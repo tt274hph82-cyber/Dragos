@@ -1,0 +1,19 @@
+{
+  "category": "kinetic-type",
+  "duration_s": 10,
+  "fps": 30,
+  "canvas": { "width": 1080, "height": 1920 },
+  "style": "bold editorial kinetic type, dark with one hot accent flip",
+  "palette": ["#FF5A1F", "#F5F3EE", "#8A8A93", "#0B0B0F"],
+  "font": "Inter Display (local)",
+  "export": "mp4",
+  "asset_needs": [],
+  "brief": "A self-aware reel about its own length. A countdown clock in the corner and a draining progress bar run the full 10 seconds. Copy lands in four beats: Hook 'YOU HAVE 10 SECONDS' (the 10 slams in, in orange), Build 'TO STOP THE SCROLL.' (words whip in from alternating sides), Punch 'MAKE EVERY SECOND COUNT.' (pattern interrupt: the whole frame flips to orange, words pop on a staccato beat), Resolve 'Used well.' as the clock hits 00:00. One motif: time running out.",
+  "scenes": [
+    { "id": "hook", "tag": "Hook", "start": 0, "end": 2.3, "text": "YOU HAVE 10 SECONDS", "emphasis_words": ["10"], "motion": "rise + slam with 3-frame shake" },
+    { "id": "build", "tag": "Build", "start": 2.3, "end": 4.7, "text": "TO STOP THE SCROLL.", "emphasis_words": ["SCROLL."], "motion": "alternating side whips, vertical whip exit" },
+    { "id": "punch", "tag": "Punch", "start": 4.7, "end": 7.4, "text": "MAKE EVERY SECOND COUNT.", "emphasis_words": ["COUNT."], "motion": "orange flip, staccato pop, scale pulse" },
+    { "id": "resolve", "tag": "Resolve", "start": 7.4, "end": 10, "text": "10s. Used well.", "emphasis_words": ["10s."], "motion": "scale settle, soft reveal, final hold" }
+  ],
+  "content": { "block": "hand-authored (caption-kinetic-slam is single-word captions; reel needs stacked lines + persistent clock)", "customize": {} }
+}

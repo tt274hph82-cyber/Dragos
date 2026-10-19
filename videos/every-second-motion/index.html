@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Reel Display"; font-weight: 900; src: local("Inter Display Black"), local("InterDisplay-Black"); }
+      @font-face { font-family: "Reel Display"; font-weight: 600; src: local("Inter Display SemiBold"), local("InterDisplay-SemiBold"); }
+      @font-face { font-family: "Reel Display"; font-weight: 500; src: local("Inter Display Medium"), local("InterDisplay-Medium"); }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #0b0b0f;
+      }
+      #stage {
+        position: relative;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        font-family: "Reel Display", sans-serif;
+        color: #f5f3ee;
+      }
+      #reel {
+        position: absolute;
+        inset: 0;
+      }
+      #bg {
+        position: absolute;
+        inset: 0;
+        background: #0b0b0f;
+      }
+      /* persistent chrome: clock + progress bar */
+      #hud {
+        position: absolute;
+        top: 140px;
+        left: 90px;
+        right: 90px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 34px;
+        letter-spacing: 0.12em;
+        color: #8a8a93;
+      }
+      #clock {
+        font-variant-numeric: tabular-nums;
+        color: #f5f3ee;
+      }
+      #dot {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #ff5a1f;
+        margin-right: 16px;
+        vertical-align: middle;
+      }
+      #bar {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        bottom: 220px;
+        height: 10px;
+        border-radius: 5px;
+        background: rgba(138, 138, 147, 0.25);
+        overflow: hidden;
+      }
+      #fill {
+        width: 100%;
+        height: 100%;
+        background: #ff5a1f;
+        transform-origin: left center;
+      }
+      /* scenes: stacked full-frame groups, flex-centered */
+      .scene {
+        position: absolute;
+        inset: 0;
+        padding: 0 90px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        visibility: hidden;
+      }
+      .line {
+        display: block;
+        font-weight: 900;
+        line-height: 0.92;
+        letter-spacing: -0.04em;
+        text-transform: uppercase;
+      }
+      .sm {
+        font-size: 150px;
+      }
+      .md {
+        font-size: 190px;
+      }
+      .xl {
+        font-size: 520px;
+        line-height: 0.8;
+        color: #ff5a1f;
+        letter-spacing: -0.06em;
+      }
+      .accent {
+        color: #ff5a1f;
+      }
+      #punch .line {
+        color: #0b0b0f;
+      }
+      #punch .count {
+        color: #f5f3ee;
+        background: #0b0b0f;
+        padding: 6px 28px 22px;
+        margin-top: 18px;
+      }
+      #resolve {
+        align-items: center;
+        text-align: center;
+      }
+      #resolve .big {
+        font-weight: 900;
+        font-size: 380px;
+        letter-spacing: -0.06em;
+        line-height: 0.85;
+        color: #ff5a1f;
+      }
+      #resolve .tag {
+        margin-top: 50px;
+        font-weight: 500;
+        font-size: 92px;
+        letter-spacing: -0.02em;
+        color: #f5f3ee;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="stage"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="10"
+      data-fps="30"
+      data-width="1080"
+      data-height="1920"
+    >
+      <div id="reel" class="clip" data-start="0" data-duration="10" data-track-index="0">
+        <div id="bg"></div>
+
+        <div id="hook" class="scene">
+          <span class="line sm" id="h1">You have</span>
+          <span class="line xl" id="h2">10</span>
+          <span class="line md" id="h3">seconds</span>
+        </div>
+
+        <div id="build" class="scene">
+          <span class="line md" id="b1" data-layout-allow-overflow>To stop</span>
+          <span class="line md" id="b2" data-layout-allow-overflow>the</span>
+          <span class="line md accent" id="b3" data-layout-allow-overflow>scroll.</span>
+        </div>
+
+        <div id="punch" class="scene">
+          <span class="line md" id="p1">Make</span>
+          <span class="line md" id="p2">every</span>
+          <span class="line md" id="p3">second</span>
+          <span class="line md count" id="p4">count.</span>
+        </div>
+
+        <div id="resolve" class="scene">
+          <div class="big" id="r1">10s.</div>
+          <div class="tag" id="r2">Used well.</div>
+        </div>
+
+        <div id="hud"><span><span id="dot"></span>REC</span><span id="clock">00:10</span></div>
+        <div id="bar"><div id="fill"></div></div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const clock = document.getElementById("clock");
+      const t = { secs: 10 };
+
+      // persistent motif: clock counts down, bar drains, rec dot blinks
+      tl.fromTo(
+        t,
+        { secs: 10 },
+        {
+          secs: 0,
+          duration: 10,
+          ease: "none",
+          onUpdate: () => {
+            const s = Math.max(0, Math.ceil(t.secs - 1e-6));
+            clock.textContent = "00:" + String(s).padStart(2, "0");
+          },
+        },
+        0,
+      );
+      tl.fromTo("#fill", { scaleX: 1 }, { scaleX: 0, duration: 10, ease: "none" }, 0);
+      tl.fromTo("#dot", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 19 }, 0);
+
+      // HOOK 0 - 2.3
+      tl.set("#hook", { autoAlpha: 1 }, 0);
+      tl.fromTo("#h1", { y: 80, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" }, 0.05);
+      tl.fromTo("#h2", { scale: 2.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.32, ease: "power4.in" }, 0.45);
+      tl.fromTo("#h2", { x: -14 }, { x: 0, duration: 0.1, ease: "power1.out", immediateRender: false }, 0.77);
+      tl.fromTo("#h2", { x: 12 }, { x: 0, duration: 0.07, ease: "power1.out", immediateRender: false }, 0.87);
+      tl.fromTo("#h3", { y: 80, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" }, 0.95);
+      tl.to("#hook", { y: -160, autoAlpha: 0, filter: "blur(18px)", duration: 0.3, ease: "power2.in" }, 2.0);
+
+      // BUILD 2.3 - 4.7
+      tl.set("#build", { autoAlpha: 1 }, 2.3);
+      tl.fromTo("#b1", { x: -900 }, { x: 0, duration: 0.42, ease: "expo.out" }, 2.3);
+      tl.fromTo("#b2", { x: 900 }, { x: 0, duration: 0.42, ease: "expo.out" }, 2.65);
+      tl.fromTo("#b3", { x: -900 }, { x: 0, duration: 0.42, ease: "expo.out" }, 3.0);
+      tl.fromTo("#b3", { scale: 1 }, { scale: 1.08, duration: 0.18, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "left center", immediateRender: false }, 3.5);
+      tl.to("#build", { y: -1200, filter: "blur(24px)", duration: 0.35, ease: "power3.in" }, 4.35);
+
+      // PUNCH 4.7 - 7.4: frame flips orange, staccato pops
+      tl.set("#build", { autoAlpha: 0 }, 4.7);
+      tl.set("#bg", { backgroundColor: "#ff5a1f" }, 4.7);
+      tl.set("#hud", { color: "#0b0b0f" }, 4.7);
+      tl.set("#clock", { color: "#0b0b0f" }, 4.7);
+      tl.set("#dot", { backgroundColor: "#0b0b0f" }, 4.7);
+      tl.set("#fill", { backgroundColor: "#0b0b0f" }, 4.7);
+      tl.set("#punch", { autoAlpha: 1 }, 4.7);
+      ["#p1", "#p2", "#p3", "#p4"].forEach((id, i) => {
+        tl.fromTo(id, { scale: 0.6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.2, ease: "back.out(2.5)", transformOrigin: "left center" }, 4.75 + i * 0.38);
+      });
+      tl.fromTo("#p4", { scale: 1 }, { scale: 1.12, duration: 0.16, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "left center", immediateRender: false }, 6.4);
+      tl.to("#punch", { scale: 0.9, autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 7.15);
+
+      // RESOLVE 7.4 - 10: back to dark, final hold
+      tl.set("#bg", { backgroundColor: "#0b0b0f" }, 7.4);
+      tl.set("#hud", { color: "#8a8a93" }, 7.4);
+      tl.set("#clock", { color: "#f5f3ee" }, 7.4);
+      tl.set("#dot", { backgroundColor: "#ff5a1f" }, 7.4);
+      tl.set("#fill", { backgroundColor: "#ff5a1f" }, 7.4);
+      tl.set("#resolve", { autoAlpha: 1 }, 7.4);
+      tl.fromTo("#r1", { scale: 1.6, autoAlpha: 0, filter: "blur(20px)" }, { scale: 1, autoAlpha: 1, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, 7.45);
+      tl.fromTo("#r2", { y: 60, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.5, ease: "power3.out" }, 8.0);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
