@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Broll Display"; font-weight: 800; src: local("Inter Display ExtraBold"), local("InterDisplay-ExtraBold"); }
+      @font-face { font-family: "Broll Display"; font-weight: 600; src: local("Inter Display SemiBold"), local("InterDisplay-SemiBold"); }
+      @font-face { font-family: "Broll Display"; font-weight: 500; src: local("Inter Display Medium"), local("InterDisplay-Medium"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #05060a; }
+      #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Broll Display", sans-serif; color: #f4f1ea; }
+      #film, #frame { position: absolute; inset: 0; }
+      #sky { position: absolute; inset: 0; background: radial-gradient(120% 90% at 70% 110%, #1b2a3a 0%, #0b1220 45%, #05060a 100%); }
+      #field { position: absolute; inset: -80px; transform-origin: 60% 55%; }
+      .bokeh { position: absolute; border-radius: 50%; will-change: transform, opacity; }
+      .streak { position: absolute; height: 3px; border-radius: 3px; filter: blur(1.5px); }
+      #vignette { position: absolute; inset: 0; background: radial-gradient(80% 75% at 50% 50%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.75) 100%); }
+      .bar { position: absolute; left: 0; right: 0; height: 120px; background: #000; }
+      #barTop { top: 0; } #barBot { bottom: 0; }
+      .title { position: absolute; left: 150px; bottom: 210px; visibility: hidden; }
+      .kicker { font-weight: 600; font-size: 26px; letter-spacing: 0.42em; text-transform: uppercase; color: #ffb347; margin-bottom: 22px; }
+      .head { font-weight: 800; font-size: 128px; line-height: 0.95; letter-spacing: -0.03em; }
+      .head .w { display: inline-block; }
+      .rule { width: 0; height: 4px; background: #ffb347; margin-top: 30px; }
+      #t1 .head { font-size: 168px; letter-spacing: 0.02em; }
+      #t4 { left: 0; right: 0; bottom: auto; top: 50%; transform: translateY(-50%); text-align: center; }
+      #t4 .head { font-size: 150px; }
+      #t4 .sub { margin-top: 26px; font-weight: 500; font-size: 34px; letter-spacing: 0.3em; text-transform: uppercase; color: #9fb3c8; }
+      #tc { position: absolute; right: 150px; top: 150px; font-weight: 500; font-size: 22px; letter-spacing: 0.2em; color: rgba(244,241,234,0.55); font-variant-numeric: tabular-nums; }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="main" data-start="0" data-duration="10" data-fps="30" data-width="1920" data-height="1080">
+      <audio id="score" src="assets/score.wav" data-start="0" data-duration="10" data-track-index="1" data-volume="1"></audio>
+      <div id="film" class="clip" data-start="0" data-duration="10" data-track-index="0">
+        <div id="frame">
+        <div id="sky"></div>
+        <div id="field"></div>
+        <div id="vignette"></div>
+
+        <div id="t1" class="title">
+          <div class="kicker">B-Roll · 01</div>
+          <div class="head"><span class="w">AFTER</span> <span class="w">HOURS</span></div>
+          <div class="rule"></div>
+        </div>
+        <div id="t2" class="title">
+          <div class="kicker">00:03 — Downtown</div>
+          <div class="head"><span class="w">The</span> <span class="w">city</span> <span class="w">never</span> <span class="w">sleeps.</span></div>
+        </div>
+        <div id="t3" class="title">
+          <div class="kicker">00:06 — Still on</div>
+          <div class="head"><span class="w">Neither</span> <span class="w">do</span> <span class="w">ideas.</span></div>
+        </div>
+        <div id="t4" class="title">
+          <div class="head"><span class="w">Keep</span> <span class="w">building.</span></div>
+          <div class="sub">After Hours</div>
+        </div>
+
+        <div id="tc">REC 00:00:00</div>
+        <div class="bar" id="barTop"></div>
+        <div class="bar" id="barBot"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Seeded PRNG so every render is identical.
+      let seed = 1337;
+      const rand = () => ((seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296);
+
+      const field = document.getElementById("field");
+      const palette = ["255,179,71", "255,120,80", "120,200,255", "255,90,160", "255,236,190"];
+      const lights = [];
+      for (let i = 0; i < 70; i++) {
+        const depth = rand();                       // 0 far .. 1 near
+        const size = 30 + depth * depth * 260;
+        const c = palette[Math.floor(rand() * palette.length)];
+        const el = document.createElement("div");
+        el.className = "bokeh";
+        el.style.width = el.style.height = size + "px";
+        el.style.background = `radial-gradient(circle, rgba(${c},0.55) 0%, rgba(${c},0.35) 45%, rgba(${c},0.08) 68%, rgba(${c},0) 72%)`;
+        field.appendChild(el);
+        lights.push({ el, x: rand() * 2300 - 120, y: 220 + rand() * 820, depth, phase: rand() * 6.28, speed: 12 + depth * 70, size });
+      }
+      const streaks = [];
+      for (let i = 0; i < 9; i++) {
+        const el = document.createElement("div");
+        el.className = "streak";
+        const warm = i % 3 !== 0;
+        const w = 160 + rand() * 340;
+        el.style.width = w + "px";
+        el.style.background = warm ? "linear-gradient(90deg, rgba(255,80,60,0), rgba(255,90,70,0.9))" : "linear-gradient(90deg, rgba(255,250,230,0), rgba(255,250,230,0.95))";
+        field.appendChild(el);
+        streaks.push({ el, y: 760 + rand() * 260, w, start: rand() * 10, speed: 900 + rand() * 900, dir: warm ? 1 : -1 });
+      }
+      const tc = document.getElementById("tc");
+
+      // Draw the whole frame as a pure function of time t.
+      function draw(t) {
+        for (const L of lights) {
+          let x = (L.x - L.speed * t) % 2300; if (x < -300) x += 2300;
+          const y = L.y + Math.sin(t * 0.6 + L.phase) * 10 * L.depth;
+          const o = 0.45 + 0.4 * Math.sin(t * (0.9 + L.depth) + L.phase) ** 2;
+          L.el.style.transform = `translate(${x}px, ${y - L.size / 2}px)`;
+          L.el.style.opacity = o.toFixed(3);
+        }
+        for (const S of streaks) {
+          const p = ((t + S.start) * S.speed) % 3400 - 700;
+          const x = S.dir > 0 ? p : 2100 - p;
+          S.el.style.transform = `translate(${x}px, ${S.y}px) scaleX(${S.dir})`;
+        }
+        const f = Math.floor(t * 30);
+        tc.textContent = "REC 00:" + String(Math.floor(t)).padStart(2, "0") + ":" + String(f % 30).padStart(2, "0");
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      const clock = { t: 0 };
+      tl.to(clock, { t: 10, duration: 10, ease: "none", onUpdate: () => draw(clock.t) }, 0);
+      draw(0);
+
+      // slow camera push + gentle rack-focus breaths
+      tl.fromTo("#field", { scale: 1.0, filter: "blur(10px)" }, { scale: 1.12, filter: "blur(2px)", duration: 10, ease: "sine.inOut" }, 0);
+      tl.fromTo("#frame", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out" }, 0);
+      tl.fromTo(".bar", { scaleY: 1.6 }, { scaleY: 1, duration: 1.2, ease: "power3.out" }, 0);
+
+      function wordsIn(sel, at, stagger) {
+        tl.set(sel, { autoAlpha: 1 }, at);
+        tl.fromTo(sel + " .kicker", { autoAlpha: 0, x: -30 }, { autoAlpha: 1, x: 0, duration: 0.5, ease: "power3.out" }, at);
+        tl.fromTo(sel + " .w", { autoAlpha: 0, y: 60, filter: "blur(12px)" }, { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out", stagger }, at + 0.08);
+      }
+      function out(sel, at) {
+        tl.to(sel, { autoAlpha: 0, y: -24, filter: "blur(10px)", duration: 0.35, ease: "power2.in" }, at);
+      }
+
+      // Titles land on the soundtrack hits: 0.6, 3.4, 6.2, 8.4
+      wordsIn("#t1", 0.6, 0.12);
+      tl.fromTo("#t1 .head", { scale: 1 }, { scale: 1.06, transformOrigin: "left bottom", duration: 2.4, ease: "sine.out" }, 0.6);
+      tl.to("#t1 .rule", { width: 420, duration: 0.9, ease: "expo.out" }, 0.9);
+      out("#t1", 2.9);
+
+      wordsIn("#t2", 3.4, 0.09);
+      out("#t2", 5.75);
+
+      wordsIn("#t3", 6.2, 0.11);
+      out("#t3", 7.85);
+
+      tl.set("#t4", { autoAlpha: 1 }, 8.4);
+      tl.fromTo("#t4 .w", { autoAlpha: 0, scale: 1.25, filter: "blur(18px)" }, { autoAlpha: 1, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "expo.out", stagger: 0.08 }, 8.4);
+      tl.fromTo("#t4 .sub", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.9, ease: "power3.out" }, 8.65);
+      tl.to("#sky", { filter: "brightness(1.35)", duration: 0.15, yoyo: true, repeat: 1, ease: "power2.out" }, 8.4);
+      tl.to("#frame", { opacity: 0, duration: 0.4, ease: "power1.in" }, 9.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
