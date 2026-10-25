@@ -1,0 +1,74 @@
+<!--SFX [["pop","w1",0.4,0.45],["typing","w2",0.2,0.35],["typing","w2",1.8,0.35],["whoosh-short","w3",0.0,0.4],["whoosh-short","w4",0.0,0.35],["impact-bass-1","w4",0.6,0.3],["pop","w5",0.4,0.35],["pop","w6",0.3,0.4],["pop","w6",3.2,0.4],["pop","w7",0.0,0.4]]-->
+<style>
+  #wo-vb { left: 150px; top: 60px; }
+  #wo-cam { position: absolute; left: 150px; top: 150px; width: 1120px; height: 630px; transform-origin: 0 0; }
+  #wo-ht { left: 0; top: 0; background: #16110e; }
+  #wo-pl { left: 50px; top: 45px; width: 540px; height: 540px; box-shadow: 0 0 0 14px #fbf8f3; }
+  #wo-long { position: absolute; left: 640px; top: 60px; width: 440px; font-size: 40px; font-weight: 700; line-height: 1.15; color: #fbf8f3; opacity: 0; }
+  #wo-big { left: 630px; top: 120px; width: 460px; font-size: 150px; text-align: right; opacity: 0; }
+  #wo-ring { position: absolute; left: 620px; top: 100px; width: 480px; height: 300px; border-radius: 20px; border: 10px solid #ff5a1f; opacity: 0; }
+  #wo-title { position: absolute; left: 0; top: 660px; width: 1120px; font-size: 64px; font-weight: 700; color: #f5f0e8; opacity: 0; }
+  #wo-tul { position: absolute; left: 0; top: 750px; width: 820px; height: 12px; border-radius: 6px; background: #ff5a1f; transform-origin: left center; opacity: 0; }
+  #wo-unread { left: 700px; top: 380px; width: 600px; }
+  #wo-rule { left: 1340px; top: 220px; width: 500px; }
+  #wo-rule2 { left: 1340px; top: 560px; width: 500px; }
+  #wo-cut { left: 1340px; top: 220px; width: 500px; }
+  #wo-team { left: 1000px; top: 260px; width: 800px; }
+  #wo-team2 { left: 1000px; top: 500px; width: 800px; }
+  #wo-blink { left: 150px; top: 380px; width: 1700px; }
+</style>
+
+<div class="desk"></div>
+<div class="vb pn" id="wo-vb">v4</div>
+<div class="pn" id="wo-cam">
+  <div class="ht" id="wo-ht">
+    <div class="pl" id="wo-pl"><i></i><i></i><i></i></div>
+    <div id="wo-long">5 CHEAP AND EASY DINNERS YOU CAN MAKE IN 10 MINUTES FOR UNDER $10!!</div>
+    <div class="tx" id="wo-big">ONLY <span class="acc">$10?</span></div>
+    <div id="wo-ring"></div>
+  </div>
+  <div id="wo-title">5 Dinners for Under $10</div>
+  <div id="wo-tul"></div>
+</div>
+<div class="disp t96 paper pn" id="wo-unread">Unreadable</div>
+<div class="disp t64 paper pn" id="wo-rule"><span class="acc">3–4 words</span>, at most</div>
+<div class="b46 paper pn" id="wo-rule2">Huge. Bold. Simple.</div>
+<div class="b46 paper pn" id="wo-cut">If a word doesn't add something the picture can't show, cut it.</div>
+<div class="disp t64 paper pn" id="wo-team">Title and thumbnail: a <span class="acc">team</span></div>
+<div class="b46 mut pn" id="wo-team2">The title says it. The thumbnail asks.</div>
+<div class="disp t130 paper pn" id="wo-blink">Read in a <span class="acc">blink</span></div>
+
+<script>
+  // w1
+  on("#wo-vb", C.w1 + 0.4, "pop");
+  tl.fromTo("#wo-cam", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.w1 - 0.3);
+  // w2: the long text
+  type("#wo-long", C.w2 + 0.2, 16);
+  // w3: phone size
+  tl.to("#wo-cam", { scale: 0.28, x: 200, y: 200, duration: 0.8, ease: "power3.inOut" }, C.w3 - 0.1);
+  words("#wo-unread", C.w3 + 0.6);
+  // w4: big words
+  off("#wo-unread", C.w4 - 0.3, "blur");
+  tl.to("#wo-cam", { scale: 1, x: 0, y: 0, duration: 0.7, ease: "expo.out" }, C.w4 - 0.1);
+  tl.to("#wo-long", { opacity: 0, duration: 0.2, immediateRender: false }, C.w4 + 0.3);
+  tl.fromTo("#wo-big", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.28, ease: "power4.in", transformOrigin: "100% 0%" }, C.w4 + 0.6);
+  words("#wo-rule", C.w4 + 0.9);
+  on("#wo-rule2", C.w4 + 2.6, "blur");
+  // w4b
+  off("#wo-rule", C.w4b - 0.3, "blur");
+  off("#wo-rule2", C.w4b - 0.3, "blur");
+  words("#wo-cut", C.w4b);
+  // w5: title + thumbnail as a team
+  off("#wo-cut", C.w5 - 0.3, "blur");
+  tl.to("#wo-cam", { scale: 0.72, y: -20, duration: 0.7, ease: "power3.inOut" }, C.w5);
+  on("#wo-title", C.w5 + 0.4, "blur");
+  words("#wo-team", C.w5 + 0.9);
+  // w6: highlight each
+  tl.fromTo("#wo-tul", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "expo.out" }, C.w6 + 0.3);
+  tl.fromTo("#wo-ring", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.w6 + 3.2);
+  on("#wo-team2", C.w6 + 1.0, "blur");
+  // w7
+  ["#wo-team", "#wo-team2"].forEach((s) => off(s, C.w7 - 0.35, "blur"));
+  tl.to(["#wo-cam", "#wo-vb"], { opacity: 0, y: -60, duration: 0.3, ease: "power3.in" }, C.w7 - 0.35);
+  words("#wo-blink", C.w7);
+</script>

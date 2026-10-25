@@ -1,0 +1,59 @@
+<!--SFX [["pop","f1",0.4,0.45],["pop","f1",1.0,0.4],["pop","f2",2.4,0.35],["pop","f2",3.6,0.35],["pop","f2",4.8,0.35],["sparkle","f3",3.0,0.3],["whoosh-short","f3b",0.6,0.4],["pop","f5",3.0,0.4]]-->
+<style>
+  #fa-vb { left: 150px; top: 60px; }
+  #fa-ht { left: 150px; top: 150px; background: #16110e; opacity: 0; }
+  #fa-pl { left: 40px; top: 130px; width: 460px; height: 460px; box-shadow: 0 0 0 12px #fbf8f3; }
+  #fa-tx { left: 520px; top: 40px; width: 560px; font-size: 110px; text-align: right; }
+  #fa-fc { left: 720px; top: 310px; width: 300px; height: 300px; opacity: 0; }
+  #fa-fc .e { transform-origin: 50% 50%; }
+  #fa-brow { position: absolute; left: 22%; top: 16%; width: 56%; height: 14%; opacity: 0; }
+  #fa-draw { left: 1340px; top: 160px; width: 520px; }
+  .fa-em { position: absolute; left: 1340px; display: flex; align-items: center; gap: 28px; opacity: 0; }
+  .fa-em .fc { position: relative; width: 140px; height: 140px; flex: none; }
+  #fa-feel { left: 1340px; top: 300px; width: 500px; }
+  #fa-noface { left: 1340px; top: 220px; width: 500px; }
+  #fa-honest { left: 1340px; top: 520px; width: 500px; }
+</style>
+
+<div class="desk"></div>
+<div class="vb pn" id="fa-vb">v5</div>
+<div class="ht" id="fa-ht">
+  <div class="pl" id="fa-pl"><i></i><i></i><i></i></div>
+  <div class="tx" id="fa-tx">ONLY <span class="acc">$10?</span></div>
+  <div class="fc" id="fa-fc">
+    <svg id="fa-brow" viewBox="0 0 168 42"><path d="M6 34 Q 30 6 60 20 M108 20 Q 138 6 162 34" stroke="#16110e" stroke-width="10" fill="none" stroke-linecap="round" /></svg>
+    <div class="e l"></div><div class="e r"></div><div class="m" id="fa-m"></div><div class="m o" id="fa-mo" style="opacity: 0"></div>
+  </div>
+</div>
+<div class="disp t64 paper pn" id="fa-draw">Faces with a <span class="acc">clear</span> emotion</div>
+<div class="fa-em" id="fa-e1" style="top: 330px"><div class="fc"><div class="e l"></div><div class="e r"></div><div class="m o"></div></div><div class="b46 paper">Surprise</div></div>
+<div class="fa-em" id="fa-e2" style="top: 510px"><div class="fc" style="background: #e8b45a"><div class="e l"></div><div class="e r"></div><div class="m" style="height: 18%; top: 58%"></div></div><div class="b46 paper">Joy</div></div>
+<div class="fa-em" id="fa-e3" style="top: 690px"><div class="fc" style="background: #9db7d6"><div class="e l" style="height: 8%; top: 37%"></div><div class="e r"></div><div class="m" style="height: 5%; border-radius: 4px; top: 66%"></div></div><div class="b46 paper">Disbelief</div></div>
+<div class="disp t64 paper pn" id="fa-feel">It tells viewers how the video will make them <span class="acc">feel</span></div>
+<div class="b46 mut pn" id="fa-noface">No face? That's fine.</div>
+<div class="disp t64 paper pn" id="fa-honest">If you show it: <span class="acc">big</span> and <span class="acc">honest</span></div>
+
+<script>
+  // f1: her face
+  on("#fa-vb", C.f1 + 0.4, "pop");
+  tl.fromTo("#fa-ht", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.f1 - 0.3);
+  tl.fromTo("#fa-fc", { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.f1 + 1.0);
+  // f2: clear emotions
+  words("#fa-draw", C.f2 + 0.2);
+  [["#fa-e1", 2.4], ["#fa-e2", 3.6], ["#fa-e3", 4.8]].forEach(([s, dt]) => tl.fromTo(s, { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, C.f2 + dt));
+  // f3: she reacts to the plate
+  ["#fa-draw", "#fa-e1", "#fa-e2", "#fa-e3"].forEach((s) => off(s, C.f3 - 0.3, "right"));
+  tl.to("#fa-fc", { rotation: -12, x: -40, duration: 0.6, ease: "back.out(1.6)" }, C.f3 + 2.6);
+  tl.to("#fa-m", { opacity: 0, duration: 0.1 }, C.f3 + 2.9);
+  tl.to("#fa-mo", { opacity: 1, duration: 0.1 }, C.f3 + 2.9);
+  tl.fromTo("#fa-fc .e", { scale: 1 }, { scale: 1.35, duration: 0.3, ease: "back.out(2)", immediateRender: false }, C.f3 + 2.9);
+  tl.fromTo("#fa-brow", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, C.f3 + 2.9);
+  // f3b: closer to the camera
+  tl.to("#fa-fc", { scale: 1.2, x: -90, y: 10, duration: 0.8, ease: "power3.inOut" }, C.f3b + 0.6);
+  // f4
+  words("#fa-feel", C.f4 + 0.1);
+  // f5
+  off("#fa-feel", C.f5 - 0.3, "blur");
+  on("#fa-noface", C.f5 + 0.3, "blur");
+  words("#fa-honest", C.f5 + 2.8);
+</script>

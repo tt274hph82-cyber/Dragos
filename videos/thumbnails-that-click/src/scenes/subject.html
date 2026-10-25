@@ -1,0 +1,73 @@
+<!--SFX [["pop","u1",0.4,0.45],["pop","u2",0.0,0.35],["pop","u2",0.8,0.35],["pop","u2",1.6,0.35],["pop","u2",2.4,0.35],["pop","u4",0.6,0.45],["whoosh-short","u5",0.2,0.4],["whoosh","u6",0.6,0.4],["pop","u7",0.0,0.35],["pop","u7",1.0,0.35],["pop","u7",2.0,0.35]]-->
+<style>
+  #su-vb { left: 150px; top: 60px; }
+  #su-ht { left: 150px; top: 150px; opacity: 0; }
+  #su-kitchen { background: #8c7f73; }
+  .su-cab { position: absolute; top: 0; height: 250px; width: 250px; background: #a8998b; border: 8px solid #6f6359; }
+  #su-counter { position: absolute; left: 0; top: 430px; width: 100%; height: 200px; background: #6f6359; }
+  #su-flat { background: #2b211b; opacity: 0; }
+  .su-it { position: absolute; opacity: 0; }
+  #su-pl { left: 760px; top: 360px; width: 200px; height: 200px; opacity: 0; }
+  #su-ring { position: absolute; left: 744px; top: 344px; width: 232px; height: 232px; border-radius: 50%; border: 8px solid #ff5a1f; opacity: 0; }
+  #su-every { left: 1340px; top: 200px; width: 500px; }
+  #su-hero { left: 1340px; top: 560px; width: 500px; }
+  #su-busy { left: 1340px; top: 200px; width: 500px; }
+  #su-desc { left: 1340px; top: 520px; }
+  .su-one { left: 1340px; width: 520px; }
+</style>
+
+<div class="desk"></div>
+<div class="vb pn" id="su-vb">v2</div>
+<div class="ht" id="su-ht">
+  <div class="lay" id="su-kitchen">
+    <div class="su-cab" style="left: 40px"></div><div class="su-cab" style="left: 310px"></div><div class="su-cab" style="left: 580px"></div><div class="su-cab" style="left: 850px"></div>
+    <div id="su-counter"></div>
+  </div>
+  <div class="lay" id="su-flat"></div>
+  <div id="su-clutter">
+    <div class="su-it" id="su-pan" style="left: 60px; top: 330px"><svg width="300" height="200" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /></svg></div>
+    <div class="su-it" id="su-ing" style="left: 380px; top: 400px"><svg width="340" height="160" viewBox="0 0 340 160"><circle cx="50" cy="100" r="50" fill="#c0392b" /><circle cx="150" cy="110" r="44" fill="#e8d6b0" /><ellipse cx="250" cy="110" rx="38" ry="48" fill="#fbf8f3" /><rect x="290" y="40" width="40" height="110" rx="10" fill="#7fa66b" /></svg></div>
+    <div class="su-it" id="su-bot" style="left: 980px; top: 250px"><svg width="120" height="200" viewBox="0 0 120 200"><rect x="10" y="40" width="44" height="160" rx="10" fill="#7a6a99" /><rect x="66" y="80" width="44" height="120" rx="10" fill="#9db7d6" /></svg></div>
+    <div class="su-it" id="su-mug" style="left: 640px; top: 270px"><svg width="110" height="110" viewBox="0 0 110 110"><rect x="10" y="20" width="70" height="80" rx="10" fill="#e8b4bc" /><path d="M80 40 h14 a12 12 0 0 1 0 30 h-14" stroke="#e8b4bc" stroke-width="10" fill="none" /></svg></div>
+  </div>
+  <div class="pl" id="su-pl"><i></i><i></i><i></i></div>
+  <div id="su-ring"></div>
+</div>
+<div class="disp t64 paper pn" id="su-every">When everything is the subject, <span class="acc">nothing is</span></div>
+<div class="b46 paper pn" id="su-hero">One hero: the finished plate</div>
+<div class="b46 paper pn" id="su-busy">Can't describe it in a few words? It's too busy.</div>
+<div class="chip acc-bg pn" id="su-desc">"Plate, close-up"</div>
+<div class="disp t80 paper pn su-one" id="su-o1" style="top: 220px">One subject.</div>
+<div class="disp t80 paper pn su-one" id="su-o2" style="top: 400px">One idea.</div>
+<div class="disp t80 acc pn su-one" id="su-o3" style="top: 580px">One glance.</div>
+
+<script>
+  // u1: v2, the kitchen
+  on("#su-vb", C.u1 + 0.4, "pop");
+  tl.fromTo("#su-ht", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.u1 - 0.2);
+  // u2: everything piles in
+  [["#su-pan", 0.0], ["#su-ing", 0.8], ["#su-bot", 1.6], ["#su-mug", 1.6], ["#su-pl", 2.4]].forEach(([s, dt]) => on(s, C.u2 + dt, "pop"));
+  // u3
+  words("#su-every", C.u3 + 0.1);
+  // u4: pick the plate
+  off("#su-every", C.u4 - 0.3, "blur");
+  tl.to(["#su-clutter", "#su-kitchen"], { opacity: 0.3, duration: 0.4 }, C.u4 + 0.3);
+  tl.fromTo("#su-ring", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.u4 + 0.6);
+  on("#su-hero", C.u4 + 0.6, "blur");
+  // u5: make it big
+  tl.to("#su-ring", { opacity: 0, duration: 0.2 }, C.u5);
+  tl.to("#su-pl", { x: -300, y: -145, scale: 2.7, duration: 1.0, ease: "power3.inOut" }, C.u5 + 0.2);
+  off("#su-hero", C.u5b - 0.3, "blur");
+  // u5b: too busy?
+  words("#su-busy", C.u5b);
+  on("#su-desc", C.u5b + 2.6, "pop");
+  // u6: clutter falls away, background goes flat
+  off("#su-busy", C.u6 - 0.3, "blur");
+  off("#su-desc", C.u6 - 0.3, "blur");
+  q("#su-clutter .su-it").forEach((el, k) => tl.to(el, { y: 700, rotation: [12, -8, 20, -15][k], duration: 0.6, ease: "power3.in" }, C.u6 + 0.6 + k * 0.12));
+  tl.to("#su-flat", { opacity: 1, duration: 0.6, ease: "power2.inOut" }, C.u6 + 2.4);
+  // u7: one, one, one
+  on("#su-o1", C.u7, "left");
+  on("#su-o2", C.u7 + 1.0, "left");
+  on("#su-o3", C.u7 + 2.0, "left");
+</script>

@@ -1,0 +1,87 @@
+<!--SFX [["pop","s1",0.4,0.45],["whoosh","s3",0.0,0.4],["pop","s3",0.6,0.35],["pop","s3",2.6,0.4],["pop","s4",0.4,0.5],["pop","s5",0.0,0.35],["pop","s5",1.6,0.35],["impact-bass-1","s6",0.0,0.3]]-->
+<style>
+  #sy-vb { left: 150px; top: 60px; }
+  #sy-ht { left: 150px; top: 150px; background: #16110e; opacity: 0; }
+  #sy-a { position: absolute; inset: 0; }
+  #sy-a .pl { left: 40px; top: 130px; width: 460px; height: 460px; box-shadow: 0 0 0 12px #fbf8f3; }
+  #sy-a .tx { left: 520px; top: 40px; width: 560px; font-size: 110px; text-align: right; }
+  #sy-a .fc { left: 640px; top: 270px; width: 360px; height: 360px; transform: rotate(-12deg); }
+  #sy-b { position: absolute; inset: 0; opacity: 0; }
+  #sy-left { position: absolute; left: 0; top: 0; width: 520px; height: 630px; background: #6f6359; }
+  #sy-cup { left: 120px; top: 180px; width: 280px; height: 320px; }
+  #sy-sad { position: absolute; left: 180px; top: 120px; }
+  #sy-arrow { position: absolute; left: 470px; top: 250px; }
+  #sy-pl2 { left: 610px; top: 100px; width: 440px; height: 440px; box-shadow: 0 0 0 12px #fbf8f3; }
+  #sy-tag { left: 820px; top: 400px; font-size: 90px; opacity: 0; transform-origin: 10% 50%; }
+  #sy-q { left: 1340px; top: 230px; width: 500px; }
+  #sy-tiny { left: 1340px; top: 200px; width: 500px; }
+  #sy-tiny2 { left: 1340px; top: 560px; width: 500px; }
+  #sy-ba { left: 1340px; top: 260px; width: 500px; }
+  #sy-gap { left: 1340px; top: 260px; width: 500px; }
+  #sy-how { left: 1340px; top: 560px; width: 500px; }
+  #sy-asks { left: 1340px; top: 220px; width: 520px; }
+  #sy-ans { left: 1340px; top: 540px; width: 520px; }
+  #sy-cur { left: 150px; top: 380px; width: 1700px; }
+</style>
+
+<div class="desk"></div>
+<div class="vb pn" id="sy-vb">v6</div>
+<div class="ht" id="sy-ht">
+  <div id="sy-a">
+    <div class="pl"><i></i><i></i><i></i></div>
+    <div class="tx">ONLY <span class="acc">$10?</span></div>
+    <div class="fc"><div class="e l" style="transform: scale(1.35)"></div><div class="e r" style="transform: scale(1.35)"></div><div class="m o"></div></div>
+  </div>
+  <div id="sy-b">
+    <div id="sy-left"></div>
+    <div class="cup" id="sy-cup"></div>
+    <svg id="sy-sad" width="160" height="70" viewBox="0 0 160 70"><circle cx="30" cy="20" r="10" fill="#16110e" /><circle cx="130" cy="20" r="10" fill="#16110e" /><path d="M30 64 Q 80 30 130 64" stroke="#16110e" stroke-width="10" fill="none" stroke-linecap="round" /></svg>
+    <svg id="sy-arrow" width="160" height="120" viewBox="0 0 160 120"><path id="sy-arp" pathLength="100" d="M10 60 L140 60 M100 20 L145 60 L100 100" stroke="#ff5a1f" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    <div class="pl" id="sy-pl2"><i></i><i></i><i></i></div>
+    <div class="tag" id="sy-tag">$3</div>
+  </div>
+</div>
+<div class="disp t64 paper pn" id="sy-q">Clear now. But is it <span class="acc">interesting</span>?</div>
+<div class="disp t64 paper pn" id="sy-tiny">Tell a <span class="acc">tiny story</span></div>
+<div class="b46 mut pn" id="sy-tiny2">…or open a question</div>
+<div class="b46 paper pn" id="sy-ba">Before and after</div>
+<div class="b46 paper pn" id="sy-gap">A price that seems too low to be true</div>
+<div class="disp t64 paper pn" id="sy-how">Now they have to know <span class="acc">how</span></div>
+<div class="disp t80 paper pn" id="sy-asks">The thumbnail <span class="acc">asks</span></div>
+<div class="disp t80 paper pn" id="sy-ans">The video answers</div>
+<div class="disp t130 paper pn" id="sy-cur"><span class="acc">Curiosity</span> gets the click</div>
+
+<script>
+  // s1
+  on("#sy-vb", C.s1 + 0.4, "pop");
+  tl.fromTo("#sy-ht", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.s1 - 0.3);
+  words("#sy-q", C.s1 + 0.6);
+  // s2
+  off("#sy-q", C.s2 - 0.3, "blur");
+  words("#sy-tiny", C.s2);
+  on("#sy-tiny2", C.s2 + 1.8, "blur");
+  // s3: before and after
+  off("#sy-tiny", C.s3 - 0.3, "blur");
+  off("#sy-tiny2", C.s3 - 0.3, "blur");
+  tl.to("#sy-a", { opacity: 0, duration: 0.3 }, C.s3 - 0.1);
+  tl.set("#sy-b", { opacity: 1 }, C.s3);
+  tl.fromTo(["#sy-left", "#sy-cup", "#sy-sad"], { opacity: 0, x: -120 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out", stagger: 0.08 }, C.s3 + 0.4);
+  draw("#sy-arp", C.s3 + 1.6, 0.4, "power3.out");
+  tl.fromTo("#sy-pl2", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.4)" }, C.s3 + 2.6);
+  on("#sy-ba", C.s3 + 0.3, "blur");
+  // s4: the price tag
+  off("#sy-ba", C.s4 - 0.3, "blur");
+  tl.fromTo("#sy-tag", { opacity: 0, rotation: -40, y: -200 }, { opacity: 1, rotation: -8, y: 0, duration: 0.6, ease: "back.out(1.8)" }, C.s4 + 0.4);
+  words("#sy-gap", C.s4 + 0.3);
+  // s4b
+  words("#sy-how", C.s4b + 0.2);
+  // s5
+  off("#sy-gap", C.s5 - 0.3, "blur");
+  off("#sy-how", C.s5 - 0.3, "blur");
+  on("#sy-asks", C.s5, "left");
+  on("#sy-ans", C.s5 + 1.6, "left");
+  // s6
+  ["#sy-asks", "#sy-ans"].forEach((s) => off(s, C.s6 - 0.3, "up"));
+  tl.to(["#sy-ht", "#sy-vb"], { opacity: 0, y: -60, duration: 0.3, ease: "power3.in" }, C.s6 - 0.3);
+  words("#sy-cur", C.s6);
+</script>

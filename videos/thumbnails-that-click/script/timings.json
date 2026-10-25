@@ -1,0 +1,623 @@
+{
+ "total": 357.807,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Version one",
+   "start": 0.0,
+   "beats": [
+    {
+     "id": "o1",
+     "text": "Remember Maya's first thumbnail? A blurry frame of a frying pan.",
+     "start": 0.6,
+     "end": 4.586,
+     "local": 0.6,
+     "localEnd": 4.586
+    },
+    {
+     "id": "o2",
+     "text": "It got three views.",
+     "start": 5.336,
+     "end": 6.524,
+     "local": 5.336,
+     "localEnd": 6.524
+    },
+    {
+     "id": "o2b",
+     "text": "Not because the video was bad. Because nobody wanted to tap on it.",
+     "start": 7.274,
+     "end": 11.218,
+     "local": 7.274,
+     "localEnd": 11.218
+    },
+    {
+     "id": "o3",
+     "text": "Today, she's going to fix it. Not once, but ten times.",
+     "start": 11.968,
+     "end": 15.234,
+     "local": 11.968,
+     "localEnd": 15.234
+    },
+    {
+     "id": "o4",
+     "text": "Each version fixes one mistake. And by version ten, you'll know exactly what makes people click.",
+     "start": 15.984,
+     "end": 21.977,
+     "local": 15.984,
+     "localEnd": 21.977
+    }
+   ],
+   "end": 24.177,
+   "duration": 24.177
+  },
+  {
+   "id": "glance",
+   "title": "The one-glance test",
+   "start": 24.177,
+   "beats": [
+    {
+     "id": "g1",
+     "text": "First, understand where your thumbnail actually lives.",
+     "start": 24.177,
+     "end": 27.181,
+     "local": 0.0,
+     "localEnd": 3.004
+    },
+    {
+     "id": "g2",
+     "text": "Not big, on your editing screen. Tiny, on a phone, in a feed that scrolls past in a blur.",
+     "start": 27.931,
+     "end": 33.732,
+     "local": 3.754,
+     "localEnd": 9.555
+    },
+    {
+     "id": "g3",
+     "text": "People decide in a split second whether to tap.",
+     "start": 34.482,
+     "end": 37.193,
+     "local": 10.305,
+     "localEnd": 13.016
+    },
+    {
+     "id": "g4",
+     "text": "So every rule in this video comes from one question: can someone get it in a single glance, at the size of a postage stamp?",
+     "start": 37.943,
+     "end": 45.573,
+     "local": 13.766,
+     "localEnd": 21.396
+    },
+    {
+     "id": "g5",
+     "text": "Maya shrinks her frying pan thumbnail to phone size. It's just a brown smudge.",
+     "start": 46.323,
+     "end": 51.325,
+     "local": 22.146,
+     "localEnd": 27.148
+    },
+    {
+     "id": "g5b",
+     "text": "Try it yourself: shrink your thumbnail down, step back from the screen, and see what's left.",
+     "start": 52.075,
+     "end": 57.446,
+     "local": 27.898,
+     "localEnd": 33.269
+    },
+    {
+     "id": "g6",
+     "text": "Version one fails the test. Time to fix it.",
+     "start": 58.196,
+     "end": 61.134,
+     "local": 34.019,
+     "localEnd": 36.957
+    }
+   ],
+   "end": 63.334,
+   "duration": 39.157
+  },
+  {
+   "id": "subject",
+   "title": "One clear subject",
+   "start": 63.334,
+   "beats": [
+    {
+     "id": "u1",
+     "text": "Version two. Maya's first instinct is to show everything.",
+     "start": 63.334,
+     "end": 66.924,
+     "local": 0.0,
+     "localEnd": 3.59
+    },
+    {
+     "id": "u2",
+     "text": "The pan, the ingredients, the kitchen, and the finished plate.",
+     "start": 67.674,
+     "end": 70.877,
+     "local": 4.34,
+     "localEnd": 7.543
+    },
+    {
+     "id": "u3",
+     "text": "But when everything is the subject, nothing is.",
+     "start": 71.627,
+     "end": 74.389,
+     "local": 8.293,
+     "localEnd": 11.055
+    },
+    {
+     "id": "u4",
+     "text": "So she picks one hero: the finished plate.",
+     "start": 75.139,
+     "end": 77.502,
+     "local": 11.805,
+     "localEnd": 14.168
+    },
+    {
+     "id": "u5",
+     "text": "She makes it big. Big enough to fill most of the frame.",
+     "start": 78.252,
+     "end": 81.363,
+     "local": 14.918,
+     "localEnd": 18.029
+    },
+    {
+     "id": "u5b",
+     "text": "A good rule: if you can't describe your thumbnail in a few words, it's too busy.",
+     "start": 82.113,
+     "end": 86.571,
+     "local": 18.779,
+     "localEnd": 23.237
+    },
+    {
+     "id": "u6",
+     "text": "And she removes everything that doesn't help: the clutter on the counter, the busy background.",
+     "start": 87.321,
+     "end": 92.493,
+     "local": 23.987,
+     "localEnd": 29.159
+    },
+    {
+     "id": "u7",
+     "text": "One subject. One idea. Readable in an instant.",
+     "start": 93.243,
+     "end": 96.562,
+     "local": 29.909,
+     "localEnd": 33.228
+    }
+   ],
+   "end": 98.762,
+   "duration": 35.428
+  },
+  {
+   "id": "contrast",
+   "title": "Make it pop",
+   "start": 98.762,
+   "beats": [
+    {
+     "id": "k1",
+     "text": "Version three looks better, but it still blends in.",
+     "start": 98.762,
+     "end": 101.502,
+     "local": 0.0,
+     "localEnd": 2.74
+    },
+    {
+     "id": "k2",
+     "text": "A brown plate, on a brown table, in a feed full of other videos.",
+     "start": 102.252,
+     "end": 106.213,
+     "local": 3.49,
+     "localEnd": 7.451
+    },
+    {
+     "id": "k3",
+     "text": "The fix is contrast. Light against dark. Warm against cool.",
+     "start": 106.963,
+     "end": 110.937,
+     "local": 8.201,
+     "localEnd": 12.175
+    },
+    {
+     "id": "k3b",
+     "text": "Bright subjects pop off dark backgrounds. Warm colors, like orange and yellow, pop off cool ones, like blue and teal.",
+     "start": 111.687,
+     "end": 119.085,
+     "local": 12.925,
+     "localEnd": 20.323
+    },
+    {
+     "id": "k4",
+     "text": "She puts the bright plate on a dark background, and adds a clean edge so it separates.",
+     "start": 119.835,
+     "end": 124.551,
+     "local": 21.073,
+     "localEnd": 25.789
+    },
+    {
+     "id": "k5",
+     "text": "Here's a trick: turn your thumbnail black and white. If the subject still stands out, your contrast works.",
+     "start": 125.301,
+     "end": 131.411,
+     "local": 26.539,
+     "localEnd": 32.649
+    },
+    {
+     "id": "k6",
+     "text": "And check it in both light mode and dark mode, because your viewers use both.",
+     "start": 132.161,
+     "end": 136.479,
+     "local": 33.399,
+     "localEnd": 37.717
+    }
+   ],
+   "end": 138.679,
+   "duration": 39.917
+  },
+  {
+   "id": "words",
+   "title": "Fewer, bigger words",
+   "start": 138.679,
+   "beats": [
+    {
+     "id": "w1",
+     "text": "Version four. Maya adds text.",
+     "start": 138.679,
+     "end": 140.932,
+     "local": 0.0,
+     "localEnd": 2.253
+    },
+    {
+     "id": "w2",
+     "text": "Five cheap and easy dinners you can make in ten minutes, for under ten dollars.",
+     "start": 141.682,
+     "end": 146.337,
+     "local": 3.003,
+     "localEnd": 7.658
+    },
+    {
+     "id": "w3",
+     "text": "At phone size, that's unreadable.",
+     "start": 147.087,
+     "end": 148.96,
+     "local": 8.408,
+     "localEnd": 10.281
+    },
+    {
+     "id": "w4",
+     "text": "Thumbnail text should be three or four words at most. Huge, bold, and simple.",
+     "start": 149.71,
+     "end": 154.319,
+     "local": 11.031,
+     "localEnd": 15.64
+    },
+    {
+     "id": "w4b",
+     "text": "Another test: if a word doesn't add something the picture can't show, cut it.",
+     "start": 155.069,
+     "end": 159.306,
+     "local": 16.39,
+     "localEnd": 20.627
+    },
+    {
+     "id": "w5",
+     "text": "And it shouldn't repeat the title. The title and the thumbnail work as a team.",
+     "start": 160.056,
+     "end": 164.195,
+     "local": 21.377,
+     "localEnd": 25.516
+    },
+    {
+     "id": "w6",
+     "text": "The title says: five dinners for under ten dollars. The thumbnail just asks: only ten dollars?",
+     "start": 164.945,
+     "end": 171.262,
+     "local": 26.266,
+     "localEnd": 32.583
+    },
+    {
+     "id": "w7",
+     "text": "Short words, read in a blink.",
+     "start": 172.012,
+     "end": 173.706,
+     "local": 33.333,
+     "localEnd": 35.027
+    }
+   ],
+   "end": 175.906,
+   "duration": 37.227
+  },
+  {
+   "id": "face",
+   "title": "Faces and feelings",
+   "start": 175.906,
+   "beats": [
+    {
+     "id": "f1",
+     "text": "Version five. Maya adds her face.",
+     "start": 175.906,
+     "end": 178.4,
+     "local": 0.0,
+     "localEnd": 2.494
+    },
+    {
+     "id": "f2",
+     "text": "People are drawn to faces, especially faces with a clear emotion: surprise, joy, disbelief.",
+     "start": 179.15,
+     "end": 185.361,
+     "local": 3.244,
+     "localEnd": 9.455
+    },
+    {
+     "id": "f3",
+     "text": "So she doesn't just smile at the camera. She reacts to the plate, eyes wide, like she can't believe it was that cheap.",
+     "start": 186.111,
+     "end": 192.9,
+     "local": 10.205,
+     "localEnd": 16.994
+    },
+    {
+     "id": "f3b",
+     "text": "She also moves closer to the camera, so her expression is still clear at phone size.",
+     "start": 193.65,
+     "end": 198.563,
+     "local": 17.744,
+     "localEnd": 22.657
+    },
+    {
+     "id": "f4",
+     "text": "The expression tells viewers how the video will make them feel.",
+     "start": 199.313,
+     "end": 202.677,
+     "local": 23.407,
+     "localEnd": 26.771
+    },
+    {
+     "id": "f5",
+     "text": "You don't have to show your face. But if you do, make the emotion big, and make it honest.",
+     "start": 203.427,
+     "end": 208.731,
+     "local": 27.521,
+     "localEnd": 32.825
+    }
+   ],
+   "end": 210.931,
+   "duration": 35.025
+  },
+  {
+   "id": "story",
+   "title": "Tell a tiny story",
+   "start": 210.931,
+   "beats": [
+    {
+     "id": "s1",
+     "text": "Version six. The thumbnail is clear now. But is it interesting?",
+     "start": 210.931,
+     "end": 214.812,
+     "local": 0.0,
+     "localEnd": 3.881
+    },
+    {
+     "id": "s2",
+     "text": "The best thumbnails tell a tiny story, or open a question.",
+     "start": 215.562,
+     "end": 219.007,
+     "local": 4.631,
+     "localEnd": 8.076
+    },
+    {
+     "id": "s3",
+     "text": "Before and after: a sad cup of instant noodles, next to a beautiful dinner.",
+     "start": 219.757,
+     "end": 224.478,
+     "local": 8.826,
+     "localEnd": 13.547
+    },
+    {
+     "id": "s4",
+     "text": "Or a gap: a price tag that seems too low to be true.",
+     "start": 225.228,
+     "end": 228.488,
+     "local": 14.297,
+     "localEnd": 17.557
+    },
+    {
+     "id": "s4b",
+     "text": "Maya shows the finished plate with a tag that says three dollars. Now viewers have to know how.",
+     "start": 229.238,
+     "end": 234.52,
+     "local": 18.307,
+     "localEnd": 23.589
+    },
+    {
+     "id": "s5",
+     "text": "The thumbnail asks the question. The video answers it.",
+     "start": 235.27,
+     "end": 238.445,
+     "local": 24.339,
+     "localEnd": 27.514
+    },
+    {
+     "id": "s6",
+     "text": "Curiosity gets the click.",
+     "start": 239.195,
+     "end": 240.728,
+     "local": 28.264,
+     "localEnd": 29.797
+    }
+   ],
+   "end": 242.928,
+   "duration": 31.997
+  },
+  {
+   "id": "promise",
+   "title": "Keep the promise",
+   "start": 242.928,
+   "beats": [
+    {
+     "id": "p1",
+     "text": "Version seven is tempting. A giant shocked face, flames, a red arrow, and a dish she never actually cooks.",
+     "start": 242.928,
+     "end": 250.095,
+     "local": 0.0,
+     "localEnd": 7.167
+    },
+    {
+     "id": "p2",
+     "text": "It might get more clicks. But when viewers realize the video isn't what was promised, they leave.",
+     "start": 250.845,
+     "end": 256.206,
+     "local": 7.917,
+     "localEnd": 13.278
+    },
+    {
+     "id": "p3",
+     "text": "And YouTube watches what happens after the click, not just the click.",
+     "start": 256.956,
+     "end": 260.743,
+     "local": 14.028,
+     "localEnd": 17.815
+    },
+    {
+     "id": "p3b",
+     "text": "If people click and then leave fast, that tells YouTube the video wasn't what they wanted.",
+     "start": 261.493,
+     "end": 266.399,
+     "local": 18.565,
+     "localEnd": 23.471
+    },
+    {
+     "id": "p4",
+     "text": "So Maya keeps the drama, but only what's true. Everything in the thumbnail shows up in the video.",
+     "start": 267.149,
+     "end": 272.731,
+     "local": 24.221,
+     "localEnd": 29.803
+    },
+    {
+     "id": "p5",
+     "text": "An honest thumbnail brings in viewers who stay.",
+     "start": 273.481,
+     "end": 276.019,
+     "local": 30.553,
+     "localEnd": 33.091
+    }
+   ],
+   "end": 278.219,
+   "duration": 35.291
+  },
+  {
+   "id": "test",
+   "title": "Test, don't guess",
+   "start": 278.219,
+   "beats": [
+    {
+     "id": "t1",
+     "text": "Versions eight and nine are both strong. Which one is better? Maya doesn't guess.",
+     "start": 278.219,
+     "end": 282.939,
+     "local": 0.0,
+     "localEnd": 4.72
+    },
+    {
+     "id": "t2",
+     "text": "In YouTube Studio, the Test and Compare feature shows different thumbnails to different viewers, and reports which one earns the most watch time.",
+     "start": 283.689,
+     "end": 292.489,
+     "local": 5.47,
+     "localEnd": 14.27
+    },
+    {
+     "id": "t3",
+     "text": "She also checks by hand. She drops each thumbnail into a mock home page, next to the biggest videos in her niche.",
+     "start": 293.239,
+     "end": 300.266,
+     "local": 15.02,
+     "localEnd": 22.047
+    },
+    {
+     "id": "t4",
+     "text": "Does hers stand out? Can she read it at a glance? Does it look different from everything around it?",
+     "start": 301.016,
+     "end": 306.079,
+     "local": 22.797,
+     "localEnd": 27.86
+    },
+    {
+     "id": "t4b",
+     "text": "And she doesn't stop at upload. If a video is struggling a week later, a fresh thumbnail can give it a second chance.",
+     "start": 306.829,
+     "end": 313.706,
+     "local": 28.61,
+     "localEnd": 35.487
+    },
+    {
+     "id": "t5",
+     "text": "The winner becomes version ten.",
+     "start": 314.456,
+     "end": 316.081,
+     "local": 36.237,
+     "localEnd": 37.862
+    }
+   ],
+   "end": 318.281,
+   "duration": 40.062
+  },
+  {
+   "id": "ten",
+   "title": "Version ten",
+   "start": 318.281,
+   "beats": [
+    {
+     "id": "v1",
+     "text": "Here's version ten, next to version one.",
+     "start": 318.281,
+     "end": 320.772,
+     "local": 0.0,
+     "localEnd": 2.491
+    },
+    {
+     "id": "v1b",
+     "text": "Same video. Same idea. A completely different first impression.",
+     "start": 321.522,
+     "end": 325.732,
+     "local": 3.241,
+     "localEnd": 7.451
+    },
+    {
+     "id": "v2",
+     "text": "One clear subject. Strong contrast. A few big words. An honest emotion. A tiny story. And a promise the video keeps.",
+     "start": 326.482,
+     "end": 335.122,
+     "local": 8.201,
+     "localEnd": 16.841
+    },
+    {
+     "id": "v3",
+     "text": "Before you upload, check the basics: twelve eighty by seven twenty pixels, a sixteen by nine shape, and a file under two megabytes.",
+     "start": 335.872,
+     "end": 344.291,
+     "local": 17.591,
+     "localEnd": 26.01
+    },
+    {
+     "id": "v4",
+     "text": "And keep testing. Your thumbnails can always get a little better, just like your videos.",
+     "start": 345.041,
+     "end": 350.095,
+     "local": 26.76,
+     "localEnd": 31.814
+    },
+    {
+     "id": "v5",
+     "text": "Now open your last video, and make version two of its thumbnail.",
+     "start": 350.845,
+     "end": 354.607,
+     "local": 32.564,
+     "localEnd": 36.326
+    }
+   ],
+   "end": 357.807,
+   "duration": 39.526
+  }
+ ]
+}

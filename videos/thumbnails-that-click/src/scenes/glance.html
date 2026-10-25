@@ -1,0 +1,100 @@
+<!--SFX [["whoosh","g2",0.3,0.4],["key-press","g3",0.2,0.4],["pop","g4",3.2,0.45],["whoosh-short","g5",0.2,0.4],["pop","g5",2.6,0.4],["impact-bass-1","g6",0.6,0.35]]-->
+<style>
+  #gl-laptop { left: 150px; top: 80px; width: 1180px; height: 760px; }
+  #gl-base { left: 80px; top: 835px; width: 1320px; }
+  #gl-big { left: 40px; top: 40px; transform-origin: 0 0; }
+  #gl-big svg, .gl-pan svg { position: absolute; left: 330px; top: 140px; filter: blur(18px); }
+  #gl-edit { left: 1400px; top: 260px; width: 440px; }
+  #gl-phone { left: 1330px; top: 70px; opacity: 0; }
+  #gl-feed { position: absolute; left: 20px; top: 0; width: 394px; }
+  .gl-ft { position: absolute; left: 0; width: 394px; height: 222px; border-radius: 14px; }
+  #gl-tiny { left: 150px; top: 300px; width: 1100px; }
+  #gl-split { left: 150px; top: 330px; width: 1100px; }
+  #gl-stamp { left: 330px; top: 230px; opacity: 0; }
+  #gl-stamp .inner { position: relative; width: 448px; height: 252px; overflow: hidden; border-radius: 6px; }
+  .gl-pan { position: absolute; left: 0; top: 0; width: 1120px; height: 630px; background: #6f6359; transform: scale(0.4); transform-origin: 0 0; }
+  #gl-q { left: 150px; top: 640px; width: 1700px; }
+  #gl-row { position: absolute; left: 150px; top: 380px; width: 1620px; height: 200px; opacity: 0; }
+  .gl-rt { position: absolute; top: 0; width: 240px; height: 135px; border-radius: 10px; overflow: hidden; }
+  .gl-rt b { position: absolute; left: 10px; top: 8px; font-family: "Archivo Black", sans-serif; font-size: 32px; line-height: 0.92; color: #fbf8f3; }
+  #gl-smudge { left: 600px; top: 560px; }
+  #gl-try { left: 150px; top: 180px; width: 1600px; }
+  #gl-trysm { position: absolute; left: 780px; top: 420px; width: 360px; height: 202px; border-radius: 12px; background: #6f6359; overflow: hidden; opacity: 0; }
+  #gl-trysm svg { position: absolute; left: 100px; top: 40px; filter: blur(6px); }
+  #gl-fail { left: 1250px; top: 380px; }
+  #gl-fail .chip { position: static; font-size: 80px; font-family: "Archivo Black", sans-serif; padding: 24px 44px; }
+  #gl-fix { left: 150px; top: 860px; }
+</style>
+
+<div class="desk"></div>
+
+<div class="laptop pn" id="gl-laptop">
+  <div class="screen" style="background: #2b211b">
+    <div class="ht" id="gl-big"><svg width="460" height="340" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /><circle cx="150" cy="140" r="40" fill="#a8998b" /></svg></div>
+  </div>
+</div>
+<div class="laptop-base pn" id="gl-base"></div>
+<div class="b46 mut pn" id="gl-edit">Not big, on your editing screen…</div>
+
+<div class="phone" id="gl-phone"><div class="screen"><div id="gl-feed"></div></div></div>
+<div class="disp t96 paper pn" id="gl-tiny">…tiny, on a phone, in a <span class="acc">blur</span></div>
+
+<div class="disp t130 paper pn" id="gl-split">A <span class="acc">split second</span> to decide</div>
+
+<div class="stamp" id="gl-stamp"><div class="inner"><div class="gl-pan"><svg width="460" height="340" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /></svg></div></div></div>
+<div class="disp t64 paper pn" id="gl-q">Can you get it in <span class="acc">one glance</span>, at the size of a stamp?</div>
+
+<div id="gl-row"></div>
+<div class="chip light pn" id="gl-smudge">Just a brown smudge</div>
+
+<div class="disp t80 paper pn" id="gl-try">Shrink it. Step back. What's left?</div>
+<div id="gl-trysm"><svg width="160" height="120" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /></svg></div>
+
+<div class="pn" id="gl-fail"><div class="chip acc-bg">v1 FAILS</div></div>
+<div class="b46 paper pn" id="gl-fix">Time to fix it</div>
+
+<script>
+  const cols = ["#ff7a45", "#16110e", "#7fa66b", "#e8b45a", "#9db7d6", "#6f6359", "#e8b4bc", "#ff5a1f", "#7a6a99", "#7fa6b0", "#ff8a5c", "#16110e", "#e8b45a", "#9db7d6"];
+  make("#gl-feed", cols.length, (k) => ({ cls: "gl-ft", css: { top: 30 + k * 250 + "px", background: cols[k] } }));
+  const row = [["#ff7a45", "I ATE ON $1"], ["#16110e", "EASY BREAD"], ["#6f6359", ""], ["#7fa66b", "3 MIN EGGS"], ["#e8b45a", "PASTA HACK"], ["#9db7d6", "DORM CHEF"]];
+  make("#gl-row", row.length, (k) => ({ cls: "gl-rt", id: "gl-rt" + k, html: k === 2 ? '<svg width="240" height="135" viewBox="0 0 440 320" style="filter:blur(4px)"><circle cx="190" cy="160" r="110" fill="#2b211b"/></svg>' : `<b>${row[k][1]}</b>`, css: { left: k * 276 + "px", background: row[k][0] } }));
+
+  // g1: on the editing screen, huge
+  on("#gl-laptop", 0.2, "up");
+  on("#gl-base", 0.2, "up");
+  on("#gl-edit", C.g2 - 0.2, "blur");
+  // g2: tiny, on a phone, scrolling
+  tl.to("#gl-laptop", { x: -1500, duration: 0.6, ease: "power3.in" }, C.g2 + 2.0);
+  tl.to("#gl-base", { x: -1500, duration: 0.6, ease: "power3.in" }, C.g2 + 2.0);
+  off("#gl-edit", C.g2 + 2.0, "blur");
+  tl.fromTo("#gl-phone", { opacity: 0, y: 300 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, C.g2 + 2.2);
+  tl.fromTo("#gl-feed", { y: 0 }, { y: -2400, duration: 5.0, ease: "power1.in" }, C.g2 + 2.6);
+  tl.fromTo("#gl-feed", { filter: "blur(0px)" }, { filter: "blur(6px)", duration: 2.0, ease: "power1.in" }, C.g2 + 3.6);
+  words("#gl-tiny", C.g2 + 2.4);
+  // g3: split second
+  off("#gl-tiny", C.g3 - 0.3, "up");
+  tl.to("#gl-phone", { y: 1100, duration: 0.5, ease: "power3.in" }, C.g3 - 0.4);
+  words("#gl-split", C.g3 + 0.05);
+  // g4: the stamp
+  off("#gl-split", C.g4 - 0.3, "up");
+  tl.fromTo("#gl-stamp", { opacity: 0, scale: 1.6, rotation: -4 }, { opacity: 1, scale: 1, rotation: -4, duration: 0.5, ease: "expo.out" }, C.g4 + 0.2);
+  words("#gl-q", C.g4 + 1.0);
+  // g5: her thumbnail in a row of phone-size tiles
+  tl.to("#gl-stamp", { opacity: 0, scale: 0.7, duration: 0.3, ease: "power3.in" }, C.g5 - 0.35);
+  off("#gl-q", C.g5 - 0.35, "blur");
+  tl.set("#gl-row", { opacity: 1 }, C.g5);
+  q(".gl-rt").forEach((el, k) => tl.fromTo(el, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.g5 + 0.2 + k * 0.08));
+  tl.to(q(".gl-rt").filter((_, k) => k !== 2), { opacity: 0.35, duration: 0.4 }, C.g5 + 2.4);
+  on("#gl-smudge", C.g5 + 2.6, "pop");
+  // g5b: try it yourself
+  tl.to("#gl-row", { opacity: 0, duration: 0.3 }, C.g5b - 0.35);
+  off("#gl-smudge", C.g5b - 0.35, "blur");
+  words("#gl-try", C.g5b);
+  tl.fromTo("#gl-trysm", { opacity: 0, scale: 2.4 }, { opacity: 1, scale: 1, duration: 2.6, ease: "power2.inOut" }, C.g5b + 0.5);
+  tl.to("#gl-trysm", { scale: 0.45, filter: "blur(3px)", duration: 1.6, ease: "power2.inOut" }, C.g5b + 3.2);
+  // g6: fails
+  off("#gl-try", C.g6 - 0.3, "up");
+  tl.to("#gl-trysm", { scale: 1, filter: "blur(0px)", x: -400, duration: 0.6, ease: "expo.out" }, C.g6);
+  tl.fromTo("#gl-fail", { opacity: 0, scale: 1.8, rotation: -14 }, { opacity: 1, scale: 1, rotation: -8, duration: 0.28, ease: "power4.in" }, C.g6 + 0.35);
+  on("#gl-fix", C.g6 + 1.8, "blur");
+</script>

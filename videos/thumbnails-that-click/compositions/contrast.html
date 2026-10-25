@@ -1,0 +1,431 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- thumbnail kit (designed at 1120 x 630) ---------- */
+#root .ht { position: absolute; width: 1120px; height: 630px; border-radius: 28px; overflow: hidden; background: #6f6359; box-shadow: 0 30px 60px rgba(0,0,0,0.45); }
+#root .ht .lay { position: absolute; inset: 0; }
+#root .pl { position: absolute; border-radius: 50%; background: #fbf8f3; }
+#root .pl i { position: absolute; border-radius: 50%; }
+#root .pl i:nth-child(1) { left: 16%; top: 20%; width: 40%; height: 32%; background: #ff5a1f; }
+#root .pl i:nth-child(2) { left: 48%; top: 38%; width: 32%; height: 29%; background: #e8b45a; }
+#root .pl i:nth-child(3) { left: 22%; top: 55%; width: 29%; height: 24%; background: #7fa66b; }
+#root .pl.dull { background: #a8998b; }
+#root .pl.dull i:nth-child(1) { background: #8a6a55; }
+#root .pl.dull i:nth-child(2) { background: #9a8466; }
+#root .pl.dull i:nth-child(3) { background: #7d7a5e; }
+#root .fc { position: absolute; border-radius: 50%; background: #ff5a1f; }
+#root .fc .e { position: absolute; top: 33%; width: 12%; height: 15%; border-radius: 50%; background: #16110e; }
+#root .fc .e.l { left: 29%; }
+#root .fc .e.r { left: 59%; }
+#root .fc .m { position: absolute; left: 36%; top: 62%; width: 28%; height: 10%; border-radius: 0 0 60px 60px; background: #16110e; }
+#root .fc .m.o { left: 38%; top: 58%; width: 24%; height: 27%; border-radius: 50%; }
+#root .tx { position: absolute; font-family: "Archivo Black", sans-serif; line-height: 0.9; letter-spacing: -0.02em; color: #fbf8f3; }
+#root .tx .acc { color: #ff5a1f; }
+#root .tag { position: absolute; padding: 18px 34px 18px 60px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%); }
+#root .cup { position: absolute; background: #e8e0d0; clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%); }
+#root .cup::after { content: ""; position: absolute; left: 0; right: 0; top: 30%; height: 22%; background: #c0392b; }
+#root .vb { position: absolute; padding: 12px 26px; border-radius: 14px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; font-size: 44px; z-index: 20; }
+#root .vb.mut { background: #8c7f73; }
+#root .stamp { position: absolute; padding: 18px; background: #fbf8f3; border: 6px dashed #8c7f73; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+
+  #co-vb { left: 150px; top: 60px; }
+  #co-ht { left: 150px; top: 150px; opacity: 0; }
+  #co-dark { background: #16110e; opacity: 0; }
+  .co-pl { left: 290px; top: 45px; width: 540px; height: 540px; }
+  #co-plb { opacity: 0; }
+  #co-edge { position: absolute; left: 276px; top: 31px; width: 568px; height: 568px; border-radius: 50%; border: 14px solid #fbf8f3; opacity: 0; }
+  #co-blend { left: 1340px; top: 260px; width: 500px; }
+  #co-feed { position: absolute; left: 150px; top: 120px; width: 1620px; height: 840px; opacity: 0; }
+  .co-ft { position: absolute; width: 520px; height: 292px; border-radius: 16px; overflow: hidden; }
+  .co-ft b { position: absolute; left: 20px; top: 16px; font-family: "Archivo Black", sans-serif; font-size: 54px; line-height: 0.92; color: #fbf8f3; }
+  .co-sw { position: absolute; top: 280px; width: 420px; height: 420px; border-radius: 24px; opacity: 0; }
+  .co-sw i { position: absolute; left: 110px; top: 110px; width: 200px; height: 200px; border-radius: 50%; }
+  .co-swl { position: absolute; top: 740px; width: 420px; opacity: 0; }
+  #co-warm { left: 150px; top: 140px; width: 1600px; }
+  .co-ws { position: absolute; top: 380px; width: 340px; height: 340px; border-radius: 24px; opacity: 0; }
+  .co-ws i { position: absolute; left: 80px; top: 80px; width: 180px; height: 180px; border-radius: 50%; }
+  #co-bw { position: absolute; inset: 0; opacity: 0; }
+  .co-mini { position: absolute; top: 300px; width: 760px; height: 428px; border-radius: 20px; overflow: hidden; filter: grayscale(1); }
+  .co-mini .pl { left: 200px; top: 30px; width: 368px; height: 368px; }
+  .co-minil { position: absolute; top: 760px; }
+  #co-bwq { position: absolute; left: 150px; top: 140px; width: 1600px; }
+  #co-modes { position: absolute; inset: 0; opacity: 0; }
+  .co-mode { position: absolute; top: 230px; width: 780px; height: 620px; border-radius: 26px; padding: 40px; }
+  .co-mode .th { position: absolute; left: 40px; top: 90px; width: 700px; height: 394px; border-radius: 16px; overflow: hidden; background: #16110e; }
+  .co-mode .th .pl { left: 180px; top: 28px; width: 340px; height: 340px; box-shadow: 0 0 0 10px #fbf8f3; }
+  .co-mode .h { position: absolute; left: 40px; top: 26px; font-size: 40px; font-weight: 700; }
+  .co-mode .ln { position: absolute; left: 40px; height: 26px; border-radius: 13px; }
+  #co-mq { position: absolute; left: 150px; top: 100px; width: 1600px; }
+
+  </style>
+  <div id="root" data-composition-id="contrast" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+<div class="vb pn" id="co-vb">v3</div>
+<div class="ht" id="co-ht">
+  <div class="lay" id="co-dark"></div>
+  <div class="pl dull co-pl" id="co-pla"><i></i><i></i><i></i></div>
+  <div class="pl co-pl" id="co-plb"><i></i><i></i><i></i></div>
+  <div id="co-edge"></div>
+</div>
+<div class="disp t64 paper pn" id="co-blend">It still <span class="acc">blends in</span></div>
+
+<div id="co-feed"></div>
+
+<div class="co-sw" id="co-sw1" style="left: 150px; background: #16110e"><i style="background: #fbf8f3"></i></div>
+<div class="co-sw" id="co-sw2" style="left: 640px; background: #1f4e5a"><i style="background: #ff5a1f"></i></div>
+<div class="b46 paper co-swl" id="co-swl1" style="left: 150px">Light against dark</div>
+<div class="b46 paper co-swl" id="co-swl2" style="left: 640px">Warm against cool</div>
+<div class="disp t64 paper pn" id="co-k3" style="left: 1150px; top: 300px; width: 640px">The fix is <span class="acc">contrast</span></div>
+
+<div class="disp t64 paper pn" id="co-warm">Warm colours pop off cool ones</div>
+<div class="co-ws" id="co-ws1" style="left: 150px; background: #1f4e5a"><i style="background: #ff5a1f"></i></div>
+<div class="co-ws" id="co-ws2" style="left: 560px; background: #2f6f8f"><i style="background: #e8b45a"></i></div>
+<div class="co-ws" id="co-ws3" style="left: 970px; background: #1f4e5a"><i style="background: #e8b45a"></i></div>
+<div class="co-ws" id="co-ws4" style="left: 1380px; background: #2f6f8f"><i style="background: #ff5a1f"></i></div>
+
+<div id="co-bw">
+  <div class="disp t64 paper" id="co-bwq">Black and white: does it still stand out?</div>
+  <div class="co-mini" style="left: 150px; background: #6f6359"><div class="pl dull"><i></i><i></i><i></i></div></div>
+  <div class="co-mini" style="left: 1010px; background: #16110e"><div class="pl" style="box-shadow: 0 0 0 10px #fbf8f3"><i></i><i></i><i></i></div></div>
+  <div class="b46 mut co-minil" style="left: 150px">Before: it disappears</div>
+  <div class="b46 paper co-minil" style="left: 1010px">After: it <span class="acc">still pops</span></div>
+</div>
+
+<div id="co-modes">
+  <div class="disp t64 paper" id="co-mq">Check light mode <span class="acc">and</span> dark mode</div>
+  <div class="co-mode" id="co-m1" style="left: 150px; background: #fbf8f3; color: #16110e"><div class="h">Light mode</div><div class="th"><div class="pl"><i></i><i></i><i></i></div></div><div class="ln" style="top: 510px; width: 560px; background: #d9cfc4"></div><div class="ln" style="top: 552px; width: 320px; background: #e6ddd3"></div></div>
+  <div class="co-mode" id="co-m2" style="left: 990px; background: #0f0f0f; color: #f5f0e8"><div class="h">Dark mode</div><div class="th"><div class="pl"><i></i><i></i><i></i></div></div><div class="ln" style="top: 510px; width: 560px; background: #3a3a3a"></div><div class="ln" style="top: 552px; width: 320px; background: #2a2a2a"></div></div>
+</div>
+    <div id="contrast-card" class="card"><div class="num">Lesson 3</div><div class="ttl">Make it pop</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"k1":2.3,"k2":5.79,"k3":10.501,"k3b":15.225,"k4":23.373,"k5":28.839,"k6":35.699};
+      const E = {"k1":5.04,"k2":9.751,"k3":14.475,"k3b":22.623,"k4":28.089,"k5":34.949,"k6":40.017};
+      const D = 40.367;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      card("contrast", 1.85);
+
+  const fc = ["#ff7a45", "#16110e", "#7fa66b", "#9db7d6", "#6f6359", "#e8b45a"];
+  const ft = ["$1 FOOD WEEK", "EASY BREAD", "3 MIN EGGS", "DORM CHEF", "", "PASTA HACK"];
+  make("#co-feed", 6, (k) => ({ cls: "co-ft", id: "co-ft" + k, html: k === 4 ? '<div class="pl dull" style="left:160px;top:24px;width:244px;height:244px"><i></i><i></i><i></i></div>' : `<b>${ft[k]}</b>`, css: { left: (k % 3) * 550 + "px", top: Math.floor(k / 3) * 330 + 60 + "px", background: fc[k] } }));
+
+  // k1
+  on("#co-vb", C.k1 + 0.4, "pop");
+  tl.fromTo("#co-ht", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.k1 - 0.3);
+  words("#co-blend", C.k1 + 1.4);
+  // k2: lost in a feed
+  off("#co-blend", C.k2 - 0.2, "blur");
+  tl.to(["#co-ht", "#co-vb"], { opacity: 0, scale: 0.9, duration: 0.3, ease: "power3.in" }, C.k2 - 0.1);
+  tl.set("#co-feed", { opacity: 1 }, C.k2 + 0.1);
+  q(".co-ft").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.45, ease: "expo.out" }, C.k2 + 0.1 + k * 0.06));
+  tl.fromTo("#co-ft4", { scale: 1 }, { scale: 1.04, duration: 0.3, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, C.k2 + 2.4);
+  // k3: contrast swatches
+  tl.to("#co-feed", { opacity: 0, duration: 0.3 }, C.k3 - 0.3);
+  words("#co-k3", C.k3);
+  tl.fromTo("#co-sw1", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.k3 + 0.6);
+  tl.fromTo("#co-swl1", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.k3 + 0.7);
+  tl.fromTo("#co-sw2", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.k3 + 2.2);
+  tl.fromTo("#co-swl2", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.k3 + 2.3);
+  // k3b: warm on cool
+  tl.to(["#co-sw1", "#co-sw2", "#co-swl1", "#co-swl2"], { opacity: 0, duration: 0.3 }, C.k3b - 0.35);
+  off("#co-k3", C.k3b - 0.35, "blur");
+  words("#co-warm", C.k3b);
+  ["#co-ws1", "#co-ws2", "#co-ws3", "#co-ws4"].forEach((s, k) => tl.fromTo(s, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.6)" }, C.k3b + 0.6 + k * 0.6));
+  // k4: dark background, bright plate, clean edge
+  off("#co-warm", C.k4 - 0.35, "up");
+  tl.to(["#co-ws1", "#co-ws2", "#co-ws3", "#co-ws4"], { opacity: 0, duration: 0.3 }, C.k4 - 0.35);
+  tl.to(["#co-ht", "#co-vb"], { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, C.k4 - 0.1);
+  tl.to("#co-dark", { opacity: 1, duration: 0.5, ease: "power2.inOut" }, C.k4 + 0.4);
+  tl.to("#co-plb", { opacity: 1, duration: 0.5, ease: "power2.inOut" }, C.k4 + 0.4);
+  tl.fromTo("#co-edge", { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, C.k4 + 2.2);
+  // k5: black and white test
+  tl.to(["#co-ht", "#co-vb"], { opacity: 0, duration: 0.3 }, C.k5 - 0.35);
+  tl.fromTo("#co-bw", { opacity: 0 }, { opacity: 1, duration: 0.4 }, C.k5);
+  // k6: light and dark mode
+  tl.to("#co-bw", { opacity: 0, duration: 0.3 }, C.k6 - 0.35);
+  tl.fromTo("#co-modes", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.k6);
+  tl.fromTo("#co-m1", { opacity: 0, x: -200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.k6 + 0.6);
+  tl.fromTo("#co-m2", { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.k6 + 1.8);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["contrast"] = tl;
+    })();
+  </script>
+</template>

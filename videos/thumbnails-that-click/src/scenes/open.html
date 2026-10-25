@@ -1,0 +1,63 @@
+<!--SFX [["pop","o2",0.1,0.5],["whoosh","o2b",1.0,0.4],["key-press","o3",1.6,0.3],["key-press","o3",1.9,0.3],["key-press","o3",2.2,0.3],["pop","o3",2.6,0.5],["whoosh","o4",-0.3,0.4],["pop","o4",0.1,0.4]]-->
+<style>
+  #op-ht { left: 150px; top: 130px; }
+  #op-ht svg { position: absolute; left: 330px; top: 140px; filter: blur(18px); }
+  #op-meta { left: 156px; top: 790px; width: 1100px; }
+  #op-meta .t { font-size: 52px; font-weight: 700; color: #f5f0e8; }
+  #op-meta .v { font-size: 40px; font-weight: 700; color: #8c7f73; margin-top: 6px; }
+  #op-vb { left: 1350px; top: 150px; }
+  #op-three { left: 1350px; top: 300px; width: 520px; }
+  #op-feed { position: absolute; left: 1380px; top: 0; width: 380px; height: 1080px; opacity: 0; }
+  .op-ft { position: absolute; left: 0; width: 380px; height: 214px; border-radius: 14px; }
+  #op-tap { left: 1350px; top: 860px; width: 520px; }
+  #op-ten { left: 1350px; top: 330px; width: 520px; }
+  #op-title { left: 150px; top: 220px; width: 1650px; }
+  #op-sub { left: 156px; top: 700px; }
+  #op-bg2 { opacity: 0; }
+</style>
+
+<div class="desk"></div>
+<div class="pn" id="op-scene">
+  <div class="ht" id="op-ht">
+    <svg width="460" height="340" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /><circle cx="150" cy="140" r="40" fill="#a8998b" /></svg>
+  </div>
+  <div class="pn" id="op-meta"><div class="t">my cooking video #4</div><div class="v">Maya · <span id="op-vn">3 views</span></div></div>
+</div>
+<div class="vb pn" id="op-vb">v<span id="op-vbn">1</span></div>
+<div class="disp t96 paper pn" id="op-three"><span class="acc">3</span> views</div>
+<div id="op-feed"></div>
+<div class="b46 paper pn" id="op-tap">Nobody wanted to tap on it</div>
+<div class="disp t110 paper pn" id="op-ten"><span class="acc">10</span> versions</div>
+
+<div class="desk" id="op-bg2"></div>
+<div class="disp t130 paper pn" id="op-title">How to make thumbnails people <span class="acc">click</span></div>
+<div class="b46 mut pn" id="op-sub">One fix per version, from v1 to v10</div>
+
+<script>
+  const cols = ["#ff7a45", "#16110e", "#7fa66b", "#e8b45a", "#9db7d6", "#e8b4bc", "#ff5a1f", "#7a6a99", "#7fa6b0", "#ff8a5c"];
+  make("#op-feed", 10, (k) => ({ cls: "op-ft", css: { top: k * 240 + "px", background: k === 4 ? "#6f6359" : cols[k] } }));
+
+  tl.set("#op-scene", { opacity: 1 }, 0);
+  on("#op-meta", 0.3, "blur");
+  on("#op-vb", C.o1 + 0.6, "pop");
+  // o2: 3 views
+  words("#op-three", C.o2 + 0.05);
+  // o2b: a feed scrolls past it
+  off("#op-three", C.o2b - 0.2, "blur");
+  tl.fromTo("#op-feed", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.o2b);
+  tl.fromTo("#op-feed", { y: 0 }, { y: -1300, duration: 3.6, ease: "power1.inOut" }, C.o2b);
+  on("#op-tap", C.o2b + 1.4, "blur");
+  tl.to("#op-feed", { opacity: 0, duration: 0.3 }, C.o3 - 0.3);
+  off("#op-tap", C.o3 - 0.3, "blur");
+  // o3: ten versions, the badge ticks to 10 and back
+  const vb = { v: 1 };
+  tl.fromTo(vb, { v: 1 }, { v: 10, duration: 1.2, ease: "power1.in", onUpdate: () => (document.getElementById("op-vbn").textContent = Math.round(vb.v)) }, C.o3 + 1.4);
+  words("#op-ten", C.o3 + 1.6);
+  tl.fromTo("#op-vb", { scale: 1 }, { scale: 1.25, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, C.o3 + 2.6);
+  // o4: title
+  off("#op-ten", C.o4 - 0.3, "up");
+  tl.to(["#op-scene", "#op-vb"], { x: -1500, duration: 0.5, ease: "power3.in" }, C.o4 - 0.5);
+  tl.fromTo("#op-bg2", { opacity: 0 }, { opacity: 1, duration: 0.2 }, C.o4 - 0.1);
+  words("#op-title", C.o4, 0.09);
+  on("#op-sub", C.o4 + 1.8, "blur");
+</script>

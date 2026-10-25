@@ -1,0 +1,86 @@
+<!--SFX [["pop","p1",0.3,0.45],["impact-bass-1","p1",0.8,0.3],["pop","p1",2.4,0.4],["pop","p1",3.4,0.4],["pop","p1",4.8,0.4],["pop","p2",0.4,0.35],["whoosh-short","p2",2.4,0.35],["whoosh","p4",0.6,0.4],["pop","p4",2.6,0.4],["sparkle","p5",0.6,0.3]]-->
+<style>
+  #pr-vb { left: 150px; top: 60px; }
+  #pr-ht { left: 150px; top: 150px; background: #16110e; opacity: 0; }
+  #pr-red { background: #c0392b; opacity: 0; }
+  #pr-pl { left: 40px; top: 130px; width: 460px; height: 460px; box-shadow: 0 0 0 12px #fbf8f3; }
+  #pr-tag { left: 250px; top: 420px; font-size: 80px; }
+  #pr-fc { left: 600px; top: 120px; width: 480px; height: 480px; opacity: 0; }
+  #pr-flames { position: absolute; left: 0; top: 330px; width: 1120px; height: 300px; opacity: 0; }
+  #pr-arrow { position: absolute; left: 360px; top: 40px; opacity: 0; }
+  #pr-cloche { position: absolute; left: 60px; top: 160px; opacity: 0; }
+  #pr-tempt { left: 1340px; top: 200px; width: 500px; }
+  #pr-clk { position: absolute; left: 1340px; top: 200px; width: 500px; opacity: 0; }
+  #pr-clk .bar { height: 60px; border-radius: 10px; background: #ff5a1f; transform-origin: left center; }
+  #pr-g { position: absolute; left: 1340px; top: 470px; width: 480px; height: 300px; opacity: 0; }
+  #pr-leave { left: 1340px; top: 800px; width: 500px; }
+  #pr-eye { left: 1340px; top: 200px; width: 500px; }
+  #pr-fast { left: 1340px; top: 800px; width: 500px; }
+  #pr-true { left: 1340px; top: 180px; width: 500px; }
+  #pr-stay { left: 1340px; top: 800px; width: 500px; }
+</style>
+
+<div class="desk"></div>
+<div class="vb pn" id="pr-vb">v7</div>
+<div class="ht" id="pr-ht">
+  <div class="lay" id="pr-red"></div>
+  <div class="pl" id="pr-pl"><i></i><i></i><i></i></div>
+  <div class="tag" id="pr-tag">$3</div>
+  <svg id="pr-flames" viewBox="0 0 1120 300">
+    <path d="M60 300 C 0 200, 120 160, 90 40 C 180 120, 220 200, 170 300 Z" fill="#ff8a1f" /><path d="M220 300 C 170 220, 260 170, 250 70 C 330 150, 360 230, 320 300 Z" fill="#ffcc33" />
+    <path d="M820 300 C 760 200, 880 160, 850 30 C 950 120, 990 210, 930 300 Z" fill="#ff8a1f" /><path d="M980 300 C 930 220, 1020 170, 1010 80 C 1090 150, 1110 230, 1080 300 Z" fill="#ffcc33" />
+  </svg>
+  <svg id="pr-arrow" width="280" height="240" viewBox="0 0 280 240"><path d="M20 30 L200 170 M120 190 L210 180 L200 90" stroke="#ff2020" stroke-width="34" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  <svg id="pr-cloche" width="420" height="300" viewBox="0 0 420 300"><path d="M30 250 A 180 180 0 0 1 390 250 Z" fill="#e8b45a" /><rect x="0" y="250" width="420" height="30" rx="15" fill="#c99a3a" /><circle cx="210" cy="60" r="24" fill="#c99a3a" /></svg>
+  <div class="fc" id="pr-fc"><div class="e l" style="width: 16%; height: 20%"></div><div class="e r" style="width: 16%; height: 20%"></div><div class="m o" style="left: 34%; width: 32%; height: 32%"></div></div>
+</div>
+<div class="disp t64 paper pn" id="pr-tempt">Version seven is <span class="acc">tempting</span></div>
+<div id="pr-clk"><div class="b40 paper" style="margin-bottom: 14px">Clicks ↑</div><div class="bar" id="pr-bar"></div></div>
+<svg id="pr-g" viewBox="0 0 480 300"><path d="M4 4 V296 H476" stroke="#f5f0e8" stroke-width="5" fill="none" /><path id="pr-gl" pathLength="100" d="M8 20 C 30 20, 50 240, 110 260 S 300 280, 476 285" stroke="#ff5a1f" stroke-width="9" fill="none" stroke-linecap="round" /><path id="pr-gl2" pathLength="100" d="M8 20 C 60 20, 90 90, 160 100 S 340 130, 476 140" stroke="#ff5a1f" stroke-width="9" fill="none" stroke-linecap="round" opacity="0" /></svg>
+<div class="b46 paper pn" id="pr-leave">…then they <span class="acc">leave</span></div>
+<div class="disp t64 paper pn" id="pr-eye">YouTube watches what happens <span class="acc">after</span> the click</div>
+<div class="b40 paper pn" id="pr-fast">Click, then leave fast = not what they wanted</div>
+<div class="disp t64 paper pn" id="pr-true">Keep the drama. <span class="acc">Only what's true.</span></div>
+<div class="b46 paper pn" id="pr-stay">Honest thumbnail → viewers who <span class="acc">stay</span></div>
+
+<script>
+  // p1: clickbait version
+  on("#pr-vb", C.p1 + 0.2, "pop");
+  tl.fromTo("#pr-ht", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.p1 - 0.3);
+  words("#pr-tempt", C.p1 + 0.1);
+  tl.to(["#pr-pl", "#pr-tag"], { opacity: 0, duration: 0.2 }, C.p1 + 0.2);
+  tl.to("#pr-red", { opacity: 1, duration: 0.2 }, C.p1 + 0.3);
+  tl.fromTo("#pr-fc", { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power4.in" }, C.p1 + 0.5);
+  tl.fromTo("#pr-flames", { opacity: 0, y: 120 }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, C.p1 + 2.4);
+  tl.fromTo("#pr-arrow", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)" }, C.p1 + 3.4);
+  tl.fromTo("#pr-cloche", { opacity: 0, y: -100 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.6)" }, C.p1 + 4.8);
+  // p2: more clicks, then they leave
+  off("#pr-tempt", C.p2 - 0.3, "blur");
+  tl.set("#pr-clk", { opacity: 1 }, C.p2 + 0.3);
+  tl.fromTo("#pr-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "expo.out" }, C.p2 + 0.4);
+  tl.set("#pr-g", { opacity: 1 }, C.p2 + 2.4);
+  draw("#pr-gl", C.p2 + 2.4, 1.2, "power2.out");
+  on("#pr-leave", C.p2 + 3.0, "blur");
+  // p3: YouTube watches after the click
+  tl.to("#pr-clk", { opacity: 0, duration: 0.25 }, C.p3 - 0.3);
+  words("#pr-eye", C.p3);
+  off("#pr-leave", C.p3b - 0.3, "blur");
+  on("#pr-fast", C.p3b + 0.2, "blur");
+  // p4: strip it back to what's true
+  off("#pr-eye", C.p4 - 0.3, "blur");
+  off("#pr-fast", C.p4 - 0.3, "blur");
+  tl.to("#pr-g", { opacity: 0, duration: 0.25 }, C.p4 - 0.3);
+  tl.to("#pr-flames", { y: 300, opacity: 0, duration: 0.4, ease: "power3.in" }, C.p4 + 0.6);
+  tl.to("#pr-arrow", { x: 300, rotation: 30, opacity: 0, duration: 0.4, ease: "power3.in" }, C.p4 + 0.9);
+  tl.to("#pr-cloche", { y: -500, opacity: 0, duration: 0.4, ease: "power3.in" }, C.p4 + 1.2);
+  tl.to("#pr-red", { opacity: 0, duration: 0.4 }, C.p4 + 1.4);
+  tl.to(["#pr-pl", "#pr-tag"], { opacity: 1, duration: 0.4 }, C.p4 + 1.6);
+  tl.to("#pr-fc", { scale: 0.85, x: 40, y: 40, duration: 0.5, ease: "power2.inOut" }, C.p4 + 1.6);
+  words("#pr-true", C.p4 + 2.6);
+  // p5: honest -> they stay
+  tl.set("#pr-g", { opacity: 1 }, C.p5);
+  tl.set("#pr-gl", { opacity: 0.25 }, C.p5);
+  tl.set("#pr-gl2", { opacity: 1 }, C.p5);
+  draw("#pr-gl2", C.p5, 1.0, "power2.out");
+  on("#pr-stay", C.p5 + 0.6, "blur");
+</script>

@@ -1,0 +1,405 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- thumbnail kit (designed at 1120 x 630) ---------- */
+#root .ht { position: absolute; width: 1120px; height: 630px; border-radius: 28px; overflow: hidden; background: #6f6359; box-shadow: 0 30px 60px rgba(0,0,0,0.45); }
+#root .ht .lay { position: absolute; inset: 0; }
+#root .pl { position: absolute; border-radius: 50%; background: #fbf8f3; }
+#root .pl i { position: absolute; border-radius: 50%; }
+#root .pl i:nth-child(1) { left: 16%; top: 20%; width: 40%; height: 32%; background: #ff5a1f; }
+#root .pl i:nth-child(2) { left: 48%; top: 38%; width: 32%; height: 29%; background: #e8b45a; }
+#root .pl i:nth-child(3) { left: 22%; top: 55%; width: 29%; height: 24%; background: #7fa66b; }
+#root .pl.dull { background: #a8998b; }
+#root .pl.dull i:nth-child(1) { background: #8a6a55; }
+#root .pl.dull i:nth-child(2) { background: #9a8466; }
+#root .pl.dull i:nth-child(3) { background: #7d7a5e; }
+#root .fc { position: absolute; border-radius: 50%; background: #ff5a1f; }
+#root .fc .e { position: absolute; top: 33%; width: 12%; height: 15%; border-radius: 50%; background: #16110e; }
+#root .fc .e.l { left: 29%; }
+#root .fc .e.r { left: 59%; }
+#root .fc .m { position: absolute; left: 36%; top: 62%; width: 28%; height: 10%; border-radius: 0 0 60px 60px; background: #16110e; }
+#root .fc .m.o { left: 38%; top: 58%; width: 24%; height: 27%; border-radius: 50%; }
+#root .tx { position: absolute; font-family: "Archivo Black", sans-serif; line-height: 0.9; letter-spacing: -0.02em; color: #fbf8f3; }
+#root .tx .acc { color: #ff5a1f; }
+#root .tag { position: absolute; padding: 18px 34px 18px 60px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%); }
+#root .cup { position: absolute; background: #e8e0d0; clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%); }
+#root .cup::after { content: ""; position: absolute; left: 0; right: 0; top: 30%; height: 22%; background: #c0392b; }
+#root .vb { position: absolute; padding: 12px 26px; border-radius: 14px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; font-size: 44px; z-index: 20; }
+#root .vb.mut { background: #8c7f73; }
+#root .stamp { position: absolute; padding: 18px; background: #fbf8f3; border: 6px dashed #8c7f73; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+
+  #sy-vb { left: 150px; top: 60px; }
+  #sy-ht { left: 150px; top: 150px; background: #16110e; opacity: 0; }
+  #sy-a { position: absolute; inset: 0; }
+  #sy-a .pl { left: 40px; top: 130px; width: 460px; height: 460px; box-shadow: 0 0 0 12px #fbf8f3; }
+  #sy-a .tx { left: 520px; top: 40px; width: 560px; font-size: 110px; text-align: right; }
+  #sy-a .fc { left: 640px; top: 270px; width: 360px; height: 360px; transform: rotate(-12deg); }
+  #sy-b { position: absolute; inset: 0; opacity: 0; }
+  #sy-left { position: absolute; left: 0; top: 0; width: 520px; height: 630px; background: #6f6359; }
+  #sy-cup { left: 120px; top: 180px; width: 280px; height: 320px; }
+  #sy-sad { position: absolute; left: 180px; top: 120px; }
+  #sy-arrow { position: absolute; left: 470px; top: 250px; }
+  #sy-pl2 { left: 610px; top: 100px; width: 440px; height: 440px; box-shadow: 0 0 0 12px #fbf8f3; }
+  #sy-tag { left: 820px; top: 400px; font-size: 90px; opacity: 0; transform-origin: 10% 50%; }
+  #sy-q { left: 1340px; top: 230px; width: 500px; }
+  #sy-tiny { left: 1340px; top: 200px; width: 500px; }
+  #sy-tiny2 { left: 1340px; top: 560px; width: 500px; }
+  #sy-ba { left: 1340px; top: 260px; width: 500px; }
+  #sy-gap { left: 1340px; top: 260px; width: 500px; }
+  #sy-how { left: 1340px; top: 560px; width: 500px; }
+  #sy-asks { left: 1340px; top: 220px; width: 520px; }
+  #sy-ans { left: 1340px; top: 540px; width: 520px; }
+  #sy-cur { left: 150px; top: 380px; width: 1700px; }
+
+  </style>
+  <div id="root" data-composition-id="story" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+<div class="vb pn" id="sy-vb">v6</div>
+<div class="ht" id="sy-ht">
+  <div id="sy-a">
+    <div class="pl"><i></i><i></i><i></i></div>
+    <div class="tx">ONLY <span class="acc">$10?</span></div>
+    <div class="fc"><div class="e l" style="transform: scale(1.35)"></div><div class="e r" style="transform: scale(1.35)"></div><div class="m o"></div></div>
+  </div>
+  <div id="sy-b">
+    <div id="sy-left"></div>
+    <div class="cup" id="sy-cup"></div>
+    <svg id="sy-sad" width="160" height="70" viewBox="0 0 160 70"><circle cx="30" cy="20" r="10" fill="#16110e" /><circle cx="130" cy="20" r="10" fill="#16110e" /><path d="M30 64 Q 80 30 130 64" stroke="#16110e" stroke-width="10" fill="none" stroke-linecap="round" /></svg>
+    <svg id="sy-arrow" width="160" height="120" viewBox="0 0 160 120"><path id="sy-arp" pathLength="100" d="M10 60 L140 60 M100 20 L145 60 L100 100" stroke="#ff5a1f" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    <div class="pl" id="sy-pl2"><i></i><i></i><i></i></div>
+    <div class="tag" id="sy-tag">$3</div>
+  </div>
+</div>
+<div class="disp t64 paper pn" id="sy-q">Clear now. But is it <span class="acc">interesting</span>?</div>
+<div class="disp t64 paper pn" id="sy-tiny">Tell a <span class="acc">tiny story</span></div>
+<div class="b46 mut pn" id="sy-tiny2">…or open a question</div>
+<div class="b46 paper pn" id="sy-ba">Before and after</div>
+<div class="b46 paper pn" id="sy-gap">A price that seems too low to be true</div>
+<div class="disp t64 paper pn" id="sy-how">Now they have to know <span class="acc">how</span></div>
+<div class="disp t80 paper pn" id="sy-asks">The thumbnail <span class="acc">asks</span></div>
+<div class="disp t80 paper pn" id="sy-ans">The video answers</div>
+<div class="disp t130 paper pn" id="sy-cur"><span class="acc">Curiosity</span> gets the click</div>
+    <div id="story-card" class="card"><div class="num">Lesson 6</div><div class="ttl">Tell a tiny story</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"s1":2.3,"s2":6.931,"s3":11.126,"s4":16.597,"s4b":20.607,"s5":26.639,"s6":30.564};
+      const E = {"s1":6.181,"s2":10.376,"s3":15.847,"s4":19.857,"s4b":25.889,"s5":29.814,"s6":32.097};
+      const D = 32.447;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      card("story", 1.85);
+
+  // s1
+  on("#sy-vb", C.s1 + 0.4, "pop");
+  tl.fromTo("#sy-ht", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.s1 - 0.3);
+  words("#sy-q", C.s1 + 0.6);
+  // s2
+  off("#sy-q", C.s2 - 0.3, "blur");
+  words("#sy-tiny", C.s2);
+  on("#sy-tiny2", C.s2 + 1.8, "blur");
+  // s3: before and after
+  off("#sy-tiny", C.s3 - 0.3, "blur");
+  off("#sy-tiny2", C.s3 - 0.3, "blur");
+  tl.to("#sy-a", { opacity: 0, duration: 0.3 }, C.s3 - 0.1);
+  tl.set("#sy-b", { opacity: 1 }, C.s3);
+  tl.fromTo(["#sy-left", "#sy-cup", "#sy-sad"], { opacity: 0, x: -120 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out", stagger: 0.08 }, C.s3 + 0.4);
+  draw("#sy-arp", C.s3 + 1.6, 0.4, "power3.out");
+  tl.fromTo("#sy-pl2", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.4)" }, C.s3 + 2.6);
+  on("#sy-ba", C.s3 + 0.3, "blur");
+  // s4: the price tag
+  off("#sy-ba", C.s4 - 0.3, "blur");
+  tl.fromTo("#sy-tag", { opacity: 0, rotation: -40, y: -200 }, { opacity: 1, rotation: -8, y: 0, duration: 0.6, ease: "back.out(1.8)" }, C.s4 + 0.4);
+  words("#sy-gap", C.s4 + 0.3);
+  // s4b
+  words("#sy-how", C.s4b + 0.2);
+  // s5
+  off("#sy-gap", C.s5 - 0.3, "blur");
+  off("#sy-how", C.s5 - 0.3, "blur");
+  on("#sy-asks", C.s5, "left");
+  on("#sy-ans", C.s5 + 1.6, "left");
+  // s6
+  ["#sy-asks", "#sy-ans"].forEach((s) => off(s, C.s6 - 0.3, "up"));
+  tl.to(["#sy-ht", "#sy-vb"], { opacity: 0, y: -60, duration: 0.3, ease: "power3.in" }, C.s6 - 0.3);
+  words("#sy-cur", C.s6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["story"] = tl;
+    })();
+  </script>
+</template>

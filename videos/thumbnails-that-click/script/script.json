@@ -1,0 +1,332 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap_s": 0.75,
+ "chapter_gap_s": 2.2,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Version one",
+   "beats": [
+    [
+     "o1",
+     "Remember Maya's first thumbnail? A blurry frame of a frying pan."
+    ],
+    [
+     "o2",
+     "It got three views."
+    ],
+    [
+     "o2b",
+     "Not because the video was bad. Because nobody wanted to tap on it."
+    ],
+    [
+     "o3",
+     "Today, she's going to fix it. Not once, but ten times."
+    ],
+    [
+     "o4",
+     "Each version fixes one mistake. And by version ten, you'll know exactly what makes people click."
+    ]
+   ]
+  },
+  {
+   "id": "glance",
+   "title": "The one-glance test",
+   "beats": [
+    [
+     "g1",
+     "First, understand where your thumbnail actually lives."
+    ],
+    [
+     "g2",
+     "Not big, on your editing screen. Tiny, on a phone, in a feed that scrolls past in a blur."
+    ],
+    [
+     "g3",
+     "People decide in a split second whether to tap."
+    ],
+    [
+     "g4",
+     "So every rule in this video comes from one question: can someone get it in a single glance, at the size of a postage stamp?"
+    ],
+    [
+     "g5",
+     "Maya shrinks her frying pan thumbnail to phone size. It's just a brown smudge."
+    ],
+    [
+     "g5b",
+     "Try it yourself: shrink your thumbnail down, step back from the screen, and see what's left."
+    ],
+    [
+     "g6",
+     "Version one fails the test. Time to fix it."
+    ]
+   ]
+  },
+  {
+   "id": "subject",
+   "title": "One clear subject",
+   "beats": [
+    [
+     "u1",
+     "Version two. Maya's first instinct is to show everything."
+    ],
+    [
+     "u2",
+     "The pan, the ingredients, the kitchen, and the finished plate."
+    ],
+    [
+     "u3",
+     "But when everything is the subject, nothing is."
+    ],
+    [
+     "u4",
+     "So she picks one hero: the finished plate."
+    ],
+    [
+     "u5",
+     "She makes it big. Big enough to fill most of the frame."
+    ],
+    [
+     "u5b",
+     "A good rule: if you can't describe your thumbnail in a few words, it's too busy."
+    ],
+    [
+     "u6",
+     "And she removes everything that doesn't help: the clutter on the counter, the busy background."
+    ],
+    [
+     "u7",
+     "One subject. One idea. Readable in an instant."
+    ]
+   ]
+  },
+  {
+   "id": "contrast",
+   "title": "Make it pop",
+   "beats": [
+    [
+     "k1",
+     "Version three looks better, but it still blends in."
+    ],
+    [
+     "k2",
+     "A brown plate, on a brown table, in a feed full of other videos."
+    ],
+    [
+     "k3",
+     "The fix is contrast. Light against dark. Warm against cool."
+    ],
+    [
+     "k3b",
+     "Bright subjects pop off dark backgrounds. Warm colors, like orange and yellow, pop off cool ones, like blue and teal."
+    ],
+    [
+     "k4",
+     "She puts the bright plate on a dark background, and adds a clean edge so it separates."
+    ],
+    [
+     "k5",
+     "Here's a trick: turn your thumbnail black and white. If the subject still stands out, your contrast works."
+    ],
+    [
+     "k6",
+     "And check it in both light mode and dark mode, because your viewers use both."
+    ]
+   ]
+  },
+  {
+   "id": "words",
+   "title": "Fewer, bigger words",
+   "beats": [
+    [
+     "w1",
+     "Version four. Maya adds text."
+    ],
+    [
+     "w2",
+     "Five cheap and easy dinners you can make in ten minutes, for under ten dollars."
+    ],
+    [
+     "w3",
+     "At phone size, that's unreadable."
+    ],
+    [
+     "w4",
+     "Thumbnail text should be three or four words at most. Huge, bold, and simple."
+    ],
+    [
+     "w4b",
+     "Another test: if a word doesn't add something the picture can't show, cut it."
+    ],
+    [
+     "w5",
+     "And it shouldn't repeat the title. The title and the thumbnail work as a team."
+    ],
+    [
+     "w6",
+     "The title says: five dinners for under ten dollars. The thumbnail just asks: only ten dollars?"
+    ],
+    [
+     "w7",
+     "Short words, read in a blink."
+    ]
+   ]
+  },
+  {
+   "id": "face",
+   "title": "Faces and feelings",
+   "beats": [
+    [
+     "f1",
+     "Version five. Maya adds her face."
+    ],
+    [
+     "f2",
+     "People are drawn to faces, especially faces with a clear emotion: surprise, joy, disbelief."
+    ],
+    [
+     "f3",
+     "So she doesn't just smile at the camera. She reacts to the plate, eyes wide, like she can't believe it was that cheap."
+    ],
+    [
+     "f3b",
+     "She also moves closer to the camera, so her expression is still clear at phone size."
+    ],
+    [
+     "f4",
+     "The expression tells viewers how the video will make them feel."
+    ],
+    [
+     "f5",
+     "You don't have to show your face. But if you do, make the emotion big, and make it honest."
+    ]
+   ]
+  },
+  {
+   "id": "story",
+   "title": "Tell a tiny story",
+   "beats": [
+    [
+     "s1",
+     "Version six. The thumbnail is clear now. But is it interesting?"
+    ],
+    [
+     "s2",
+     "The best thumbnails tell a tiny story, or open a question."
+    ],
+    [
+     "s3",
+     "Before and after: a sad cup of instant noodles, next to a beautiful dinner."
+    ],
+    [
+     "s4",
+     "Or a gap: a price tag that seems too low to be true."
+    ],
+    [
+     "s4b",
+     "Maya shows the finished plate with a tag that says three dollars. Now viewers have to know how."
+    ],
+    [
+     "s5",
+     "The thumbnail asks the question. The video answers it."
+    ],
+    [
+     "s6",
+     "Curiosity gets the click."
+    ]
+   ]
+  },
+  {
+   "id": "promise",
+   "title": "Keep the promise",
+   "beats": [
+    [
+     "p1",
+     "Version seven is tempting. A giant shocked face, flames, a red arrow, and a dish she never actually cooks."
+    ],
+    [
+     "p2",
+     "It might get more clicks. But when viewers realize the video isn't what was promised, they leave."
+    ],
+    [
+     "p3",
+     "And YouTube watches what happens after the click, not just the click."
+    ],
+    [
+     "p3b",
+     "If people click and then leave fast, that tells YouTube the video wasn't what they wanted."
+    ],
+    [
+     "p4",
+     "So Maya keeps the drama, but only what's true. Everything in the thumbnail shows up in the video."
+    ],
+    [
+     "p5",
+     "An honest thumbnail brings in viewers who stay."
+    ]
+   ]
+  },
+  {
+   "id": "test",
+   "title": "Test, don't guess",
+   "beats": [
+    [
+     "t1",
+     "Versions eight and nine are both strong. Which one is better? Maya doesn't guess."
+    ],
+    [
+     "t2",
+     "In YouTube Studio, the Test and Compare feature shows different thumbnails to different viewers, and reports which one earns the most watch time."
+    ],
+    [
+     "t3",
+     "She also checks by hand. She drops each thumbnail into a mock home page, next to the biggest videos in her niche."
+    ],
+    [
+     "t4",
+     "Does hers stand out? Can she read it at a glance? Does it look different from everything around it?"
+    ],
+    [
+     "t4b",
+     "And she doesn't stop at upload. If a video is struggling a week later, a fresh thumbnail can give it a second chance."
+    ],
+    [
+     "t5",
+     "The winner becomes version ten."
+    ]
+   ]
+  },
+  {
+   "id": "ten",
+   "title": "Version ten",
+   "beats": [
+    [
+     "v1",
+     "Here's version ten, next to version one."
+    ],
+    [
+     "v1b",
+     "Same video. Same idea. A completely different first impression."
+    ],
+    [
+     "v2",
+     "One clear subject. Strong contrast. A few big words. An honest emotion. A tiny story. And a promise the video keeps."
+    ],
+    [
+     "v3",
+     "Before you upload, check the basics: twelve eighty by seven twenty pixels, a sixteen by nine shape, and a file under two megabytes."
+    ],
+    [
+     "v4",
+     "And keep testing. Your thumbnails can always get a little better, just like your videos."
+    ],
+    [
+     "v5",
+     "Now open your last video, and make version two of its thumbnail."
+    ]
+   ]
+  }
+ ]
+}
