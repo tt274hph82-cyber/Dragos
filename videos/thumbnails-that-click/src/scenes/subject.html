@@ -37,6 +37,7 @@
 <div class="b46 paper pn" id="su-hero">One hero: the finished plate</div>
 <div class="b46 paper pn" id="su-busy">Can't describe it in a few words? It's too busy.</div>
 <div class="chip acc-bg pn" id="su-desc">"Plate, close-up"</div>
+<div class="disp t64 paper pn" id="su-extra" style="left: 1340px; top: 220px; width: 500px">Every extra object is one more thing to <span class="acc">figure out</span></div>
 <div class="disp t80 paper pn su-one" id="su-o1" style="top: 220px">One subject.</div>
 <div class="disp t80 paper pn su-one" id="su-o2" style="top: 400px">One idea.</div>
 <div class="disp t80 acc pn su-one" id="su-o3" style="top: 580px">One glance.</div>
@@ -66,6 +67,9 @@
   off("#su-desc", C.u6 - 0.3, "blur");
   q("#su-clutter .su-it").forEach((el, k) => tl.to(el, { y: 700, rotation: [12, -8, 20, -15][k], duration: 0.6, ease: "power3.in" }, C.u6 + 0.6 + k * 0.12));
   tl.to("#su-flat", { opacity: 1, duration: 0.6, ease: "power2.inOut" }, C.u6 + 2.4);
+  // u6b
+  words("#su-extra", C.u6b + 0.1);
+  off("#su-extra", C.u7 - 0.3, "blur");
   // u7: one, one, one
   on("#su-o1", C.u7, "left");
   on("#su-o2", C.u7 + 1.0, "left");

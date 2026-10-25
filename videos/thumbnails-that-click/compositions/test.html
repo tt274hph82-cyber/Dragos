@@ -212,14 +212,15 @@
   <div class="b46 paper" id="te-wl">A fresh thumbnail, a <span class="acc">second chance</span></div>
 </div>
 
+<div class="disp t96 paper pn" id="te-chose" style="left: 150px; top: 820px; width: 1600px">The one <span class="acc">viewers</span> chose</div>
 <div class="disp t96 paper pn" id="te-ten">The winner becomes <span class="acc">version ten</span></div>
-    <div id="test-card" class="card"><div class="num">Lesson 8</div><div class="ttl">Test, don't guess</div></div>
+    <div id="test-card" class="card"><div class="num">Lesson 10</div><div class="ttl">Test, don't guess</div></div>
   </div>
   <script>
     (function () {
-      const C = {"t1":2.3,"t2":7.77,"t3":17.32,"t4":25.097,"t4b":30.91,"t5":38.537};
-      const E = {"t1":7.02,"t2":16.57,"t3":24.347,"t4":30.16,"t4b":37.787,"t5":40.162};
-      const D = 40.512;
+      const C = {"t1":2.3,"t2":7.771,"t3":17.321,"t4":25.097,"t4b":30.91,"t5":38.538,"t5b":40.912};
+      const E = {"t1":7.021,"t2":16.571,"t3":24.347,"t4":30.16,"t4b":37.788,"t5":40.162,"t5b":44.636};
+      const D = 44.986;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -418,6 +419,9 @@ function make(parentSel, n, fn) {
   tl.to("#te-v9", { opacity: 1, y: 0, x: -450, scale: 1.2, duration: 0.6, ease: "expo.out" }, C.t5 - 0.2);
   on("#te-b10", C.t5 + 0.4, "pop");
   words("#te-ten", C.t5 + 0.1);
+  // t5b
+  off("#te-ten", C.t5b - 0.3, "blur");
+  words("#te-chose", C.t5b + 1.6);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["test"] = tl;

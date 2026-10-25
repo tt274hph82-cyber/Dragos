@@ -1,0 +1,78 @@
+<!--SFX [["pop","n1",0.4,0.4],["typing","n2",0.4,0.35],["sparkle","n2",2.4,0.25],["pop","n4",0.2,0.4],["pop","n4",1.9,0.4],["pop","n4",3.6,0.4],["whoosh-short","n6",3.6,0.4],["pop","n6",4.0,0.45],["pop","n7",0.0,0.35]]-->
+<style>
+  #sd-home { left: 150px; top: 330px; width: 1600px; }
+  #sd-vb { left: 150px; top: 200px; }
+  #sd-search { position: absolute; left: 150px; top: 140px; width: 1100px; height: 100px; border-radius: 50px; background: #fbf8f3; opacity: 0; }
+  #sd-search svg { position: absolute; left: 34px; top: 26px; }
+  #sd-q { position: absolute; left: 110px; top: 24px; font-size: 44px; font-weight: 700; color: #16110e; opacity: 0; }
+  #sd-grid { position: absolute; left: 150px; top: 300px; width: 1100px; height: 560px; }
+  .sd-t { position: absolute; width: 200px; height: 112px; border-radius: 10px; overflow: hidden; opacity: 0; }
+  .sd-t i { position: absolute; border-radius: 50%; background: #fbf8f3; }
+  .sd-t s { position: absolute; top: 0; width: 46px; height: 46px; background: #c9bcae; border: 4px solid #8c7f73; }
+  .sd-ring { position: absolute; inset: 0; border: 6px solid #fbf8f3; border-radius: 10px; opacity: 0; }
+  #sd-pat { left: 1340px; top: 320px; width: 500px; }
+  .sd-chip { left: 1340px; }
+  #sd-resp { left: 1340px; top: 320px; width: 500px; }
+  #sd-copy { left: 1340px; top: 320px; width: 500px; }
+  #sd-rule { left: 150px; top: 330px; width: 1700px; }
+</style>
+
+<div class="desk"></div>
+<div class="disp t96 paper pn" id="sd-home">Before v8: <span class="acc">homework</span></div>
+<div id="sd-search">
+  <svg width="50" height="50" viewBox="0 0 50 50"><circle cx="20" cy="20" r="14" fill="none" stroke="#16110e" stroke-width="6" /><path d="M31 31 L44 44" stroke="#16110e" stroke-width="6" stroke-linecap="round" /></svg>
+  <div id="sd-q">cheap dinner ideas</div>
+</div>
+<div id="sd-grid"></div>
+<div class="disp t64 paper pn" id="sd-pat">Side by side, look for <span class="acc">patterns</span></div>
+<div class="chip acc-bg pn sd-chip" id="sd-c1" style="top: 560px">Close-up of the food</div>
+<div class="chip acc-bg pn sd-chip" id="sd-c2" style="top: 680px">Warm colours</div>
+<div class="chip light pn sd-chip" id="sd-c3" style="top: 800px">Almost no kitchens</div>
+<div class="disp t64 paper pn" id="sd-resp">What her viewers already respond to</div>
+<div class="disp t64 paper pn" id="sd-copy">Don't copy. <span class="acc">Stand out.</span></div>
+<div class="disp t96 paper pn" id="sd-rule">Learn the rules of your niche. Then do <span class="acc">one thing</span> differently.</div>
+
+<script>
+  const warm = ["#ff5a1f", "#c0392b", "#e8b45a", "#ff8a5c", "#8a4a2a", "#ff7a45", "#d35400", "#e8b45a", "#c0392b", "#ff5a1f"];
+  const kitchens = [6, 13];
+  const blue = 11;
+  make("#sd-grid", 20, (k) => {
+    const isK = kitchens.includes(k);
+    const sz = 70 + ((k * 37) % 30);
+    return {
+      cls: "sd-t", id: "sd-t" + k,
+      html: isK ? '<s style="left:10px"></s><s style="left:60px"></s><s style="left:110px"></s><s style="left:160px;width:30px"></s><i style="left:120px;top:70px;width:30px;height:30px"></i><div class="sd-ring"></div>' : `<i style="left:${(k * 13) % 60 + 20}px;top:${(112 - sz) / 2}px;width:${sz}px;height:${sz}px"></i><div class="sd-ring"></div>`,
+      css: { left: (k % 5) * 225 + "px", top: Math.floor(k / 5) * 137 + "px", background: isK ? "#8c7f73" : warm[k % warm.length] },
+    };
+  });
+
+  // n1
+  words("#sd-home", C.n1 + 0.1);
+  // n2: search + top twenty
+  off("#sd-home", C.n2 - 0.3, "up");
+  tl.fromTo("#sd-search", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.n2);
+  type("#sd-q", C.n2 + 0.4, 18);
+  q(".sd-t").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, C.n2 + 2.4 + k * 0.05));
+  // n3: patterns
+  words("#sd-pat", C.n3 + 0.4);
+  // n4: three patterns
+  off("#sd-pat", C.n4 - 0.3, "blur");
+  on("#sd-c1", C.n4 + 0.2, "left");
+  tl.to(q(".sd-t").filter((_, k) => !kitchens.includes(k)).map((el) => el.querySelector(".sd-ring")), { opacity: 1, duration: 0.2, stagger: 0.02 }, C.n4 + 0.2);
+  tl.to(q(".sd-ring"), { opacity: 0, duration: 0.2 }, C.n4 + 1.7);
+  on("#sd-c2", C.n4 + 1.9, "left");
+  on("#sd-c3", C.n4 + 3.6, "left");
+  kitchens.forEach((k) => tl.to("#sd-t" + k, { opacity: 0.25, duration: 0.3 }, C.n4 + 3.8));
+  // n5
+  ["#sd-c1", "#sd-c2", "#sd-c3"].forEach((s) => off(s, C.n5 - 0.3, "right"));
+  words("#sd-resp", C.n5);
+  // n6: one cool tile stands out
+  off("#sd-resp", C.n6 - 0.3, "blur");
+  words("#sd-copy", C.n6 + 0.2);
+  tl.to(q(".sd-t").filter((_, k) => k !== blue), { opacity: 0.5, duration: 0.4 }, C.n6 + 3.4);
+  tl.to("#sd-t" + blue, { backgroundColor: "#1f4e5a", scale: 1.5, zIndex: 5, duration: 0.5, ease: "back.out(1.6)" }, C.n6 + 4.0);
+  // n7
+  off("#sd-copy", C.n7 - 0.3, "blur");
+  tl.to(["#sd-grid", "#sd-search"], { opacity: 0, duration: 0.3 }, C.n7 - 0.3);
+  words("#sd-rule", C.n7, 0.08);
+</script>

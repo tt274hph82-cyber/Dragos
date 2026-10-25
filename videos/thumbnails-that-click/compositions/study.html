@@ -1,0 +1,396 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- thumbnail kit (designed at 1120 x 630) ---------- */
+#root .ht { position: absolute; width: 1120px; height: 630px; border-radius: 28px; overflow: hidden; background: #6f6359; box-shadow: 0 30px 60px rgba(0,0,0,0.45); }
+#root .ht .lay { position: absolute; inset: 0; }
+#root .pl { position: absolute; border-radius: 50%; background: #fbf8f3; }
+#root .pl i { position: absolute; border-radius: 50%; }
+#root .pl i:nth-child(1) { left: 16%; top: 20%; width: 40%; height: 32%; background: #ff5a1f; }
+#root .pl i:nth-child(2) { left: 48%; top: 38%; width: 32%; height: 29%; background: #e8b45a; }
+#root .pl i:nth-child(3) { left: 22%; top: 55%; width: 29%; height: 24%; background: #7fa66b; }
+#root .pl.dull { background: #a8998b; }
+#root .pl.dull i:nth-child(1) { background: #8a6a55; }
+#root .pl.dull i:nth-child(2) { background: #9a8466; }
+#root .pl.dull i:nth-child(3) { background: #7d7a5e; }
+#root .fc { position: absolute; border-radius: 50%; background: #ff5a1f; }
+#root .fc .e { position: absolute; top: 33%; width: 12%; height: 15%; border-radius: 50%; background: #16110e; }
+#root .fc .e.l { left: 29%; }
+#root .fc .e.r { left: 59%; }
+#root .fc .m { position: absolute; left: 36%; top: 62%; width: 28%; height: 10%; border-radius: 0 0 60px 60px; background: #16110e; }
+#root .fc .m.o { left: 38%; top: 58%; width: 24%; height: 27%; border-radius: 50%; }
+#root .tx { position: absolute; font-family: "Archivo Black", sans-serif; line-height: 0.9; letter-spacing: -0.02em; color: #fbf8f3; }
+#root .tx .acc { color: #ff5a1f; }
+#root .tag { position: absolute; padding: 18px 34px 18px 60px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%); }
+#root .cup { position: absolute; background: #e8e0d0; clip-path: polygon(0 0, 100% 0, 86% 100%, 14% 100%); }
+#root .cup::after { content: ""; position: absolute; left: 0; right: 0; top: 30%; height: 22%; background: #c0392b; }
+#root .vb { position: absolute; padding: 12px 26px; border-radius: 14px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; font-size: 44px; z-index: 20; }
+#root .vb.mut { background: #8c7f73; }
+#root .stamp { position: absolute; padding: 18px; background: #fbf8f3; border: 6px dashed #8c7f73; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+
+  #sd-home { left: 150px; top: 330px; width: 1600px; }
+  #sd-vb { left: 150px; top: 200px; }
+  #sd-search { position: absolute; left: 150px; top: 140px; width: 1100px; height: 100px; border-radius: 50px; background: #fbf8f3; opacity: 0; }
+  #sd-search svg { position: absolute; left: 34px; top: 26px; }
+  #sd-q { position: absolute; left: 110px; top: 24px; font-size: 44px; font-weight: 700; color: #16110e; opacity: 0; }
+  #sd-grid { position: absolute; left: 150px; top: 300px; width: 1100px; height: 560px; }
+  .sd-t { position: absolute; width: 200px; height: 112px; border-radius: 10px; overflow: hidden; opacity: 0; }
+  .sd-t i { position: absolute; border-radius: 50%; background: #fbf8f3; }
+  .sd-t s { position: absolute; top: 0; width: 46px; height: 46px; background: #c9bcae; border: 4px solid #8c7f73; }
+  .sd-ring { position: absolute; inset: 0; border: 6px solid #fbf8f3; border-radius: 10px; opacity: 0; }
+  #sd-pat { left: 1340px; top: 320px; width: 500px; }
+  .sd-chip { left: 1340px; }
+  #sd-resp { left: 1340px; top: 320px; width: 500px; }
+  #sd-copy { left: 1340px; top: 320px; width: 500px; }
+  #sd-rule { left: 150px; top: 330px; width: 1700px; }
+
+  </style>
+  <div id="root" data-composition-id="study" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+<div class="disp t96 paper pn" id="sd-home">Before v8: <span class="acc">homework</span></div>
+<div id="sd-search">
+  <svg width="50" height="50" viewBox="0 0 50 50"><circle cx="20" cy="20" r="14" fill="none" stroke="#16110e" stroke-width="6" /><path d="M31 31 L44 44" stroke="#16110e" stroke-width="6" stroke-linecap="round" /></svg>
+  <div id="sd-q">cheap dinner ideas</div>
+</div>
+<div id="sd-grid"></div>
+<div class="disp t64 paper pn" id="sd-pat">Side by side, look for <span class="acc">patterns</span></div>
+<div class="chip acc-bg pn sd-chip" id="sd-c1" style="top: 560px">Close-up of the food</div>
+<div class="chip acc-bg pn sd-chip" id="sd-c2" style="top: 680px">Warm colours</div>
+<div class="chip light pn sd-chip" id="sd-c3" style="top: 800px">Almost no kitchens</div>
+<div class="disp t64 paper pn" id="sd-resp">What her viewers already respond to</div>
+<div class="disp t64 paper pn" id="sd-copy">Don't copy. <span class="acc">Stand out.</span></div>
+<div class="disp t96 paper pn" id="sd-rule">Learn the rules of your niche. Then do <span class="acc">one thing</span> differently.</div>
+    <div id="study-card" class="card"><div class="num">Lesson 8</div><div class="ttl">Study your niche</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"n1":2.3,"n2":5.968,"n3":11.044,"n4":15.471,"n5":21.538,"n6":25.653,"n7":33.915};
+      const E = {"n1":5.218,"n2":10.294,"n3":14.721,"n4":20.788,"n5":24.903,"n6":33.165,"n7":38.039};
+      const D = 38.389;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      card("study", 1.85);
+
+  const warm = ["#ff5a1f", "#c0392b", "#e8b45a", "#ff8a5c", "#8a4a2a", "#ff7a45", "#d35400", "#e8b45a", "#c0392b", "#ff5a1f"];
+  const kitchens = [6, 13];
+  const blue = 11;
+  make("#sd-grid", 20, (k) => {
+    const isK = kitchens.includes(k);
+    const sz = 70 + ((k * 37) % 30);
+    return {
+      cls: "sd-t", id: "sd-t" + k,
+      html: isK ? '<s style="left:10px"></s><s style="left:60px"></s><s style="left:110px"></s><s style="left:160px;width:30px"></s><i style="left:120px;top:70px;width:30px;height:30px"></i><div class="sd-ring"></div>' : `<i style="left:${(k * 13) % 60 + 20}px;top:${(112 - sz) / 2}px;width:${sz}px;height:${sz}px"></i><div class="sd-ring"></div>`,
+      css: { left: (k % 5) * 225 + "px", top: Math.floor(k / 5) * 137 + "px", background: isK ? "#8c7f73" : warm[k % warm.length] },
+    };
+  });
+
+  // n1
+  words("#sd-home", C.n1 + 0.1);
+  // n2: search + top twenty
+  off("#sd-home", C.n2 - 0.3, "up");
+  tl.fromTo("#sd-search", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.n2);
+  type("#sd-q", C.n2 + 0.4, 18);
+  q(".sd-t").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, C.n2 + 2.4 + k * 0.05));
+  // n3: patterns
+  words("#sd-pat", C.n3 + 0.4);
+  // n4: three patterns
+  off("#sd-pat", C.n4 - 0.3, "blur");
+  on("#sd-c1", C.n4 + 0.2, "left");
+  tl.to(q(".sd-t").filter((_, k) => !kitchens.includes(k)).map((el) => el.querySelector(".sd-ring")), { opacity: 1, duration: 0.2, stagger: 0.02 }, C.n4 + 0.2);
+  tl.to(q(".sd-ring"), { opacity: 0, duration: 0.2 }, C.n4 + 1.7);
+  on("#sd-c2", C.n4 + 1.9, "left");
+  on("#sd-c3", C.n4 + 3.6, "left");
+  kitchens.forEach((k) => tl.to("#sd-t" + k, { opacity: 0.25, duration: 0.3 }, C.n4 + 3.8));
+  // n5
+  ["#sd-c1", "#sd-c2", "#sd-c3"].forEach((s) => off(s, C.n5 - 0.3, "right"));
+  words("#sd-resp", C.n5);
+  // n6: one cool tile stands out
+  off("#sd-resp", C.n6 - 0.3, "blur");
+  words("#sd-copy", C.n6 + 0.2);
+  tl.to(q(".sd-t").filter((_, k) => k !== blue), { opacity: 0.5, duration: 0.4 }, C.n6 + 3.4);
+  tl.to("#sd-t" + blue, { backgroundColor: "#1f4e5a", scale: 1.5, zIndex: 5, duration: 0.5, ease: "back.out(1.6)" }, C.n6 + 4.0);
+  // n7
+  off("#sd-copy", C.n7 - 0.3, "blur");
+  tl.to(["#sd-grid", "#sd-search"], { opacity: 0, duration: 0.3 }, C.n7 - 0.3);
+  words("#sd-rule", C.n7, 0.08);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["study"] = tl;
+    })();
+  </script>
+</template>

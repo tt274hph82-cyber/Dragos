@@ -160,6 +160,7 @@
   #op-ten { left: 1350px; top: 330px; width: 520px; }
   #op-title { left: 150px; top: 220px; width: 1650px; }
   #op-sub { left: 156px; top: 700px; }
+  #op-follow { left: 156px; top: 800px; }
   #op-bg2 { opacity: 0; }
 
   </style>
@@ -180,13 +181,14 @@
 <div class="desk" id="op-bg2"></div>
 <div class="disp t130 paper pn" id="op-title">How to make thumbnails people <span class="acc">click</span></div>
 <div class="b46 mut pn" id="op-sub">One fix per version, from v1 to v10</div>
+<div class="b46 paper pn" id="op-follow">Grab one of <span class="acc">your</span> thumbnails and follow along</div>
     
   </div>
   <script>
     (function () {
-      const C = {"o1":0.6,"o2":5.336,"o2b":7.274,"o3":11.968,"o4":15.984};
-      const E = {"o1":4.586,"o2":6.524,"o2b":11.218,"o3":15.234,"o4":21.977};
-      const D = 22.327;
+      const C = {"o1":0.6,"o2":5.336,"o2b":7.274,"o3":11.968,"o4":15.984,"o4b":22.727};
+      const E = {"o1":4.586,"o2":6.524,"o2b":11.218,"o3":15.234,"o4":21.977,"o4b":25.749};
+      const D = 26.099;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -373,6 +375,7 @@ function make(parentSel, n, fn) {
   tl.fromTo("#op-bg2", { opacity: 0 }, { opacity: 1, duration: 0.2 }, C.o4 - 0.1);
   words("#op-title", C.o4, 0.09);
   on("#op-sub", C.o4 + 1.8, "blur");
+  words("#op-follow", C.o4b + 0.1);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["open"] = tl;

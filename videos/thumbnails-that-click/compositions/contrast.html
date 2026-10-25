@@ -215,13 +215,22 @@
   <div class="co-mode" id="co-m1" style="left: 150px; background: #fbf8f3; color: #16110e"><div class="h">Light mode</div><div class="th"><div class="pl"><i></i><i></i><i></i></div></div><div class="ln" style="top: 510px; width: 560px; background: #d9cfc4"></div><div class="ln" style="top: 552px; width: 320px; background: #e6ddd3"></div></div>
   <div class="co-mode" id="co-m2" style="left: 990px; background: #0f0f0f; color: #f5f0e8"><div class="h">Dark mode</div><div class="th"><div class="pl"><i></i><i></i><i></i></div></div><div class="ln" style="top: 510px; width: 560px; background: #3a3a3a"></div><div class="ln" style="top: 552px; width: 320px; background: #2a2a2a"></div></div>
 </div>
+
+<div id="co-corner" style="position: absolute; inset: 0; opacity: 0">
+  <div class="ht" style="left: 150px; top: 150px; background: #16110e"><div class="pl" style="left: 290px; top: 45px; width: 540px; height: 540px; box-shadow: 0 0 0 14px #fbf8f3"><i></i><i></i><i></i></div>
+    <div id="co-zone" style="position: absolute; right: 16px; bottom: 16px; width: 300px; height: 170px; border: 8px dashed #ff5a1f; border-radius: 16px; opacity: 0"></div>
+    <div style="position: absolute; right: 30px; bottom: 30px; padding: 8px 18px; border-radius: 10px; background: rgba(0,0,0,0.85); color: #fbf8f3; font-size: 44px; font-weight: 700">8:18</div>
+  </div>
+  <div class="disp t64 paper" style="position: absolute; left: 1340px; top: 260px; width: 500px">Keep the bottom right <span class="acc">clear</span></div>
+  <div class="b40 mut" style="position: absolute; left: 1340px; top: 560px; width: 480px">YouTube puts the video length there</div>
+</div>
     <div id="contrast-card" class="card"><div class="num">Lesson 3</div><div class="ttl">Make it pop</div></div>
   </div>
   <script>
     (function () {
-      const C = {"k1":2.3,"k2":5.79,"k3":10.501,"k3b":15.225,"k4":23.373,"k5":28.839,"k6":35.699};
-      const E = {"k1":5.04,"k2":9.751,"k3":14.475,"k3b":22.623,"k4":28.089,"k5":34.949,"k6":40.017};
-      const D = 40.367;
+      const C = {"k1":2.3,"k2":5.791,"k3":10.502,"k3b":15.226,"k4":23.374,"k5":28.84,"k6":35.699,"k6b":40.767};
+      const E = {"k1":5.041,"k2":9.752,"k3":14.476,"k3b":22.624,"k4":28.09,"k5":34.949,"k6":40.017,"k6b":47.378};
+      const D = 47.728;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -423,6 +432,10 @@ function make(parentSel, n, fn) {
   tl.fromTo("#co-modes", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.k6);
   tl.fromTo("#co-m1", { opacity: 0, x: -200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.k6 + 0.6);
   tl.fromTo("#co-m2", { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.k6 + 1.8);
+  // k6b: the corner
+  tl.to("#co-modes", { opacity: 0, duration: 0.3 }, C.k6b - 0.35);
+  tl.fromTo("#co-corner", { opacity: 0 }, { opacity: 1, duration: 0.4 }, C.k6b);
+  tl.fromTo("#co-zone", { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.k6b + 2.6);
 
       window.__timelines = window.__timelines || {};
       window.__timelines["contrast"] = tl;

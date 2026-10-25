@@ -197,14 +197,15 @@
 <div class="disp t64 paper pn" id="sy-how">Now they have to know <span class="acc">how</span></div>
 <div class="disp t80 paper pn" id="sy-asks">The thumbnail <span class="acc">asks</span></div>
 <div class="disp t80 paper pn" id="sy-ans">The video answers</div>
+<div class="b46 acc pn" id="sy-honest" style="left: 1340px; top: 780px; width: 520px">Keep the gap honest: the answer is in the video</div>
 <div class="disp t130 paper pn" id="sy-cur"><span class="acc">Curiosity</span> gets the click</div>
     <div id="story-card" class="card"><div class="num">Lesson 6</div><div class="ttl">Tell a tiny story</div></div>
   </div>
   <script>
     (function () {
-      const C = {"s1":2.3,"s2":6.931,"s3":11.126,"s4":16.597,"s4b":20.607,"s5":26.639,"s6":30.564};
-      const E = {"s1":6.181,"s2":10.376,"s3":15.847,"s4":19.857,"s4b":25.889,"s5":29.814,"s6":32.097};
-      const D = 32.447;
+      const C = {"s1":2.3,"s2":6.931,"s3":11.127,"s4":16.597,"s4b":20.607,"s5":26.64,"s5b":30.564,"s6":34.699};
+      const E = {"s1":6.181,"s2":10.377,"s3":15.847,"s4":19.857,"s4b":25.89,"s5":29.814,"s5b":33.949,"s6":36.233};
+      const D = 36.583;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -393,8 +394,10 @@ function make(parentSel, n, fn) {
   off("#sy-how", C.s5 - 0.3, "blur");
   on("#sy-asks", C.s5, "left");
   on("#sy-ans", C.s5 + 1.6, "left");
+  // s5b
+  words("#sy-honest", C.s5b + 0.1);
   // s6
-  ["#sy-asks", "#sy-ans"].forEach((s) => off(s, C.s6 - 0.3, "up"));
+  ["#sy-asks", "#sy-ans", "#sy-honest"].forEach((s) => off(s, C.s6 - 0.3, "up"));
   tl.to(["#sy-ht", "#sy-vb"], { opacity: 0, y: -60, duration: 0.3, ease: "power3.in" }, C.s6 - 0.3);
   words("#sy-cur", C.s6);
 

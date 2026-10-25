@@ -13,6 +13,7 @@
   #op-ten { left: 1350px; top: 330px; width: 520px; }
   #op-title { left: 150px; top: 220px; width: 1650px; }
   #op-sub { left: 156px; top: 700px; }
+  #op-follow { left: 156px; top: 800px; }
   #op-bg2 { opacity: 0; }
 </style>
 
@@ -32,6 +33,7 @@
 <div class="desk" id="op-bg2"></div>
 <div class="disp t130 paper pn" id="op-title">How to make thumbnails people <span class="acc">click</span></div>
 <div class="b46 mut pn" id="op-sub">One fix per version, from v1 to v10</div>
+<div class="b46 paper pn" id="op-follow">Grab one of <span class="acc">your</span> thumbnails and follow along</div>
 
 <script>
   const cols = ["#ff7a45", "#16110e", "#7fa66b", "#e8b45a", "#9db7d6", "#e8b4bc", "#ff5a1f", "#7a6a99", "#7fa6b0", "#ff8a5c"];
@@ -60,4 +62,5 @@
   tl.fromTo("#op-bg2", { opacity: 0 }, { opacity: 1, duration: 0.2 }, C.o4 - 0.1);
   words("#op-title", C.o4, 0.09);
   on("#op-sub", C.o4 + 1.8, "blur");
+  words("#op-follow", C.o4b + 0.1);
 </script>

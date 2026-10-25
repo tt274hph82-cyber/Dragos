@@ -1,4 +1,4 @@
-<!--SFX [["pop","w1",0.4,0.45],["typing","w2",0.2,0.35],["typing","w2",1.8,0.35],["whoosh-short","w3",0.0,0.4],["whoosh-short","w4",0.0,0.35],["impact-bass-1","w4",0.6,0.3],["pop","w5",0.4,0.35],["pop","w6",0.3,0.4],["pop","w6",3.2,0.4],["pop","w7",0.0,0.4]]-->
+<!--SFX [["pop","w6b",1.6,0.4],["pop","w1",0.4,0.45],["typing","w2",0.2,0.35],["typing","w2",1.8,0.35],["whoosh-short","w3",0.0,0.4],["whoosh-short","w4",0.0,0.35],["impact-bass-1","w4",0.6,0.3],["pop","w5",0.4,0.35],["pop","w6",0.3,0.4],["pop","w6",3.2,0.4],["pop","w7",0.0,0.4]]-->
 <style>
   #wo-vb { left: 150px; top: 60px; }
   #wo-cam { position: absolute; left: 150px; top: 150px; width: 1120px; height: 630px; transform-origin: 0 0; }
@@ -36,6 +36,9 @@
 <div class="b46 paper pn" id="wo-cut">If a word doesn't add something the picture can't show, cut it.</div>
 <div class="disp t64 paper pn" id="wo-team">Title and thumbnail: a <span class="acc">team</span></div>
 <div class="b46 mut pn" id="wo-team2">The title says it. The thumbnail asks.</div>
+<div class="pn" id="wo-thin" style="left: 1000px; top: 250px; width: 800px; font-family: Inter, sans-serif; font-weight: 400; font-style: italic; font-size: 60px; color: #8c7f73; letter-spacing: 0.04em">only ten dollars?</div>
+<div class="tx pn" id="wo-thick" style="left: 1000px; top: 430px; font-size: 110px">ONLY <span class="acc">$10?</span></div>
+<div class="b46 paper pn" id="wo-fontl" style="left: 1000px; top: 620px; width: 800px">Thick and simple beats thin and fancy</div>
 <div class="disp t130 paper pn" id="wo-blink">Read in a <span class="acc">blink</span></div>
 
 <script>
@@ -67,8 +70,13 @@
   tl.fromTo("#wo-tul", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "expo.out" }, C.w6 + 0.3);
   tl.fromTo("#wo-ring", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.w6 + 3.2);
   on("#wo-team2", C.w6 + 1.0, "blur");
+  // w6b: fonts
+  ["#wo-team", "#wo-team2"].forEach((s) => off(s, C.w6b - 0.3, "blur"));
+  on("#wo-thin", C.w6b + 0.6, "blur");
+  on("#wo-thick", C.w6b + 1.6, "pop");
+  on("#wo-fontl", C.w6b + 3.2, "blur");
   // w7
-  ["#wo-team", "#wo-team2"].forEach((s) => off(s, C.w7 - 0.35, "blur"));
+  ["#wo-thin", "#wo-thick", "#wo-fontl"].forEach((s) => off(s, C.w7 - 0.35, "blur"));
   tl.to(["#wo-cam", "#wo-vb"], { opacity: 0, y: -60, duration: 0.3, ease: "power3.in" }, C.w7 - 0.35);
   words("#wo-blink", C.w7);
 </script>

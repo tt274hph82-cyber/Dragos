@@ -184,14 +184,17 @@
 <div class="b46 paper pn" id="wo-cut">If a word doesn't add something the picture can't show, cut it.</div>
 <div class="disp t64 paper pn" id="wo-team">Title and thumbnail: a <span class="acc">team</span></div>
 <div class="b46 mut pn" id="wo-team2">The title says it. The thumbnail asks.</div>
+<div class="pn" id="wo-thin" style="left: 1000px; top: 250px; width: 800px; font-family: Inter, sans-serif; font-weight: 400; font-style: italic; font-size: 60px; color: #8c7f73; letter-spacing: 0.04em">only ten dollars?</div>
+<div class="tx pn" id="wo-thick" style="left: 1000px; top: 430px; font-size: 110px">ONLY <span class="acc">$10?</span></div>
+<div class="b46 paper pn" id="wo-fontl" style="left: 1000px; top: 620px; width: 800px">Thick and simple beats thin and fancy</div>
 <div class="disp t130 paper pn" id="wo-blink">Read in a <span class="acc">blink</span></div>
     <div id="words-card" class="card"><div class="num">Lesson 4</div><div class="ttl">Fewer, bigger words</div></div>
   </div>
   <script>
     (function () {
-      const C = {"w1":2.3,"w2":5.303,"w3":10.708,"w4":13.331,"w4b":18.69,"w5":23.677,"w6":28.566,"w7":35.633};
-      const E = {"w1":4.553,"w2":9.958,"w3":12.581,"w4":17.94,"w4b":22.927,"w5":27.816,"w6":34.883,"w7":37.327};
-      const D = 37.677;
+      const C = {"w1":2.3,"w2":5.304,"w3":10.708,"w4":13.331,"w4b":18.691,"w5":23.677,"w6":28.566,"w6b":35.634,"w7":41.988};
+      const E = {"w1":4.554,"w2":9.958,"w3":12.581,"w4":17.941,"w4b":22.927,"w5":27.816,"w6":34.884,"w6b":41.238,"w7":43.681};
+      const D = 44.031;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -380,8 +383,13 @@ function make(parentSel, n, fn) {
   tl.fromTo("#wo-tul", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "expo.out" }, C.w6 + 0.3);
   tl.fromTo("#wo-ring", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.w6 + 3.2);
   on("#wo-team2", C.w6 + 1.0, "blur");
+  // w6b: fonts
+  ["#wo-team", "#wo-team2"].forEach((s) => off(s, C.w6b - 0.3, "blur"));
+  on("#wo-thin", C.w6b + 0.6, "blur");
+  on("#wo-thick", C.w6b + 1.6, "pop");
+  on("#wo-fontl", C.w6b + 3.2, "blur");
   // w7
-  ["#wo-team", "#wo-team2"].forEach((s) => off(s, C.w7 - 0.35, "blur"));
+  ["#wo-thin", "#wo-thick", "#wo-fontl"].forEach((s) => off(s, C.w7 - 0.35, "blur"));
   tl.to(["#wo-cam", "#wo-vb"], { opacity: 0, y: -60, duration: 0.3, ease: "power3.in" }, C.w7 - 0.35);
   words("#wo-blink", C.w7);
 

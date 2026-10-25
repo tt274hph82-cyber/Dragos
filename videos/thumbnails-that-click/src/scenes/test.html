@@ -64,6 +64,7 @@
   <div class="b46 paper" id="te-wl">A fresh thumbnail, a <span class="acc">second chance</span></div>
 </div>
 
+<div class="disp t96 paper pn" id="te-chose" style="left: 150px; top: 820px; width: 1600px">The one <span class="acc">viewers</span> chose</div>
 <div class="disp t96 paper pn" id="te-ten">The winner becomes <span class="acc">version ten</span></div>
 
 <script>
@@ -105,4 +106,7 @@
   tl.to("#te-v9", { opacity: 1, y: 0, x: -450, scale: 1.2, duration: 0.6, ease: "expo.out" }, C.t5 - 0.2);
   on("#te-b10", C.t5 + 0.4, "pop");
   words("#te-ten", C.t5 + 0.1);
+  // t5b
+  off("#te-ten", C.t5b - 0.3, "blur");
+  words("#te-chose", C.t5b + 1.6);
 </script>

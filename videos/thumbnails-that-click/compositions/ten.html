@@ -166,6 +166,7 @@
   #tn-h { position: absolute; left: -70px; top: 435px; width: 260px; text-align: center; white-space: nowrap; transform: rotate(-90deg); }
   #tn-ratio { position: absolute; left: 460px; top: 400px; }
   #tn-mb { position: absolute; left: 1180px; top: 420px; }
+  #tn-fmt, #tn-src { position: absolute; }
   #tn-spech { position: absolute; left: 0; top: 0; }
   #tn-keep { left: 150px; top: 300px; width: 1100px; }
   #tn-vb { left: 1360px; top: 340px; font-size: 120px; padding: 30px 60px; }
@@ -201,9 +202,12 @@
   <div class="disp t64 acc" id="tn-h">720 px</div>
   <div class="disp t110 paper" id="tn-ratio">16:9</div>
   <div class="chip acc-bg" id="tn-mb" style="font-size: 56px">Under 2 MB</div>
+  <div class="chip light" id="tn-fmt" style="left: 1180px; top: 560px; font-size: 44px; opacity: 0">JPG or PNG</div>
+  <div class="chip light" id="tn-src" style="left: 1180px; top: 680px; font-size: 44px; opacity: 0">Keep the design file</div>
 </div>
 
 <div class="disp t96 paper pn" id="tn-keep">Keep testing. It can always get a little <span class="acc">better</span>.</div>
+<div class="disp t80 paper pn" id="tn-pros" style="left: 150px; top: 300px; width: 1100px">Even big creators redo thumbnails. It's <span class="acc">part of the job.</span></div>
 <div class="vb pn" id="tn-vb">v<span id="tn-vbn">10</span></div>
 
 <div class="laptop pn" id="tn-laptop">
@@ -216,13 +220,13 @@
 </div>
 <div class="laptop-base pn" id="tn-base"></div>
 <div class="disp t96 paper pn" id="tn-final">Make <span class="acc">version two.</span></div>
-    <div id="ten-card" class="card"><div class="num">Lesson 9</div><div class="ttl">Version ten</div></div>
+    <div id="ten-card" class="card"><div class="num">Lesson 11</div><div class="ttl">Version ten</div></div>
   </div>
   <script>
     (function () {
-      const C = {"v1":2.3,"v1b":5.541,"v2":10.501,"v3":19.891,"v4":29.06,"v5":34.864};
-      const E = {"v1":4.791,"v1b":9.751,"v2":19.141,"v3":28.31,"v4":34.114,"v5":38.626};
-      const D = 41.826;
+      const C = {"v1":2.3,"v1b":5.54,"v2":10.501,"v3":19.89,"v3b":29.06,"v4":37.866,"v4b":43.67,"v5":50.618};
+      const E = {"v1":4.79,"v1b":9.751,"v2":19.14,"v3":28.31,"v3b":37.116,"v4":42.92,"v4b":49.868,"v5":54.379};
+      const D = 57.579;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -405,14 +409,22 @@ function make(parentSel, n, fn) {
   tl.fromTo("#tn-h", { opacity: 0 }, { opacity: 1, duration: 0.25 }, C.v3 + 2.6);
   tl.fromTo("#tn-ratio", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power4.in" }, C.v3 + 4.8);
   tl.fromTo("#tn-mb", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.8)" }, C.v3 + 6.4);
+  // v3b
+  tl.fromTo("#tn-fmt", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, C.v3b + 1.4);
+  tl.fromTo("#tn-src", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, C.v3b + 3.6);
   // v4: keep testing
   tl.to("#tn-spec", { opacity: 0, duration: 0.3 }, C.v4 - 0.35);
   words("#tn-keep", C.v4);
   on("#tn-vb", C.v4 + 0.4, "pop");
   const vv = { v: 10 };
   tl.fromTo(vv, { v: 10 }, { v: 12, duration: 1.0, ease: "steps(2)", onUpdate: () => (document.getElementById("tn-vbn").textContent = Math.round(vv.v)) }, C.v4 + 1.0);
+  // v4b
+  off("#tn-keep", C.v4b - 0.3, "blur");
+  words("#tn-pros", C.v4b + 0.1);
+  const vv2 = { v: 12 };
+  tl.fromTo(vv2, { v: 12 }, { v: 15, duration: 1.5, ease: "steps(3)", immediateRender: false, onUpdate: () => (document.getElementById("tn-vbn").textContent = Math.round(vv2.v)) }, C.v4b + 1.0);
   // v5: your last video
-  off("#tn-keep", C.v5 - 0.35, "up");
+  off("#tn-pros", C.v5 - 0.35, "up");
   off("#tn-vb", C.v5 - 0.35, "up");
   on("#tn-laptop", C.v5 - 0.1, "scale");
   on("#tn-base", C.v5 - 0.1, "fade");

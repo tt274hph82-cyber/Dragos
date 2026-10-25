@@ -185,6 +185,7 @@
 <div class="b46 paper pn" id="su-hero">One hero: the finished plate</div>
 <div class="b46 paper pn" id="su-busy">Can't describe it in a few words? It's too busy.</div>
 <div class="chip acc-bg pn" id="su-desc">"Plate, close-up"</div>
+<div class="disp t64 paper pn" id="su-extra" style="left: 1340px; top: 220px; width: 500px">Every extra object is one more thing to <span class="acc">figure out</span></div>
 <div class="disp t80 paper pn su-one" id="su-o1" style="top: 220px">One subject.</div>
 <div class="disp t80 paper pn su-one" id="su-o2" style="top: 400px">One idea.</div>
 <div class="disp t80 acc pn su-one" id="su-o3" style="top: 580px">One glance.</div>
@@ -192,9 +193,9 @@
   </div>
   <script>
     (function () {
-      const C = {"u1":2.3,"u2":6.64,"u3":10.593,"u4":14.105,"u5":17.218,"u5b":21.079,"u6":26.287,"u7":32.209};
-      const E = {"u1":5.89,"u2":9.843,"u3":13.355,"u4":16.468,"u5":20.329,"u5b":25.537,"u6":31.459,"u7":35.528};
-      const D = 35.878;
+      const C = {"u1":2.3,"u2":6.64,"u3":10.594,"u4":14.106,"u5":17.219,"u5b":21.08,"u6":26.288,"u6b":32.209,"u7":36.948};
+      const E = {"u1":5.89,"u2":9.844,"u3":13.356,"u4":16.469,"u5":20.33,"u5b":25.538,"u6":31.459,"u6b":36.198,"u7":40.267};
+      const D = 40.617;
       const tl = gsap.timeline({ paused: true });
 // Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
 // after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
@@ -379,6 +380,9 @@ function make(parentSel, n, fn) {
   off("#su-desc", C.u6 - 0.3, "blur");
   q("#su-clutter .su-it").forEach((el, k) => tl.to(el, { y: 700, rotation: [12, -8, 20, -15][k], duration: 0.6, ease: "power3.in" }, C.u6 + 0.6 + k * 0.12));
   tl.to("#su-flat", { opacity: 1, duration: 0.6, ease: "power2.inOut" }, C.u6 + 2.4);
+  // u6b
+  words("#su-extra", C.u6b + 0.1);
+  off("#su-extra", C.u7 - 0.3, "blur");
   // u7: one, one, one
   on("#su-o1", C.u7, "left");
   on("#su-o2", C.u7 + 1.0, "left");

@@ -1,4 +1,4 @@
-<!--SFX [["pop","k1",0.4,0.45],["whoosh-short","k2",0.0,0.4],["pop","k3",0.6,0.4],["pop","k3",2.2,0.4],["pop","k3b",0.6,0.35],["pop","k3b",2.6,0.35],["whoosh","k4",-0.3,0.4],["sparkle","k4",2.2,0.3],["whoosh","k5",-0.3,0.4],["click-soft","k5",2.0,0.5],["whoosh","k6",-0.3,0.4]]-->
+<!--SFX [["whoosh","k6b",-0.3,0.4],["pop","k6b",2.6,0.4],["pop","k1",0.4,0.45],["whoosh-short","k2",0.0,0.4],["pop","k3",0.6,0.4],["pop","k3",2.2,0.4],["pop","k3b",0.6,0.35],["pop","k3b",2.6,0.35],["whoosh","k4",-0.3,0.4],["sparkle","k4",2.2,0.3],["whoosh","k5",-0.3,0.4],["click-soft","k5",2.0,0.5],["whoosh","k6",-0.3,0.4]]-->
 <style>
   #co-vb { left: 150px; top: 60px; }
   #co-ht { left: 150px; top: 150px; opacity: 0; }
@@ -68,6 +68,14 @@
   <div class="co-mode" id="co-m2" style="left: 990px; background: #0f0f0f; color: #f5f0e8"><div class="h">Dark mode</div><div class="th"><div class="pl"><i></i><i></i><i></i></div></div><div class="ln" style="top: 510px; width: 560px; background: #3a3a3a"></div><div class="ln" style="top: 552px; width: 320px; background: #2a2a2a"></div></div>
 </div>
 
+<div id="co-corner" style="position: absolute; inset: 0; opacity: 0">
+  <div class="ht" style="left: 150px; top: 150px; background: #16110e"><div class="pl" style="left: 290px; top: 45px; width: 540px; height: 540px; box-shadow: 0 0 0 14px #fbf8f3"><i></i><i></i><i></i></div>
+    <div id="co-zone" style="position: absolute; right: 16px; bottom: 16px; width: 300px; height: 170px; border: 8px dashed #ff5a1f; border-radius: 16px; opacity: 0"></div>
+    <div style="position: absolute; right: 30px; bottom: 30px; padding: 8px 18px; border-radius: 10px; background: rgba(0,0,0,0.85); color: #fbf8f3; font-size: 44px; font-weight: 700">8:18</div>
+  </div>
+  <div class="disp t64 paper" style="position: absolute; left: 1340px; top: 260px; width: 500px">Keep the bottom right <span class="acc">clear</span></div>
+  <div class="b40 mut" style="position: absolute; left: 1340px; top: 560px; width: 480px">YouTube puts the video length there</div>
+</div>
 <script>
   const fc = ["#ff7a45", "#16110e", "#7fa66b", "#9db7d6", "#6f6359", "#e8b45a"];
   const ft = ["$1 FOOD WEEK", "EASY BREAD", "3 MIN EGGS", "DORM CHEF", "", "PASTA HACK"];
@@ -110,4 +118,8 @@
   tl.fromTo("#co-modes", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.k6);
   tl.fromTo("#co-m1", { opacity: 0, x: -200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.k6 + 0.6);
   tl.fromTo("#co-m2", { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.k6 + 1.8);
+  // k6b: the corner
+  tl.to("#co-modes", { opacity: 0, duration: 0.3 }, C.k6b - 0.35);
+  tl.fromTo("#co-corner", { opacity: 0 }, { opacity: 1, duration: 0.4 }, C.k6b);
+  tl.fromTo("#co-zone", { opacity: 0, scale: 1.2 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.k6b + 2.6);
 </script>

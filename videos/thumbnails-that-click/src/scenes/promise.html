@@ -41,6 +41,7 @@
 <div class="disp t64 paper pn" id="pr-eye">YouTube watches what happens <span class="acc">after</span> the click</div>
 <div class="b40 paper pn" id="pr-fast">Click, then leave fast = not what they wanted</div>
 <div class="disp t64 paper pn" id="pr-true">Keep the drama. <span class="acc">Only what's true.</span></div>
+<div class="disp t80 paper pn" id="pr-drama" style="left: 1340px; top: 180px; width: 500px">Drama is fine. <span class="acc">Lying isn't.</span></div>
 <div class="b46 paper pn" id="pr-stay">Honest thumbnail → viewers who <span class="acc">stay</span></div>
 
 <script>
@@ -83,4 +84,7 @@
   tl.set("#pr-gl2", { opacity: 1 }, C.p5);
   draw("#pr-gl2", C.p5, 1.0, "power2.out");
   on("#pr-stay", C.p5 + 0.6, "blur");
+  // p5b
+  off("#pr-true", C.p5b - 0.3, "blur");
+  words("#pr-drama", C.p5b);
 </script>

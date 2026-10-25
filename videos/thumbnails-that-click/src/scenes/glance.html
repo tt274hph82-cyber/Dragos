@@ -1,4 +1,4 @@
-<!--SFX [["whoosh","g2",0.3,0.4],["key-press","g3",0.2,0.4],["pop","g4",3.2,0.45],["whoosh-short","g5",0.2,0.4],["pop","g5",2.6,0.4],["impact-bass-1","g6",0.6,0.35]]-->
+<!--SFX [["pop","g3b",2.0,0.35],["pop","g3b",2.9,0.35],["pop","g3b",3.5,0.35],["whoosh","g2",0.3,0.4],["key-press","g3",0.2,0.4],["pop","g4",3.2,0.45],["whoosh-short","g5",0.2,0.4],["pop","g5",2.6,0.4],["impact-bass-1","g6",0.6,0.35]]-->
 <style>
   #gl-laptop { left: 150px; top: 80px; width: 1180px; height: 760px; }
   #gl-base { left: 80px; top: 835px; width: 1320px; }
@@ -39,6 +39,9 @@
 <div class="phone" id="gl-phone"><div class="screen"><div id="gl-feed"></div></div></div>
 <div class="disp t96 paper pn" id="gl-tiny">…tiny, on a phone, in a <span class="acc">blur</span></div>
 
+<div class="chip pn" id="gl-x1" style="left: 150px; top: 680px">Other videos</div>
+<div class="chip pn" id="gl-x2" style="left: 560px; top: 680px">Ads</div>
+<div class="chip pn" id="gl-x3" style="left: 800px; top: 680px">Notifications</div>
 <div class="disp t130 paper pn" id="gl-split">A <span class="acc">split second</span> to decide</div>
 
 <div class="stamp" id="gl-stamp"><div class="inner"><div class="gl-pan"><svg width="460" height="340" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /></svg></div></div></div>
@@ -75,6 +78,9 @@
   off("#gl-tiny", C.g3 - 0.3, "up");
   tl.to("#gl-phone", { y: 1100, duration: 0.5, ease: "power3.in" }, C.g3 - 0.4);
   words("#gl-split", C.g3 + 0.05);
+  // g3b: competing with everything
+  [["#gl-x1", 2.0], ["#gl-x2", 2.9], ["#gl-x3", 3.5]].forEach(([s, dt]) => on(s, C.g3b + dt, "pop"));
+  ["#gl-x1", "#gl-x2", "#gl-x3"].forEach((s) => off(s, C.g4 - 0.3, "blur"));
   // g4: the stamp
   off("#gl-split", C.g4 - 0.3, "up");
   tl.fromTo("#gl-stamp", { opacity: 0, scale: 1.6, rotation: -4 }, { opacity: 1, scale: 1, rotation: -4, duration: 0.5, ease: "expo.out" }, C.g4 + 0.2);
