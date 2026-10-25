@@ -1,0 +1,77 @@
+<!--SFX [["pop","w2",0.6,0.35],["pop","w2",2.0,0.35],["pop","w2",3.6,0.35],["pop","w3",0.6,0.35],["pop","w3",2.6,0.35],["whoosh-short","w4",1.4,0.35],["whoosh","w5",-0.3,0.4],["click","w5",3.4,0.6],["pop","w6",0.2,0.35]]-->
+<style>
+  #wh-q { left: 150px; top: 400px; width: 1600px; }
+  #wh-ph { left: 260px; top: 70px; }
+  .wh-ft { position: absolute; left: 0; width: 438px; height: 908px; }
+  .wh-ft .plate, .wh-ft .egg { left: 120px; top: 330px; width: 200px; height: 200px; }
+  #wh-feed { position: absolute; left: 0; top: 0; width: 438px; height: 2724px; }
+  .wh-l { left: 860px; }
+  #wh-nos { left: 860px; top: 200px; width: 900px; }
+  #wh-plays { left: 860px; top: 520px; }
+  #wh-ch1 { left: 860px; top: 300px; }
+  #wh-ch2 { left: 860px; top: 480px; }
+  #wh-vid { left: 860px; top: 200px; width: 900px; height: 506px; }
+  #wh-vid .plate { left: 310px; top: 100px; width: 260px; height: 260px; }
+  #wh-vt { left: 860px; top: 740px; width: 900px; }
+  #wh-cur { left: 1500px; top: 600px; }
+  .wh-st { left: 860px; top: 860px; }
+  #wh-same { left: 860px; top: 830px; width: 960px; }
+  #wh-diff { left: 860px; top: 830px; width: 960px; }
+</style>
+
+<div class="disp t110 paper pn shadowed" id="wh-q">What makes a <span class="acc">Short</span> different?</div>
+
+<div class="glass phone pn" id="wh-ph"><div class="scr"><div id="wh-feed">
+  <div class="wh-ft" style="top: 0; background: #142640"><div class="egg"></div></div>
+  <div class="wh-ft" style="top: 908px; background: #2a1830"><div class="plate"><i></i><i></i><i></i></div></div>
+  <div class="wh-ft" style="top: 1816px; background: #12302e"><div class="egg"></div></div>
+</div></div></div>
+<div class="glass pill chip pn wh-l" id="wh-l1" style="top: 200px">Vertical</div>
+<div class="glass pill chip pn wh-l" id="wh-l2" style="top: 340px">Up to 3 minutes</div>
+<div class="glass pill chip pn wh-l" id="wh-l3" style="top: 480px">A feed you swipe</div>
+<div class="b56 paper pn shadowed" id="wh-nos">No search. No thumbnail to pick.</div>
+<div class="disp t96 acc pn shadowed" id="wh-plays">It just plays.</div>
+<div class="glass pill chip pn" id="wh-ch1"><span class="teal">Keep watching</span></div>
+<div class="glass pill chip pn" id="wh-ch2">…or <span class="acc">swipe away</span></div>
+
+<div class="glass vid pn" id="wh-vid"><div class="scr" style="background: #1a2a44"><div class="plate"><i></i><i></i><i></i></div></div></div>
+<div class="b46 paper pn shadowed" id="wh-vt">5 Dinners for Under $10</div>
+<svg class="pn" id="wh-cur" width="54" height="70" viewBox="0 0 54 70" style="z-index: 30"><path d="M4 4 L4 56 L18 44 L28 66 L38 61 L28 40 L46 40 Z" fill="#fff" stroke="#0a1424" stroke-width="4" stroke-linejoin="round" /></svg>
+<div class="glass pill chip pn wh-st" id="wh-s1">Sees a thumbnail</div>
+<div class="glass pill chip pn wh-st" id="wh-s2" style="left: 1240px">Clicks</div>
+<div class="glass pill chip pn wh-st" id="wh-s3" style="left: 1450px">Commits minutes</div>
+<div class="disp t64 paper pn shadowed" id="wh-same">Same platform. <span class="acc">Two ways</span> of watching.</div>
+<div class="b46 paper pn shadowed" id="wh-diff">…and that changes how each one helps your channel</div>
+
+<script>
+  words("#wh-q", C.w1 + 0.05);
+  off("#wh-q", C.w2 - 0.3, "up");
+  gIn("#wh-ph", C.w2);
+  [["#wh-l1", 0.6], ["#wh-l2", 2.0], ["#wh-l3", 3.6]].forEach(([s, dt]) => gIn(s, C.w2 + dt, { x: 60, y: 0 }));
+  // w3
+  ["#wh-l1", "#wh-l2", "#wh-l3"].forEach((s) => gOut(s, C.w3 - 0.3));
+  words("#wh-nos", C.w3 + 0.4);
+  words("#wh-plays", C.w3 + 2.6);
+  // w4: keep watching or swipe
+  off("#wh-nos", C.w4 - 0.3, "blur");
+  off("#wh-plays", C.w4 - 0.3, "blur");
+  gIn("#wh-ch1", C.w4 + 0.2, { x: 60, y: 0 });
+  gIn("#wh-ch2", C.w4 + 1.0, { x: 60, y: 0 });
+  tl.to("#wh-feed", { y: -908, duration: 0.45, ease: "power3.inOut" }, C.w4 + 1.4);
+  // w5: the long-video way
+  ["#wh-ch1", "#wh-ch2"].forEach((s) => gOut(s, C.w5 - 0.3));
+  tl.to("#wh-feed", { y: -1816, duration: 0.45, ease: "power3.inOut" }, C.w5 - 0.4);
+  gIn("#wh-vid", C.w5 + 0.1);
+  on("#wh-vt", C.w5 + 0.6, "blur");
+  gIn("#wh-s1", C.w5 + 1.2);
+  tl.set("#wh-cur", { opacity: 1, x: 200, y: 300 }, C.w5 + 2.0);
+  clickAt("#wh-cur", C.w5 + 2.2, -150, -200, 1.2);
+  gIn("#wh-s2", C.w5 + 3.4);
+  gIn("#wh-s3", C.w5 + 5.0);
+  // w6
+  tl.to("#wh-cur", { opacity: 0, duration: 0.2 }, C.w6 - 0.3);
+  ["#wh-s1", "#wh-s2", "#wh-s3"].forEach((s) => gOut(s, C.w6 - 0.3));
+  words("#wh-same", C.w6 + 0.2);
+  off("#wh-same", C.w6b - 0.3, "blur");
+  words("#wh-diff", C.w6b + 0.1);
+</script>

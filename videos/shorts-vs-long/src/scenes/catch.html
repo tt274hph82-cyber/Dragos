@@ -1,0 +1,101 @@
+<!--SFX [["pop","c1",0.3,0.4],["pop","c2",0.8,0.35],["pop","c2",3.4,0.35],["whoosh-short","c3",2.2,0.35],["whoosh-short","c3",3.6,0.35],["whoosh","c5",-0.3,0.4],["impact-bass-1","c6",0.0,0.3],["pop","c6b",1.2,0.35]]-->
+<style>
+  #ca-card { left: 150px; top: 150px; width: 1000px; height: 620px; }
+  #ca-card .row { gap: 28px; }
+  .ca-m { position: absolute; left: 48px; }
+  .ca-m .stat { font-size: 110px; }
+  #ca-illu { left: 156px; top: 800px; }
+  #ca-odd { left: 1240px; top: 200px; width: 560px; }
+  #ca-ph { left: 1250px; top: 70px; }
+  #ca-feed { position: absolute; left: 0; top: 0; width: 438px; height: 4540px; }
+  .ca-ft { position: absolute; left: 0; width: 438px; height: 908px; }
+  .ca-ft .egg { left: 120px; top: 330px; width: 200px; height: 200px; }
+  .ca-bar { position: absolute; left: 30px; top: 860px; width: 378px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.25); overflow: hidden; }
+  .ca-bar i { position: absolute; inset: 0; background: #fff; transform-origin: left center; }
+  #ca-sec { left: 150px; top: 300px; width: 1000px; }
+  #ca-saw { left: 150px; top: 560px; width: 1000px; }
+  #ca-feel { left: 150px; top: 300px; width: 1000px; }
+  #ca-dots { position: absolute; left: 150px; top: 560px; width: 1000px; height: 300px; }
+  #ca-lv { left: 150px; top: 230px; width: 760px; height: 600px; }
+  #ca-sv { left: 1010px; top: 230px; width: 760px; height: 600px; }
+  .ca-big { position: absolute; left: 50px; top: 220px; font-size: 130px; }
+  #ca-ne { left: 150px; top: 380px; width: 1700px; }
+  #ca-p1 { left: 500px; top: 360px; color: #3fe0d0; width: 160px; height: 230px; }
+  #ca-p2 { left: 1260px; top: 360px; color: #ff7a3d; width: 160px; height: 230px; }
+  #ca-hi { left: 700px; top: 300px; padding: 18px 34px; }
+  #ca-call { left: 150px; top: 760px; width: 1700px; }
+</style>
+
+<div class="glass pn" id="ca-card">
+  <div class="row" style="position: absolute; left: 48px; top: 40px"><div class="avatar l">L</div><div class="b56">Leo · week 4</div></div>
+  <div class="ca-m" style="top: 190px"><div class="stat">480K</div><div class="lab">views</div></div>
+  <div class="ca-m" id="ca-cm" style="top: 190px; left: 520px; opacity: 0"><div class="stat acc">12</div><div class="lab">comments</div></div>
+  <div class="ca-m" id="ca-ov" style="top: 400px; opacity: 0"><div class="b46">Subscribers watching his other videos: <span class="acc">almost none</span></div></div>
+</div>
+<div class="illu pn" id="ca-illu">Illustrative numbers</div>
+<div class="disp t80 paper pn shadowed" id="ca-odd">Something's <span class="acc">strange</span></div>
+
+<div class="glass phone pn" id="ca-ph"><div class="scr"><div id="ca-feed">
+  <div class="ca-ft" style="top: 0; background: #12302e"><div class="egg"></div><div class="ca-bar"><i id="ca-b0"></i></div></div>
+  <div class="ca-ft" style="top: 908px; background: #2a1830"></div>
+  <div class="ca-ft" style="top: 1816px; background: #142640"></div>
+  <div class="ca-ft" style="top: 2724px; background: #302412"></div>
+</div></div></div>
+<div class="disp t80 paper pn shadowed" id="ca-sec">A view can be <span class="acc">one second</span> of attention</div>
+<div class="b46 mut pn shadowed" id="ca-saw">They saw the egg trick. Not necessarily Leo.</div>
+<div class="disp t80 paper pn shadowed" id="ca-feel">Subscribed to a <span class="teal">feeling</span>, not a person</div>
+<div id="ca-dots"></div>
+
+<div class="glass pn" id="ca-lv"><div class="b46" style="position: absolute; left: 50px; top: 50px">Leo's first long video</div><div class="disp ca-big acc">184</div><div class="lab" style="position: absolute; left: 54px; top: 380px">views</div></div>
+<div class="glass pn" id="ca-sv"><div class="b46" style="position: absolute; left: 50px; top: 50px">His average Short</div><div class="disp ca-big teal">60K</div><div class="lab" style="position: absolute; left: 54px; top: 380px">views</div></div>
+<div class="disp t130 paper pn shadowed" id="ca-ne">Views <span class="acc">≠</span> fans</div>
+
+<div class="person pn" id="ca-p1"></div>
+<div class="person pn" id="ca-p2"></div>
+<div class="glass pill chip pn" id="ca-hi">"Hi!" · 2 seconds</div>
+<div class="b56 paper pn shadowed" id="ca-call">They saw you. That doesn't mean they'll <span class="acc">call</span>.</div>
+
+<script>
+  make("#ca-dots", 18, (k) => ({ cls: "dot", id: "ca-d" + k, css: { left: (k % 9) * 100 + 20 + "px", top: Math.floor(k / 9) * 100 + 40 + "px", opacity: 0 } }));
+
+  gIn("#ca-card", C.c1 - 0.3);
+  on("#ca-illu", C.c1 + 0.4, "fade");
+  words("#ca-odd", C.c1 + 1.2);
+  // c2
+  tl.fromTo("#ca-cm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.c2 + 0.8);
+  tl.fromTo("#ca-ov", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.c2 + 3.4);
+  // c3: one second, then swipe
+  gOut("#ca-card", C.c3 - 0.3);
+  off("#ca-illu", C.c3 - 0.3, "fade");
+  off("#ca-odd", C.c3 - 0.3, "blur");
+  gIn("#ca-ph", C.c3);
+  tl.fromTo("#ca-b0", { scaleX: 0 }, { scaleX: 0.12, duration: 1.0, ease: "none" }, C.c3 + 1.0);
+  tl.to("#ca-feed", { y: -908, duration: 0.4, ease: "power3.inOut" }, C.c3 + 2.2);
+  tl.to("#ca-feed", { y: -1816, duration: 0.4, ease: "power3.inOut" }, C.c3 + 3.6);
+  words("#ca-sec", C.c3 + 0.3);
+  on("#ca-saw", C.c3 + 4.2, "blur");
+  // c4: subscribed to a feeling
+  off("#ca-sec", C.c4 - 0.3, "blur");
+  off("#ca-saw", C.c4 - 0.3, "blur");
+  words("#ca-feel", C.c4);
+  q("#ca-dots .dot").forEach((el, k) => {
+    tl.fromTo(el, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, C.c4 + 1.0 + k * 0.03);
+    if (k % 5) tl.to(el, { opacity: 0, y: 80, duration: 0.6, ease: "power2.in" }, C.c4 + 2.6 + (k % 7) * 0.08);
+  });
+  tl.to("#ca-feed", { y: -2724, duration: 0.4, ease: "power3.inOut" }, C.c4 + 2.4);
+  // c5: his long video
+  gOut("#ca-ph", C.c5 - 0.3);
+  off("#ca-feel", C.c5 - 0.3, "blur");
+  tl.to("#ca-dots", { opacity: 0, duration: 0.3 }, C.c5 - 0.3);
+  gIn("#ca-lv", C.c5 + 0.2);
+  gIn("#ca-sv", C.c5 + 1.4);
+  // c6
+  ["#ca-lv", "#ca-sv"].forEach((s) => gOut(s, C.c6 - 0.3));
+  words("#ca-ne", C.c6 + 0.05);
+  // c6b: the party
+  off("#ca-ne", C.c6b - 0.3, "up");
+  on("#ca-p1", C.c6b + 0.2, "rise");
+  on("#ca-p2", C.c6b + 0.5, "rise");
+  gIn("#ca-hi", C.c6b + 1.2);
+  words("#ca-call", C.c6b + 2.2);
+</script>

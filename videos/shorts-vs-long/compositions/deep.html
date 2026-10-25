@@ -1,0 +1,398 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: #ffffff;
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+
+/* ---------- Liquid Glass world ---------- */
+#root .lg-bg { position: absolute; inset: 0; background: #0a1424; overflow: hidden; }
+#root .lg-bg .bl { position: absolute; width: 1100px; height: 1100px; border-radius: 50%; }
+#root .lg-bg .b1 { left: -250px; top: -350px; background: radial-gradient(circle, rgba(255, 90, 31, 0.95) 0%, rgba(255, 90, 31, 0) 68%); }
+#root .lg-bg .b2 { left: 1050px; top: -300px; background: radial-gradient(circle, rgba(24, 166, 160, 0.9) 0%, rgba(24, 166, 160, 0) 68%); }
+#root .lg-bg .b3 { left: 700px; top: 450px; background: radial-gradient(circle, rgba(255, 61, 127, 0.75) 0%, rgba(255, 61, 127, 0) 68%); }
+#root .lg-bg .b4 { left: -300px; top: 500px; background: radial-gradient(circle, rgba(90, 110, 255, 0.7) 0%, rgba(90, 110, 255, 0) 68%); }
+#root .lg-bg .grain { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 120%, rgba(5, 10, 20, 0.55), rgba(5, 10, 20, 0) 60%); }
+
+#root .glass {
+  position: absolute;
+  border-radius: 40px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.08) 45%, rgba(255, 255, 255, 0.14) 100%);
+  backdrop-filter: blur(30px) saturate(165%) brightness(0.72);
+  -webkit-backdrop-filter: blur(30px) saturate(165%) brightness(0.72);
+  text-shadow: 0 2px 14px rgba(0, 0, 20, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.75), inset 0 -2px 6px rgba(255, 255, 255, 0.12), 0 30px 80px rgba(0, 0, 20, 0.35);
+  overflow: hidden;
+}
+#root .glass::before {
+  content: ""; position: absolute; left: -10%; top: -60%; width: 80%; height: 120%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%);
+  pointer-events: none;
+}
+#root .glass.pill { border-radius: 999px; white-space: nowrap; }
+#root .glass.dark { background: linear-gradient(140deg, rgba(10, 20, 36, 0.55), rgba(10, 20, 36, 0.35)); }
+
+/* ---------- type ---------- */
+#root .disp { font-family: Inter, sans-serif; font-weight: 900; letter-spacing: -0.035em; line-height: 1.0; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.015em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff7a3d; }
+#root .teal { color: #3fe0d0; }
+#root .paper { color: #ffffff; }
+#root .mut { color: rgba(255, 255, 255, 0.72); }
+#root .w { display: inline-block; white-space: pre; }
+#root .shadowed { text-shadow: 0 4px 30px rgba(0, 0, 20, 0.45); }
+
+/* ---------- objects ---------- */
+#root .phone { position: absolute; width: 470px; height: 940px; border-radius: 70px; padding: 16px; }
+#root .phone .scr { position: absolute; inset: 16px; border-radius: 56px; overflow: hidden; background: #0d1b2a; }
+#root .vid { position: absolute; border-radius: 34px; padding: 14px; }
+#root .vid .scr { position: absolute; inset: 14px; border-radius: 22px; overflow: hidden; background: #0d1b2a; }
+#root .avatar { width: 96px; height: 96px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 50px; color: #0a1424; }
+#root .avatar.m { background: #ff7a3d; }
+#root .avatar.l { background: #3fe0d0; }
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #ffffff; }
+#root .chip { position: absolute; padding: 18px 34px; font-size: 42px; font-weight: 700; white-space: nowrap; color: #fff; }
+#root .play { position: absolute; width: 110px; height: 110px; border-radius: 50%; }
+#root .play::after { content: ""; position: absolute; left: 42px; top: 31px; border-left: 40px solid #fff; border-top: 24px solid transparent; border-bottom: 24px solid transparent; }
+#root .plate { position: absolute; border-radius: 50%; background: #fbf8f3; }
+#root .plate i { position: absolute; border-radius: 50%; }
+#root .plate i:nth-child(1) { left: 16%; top: 20%; width: 40%; height: 32%; background: #ff5a1f; }
+#root .plate i:nth-child(2) { left: 48%; top: 38%; width: 32%; height: 29%; background: #e8b45a; }
+#root .plate i:nth-child(3) { left: 22%; top: 55%; width: 29%; height: 24%; background: #7fa66b; }
+#root .egg { position: absolute; border-radius: 50%; background: #fbf8f3; }
+#root .egg::after { content: ""; position: absolute; left: 30%; top: 30%; width: 40%; height: 40%; border-radius: 50%; background: #ffb21f; }
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; }
+#root .card .cbg { position: absolute; inset: 0; background:
+  radial-gradient(circle 650px at 12% 10%, rgba(255, 90, 31, 0.95), rgba(255, 90, 31, 0) 70%),
+  radial-gradient(circle 650px at 90% 15%, rgba(24, 166, 160, 0.9), rgba(24, 166, 160, 0) 70%),
+  radial-gradient(circle 600px at 65% 90%, rgba(255, 61, 127, 0.75), rgba(255, 61, 127, 0) 70%),
+  #0a1424; }
+#root .card .cpane { position: absolute; left: 120px; top: 250px; width: 1680px; height: 560px; }
+#root .card .num { position: absolute; left: 200px; top: 330px; font-weight: 700; font-size: 56px; color: rgba(255, 255, 255, 0.85); }
+#root .card .ttl { position: absolute; left: 200px; top: 420px; width: 1560px; font-weight: 900; font-size: 136px; line-height: 0.98; letter-spacing: -0.04em; color: #fff; }
+
+/* ---------- helpers ---------- */
+#root .gc { position: absolute; padding: 40px 48px; }
+#root .stat { font-weight: 900; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+#root .lab { font-size: 34px; font-weight: 700; color: rgba(255,255,255,0.75); }
+#root .row { display: flex; align-items: center; gap: 24px; }
+#root .xk { width: 64px; height: 64px; border-radius: 50%; background: #ff3d5a; flex: none; position: relative; }
+#root .xk::before, #root .xk::after { content: ""; position: absolute; left: 29px; top: 14px; width: 7px; height: 36px; border-radius: 4px; background: #fff; transform: rotate(45deg); }
+#root .xk::after { transform: rotate(-45deg); }
+#root .ok { width: 64px; height: 64px; border-radius: 50%; background: #3fe0d0; flex: none; position: relative; }
+#root .ok::after { content: ""; position: absolute; left: 22px; top: 12px; width: 16px; height: 30px; border-right: 7px solid #0a1424; border-bottom: 7px solid #0a1424; transform: rotate(45deg); }
+#root .illu { position: absolute; font-size: 30px; color: rgba(255,255,255,0.7); }
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+
+
+  #dp-ch { left: 150px; top: 170px; width: 1100px; height: 640px; }
+  #dp-ch .row { position: absolute; left: 48px; top: 40px; gap: 28px; }
+  #dp-ch svg { position: absolute; left: 60px; top: 180px; }
+  #dp-flat { left: 1340px; top: 260px; width: 480px; }
+  #dp-avd { left: 1340px; top: 170px; width: 430px; height: 300px; }
+  #dp-avd .stat { position: absolute; left: 48px; top: 60px; font-size: 120px; }
+  #dp-avd .lab { position: absolute; left: 52px; top: 200px; }
+  .dp-cm { left: 1340px; width: 430px; padding: 20px 28px; font-size: 34px; font-weight: 700; }
+  #dp-trust { left: 150px; top: 160px; width: 1100px; height: 620px; }
+  #dp-trust .avatar { position: absolute; left: 470px; top: 160px; width: 160px; height: 160px; font-size: 84px; }
+  #dp-wave { position: absolute; left: 340px; top: 400px; }
+  #dp-tt { left: 1340px; top: 240px; width: 500px; }
+  #dp-search { left: 150px; top: 150px; width: 1200px; height: 100px; }
+  #dp-search .q { position: absolute; left: 100px; top: 24px; font-size: 44px; font-weight: 700; }
+  #dp-search svg { position: absolute; left: 36px; top: 26px; }
+  .dp-res { left: 150px; width: 1200px; height: 150px; }
+  .dp-res .th { position: absolute; left: 20px; top: 15px; width: 213px; height: 120px; border-radius: 14px; background: #1a2a44; overflow: hidden; }
+  .dp-res .t { position: absolute; left: 260px; top: 30px; font-size: 40px; font-weight: 800; }
+  .dp-res .s { position: absolute; left: 260px; top: 86px; font-size: 32px; color: rgba(255,255,255,0.7); font-weight: 700; }
+  #dp-months { left: 1420px; top: 300px; width: 420px; }
+  .dp-v { top: 300px; width: 440px; height: 248px; }
+  .dp-v .plate { left: 150px; top: 50px; width: 140px; height: 140px; }
+  #dp-arrows { position: absolute; left: 150px; top: 300px; width: 1620px; height: 260px; }
+  #dp-hours { left: 150px; top: 660px; width: 1600px; }
+  #dp-deeper { left: 150px; top: 380px; width: 1700px; }
+  #dp-slow { left: 150px; top: 620px; width: 1700px; }
+
+  </style>
+  <div id="root" data-composition-id="deep" data-width="1920" data-height="1080">
+    <div class="lg-bg"><i class="bl b1" id="deep-b1"></i><i class="bl b2" id="deep-b2"></i><i class="bl b3" id="deep-b3"></i><i class="bl b4" id="deep-b4"></i><div class="grain"></div></div>
+    <div class="glass pn" id="dp-ch">
+  <div class="row"><div class="avatar m">M</div><div class="b56">Maya · month 1</div></div>
+  <svg width="980" height="400" viewBox="0 0 980 400"><path d="M0 0 V380 H980" stroke="rgba(255,255,255,0.6)" stroke-width="5" fill="none" /><path id="dp-line" pathLength="100" d="M10 370 C 200 365, 400 360, 600 352 S 850 340, 970 330" stroke="#ff7a3d" stroke-width="10" fill="none" stroke-linecap="round" /></svg>
+</div>
+<div class="disp t80 paper pn shadowed" id="dp-flat">Almost <span class="acc">flat</span></div>
+
+<div class="glass pn" id="dp-avd"><div class="stat">8:40</div><div class="lab">average watch time</div></div>
+<div class="glass pn dp-cm" id="dp-c1" style="top: 510px">"Can I swap the rice?"</div>
+<div class="glass pn dp-cm" id="dp-c2" style="top: 620px">"Made this tonight!"</div>
+<div class="glass pn dp-cm" id="dp-c3" style="top: 730px">"See you next week"</div>
+
+<div class="glass pn" id="dp-trust"><div class="avatar m">M</div>
+  <svg id="dp-wave" width="420" height="120" viewBox="0 0 420 120"></svg>
+</div>
+<div class="disp t80 paper pn shadowed" id="dp-tt">10 minutes with a <span class="acc">person</span></div>
+
+<div class="glass pill pn" id="dp-search"><svg width="50" height="50" viewBox="0 0 50 50"><circle cx="20" cy="20" r="14" fill="none" stroke="#fff" stroke-width="6" /><path d="M31 31 L44 44" stroke="#fff" stroke-width="6" stroke-linecap="round" /></svg><div class="q" id="dp-q">cheap dinner ideas</div></div>
+<div class="glass pn dp-res" id="dp-r1" style="top: 300px; border-color: #ff7a3d"><div class="th"><div class="plate" style="left: 66px; top: 20px; width: 80px; height: 80px"><i></i><i></i><i></i></div></div><div class="t">5 Dinners for Under $10</div><div class="s">Maya · uploaded 8 months ago</div></div>
+<div class="glass pn dp-res" id="dp-r2" style="top: 480px"><div class="th" style="background: #2a1830"></div><div class="t">Budget meals for the week</div><div class="s">2 years ago</div></div>
+<div class="glass pn dp-res" id="dp-r3" style="top: 660px"><div class="th" style="background: #12302e"></div><div class="t">10 minute dinners</div><div class="s">1 year ago</div></div>
+<div class="disp t64 paper pn shadowed" id="dp-months">Found for <span class="acc">months</span>, even years</div>
+
+<div class="glass vid pn dp-v" id="dp-v1" style="left: 150px"><div class="scr" style="background: #1a2a44"><div class="plate"><i></i><i></i><i></i></div></div></div>
+<div class="glass vid pn dp-v" id="dp-v2" style="left: 740px"><div class="scr" style="background: #2a1830"><div class="plate"><i></i><i></i><i></i></div></div></div>
+<div class="glass vid pn dp-v" id="dp-v3" style="left: 1330px"><div class="scr" style="background: #12302e"><div class="plate"><i></i><i></i><i></i></div></div></div>
+<svg id="dp-arrows" viewBox="0 0 1620 260"><path id="dp-a1" pathLength="100" d="M450 124 L580 124" stroke="#ff7a3d" stroke-width="12" fill="none" stroke-linecap="round" opacity="0" /><path id="dp-a2" pathLength="100" d="M1040 124 L1170 124" stroke="#ff7a3d" stroke-width="12" fill="none" stroke-linecap="round" opacity="0" /></svg>
+<div class="b56 paper pn shadowed" id="dp-hours">Every hour on her channel tells YouTube: <span class="acc">recommend this</span></div>
+
+<div class="disp t110 paper pn shadowed" id="dp-deeper">Slower to start. <span class="acc">Deeper</span> views.</div>
+<div class="b56 mut pn shadowed" id="dp-slow">A slow start isn't a bad start. It's a different kind of growth.</div>
+    <div id="deep-card" class="card"><div class="cbg"></div><div class="glass cpane"></div><div class="num">Lesson 5</div><div class="ttl">What long videos do</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"d1":2.3,"d2":7.646,"d3":15.39,"d4":23.168,"d5":32.021,"d6":41.33,"d6b":44.77};
+      const E = {"d1":6.896,"d2":14.64,"d3":22.418,"d4":31.271,"d5":40.58,"d6":44.02,"d6b":48.787};
+      const D = 49.137;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+// Slow drift of the four background light blobs across the whole scene (Liquid Glass world).
+function lgDrift(id, seed) {
+  const R = rng(100 + seed);
+  [1, 2, 3, 4].forEach((k) => {
+    const dx = (R() - 0.5) * 700, dy = (R() - 0.5) * 500;
+    tl.fromTo("#" + id + "-b" + k, { x: -dx / 2, y: -dy / 2, scale: 1 }, { x: dx / 2, y: dy / 2, scale: 0.85 + R() * 0.3, duration: D, ease: "sine.inOut" }, 0);
+  });
+}
+// Glass panel in / out.
+function gIn(sel, t, from = {}) {
+  tl.fromTo(sel, { opacity: 0, y: 60, scale: 0.96, ...from }, { opacity: 1, y: 0, x: 0, scale: 1, duration: 0.7, ease: "expo.out" }, t);
+}
+function gOut(sel, t) {
+  tl.to(sel, { opacity: 0, y: -40, scale: 0.97, duration: 0.3, ease: "power3.in" }, t);
+}
+
+      lgDrift("deep", 5);
+      card("deep", 1.85);
+
+  // voice waveform bars
+  const wv = document.getElementById("dp-wave");
+  for (let k = 0; k < 21; k++) {
+    const r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    Object.entries({ id: "dp-w" + k, x: k * 20, y: 30, width: 10, height: 60, rx: 5, fill: "#ff7a3d" }).forEach(([a, v]) => r.setAttribute(a, v));
+    wv.appendChild(r);
+  }
+
+  // d1: flat month
+  gIn("#dp-ch", C.d1 - 0.3);
+  draw("#dp-line", C.d1 + 0.3, 2.4, "power1.inOut");
+  words("#dp-flat", C.d1 + 2.6);
+  // d2: they stay, comment, come back
+  off("#dp-flat", C.d2 - 0.3, "blur");
+  gIn("#dp-avd", C.d2 + 0.2, { x: 60, y: 0 });
+  [["#dp-c1", 1.4], ["#dp-c2", 2.4], ["#dp-c3", 3.4]].forEach(([s, dt]) => gIn(s, C.d2 + dt, { x: 60, y: 0 }));
+  // d3: trust
+  gOut("#dp-ch", C.d3 - 0.3);
+  ["#dp-avd", "#dp-c1", "#dp-c2", "#dp-c3"].forEach((s) => gOut(s, C.d3 - 0.3));
+  gIn("#dp-trust", C.d3);
+  q("#dp-wave rect").forEach((el, k) => tl.fromTo(el, { scaleY: 0.2 }, { scaleY: 1, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: 13, delay: (k % 5) * 0.06, transformOrigin: "50% 50%" }, C.d3 + 0.4));
+  words("#dp-tt", C.d3 + 1.0);
+  // d4: search
+  gOut("#dp-trust", C.d4 - 0.3);
+  off("#dp-tt", C.d4 - 0.3, "blur");
+  gIn("#dp-search", C.d4);
+  type("#dp-q", C.d4 + 2.4, 18);
+  ["#dp-r1", "#dp-r2", "#dp-r3"].forEach((s, k) => gIn(s, C.d4 + 4.4 + k * 0.15));
+  words("#dp-months", C.d4 + 5.4);
+  // d5: binge
+  ["#dp-search", "#dp-r1", "#dp-r2", "#dp-r3"].forEach((s) => gOut(s, C.d5 - 0.3));
+  off("#dp-months", C.d5 - 0.3, "blur");
+  [["#dp-v1", 1.0], ["#dp-v2", 2.0], ["#dp-v3", 3.0]].forEach(([s, dt]) => gIn(s, C.d5 + dt));
+  [["#dp-a1", 1.6], ["#dp-a2", 2.6]].forEach(([s, dt]) => { tl.set(s, { opacity: 1 }, C.d5 + dt); draw(s, C.d5 + dt, 0.35, "power2.out"); });
+  words("#dp-hours", C.d5 + 4.6);
+  // d6 / d6b
+  ["#dp-v1", "#dp-v2", "#dp-v3"].forEach((s) => gOut(s, C.d6 - 0.3));
+  tl.to("#dp-arrows", { opacity: 0, duration: 0.25 }, C.d6 - 0.3);
+  off("#dp-hours", C.d6 - 0.3, "blur");
+  words("#dp-deeper", C.d6);
+  on("#dp-slow", C.d6b + 0.1, "blur");
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["deep"] = tl;
+    })();
+  </script>
+</template>

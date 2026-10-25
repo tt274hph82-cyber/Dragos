@@ -1,0 +1,79 @@
+<!--SFX [["pop","m2",0.4,0.4],["pop","m2",3.4,0.4],["pop","m3",0.3,0.4],["pop","m4",0.3,0.4],["pop","m5",2.4,0.4],["sparkle","m6b",2.0,0.25]]-->
+<style>
+  #mo-q { left: 150px; top: 400px; width: 1600px; }
+  #mo-ypp { left: 150px; top: 120px; width: 1620px; height: 200px; }
+  #mo-ypp .t { position: absolute; left: 50px; top: 36px; font-size: 56px; font-weight: 900; letter-spacing: -0.02em; }
+  #mo-ypp .s { position: absolute; left: 52px; top: 118px; font-size: 40px; font-weight: 700; color: rgba(255,255,255,0.8); }
+  .mo-p { top: 380px; width: 760px; height: 440px; }
+  .mo-p .k { position: absolute; left: 48px; top: 40px; font-size: 36px; font-weight: 800; color: rgba(255,255,255,0.75); }
+  .mo-p .stat { position: absolute; left: 48px; top: 110px; font-size: 120px; }
+  .mo-p .d { position: absolute; left: 52px; top: 270px; font-size: 40px; font-weight: 700; }
+  #mo-or { left: 912px; top: 560px; font-size: 48px; font-weight: 900; }
+  #mo-bars { left: 150px; top: 200px; width: 1100px; height: 640px; }
+  #mo-bars .h { position: absolute; left: 50px; top: 40px; font-size: 44px; font-weight: 800; }
+  .mo-b { position: absolute; bottom: 90px; width: 260px; border-radius: 22px 22px 6px 6px; transform-origin: 50% 100%; }
+  .mo-bl { position: absolute; bottom: 30px; width: 260px; text-align: center; font-size: 38px; font-weight: 800; }
+  #mo-usu { left: 1340px; top: 300px; width: 480px; }
+  #mo-sum1 { left: 150px; top: 300px; width: 1700px; }
+  #mo-sum2 { left: 150px; top: 480px; width: 1700px; }
+  #mo-pool { left: 150px; top: 200px; width: 1620px; height: 640px; }
+  #mo-pool .h { position: absolute; left: 50px; top: 40px; font-size: 44px; font-weight: 800; }
+  #mo-pie { position: absolute; left: 1000px; top: 140px; }
+  #mo-coins { position: absolute; left: 0; top: 0; width: 1620px; height: 640px; }
+  .mo-c { position: absolute; width: 50px; height: 50px; border-radius: 50%; background: #ffcf4a; box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2); }
+  #mo-pt { position: absolute; left: 50px; top: 470px; width: 800px; font-size: 40px; font-weight: 700; }
+</style>
+
+<div class="disp t110 paper pn shadowed" id="mo-q">What about <span class="acc">money</span>?</div>
+<div class="glass pn" id="mo-ypp"><div class="t">YouTube Partner Program</div><div class="s">1,000 subscribers, <span id="mo-plus" style="opacity: 0">plus one of these:</span></div></div>
+<div class="glass pn mo-p" id="mo-a" style="left: 150px"><div class="k">Long videos</div><div class="stat acc">4,000</div><div class="d">watch hours in the past 12 months</div></div>
+<div class="b46 paper pn" id="mo-or">or</div>
+<div class="glass pn mo-p" id="mo-b" style="left: 1010px"><div class="k">Shorts</div><div class="stat teal">10M</div><div class="d">Shorts views in the past 90 days</div></div>
+
+<div class="glass pn" id="mo-bars"><div class="h">Earnings per view</div>
+  <div class="mo-b" id="mo-bl" style="left: 200px; height: 380px; background: #ff7a3d"></div><div class="mo-bl" style="left: 200px">Long</div>
+  <div class="mo-b" id="mo-bs" style="left: 620px; height: 110px; background: #3fe0d0"></div><div class="mo-bl" style="left: 620px">Shorts</div>
+</div>
+<div class="disp t64 paper pn shadowed" id="mo-usu">Long videos <span class="acc">usually</span> earn more per view</div>
+<div class="disp t80 paper pn shadowed" id="mo-sum1"><span class="teal">Shorts:</span> get noticed</div>
+<div class="disp t80 paper pn shadowed" id="mo-sum2"><span class="acc">Long videos:</span> steady income</div>
+
+<div class="glass pn" id="mo-pool"><div class="h">Shorts ad money: pooled, then shared</div>
+  <svg id="mo-pie" width="420" height="420" viewBox="0 0 420 420"><circle cx="210" cy="210" r="190" fill="rgba(255,255,255,0.15)" /><path id="mo-s1" d="M210 210 L210 20 A190 190 0 0 1 390 270 Z" fill="#3fe0d0" opacity="0" /><path id="mo-s2" d="M210 210 L390 270 A190 190 0 0 1 120 378 Z" fill="#ff7a3d" opacity="0" /><path id="mo-s3" d="M210 210 L120 378 A190 190 0 0 1 210 20 Z" fill="#ff3d7f" opacity="0" /></svg>
+  <div id="mo-coins"></div>
+  <div id="mo-pt">Each creator's slice depends on their share of views</div>
+</div>
+
+<script>
+  const R = rng(8);
+  make("#mo-coins", 14, (k) => ({ cls: "mo-c", id: "mo-c" + k, css: { left: 120 + R() * 600 + "px", top: 150 + R() * 260 + "px", opacity: 0 } }));
+
+  words("#mo-q", C.m1 + 0.05);
+  off("#mo-q", C.m2 - 0.3, "up");
+  gIn("#mo-ypp", C.m2 + 0.2);
+  tl.to("#mo-plus", { opacity: 1, duration: 0.3 }, C.m2 + 3.4);
+  gIn("#mo-a", C.m3 + 0.2);
+  on("#mo-or", C.m4 - 0.2, "fade");
+  gIn("#mo-b", C.m4 + 0.2);
+  // m5: per view
+  ["#mo-ypp", "#mo-a", "#mo-b"].forEach((s) => gOut(s, C.m5 - 0.3));
+  off("#mo-or", C.m5 - 0.3, "fade");
+  gIn("#mo-bars", C.m5);
+  tl.fromTo("#mo-bl", { scaleY: 0 }, { scaleY: 1, duration: 1.0, ease: "expo.out" }, C.m5 + 1.0);
+  tl.fromTo("#mo-bs", { scaleY: 0 }, { scaleY: 1, duration: 1.0, ease: "expo.out" }, C.m5 + 1.2);
+  words("#mo-usu", C.m5 + 2.4);
+  // m6
+  gOut("#mo-bars", C.m6 - 0.3);
+  off("#mo-usu", C.m6 - 0.3, "blur");
+  on("#mo-sum1", C.m6 + 0.4, "left");
+  on("#mo-sum2", C.m6 + 2.6, "left");
+  // m6b: pooled
+  off("#mo-sum1", C.m6b - 0.3, "up");
+  off("#mo-sum2", C.m6b - 0.3, "up");
+  gIn("#mo-pool", C.m6b);
+  q(".mo-c").forEach((el, k) => {
+    tl.fromTo(el, { opacity: 0, y: -200 }, { opacity: 1, y: 0, duration: 0.5, ease: "bounce.out" }, C.m6b + 0.6 + k * 0.08);
+    tl.to(el, { x: 1210 - parseFloat(el.style.left), y: 350 - parseFloat(el.style.top), opacity: 0, scale: 0.4, duration: 0.6, ease: "power3.in" }, C.m6b + 2.2 + k * 0.04);
+  });
+  ["#mo-s1", "#mo-s2", "#mo-s3"].forEach((s, k) => tl.to(s, { opacity: 1, duration: 0.3 }, C.m6b + 3.0 + k * 0.35));
+</script>

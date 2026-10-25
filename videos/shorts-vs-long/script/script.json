@@ -1,0 +1,422 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap_s": 0.75,
+ "chapter_gap_s": 2.2,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Two roommates",
+   "beats": [
+    [
+     "o1",
+     "Maya and her roommate Leo start YouTube channels on the same day."
+    ],
+    [
+     "o2",
+     "Maya makes long videos. Ten minutes, cooking, one a week."
+    ],
+    [
+     "o3",
+     "Leo only makes Shorts. Thirty seconds, every single day."
+    ],
+    [
+     "o3b",
+     "Same kitchen, same budget, same starting line."
+    ],
+    [
+     "o4",
+     "Ninety days later, one of them has more views. The other has a stronger channel. And they're not the same person."
+    ],
+    [
+     "o5",
+     "Let's follow both channels, and find out which format grows you faster, and why the real answer is: use both, the right way."
+    ]
+   ]
+  },
+  {
+   "id": "what",
+   "title": "What a Short really is",
+   "beats": [
+    [
+     "w1",
+     "First, what makes a Short different?"
+    ],
+    [
+     "w2",
+     "A Short is a vertical video, up to three minutes long, watched in a feed you swipe through."
+    ],
+    [
+     "w3",
+     "Nobody searches for it, and nobody picks it from a thumbnail. It just appears, and plays."
+    ],
+    [
+     "w4",
+     "The viewer's only choice is: keep watching, or swipe away."
+    ],
+    [
+     "w5",
+     "A long video works the other way around. The viewer sees a thumbnail and a title, decides to click, and commits minutes of their time."
+    ],
+    [
+     "w6",
+     "Same platform. Two completely different ways of watching."
+    ],
+    [
+     "w6b",
+     "And that difference changes everything about how each one helps your channel."
+    ]
+   ]
+  },
+  {
+   "id": "good",
+   "title": "What makes a good Short",
+   "beats": [
+    [
+     "g1",
+     "So what makes a Short actually work?"
+    ],
+    [
+     "g2",
+     "It starts instantly. No intro, no greeting. The very first frame is already the interesting part."
+    ],
+    [
+     "g3",
+     "It's about one thing only: one tip, one trick, or one result."
+    ],
+    [
+     "g4",
+     "Text on screen helps, because lots of people scroll with the sound off."
+    ],
+    [
+     "g5",
+     "And the best Shorts end in a way that makes people want to watch again, or see more."
+    ]
+   ]
+  },
+  {
+   "id": "fast",
+   "title": "Why Shorts grow fast",
+   "beats": [
+    [
+     "f1",
+     "In his first week, Leo's numbers explode."
+    ],
+    [
+     "f2",
+     "One of his Shorts, a ten second egg trick, gets shown to thousands of people who have never heard of him."
+    ],
+    [
+     "f3",
+     "That's the superpower of Shorts: discovery."
+    ],
+    [
+     "f4",
+     "There's no click to earn. The feed puts your video in front of people for free, and lets them decide in a couple of seconds."
+    ],
+    [
+     "f5",
+     "It's also low effort for the viewer. Watching thirty seconds is easy, so people try new creators all the time."
+    ],
+    [
+     "f6",
+     "And Leo learns fast. Seven uploads a week means seven chances a week to see what works."
+    ],
+    [
+     "f7",
+     "For a brand new channel, that kind of reach is hard to get any other way."
+    ]
+   ]
+  },
+  {
+   "id": "catch",
+   "title": "The catch",
+   "beats": [
+    [
+     "c1",
+     "But by week four, Leo notices something strange."
+    ],
+    [
+     "c2",
+     "His views are huge, but almost nobody comments. His subscribers don't watch his other videos."
+    ],
+    [
+     "c3",
+     "A Short view can be a second of attention before the next swipe. People saw the egg trick. They didn't necessarily see Leo."
+    ],
+    [
+     "c4",
+     "Many viewers subscribe to a feeling, not a person. They liked one clip, and they're gone."
+    ],
+    [
+     "c5",
+     "And when Leo posts his first long video, his Shorts audience barely shows up."
+    ],
+    [
+     "c6",
+     "Views are not the same as fans. Shorts are great at the first one, and slower at the second."
+    ],
+    [
+     "c6b",
+     "It's like meeting someone for two seconds at a party. They saw you. That doesn't mean they'll call."
+    ]
+   ]
+  },
+  {
+   "id": "deep",
+   "title": "What long videos do",
+   "beats": [
+    [
+     "d1",
+     "Meanwhile, Maya's channel grows slowly. Her first month looks almost flat."
+    ],
+    [
+     "d2",
+     "But look closer. Her viewers stay for minutes at a time. They comment, they ask questions, and they come back next week."
+    ],
+    [
+     "d3",
+     "Long videos build trust. Ten minutes with someone's voice, face, and personality is how viewers become fans."
+    ],
+    [
+     "d4",
+     "They're also findable. People search for things like cheap dinner ideas, and her videos can keep showing up for months, even years."
+    ],
+    [
+     "d5",
+     "And one good long video leads to another. Viewers binge, and every hour they spend on her channel tells YouTube her videos are worth recommending."
+    ],
+    [
+     "d6",
+     "Slower to start. But every view goes deeper."
+    ],
+    [
+     "d6b",
+     "A slow start isn't a bad start. It's just a different kind of growth."
+    ]
+   ]
+  },
+  {
+   "id": "money",
+   "title": "The money question",
+   "beats": [
+    [
+     "m1",
+     "What about earning money?"
+    ],
+    [
+     "m2",
+     "To join the YouTube Partner Program, a channel needs a thousand subscribers, plus one of two things."
+    ],
+    [
+     "m3",
+     "Either four thousand watch hours from long videos in the past year."
+    ],
+    [
+     "m4",
+     "Or ten million Shorts views in the past ninety days."
+    ],
+    [
+     "m5",
+     "Both paths work. But once you're in, long videos usually earn more per view than Shorts."
+    ],
+    [
+     "m6",
+     "So Shorts can help you get noticed, and long videos are usually where the steady income comes from."
+    ],
+    [
+     "m6b",
+     "Shorts ad money works differently too. It's pooled together, and shared between creators based on their share of views."
+    ]
+   ]
+  },
+  {
+   "id": "day30",
+   "title": "Day 30",
+   "beats": [
+    [
+     "t1",
+     "Let's check in on day thirty. These numbers are an illustration, not a promise."
+    ],
+    [
+     "t2",
+     "Leo has hundreds of thousands of views, and about a thousand subscribers."
+    ],
+    [
+     "t3",
+     "Maya has a few thousand views, and about two hundred subscribers."
+    ],
+    [
+     "t4",
+     "Leo is ahead on reach. But compare how long people watch."
+    ],
+    [
+     "t5",
+     "Maya's viewers have spent more total hours with her channel than Leo's have with his."
+    ],
+    [
+     "t6",
+     "So who's winning? It depends on what you're counting."
+    ]
+   ]
+  },
+  {
+   "id": "both",
+   "title": "Make them work together",
+   "beats": [
+    [
+     "b1",
+     "So the roommates make a deal. They'll each steal the other's best move."
+    ],
+    [
+     "b2",
+     "Maya starts cutting Shorts from her long videos. The sizzle, the reveal, the price tag."
+    ],
+    [
+     "b3",
+     "Each Short is a trailer. It gives a taste, and points to the full video."
+    ],
+    [
+     "b4",
+     "She uses the related video link on every Short, so one tap takes viewers to the long version."
+    ],
+    [
+     "b5",
+     "Leo does the opposite. He takes his most popular Short, and turns it into a full ten minute deep dive."
+    ],
+    [
+     "b6",
+     "And they keep the topics matched. A cooking Short leads to a cooking video, not a random vlog."
+    ],
+    [
+     "b7",
+     "Shorts bring people in. Long videos give them a reason to stay."
+    ],
+    [
+     "b7b",
+     "Think of it like a restaurant. Shorts are the free samples outside. Long videos are the meal inside."
+    ]
+   ]
+  },
+  {
+   "id": "plan",
+   "title": "A simple weekly plan",
+   "beats": [
+    [
+     "p1",
+     "Here's the system Maya settles on."
+    ],
+    [
+     "p2",
+     "One long video every week. That's the main course."
+    ],
+    [
+     "p3",
+     "Then three Shorts cut from it: one on Monday, one on Wednesday, and one on Friday."
+    ],
+    [
+     "p4",
+     "Each Short uses a different moment: a hook, a tip, and the final result."
+    ],
+    [
+     "p5",
+     "She films everything on the same day, so the Shorts cost almost no extra time."
+    ],
+    [
+     "p6",
+     "And every Sunday, she checks which Shorts sent people to the long video, and makes more like those."
+    ],
+    [
+     "p6b",
+     "That's four uploads a week, from a single filming day."
+    ]
+   ]
+  },
+  {
+   "id": "mistakes",
+   "title": "Mistakes to avoid",
+   "beats": [
+    [
+     "x1",
+     "Along the way, both roommates make mistakes worth avoiding."
+    ],
+    [
+     "x2",
+     "Leo's first mistake: Shorts on totally random topics. Each one found a different crowd, so none of them stuck around."
+    ],
+    [
+     "x3",
+     "Maya's first mistake: uploading her Shorts sideways, with tiny text. On a phone, they were almost impossible to watch."
+    ],
+    [
+     "x4",
+     "Another one: just chopping off the start of a long video. A Short has to make sense on its own, from the very first second."
+    ],
+    [
+     "x5",
+     "And the biggest one: judging a Short in its first hour. Shorts can take days to find their audience, so give them time before you decide."
+    ]
+   ]
+  },
+  {
+   "id": "day90",
+   "title": "Day 90",
+   "beats": [
+    [
+     "n1",
+     "Day ninety. Again, the numbers are just an illustration."
+    ],
+    [
+     "n2",
+     "Leo's Shorts still bring the biggest crowds, but now his long video gets real viewers too."
+    ],
+    [
+     "n3",
+     "Maya's growth curve finally bends upward. Her Shorts bring new people, and her long videos keep them."
+    ],
+    [
+     "n4",
+     "Both channels are growing faster than either one did alone."
+    ],
+    [
+     "n5",
+     "Not because one format won. Because they stopped choosing."
+    ],
+    [
+     "n5b",
+     "And notice: neither of them quit when the numbers looked bad."
+    ]
+   ]
+  },
+  {
+   "id": "choose",
+   "title": "Which should you choose?",
+   "beats": [
+    [
+     "e1",
+     "So, which should you make?"
+    ],
+    [
+     "e2",
+     "If you want to be discovered fast, and test ideas quickly, lean on Shorts."
+    ],
+    [
+     "e3",
+     "If you want loyal viewers, search traffic, and steadier income, lean on long videos."
+    ],
+    [
+     "e4",
+     "And if you want both, let your Shorts be the door, and your long videos be the room people want to stay in."
+    ],
+    [
+     "e4b",
+     "There's no wrong first step. The only real mistake is posting nothing while you decide."
+    ],
+    [
+     "e5",
+     "Start this week: make one long video, and cut one Short from it."
+    ]
+   ]
+  }
+ ]
+}

@@ -1,0 +1,116 @@
+<!--SFX [["pop","b1",1.2,0.4],["whoosh-short","b2",1.2,0.35],["pop","b2",2.6,0.35],["pop","b2",3.6,0.35],["pop","b2",4.6,0.35],["pop","b3",0.6,0.4],["click","b4",3.0,0.6],["whoosh","b4",3.2,0.35],["whoosh","b5",2.4,0.4],["pop","b6",1.6,0.35],["pop","b6",3.6,0.35],["pop","b7b",1.4,0.35],["pop","b7b",3.6,0.35]]-->
+<style>
+  #bo-m { left: 560px; top: 380px; width: 200px; height: 200px; font-size: 100px; }
+  #bo-l { left: 1160px; top: 380px; width: 200px; height: 200px; font-size: 100px; }
+  #bo-deal { left: 150px; top: 700px; width: 1700px; text-align: center; }
+  #bo-strip { left: 150px; top: 120px; width: 1620px; height: 160px; }
+  .bo-seg { position: absolute; top: 24px; height: 112px; border-radius: 16px; }
+  .bo-ph { top: 360px; width: 260px; height: 520px; border-radius: 44px; padding: 10px; }
+  .bo-ph .scr { position: absolute; inset: 10px; border-radius: 34px; overflow: hidden; }
+  .bo-ph .t { position: absolute; left: 0; width: 100%; top: 380px; text-align: center; font-size: 34px; font-weight: 800; }
+  #bo-trail { left: 150px; top: 360px; width: 700px; }
+  #bo-sph { left: 300px; top: 70px; }
+  #bo-rel { position: absolute; left: 30px; top: 790px; width: 378px; padding: 20px 26px; font-size: 36px; font-weight: 800; border-radius: 22px; }
+  #bo-sph .egg, #bo-sph .plate { left: 120px; top: 300px; width: 200px; height: 200px; }
+  #bo-lv { left: 900px; top: 200px; width: 880px; height: 495px; }
+  #bo-lv .plate { left: 310px; top: 90px; width: 260px; height: 260px; }
+  #bo-reltx { left: 900px; top: 760px; width: 900px; }
+  #bo-egg { left: 150px; top: 280px; width: 260px; height: 520px; border-radius: 44px; padding: 10px; }
+  #bo-egg .scr { position: absolute; inset: 10px; border-radius: 34px; overflow: hidden; background: #12302e; }
+  #bo-egg .egg { left: 60px; top: 190px; width: 120px; height: 120px; }
+  #bo-dive { left: 700px; top: 260px; width: 1070px; height: 602px; }
+  #bo-dive .egg { left: 420px; top: 170px; width: 220px; height: 220px; }
+  #bo-dive .t { position: absolute; left: 40px; top: 30px; font-size: 60px; font-weight: 900; }
+  .bo-match { left: 150px; width: 1620px; height: 200px; }
+  .bo-match .row { position: absolute; left: 50px; top: 50px; gap: 40px; }
+  #bo-in { left: 150px; top: 300px; width: 1700px; }
+  #bo-stay { left: 150px; top: 480px; width: 1700px; }
+  #bo-door { left: 150px; top: 200px; width: 700px; height: 660px; }
+  #bo-meal { left: 950px; top: 200px; width: 820px; height: 660px; }
+  .bo-rt { position: absolute; left: 50px; top: 40px; font-size: 46px; font-weight: 900; }
+  .bo-rs { position: absolute; left: 50px; top: 560px; font-size: 38px; font-weight: 700; color: rgba(255,255,255,0.8); }
+</style>
+
+<div class="avatar m pn" id="bo-m">M</div>
+<div class="avatar l pn" id="bo-l">L</div>
+<div class="disp t80 paper pn shadowed" id="bo-deal">A deal: steal each other's <span class="acc">best move</span></div>
+
+<div class="glass pn" id="bo-strip">
+  <div class="bo-seg" style="left: 24px; width: 380px; background: rgba(255,255,255,0.18)"></div>
+  <div class="bo-seg" id="bo-k1" style="left: 414px; width: 200px; background: #ff7a3d"></div>
+  <div class="bo-seg" style="left: 624px; width: 300px; background: rgba(255,255,255,0.18)"></div>
+  <div class="bo-seg" id="bo-k2" style="left: 934px; width: 200px; background: #ff3d7f"></div>
+  <div class="bo-seg" style="left: 1144px; width: 200px; background: rgba(255,255,255,0.18)"></div>
+  <div class="bo-seg" id="bo-k3" style="left: 1354px; width: 242px; background: #3fe0d0"></div>
+</div>
+<div class="glass pn bo-ph" id="bo-p1" style="left: 750px"><div class="scr" style="background: #3a1c10"><div class="plate" style="left: 50px; top: 140px; width: 140px; height: 140px"><i></i><i></i><i></i></div><div class="t">The sizzle</div></div></div>
+<div class="glass pn bo-ph" id="bo-p2" style="left: 1100px"><div class="scr" style="background: #3a1028"><div class="plate" style="left: 50px; top: 140px; width: 140px; height: 140px"><i></i><i></i><i></i></div><div class="t">The reveal</div></div></div>
+<div class="glass pn bo-ph" id="bo-p3" style="left: 1450px"><div class="scr" style="background: #10302e"><div class="plate" style="left: 50px; top: 140px; width: 140px; height: 140px"><i></i><i></i><i></i></div><div class="t">The price</div></div></div>
+<div class="disp t80 paper pn shadowed" id="bo-trail">Each Short is a <span class="acc">trailer</span></div>
+
+<div class="glass phone pn" id="bo-sph"><div class="scr" style="background: #3a1c10"><div class="plate"><i></i><i></i><i></i></div><div class="glass" id="bo-rel">▶ Related video</div></div></div>
+<div class="glass vid pn" id="bo-lv"><div class="scr" style="background: #1a2a44"><div class="plate"><i></i><i></i><i></i></div></div></div>
+<div class="b46 paper pn shadowed" id="bo-reltx">One tap from the Short to the long version</div>
+<svg class="pn" id="bo-cur" width="54" height="70" viewBox="0 0 54 70" style="left: 520px; top: 600px; z-index: 30"><path d="M4 4 L4 56 L18 44 L28 66 L38 61 L28 40 L46 40 Z" fill="#fff" stroke="#0a1424" stroke-width="4" stroke-linejoin="round" /></svg>
+
+<div class="glass pn" id="bo-egg"><div class="scr"><div class="egg"></div></div></div>
+<div class="glass pn" id="bo-dive"><div class="t">The egg trick: a <span class="teal">10 minute</span> deep dive</div><div class="egg"></div></div>
+
+<div class="glass pn bo-match" id="bo-mt1" style="top: 260px"><div class="row"><div class="b56">Cooking Short → cooking video</div><div class="ok"></div></div></div>
+<div class="glass pn bo-match" id="bo-mt2" style="top: 520px"><div class="row"><div class="b56">Cooking Short → random vlog</div><div class="xk"></div></div></div>
+
+<div class="disp t96 paper pn shadowed" id="bo-in">Shorts bring people <span class="teal">in</span></div>
+<div class="disp t96 paper pn shadowed" id="bo-stay">Long videos give them a reason to <span class="acc">stay</span></div>
+
+<div class="glass pn" id="bo-door"><div class="bo-rt">Free samples outside</div><div class="glass" style="left: 220px; top: 140px; width: 260px; height: 380px; border-radius: 40px; background: rgba(63,224,208,0.25)"></div><div class="bo-rs">= your Shorts</div></div>
+<div class="glass pn" id="bo-meal"><div class="bo-rt">The meal inside</div><div class="plate" style="left: 260px; top: 150px; width: 300px; height: 300px"><i></i><i></i><i></i></div><div class="bo-rs">= your long videos</div></div>
+
+<script>
+  // b1: the deal
+  on("#bo-m", C.b1, "pop");
+  on("#bo-l", C.b1 + 0.2, "pop");
+  tl.to("#bo-m", { x: 220, duration: 0.6, ease: "back.out(1.6)" }, C.b1 + 1.0);
+  tl.to("#bo-l", { x: -220, duration: 0.6, ease: "back.out(1.6)" }, C.b1 + 1.0);
+  words("#bo-deal", C.b1 + 1.2);
+  // b2: cut Shorts from the long video
+  ["#bo-m", "#bo-l"].forEach((s) => off(s, C.b2 - 0.3, "shrink"));
+  off("#bo-deal", C.b2 - 0.3, "blur");
+  gIn("#bo-strip", C.b2);
+  [["#bo-k1", "#bo-p1", 2.6], ["#bo-k2", "#bo-p2", 3.6], ["#bo-k3", "#bo-p3", 4.6]].forEach(([k, p, dt]) => {
+    tl.fromTo(k, { y: 0 }, { y: -10, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, C.b2 + dt - 0.4);
+    gIn(p, C.b2 + dt, { y: -160 });
+  });
+  // b3: trailer
+  gOut("#bo-strip", C.b3 - 0.1);
+  words("#bo-trail", C.b3 + 0.6);
+  // b4: related video link
+  ["#bo-p1", "#bo-p2", "#bo-p3"].forEach((s) => gOut(s, C.b4 - 0.3));
+  off("#bo-trail", C.b4 - 0.3, "blur");
+  gIn("#bo-sph", C.b4);
+  tl.set("#bo-cur", { opacity: 1, x: 300, y: 200 }, C.b4 + 1.4);
+  clickAt("#bo-cur", C.b4 + 1.6, 0, 290, 1.4);
+  gIn("#bo-lv", C.b4 + 3.2, { x: -200, y: 0 });
+  words("#bo-reltx", C.b4 + 3.4);
+  // b5: Leo's deep dive
+  gOut("#bo-sph", C.b5 - 0.3);
+  gOut("#bo-lv", C.b5 - 0.3);
+  tl.to("#bo-cur", { opacity: 0, duration: 0.2 }, C.b5 - 0.3);
+  off("#bo-reltx", C.b5 - 0.3, "blur");
+  gIn("#bo-egg", C.b5 + 0.4);
+  gIn("#bo-dive", C.b5 + 2.4, { x: -300, y: 0, scale: 0.6 });
+  // b6: topic match
+  gOut("#bo-egg", C.b6 - 0.3);
+  gOut("#bo-dive", C.b6 - 0.3);
+  gIn("#bo-mt1", C.b6 + 1.2);
+  gIn("#bo-mt2", C.b6 + 3.2);
+  // b7
+  gOut("#bo-mt1", C.b7 - 0.3);
+  gOut("#bo-mt2", C.b7 - 0.3);
+  words("#bo-in", C.b7);
+  words("#bo-stay", C.b7 + 1.8);
+  // b7b: the restaurant
+  off("#bo-in", C.b7b - 0.3, "up");
+  off("#bo-stay", C.b7b - 0.3, "up");
+  gIn("#bo-door", C.b7b + 1.4);
+  gIn("#bo-meal", C.b7b + 3.6);
+</script>

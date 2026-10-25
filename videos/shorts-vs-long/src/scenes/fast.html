@@ -1,0 +1,91 @@
+<!--SFX [["pop","f1",0.3,0.4],["key-press","f1",0.6,0.3],["sparkle","f2",1.4,0.3],["impact-bass-1","f3",0.0,0.3],["pop","f4",1.0,0.35],["pop","f4",3.6,0.35],["key-press","f5",1.2,0.3],["pop","f6",0.6,0.3],["pop","f6",1.0,0.3],["pop","f6",1.4,0.3],["pop","f6",1.8,0.3],["pop","f6",2.2,0.3],["pop","f6",2.6,0.3],["pop","f6",3.0,0.3]]-->
+<style>
+  #fs-prof { left: 150px; top: 140px; width: 760px; }
+  #fs-prof .row { gap: 28px; }
+  #fs-num { margin-top: 30px; font-size: 140px; }
+  #fs-illu { left: 156px; top: 560px; }
+  #fs-ph { left: 1180px; top: 70px; }
+  #fs-ph .egg { left: 120px; top: 330px; width: 200px; height: 200px; }
+  #fs-cap { position: absolute; left: 40px; top: 120px; width: 358px; text-align: center; font-weight: 900; font-size: 62px; color: #fff; }
+  #fs-dots { position: absolute; inset: 0; }
+  #fs-disc { left: 150px; top: 380px; width: 900px; }
+  #fs-long { left: 150px; top: 230px; width: 1620px; height: 230px; }
+  #fs-short { left: 150px; top: 520px; width: 1620px; height: 230px; }
+  .fs-lt { position: absolute; left: 50px; top: 40px; font-size: 40px; font-weight: 800; }
+  .fs-steps { position: absolute; left: 50px; top: 110px; display: flex; gap: 20px; }
+  .fs-steps .glass { position: relative; padding: 16px 30px; font-size: 38px; font-weight: 700; }
+  #fs-free { left: 150px; top: 820px; width: 1600px; }
+  #fs-tm { left: 150px; top: 230px; width: 760px; height: 560px; }
+  #fs-tl { left: 1010px; top: 230px; width: 760px; height: 560px; }
+  .fs-big { position: absolute; left: 0; width: 100%; top: 150px; text-align: center; font-size: 170px; }
+  .fs-tc { position: absolute; left: 0; width: 100%; top: 400px; text-align: center; }
+  #fs-easy { left: 150px; top: 860px; width: 1600px; }
+  #fs-week { position: absolute; left: 150px; top: 330px; width: 1620px; height: 300px; }
+  .fs-d { position: absolute; top: 0; width: 210px; height: 300px; }
+  .fs-d .dn { position: absolute; left: 24px; top: 20px; font-size: 36px; font-weight: 800; }
+  .fs-d .ok { position: absolute; left: 70px; top: 150px; opacity: 0; }
+  #fs-seven { left: 150px; top: 700px; width: 1600px; }
+  #fs-reach { left: 150px; top: 380px; width: 1700px; }
+</style>
+
+<div class="glass gc pn" id="fs-prof"><div class="row"><div class="avatar l">L</div><div class="b56">Leo · week 1</div></div><div class="stat" id="fs-num">0</div><div class="lab">views</div></div>
+<div class="illu pn" id="fs-illu">Illustrative numbers</div>
+<div class="glass phone pn" id="fs-ph"><div class="scr" style="background: #12302e"><div id="fs-cap">EGG TRICK</div><div class="egg"></div></div></div>
+<div id="fs-dots"></div>
+<div class="disp t160 paper pn shadowed" id="fs-disc"><span class="teal">Discovery</span></div>
+
+<div class="glass pn" id="fs-long"><div class="fs-lt mut">Long video</div><div class="fs-steps"><div class="glass pill">Thumbnail</div><div class="glass pill">Title</div><div class="glass pill" style="border-color: #ff7a3d">Earn the click</div><div class="glass pill">Watch</div></div></div>
+<div class="glass pn" id="fs-short"><div class="fs-lt teal">Short</div><div class="fs-steps"><div class="glass pill">It plays</div><div class="glass pill">Decide in seconds</div></div></div>
+<div class="b56 paper pn shadowed" id="fs-free">The feed puts you in front of people, for free</div>
+
+<div class="glass pn" id="fs-tm"><div class="disp fs-big teal">0:30</div><div class="b46 fs-tc">Easy to try</div></div>
+<div class="glass pn" id="fs-tl"><div class="disp fs-big acc">10:00</div><div class="b46 fs-tc">A real commitment</div></div>
+<div class="b56 paper pn shadowed" id="fs-easy">So people try new creators all the time</div>
+
+<div id="fs-week"></div>
+<div class="disp t80 paper pn shadowed" id="fs-seven"><span class="teal">7 chances</span> a week to learn</div>
+<div class="disp t110 paper pn shadowed" id="fs-reach">Reach that's hard to get <span class="teal">any other way</span></div>
+
+<script>
+  const R = rng(4);
+  const pts = [];
+  for (let k = 0; k < 46; k++) pts.push({ sx: (R() < 0.5 ? -100 : 2020) + (R() - 0.5) * 200, sy: R() * 1080, tx: 1220 + R() * 360, ty: 160 + R() * 760 });
+  make("#fs-dots", pts.length, (k) => ({ cls: "dot", id: "fs-d" + k, css: { left: pts[k].tx + "px", top: pts[k].ty + "px", opacity: 0 } }));
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  make("#fs-week", 7, (k) => ({ cls: "glass fs-d", id: "fs-wd" + k, html: `<div class="dn">${days[k]}</div><div class="ok"></div>`, css: { left: k * 235 + "px", opacity: 0 } }));
+
+  // f1: views explode
+  gIn("#fs-prof", C.f1 - 0.3);
+  count("#fs-num", C.f1 + 0.6, 0, 48200, 3.0);
+  on("#fs-illu", C.f1 + 1.0, "fade");
+  // f2: egg trick, new people
+  gIn("#fs-ph", C.f2);
+  pts.forEach((p, k) => tl.fromTo("#fs-d" + k, { opacity: 0, x: p.sx - p.tx, y: p.sy - p.ty }, { opacity: 0.9, x: 0, y: 0, duration: 1.4, ease: "power2.out" }, C.f2 + 1.4 + k * 0.05));
+  // f3: discovery
+  gOut("#fs-prof", C.f3 - 0.3);
+  off("#fs-illu", C.f3 - 0.3, "fade");
+  words("#fs-disc", C.f3 + 0.05);
+  // f4: no click to earn
+  off("#fs-disc", C.f4 - 0.3, "blur");
+  gOut("#fs-ph", C.f4 - 0.3);
+  tl.to("#fs-dots", { opacity: 0, duration: 0.3 }, C.f4 - 0.3);
+  gIn("#fs-long", C.f4 + 1.0);
+  gIn("#fs-short", C.f4 + 3.6);
+  words("#fs-free", C.f4 + 4.4);
+  // f5: thirty seconds is easy
+  ["#fs-long", "#fs-short"].forEach((s) => gOut(s, C.f5 - 0.3));
+  off("#fs-free", C.f5 - 0.3, "blur");
+  gIn("#fs-tm", C.f5 + 0.3);
+  gIn("#fs-tl", C.f5 + 1.2);
+  words("#fs-easy", C.f5 + 3.2);
+  // f6: seven chances
+  ["#fs-tm", "#fs-tl"].forEach((s) => gOut(s, C.f6 - 0.3));
+  off("#fs-easy", C.f6 - 0.3, "blur");
+  q(".fs-d").forEach((el, k) => gIn(el, C.f6 + 0.2 + k * 0.08));
+  q(".fs-d .ok").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, C.f6 + 0.6 + k * 0.4));
+  words("#fs-seven", C.f6 + 2.8);
+  // f7
+  q(".fs-d").forEach((el) => gOut(el, C.f7 - 0.3));
+  off("#fs-seven", C.f7 - 0.3, "blur");
+  words("#fs-reach", C.f7 + 0.1);
+</script>

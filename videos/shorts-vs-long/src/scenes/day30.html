@@ -1,0 +1,57 @@
+<!--SFX [["pop","t1",0.2,0.45],["key-press","t2",0.6,0.3],["key-press","t3",0.6,0.3],["pop","t4",0.6,0.4],["pop","t5",1.2,0.4],["pop","t6",0.0,0.35]]-->
+<style>
+  #d3-day { left: 790px; top: 80px; padding: 18px 46px; font-size: 56px; font-weight: 900; }
+  #d3-illu { left: 830px; top: 190px; }
+  .d3-c { top: 270px; width: 780px; height: 520px; }
+  .d3-c .row { position: absolute; left: 48px; top: 40px; gap: 28px; }
+  .d3-c .m1 { position: absolute; left: 48px; top: 190px; }
+  .d3-c .m2 { position: absolute; left: 430px; top: 190px; }
+  .d3-c .stat { font-size: 96px; }
+  #d3-l { left: 150px; }
+  #d3-m { left: 990px; }
+  #d3-badge { left: 450px; top: 690px; padding: 14px 30px; }
+  #d3-but { left: 150px; top: 860px; width: 1700px; }
+  .d3-hb { position: absolute; left: 48px; top: 400px; height: 40px; border-radius: 20px; transform-origin: left center; opacity: 0; }
+  .d3-hl { position: absolute; left: 48px; top: 450px; font-size: 36px; font-weight: 800; opacity: 0; }
+  #d3-who { left: 150px; top: 860px; width: 1700px; }
+</style>
+
+<div class="glass pill pn" id="d3-day">Day 30</div>
+<div class="illu pn" id="d3-illu">Illustrative numbers</div>
+<div class="glass pn d3-c" id="d3-l">
+  <div class="row"><div class="avatar l">L</div><div class="b56">Leo · Shorts</div></div>
+  <div class="m1"><div class="stat teal" id="d3-lv">0</div><div class="lab">views</div></div>
+  <div class="m2"><div class="stat" id="d3-ls">0</div><div class="lab">subscribers</div></div>
+  <div class="d3-hb" id="d3-lh" style="width: 300px; background: #3fe0d0"></div><div class="d3-hl" id="d3-lhl">430 watch hours</div>
+</div>
+<div class="glass pn d3-c" id="d3-m">
+  <div class="row"><div class="avatar m">M</div><div class="b56">Maya · long videos</div></div>
+  <div class="m1"><div class="stat acc" id="d3-mv">0</div><div class="lab">views</div></div>
+  <div class="m2"><div class="stat" id="d3-ms">0</div><div class="lab">subscribers</div></div>
+  <div class="d3-hb" id="d3-mh" style="width: 450px; background: #ff7a3d"></div><div class="d3-hl" id="d3-mhl">640 watch hours</div>
+</div>
+<div class="glass pill chip pn" id="d3-badge">Ahead on <span class="teal">reach</span></div>
+<div class="b56 paper pn shadowed" id="d3-but">…but compare how long people <span class="acc">watch</span></div>
+<div class="disp t80 paper pn shadowed" id="d3-who">Who's winning? <span class="acc">Depends what you count.</span></div>
+
+<script>
+  gIn("#d3-day", C.t1 - 0.2);
+  on("#d3-illu", C.t1 + 2.0, "fade");
+  gIn("#d3-l", C.t2 - 0.1);
+  count("#d3-lv", C.t2 + 0.6, 0, 312000, 1.6, (v) => Math.round(v / 1000) + "K");
+  count("#d3-ls", C.t2 + 2.6, 0, 1000, 1.2);
+  gIn("#d3-m", C.t3 - 0.1);
+  count("#d3-mv", C.t3 + 0.6, 0, 4800, 1.4);
+  count("#d3-ms", C.t3 + 2.0, 0, 200, 1.0);
+  gIn("#d3-badge", C.t4 + 0.6);
+  words("#d3-but", C.t4 + 1.6);
+  // t5: watch hours
+  gOut("#d3-badge", C.t5 - 0.2);
+  [["#d3-lh", "#d3-lhl"], ["#d3-mh", "#d3-mhl"]].forEach(([b, l], k) => {
+    tl.fromTo(b, { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 1.0, ease: "expo.out" }, C.t5 + 0.4 + k * 0.6);
+    tl.fromTo(l, { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.t5 + 0.9 + k * 0.6);
+  });
+  // t6
+  off("#d3-but", C.t6 - 0.3, "blur");
+  words("#d3-who", C.t6 + 0.05);
+</script>

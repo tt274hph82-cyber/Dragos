@@ -1,0 +1,64 @@
+<!--SFX [["pop","o1",0.3,0.4],["pop","o1",1.6,0.4],["whoosh-short","o2",0.2,0.35],["whoosh-short","o3",0.2,0.35],["key-press","o4",0.6,0.3],["pop","o4",3.0,0.4],["pop","o4",5.0,0.4],["whoosh","o5",-0.3,0.4],["pop","o5",0.1,0.45]]-->
+<style>
+  #op-day { left: 820px; top: 70px; padding: 16px 40px; font-size: 44px; font-weight: 800; }
+  .op-prof { top: 190px; width: 750px; height: 150px; display: flex; align-items: center; gap: 28px; padding: 0 30px; }
+  #op-pm { left: 150px; }
+  #op-pl { left: 1020px; }
+  .op-prof .n { font-size: 52px; font-weight: 800; }
+  .op-prof .s { font-size: 34px; font-weight: 700; color: rgba(255,255,255,0.75); }
+  #op-vid { left: 150px; top: 390px; width: 750px; height: 422px; }
+  #op-vid .plate { left: 230px; top: 70px; width: 260px; height: 260px; }
+  #op-vtag { left: 150px; top: 840px; padding: 14px 30px; font-size: 38px; }
+  #op-ph { left: 1170px; top: 370px; width: 300px; height: 600px; border-radius: 48px; padding: 10px; }
+  #op-ph .scr { position: absolute; inset: 10px; border-radius: 38px; overflow: hidden; background: #0d1b2a; }
+  #op-ph .egg { left: 70px; top: 200px; width: 140px; height: 140px; }
+  #op-ptag { left: 1500px; top: 840px; padding: 14px 30px; font-size: 38px; }
+  #op-same { left: 150px; top: 900px; width: 1700px; }
+  #op-more { left: 1180px; top: 840px; padding: 18px 34px; }
+  #op-strong { left: 150px; top: 840px; padding: 18px 34px; }
+  #op-title { left: 150px; top: 300px; width: 1700px; }
+  #op-sub { left: 156px; top: 640px; }
+</style>
+
+<div class="pn" id="op-a">
+  <div class="glass pill" id="op-day" style="position: absolute">Day <span id="op-dn">1</span></div>
+  <div class="glass op-prof" id="op-pm" style="position: absolute"><div class="avatar m">M</div><div><div class="n">Maya</div><div class="s">Long videos</div></div></div>
+  <div class="glass op-prof" id="op-pl" style="position: absolute"><div class="avatar l">L</div><div><div class="n">Leo</div><div class="s">Shorts only</div></div></div>
+  <div class="glass vid" id="op-vid" style="position: absolute"><div class="scr"><div class="plate"><i></i><i></i><i></i></div></div></div>
+  <div class="glass pill" id="op-vtag" style="position: absolute">10 min · once a week</div>
+  <div class="glass" id="op-ph" style="position: absolute"><div class="scr"><div class="egg"></div></div></div>
+  <div class="glass pill" id="op-ptag" style="position: absolute">30 sec · every day</div>
+</div>
+<div class="b46 paper pn shadowed" id="op-same">Same kitchen. Same budget. Same starting line.</div>
+<div class="glass pill chip pn" id="op-more">More <span class="teal">views</span></div>
+<div class="glass pill chip pn" id="op-strong">Stronger <span class="acc">channel</span></div>
+<div class="disp t160 paper pn shadowed" id="op-title">Shorts vs. <span class="acc">Long Videos</span></div>
+<div class="b56 mut pn" id="op-sub">Which one grows you faster?</div>
+
+<script>
+  tl.set("#op-a", { opacity: 1 }, 0);
+  ["#op-day", "#op-pm", "#op-pl", "#op-vid", "#op-vtag", "#op-ph", "#op-ptag"].forEach((s) => tl.set(s, { opacity: 0 }, 0));
+  tl.fromTo("#op-day", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.1);
+  tl.fromTo("#op-pm", { opacity: 0, x: -100 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.o1 + 0.3);
+  tl.fromTo("#op-pl", { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.o1 + 1.6);
+  // o2: Maya's long video
+  tl.fromTo("#op-vid", { opacity: 0, y: 80, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, C.o2 + 0.2);
+  tl.fromTo("#op-vtag", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.o2 + 1.4);
+  // o3: Leo's Short
+  tl.fromTo("#op-ph", { opacity: 0, y: 120, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, C.o3 + 0.2);
+  tl.fromTo("#op-ptag", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.o3 + 1.6);
+  // o3b
+  tl.to(["#op-vtag", "#op-ptag"], { opacity: 0, duration: 0.25 }, C.o3b - 0.1);
+  words("#op-same", C.o3b + 0.1);
+  // o4: ninety days
+  off("#op-same", C.o4 - 0.3, "blur");
+  const dn = { v: 1 };
+  tl.fromTo(dn, { v: 1 }, { v: 90, duration: 1.6, ease: "power2.inOut", onUpdate: () => (document.getElementById("op-dn").textContent = Math.round(dn.v)) }, C.o4 + 0.4);
+  on("#op-more", C.o4 + 3.0, "pop");
+  on("#op-strong", C.o4 + 5.0, "pop");
+  // o5: title
+  ["#op-more", "#op-strong"].forEach((s) => off(s, C.o5 - 0.35, "blur"));
+  tl.to("#op-a", { opacity: 0, scale: 0.94, filter: "blur(12px)", duration: 0.4, ease: "power3.in" }, C.o5 - 0.35);
+  words("#op-title", C.o5, 0.09);
+  on("#op-sub", C.o5 + 1.6, "blur");
+</script>

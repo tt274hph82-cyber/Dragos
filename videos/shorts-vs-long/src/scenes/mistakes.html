@@ -1,0 +1,40 @@
+<!--SFX [["pop","x2",0.4,0.4],["pop","x2",4.0,0.4],["pop","x3",0.4,0.4],["pop","x3",4.0,0.4],["pop","x4",0.4,0.4],["pop","x4",4.6,0.4],["pop","x5",0.4,0.4],["pop","x5",5.0,0.4]]-->
+<style>
+  #mi-h { left: 150px; top: 80px; }
+  .mi-c { width: 790px; height: 400px; }
+  .mi-c .row { position: absolute; left: 40px; top: 34px; gap: 22px; }
+  .mi-c .t { font-size: 44px; font-weight: 900; letter-spacing: -0.02em; }
+  .mi-c .vis { position: absolute; left: 40px; top: 130px; width: 710px; height: 240px; }
+  .mi-tp { position: absolute; top: 20px; width: 110px; height: 200px; border-radius: 22px; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 800; }
+  .mi-ph { position: absolute; left: 0; top: 0; width: 135px; height: 240px; border-radius: 26px; background: #0d1b2a; border: 3px solid rgba(255,255,255,0.5); overflow: hidden; }
+  .mi-q { position: absolute; left: 190px; top: 40px; width: 520px; font-size: 38px; font-weight: 700; }
+  .mi-bar { position: absolute; left: 0; bottom: 20px; width: 700px; height: 6px; background: rgba(255,255,255,0.5); }
+</style>
+
+<div class="disp t80 paper pn shadowed" id="mi-h">Mistakes to <span class="acc">avoid</span></div>
+
+<div class="glass pn mi-c" id="mi-1" style="left: 150px; top: 210px">
+  <div class="row"><div class="avatar l" style="width: 64px; height: 64px; font-size: 34px">L</div><div class="t">Random topics</div><div class="xk" id="mi-x1" style="opacity: 0"></div></div>
+  <div class="vis"><div class="mi-tp" style="left: 0; background: #3fe0d0; color: #0a1424">Egg</div><div class="mi-tp" style="left: 130px; background: #5a6eff">Cars</div><div class="mi-tp" style="left: 260px; background: #ff3d7f">Cats</div><div class="mi-tp" style="left: 390px; background: #ffcf4a; color: #0a1424">Golf</div><div class="mi-tp" style="left: 520px; background: #ff7a3d; color: #0a1424">Prank</div></div>
+</div>
+<div class="glass pn mi-c" id="mi-2" style="left: 980px; top: 210px">
+  <div class="row"><div class="avatar m" style="width: 64px; height: 64px; font-size: 34px">M</div><div class="t">Sideways, tiny text</div><div class="xk" id="mi-x2" style="opacity: 0"></div></div>
+  <div class="vis"><div class="mi-ph"><div style="position: absolute; left: 4px; top: 90px; width: 127px; height: 60px; background: #1a2a44"><div data-layout-ignore style="position: absolute; left: 6px; top: 8px; font-size: 9px; color: #fff">5 dinners under $10 for busy students</div></div></div><div class="mi-q">Unwatchable on a phone. Shoot vertical, text big.</div></div>
+</div>
+<div class="glass pn mi-c" id="mi-3" style="left: 150px; top: 640px">
+  <div class="row"><div class="t">Chopped off the start</div><div class="xk" id="mi-x3" style="opacity: 0"></div></div>
+  <div class="vis"><div class="mi-ph"><div data-layout-ignore style="position: absolute; left: 8px; top: 80px; width: 115px; font-size: 18px; font-weight: 700">"…so anyway, as I was saying"</div></div><div class="mi-q">A Short must make sense from the first second.</div></div>
+</div>
+<div class="glass pn mi-c" id="mi-4" style="left: 980px; top: 640px">
+  <div class="row"><div class="t">Judged in the first hour</div><div class="xk" id="mi-x4" style="opacity: 0"></div></div>
+  <div class="vis"><svg width="700" height="240" viewBox="0 0 700 240"><path d="M0 230 H700" stroke="rgba(255,255,255,0.5)" stroke-width="4" /><path id="mi-gl" pathLength="100" d="M10 225 C 120 222, 200 220, 300 200 S 520 90, 690 30" stroke="#3fe0d0" stroke-width="9" fill="none" stroke-linecap="round" /><path d="M60 0 V230" stroke="#ff3d7f" stroke-width="4" stroke-dasharray="10 10" /><text x="72" y="40" fill="#fff" font-family="Inter" font-weight="700" font-size="28">1 hour</text><text x="560" y="140" fill="#fff" font-family="Inter" font-weight="700" font-size="28">days later</text></svg></div>
+</div>
+
+<script>
+  words("#mi-h", C.x1 + 0.05);
+  [["#mi-1", "#mi-x1", C.x2], ["#mi-2", "#mi-x2", C.x3], ["#mi-3", "#mi-x3", C.x4], ["#mi-4", "#mi-x4", C.x5]].forEach(([c, x, t], k) => {
+    gIn(c, t + 0.4);
+    tl.fromTo(x, { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power4.in" }, t + [4.0, 4.0, 4.6, 5.0][k]);
+  });
+  draw("#mi-gl", C.x5 + 1.2, 3.0, "power2.in");
+</script>

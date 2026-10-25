@@ -1,0 +1,51 @@
+<!--SFX [["pop","n1",0.2,0.45],["key-press","n2",1.4,0.3],["pop","n2",3.0,0.4],["sparkle","n3",2.4,0.3],["pop","n4",0.4,0.35],["impact-bass-1","n5",0.0,0.3]]-->
+<style>
+  #d9-day { left: 790px; top: 80px; padding: 18px 46px; font-size: 56px; font-weight: 900; }
+  #d9-illu { left: 830px; top: 190px; }
+  #d9-l { left: 150px; top: 270px; width: 780px; height: 560px; }
+  #d9-l .row { position: absolute; left: 48px; top: 40px; gap: 28px; }
+  #d9-l .m1 { position: absolute; left: 48px; top: 190px; }
+  #d9-l .m2 { position: absolute; left: 48px; top: 370px; opacity: 0; }
+  #d9-l .stat { font-size: 96px; }
+  #d9-g { left: 990px; top: 270px; width: 780px; height: 560px; }
+  #d9-g .row { position: absolute; left: 48px; top: 40px; gap: 28px; }
+  #d9-g svg { position: absolute; left: 40px; top: 150px; }
+  #d9-sa { position: absolute; left: 340px; top: 170px; font-size: 30px; font-weight: 800; color: #3fe0d0; opacity: 0; }
+  #d9-both { left: 150px; top: 870px; width: 1700px; }
+  #d9-stop { left: 150px; top: 380px; width: 1700px; }
+  #d9-quit { left: 150px; top: 620px; width: 1700px; }
+</style>
+
+<div class="glass pill pn" id="d9-day">Day 90</div>
+<div class="illu pn" id="d9-illu">Illustrative numbers</div>
+<div class="glass pn" id="d9-l">
+  <div class="row"><div class="avatar l">L</div><div class="b56">Leo</div></div>
+  <div class="m1"><div class="stat teal">1.2M</div><div class="lab">Shorts views</div></div>
+  <div class="m2" id="d9-lv"><div class="stat acc" id="d9-lvn">0</div><div class="lab">views on his long video</div></div>
+</div>
+<div class="glass pn" id="d9-g">
+  <div class="row"><div class="avatar m">M</div><div class="b56">Maya</div></div>
+  <svg width="700" height="380" viewBox="0 0 700 380"><path d="M0 0 V370 H700" stroke="rgba(255,255,255,0.6)" stroke-width="5" fill="none" /><path d="M350 0 V370" stroke="rgba(63,224,208,0.7)" stroke-width="4" stroke-dasharray="10 10" /><path id="d9-line" pathLength="100" d="M10 360 C 120 356, 250 350, 350 340 C 450 320, 560 200, 690 40" stroke="#ff7a3d" stroke-width="10" fill="none" stroke-linecap="round" /></svg>
+  <div id="d9-sa">Shorts added</div>
+</div>
+<div class="b56 paper pn shadowed" id="d9-both">Both channels grow faster than either did <span class="acc">alone</span></div>
+<div class="disp t110 paper pn shadowed" id="d9-stop">They stopped <span class="acc">choosing</span>.</div>
+<div class="b56 mut pn shadowed" id="d9-quit">And neither of them quit when the numbers looked bad.</div>
+
+<script>
+  gIn("#d9-day", C.n1 - 0.2);
+  on("#d9-illu", C.n1 + 1.0, "fade");
+  gIn("#d9-l", C.n2 - 0.1);
+  tl.fromTo("#d9-lv", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.n2 + 3.0);
+  count("#d9-lvn", C.n2 + 3.0, 0, 18000, 1.4, (v) => Math.round(v / 1000) + "K");
+  gIn("#d9-g", C.n3 - 0.1);
+  draw("#d9-line", C.n3 + 0.4, 3.0, "power1.inOut");
+  tl.to("#d9-sa", { opacity: 1, duration: 0.3 }, C.n3 + 2.4);
+  words("#d9-both", C.n4 + 0.1);
+  // n5
+  ["#d9-l", "#d9-g", "#d9-day"].forEach((s) => gOut(s, C.n5 - 0.3));
+  off("#d9-illu", C.n5 - 0.3, "fade");
+  off("#d9-both", C.n5 - 0.3, "blur");
+  words("#d9-stop", C.n5 + 0.05);
+  on("#d9-quit", C.n5b + 0.2, "blur");
+</script>
