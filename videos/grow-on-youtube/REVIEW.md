@@ -8,7 +8,7 @@
 - `script/script.json` holds the narration, split into short phrases. `script/make_voice.py` voices it with Kokoro (af_heart, speed 0.92) and writes `script/timings.json`, the start/end of every phrase.
 - `src/scenes/<chapter>.html` holds each scene's markup and animation, keyed to phrase ids (`C.c6` = when phrase c6 starts). `src/shared.css` / `src/shared.js` hold the shared look and helpers.
 - `node build.mjs` writes `compositions/*.html` and `index.html` (scene hosts, voice, music, sound effects). Edit `src/`, never `compositions/`.
-- To change the words: edit `script/script.json`, run `python3 -I script/make_voice.py`, convert to mp3 (ffmpeg), then `node build.mjs`. Visuals follow the new timings automatically.
+- To change the words: edit `script/script.json`, run `python3 -I script/make_voice.py`, then `node build.mjs`, then render and normalize loudness (see below). Visuals follow the new timings automatically.
 
 ## Checked
 - `hyperframes check`: 0 errors. Kept warnings: "composition file too large" (scenes are long by design: one per lesson) and one "repeated fromTo on a proxy" (number counters; they render correctly when seeked).

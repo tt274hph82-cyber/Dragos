@@ -57,7 +57,11 @@ audio = np.concatenate(pieces + [np.zeros(int(1.0 * SR), dtype=np.float32)])
 peak = np.max(np.abs(audio))
 audio = audio * (0.89 / peak)  # about -1 dBFS peak
 os.makedirs(os.path.join(ROOT, "assets/voice"), exist_ok=True)
-sf.write(os.path.join(ROOT, "assets/voice/voice.mp3"), audio, SR)
+wav = os.path.join(ROOT, "assets/voice/voice.wav")
+sf.write(wav, audio, SR)
+import subprocess
+subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", wav, "-c:a", "libmp3lame", "-b:a", "160k", os.path.join(ROOT, "assets/voice/voice.mp3")], check=True)
+os.remove(wav)
 total = len(audio) / SR
 json.dump({"total": round(total, 3), "chapters": chapters}, open(os.path.join(ROOT, "script/timings.json"), "w"), indent=1)
 words = sum(len(b["text"].split()) for c in chapters for b in c["beats"])
