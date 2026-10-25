@@ -1,0 +1,3 @@
+yt-dlp>=2025.1.1
+# optional: transcription when a video has no subtitles
+# faster-whisper>=1.0
