@@ -1,0 +1,872 @@
+{
+ "total": 484.971,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Three views",
+   "start": 0.0,
+   "beats": [
+    {
+     "id": "o1",
+     "text": "This is Maya's first YouTube video. She spent two whole weekends making it.",
+     "start": 0.6,
+     "end": 4.975,
+     "local": 0.6,
+     "localEnd": 4.975
+    },
+    {
+     "id": "o2",
+     "text": "She hit upload, refreshed the page, and waited.",
+     "start": 5.725,
+     "end": 8.376,
+     "local": 5.725,
+     "localEnd": 8.376
+    },
+    {
+     "id": "o3",
+     "text": "Three views. And one of them was her mom.",
+     "start": 9.126,
+     "end": 11.441,
+     "local": 9.126,
+     "localEnd": 11.441
+    },
+    {
+     "id": "o4",
+     "text": "If that sounds familiar, this video is for you.",
+     "start": 12.191,
+     "end": 14.879,
+     "local": 12.191,
+     "localEnd": 14.879
+    },
+    {
+     "id": "o5",
+     "text": "Over the next eight minutes, we'll follow Maya through her first year on YouTube, and fix every mistake she makes, one at a time.",
+     "start": 15.629,
+     "end": 23.214,
+     "local": 15.629,
+     "localEnd": 23.214
+    },
+    {
+     "id": "o6",
+     "text": "By the end, you'll know what actually makes a channel grow.",
+     "start": 23.964,
+     "end": 27.033,
+     "local": 23.964,
+     "localEnd": 27.033
+    }
+   ],
+   "end": 29.233,
+   "duration": 29.233
+  },
+  {
+   "id": "algo",
+   "title": "How YouTube decides",
+   "start": 29.233,
+   "beats": [
+    {
+     "id": "a1",
+     "text": "First, Maya needs to understand how YouTube decides what to show.",
+     "start": 29.233,
+     "end": 33.378,
+     "local": 0.0,
+     "localEnd": 4.145
+    },
+    {
+     "id": "a2",
+     "text": "YouTube doesn't push videos out. It pulls them toward people.",
+     "start": 34.128,
+     "end": 37.67,
+     "local": 4.895,
+     "localEnd": 8.437
+    },
+    {
+     "id": "a3",
+     "text": "Every time someone opens the app, it has millions of videos to choose from, and only a few spots on the screen.",
+     "start": 38.42,
+     "end": 45.132,
+     "local": 9.187,
+     "localEnd": 15.899
+    },
+    {
+     "id": "a4",
+     "text": "So it tries to guess which video this one person will actually enjoy.",
+     "start": 45.882,
+     "end": 50.015,
+     "local": 16.649,
+     "localEnd": 20.782
+    },
+    {
+     "id": "a5",
+     "text": "To guess well, it watches what viewers do.",
+     "start": 50.765,
+     "end": 53.12,
+     "local": 21.532,
+     "localEnd": 23.887
+    },
+    {
+     "id": "a6",
+     "text": "Do they click? How long do they stay? Do they come back for more?",
+     "start": 53.87,
+     "end": 57.248,
+     "local": 24.637,
+     "localEnd": 28.015
+    },
+    {
+     "id": "a6b",
+     "text": "YouTube even asks some viewers directly, with quick surveys about whether they liked what they just watched.",
+     "start": 57.998,
+     "end": 64.182,
+     "local": 28.765,
+     "localEnd": 34.949
+    },
+    {
+     "id": "a7",
+     "text": "So the algorithm isn't a gatekeeper you have to trick. It follows the audience.",
+     "start": 64.932,
+     "end": 69.585,
+     "local": 35.699,
+     "localEnd": 40.352
+    },
+    {
+     "id": "a8",
+     "text": "Make something people click, watch, and enjoy, and YouTube will show it to more people like them.",
+     "start": 70.335,
+     "end": 75.932,
+     "local": 41.102,
+     "localEnd": 46.699
+    },
+    {
+     "id": "a9",
+     "text": "That's the whole game. Everything else in this video is how to play it.",
+     "start": 76.682,
+     "end": 80.464,
+     "local": 47.449,
+     "localEnd": 51.231
+    }
+   ],
+   "end": 82.664,
+   "duration": 53.431
+  },
+  {
+   "id": "niche",
+   "title": "Pick a lane",
+   "start": 82.664,
+   "beats": [
+    {
+     "id": "n1",
+     "text": "Maya's first mistake: her channel is about everything.",
+     "start": 82.664,
+     "end": 85.85,
+     "local": 0.0,
+     "localEnd": 3.186
+    },
+    {
+     "id": "n2",
+     "text": "A baking video. A travel vlog. A video game review.",
+     "start": 86.6,
+     "end": 90.399,
+     "local": 3.936,
+     "localEnd": 7.735
+    },
+    {
+     "id": "n3",
+     "text": "Each one reaches a different crowd, so nobody has a reason to subscribe.",
+     "start": 91.149,
+     "end": 95.439,
+     "local": 8.485,
+     "localEnd": 12.775
+    },
+    {
+     "id": "n4",
+     "text": "So she asks herself three questions.",
+     "start": 96.189,
+     "end": 98.091,
+     "local": 13.525,
+     "localEnd": 15.427
+    },
+    {
+     "id": "n5",
+     "text": "What could I make a hundred videos about?",
+     "start": 98.841,
+     "end": 100.886,
+     "local": 16.177,
+     "localEnd": 18.222
+    },
+    {
+     "id": "n6",
+     "text": "Who, exactly, is this for?",
+     "start": 101.636,
+     "end": 103.373,
+     "local": 18.972,
+     "localEnd": 20.709
+    },
+    {
+     "id": "n7",
+     "text": "And why would they pick me over anyone else?",
+     "start": 104.123,
+     "end": 106.063,
+     "local": 21.459,
+     "localEnd": 23.399
+    },
+    {
+     "id": "n8",
+     "text": "Her answer: quick, cheap dinners for busy students.",
+     "start": 106.813,
+     "end": 109.886,
+     "local": 24.149,
+     "localEnd": 27.222
+    },
+    {
+     "id": "n9",
+     "text": "It's specific enough that the right person instantly thinks: that's for me.",
+     "start": 110.636,
+     "end": 114.813,
+     "local": 27.972,
+     "localEnd": 32.149
+    },
+    {
+     "id": "n9b",
+     "text": "Later, she can widen it. But starting narrow makes her far easier to find, and far easier to remember.",
+     "start": 115.563,
+     "end": 122.084,
+     "local": 32.899,
+     "localEnd": 39.42
+    },
+    {
+     "id": "n10",
+     "text": "A clear niche tells both viewers and YouTube who your videos are for.",
+     "start": 122.834,
+     "end": 126.948,
+     "local": 40.17,
+     "localEnd": 44.284
+    }
+   ],
+   "end": 129.148,
+   "duration": 46.484
+  },
+  {
+   "id": "click",
+   "title": "Earn the click",
+   "start": 129.148,
+   "beats": [
+    {
+     "id": "c1",
+     "text": "Next: the click.",
+     "start": 129.148,
+     "end": 130.147,
+     "local": 0.0,
+     "localEnd": 0.999
+    },
+    {
+     "id": "c2",
+     "text": "Maya's video is called, my cooking video number four. The thumbnail is a blurry frame of a frying pan.",
+     "start": 130.897,
+     "end": 137.582,
+     "local": 1.749,
+     "localEnd": 8.434
+    },
+    {
+     "id": "c3",
+     "text": "On a busy home page, it's invisible.",
+     "start": 138.332,
+     "end": 140.543,
+     "local": 9.184,
+     "localEnd": 11.395
+    },
+    {
+     "id": "c4",
+     "text": "Your title and thumbnail are a promise. In a split second, they answer one question: what do I get if I click?",
+     "start": 141.293,
+     "end": 147.965,
+     "local": 12.145,
+     "localEnd": 18.817
+    },
+    {
+     "id": "c5",
+     "text": "So Maya rewrites the promise.",
+     "start": 148.715,
+     "end": 150.393,
+     "local": 19.567,
+     "localEnd": 21.245
+    },
+    {
+     "id": "c6",
+     "text": "New title: five dinners for under ten dollars.",
+     "start": 151.143,
+     "end": 154.117,
+     "local": 21.995,
+     "localEnd": 24.969
+    },
+    {
+     "id": "c7",
+     "text": "New thumbnail: one finished plate, her face reacting, and three big words.",
+     "start": 154.867,
+     "end": 159.397,
+     "local": 25.719,
+     "localEnd": 30.249
+    },
+    {
+     "id": "c8",
+     "text": "Good thumbnails are simple. One subject, strong contrast, and text you can read on a phone.",
+     "start": 160.147,
+     "end": 166.028,
+     "local": 30.999,
+     "localEnd": 36.88
+    },
+    {
+     "id": "c8b",
+     "text": "Maya checks hers at the size of a phone screen. If she can't tell what it is in one glance, it goes back to the drawing board.",
+     "start": 166.778,
+     "end": 173.712,
+     "local": 37.63,
+     "localEnd": 44.564
+    },
+    {
+     "id": "c9",
+     "text": "Good titles spark curiosity, but they never lie. If the video doesn't deliver, people leave, and YouTube notices.",
+     "start": 174.462,
+     "end": 181.891,
+     "local": 45.314,
+     "localEnd": 52.743
+    },
+    {
+     "id": "c10",
+     "text": "Maya makes two versions, and tests them against each other.",
+     "start": 182.641,
+     "end": 185.848,
+     "local": 53.493,
+     "localEnd": 56.7
+    },
+    {
+     "id": "c11",
+     "text": "In this example, the new one gets clicked almost twice as often.",
+     "start": 186.598,
+     "end": 190.145,
+     "local": 57.45,
+     "localEnd": 60.997
+    },
+    {
+     "id": "c12",
+     "text": "Same video. Better promise.",
+     "start": 190.895,
+     "end": 192.814,
+     "local": 61.747,
+     "localEnd": 63.666
+    }
+   ],
+   "end": 195.014,
+   "duration": 65.866
+  },
+  {
+   "id": "hook",
+   "title": "The first 30 seconds",
+   "start": 195.014,
+   "beats": [
+    {
+     "id": "h1",
+     "text": "Now people are clicking. But a lot of them leave in the first few seconds.",
+     "start": 195.014,
+     "end": 199.045,
+     "local": 0.0,
+     "localEnd": 4.031
+    },
+    {
+     "id": "h2",
+     "text": "Her old intro: a spinning logo, some music, and, hey guys, welcome back to my channel.",
+     "start": 199.795,
+     "end": 205.333,
+     "local": 4.781,
+     "localEnd": 10.319
+    },
+    {
+     "id": "h3",
+     "text": "Thirty seconds before anything happens.",
+     "start": 206.083,
+     "end": 208.166,
+     "local": 11.069,
+     "localEnd": 13.152
+    },
+    {
+     "id": "h4",
+     "text": "So she opens with the payoff instead.",
+     "start": 208.916,
+     "end": 210.839,
+     "local": 13.902,
+     "localEnd": 15.825
+    },
+    {
+     "id": "h5",
+     "text": "A sizzling plate on screen, and one line: this dinner costs three dollars, and takes ten minutes.",
+     "start": 211.589,
+     "end": 217.318,
+     "local": 16.575,
+     "localEnd": 22.304
+    },
+    {
+     "id": "h6",
+     "text": "That's a hook. Show the result, confirm the promise from the thumbnail, and give people a reason to stay.",
+     "start": 218.068,
+     "end": 224.225,
+     "local": 23.054,
+     "localEnd": 29.211
+    },
+    {
+     "id": "h7",
+     "text": "Cut the long intro. Cut the logo. Get to the good part, fast.",
+     "start": 224.975,
+     "end": 228.947,
+     "local": 29.961,
+     "localEnd": 33.933
+    },
+    {
+     "id": "h7b",
+     "text": "A good test: if a stranger skipped your first ten seconds, would they miss anything? If not, cut it.",
+     "start": 229.697,
+     "end": 235.691,
+     "local": 34.683,
+     "localEnd": 40.677
+    },
+    {
+     "id": "h8",
+     "text": "On her retention graph, the steep drop at the start gets much smaller.",
+     "start": 236.441,
+     "end": 240.299,
+     "local": 41.427,
+     "localEnd": 45.285
+    }
+   ],
+   "end": 242.499,
+   "duration": 47.485
+  },
+  {
+   "id": "retain",
+   "title": "Keep them watching",
+   "start": 242.499,
+   "beats": [
+    {
+     "id": "r1",
+     "text": "Next problem: the middle of her videos sags.",
+     "start": 242.499,
+     "end": 245.103,
+     "local": 0.0,
+     "localEnd": 2.604
+    },
+    {
+     "id": "r2",
+     "text": "The retention graph in YouTube Studio shows exactly where people leave.",
+     "start": 245.853,
+     "end": 250.222,
+     "local": 3.354,
+     "localEnd": 7.723
+    },
+    {
+     "id": "r3",
+     "text": "Every dip is a moment someone got bored.",
+     "start": 250.972,
+     "end": 253.192,
+     "local": 8.473,
+     "localEnd": 10.693
+    },
+    {
+     "id": "r4",
+     "text": "So Maya edits tighter. She cuts the pauses, and the repeated steps.",
+     "start": 253.942,
+     "end": 258.131,
+     "local": 11.443,
+     "localEnd": 15.632
+    },
+    {
+     "id": "r5",
+     "text": "She changes something on screen every few seconds: a new angle, a close-up, a line of text.",
+     "start": 258.881,
+     "end": 264.602,
+     "local": 16.382,
+     "localEnd": 22.103
+    },
+    {
+     "id": "r6",
+     "text": "She plants small questions, like, stay to the end for the secret sauce. And then she actually pays it off.",
+     "start": 265.352,
+     "end": 271.644,
+     "local": 22.853,
+     "localEnd": 29.145
+    },
+    {
+     "id": "r7",
+     "text": "She tells people where the video is going, and keeps moving forward.",
+     "start": 272.394,
+     "end": 275.969,
+     "local": 29.895,
+     "localEnd": 33.47
+    },
+    {
+     "id": "r7b",
+     "text": "And she ends the video the moment it's done, pointing straight to another video, instead of saying goodbye for a whole minute.",
+     "start": 276.719,
+     "end": 283.821,
+     "local": 34.22,
+     "localEnd": 41.322
+    },
+    {
+     "id": "r8",
+     "text": "After every upload, she finds the biggest dip, and fixes that kind of moment next time.",
+     "start": 284.571,
+     "end": 289.99,
+     "local": 42.072,
+     "localEnd": 47.491
+    },
+    {
+     "id": "r9",
+     "text": "When people watch longer, it's a sign they're enjoying it. And that's what YouTube wants to recommend.",
+     "start": 290.74,
+     "end": 296.564,
+     "local": 48.241,
+     "localEnd": 54.065
+    }
+   ],
+   "end": 298.764,
+   "duration": 56.265
+  },
+  {
+   "id": "habit",
+   "title": "Show up every week",
+   "start": 298.764,
+   "beats": [
+    {
+     "id": "k1",
+     "text": "Maya used to upload whenever she felt like it. Twice one week, then nothing for two months.",
+     "start": 298.764,
+     "end": 304.242,
+     "local": 0.0,
+     "localEnd": 5.478
+    },
+    {
+     "id": "k2",
+     "text": "Now she picks a schedule she can actually keep: one video, every week.",
+     "start": 304.992,
+     "end": 309.145,
+     "local": 6.228,
+     "localEnd": 10.381
+    },
+    {
+     "id": "k3",
+     "text": "A schedule matters less to the algorithm than people think. But it matters a lot to you.",
+     "start": 309.895,
+     "end": 314.941,
+     "local": 11.131,
+     "localEnd": 16.177
+    },
+    {
+     "id": "k4",
+     "text": "Every video is practice. Video ten is better than video one. Video fifty is better than video ten.",
+     "start": 315.691,
+     "end": 322.436,
+     "local": 16.927,
+     "localEnd": 23.672
+    },
+    {
+     "id": "k5",
+     "text": "She batches her work. She films two videos on Sunday, and edits during the week.",
+     "start": 323.186,
+     "end": 327.78,
+     "local": 24.422,
+     "localEnd": 29.016
+    },
+    {
+     "id": "k5b",
+     "text": "That rhythm means one bad week never breaks the chain.",
+     "start": 328.53,
+     "end": 331.47,
+     "local": 29.766,
+     "localEnd": 32.706
+    },
+    {
+     "id": "k6",
+     "text": "And she stops chasing perfect. Done and uploaded beats perfect and stuck in a folder.",
+     "start": 332.22,
+     "end": 337.245,
+     "local": 33.456,
+     "localEnd": 38.481
+    }
+   ],
+   "end": 339.445,
+   "duration": 40.681
+  },
+  {
+   "id": "shorts",
+   "title": "Shorts and series",
+   "start": 339.445,
+   "beats": [
+    {
+     "id": "s1",
+     "text": "Then she adds Shorts.",
+     "start": 339.445,
+     "end": 340.639,
+     "local": 0.0,
+     "localEnd": 1.194
+    },
+    {
+     "id": "s2",
+     "text": "Quick vertical videos that get shown to people who have never heard of her.",
+     "start": 341.389,
+     "end": 345.172,
+     "local": 1.944,
+     "localEnd": 5.727
+    },
+    {
+     "id": "s3",
+     "text": "She cuts the best moment from each long video into a Short: the sizzle, the reveal, the price.",
+     "start": 345.922,
+     "end": 351.763,
+     "local": 6.477,
+     "localEnd": 12.318
+    },
+    {
+     "id": "s4",
+     "text": "Shorts bring in new eyes. Long videos turn them into fans.",
+     "start": 352.513,
+     "end": 356.128,
+     "local": 13.068,
+     "localEnd": 16.683
+    },
+    {
+     "id": "s4b",
+     "text": "Some of the people who find her through a Short tap through to her channel, and stay for the longer videos.",
+     "start": 356.878,
+     "end": 362.312,
+     "local": 17.433,
+     "localEnd": 22.867
+    },
+    {
+     "id": "s5",
+     "text": "She also turns her best idea into a series: dinner for under five dollars, week after week.",
+     "start": 363.062,
+     "end": 368.941,
+     "local": 23.617,
+     "localEnd": 29.496
+    },
+    {
+     "id": "s6",
+     "text": "And she links her videos together with end screens and playlists, so one view leads to the next.",
+     "start": 369.691,
+     "end": 375.047,
+     "local": 30.246,
+     "localEnd": 35.602
+    }
+   ],
+   "end": 377.247,
+   "duration": 37.802
+  },
+  {
+   "id": "stats",
+   "title": "Read the numbers",
+   "start": 377.247,
+   "beats": [
+    {
+     "id": "t1",
+     "text": "Every Sunday, Maya spends fifteen minutes in YouTube Studio.",
+     "start": 377.247,
+     "end": 380.76,
+     "local": 0.0,
+     "localEnd": 3.513
+    },
+    {
+     "id": "t2",
+     "text": "She checks three things.",
+     "start": 381.51,
+     "end": 382.806,
+     "local": 4.263,
+     "localEnd": 5.559
+    },
+    {
+     "id": "t3",
+     "text": "Click-through rate. Are people clicking when they see her thumbnail?",
+     "start": 383.556,
+     "end": 386.781,
+     "local": 6.309,
+     "localEnd": 9.534
+    },
+    {
+     "id": "t4",
+     "text": "Average view duration. Are they staying?",
+     "start": 387.531,
+     "end": 389.966,
+     "local": 10.284,
+     "localEnd": 12.719
+    },
+    {
+     "id": "t5",
+     "text": "And returning viewers. Are they coming back?",
+     "start": 390.716,
+     "end": 393.105,
+     "local": 13.469,
+     "localEnd": 15.858
+    },
+    {
+     "id": "t6",
+     "text": "Low clicks? Work on the title and thumbnail.",
+     "start": 393.855,
+     "end": 396.221,
+     "local": 16.608,
+     "localEnd": 18.974
+    },
+    {
+     "id": "t7",
+     "text": "Early drop off? Work on the hook.",
+     "start": 396.971,
+     "end": 398.872,
+     "local": 19.724,
+     "localEnd": 21.625
+    },
+    {
+     "id": "t8",
+     "text": "Few returning viewers? Work on the series.",
+     "start": 399.622,
+     "end": 402.061,
+     "local": 22.375,
+     "localEnd": 24.814
+    },
+    {
+     "id": "t8b",
+     "text": "Over time, she spots patterns: which topics get clicked, which ones keep people watching, and which ones bring in subscribers.",
+     "start": 402.811,
+     "end": 410.572,
+     "local": 25.564,
+     "localEnd": 33.325
+    },
+    {
+     "id": "t9",
+     "text": "She doesn't compare herself to giant channels. She only tries to beat her own last video.",
+     "start": 411.322,
+     "end": 416.493,
+     "local": 34.075,
+     "localEnd": 39.246
+    }
+   ],
+   "end": 418.693,
+   "duration": 41.446
+  },
+  {
+   "id": "people",
+   "title": "Talk to your viewers",
+   "start": 418.693,
+   "beats": [
+    {
+     "id": "p1",
+     "text": "Finally, she treats her viewers like people, not numbers.",
+     "start": 418.693,
+     "end": 421.913,
+     "local": 0.0,
+     "localEnd": 3.22
+    },
+    {
+     "id": "p2",
+     "text": "She replies to comments in the first hour after a video goes live.",
+     "start": 422.663,
+     "end": 426.593,
+     "local": 3.97,
+     "localEnd": 7.9
+    },
+    {
+     "id": "p3",
+     "text": "She pins the best questions, and turns them into her next videos.",
+     "start": 427.343,
+     "end": 431.11,
+     "local": 8.65,
+     "localEnd": 12.417
+    },
+    {
+     "id": "p4",
+     "text": "She posts polls, and asks what they want to cook next.",
+     "start": 431.86,
+     "end": 435.061,
+     "local": 13.167,
+     "localEnd": 16.368
+    },
+    {
+     "id": "p4b",
+     "text": "She even features a viewer's recipe in one video, and that viewer shares it with all of their friends.",
+     "start": 435.811,
+     "end": 441.477,
+     "local": 17.118,
+     "localEnd": 22.784
+    },
+    {
+     "id": "p5",
+     "text": "Viewers who feel heard come back. And people who come back are what turn a channel into a community.",
+     "start": 442.227,
+     "end": 447.772,
+     "local": 23.534,
+     "localEnd": 29.079
+    }
+   ],
+   "end": 449.972,
+   "duration": 31.279
+  },
+  {
+   "id": "year",
+   "title": "One year later",
+   "start": 449.972,
+   "beats": [
+    {
+     "id": "y1",
+     "text": "One year later.",
+     "start": 449.972,
+     "end": 450.913,
+     "local": 0.0,
+     "localEnd": 0.941
+    },
+    {
+     "id": "y2",
+     "text": "Maya has made fifty two videos. Most did okay. A few did great. And one took off.",
+     "start": 451.663,
+     "end": 457.12,
+     "local": 1.691,
+     "localEnd": 7.148
+    },
+    {
+     "id": "y3",
+     "text": "Not because of a trick. Because each video was a little better than the last.",
+     "start": 457.87,
+     "end": 462.114,
+     "local": 7.898,
+     "localEnd": 12.142
+    },
+    {
+     "id": "y3b",
+     "text": "Her click-through rate went up. Her viewers stayed longer. And more of them came back, every single week.",
+     "start": 462.864,
+     "end": 468.521,
+     "local": 12.892,
+     "localEnd": 18.549
+    },
+    {
+     "id": "y4",
+     "text": "So here's the whole thing, in one line.",
+     "start": 469.271,
+     "end": 471.271,
+     "local": 19.299,
+     "localEnd": 21.299
+    },
+    {
+     "id": "y5",
+     "text": "Make videos for one clear viewer. Earn the click. Keep the promise. And get a little better every time.",
+     "start": 472.021,
+     "end": 478.249,
+     "local": 22.049,
+     "localEnd": 28.277
+    },
+    {
+     "id": "y6",
+     "text": "Now go make your next video. And press upload.",
+     "start": 478.999,
+     "end": 481.771,
+     "local": 29.027,
+     "localEnd": 31.799
+    }
+   ],
+   "end": 484.971,
+   "duration": 34.999
+  }
+ ]
+}

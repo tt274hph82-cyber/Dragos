@@ -1,0 +1,188 @@
+<!--SFX [["whoosh-short","a2",0.9,0.4],["sparkle","a3",0.2,0.25],["whoosh","a3",4.6,0.4],["pop","a4",0.8,0.5],["pop","a6",0.3,0.45],["pop","a6",1.1,0.45],["pop","a6",2.3,0.45],["key-press","a6b",2.0,0.4],["key-press","a6b",2.3,0.4],["key-press","a6b",2.6,0.4],["key-press","a6b",2.9,0.4],["key-press","a6b",3.2,0.4],["whoosh-short","a7",1.4,0.4],["sparkle","a8",2.0,0.25],["pop","a9",0.0,0.4]]-->
+<style>
+  #al-q { left: 150px; top: 120px; width: 1050px; }
+  #al-phone { left: 1330px; top: 70px; }
+  #al-phone .hdr { position: absolute; left: 30px; top: 30px; }
+  .al-slot { position: absolute; left: 20px; width: 394px; height: 222px; border-radius: 14px; background: #e6ddd3; }
+  .al-slot-t { position: absolute; left: 20px; width: 300px; height: 22px; border-radius: 11px; background: #e6ddd3; }
+  #al-pick { position: absolute; left: 14px; top: 104px; width: 406px; height: 234px; border-radius: 18px; border: 8px solid #ff5a1f; opacity: 0; }
+  #al-pull { left: 0; top: 0; width: 1200px; height: 1080px; }
+  #al-ptile { position: absolute; left: 150px; top: 520px; width: 360px; height: 202px; border-radius: 14px; background: #f5f0e8; }
+  #al-ptile .playbtn { left: 120px; top: 60px; }
+  #al-pviewer { left: 1130px; top: 520px; color: #f5f0e8; width: 130px; height: 188px; }
+  #al-pnot { left: 150px; top: 370px; }
+  #al-pyes { left: 150px; top: 800px; }
+  #al-wall { left: 120px; top: 330px; width: 1100px; height: 640px; }
+  #al-many { left: 150px; top: 250px; }
+  #al-few { left: 150px; top: 960px; }
+  #al-guess { left: 150px; top: 330px; width: 1050px; }
+  #al-sig-h { left: 150px; top: 150px; width: 1100px; }
+  .al-sig { left: 150px; display: flex; align-items: center; gap: 36px; }
+  .al-ic { width: 110px; height: 110px; border-radius: 26px; background: #f5f0e8; position: relative; }
+  #al-survey { position: absolute; left: 30px; top: 380px; width: 374px; padding: 30px; border-radius: 22px; background: #16110e; color: #f5f0e8; opacity: 0; }
+  #al-survey .stars { display: flex; gap: 10px; margin-top: 20px; }
+  #al-survey .st { width: 56px; height: 56px; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); background: #8c7f73; }
+  #al-gate { left: 150px; top: 230px; }
+  #al-strike { position: absolute; left: 140px; top: 290px; width: 1120px; height: 40px; opacity: 0; }
+  #al-follow { left: 150px; top: 480px; width: 1600px; }
+  #al-net { position: absolute; inset: 0; opacity: 0; }
+  #al-ntile { position: absolute; left: 820px; top: 430px; width: 280px; height: 158px; border-radius: 14px; background: #ff5a1f; }
+  #al-ntile .playbtn { background: #16110e; left: 80px; top: 37px; }
+  #al-ntile .playbtn::after { border-left-color: #ff5a1f; }
+  #al-nlab { left: 150px; top: 960px; width: 1700px; }
+  #al-game { left: 150px; top: 380px; width: 1700px; }
+  #al-game2 { left: 156px; top: 640px; width: 1500px; }
+</style>
+
+<div class="desk"></div>
+
+<div class="disp t96 paper pn" id="al-q">How does YouTube decide what to show?</div>
+
+<div class="phone pn" id="al-phone">
+  <div class="screen">
+    <div class="hdr b40 ink">Home</div>
+    <div class="al-slot" style="top: 110px"></div><div class="al-slot-t" style="top: 348px"></div>
+    <div class="al-slot" style="top: 400px"></div><div class="al-slot-t" style="top: 638px"></div>
+    <div class="al-slot" style="top: 690px"></div>
+    <div id="al-pick"></div>
+    <div id="al-survey">
+      <div class="b40">Did you enjoy this video?</div>
+      <div class="stars"><div class="st"></div><div class="st"></div><div class="st"></div><div class="st"></div><div class="st"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="pn" id="al-pull">
+  <div class="b46 mut pn" id="al-pnot">Not pushed out…</div>
+  <div id="al-ptile"><div class="playbtn"></div></div>
+  <div class="person pn" id="al-pviewer"></div>
+  <div class="b56 paper pn" id="al-pyes">…<span class="acc">pulled</span> toward people</div>
+</div>
+
+<div class="b56 paper pn" id="al-many">Millions of videos</div>
+<div class="pn" id="al-wall"></div>
+<div class="b56 paper pn" id="al-few">Only a few spots on the screen</div>
+<div class="disp t96 paper pn" id="al-guess">Which one will <span class="acc">this person</span> enjoy?</div>
+
+<div class="disp t80 paper pn" id="al-sig-h">It watches what viewers do</div>
+<div class="pn al-sig" id="al-s1" style="top: 360px">
+  <div class="al-ic"><svg width="110" height="110" viewBox="0 0 110 110"><path d="M38 26 L38 82 L52 70 L62 92 L72 87 L62 66 L80 66 Z" fill="#16110e"/></svg></div>
+  <div class="b56 paper">Do they <span class="acc">click</span>?</div>
+</div>
+<div class="pn al-sig" id="al-s2" style="top: 520px">
+  <div class="al-ic"><svg width="110" height="110" viewBox="0 0 110 110"><circle cx="55" cy="58" r="30" fill="none" stroke="#16110e" stroke-width="8"/><path d="M55 58 L55 40" stroke="#16110e" stroke-width="8" stroke-linecap="round"/><rect x="45" y="14" width="20" height="10" rx="3" fill="#16110e"/></svg></div>
+  <div class="b56 paper">How long do they <span class="acc">stay</span>?</div>
+</div>
+<div class="pn al-sig" id="al-s3" style="top: 680px">
+  <div class="al-ic"><svg width="110" height="110" viewBox="0 0 110 110"><path d="M78 56a24 24 0 1 1-8-18" fill="none" stroke="#16110e" stroke-width="8" stroke-linecap="round"/><path d="M74 20v20h-20" fill="none" stroke="#16110e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+  <div class="b56 paper">Do they <span class="acc">come back</span>?</div>
+</div>
+
+<div class="disp t130 mut pn" id="al-gate">A gatekeeper</div>
+<svg id="al-strike" viewBox="0 0 1120 40"><path id="al-strike-p" pathLength="100" d="M0 22 L1120 18" stroke="#ff5a1f" stroke-width="16" stroke-linecap="round" fill="none"/></svg>
+<div class="disp t130 paper pn" id="al-follow">It <span class="acc">follows</span> the audience</div>
+
+<div id="al-net">
+  <div class="b56 paper pn" id="al-nlab">Click, watch, enjoy → shown to more people like them</div>
+  <div id="al-dots"></div>
+  <div id="al-ntile"><div class="playbtn"></div></div>
+</div>
+
+<div class="disp t130 paper pn" id="al-game">That's the whole <span class="acc">game</span></div>
+<div class="b46 mut pn" id="al-game2">Everything else is how to play it</div>
+
+<script>
+  // wall of tiny tiles
+  const R = rng(11);
+  make("#al-wall", 240, (k) => ({
+    cls: "mt",
+    id: "al-mt" + k,
+    css: { left: (k % 16) * 68 + "px", top: Math.floor(k / 16) * 42 + "px", background: ["#8c7f73", "#a8998b", "#6f6359", "#c9bcae"][Math.floor(R() * 4)] },
+  }));
+  // network dots: 3 rings
+  const ring = [];
+  const RN = rng(5);
+  [[8, 230], [18, 380], [36, 540]].forEach(([n, r], ri) => {
+    for (let k = 0; k < n; k++) {
+      const a = (k / n) * Math.PI * 2 + ri * 0.3 + RN() * 0.2;
+      ring.push({ x: 960 + Math.cos(a) * r * 1.45 - 11, y: 509 + Math.sin(a) * r * 0.82 - 11, ri });
+    }
+  });
+  make("#al-dots", ring.length, (k) => ({ cls: "dot", id: "al-d" + k, css: { left: ring[k].x + "px", top: ring[k].y + "px", opacity: 0 } }));
+
+  // a1: question + phone
+  tl.set("#al-q", { opacity: 1 }, 0);
+  words("#al-q", C.a1 + 0.1);
+  on("#al-phone", C.a1 + 0.3, "up");
+  off("#al-q", C.a2 - 0.35, "up");
+
+  // a2: push vs pull
+  tl.set("#al-pull", { opacity: 1 }, C.a2 - 0.1);
+  on("#al-ptile", C.a2, "pop");
+  on("#al-pnot", C.a2 + 0.1, "blur");
+  on("#al-pviewer", C.a2 + 0.2, "fade");
+  tl.fromTo("#al-ptile", { x: 0 }, { x: 60, duration: 0.25, ease: "power2.out", immediateRender: false }, C.a2 + 0.6);
+  tl.to("#al-ptile", { x: 0, duration: 0.2, ease: "power2.in" }, C.a2 + 0.85);
+  tl.to("#al-ptile", { x: 520, duration: 1.0, ease: "expo.out" }, C.a2 + 1.7);
+  on("#al-pyes", C.a2 + 1.8, "blur");
+  tl.to("#al-pull", { opacity: 0, duration: 0.25, ease: "power2.in" }, C.a3 - 0.3);
+
+  // a3: millions -> few spots
+  on("#al-many", C.a3, "blur");
+  tl.set("#al-wall", { opacity: 1 }, C.a3);
+  tl.fromTo("#al-wall .mt", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out", stagger: { each: 0.006, from: "start" } }, C.a3 + 0.1);
+  // funnel: three tiles fly to the slots, the rest fall away
+  const keep = [37, 118, 201];
+  tl.to(q("#al-wall .mt").filter((_, k) => !keep.includes(k)), { opacity: 0.12, duration: 0.5, ease: "power2.in", stagger: { each: 0.001, from: "random" } }, C.a3 + 4.0);
+  keep.forEach((k, j) => {
+    const el = document.getElementById("al-mt" + k);
+    const x0 = 120 + (k % 16) * 68, y0 = 330 + Math.floor(k / 16) * 42;
+    const tx = 1330 + 18 + 20, ty = 70 + 18 + [110, 400, 690][j];
+    tl.to(el, { x: tx - x0, y: ty - y0, scaleX: 394 / 64, scaleY: 222 / 36, transformOrigin: "0 0", backgroundColor: ["#ff5a1f", "#c9bcae", "#a8998b"][j], borderRadius: "2px", duration: 0.9, ease: "power3.inOut" }, C.a3 + 4.5 + j * 0.12);
+  });
+  on("#al-few", C.a3 + 4.7, "blur");
+  off("#al-many", C.a4 - 0.3, "blur");
+  off("#al-few", C.a4 - 0.3, "blur");
+
+  // a4: guess for one person
+  words("#al-guess", C.a4 + 0.1);
+  tl.fromTo("#al-pick", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.a4 + 0.8);
+  off("#al-guess", C.a5 - 0.3, "up");
+  tl.to("#al-wall", { opacity: 0, duration: 0.3 }, C.a4 - 0.2);
+  tl.to("#al-pick", { opacity: 0, duration: 0.2, immediateRender: false }, C.a5 - 0.2);
+
+  // a5/a6: signals
+  words("#al-sig-h", C.a5 + 0.05);
+  on("#al-s1", C.a6 + 0.25, "left");
+  on("#al-s2", C.a6 + 1.05, "left");
+  on("#al-s3", C.a6 + 2.25, "left");
+  // a6b: survey on the phone
+  tl.fromTo("#al-survey", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.a6b + 0.6);
+  q("#al-survey .st").forEach((el, k) => tl.fromTo(el, { backgroundColor: "#8c7f73", scale: 1 }, { backgroundColor: "#ff5a1f", scale: 1.15, duration: 0.15, ease: "power2.out", yoyo: true, repeat: 1 }, C.a6b + 2.0 + k * 0.3));
+  q("#al-survey .st").forEach((el, k) => tl.set(el, { backgroundColor: "#ff5a1f" }, C.a6b + 2.32 + k * 0.3));
+  ["#al-sig-h", "#al-s1", "#al-s2", "#al-s3"].forEach((s, k) => off(s, C.a7 - 0.4 + k * 0.05, "left"));
+  off("#al-phone", C.a7 - 0.3, "down");
+
+  // a7: gatekeeper struck, follows printed
+  words("#al-gate", C.a7);
+  draw("#al-strike-p", C.a7 + 1.4, 0.35, "power3.out");
+  tl.set("#al-strike", { opacity: 1 }, C.a7 + 1.4);
+  inkIn("#al-follow", C.a7 + 2.5, 0.12);
+  off("#al-gate", C.a8 - 0.3, "blur");
+  tl.to("#al-strike", { opacity: 0, duration: 0.2 }, C.a8 - 0.3);
+  off("#al-follow", C.a8 - 0.3, "up");
+
+  // a8: viewers multiply
+  tl.set("#al-net", { opacity: 1 }, C.a8 - 0.1);
+  on("#al-ntile", C.a8, "pop");
+  words("#al-nlab", C.a8 + 0.2);
+  ring.forEach((d, k) => {
+    const t0 = C.a8 + [1.0, 2.4, 3.6][d.ri] + (k % 12) * 0.03;
+    tl.fromTo("#al-d" + k, { opacity: 0, x: 960 - 11 - d.x, y: 509 - 11 - d.y, scale: 0.3 }, { opacity: 1, x: 0, y: 0, scale: 1, duration: 0.7, ease: "expo.out" }, t0);
+  });
+  tl.to("#al-net", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.a9 - 0.3);
+
+  // a9
+  words("#al-game", C.a9 + 0.05, 0.08);
+  on("#al-game2", C.a9 + 1.6, "blur");
+</script>

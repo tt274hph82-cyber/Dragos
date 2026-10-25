@@ -1,0 +1,179 @@
+<!--SFX [["pop","r3",0.3,0.4],["pop","r3",0.9,0.4],["whoosh","r4",-0.3,0.4],["click","r4",2.0,0.6],["click","r4",2.8,0.6],["whoosh-short","r5",1.0,0.3],["whoosh-short","r5",2.2,0.3],["whoosh-short","r5",3.4,0.3],["pop","r6",0.4,0.4],["sparkle","r6",4.4,0.3],["pop","r7",0.4,0.35],["pop","r7",1.2,0.35],["pop","r7",2.0,0.35],["whoosh","r7b",-0.3,0.4],["pop","r7b",3.4,0.4],["whoosh","r8",-0.3,0.4],["pop","r8",1.0,0.45]]-->
+<style>
+  #rt-studio { opacity: 0; }
+  #rt-gt { left: 150px; top: 90px; }
+  #rt-gs { left: 154px; top: 200px; }
+  #rt-graph { position: absolute; left: 230px; top: 300px; width: 1500px; height: 620px; }
+  #rt-head { position: absolute; left: 0; top: 0; width: 6px; height: 600px; background: #16110e; opacity: 0; }
+  .rt-circ { position: absolute; width: 190px; height: 190px; border-radius: 50%; border: 8px solid #ff5a1f; opacity: 0; }
+  #rt-bored { left: 980px; top: 360px; }
+  #rt-sag { left: 1100px; top: 140px; width: 650px; }
+  #rt-flag { left: 1000px; top: 120px; width: 800px; }
+  #rt-better { left: 1000px; top: 640px; width: 800px; }
+  #rt-tline { position: absolute; left: 150px; top: 480px; width: 1620px; height: 150px; opacity: 0; }
+  .rt-clip { position: absolute; top: 0; height: 150px; border-radius: 12px; display: flex; align-items: flex-end; padding: 16px; font-size: 32px; font-weight: 700; color: #16110e; }
+  .rt-gap { position: absolute; top: 60px; height: 30px; border-radius: 6px; background: repeating-linear-gradient(90deg, #8c7f73 0 10px, transparent 10px 20px); }
+  #rt-tl-h { left: 150px; top: 280px; }
+  #rt-mon { position: absolute; left: 150px; top: 200px; width: 1000px; height: 562px; border-radius: 20px; overflow: hidden; background: #16110e; box-shadow: 0 30px 60px rgba(0,0,0,0.45); opacity: 0; }
+  .rt-shot { position: absolute; inset: 0; opacity: 0; }
+  #rt-every { left: 1240px; top: 250px; width: 600px; }
+  .rt-sl { position: absolute; left: 1240px; }
+  #rt-loop { position: absolute; left: 150px; top: 240px; width: 1620px; height: 600px; opacity: 0; }
+  #rt-q { left: 150px; top: 790px; width: 900px; }
+  #rt-pay { left: 1270px; top: 790px; width: 500px; text-align: right; }
+  #rt-road { position: absolute; left: 150px; top: 520px; width: 1620px; height: 10px; border-radius: 5px; background: #8c7f73; opacity: 0; }
+  .rt-rs { position: absolute; top: 494px; width: 62px; height: 62px; margin-left: -31px; border-radius: 50%; background: #3a2a20; border: 8px solid #f5f0e8; opacity: 0; }
+  .rt-rl { position: absolute; top: 590px; width: 300px; margin-left: -150px; text-align: center; opacity: 0; }
+  #rt-mark { position: absolute; left: 150px; top: 470px; width: 110px; height: 110px; margin-left: -55px; border-radius: 50%; background: #ff5a1f; opacity: 0; }
+  #rt-roadh { left: 150px; top: 220px; width: 1500px; }
+  #rt-end { position: absolute; left: 150px; top: 160px; width: 1100px; height: 620px; border-radius: 20px; background: #16110e; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.45); opacity: 0; }
+  #rt-bye { position: absolute; left: 60px; top: 60px; }
+  #rt-byex { position: absolute; left: 40px; top: 70px; width: 720px; height: 60px; opacity: 0; }
+  #rt-next { position: absolute; left: 560px; top: 210px; width: 480px; opacity: 0; }
+  #rt-next .th { width: 480px; height: 270px; border-radius: 14px; background: #ff5a1f; position: relative; }
+  #rt-next .th b { position: absolute; left: 20px; top: 16px; font-family: "Archivo Black", sans-serif; font-size: 52px; line-height: 0.92; color: #16110e; }
+  #rt-endl { left: 1320px; top: 300px; width: 520px; }
+</style>
+
+<div class="desk"></div>
+
+<div class="studio" id="rt-studio">
+  <div class="grid"></div>
+  <div class="disp t64 ink pn" id="rt-gt" style="opacity: 1">Audience retention</div>
+  <div class="b40 mut pn" id="rt-gs">YouTube Studio · where people leave</div>
+  <svg id="rt-graph" viewBox="0 0 1500 620">
+    <path class="graph-axis" d="M0 0 L0 600 L1500 600" />
+    <path id="rt-line" class="graph-old" pathLength="100" style="stroke: #16110e" d="M4 20 C 60 20, 100 120, 200 130 C 300 140, 380 150, 450 160 C 520 300, 640 330, 760 330 C 880 330, 950 340, 1050 360 C 1150 480, 1250 500, 1350 500 C 1420 500, 1460 510, 1496 520" />
+  </svg>
+  <div id="rt-headw" style="position: absolute; left: 230px; top: 300px; width: 1500px; height: 600px"><div id="rt-head"></div></div>
+  <div class="rt-circ" id="rt-c1" style="left: 750px; top: 440px"></div>
+  <div class="rt-circ" id="rt-c2" style="left: 1355px; top: 610px; width: 230px; height: 230px"></div>
+  <div class="disp t64 ink pn" id="rt-sag">The middle <span class="acc">sags</span></div>
+  <div class="b46 ink pn" id="rt-bored">Someone got bored here</div>
+  <div class="b46 ink pn" id="rt-flag">Biggest dip → fix that kind of moment next time</div>
+  <div class="disp t64 ink pn" id="rt-better">Watch longer → <span class="acc">recommended more</span></div>
+</div>
+
+<div class="disp t80 paper pn" id="rt-tl-h">Edit tighter</div>
+<div id="rt-tline">
+  <div class="rt-clip" id="rt-k1" style="left: 0; width: 300px; background: #ff5a1f">Chop</div>
+  <div class="rt-gap" id="rt-g1" style="left: 310px; width: 180px"></div>
+  <div class="rt-clip" id="rt-k2" style="left: 500px; width: 280px; background: #e8b45a">Fry</div>
+  <div class="rt-clip" id="rt-k3" style="left: 790px; width: 280px; background: #c9bcae">Fry (again)</div>
+  <div class="rt-gap" id="rt-g2" style="left: 1080px; width: 160px"></div>
+  <div class="rt-clip" id="rt-k4" style="left: 1250px; width: 370px; background: #ff8a5c">Plate it</div>
+</div>
+
+<div id="rt-mon">
+  <div class="rt-shot" id="rt-sh1" style="background: #2b211b"><div style="position:absolute;left:300px;top:180px;width:400px;height:240px;border-radius:50%;background:#6f6359"></div><div style="position:absolute;left:420px;top:230px;width:160px;height:140px;border-radius:50%;background:#ff5a1f"></div></div>
+  <div class="rt-shot" id="rt-sh2" style="background: #6f6359"><div style="position:absolute;left:-100px;top:-120px;width:1200px;height:800px;border-radius:50%;background:#ff5a1f"></div><div style="position:absolute;left:300px;top:160px;width:420px;height:300px;border-radius:50%;background:#e8b45a"></div></div>
+  <div class="rt-shot" id="rt-sh3" style="background: #2b211b"><div style="position:absolute;left:300px;top:180px;width:400px;height:240px;border-radius:50%;background:#6f6359"></div><div style="position:absolute;left:60px;top:420px;padding:16px 28px;border-radius:12px;background:#fbf8f3;font-family:'Archivo Black',sans-serif;font-size:60px;color:#16110e">2 tbsp soy sauce</div></div>
+</div>
+<div class="disp t64 paper pn" id="rt-every">Something new every few seconds</div>
+<div class="b46 mut rt-sl pn" id="rt-sl1" style="top: 520px">New angle</div>
+<div class="b46 mut rt-sl pn" id="rt-sl2" style="top: 600px">Close-up</div>
+<div class="b46 mut rt-sl pn" id="rt-sl3" style="top: 680px">A line of text</div>
+
+<svg id="rt-loop" viewBox="0 0 1620 600">
+  <rect x="0" y="480" width="1620" height="20" rx="10" fill="#8c7f73" />
+  <path id="rt-arc" pathLength="100" d="M60 470 C 400 -40, 1220 -40, 1560 470" stroke="#ff5a1f" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="4 3" />
+  <circle id="rt-qd" cx="60" cy="490" r="56" fill="#f5f0e8" />
+  <text x="60" y="516" text-anchor="middle" font-family="Archivo Black" font-size="76" fill="#16110e">?</text>
+  <circle id="rt-ck" cx="1560" cy="490" r="56" fill="#ff5a1f" opacity="0" />
+  <path id="rt-ckm" pathLength="100" d="M1532 490 L1552 512 L1590 468" stroke="#16110e" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0" />
+</svg>
+<div class="b46 paper pn" id="rt-q">"Stay to the end for the secret sauce"</div>
+<div class="b46 acc pn" id="rt-pay">…and she pays it off</div>
+
+<div class="disp t80 paper pn" id="rt-roadh">Tell people where it's going</div>
+<div id="rt-road"></div>
+<div id="rt-roadstops"></div>
+<div id="rt-mark"></div>
+
+<div id="rt-end">
+  <div class="disp t80 mut" id="rt-bye">Bye guys! See you…</div>
+  <svg id="rt-byex" viewBox="0 0 720 60"><path id="rt-byexp" pathLength="100" d="M0 34 L720 26" stroke="#ff5a1f" stroke-width="14" stroke-linecap="round" fill="none" /></svg>
+  <div id="rt-next"><div class="th"><b>NEXT: $3 RAMEN</b></div><div class="b40 paper" style="margin-top: 14px">Watch next →</div></div>
+</div>
+<div class="b46 paper pn" id="rt-endl">End the moment it's done. Point to the next video.</div>
+
+<script>
+  const stopsX = [150, 555, 960, 1365, 1770];
+  make("#rt-roadstops", 5, (k) => ({ cls: "rt-rs", id: "rt-rs" + k, css: { left: stopsX[k] + "px" } }));
+  make("#rt-roadstops", 5, (k) => ({ cls: "rt-rl b40 paper", id: "rt-rl" + k, text: "Dinner " + (k + 1), css: { left: stopsX[k] + "px" } }));
+
+  // r1/r2: the sagging graph and the playhead
+  tl.fromTo("#rt-studio", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.1);
+  draw("#rt-line", C.r1 - 0.2, 1.8, "power2.out");
+  words("#rt-sag", C.r1 + 1.2);
+  on("#rt-gs", C.r2 + 0.3, "blur");
+  off("#rt-sag", C.r2 + 0.2, "blur");
+  tl.set("#rt-head", { opacity: 1 }, C.r2 + 0.6);
+  tl.fromTo("#rt-head", { x: 0 }, { x: 1490, duration: 3.6, ease: "none" }, C.r2 + 0.6);
+  tl.to("#rt-head", { opacity: 0, duration: 0.2 }, C.r2 + 4.2);
+  // r3: dips circled
+  tl.fromTo("#rt-c1", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "expo.out" }, C.r3 + 0.3);
+  tl.fromTo("#rt-c2", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "expo.out" }, C.r3 + 0.9);
+  on("#rt-bored", C.r3 + 0.5, "blur");
+  // r4: tighter edit
+  tl.to("#rt-studio", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.r4 - 0.4);
+  words("#rt-tl-h", C.r4);
+  tl.fromTo("#rt-tline", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.r4 + 0.2);
+  tl.to(["#rt-g1", "#rt-g2"], { scaleX: 0, opacity: 0, duration: 0.3, ease: "power3.in" }, C.r4 + 2.0);
+  tl.to("#rt-k3", { y: 300, rotation: 8, opacity: 0, duration: 0.45, ease: "power3.in" }, C.r4 + 2.8);
+  tl.to("#rt-k2", { x: -190, duration: 0.5, ease: "expo.out" }, C.r4 + 2.2);
+  tl.to("#rt-k4", { x: -190 - 290 - 170, duration: 0.5, ease: "expo.out" }, C.r4 + 3.2);
+  // r5: shot changes
+  off("#rt-tl-h", C.r5 - 0.35, "blur");
+  tl.to("#rt-tline", { opacity: 0, duration: 0.3 }, C.r5 - 0.35);
+  tl.fromTo("#rt-mon", { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out" }, C.r5 - 0.1);
+  tl.set("#rt-sh1", { opacity: 1 }, C.r5 - 0.1);
+  words("#rt-every", C.r5 + 0.1);
+  [["#rt-sh1", "#rt-sl1", 1.0], ["#rt-sh2", "#rt-sl2", 2.2], ["#rt-sh3", "#rt-sl3", 3.4]].forEach(([sh, sl, dt], k) => {
+    tl.set(sh, { opacity: 1 }, C.r5 + dt);
+    if (k > 0) tl.set(["#rt-sh1", "#rt-sh2", "#rt-sh3"][k - 1], { opacity: 0 }, C.r5 + dt);
+    tl.fromTo(sh, { scale: 1.08 }, { scale: 1, duration: 0.5, ease: "expo.out", immediateRender: false }, C.r5 + dt);
+    on(sl, C.r5 + dt, "left");
+    tl.to(sl, { color: "#f5f0e8", duration: 0.2 }, C.r5 + dt);
+  });
+  // r6: the open loop
+  ["#rt-every", "#rt-sl1", "#rt-sl2", "#rt-sl3"].forEach((s) => off(s, C.r6 - 0.35, "blur"));
+  tl.to("#rt-mon", { opacity: 0, scale: 0.92, duration: 0.3, ease: "power3.in" }, C.r6 - 0.35);
+  tl.fromTo("#rt-loop", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.r6);
+  on("#rt-q", C.r6 + 0.4, "blur");
+  tl.fromTo("#rt-arc", { strokeDasharray: "0 100" }, { strokeDasharray: "100 0", duration: 3.6, ease: "power1.inOut" }, C.r6 + 0.8);
+  tl.fromTo("#rt-ck", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, C.r6 + 4.4);
+  tl.set("#rt-ckm", { opacity: 1 }, C.r6 + 4.5);
+  draw("#rt-ckm", C.r6 + 4.5, 0.3, "power2.out");
+  on("#rt-pay", C.r6 + 4.6, "blur");
+  // r7: roadmap
+  tl.to("#rt-loop", { opacity: 0, duration: 0.3 }, C.r7 - 0.35);
+  off("#rt-q", C.r7 - 0.35, "blur");
+  off("#rt-pay", C.r7 - 0.35, "blur");
+  words("#rt-roadh", C.r7);
+  tl.fromTo("#rt-road", { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out", transformOrigin: "left center" }, C.r7 + 0.2);
+  q(".rt-rs").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, C.r7 + 0.3 + k * 0.1));
+  q(".rt-rl").forEach((el, k) => tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.r7 + 0.4 + k * 0.1));
+  tl.set("#rt-mark", { opacity: 1 }, C.r7 + 0.4);
+  [0, 1, 2].forEach((k) => tl.to("#rt-mark", { x: stopsX[k + 1] - 150, duration: 0.6, ease: "power3.inOut" }, C.r7 + 0.4 + k * 0.8));
+  // r7b: end screen
+  ["#rt-roadh"].forEach((s) => off(s, C.r7b - 0.35, "blur"));
+  tl.to(["#rt-road", "#rt-roadstops", "#rt-mark"], { opacity: 0, duration: 0.3 }, C.r7b - 0.35);
+  tl.fromTo("#rt-end", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.r7b);
+  tl.set("#rt-byex", { opacity: 1 }, C.r7b + 2.2);
+  draw("#rt-byexp", C.r7b + 2.2, 0.35, "power3.out");
+  tl.fromTo("#rt-next", { opacity: 0, x: 200 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.r7b + 3.4);
+  words("#rt-endl", C.r7b + 0.6);
+  // r8: biggest dip flagged
+  off("#rt-endl", C.r8 - 0.35, "blur");
+  tl.to("#rt-end", { opacity: 0, y: 80, duration: 0.3, ease: "power3.in" }, C.r8 - 0.35);
+  tl.to("#rt-studio", { opacity: 1, duration: 0.3, immediateRender: false }, C.r8 - 0.3);
+  tl.set(["#rt-c1", "#rt-bored", "#rt-gs"], { opacity: 0 }, C.r8 - 0.3);
+  tl.fromTo("#rt-c2", { scale: 1 }, { scale: 1.15, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, C.r8 + 1.0);
+  words("#rt-flag", C.r8 + 1.0);
+  // r9: the line lifts
+  off("#rt-flag", C.r9 - 0.3, "blur");
+  tl.to("#rt-c2", { opacity: 0, duration: 0.25 }, C.r9 - 0.3);
+  tl.to("#rt-line", { attr: { d: "M4 20 C 60 20, 100 100, 200 110 C 300 120, 380 125, 450 130 C 520 150, 640 160, 760 165 C 880 170, 950 175, 1050 180 C 1150 195, 1250 205, 1350 210 C 1420 212, 1460 215, 1496 218" }, stroke: "#ff5a1f", strokeWidth: 9, duration: 1.4, ease: "power2.inOut" }, C.r9 + 0.3);
+  words("#rt-better", C.r9 + 1.6);
+</script>

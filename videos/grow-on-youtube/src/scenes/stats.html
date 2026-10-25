@@ -1,0 +1,109 @@
+<!--SFX [["pop","t1",0.5,0.4],["key-press","t3",0.3,0.4],["key-press","t4",0.3,0.4],["key-press","t5",0.3,0.4],["pop","t6",0.8,0.4],["pop","t7",0.8,0.4],["pop","t8",0.8,0.4],["whoosh","t8b",-0.3,0.4],["pop","t8b",1.8,0.3],["pop","t8b",2.6,0.3],["pop","t8b",3.4,0.3],["whoosh","t9",-0.3,0.4],["whoosh-short","t9",1.0,0.35],["pop","t9",3.6,0.45]]-->
+<style>
+  #st-studio { opacity: 0; }
+  #st-clock { position: absolute; left: 150px; top: 250px; width: 520px; height: 520px; opacity: 0; }
+  #st-sun { left: 760px; top: 330px; width: 1000px; }
+  #st-sun2 { left: 764px; top: 560px; width: 1000px; }
+  #st-h { left: 150px; top: 90px; }
+  .st-row { position: absolute; left: 150px; width: 1620px; height: 170px; border-bottom: 4px solid rgba(22,17,14,0.12); opacity: 0; }
+  .st-row .lab { position: absolute; left: 0; top: 30px; }
+  .st-row .val { position: absolute; left: 0; top: 80px; font-family: "Archivo Black", sans-serif; font-size: 72px; color: #16110e; font-variant-numeric: tabular-nums; }
+  .st-row .q { position: absolute; left: 330px; top: 98px; }
+  .st-row .fix { position: absolute; left: 880px; top: 50px; display: flex; align-items: center; gap: 24px; opacity: 0; }
+  .st-row .fix .ar { width: 80px; height: 10px; background: #ff5a1f; position: relative; }
+  .st-row .fix .ar::after { content: ""; position: absolute; right: -6px; top: -14px; border-left: 26px solid #ff5a1f; border-top: 19px solid transparent; border-bottom: 19px solid transparent; }
+  #st-illu { left: 154px; top: 940px; }
+  #st-sorth { left: 150px; top: 90px; }
+  .st-col { position: absolute; top: 260px; width: 500px; height: 640px; border-radius: 22px; background: rgba(22,17,14,0.06); opacity: 0; }
+  .st-col .h { position: absolute; left: 30px; top: 26px; }
+  .st-topic { position: absolute; opacity: 0; }
+  #st-bars { position: absolute; left: 150px; top: 230px; width: 1620px; height: 700px; }
+  .st-bar { position: absolute; bottom: 0; width: 100px; border-radius: 12px 12px 0 0; background: #8c7f73; transform-origin: 50% 100%; }
+  #st-giant { position: absolute; left: 1560px; bottom: 0; width: 160px; height: 700px; border-radius: 12px 12px 0 0; background: #c9bcae; transform-origin: 50% 100%; }
+  #st-giantl { position: absolute; left: 1500px; top: 300px; width: 280px; text-align: center; }
+  #st-beat { left: 150px; top: 90px; }
+  #st-base { position: absolute; left: 150px; top: 930px; width: 1620px; height: 6px; background: #16110e; }
+</style>
+
+<div class="desk"></div>
+<div class="studio" id="st-studio">
+  <div class="grid"></div>
+
+  <svg id="st-clock" viewBox="0 0 520 520">
+    <circle cx="260" cy="260" r="230" fill="#fbf8f3" stroke="#16110e" stroke-width="16" />
+    <path id="st-wedge" d="M260 260 L260 30 A230 230 0 0 1 490 260 Z" fill="#ff5a1f" opacity="0" />
+    <path id="st-hand" d="M260 260 L260 70" stroke="#16110e" stroke-width="14" stroke-linecap="round" />
+    <circle cx="260" cy="260" r="16" fill="#16110e" />
+  </svg>
+  <div class="disp t110 ink pn" id="st-sun">Every Sunday</div>
+  <div class="disp t110 acc pn" id="st-sun2">15 minutes</div>
+
+  <div class="disp t80 ink pn" id="st-h">Three things to check</div>
+  <div class="st-row" id="st-r1" style="top: 230px">
+    <div class="lab b40 mut">Click-through rate</div><div class="val" id="st-v1">0.0%</div><div class="q b40 ink">Are people clicking?</div>
+    <div class="fix" id="st-f1"><div class="ar"></div><div class="b40 ink">Low? Work on the <span class="acc">title &amp; thumbnail</span></div></div>
+  </div>
+  <div class="st-row" id="st-r2" style="top: 450px">
+    <div class="lab b40 mut">Average view duration</div><div class="val" id="st-v2">0:00</div><div class="q b40 ink">Are they staying?</div>
+    <div class="fix" id="st-f2"><div class="ar"></div><div class="b40 ink">Early drop-off? Work on the <span class="acc">hook</span></div></div>
+  </div>
+  <div class="st-row" id="st-r3" style="top: 670px">
+    <div class="lab b40 mut">Returning viewers</div><div class="val" id="st-v3">0%</div><div class="q b40 ink">Are they coming back?</div>
+    <div class="fix" id="st-f3"><div class="ar"></div><div class="b40 ink">Few? Work on the <span class="acc">series</span></div></div>
+  </div>
+  <div class="r32 mut pn" id="st-illu">Illustrative numbers</div>
+
+  <div class="disp t80 ink pn" id="st-sorth">Over time, patterns show up</div>
+  <div class="st-col" id="st-c1" style="left: 150px"><div class="h b46 ink">Gets clicked</div></div>
+  <div class="st-col" id="st-c2" style="left: 710px"><div class="h b46 ink">Keeps them watching</div></div>
+  <div class="st-col" id="st-c3" style="left: 1270px"><div class="h b46 ink">Brings subscribers</div></div>
+  <div id="st-topics"></div>
+
+  <div class="disp t80 ink pn" id="st-beat">Beat your <span class="acc">own</span> last video</div>
+  <div id="st-bars"><div id="st-giant"></div></div>
+  <div class="b40 mut pn" id="st-giantl">A giant channel</div>
+  <div id="st-base" class="pn"></div>
+</div>
+
+<script>
+  const topics = [["$1 challenge", 0], ["Dorm hacks", 0], ["Meal prep", 1], ["One-pan", 1], ["Series: under $5", 2], ["Viewer recipes", 2]];
+  make("#st-topics", topics.length, (k) => ({ cls: "chip st-topic", id: "st-tp" + k, text: topics[k][0], css: { left: 150 + 30 + topics[k][1] * 560 + "px", top: 380 + (k % 2) * 140 + "px" } }));
+  const H = [120, 150, 140, 190, 210, 200, 260, 300, 290, 360, 410, 470];
+  make("#st-bars", H.length, (k) => ({ cls: "st-bar", id: "st-b" + k, css: { left: k * 118 + "px", height: H[k] + "px" } }));
+
+  // t1: Sunday, 15 minutes
+  tl.fromTo("#st-studio", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.1);
+  tl.fromTo("#st-clock", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, C.t1 - 0.3);
+  words("#st-sun", C.t1 + 0.1);
+  words("#st-sun2", C.t1 + 1.6);
+  tl.fromTo("#st-wedge", { opacity: 0 }, { opacity: 1, duration: 1.4, ease: "power2.inOut" }, C.t1 + 1.6);
+  tl.fromTo("#st-hand", { rotation: 0 }, { rotation: 90, duration: 1.4, ease: "power2.inOut", svgOrigin: "260 260" }, C.t1 + 1.6);
+  // t2: three rows
+  ["#st-clock", "#st-sun", "#st-sun2"].forEach((s) => off(s, C.t2 - 0.35, "blur"));
+  words("#st-h", C.t2);
+  // t3..t5: each metric
+  [["#st-r1", "#st-v1", C.t3, 0, 6.2, (v) => v.toFixed(1) + "%"], ["#st-r2", "#st-v2", C.t4, 0, 252, (v) => Math.floor(v / 60) + ":" + String(Math.floor(v % 60)).padStart(2, "0")], ["#st-r3", "#st-v3", C.t5, 0, 38, (v) => Math.round(v) + "%"]].forEach(([row, val, t, a, b, fmt]) => {
+    tl.fromTo(row, { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, t);
+    count(val, t + 0.3, a, b, 1.3, fmt);
+  });
+  on("#st-illu", C.t3 + 0.6, "fade");
+  // t6..t8: fixes
+  [["#st-f1", C.t6], ["#st-f2", C.t7], ["#st-f3", C.t8]].forEach(([f, t]) => tl.fromTo(f, { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, t + 0.6));
+  // t8b: topics sort into columns
+  ["#st-h", "#st-illu"].forEach((s) => off(s, C.t8b - 0.35, "blur"));
+  ["#st-r1", "#st-r2", "#st-r3"].forEach((s, k) => off(s, C.t8b - 0.35 + k * 0.05, "left"));
+  words("#st-sorth", C.t8b);
+  ["#st-c1", "#st-c2", "#st-c3"].forEach((s, k) => tl.fromTo(s, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, C.t8b + 0.6 + k * 0.1));
+  topics.forEach((tp, k) => tl.fromTo("#st-tp" + k, { opacity: 0, x: (1 - tp[1]) * 560 + 200, y: -300, rotation: 8 }, { opacity: 1, x: 0, y: 0, rotation: 0, duration: 0.7, ease: "expo.out" }, C.t8b + 1.8 + tp[1] * 0.8 + (k % 2) * 0.2));
+  // t9: own bars
+  off("#st-sorth", C.t9 - 0.35, "blur");
+  tl.to(["#st-c1", "#st-c2", "#st-c3", "#st-topics"], { opacity: 0, duration: 0.3 }, C.t9 - 0.35);
+  tl.set("#st-base", { opacity: 1 }, C.t9 - 0.1);
+  tl.fromTo("#st-giant", { scaleY: 0 }, { scaleY: 1, duration: 0.5, ease: "expo.out" }, C.t9 - 0.1);
+  on("#st-giantl", C.t9 + 0.1, "fade");
+  tl.to("#st-giant", { x: 600, rotation: 25, opacity: 0, duration: 0.6, ease: "power3.in" }, C.t9 + 1.0);
+  off("#st-giantl", C.t9 + 1.0, "right");
+  words("#st-beat", C.t9 + 1.6);
+  q(".st-bar").forEach((el, k) => tl.fromTo(el, { scaleY: 0 }, { scaleY: 1, duration: 0.4, ease: "expo.out" }, C.t9 + 1.6 + k * 0.17));
+  tl.to("#st-b11", { backgroundColor: "#ff5a1f", duration: 0.2 }, C.t9 + 3.6);
+</script>

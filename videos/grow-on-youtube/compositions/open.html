@@ -1,0 +1,445 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+
+  #op-cam { position: absolute; inset: 0; transform-origin: 0px 0px; }
+  #op-bar { position: absolute; left: 0; top: 0; width: 100%; height: 70px; background: #efe9e1; }
+  #op-bar .addr { position: absolute; left: 110px; top: 15px; width: 900px; height: 40px; border-radius: 20px; background: #fbf8f3; font-size: 26px; color: #8c7f73; padding: 4px 22px; }
+  #op-refresh { position: absolute; left: 30px; top: 14px; width: 44px; height: 44px; }
+  #op-upload { left: 0; top: 70px; width: 100%; height: 738px; opacity: 1; }
+  #op-upload .h { position: absolute; left: 90px; top: 80px; }
+  #op-upload .file { position: absolute; left: 90px; top: 230px; width: 1160px; height: 210px; border-radius: 18px; background: #efe9e1; }
+  #op-upload .fname { position: absolute; left: 40px; top: 36px; }
+  #op-upload .track { position: absolute; left: 40px; top: 130px; width: 1080px; height: 26px; border-radius: 13px; background: #d9cfc4; overflow: hidden; }
+  #op-fill { width: 100%; height: 100%; background: #ff5a1f; transform-origin: left center; }
+  #op-pct { position: absolute; left: 90px; top: 480px; }
+  #op-page { left: 0; top: 70px; width: 100%; height: 738px; }
+  #op-player { position: absolute; left: 40px; top: 30px; width: 860px; height: 484px; border-radius: 16px; background: #2b211b; }
+  #op-player .playbtn { left: 370px; top: 200px; }
+  #op-vtitle { position: absolute; left: 40px; top: 540px; }
+  #op-chan { position: absolute; left: 40px; top: 620px; display: flex; align-items: center; gap: 20px; }
+  #op-chan .avatar { width: 72px; height: 72px; font-size: 40px; }
+  #op-views { position: absolute; left: 260px; top: 630px; white-space: nowrap; }
+  #op-views b { font-weight: 700; }
+  #op-side .s { position: absolute; left: 940px; width: 368px; height: 140px; border-radius: 12px; background: #e6ddd3; }
+  #op-mom { left: 720px; top: 770px; }
+  #op-week { left: 1290px; top: 130px; }
+  #op-cursor { left: 0; top: 0; }
+  /* year track */
+  #op-year { position: absolute; inset: 0; opacity: 0; }
+  #op-track { position: absolute; left: 0; top: 0; width: 4200px; height: 1080px; }
+  #op-road { position: absolute; left: 200px; top: 560px; width: 3800px; height: 10px; border-radius: 5px; background: #8c7f73; }
+  #op-road-fill { position: absolute; left: 200px; top: 560px; width: 3800px; height: 10px; border-radius: 5px; background: #ff5a1f; transform-origin: left center; }
+  .op-stop { position: absolute; top: 525px; width: 80px; height: 80px; margin-left: -40px; border-radius: 50%; background: #3a2a20; border: 8px solid #f5f0e8; }
+  .op-lab { position: absolute; top: 640px; width: 400px; margin-left: -200px; text-align: center; }
+  .op-mo { position: absolute; top: 420px; width: 400px; margin-left: -200px; text-align: center; }
+  #op-ytitle { left: 150px; top: 150px; }
+  #op-title { left: 150px; top: 330px; width: 1700px; }
+  #op-sub { left: 156px; top: 700px; }
+
+  </style>
+  <div id="root" data-composition-id="open" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+<div id="op-cam">
+  <div class="laptop" id="op-laptop">
+    <div class="screen">
+      <div id="op-bar">
+        <svg id="op-refresh" viewBox="0 0 44 44"><path d="M34 22a12 12 0 1 1-4-9" fill="none" stroke="#16110e" stroke-width="4" stroke-linecap="round"/><path d="M31 5v9h-9" fill="none" stroke="#16110e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="addr">studio · upload</div>
+      </div>
+      <div class="pn" id="op-upload">
+        <div class="h disp t80 ink">Upload video</div>
+        <div class="file">
+          <div class="fname b46 ink">my-first-video.mp4</div>
+          <div class="track"><div id="op-fill"></div></div>
+        </div>
+        <div id="op-pct" class="b40 mut">Uploading… <span id="op-pctn">0</span>%</div>
+      </div>
+      <div class="pn" id="op-page">
+        <div id="op-player"><div class="playbtn"></div></div>
+        <div id="op-vtitle" class="b46 ink">My First Video!!</div>
+        <div id="op-chan"><div class="avatar">M</div><div class="b40 ink">Maya</div></div>
+        <div id="op-views" class="r36 ink"><b id="op-vn">0</b> views</div>
+        <div id="op-side">
+          <div class="s" style="top: 30px"></div>
+          <div class="s" style="top: 200px"></div>
+          <div class="s" style="top: 370px"></div>
+          <div class="s" style="top: 540px"></div>
+        </div>
+      </div>
+      <svg class="cursor pn" id="op-cursor" viewBox="0 0 54 70"><path d="M4 4 L4 56 L18 44 L28 66 L38 61 L28 40 L46 40 Z" fill="#fbf8f3" stroke="#16110e" stroke-width="4" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+  <div class="laptop-base"></div>
+  <div class="chip acc-bg pn" id="op-week">2 weekends of work</div>
+  <div class="chip pn" id="op-mom">…one was Mom</div>
+</div>
+
+<div id="op-year">
+  <div class="desk"></div>
+  <div class="disp t64 paper pn" id="op-ytitle">Maya's first year</div>
+  <div id="op-track">
+    <div id="op-road"></div>
+    <div id="op-road-fill"></div>
+  </div>
+</div>
+
+<div class="desk pn" id="op-tbg" style="opacity:0"></div>
+<div class="disp t160 paper pn" id="op-title">How to <span class="acc">grow</span> on YouTube</div>
+<div class="b46 mut pn" id="op-sub">Follow one channel from 3 views to a community</div>
+    
+  </div>
+  <script>
+    (function () {
+      const C = {"o1":0.6,"o2":5.725,"o3":9.126,"o4":12.191,"o5":15.629,"o6":23.964};
+      const E = {"o1":4.975,"o2":8.376,"o3":11.441,"o4":14.879,"o5":23.214,"o6":27.033};
+      const D = 27.383;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      
+
+  // stops on the year track (built here, positions fixed)
+  const stops = ["Algorithm", "Niche", "The click", "The hook", "Retention", "Habit", "Shorts", "Numbers", "Community"];
+  const track = document.getElementById("op-track");
+  stops.forEach((s, k) => {
+    const x = 520 + k * 420;
+    const st = document.createElement("div");
+    st.className = "op-stop"; st.id = "op-st" + k; st.style.left = x + "px";
+    const lb = document.createElement("div");
+    lb.className = "op-lab b46 paper"; lb.id = "op-lb" + k; lb.style.left = x + "px"; lb.textContent = s;
+    const mo = document.createElement("div");
+    mo.className = "op-mo r32 mut"; mo.id = "op-mo" + k; mo.style.left = x + "px"; mo.textContent = "Month " + Math.min(12, 1 + Math.round(k * 1.4));
+    track.appendChild(st); track.appendChild(lb); track.appendChild(mo);
+  });
+
+  // o1: upload fills
+  const pct = { v: 0 };
+  tl.fromTo("#op-fill", { scaleX: 0 }, { scaleX: 1, duration: 4.2, ease: "power1.inOut" }, 0.6);
+  tl.fromTo(pct, { v: 0 }, { v: 100, duration: 4.2, ease: "power1.inOut", onUpdate: () => (document.getElementById("op-pctn").textContent = Math.round(pct.v)) }, 0.6);
+  on("#op-week", C.o1 + 2.4, "pop");
+  off("#op-week", C.o2, "blur");
+
+  // o2: upload done -> video page, refresh twice
+  off("#op-upload", C.o2 - 0.2, "fade");
+  on("#op-page", C.o2 - 0.1, "scale");
+  tl.set("#op-cursor", { x: 700, y: 500 }, 0);
+  on("#op-cursor", C.o2 + 0.1, "fade");
+  clickAt("#op-cursor", C.o2 + 0.25, 30, 20, 0.7);
+  clickAt("#op-cursor", C.o2 + 1.55, 30, 20, 0.0);
+  tl.fromTo("#op-refresh", { rotation: 0 }, { rotation: 360, duration: 0.5, ease: "power2.out", transformOrigin: "50% 50%" }, C.o2 + 0.95);
+  tl.fromTo("#op-refresh", { rotation: 0 }, { rotation: 360, duration: 0.5, ease: "power2.out", transformOrigin: "50% 50%", immediateRender: false }, C.o2 + 1.75);
+  tl.to("#op-cursor", { x: 600, y: 760, duration: 0.8, ease: "power3.inOut" }, C.o3 - 0.6);
+
+  // o3: views tick to 3
+  const vn = { v: 0 };
+  tl.fromTo(vn, { v: 0 }, { v: 3, duration: 1.2, ease: "steps(3)", onUpdate: () => (document.getElementById("op-vn").textContent = Math.round(vn.v)) }, C.o3 - 0.3);
+  [0, 1, 2].forEach((k) => {
+    tl.fromTo("#op-vn", { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false, transformOrigin: "50% 60%" }, C.o3 + 0.1 + k * 0.4);
+  });
+  on("#op-mom", C.o3 + 1.3, "pop");
+  off("#op-mom", C.o4 - 0.3, "blur");
+  off("#op-cursor", C.o4 - 0.3, "fade");
+
+  // o4: push into "3 views"
+  cam("#op-cam", C.o4, { scale: 4.2, x: 960 - 4.2 * 611, y: 540 - 4.2 * 818 }, 1.6, "power2.inOut");
+  tl.to("#op-cam", { scale: 14, filter: "blur(14px)", opacity: 0, duration: 0.5, ease: "power3.in" }, C.o5 - 0.55);
+
+  // o5: year track, pan along
+  tl.fromTo("#op-year", { opacity: 0 }, { opacity: 1, duration: 0.2 }, C.o5 - 0.2);
+  words("#op-ytitle", C.o5 + 0.1);
+  tl.fromTo("#op-road-fill", { scaleX: 0 }, { scaleX: 1, duration: 7.4, ease: "none" }, C.o5);
+  tl.fromTo("#op-track", { x: 0 }, { x: -2380, duration: 7.4, ease: "power1.inOut" }, C.o5);
+  stops.forEach((s, k) => {
+    // the fill reaches stop k at t = (x - 200) / 3800 of 7.4s (approx, linear fill)
+    const t = C.o5 + ((520 + k * 420 - 200) / 3800) * 7.4;
+    tl.fromTo("#op-st" + k, { borderColor: "#f5f0e8", backgroundColor: "#3a2a20" }, { borderColor: "#ff5a1f", backgroundColor: "#ff5a1f", duration: 0.15 }, t);
+    tl.fromTo("#op-lb" + k, { opacity: 0.25 }, { opacity: 1, duration: 0.2 }, t);
+    tl.fromTo("#op-mo" + k, { opacity: 0 }, { opacity: 1, duration: 0.2 }, t);
+  });
+  off("#op-ytitle", C.o6 - 0.4, "blur");
+  tl.to("#op-year", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.o6 - 0.3);
+
+  // o6: the title
+  tl.fromTo("#op-tbg", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.o6 - 0.3);
+  words("#op-title", C.o6, 0.09);
+  on("#op-sub", C.o6 + 1.0, "blur");
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["open"] = tl;
+    })();
+  </script>
+</template>

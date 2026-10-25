@@ -1,0 +1,206 @@
+<!--SFX [["pop","c2",3.6,0.4],["whoosh-short","c3",0.0,0.4],["whoosh","c4",-0.3,0.4],["whoosh-short","c5",0.0,0.35],["typing","c6",0.9,0.4],["pop","c7",0.6,0.45],["pop","c7",1.8,0.45],["impact-bass-1","c7",3.0,0.3],["pop","c8",1.4,0.4],["pop","c8",2.6,0.4],["pop","c8",4.0,0.4],["whoosh-short","c8b",0.0,0.4],["whoosh","c8b",5.3,0.35],["pop","c9",0.3,0.4],["pop","c9",2.4,0.4],["whoosh","c10",-0.2,0.4],["pop","c11",1.4,0.45],["pop","c12",0.0,0.4]]-->
+<style>
+  #ck-hero { left: 150px; top: 110px; width: 960px; z-index: 5; }
+  #ck-th { position: relative; width: 960px; height: 540px; border-radius: 22px; overflow: hidden; background: #8c7f73; }
+  #ck-old { position: absolute; inset: 0; background: #6f6359; }
+  #ck-old svg { position: absolute; left: 260px; top: 110px; filter: blur(16px); }
+  #ck-new { position: absolute; inset: 0; opacity: 0; background: #16110e; }
+  #ck-plate { position: absolute; left: 50px; top: 140px; width: 380px; height: 380px; border-radius: 50%; background: #fbf8f3; opacity: 0; }
+  #ck-plate i { position: absolute; border-radius: 50%; }
+  #ck-face { position: absolute; left: 620px; top: 200px; width: 290px; height: 290px; border-radius: 50%; background: #ff5a1f; opacity: 0; }
+  #ck-face .e { position: absolute; top: 96px; width: 34px; height: 44px; border-radius: 50%; background: #16110e; }
+  #ck-face .m { position: absolute; left: 112px; top: 170px; width: 66px; height: 76px; border-radius: 50%; background: #16110e; }
+  #ck-words { position: absolute; left: 380px; top: 30px; width: 550px; text-align: right; font-family: "Archivo Black", sans-serif; font-size: 80px; line-height: 0.9; color: #fbf8f3; opacity: 0; }
+  #ck-words .acc { color: #ff5a1f; }
+  #ck-title { margin-top: 22px; font-size: 52px; font-weight: 700; color: #f5f0e8; position: relative; height: 70px; }
+  #ck-title .t { position: absolute; left: 0; top: 0; white-space: nowrap; }
+  #ck-newt { opacity: 0; }
+  #ck-meta { font-size: 34px; color: #8c7f73; margin-top: 4px; }
+  #ck-blurry { left: 1180px; top: 330px; }
+  #ck-feed { position: absolute; left: 150px; top: 80px; width: 1620px; height: 920px; opacity: 0; }
+  .ck-ft { position: absolute; width: 380px; }
+  .ck-ft .th { height: 214px; border-radius: 14px; position: relative; overflow: hidden; }
+  .ck-ft .th b { position: absolute; left: 18px; top: 14px; font-family: "Archivo Black", sans-serif; font-size: 50px; line-height: 0.92; color: #fbf8f3; width: 340px; }
+  .ck-ft .tt { margin-top: 10px; font-size: 30px; font-weight: 700; color: #f5f0e8; }
+  #ck-inv { left: 150px; top: 1000px; }
+  #ck-promise { left: 150px; top: 280px; }
+  #ck-whatdo { left: 156px; top: 520px; width: 1500px; }
+  .ck-lab { position: absolute; left: 1260px; display: flex; align-items: center; gap: 20px; }
+  .ck-lab .k { width: 26px; height: 26px; border-radius: 50%; background: #ff5a1f; }
+  #ck-leads { position: absolute; inset: 0; pointer-events: none; }
+  #ck-phone { left: 1330px; top: 70px; opacity: 0; }
+  #ck-phone .hdr { position: absolute; left: 30px; top: 30px; }
+  #ck-pold { position: absolute; left: 20px; top: 430px; width: 394px; }
+  #ck-pold .th { height: 222px; border-radius: 14px; background: #6f6359; position: relative; overflow: hidden; }
+  #ck-pold .th svg { position: absolute; left: 110px; top: 40px; filter: blur(7px); transform-origin: 0 0; }
+  #ck-pold .tt { margin-top: 8px; font-size: 26px; font-weight: 700; color: #8c7f73; }
+  #ck-x { position: absolute; left: 130px; top: 40px; width: 140px; height: 140px; opacity: 0; }
+  #ck-glance { left: 150px; top: 820px; }
+  #ck-cur { left: 1500px; top: 180px; }
+  #ck-cur2 { left: 156px; top: 410px; }
+  #ck-lie { left: 150px; top: 520px; }
+  #ck-drop { position: absolute; left: 1100px; top: 280px; width: 660px; height: 400px; opacity: 0; }
+  #ck-dropl { left: 1100px; top: 720px; width: 700px; }
+  #ck-ab { position: absolute; inset: 0; opacity: 0; }
+  .ck-abt { position: absolute; top: 140px; width: 640px; }
+  .ck-abt .th { height: 360px; border-radius: 18px; position: relative; overflow: hidden; }
+  .ck-abt .lt { position: absolute; left: -90px; top: 0; font-family: "Archivo Black", sans-serif; font-size: 64px; color: #f5f0e8; }
+  .ck-bar { position: absolute; top: 580px; height: 70px; border-radius: 10px; transform-origin: left center; }
+  #ck-bla, #ck-blb { position: absolute; top: 670px; }
+  #ck-illu { left: 240px; top: 800px; }
+  #ck-same { left: 150px; top: 330px; width: 1700px; }
+</style>
+
+<div class="desk"></div>
+
+<div class="pn" id="ck-hero">
+  <div id="ck-th">
+    <div id="ck-old">
+      <svg width="440" height="320" viewBox="0 0 440 320"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /><circle cx="150" cy="140" r="40" fill="#a8998b" /></svg>
+    </div>
+    <div id="ck-new">
+      <div id="ck-plate">
+        <i style="left: 70px; top: 80px; width: 150px; height: 120px; background: #ff5a1f"></i>
+        <i style="left: 190px; top: 150px; width: 120px; height: 110px; background: #e8b45a"></i>
+        <i style="left: 90px; top: 210px; width: 110px; height: 90px; background: #7fa66b"></i>
+      </div>
+      <div id="ck-face"><div class="e" style="left: 84px"></div><div class="e" style="left: 172px"></div><div class="m"></div></div>
+      <div id="ck-words">5 DINNERS <span class="acc">$10</span></div>
+    </div>
+  </div>
+  <div id="ck-title">
+    <div class="t" id="ck-oldt">my cooking video #4</div>
+    <div class="t" id="ck-newt">5 Dinners for Under $10</div>
+  </div>
+  <div id="ck-meta">Maya · 3 views</div>
+</div>
+<div class="chip light pn" id="ck-blurry">Blurry frame of a pan</div>
+
+<div id="ck-feed"></div>
+<div class="b46 mut pn" id="ck-inv">On a busy home page, it's invisible</div>
+
+<div class="disp t160 paper pn" id="ck-promise">A <span class="acc">promise</span></div>
+<div class="b56 paper pn" id="ck-whatdo">"What do I get if I click?"</div>
+
+<div class="pn" id="ck-o1" style="left: 186px; top: 236px; width: 408px; height: 408px; border-radius: 50%; border: 8px solid #ff5a1f; z-index: 6"></div>
+<div class="pn" id="ck-o2" style="left: 134px; top: 94px; width: 992px; height: 572px; border-radius: 30px; border: 8px solid #ff5a1f; z-index: 6"></div>
+<div class="pn" id="ck-o3" style="left: 560px; top: 290px; width: 520px; height: 10px; border-radius: 5px; background: #ff5a1f; z-index: 6"></div>
+<div class="ck-lab pn" id="ck-r1" style="top: 225px"><div class="k"></div><div class="b46 paper">One subject</div></div>
+<div class="ck-lab pn" id="ck-r2" style="top: 385px"><div class="k"></div><div class="b46 paper">Strong contrast</div></div>
+<div class="ck-lab pn" id="ck-r3" style="top: 545px"><div class="k"></div><div class="b46 paper">Text you can read on a phone</div></div>
+
+<div class="phone" id="ck-phone">
+  <div class="screen">
+    <div class="hdr b40 ink">Home</div>
+    <div id="ck-pold">
+      <div class="th"><svg width="440" height="320" viewBox="0 0 440 320" style="transform: scale(0.42)"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /></svg></div>
+      <div class="tt">my cooking video #4</div>
+      <svg id="ck-x" viewBox="0 0 140 140"><path d="M20 20 L120 120 M120 20 L20 120" stroke="#ff5a1f" stroke-width="18" stroke-linecap="round" /></svg>
+    </div>
+  </div>
+</div>
+<div class="b46 paper pn" id="ck-glance">Can you tell what it is in <span class="acc">one glance</span>?</div>
+
+<div class="disp t110 paper pn" id="ck-cur2">Spark <span class="acc">curiosity</span></div>
+<div class="disp t110 mut pn" id="ck-lie">Never lie</div>
+<svg id="ck-drop" viewBox="0 0 660 400">
+  <path class="graph-axis" d="M10 10 L10 390 L650 390" />
+  <path id="ck-dropp" class="graph-new" pathLength="100" d="M14 40 C 60 40, 70 300, 140 330 S 400 360, 650 365" />
+</svg>
+<div class="b40 paper pn" id="ck-dropl">They leave. YouTube notices.</div>
+
+<div id="ck-ab">
+  <div class="ck-abt" style="left: 240px"><div class="lt">A</div><div class="th" style="background: #6f6359"><svg width="440" height="320" viewBox="0 0 440 320" style="position:absolute;left:120px;top:30px;filter:blur(12px)"><circle cx="170" cy="160" r="130" fill="#2b211b" /><rect x="290" y="140" width="150" height="40" rx="20" fill="#2b211b" /></svg></div></div>
+  <div class="ck-abt" style="left: 1080px"><div class="lt">B</div><div class="th" id="ck-bth" style="background: #16110e"><div style="position:absolute;left:34px;top:90px;width:250px;height:250px;border-radius:50%;background:#fbf8f3"></div><div style="position:absolute;left:60px;top:140px;width:110px;height:90px;border-radius:50%;background:#ff5a1f"></div><div style="position:absolute;left:150px;top:190px;width:90px;height:80px;border-radius:50%;background:#e8b45a"></div><div style="position:absolute;left:250px;top:24px;width:360px;text-align:right;font-family:'Archivo Black',sans-serif;font-size:54px;line-height:0.9;color:#fbf8f3">5 DINNERS <span style="color:#ff5a1f">$10</span></div><div style="position:absolute;left:430px;top:180px;width:180px;height:180px;border-radius:50%;background:#ff5a1f"></div></div></div>
+  <div class="ck-bar" id="ck-ba" style="left: 240px; width: 360px; background: #8c7f73"></div>
+  <div class="ck-bar" id="ck-bb" style="left: 1080px; width: 680px; background: #ff5a1f"></div>
+  <div class="b46 mut" id="ck-bla" style="left: 240px">clicks</div>
+  <div class="b46 paper" id="ck-blb" style="left: 1080px">almost <span class="acc">2×</span> the clicks</div>
+</div>
+<div class="r32 mut pn" id="ck-illu">Illustrative example</div>
+
+<div class="disp t130 paper pn" id="ck-same">Same video. <span class="acc">Better promise.</span></div>
+
+<script>
+  // feed of 12 bold tiles; hers is #5 (grey)
+  const feed = [
+    ["#ff7a45", "I ATE ONLY $1 FOOD"], ["#16110e", "WORLD'S EASIEST BREAD"], ["#7fa66b", "3 MIN BREAKFAST"], ["#e8b45a", "PASTA HACK"],
+    ["#9db7d6", "DORM ROOM CHEF"], ["#6f6359", ""], ["#e8b4bc", "TACOS 5 WAYS"], ["#ff5a1f", "$20 WEEK"],
+    ["#7a6a99", "NO-OVEN DESSERT"], ["#16110e", "RAMEN UPGRADE"], ["#7fa6b0", "MEAL PREP"], ["#ff8a5c", "SPICY NOODLES"],
+  ];
+  const titles = ["$1 food for a day", "Easiest bread ever", "Breakfast in 3 minutes", "The pasta trick", "Cooking in a dorm", "my cooking video #4", "Tacos five ways", "Eating on $20", "Dessert, no oven", "Better instant ramen", "Sunday meal prep", "Spicy noodles"];
+  make("#ck-feed", 12, (k) => ({
+    cls: "ck-ft", id: "ck-ft" + k,
+    html: `<div class="th" style="background:${feed[k][0]}"><b>${feed[k][1]}</b></div><div class="tt">${titles[k]}</div>`,
+    css: { left: (k % 4) * 413 + "px", top: Math.floor(k / 4) * 300 + "px" },
+  }));
+
+  // c1/c2: the old tile
+  on("#ck-hero", C.c1 - 0.2, "rise");
+  on("#ck-blurry", C.c2 + 3.6, "pop");
+  off("#ck-blurry", C.c3 - 0.3, "blur");
+  // c3: zoom out into a busy feed; hers is cell 5 (left 413, top 300 within feed)
+  tl.to("#ck-hero", { x: 413, y: 80 - 110 + 300, scale: 380 / 960, transformOrigin: "0 0", duration: 0.7, ease: "power3.inOut" }, C.c3 - 0.1);
+  tl.set("#ck-feed", { opacity: 1 }, C.c3 + 0.3);
+  tl.fromTo("#ck-feed .ck-ft", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out", stagger: 0.03 }, C.c3 + 0.3);
+  tl.set("#ck-ft5", { opacity: 0 }, C.c3 + 1.0);
+  tl.to("#ck-hero", { opacity: 0.3, duration: 0.6, ease: "power2.inOut" }, C.c3 + 1.1);
+  on("#ck-inv", C.c3 + 0.5, "blur");
+  // c4: a promise
+  tl.to("#ck-feed", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.c4 - 0.35);
+  tl.to("#ck-hero", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.c4 - 0.35);
+  off("#ck-inv", C.c4 - 0.35, "blur");
+  words("#ck-promise", C.c4 + 0.6, 0.1);
+  on("#ck-whatdo", C.c4 + 3.2, "blur");
+  off("#ck-promise", C.c5 - 0.35, "up");
+  off("#ck-whatdo", C.c5 - 0.35, "up");
+  // c5: the tile comes back, full size
+  tl.to("#ck-hero", { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, C.c5);
+  // c6: retitle
+  off("#ck-oldt", C.c6 + 0.4, "blur");
+  type("#ck-newt", C.c6 + 0.9, 20);
+  // c7: rebuild the thumbnail
+  tl.fromTo("#ck-new", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.c7 + 0.3);
+  tl.fromTo("#ck-plate", { opacity: 0, scale: 0.5, rotation: -40 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.4)" }, C.c7 + 0.6);
+  tl.fromTo("#ck-face", { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out" }, C.c7 + 1.8);
+  tl.fromTo("#ck-face .m", { scaleY: 0.3 }, { scaleY: 1, duration: 0.3, ease: "back.out(2)", immediateRender: true }, C.c7 + 2.2);
+  tl.fromTo("#ck-words", { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power4.in", transformOrigin: "100% 0%" }, C.c7 + 2.8);
+  tl.set("#ck-meta", { opacity: 0 }, C.c7 + 0.3);
+  // c8: rules with leader lines
+  [["#ck-r1", "#ck-o1", 1.4], ["#ck-r2", "#ck-o2", 2.6], ["#ck-r3", "#ck-o3", 4.0]].forEach(([lab, ol, dt], k) => {
+    on(lab, C.c8 + dt, "left");
+    tl.fromTo(ol, { opacity: 0, scale: 1.06 }, { opacity: 1, scale: 1, duration: 0.35, ease: "expo.out" }, C.c8 + dt);
+    if (k < 2) tl.to(ol, { opacity: 0, duration: 0.2, immediateRender: false }, C.c8 + [2.6, 4.0][k]);
+  });
+  // c8b: phone-size test
+  ["#ck-r1", "#ck-r2", "#ck-r3"].forEach((s) => off(s, C.c8b - 0.3, "right"));
+  tl.to(["#ck-o3"], { opacity: 0, duration: 0.2, immediateRender: false }, C.c8b - 0.3);
+  tl.fromTo("#ck-phone", { opacity: 0, y: 300 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, C.c8b);
+  tl.to("#ck-hero", { x: 1330 + 38 - 150, y: 70 + 18 + 110 - 110, scale: 394 / 960, duration: 0.9, ease: "power3.inOut" }, C.c8b + 0.2);
+  tl.fromTo("#ck-title", { scale: 1 }, { scale: 0.8, transformOrigin: "0 0", duration: 0.9, ease: "power3.inOut", immediateRender: false }, C.c8b + 0.2);
+  on("#ck-glance", C.c8b + 1.4, "blur");
+  tl.fromTo("#ck-x", { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power4.in" }, C.c8b + 4.3);
+  tl.to("#ck-pold", { x: 500, rotation: 20, opacity: 0, duration: 0.5, ease: "power3.in" }, C.c8b + 5.3);
+  // c9: curiosity, never lie
+  off("#ck-glance", C.c9 - 0.35, "blur");
+  tl.to("#ck-phone", { y: 1100, duration: 0.5, ease: "power3.in" }, C.c9 - 0.5);
+  tl.to("#ck-hero", { y: 1100, duration: 0.5, ease: "power3.in" }, C.c9 - 0.5);
+  words("#ck-cur2", C.c9 + 0.3);
+  words("#ck-lie", C.c9 + 2.4);
+  tl.set("#ck-drop", { opacity: 1 }, C.c9 + 3.6);
+  draw("#ck-dropp", C.c9 + 3.6, 1.2, "power2.out");
+  on("#ck-dropl", C.c9 + 4.4, "blur");
+  ["#ck-cur2", "#ck-lie", "#ck-dropl"].forEach((s) => off(s, C.c10 - 0.35, "blur"));
+  tl.to("#ck-drop", { opacity: 0, duration: 0.25 }, C.c10 - 0.35);
+  // c10/c11: A/B test (illustrative)
+  tl.fromTo("#ck-ab", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.c10);
+  q("#ck-ab .ck-abt").forEach((el, k) => tl.fromTo(el, { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.c10 + 0.1 + k * 0.15));
+  tl.fromTo("#ck-ba", { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: "power2.out" }, C.c11);
+  tl.fromTo("#ck-bb", { scaleX: 0 }, { scaleX: 1, duration: 1.6, ease: "power2.out" }, C.c11);
+  tl.fromTo(["#ck-bla", "#ck-blb"], { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.c11 + 1.4);
+  on("#ck-illu", C.c11 + 0.4, "fade");
+  // a copy of the new thumbnail look inside B
+  tl.to("#ck-ab", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.c12 - 0.35);
+  off("#ck-illu", C.c12 - 0.35, "fade");
+  words("#ck-same", C.c12, 0.1);
+</script>

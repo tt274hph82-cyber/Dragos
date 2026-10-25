@@ -1,0 +1,458 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap_s": 0.75,
+ "chapter_gap_s": 2.2,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Three views",
+   "beats": [
+    [
+     "o1",
+     "This is Maya's first YouTube video. She spent two whole weekends making it."
+    ],
+    [
+     "o2",
+     "She hit upload, refreshed the page, and waited."
+    ],
+    [
+     "o3",
+     "Three views. And one of them was her mom."
+    ],
+    [
+     "o4",
+     "If that sounds familiar, this video is for you."
+    ],
+    [
+     "o5",
+     "Over the next eight minutes, we'll follow Maya through her first year on YouTube, and fix every mistake she makes, one at a time."
+    ],
+    [
+     "o6",
+     "By the end, you'll know what actually makes a channel grow."
+    ]
+   ]
+  },
+  {
+   "id": "algo",
+   "title": "How YouTube decides",
+   "beats": [
+    [
+     "a1",
+     "First, Maya needs to understand how YouTube decides what to show."
+    ],
+    [
+     "a2",
+     "YouTube doesn't push videos out. It pulls them toward people."
+    ],
+    [
+     "a3",
+     "Every time someone opens the app, it has millions of videos to choose from, and only a few spots on the screen."
+    ],
+    [
+     "a4",
+     "So it tries to guess which video this one person will actually enjoy."
+    ],
+    [
+     "a5",
+     "To guess well, it watches what viewers do."
+    ],
+    [
+     "a6",
+     "Do they click? How long do they stay? Do they come back for more?"
+    ],
+    [
+     "a6b",
+     "YouTube even asks some viewers directly, with quick surveys about whether they liked what they just watched."
+    ],
+    [
+     "a7",
+     "So the algorithm isn't a gatekeeper you have to trick. It follows the audience."
+    ],
+    [
+     "a8",
+     "Make something people click, watch, and enjoy, and YouTube will show it to more people like them."
+    ],
+    [
+     "a9",
+     "That's the whole game. Everything else in this video is how to play it."
+    ]
+   ]
+  },
+  {
+   "id": "niche",
+   "title": "Pick a lane",
+   "beats": [
+    [
+     "n1",
+     "Maya's first mistake: her channel is about everything."
+    ],
+    [
+     "n2",
+     "A baking video. A travel vlog. A video game review."
+    ],
+    [
+     "n3",
+     "Each one reaches a different crowd, so nobody has a reason to subscribe."
+    ],
+    [
+     "n4",
+     "So she asks herself three questions."
+    ],
+    [
+     "n5",
+     "What could I make a hundred videos about?"
+    ],
+    [
+     "n6",
+     "Who, exactly, is this for?"
+    ],
+    [
+     "n7",
+     "And why would they pick me over anyone else?"
+    ],
+    [
+     "n8",
+     "Her answer: quick, cheap dinners for busy students."
+    ],
+    [
+     "n9",
+     "It's specific enough that the right person instantly thinks: that's for me."
+    ],
+    [
+     "n9b",
+     "Later, she can widen it. But starting narrow makes her far easier to find, and far easier to remember."
+    ],
+    [
+     "n10",
+     "A clear niche tells both viewers and YouTube who your videos are for."
+    ]
+   ]
+  },
+  {
+   "id": "click",
+   "title": "Earn the click",
+   "beats": [
+    [
+     "c1",
+     "Next: the click."
+    ],
+    [
+     "c2",
+     "Maya's video is called, my cooking video number four. The thumbnail is a blurry frame of a frying pan."
+    ],
+    [
+     "c3",
+     "On a busy home page, it's invisible."
+    ],
+    [
+     "c4",
+     "Your title and thumbnail are a promise. In a split second, they answer one question: what do I get if I click?"
+    ],
+    [
+     "c5",
+     "So Maya rewrites the promise."
+    ],
+    [
+     "c6",
+     "New title: five dinners for under ten dollars."
+    ],
+    [
+     "c7",
+     "New thumbnail: one finished plate, her face reacting, and three big words."
+    ],
+    [
+     "c8",
+     "Good thumbnails are simple. One subject, strong contrast, and text you can read on a phone."
+    ],
+    [
+     "c8b",
+     "Maya checks hers at the size of a phone screen. If she can't tell what it is in one glance, it goes back to the drawing board."
+    ],
+    [
+     "c9",
+     "Good titles spark curiosity, but they never lie. If the video doesn't deliver, people leave, and YouTube notices."
+    ],
+    [
+     "c10",
+     "Maya makes two versions, and tests them against each other."
+    ],
+    [
+     "c11",
+     "In this example, the new one gets clicked almost twice as often."
+    ],
+    [
+     "c12",
+     "Same video. Better promise."
+    ]
+   ]
+  },
+  {
+   "id": "hook",
+   "title": "The first 30 seconds",
+   "beats": [
+    [
+     "h1",
+     "Now people are clicking. But a lot of them leave in the first few seconds."
+    ],
+    [
+     "h2",
+     "Her old intro: a spinning logo, some music, and, hey guys, welcome back to my channel."
+    ],
+    [
+     "h3",
+     "Thirty seconds before anything happens."
+    ],
+    [
+     "h4",
+     "So she opens with the payoff instead."
+    ],
+    [
+     "h5",
+     "A sizzling plate on screen, and one line: this dinner costs three dollars, and takes ten minutes."
+    ],
+    [
+     "h6",
+     "That's a hook. Show the result, confirm the promise from the thumbnail, and give people a reason to stay."
+    ],
+    [
+     "h7",
+     "Cut the long intro. Cut the logo. Get to the good part, fast."
+    ],
+    [
+     "h7b",
+     "A good test: if a stranger skipped your first ten seconds, would they miss anything? If not, cut it."
+    ],
+    [
+     "h8",
+     "On her retention graph, the steep drop at the start gets much smaller."
+    ]
+   ]
+  },
+  {
+   "id": "retain",
+   "title": "Keep them watching",
+   "beats": [
+    [
+     "r1",
+     "Next problem: the middle of her videos sags."
+    ],
+    [
+     "r2",
+     "The retention graph in YouTube Studio shows exactly where people leave."
+    ],
+    [
+     "r3",
+     "Every dip is a moment someone got bored."
+    ],
+    [
+     "r4",
+     "So Maya edits tighter. She cuts the pauses, and the repeated steps."
+    ],
+    [
+     "r5",
+     "She changes something on screen every few seconds: a new angle, a close-up, a line of text."
+    ],
+    [
+     "r6",
+     "She plants small questions, like, stay to the end for the secret sauce. And then she actually pays it off."
+    ],
+    [
+     "r7",
+     "She tells people where the video is going, and keeps moving forward."
+    ],
+    [
+     "r7b",
+     "And she ends the video the moment it's done, pointing straight to another video, instead of saying goodbye for a whole minute."
+    ],
+    [
+     "r8",
+     "After every upload, she finds the biggest dip, and fixes that kind of moment next time."
+    ],
+    [
+     "r9",
+     "When people watch longer, it's a sign they're enjoying it. And that's what YouTube wants to recommend."
+    ]
+   ]
+  },
+  {
+   "id": "habit",
+   "title": "Show up every week",
+   "beats": [
+    [
+     "k1",
+     "Maya used to upload whenever she felt like it. Twice one week, then nothing for two months."
+    ],
+    [
+     "k2",
+     "Now she picks a schedule she can actually keep: one video, every week."
+    ],
+    [
+     "k3",
+     "A schedule matters less to the algorithm than people think. But it matters a lot to you."
+    ],
+    [
+     "k4",
+     "Every video is practice. Video ten is better than video one. Video fifty is better than video ten."
+    ],
+    [
+     "k5",
+     "She batches her work. She films two videos on Sunday, and edits during the week."
+    ],
+    [
+     "k5b",
+     "That rhythm means one bad week never breaks the chain."
+    ],
+    [
+     "k6",
+     "And she stops chasing perfect. Done and uploaded beats perfect and stuck in a folder."
+    ]
+   ]
+  },
+  {
+   "id": "shorts",
+   "title": "Shorts and series",
+   "beats": [
+    [
+     "s1",
+     "Then she adds Shorts."
+    ],
+    [
+     "s2",
+     "Quick vertical videos that get shown to people who have never heard of her."
+    ],
+    [
+     "s3",
+     "She cuts the best moment from each long video into a Short: the sizzle, the reveal, the price."
+    ],
+    [
+     "s4",
+     "Shorts bring in new eyes. Long videos turn them into fans."
+    ],
+    [
+     "s4b",
+     "Some of the people who find her through a Short tap through to her channel, and stay for the longer videos."
+    ],
+    [
+     "s5",
+     "She also turns her best idea into a series: dinner for under five dollars, week after week."
+    ],
+    [
+     "s6",
+     "And she links her videos together with end screens and playlists, so one view leads to the next."
+    ]
+   ]
+  },
+  {
+   "id": "stats",
+   "title": "Read the numbers",
+   "beats": [
+    [
+     "t1",
+     "Every Sunday, Maya spends fifteen minutes in YouTube Studio."
+    ],
+    [
+     "t2",
+     "She checks three things."
+    ],
+    [
+     "t3",
+     "Click-through rate. Are people clicking when they see her thumbnail?"
+    ],
+    [
+     "t4",
+     "Average view duration. Are they staying?"
+    ],
+    [
+     "t5",
+     "And returning viewers. Are they coming back?"
+    ],
+    [
+     "t6",
+     "Low clicks? Work on the title and thumbnail."
+    ],
+    [
+     "t7",
+     "Early drop off? Work on the hook."
+    ],
+    [
+     "t8",
+     "Few returning viewers? Work on the series."
+    ],
+    [
+     "t8b",
+     "Over time, she spots patterns: which topics get clicked, which ones keep people watching, and which ones bring in subscribers."
+    ],
+    [
+     "t9",
+     "She doesn't compare herself to giant channels. She only tries to beat her own last video."
+    ]
+   ]
+  },
+  {
+   "id": "people",
+   "title": "Talk to your viewers",
+   "beats": [
+    [
+     "p1",
+     "Finally, she treats her viewers like people, not numbers."
+    ],
+    [
+     "p2",
+     "She replies to comments in the first hour after a video goes live."
+    ],
+    [
+     "p3",
+     "She pins the best questions, and turns them into her next videos."
+    ],
+    [
+     "p4",
+     "She posts polls, and asks what they want to cook next."
+    ],
+    [
+     "p4b",
+     "She even features a viewer's recipe in one video, and that viewer shares it with all of their friends."
+    ],
+    [
+     "p5",
+     "Viewers who feel heard come back. And people who come back are what turn a channel into a community."
+    ]
+   ]
+  },
+  {
+   "id": "year",
+   "title": "One year later",
+   "beats": [
+    [
+     "y1",
+     "One year later."
+    ],
+    [
+     "y2",
+     "Maya has made fifty two videos. Most did okay. A few did great. And one took off."
+    ],
+    [
+     "y3",
+     "Not because of a trick. Because each video was a little better than the last."
+    ],
+    [
+     "y3b",
+     "Her click-through rate went up. Her viewers stayed longer. And more of them came back, every single week."
+    ],
+    [
+     "y4",
+     "So here's the whole thing, in one line."
+    ],
+    [
+     "y5",
+     "Make videos for one clear viewer. Earn the click. Keep the promise. And get a little better every time."
+    ],
+    [
+     "y6",
+     "Now go make your next video. And press upload."
+    ]
+   ]
+  }
+ ]
+}

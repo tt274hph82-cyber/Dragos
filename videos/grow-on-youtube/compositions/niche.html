@@ -1,0 +1,434 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+
+  #ni-laptop { left: 110px; top: 140px; width: 1140px; height: 760px; }
+  #ni-base { left: 40px; top: 895px; width: 1280px; }
+  #ni-head { position: absolute; left: 36px; top: 30px; display: flex; align-items: center; gap: 22px; }
+  #ni-sub { position: absolute; right: 36px; top: 44px; padding: 14px 28px; border-radius: 30px; background: #d9cfc4; color: #8c7f73; font-size: 32px; font-weight: 700; }
+  .ni-t { top: 0; }
+  .ni-t .th { display: flex; align-items: flex-end; padding: 12px; }
+  #ni-grid, #ni-grid2 { position: absolute; left: 36px; top: 170px; width: 1050px; height: 560px; }
+  .ni-hl { position: absolute; inset: -8px; border: 8px solid #ff5a1f; border-radius: 18px; opacity: 0; }
+  #ni-every { left: 1330px; top: 200px; width: 520px; }
+  #ni-nosub { left: 1330px; top: 640px; width: 520px; }
+  .ni-crowd { position: absolute; }
+  #ni-note { left: 150px; top: 110px; width: 1000px; height: 860px; padding: 40px 70px 0 120px; }
+  #ni-note .holes { position: absolute; left: 36px; top: 120px; }
+  #ni-note .holes i { display: block; width: 36px; height: 36px; border-radius: 50%; background: #3a2a20; margin-bottom: 220px; }
+  #ni-nh { position: absolute; left: 120px; top: 52px; }
+  .ni-qq { position: absolute; left: 120px; width: 820px; font-size: 46px; font-weight: 700; color: #16110e; }
+  #ni-ans { left: 1210px; top: 520px; transform-origin: 50% 50%; }
+  #ni-ans .chip { position: static; display: inline-block; font-size: 50px; padding: 28px 40px; }
+  #ni-ans-l { left: 1214px; top: 440px; }
+  #ni-viewer { left: 1260px; top: 420px; color: #f5f0e8; width: 160px; height: 232px; }
+  #ni-vcard { left: 1080px; top: 700px; width: 560px; }
+  #ni-bubble { left: 1180px; top: 200px; padding: 30px 44px; border-radius: 40px; background: #fbf8f3; color: #16110e; }
+  #ni-bubble::after { content: ""; position: absolute; left: 120px; bottom: -30px; border-top: 34px solid #fbf8f3; border-right: 34px solid transparent; }
+  #ni-beam { position: absolute; left: 150px; top: 250px; width: 1620px; height: 600px; opacity: 0; }
+  #ni-bl1 { left: 150px; top: 880px; }
+  #ni-bl2 { left: 1300px; top: 880px; }
+  #ni-clear { left: 1330px; top: 260px; width: 520px; }
+
+  </style>
+  <div id="root" data-composition-id="niche" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+
+<div id="ni-world">
+  <div class="laptop pn" id="ni-laptop">
+    <div class="screen">
+      <div id="ni-head"><div class="avatar">M</div><div class="b46 ink">Maya</div></div>
+      <div id="ni-sub">Subscribe</div>
+      <div id="ni-grid"></div>
+      <div id="ni-grid2"></div>
+    </div>
+  </div>
+  <div class="laptop-base pn" id="ni-base"></div>
+  <div id="ni-crowds"></div>
+</div>
+<div class="disp t80 paper pn" id="ni-every">A channel about <span class="acc">everything</span></div>
+<div class="b46 paper pn" id="ni-nosub">…so nobody has a reason to subscribe</div>
+
+<div class="note pn" id="ni-note">
+  <div class="holes"><i></i><i></i><i></i></div>
+  <div class="disp t64 ink" id="ni-nh">3 questions</div>
+  <div class="ni-qq pn" id="ni-q1" style="top: 220px">1. What could I make 100 videos about?</div>
+  <div class="ni-qq pn" id="ni-q2" style="top: 380px">2. Who, exactly, is this for?</div>
+  <div class="ni-qq pn" id="ni-q3" style="top: 540px">3. Why pick me over anyone else?</div>
+</div>
+<div class="b46 paper pn" id="ni-ans-l">Her answer</div>
+<div class="pn" id="ni-ans"><div class="chip acc-bg">Quick, cheap dinners<br />for busy students</div></div>
+
+<div class="person pn" id="ni-viewer"></div>
+<div class="pn" id="ni-vcard"><div class="b46 paper">Busy student · hungry · $12 left</div></div>
+<div class="disp t64 pn" id="ni-bubble">That's for me!</div>
+
+<svg id="ni-beam" viewBox="0 0 1620 600">
+  <polygon id="ni-beam-p" points="0,280 0,320 1620,320 1620,280" fill="#ff5a1f" />
+</svg>
+<div class="b46 paper pn" id="ni-bl1">Start <span class="acc">narrow</span>: easy to find, easy to remember</div>
+<div class="b46 mut pn" id="ni-bl2">widen later</div>
+<div class="disp t64 paper pn" id="ni-clear">A clear niche tells viewers <span class="acc">and</span> YouTube who it's for</div>
+    <div id="niche-card" class="card"><div class="num">Lesson 2</div><div class="ttl">Pick a lane</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"n1":2.3,"n2":6.236,"n3":10.785,"n4":15.825,"n5":18.477,"n6":21.272,"n7":23.759,"n8":26.449,"n9":30.272,"n9b":35.199,"n10":42.47};
+      const E = {"n1":5.486,"n2":10.035,"n3":15.075,"n4":17.727,"n5":20.522,"n6":23.009,"n7":25.699,"n8":29.522,"n9":34.449,"n9b":41.72,"n10":46.584};
+      const D = 46.934;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      card("niche", 1.85);
+
+  const mixed = [
+    ["Baking a cake", "#e8b4bc"], ["Paris vlog!!", "#9db7d6"], ["Game review", "#7a6a99"],
+    ["My morning", "#c9bcae"], ["Unboxing", "#a3c4a8"], ["Lake trip", "#7fa6b0"],
+  ];
+  const food = [
+    ["$3 pasta night", "#ff5a1f"], ["10-min noodles", "#ff7a45"], ["5 dinners under $10", "#ff5a1f"],
+    ["Rice cooker tricks", "#ff8a5c"], ["Meal prep on $20", "#ff6a33"], ["One-pan chicken", "#ff7a45"],
+  ];
+  const tileHtml = (t, c, hl) => `<div class="th" style="background:${c}"></div><div class="tt">${t}</div>${hl ? '<div class="ni-hl"></div>' : ""}`;
+  make("#ni-grid", 6, (k) => ({ cls: "tile ni-t", id: "ni-t" + k, html: tileHtml(mixed[k][0], mixed[k][1], true), css: { left: (k % 3) * 350 + "px", top: Math.floor(k / 3) * 280 + "px" } }));
+  make("#ni-grid2", 6, (k) => ({ cls: "tile ni-t", id: "ni-f" + k, html: tileHtml(food[k][0], food[k][1], false), css: { left: (k % 3) * 350 + "px", top: Math.floor(k / 3) * 280 + "px", opacity: 0 } }));
+  // three crowds of dots (one per highlighted tile), each its own colour
+  const cc = ["#e8b4bc", "#9db7d6", "#7a6a99"];
+  const R = rng(3);
+  const crowd = [];
+  [0, 1, 2].forEach((g) => {
+    for (let k = 0; k < 9; k++) crowd.push({ g, x: 300 + g * 350 + (R() - 0.5) * 160, y: 560 + (R() - 0.5) * 120 });
+  });
+  make("#ni-crowds", crowd.length, (k) => ({ cls: "dot", id: "ni-c" + k, css: { left: crowd[k].x + "px", top: crowd[k].y + "px", background: cc[crowd[k].g], opacity: 0 } }));
+
+  // n1
+  on("#ni-laptop", 0.2, "up");
+  on("#ni-base", 0.2, "up");
+  tl.fromTo("#ni-grid .tile", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)", stagger: 0.12 }, C.n1 + 0.2);
+  words("#ni-every", C.n1 + 0.4);
+  // n2: highlight baking, travel, game
+  [0, 1, 2].forEach((k) => {
+    tl.fromTo(`#ni-t${k} .ni-hl`, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 0.3, ease: "expo.out" }, C.n2 + k * 1.25);
+  });
+  // n3: crowds walk off in different directions
+  crowd.forEach((d, k) => {
+    const dir = [[-380, 260], [0, 360], [380, 260]][d.g];
+    tl.fromTo("#ni-c" + k, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, C.n3 + 0.1 + (k % 9) * 0.04);
+    tl.to("#ni-c" + k, { x: dir[0], y: dir[1], opacity: 0, duration: 1.8, ease: "power2.in" }, C.n3 + 1.6 + (k % 9) * 0.05);
+  });
+  on("#ni-nosub", C.n3 + 1.8, "blur");
+  tl.fromTo("#ni-sub", { x: 0 }, { x: -12, duration: 0.06, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, C.n3 + 2.4);
+  // n4: notebook
+  ["#ni-every", "#ni-nosub"].forEach((s) => off(s, C.n4 - 0.4, "blur"));
+  tl.to("#ni-world", { x: -1500, duration: 0.6, ease: "power3.in" }, C.n4 - 0.5);
+  tl.fromTo("#ni-note", { opacity: 1, x: 2100, rotation: 4 }, { opacity: 1, x: 0, rotation: -1.5, duration: 0.8, ease: "expo.out" }, C.n4 - 0.2);
+  type("#ni-q1", C.n5, 26);
+  type("#ni-q2", C.n6, 26);
+  type("#ni-q3", C.n7, 26);
+  // n8: answer stamp
+  on("#ni-ans-l", C.n8, "blur");
+  tl.fromTo("#ni-ans", { opacity: 0, scale: 1.6, rotation: -8 }, { opacity: 1, scale: 1, rotation: -3, duration: 0.28, ease: "power4.in" }, C.n8 + 0.7);
+  // n9: the viewer
+  tl.to("#ni-note", { x: -1500, rotation: -6, duration: 0.6, ease: "power3.in" }, C.n9 - 0.5);
+  off("#ni-ans-l", C.n9 - 0.4, "blur");
+  tl.to("#ni-ans", { x: -1030, y: -300, scale: 0.8, duration: 0.8, ease: "power3.inOut" }, C.n9 - 0.4);
+  on("#ni-viewer", C.n9 + 0.1, "rise");
+  on("#ni-vcard", C.n9 + 0.4, "blur");
+  on("#ni-bubble", C.n9 + 2.5, "pop", { transformOrigin: "20% 100%" });
+  // n9b: narrow beam widening
+  ["#ni-viewer", "#ni-vcard", "#ni-bubble"].forEach((s) => off(s, C.n9b - 0.35, "blur"));
+  off("#ni-ans", C.n9b - 0.35, "fade");
+  tl.set("#ni-beam", { opacity: 1 }, C.n9b);
+  tl.fromTo("#ni-beam-p", { attr: { points: "0,280 0,320 0,320 0,280" } }, { attr: { points: "0,280 0,320 1100,320 1100,280" }, duration: 1.1, ease: "expo.out" }, C.n9b);
+  on("#ni-bl1", C.n9b + 0.2, "blur");
+  tl.to("#ni-beam-p", { attr: { points: "0,280 0,320 1620,600 1620,0" }, duration: 1.6, ease: "power2.inOut" }, C.n9b + 3.6);
+  on("#ni-bl2", C.n9b + 3.9, "blur");
+  // n10: the channel, re-themed
+  tl.to("#ni-beam", { opacity: 0, duration: 0.3 }, C.n10 - 0.4);
+  off("#ni-bl1", C.n10 - 0.4, "blur");
+  off("#ni-bl2", C.n10 - 0.4, "blur");
+  tl.fromTo("#ni-world", { x: -1500 }, { x: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, C.n10 - 0.2);
+  tl.to("#ni-grid", { opacity: 0, duration: 0.01 }, C.n10 - 0.2);
+  tl.to("#ni-crowds", { opacity: 0, duration: 0.01 }, C.n10 - 0.2);
+  tl.fromTo("#ni-grid2 .tile", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)", stagger: 0.1 }, C.n10 + 0.4);
+  tl.fromTo("#ni-sub", { backgroundColor: "#d9cfc4", color: "#8c7f73" }, { backgroundColor: "#ff5a1f", color: "#16110e", duration: 0.3, immediateRender: false }, C.n10 + 1.2);
+  words("#ni-clear", C.n10 + 0.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["niche"] = tl;
+    })();
+  </script>
+</template>

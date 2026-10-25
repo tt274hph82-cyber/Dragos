@@ -1,0 +1,154 @@
+<!--SFX [["click","o2",0.95,0.7],["click","o2",1.75,0.7],["pop","o3",0.1,0.5],["pop","o3",0.5,0.5],["pop","o3",0.9,0.6],["whoosh-cinematic","o4",0.0,0.35],["whoosh","o5",-0.2,0.5],["pop","o6",0.0,0.5]]-->
+<style>
+  #op-cam { position: absolute; inset: 0; transform-origin: 0px 0px; }
+  #op-bar { position: absolute; left: 0; top: 0; width: 100%; height: 70px; background: #efe9e1; }
+  #op-bar .addr { position: absolute; left: 110px; top: 15px; width: 900px; height: 40px; border-radius: 20px; background: #fbf8f3; font-size: 26px; color: #8c7f73; padding: 4px 22px; }
+  #op-refresh { position: absolute; left: 30px; top: 14px; width: 44px; height: 44px; }
+  #op-upload { left: 0; top: 70px; width: 100%; height: 738px; opacity: 1; }
+  #op-upload .h { position: absolute; left: 90px; top: 80px; }
+  #op-upload .file { position: absolute; left: 90px; top: 230px; width: 1160px; height: 210px; border-radius: 18px; background: #efe9e1; }
+  #op-upload .fname { position: absolute; left: 40px; top: 36px; }
+  #op-upload .track { position: absolute; left: 40px; top: 130px; width: 1080px; height: 26px; border-radius: 13px; background: #d9cfc4; overflow: hidden; }
+  #op-fill { width: 100%; height: 100%; background: #ff5a1f; transform-origin: left center; }
+  #op-pct { position: absolute; left: 90px; top: 480px; }
+  #op-page { left: 0; top: 70px; width: 100%; height: 738px; }
+  #op-player { position: absolute; left: 40px; top: 30px; width: 860px; height: 484px; border-radius: 16px; background: #2b211b; }
+  #op-player .playbtn { left: 370px; top: 200px; }
+  #op-vtitle { position: absolute; left: 40px; top: 540px; }
+  #op-chan { position: absolute; left: 40px; top: 620px; display: flex; align-items: center; gap: 20px; }
+  #op-chan .avatar { width: 72px; height: 72px; font-size: 40px; }
+  #op-views { position: absolute; left: 260px; top: 630px; white-space: nowrap; }
+  #op-views b { font-weight: 700; }
+  #op-side .s { position: absolute; left: 940px; width: 368px; height: 140px; border-radius: 12px; background: #e6ddd3; }
+  #op-mom { left: 720px; top: 770px; }
+  #op-week { left: 1290px; top: 130px; }
+  #op-cursor { left: 0; top: 0; }
+  /* year track */
+  #op-year { position: absolute; inset: 0; opacity: 0; }
+  #op-track { position: absolute; left: 0; top: 0; width: 4200px; height: 1080px; }
+  #op-road { position: absolute; left: 200px; top: 560px; width: 3800px; height: 10px; border-radius: 5px; background: #8c7f73; }
+  #op-road-fill { position: absolute; left: 200px; top: 560px; width: 3800px; height: 10px; border-radius: 5px; background: #ff5a1f; transform-origin: left center; }
+  .op-stop { position: absolute; top: 525px; width: 80px; height: 80px; margin-left: -40px; border-radius: 50%; background: #3a2a20; border: 8px solid #f5f0e8; }
+  .op-lab { position: absolute; top: 640px; width: 400px; margin-left: -200px; text-align: center; }
+  .op-mo { position: absolute; top: 420px; width: 400px; margin-left: -200px; text-align: center; }
+  #op-ytitle { left: 150px; top: 150px; }
+  #op-title { left: 150px; top: 330px; width: 1700px; }
+  #op-sub { left: 156px; top: 700px; }
+</style>
+
+<div class="desk"></div>
+<div id="op-cam">
+  <div class="laptop" id="op-laptop">
+    <div class="screen">
+      <div id="op-bar">
+        <svg id="op-refresh" viewBox="0 0 44 44"><path d="M34 22a12 12 0 1 1-4-9" fill="none" stroke="#16110e" stroke-width="4" stroke-linecap="round"/><path d="M31 5v9h-9" fill="none" stroke="#16110e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div class="addr">studio · upload</div>
+      </div>
+      <div class="pn" id="op-upload">
+        <div class="h disp t80 ink">Upload video</div>
+        <div class="file">
+          <div class="fname b46 ink">my-first-video.mp4</div>
+          <div class="track"><div id="op-fill"></div></div>
+        </div>
+        <div id="op-pct" class="b40 mut">Uploading… <span id="op-pctn">0</span>%</div>
+      </div>
+      <div class="pn" id="op-page">
+        <div id="op-player"><div class="playbtn"></div></div>
+        <div id="op-vtitle" class="b46 ink">My First Video!!</div>
+        <div id="op-chan"><div class="avatar">M</div><div class="b40 ink">Maya</div></div>
+        <div id="op-views" class="r36 ink"><b id="op-vn">0</b> views</div>
+        <div id="op-side">
+          <div class="s" style="top: 30px"></div>
+          <div class="s" style="top: 200px"></div>
+          <div class="s" style="top: 370px"></div>
+          <div class="s" style="top: 540px"></div>
+        </div>
+      </div>
+      <svg class="cursor pn" id="op-cursor" viewBox="0 0 54 70"><path d="M4 4 L4 56 L18 44 L28 66 L38 61 L28 40 L46 40 Z" fill="#fbf8f3" stroke="#16110e" stroke-width="4" stroke-linejoin="round"/></svg>
+    </div>
+  </div>
+  <div class="laptop-base"></div>
+  <div class="chip acc-bg pn" id="op-week">2 weekends of work</div>
+  <div class="chip pn" id="op-mom">…one was Mom</div>
+</div>
+
+<div id="op-year">
+  <div class="desk"></div>
+  <div class="disp t64 paper pn" id="op-ytitle">Maya's first year</div>
+  <div id="op-track">
+    <div id="op-road"></div>
+    <div id="op-road-fill"></div>
+  </div>
+</div>
+
+<div class="desk pn" id="op-tbg" style="opacity:0"></div>
+<div class="disp t160 paper pn" id="op-title">How to <span class="acc">grow</span> on YouTube</div>
+<div class="b46 mut pn" id="op-sub">Follow one channel from 3 views to a community</div>
+
+<script>
+  // stops on the year track (built here, positions fixed)
+  const stops = ["Algorithm", "Niche", "The click", "The hook", "Retention", "Habit", "Shorts", "Numbers", "Community"];
+  const track = document.getElementById("op-track");
+  stops.forEach((s, k) => {
+    const x = 520 + k * 420;
+    const st = document.createElement("div");
+    st.className = "op-stop"; st.id = "op-st" + k; st.style.left = x + "px";
+    const lb = document.createElement("div");
+    lb.className = "op-lab b46 paper"; lb.id = "op-lb" + k; lb.style.left = x + "px"; lb.textContent = s;
+    const mo = document.createElement("div");
+    mo.className = "op-mo r32 mut"; mo.id = "op-mo" + k; mo.style.left = x + "px"; mo.textContent = "Month " + Math.min(12, 1 + Math.round(k * 1.4));
+    track.appendChild(st); track.appendChild(lb); track.appendChild(mo);
+  });
+
+  // o1: upload fills
+  const pct = { v: 0 };
+  tl.fromTo("#op-fill", { scaleX: 0 }, { scaleX: 1, duration: 4.2, ease: "power1.inOut" }, 0.6);
+  tl.fromTo(pct, { v: 0 }, { v: 100, duration: 4.2, ease: "power1.inOut", onUpdate: () => (document.getElementById("op-pctn").textContent = Math.round(pct.v)) }, 0.6);
+  on("#op-week", C.o1 + 2.4, "pop");
+  off("#op-week", C.o2, "blur");
+
+  // o2: upload done -> video page, refresh twice
+  off("#op-upload", C.o2 - 0.2, "fade");
+  on("#op-page", C.o2 - 0.1, "scale");
+  tl.set("#op-cursor", { x: 700, y: 500 }, 0);
+  on("#op-cursor", C.o2 + 0.1, "fade");
+  clickAt("#op-cursor", C.o2 + 0.25, 30, 20, 0.7);
+  clickAt("#op-cursor", C.o2 + 1.55, 30, 20, 0.0);
+  tl.fromTo("#op-refresh", { rotation: 0 }, { rotation: 360, duration: 0.5, ease: "power2.out", transformOrigin: "50% 50%" }, C.o2 + 0.95);
+  tl.fromTo("#op-refresh", { rotation: 0 }, { rotation: 360, duration: 0.5, ease: "power2.out", transformOrigin: "50% 50%", immediateRender: false }, C.o2 + 1.75);
+  tl.to("#op-cursor", { x: 600, y: 760, duration: 0.8, ease: "power3.inOut" }, C.o3 - 0.6);
+
+  // o3: views tick to 3
+  const vn = { v: 0 };
+  tl.fromTo(vn, { v: 0 }, { v: 3, duration: 1.2, ease: "steps(3)", onUpdate: () => (document.getElementById("op-vn").textContent = Math.round(vn.v)) }, C.o3 - 0.3);
+  [0, 1, 2].forEach((k) => {
+    tl.fromTo("#op-vn", { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "back.out(2)", immediateRender: false, transformOrigin: "50% 60%" }, C.o3 + 0.1 + k * 0.4);
+  });
+  on("#op-mom", C.o3 + 1.3, "pop");
+  off("#op-mom", C.o4 - 0.3, "blur");
+  off("#op-cursor", C.o4 - 0.3, "fade");
+
+  // o4: push into "3 views"
+  cam("#op-cam", C.o4, { scale: 4.2, x: 960 - 4.2 * 611, y: 540 - 4.2 * 818 }, 1.6, "power2.inOut");
+  tl.to("#op-cam", { scale: 14, filter: "blur(14px)", opacity: 0, duration: 0.5, ease: "power3.in" }, C.o5 - 0.55);
+
+  // o5: year track, pan along
+  tl.fromTo("#op-year", { opacity: 0 }, { opacity: 1, duration: 0.2 }, C.o5 - 0.2);
+  words("#op-ytitle", C.o5 + 0.1);
+  tl.fromTo("#op-road-fill", { scaleX: 0 }, { scaleX: 1, duration: 7.4, ease: "none" }, C.o5);
+  tl.fromTo("#op-track", { x: 0 }, { x: -2380, duration: 7.4, ease: "power1.inOut" }, C.o5);
+  stops.forEach((s, k) => {
+    // the fill reaches stop k at t = (x - 200) / 3800 of 7.4s (approx, linear fill)
+    const t = C.o5 + ((520 + k * 420 - 200) / 3800) * 7.4;
+    tl.fromTo("#op-st" + k, { borderColor: "#f5f0e8", backgroundColor: "#3a2a20" }, { borderColor: "#ff5a1f", backgroundColor: "#ff5a1f", duration: 0.15 }, t);
+    tl.fromTo("#op-lb" + k, { opacity: 0.25 }, { opacity: 1, duration: 0.2 }, t);
+    tl.fromTo("#op-mo" + k, { opacity: 0 }, { opacity: 1, duration: 0.2 }, t);
+  });
+  off("#op-ytitle", C.o6 - 0.4, "blur");
+  tl.to("#op-year", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.o6 - 0.3);
+
+  // o6: the title
+  tl.fromTo("#op-tbg", { opacity: 0 }, { opacity: 1, duration: 0.3 }, C.o6 - 0.3);
+  words("#op-title", C.o6, 0.09);
+  on("#op-sub", C.o6 + 1.0, "blur");
+</script>

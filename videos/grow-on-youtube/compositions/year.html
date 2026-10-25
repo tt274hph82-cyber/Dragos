@@ -1,0 +1,400 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+
+  #yr-later { left: 150px; top: 300px; }
+  #yr-wk { left: 156px; top: 560px; }
+  #yr-wall { position: absolute; left: 150px; top: 200px; width: 1620px; height: 720px; }
+  .yr-t { position: absolute; width: 110px; height: 62px; border-radius: 8px; background: #6f6359; opacity: 0; }
+  #yr-52 { left: 150px; top: 80px; }
+  #yr-okay { left: 150px; top: 940px; }
+  #yr-stairs { position: absolute; left: 150px; top: 260px; width: 1620px; height: 640px; }
+  .yr-st { position: absolute; bottom: 0; width: 120px; background: #2b211b; border-top: 10px solid #f5f0e8; transform-origin: 50% 100%; }
+  #yr-climb { position: absolute; left: 0; top: 0; width: 70px; height: 70px; border-radius: 50%; background: #ff5a1f; opacity: 0; }
+  #yr-trick { left: 150px; top: 90px; width: 1600px; }
+  .yr-m { position: absolute; left: 150px; display: flex; align-items: center; gap: 40px; opacity: 0; }
+  .yr-m svg { flex: none; }
+  #yr-line { left: 150px; top: 380px; width: 1700px; }
+  .yr-p { position: absolute; left: 150px; opacity: 0; }
+  #yr-laptop { left: 360px; top: 40px; width: 1200px; height: 760px; }
+  #yr-base { left: 280px; top: 795px; width: 1360px; }
+  #yr-btn { position: absolute; left: 204px; top: 300px; padding: 44px 110px; border-radius: 30px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; font-size: 110px; }
+  #yr-track { position: absolute; left: 90px; top: 560px; width: 968px; height: 26px; border-radius: 13px; background: #d9cfc4; overflow: hidden; opacity: 0; }
+  #yr-fill { width: 100%; height: 100%; background: #ff5a1f; transform-origin: left center; }
+  #yr-up { position: absolute; left: 90px; top: 70px; }
+  #yr-cursor { left: 1000px; top: 620px; }
+  #yr-press { left: 150px; top: 870px; width: 1700px; }
+
+  </style>
+  <div id="root" data-composition-id="year" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+
+<div class="disp t160 paper pn" id="yr-later">One year later</div>
+<div class="b56 mut pn" id="yr-wk">Week <span id="yr-wkn">1</span> of 52</div>
+
+<div class="disp t80 paper pn" id="yr-52"><span class="acc">52</span> videos</div>
+<div id="yr-wall"></div>
+<div class="b46 paper pn" id="yr-okay">Most did okay. A few did great. <span class="acc">One took off.</span></div>
+
+<div class="disp t80 paper pn" id="yr-trick">Not a trick. Each video a little better than the last.</div>
+<div id="yr-stairs"><div id="yr-climb"></div></div>
+
+<div class="yr-m" id="yr-m1" style="top: 250px"><svg width="90" height="110" viewBox="0 0 90 110"><path d="M45 104 L45 14 M10 46 L45 10 L80 46" stroke="#ff5a1f" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="disp t80 paper">Click-through rate</div></div>
+<div class="yr-m" id="yr-m2" style="top: 470px"><svg width="90" height="110" viewBox="0 0 90 110"><path d="M45 104 L45 14 M10 46 L45 10 L80 46" stroke="#ff5a1f" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="disp t80 paper">Watch time</div></div>
+<div class="yr-m" id="yr-m3" style="top: 690px"><svg width="90" height="110" viewBox="0 0 90 110"><path d="M45 104 L45 14 M10 46 L45 10 L80 46" stroke="#ff5a1f" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="disp t80 paper">Returning viewers, every week</div></div>
+
+<div class="disp t110 paper pn" id="yr-line">The whole thing, in one line</div>
+<div class="disp t96 paper yr-p" id="yr-p1" style="top: 170px">Make videos for one clear viewer.</div>
+<div class="disp t96 paper yr-p" id="yr-p2" style="top: 360px">Earn the click.</div>
+<div class="disp t96 paper yr-p" id="yr-p3" style="top: 550px">Keep the promise.</div>
+<div class="disp t96 paper yr-p" id="yr-p4" style="top: 740px">Get a little <span class="acc">better</span> every time.</div>
+
+<div class="laptop pn" id="yr-laptop">
+  <div class="screen">
+    <div class="disp t80 ink" id="yr-up">Your next video</div>
+    <div id="yr-btn">Upload</div>
+    <div id="yr-track"><div id="yr-fill"></div></div>
+    <svg class="cursor pn" id="yr-cursor" viewBox="0 0 54 70"><path d="M4 4 L4 56 L18 44 L28 66 L38 61 L28 40 L46 40 Z" fill="#fbf8f3" stroke="#16110e" stroke-width="4" stroke-linejoin="round" /></svg>
+  </div>
+</div>
+<div class="laptop-base pn" id="yr-base"></div>
+<div class="disp t96 paper pn" id="yr-press">Press <span class="acc">upload.</span></div>
+    <div id="year-card" class="card"><div class="num">Lesson 10</div><div class="ttl">One year later</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"y1":2.3,"y2":3.991,"y3":10.198,"y3b":15.192,"y4":21.599,"y5":24.349,"y6":31.327};
+      const E = {"y1":3.241,"y2":9.448,"y3":14.442,"y3b":20.849,"y4":23.599,"y5":30.577,"y6":34.099};
+      const D = 37.299;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      card("year", 1.85);
+
+  // 52 tiles: 13 x 4; a few "great", one "took off"
+  const great = [7, 15, 22, 33, 41, 46];
+  const hit = 38;
+  make("#yr-wall", 52, (k) => ({ cls: "yr-t", id: "yr-t" + k, css: { left: (k % 13) * 124 + "px", top: Math.floor(k / 13) * 90 + 100 + "px" } }));
+  const H = [60, 90, 110, 150, 170, 210, 240, 290, 320, 370, 410, 460];
+  make("#yr-stairs", H.length, (k) => ({ cls: "yr-st", id: "yr-s" + k, css: { left: k * 134 + "px", height: H[k] + "px" } }));
+
+  // y1: one year later
+  words("#yr-later", C.y1 - 0.3, 0.09);
+  on("#yr-wk", C.y1, "blur");
+  count("#yr-wkn", C.y1, 1, 52, 1.4, (v) => String(Math.round(v)));
+  // y2: 52 videos
+  off("#yr-later", C.y2 - 0.35, "up");
+  off("#yr-wk", C.y2 - 0.35, "up");
+  words("#yr-52", C.y2);
+  q(".yr-t").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.6)" }, C.y2 + 0.3 + k * 0.025));
+  on("#yr-okay", C.y2 + 1.6, "blur");
+  great.forEach((k) => tl.to("#yr-t" + k, { backgroundColor: "#ff8a5c", duration: 0.25, immediateRender: false }, C.y2 + 2.6));
+  tl.to("#yr-t" + hit, { backgroundColor: "#ff5a1f", scale: 3.2, zIndex: 5, duration: 0.5, ease: "back.out(1.4)", immediateRender: false }, C.y2 + 4.4);
+  // y3: the staircase
+  off("#yr-52", C.y3 - 0.35, "up");
+  off("#yr-okay", C.y3 - 0.35, "blur");
+  tl.to("#yr-wall", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.y3 - 0.35);
+  words("#yr-trick", C.y3 + 0.1);
+  q(".yr-st").forEach((el, k) => tl.fromTo(el, { scaleY: 0 }, { scaleY: 1, duration: 0.4, ease: "expo.out" }, C.y3 + 0.4 + k * 0.08));
+  tl.set("#yr-climb", { opacity: 1, x: 25, y: 640 - H[0] - 80 }, C.y3 + 1.4);
+  H.forEach((h, k) => { if (k) tl.to("#yr-climb", { x: k * 134 + 25, y: 640 - h - 80, duration: 0.22, ease: "power2.out" }, C.y3 + 1.4 + k * 0.24); });
+  // y3b: three arrows up
+  off("#yr-trick", C.y3b - 0.35, "up");
+  tl.to("#yr-stairs", { opacity: 0, duration: 0.3 }, C.y3b - 0.35);
+  [["#yr-m1", 0.3], ["#yr-m2", 2.0], ["#yr-m3", 3.6]].forEach(([s, dt]) => tl.fromTo(s, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.y3b + dt));
+  // y4: in one line
+  ["#yr-m1", "#yr-m2", "#yr-m3"].forEach((s) => off(s, C.y4 - 0.35, "up"));
+  words("#yr-line", C.y4);
+  off("#yr-line", C.y5 - 0.3, "blur");
+  // y5: the line in four parts
+  [["#yr-p1", 0.0], ["#yr-p2", 1.9], ["#yr-p3", 3.0], ["#yr-p4", 4.0]].forEach(([s, dt]) => tl.fromTo(s, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, C.y5 + dt));
+  // y6: back to the laptop
+  ["#yr-p1", "#yr-p2", "#yr-p3", "#yr-p4"].forEach((s, k) => off(s, C.y6 - 0.4 + k * 0.04, "up"));
+  on("#yr-laptop", C.y6 - 0.1, "scale");
+  on("#yr-base", C.y6 - 0.1, "fade");
+  on("#yr-cursor", C.y6 + 0.3, "fade");
+  clickAt("#yr-cursor", C.y6 + 0.6, -420, -270, 1.5);
+  tl.to("#yr-btn", { scale: 0.94, duration: 0.07, ease: "power1.out" }, C.y6 + 2.1);
+  tl.to("#yr-btn", { scale: 1, duration: 0.15, ease: "power1.out" }, C.y6 + 2.17);
+  tl.set("#yr-track", { opacity: 1 }, C.y6 + 2.3);
+  tl.fromTo("#yr-fill", { scaleX: 0 }, { scaleX: 1, duration: 4.5, ease: "power1.inOut" }, C.y6 + 2.3);
+  words("#yr-press", C.y6 + 0.2);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["year"] = tl;
+    })();
+  </script>
+</template>

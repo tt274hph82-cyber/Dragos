@@ -1,0 +1,443 @@
+<template>
+  <style>
+#root {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  color: var(--ink, #f5f0e8);
+}
+#root * { box-sizing: border-box; }
+#root .pn { position: absolute; opacity: 0; }
+#root .full { position: absolute; inset: 0; }
+
+/* ---------- worlds ---------- */
+#root .desk {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 1100px 760px at 22% 8%, rgba(255, 180, 107, 0.22), rgba(255, 180, 107, 0) 70%),
+    repeating-linear-gradient(176deg, rgba(0,0,0,0.06) 0 2px, rgba(0,0,0,0) 2px 9px, rgba(255,255,255,0.025) 9px 11px, rgba(0,0,0,0) 11px 23px),
+    #3a2a20;
+}
+#root .studio { position: absolute; inset: 0; background: #fbf8f3; }
+#root .studio .grid {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px),
+    repeating-linear-gradient(90deg, rgba(22,17,14,0.08) 0 2px, transparent 2px 90px);
+}
+#root .flood { position: absolute; inset: 0; background: #ff5a1f; }
+
+/* ---------- type ---------- */
+#root .disp { font-family: "Archivo Black", sans-serif; letter-spacing: -0.02em; line-height: 0.98; }
+#root .t160 { font-size: 160px; }
+#root .t130 { font-size: 130px; }
+#root .t110 { font-size: 110px; }
+#root .t96 { font-size: 96px; }
+#root .t80 { font-size: 80px; }
+#root .t64 { font-size: 64px; }
+#root .b56 { font-size: 56px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b46 { font-size: 46px; font-weight: 700; letter-spacing: -0.01em; }
+#root .b40 { font-size: 40px; font-weight: 700; }
+#root .r36 { font-size: 36px; font-weight: 400; }
+#root .r32 { font-size: 32px; font-weight: 400; }
+#root .acc { color: #ff5a1f; }
+#root .ink { color: #16110e; }
+#root .paper { color: #f5f0e8; }
+#root .mut { color: #8c7f73; }
+#root .w { display: inline-block; white-space: pre; }
+
+/* ---------- objects ---------- */
+#root .laptop {
+  position: absolute; left: 260px; top: 70px; width: 1400px; height: 860px;
+  background: #15110e; border-radius: 26px; padding: 26px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .laptop .screen {
+  position: relative; width: 100%; height: 100%;
+  background: #fbf8f3; border-radius: 8px; overflow: hidden; color: #16110e;
+}
+#root .laptop-base {
+  position: absolute; left: 160px; top: 925px; width: 1600px; height: 36px;
+  background: #241c17; border-radius: 0 0 30px 30px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone {
+  position: absolute; width: 470px; height: 940px; background: #15110e;
+  border-radius: 56px; padding: 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+}
+#root .phone .screen {
+  position: relative; width: 100%; height: 100%; background: #fbf8f3;
+  border-radius: 40px; overflow: hidden; color: #16110e;
+}
+#root .tile { position: absolute; width: 320px; }
+#root .tile .th {
+  width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; position: relative;
+  background: #d9cfc4;
+}
+#root .tile .tt { margin-top: 12px; font-size: 30px; font-weight: 700; line-height: 1.15; color: #16110e; }
+#root .tile .tm { margin-top: 4px; font-size: 30px; color: #8c7f73; }
+#root .avatar {
+  width: 96px; height: 96px; border-radius: 50%; background: #ff5a1f; color: #16110e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Archivo Black", sans-serif; font-size: 52px;
+}
+#root .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #f5f0e8; }
+#root .chip {
+  position: absolute; padding: 18px 30px; border-radius: 14px; background: #16110e; color: #f5f0e8;
+  font-size: 44px; font-weight: 700; white-space: nowrap;
+}
+#root .chip.acc-bg { background: #ff5a1f; color: #16110e; }
+#root .chip.light { background: #fbf8f3; color: #16110e; }
+#root .cursor { position: absolute; width: 54px; height: 70px; z-index: 50; }
+#root .playbtn {
+  position: absolute; width: 120px; height: 84px; border-radius: 24px; background: #ff5a1f;
+}
+#root .playbtn::after {
+  content: ""; position: absolute; left: 48px; top: 24px;
+  border-left: 34px solid #16110e; border-top: 18px solid transparent; border-bottom: 18px solid transparent;
+}
+#root .note {
+  position: absolute; background: #fbf8f3; border-radius: 10px; color: #16110e;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  background-image: repeating-linear-gradient(180deg, transparent 0 68px, rgba(22,17,14,0.12) 68px 70px);
+}
+#root svg { overflow: visible; }
+
+/* ---------- chapter card ---------- */
+#root .card { position: absolute; inset: 0; z-index: 100; background: #ff5a1f; color: #16110e; }
+#root .card .num { position: absolute; left: 150px; top: 300px; font-family: "Archivo Black", sans-serif; font-size: 72px; }
+#root .card .ttl { position: absolute; left: 150px; top: 400px; width: 1600px; font-family: "Archivo Black", sans-serif; font-size: 180px; line-height: 0.95; letter-spacing: -0.03em; }
+
+/* person: a viewer */
+#root .person { position: absolute; width: 90px; height: 130px; }
+#root .person::before { content: ""; position: absolute; left: 24%; top: 0; width: 52%; height: 36%; border-radius: 50%; background: currentColor; }
+#root .person::after { content: ""; position: absolute; left: 0; top: 43%; width: 100%; height: 57%; border-radius: 50% 50% 14px 14px / 60% 60% 14px 14px; background: currentColor; }
+#root .mt { position: absolute; width: 64px; height: 36px; border-radius: 6px; background: #8c7f73; }
+#root .line-t { position: absolute; left: 150px; width: 1620px; }
+#root .graph-axis { stroke: #16110e; stroke-width: 5; fill: none; }
+#root .graph-old { stroke: #8c7f73; stroke-width: 7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+#root .graph-new { stroke: #ff5a1f; stroke-width: 9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+
+  #sh-phone { left: 300px; top: 70px; }
+  #sh-short { position: absolute; inset: 0; background: #2b211b; }
+  #sh-plate { position: absolute; left: 47px; top: 280px; width: 340px; height: 340px; border-radius: 50%; background: #fbf8f3; }
+  #sh-plate i { position: absolute; border-radius: 50%; }
+  #sh-cap { position: absolute; left: 30px; top: 90px; font-family: "Archivo Black", sans-serif; font-size: 76px; line-height: 0.9; color: #fbf8f3; }
+  #sh-cap .acc { color: #ff5a1f; }
+  #sh-tag { position: absolute; left: 30px; top: 760px; padding: 10px 20px; border-radius: 10px; background: #ff5a1f; color: #16110e; font-size: 30px; font-weight: 700; }
+  #sh-h { left: 900px; top: 150px; width: 900px; }
+  #sh-new { left: 900px; top: 330px; width: 860px; }
+  #sh-dots { position: absolute; inset: 0; }
+  #sh-strip { position: absolute; left: 860px; top: 560px; width: 960px; height: 120px; opacity: 0; }
+  .sh-seg { position: absolute; top: 0; height: 120px; border-radius: 10px; }
+  #sh-best { position: absolute; left: 1310px; top: 560px; width: 200px; height: 120px; border-radius: 10px; background: #ff5a1f; opacity: 0; }
+  #sh-stripl { left: 860px; top: 480px; }
+  .sh-t { position: absolute; left: 900px; }
+  #sh-long { position: absolute; left: 1150px; top: 330px; width: 620px; opacity: 0; }
+  #sh-long .th { width: 620px; height: 349px; border-radius: 18px; background: #16110e; position: relative; }
+  #sh-long .playbtn { left: 250px; top: 132px; }
+  #sh-eyes { left: 820px; top: 160px; }
+  #sh-fans { left: 1150px; top: 760px; width: 640px; }
+  #sh-chan { position: absolute; left: 1100px; top: 260px; width: 680px; padding: 40px; border-radius: 22px; background: #fbf8f3; color: #16110e; opacity: 0; }
+  #sh-chan .row { display: flex; align-items: center; gap: 24px; }
+  #sh-chan .sub { margin-top: 30px; display: inline-block; padding: 16px 34px; border-radius: 34px; background: #ff5a1f; font-size: 38px; font-weight: 700; }
+  #sh-tap { position: absolute; left: 780px; top: 380px; width: 330px; height: 160px; opacity: 0; }
+  #sh-stay { left: 1100px; top: 680px; width: 700px; }
+  #sh-sh { left: 150px; top: 120px; width: 1600px; }
+  #sh-shelf { position: absolute; left: 150px; top: 380px; width: 3000px; height: 400px; }
+  .sh-ep { position: absolute; top: 0; width: 400px; opacity: 0; }
+  .sh-ep .th { width: 400px; height: 225px; border-radius: 14px; position: relative; overflow: hidden; background: #16110e; }
+  .sh-ep .th b { position: absolute; left: 20px; top: 16px; font-family: "Archivo Black", sans-serif; font-size: 44px; line-height: 0.92; color: #fbf8f3; }
+  .sh-ep .th i { position: absolute; right: 20px; bottom: 16px; width: 120px; height: 120px; border-radius: 50%; background: #ff5a1f; }
+  .sh-ep .tt { margin-top: 12px; }
+  #sh-links { position: absolute; left: 150px; top: 380px; width: 3000px; height: 400px; }
+  #sh-next { left: 150px; top: 860px; width: 1600px; }
+
+  </style>
+  <div id="root" data-composition-id="shorts" data-width="1920" data-height="1080">
+    <div class="desk"></div>
+
+<div class="phone pn" id="sh-phone">
+  <div class="screen">
+    <div id="sh-short">
+      <div id="sh-cap">$3<br /><span class="acc">DINNER</span></div>
+      <div id="sh-plate">
+        <i style="left: 50px; top: 60px; width: 150px; height: 120px; background: #ff5a1f"></i>
+        <i style="left: 170px; top: 130px; width: 120px; height: 110px; background: #e8b45a"></i>
+        <i style="left: 70px; top: 190px; width: 110px; height: 90px; background: #7fa66b"></i>
+      </div>
+      <div id="sh-tag">Short</div>
+    </div>
+  </div>
+</div>
+<div class="disp t110 paper pn" id="sh-h">Add <span class="acc">Shorts</span></div>
+<div class="b46 paper pn" id="sh-new">Shown to people who have never heard of her</div>
+<div id="sh-dots"></div>
+
+<div class="b40 mut pn" id="sh-stripl">Her long video</div>
+<div id="sh-strip">
+  <div class="sh-seg" style="left: 0; width: 440px; background: #6f6359"></div>
+  <div class="sh-seg" style="left: 450px; width: 200px; background: #c9bcae"></div>
+  <div class="sh-seg" style="left: 660px; width: 300px; background: #6f6359"></div>
+</div>
+<div id="sh-best"></div>
+<div class="chip acc-bg pn sh-t" id="sh-t1" style="top: 760px">The sizzle</div>
+<div class="chip acc-bg pn sh-t" id="sh-t2" style="top: 760px; left: 1190px">The reveal</div>
+<div class="chip acc-bg pn sh-t" id="sh-t3" style="top: 760px; left: 1490px">The price</div>
+
+<div class="b46 paper pn" id="sh-eyes">Shorts bring <span class="acc">new eyes</span></div>
+<div id="sh-long"><div class="th"><div class="playbtn"></div></div></div>
+<div class="b46 paper pn" id="sh-fans">Long videos turn them into <span class="acc">fans</span></div>
+
+<svg id="sh-tap" viewBox="0 0 330 160"><path id="sh-tapp" pathLength="100" d="M10 140 C 100 20, 220 20, 300 80" stroke="#ff5a1f" stroke-width="10" fill="none" stroke-linecap="round" /><path d="M276 50 L306 84 L262 96" stroke="#ff5a1f" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg>
+<div id="sh-chan"><div class="row"><div class="avatar">M</div><div class="disp t64">Maya</div></div><div class="sub">Subscribed</div></div>
+<div class="b46 paper pn" id="sh-stay">Some tap through, and stay for the longer videos</div>
+
+<div class="disp t96 paper pn" id="sh-sh">A series: <span class="acc">dinner under $5</span></div>
+<div id="sh-shelf"></div>
+<svg id="sh-links" viewBox="0 0 3000 400"></svg>
+<div class="b46 paper pn" id="sh-next">End screens and playlists: one view leads to the next</div>
+    <div id="shorts-card" class="card"><div class="num">Lesson 7</div><div class="ttl">Shorts and series</div></div>
+  </div>
+  <script>
+    (function () {
+      const C = {"s1":2.3,"s2":4.244,"s3":8.777,"s4":15.368,"s4b":19.733,"s5":25.917,"s6":32.546};
+      const E = {"s1":3.494,"s2":8.027,"s3":14.618,"s4":18.983,"s4b":25.167,"s5":31.796,"s6":37.902};
+      const D = 38.252;
+      const tl = gsap.timeline({ paused: true });
+// Shared helpers. Injected into every scene by build.mjs, inside the scene's IIFE,
+// after `tl`, `C` (cue start, local s), `E` (cue end, local s) and `D` (scene length) exist.
+const q = (sel) => Array.from(document.querySelectorAll(sel));
+
+// Wrap each word of the matched elements in <span class="w"> (keeps nested markup).
+function split(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const walk = (node) => {
+      Array.from(node.childNodes).forEach((ch) => {
+        if (ch.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          ch.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) frag.appendChild(document.createTextNode(part));
+            else {
+              const s = document.createElement("span");
+              s.className = "w";
+              s.textContent = part;
+              frag.appendChild(s);
+            }
+          });
+          node.replaceChild(frag, ch);
+        } else if (ch.nodeType === 1) walk(ch);
+      });
+    };
+    walk(el);
+  });
+}
+
+// Split into letters (for typing).
+function letters(sel) {
+  q(sel).forEach((el) => {
+    if (el.dataset.split) return;
+    el.dataset.split = "1";
+    const txt = el.textContent;
+    el.textContent = "";
+    for (const c of txt) {
+      const s = document.createElement("span");
+      s.className = "ch";
+      s.textContent = c;
+      el.appendChild(s);
+    }
+  });
+}
+
+const ENTER = {
+  blur: [{ opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" }],
+  fade: [{ opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }],
+  rise: [{ opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  drop: [{ opacity: 0, y: -70 }, { opacity: 1, y: 0, duration: 0.65, ease: "expo.out" }],
+  pop: [{ opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }],
+  scale: [{ opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.6, ease: "expo.out" }],
+  left: [{ opacity: 0, x: -260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  right: [{ opacity: 0, x: 260, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }],
+  up: [{ opacity: 0, y: 260 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }],
+};
+const EXIT = {
+  blur: [{ opacity: 1, filter: "blur(0px)" }, { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in" }],
+  fade: [{ opacity: 1 }, { opacity: 0, duration: 0.25, ease: "power2.in" }],
+  up: [{ opacity: 1, y: 0 }, { opacity: 0, y: -90, duration: 0.3, ease: "power3.in" }],
+  down: [{ opacity: 1, y: 0 }, { opacity: 0, y: 90, duration: 0.3, ease: "power3.in" }],
+  left: [{ opacity: 1, x: 0 }, { opacity: 0, x: -300, duration: 0.3, ease: "power3.in" }],
+  right: [{ opacity: 1, x: 0 }, { opacity: 0, x: 300, duration: 0.3, ease: "power3.in" }],
+  shrink: [{ opacity: 1, scale: 1 }, { opacity: 0, scale: 0.85, duration: 0.25, ease: "power3.in" }],
+};
+
+function on(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = ENTER[kind];
+  tl.fromTo(sel, { ...a }, { ...b, ...extra }, t);
+}
+function off(sel, t, kind = "blur", extra = {}) {
+  const [a, b] = EXIT[kind];
+  tl.fromTo(sel, { ...a }, { ...b, immediateRender: false, ...extra }, t);
+}
+// Per-word blur-in (split first). gap in s.
+function words(sel, t, gap = 0.067) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0, filter: "blur(6px)" },
+    { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: gap },
+    t,
+  );
+}
+// Per-word light -> full, no movement.
+function inkIn(sel, t, gap = 0.09) {
+  split(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(
+    q(sel).flatMap((el) => Array.from(el.querySelectorAll(".w"))),
+    { opacity: 0.18 },
+    { opacity: 1, duration: 0.18, ease: "power1.out", stagger: gap },
+    t,
+  );
+}
+// Typing, letter by letter.
+function type(sel, t, cps = 24) {
+  letters(sel);
+  tl.set(sel, { opacity: 1 }, t);
+  const chars = q(sel).flatMap((el) => Array.from(el.querySelectorAll(".ch")));
+  tl.fromTo(chars, { opacity: 0 }, { opacity: 1, duration: 0.01, stagger: 1 / cps }, t);
+  return chars.length / cps;
+}
+// Count a number in el's text.
+function count(sel, t, from, to, d = 1.3, fmt = (v) => Math.round(v).toLocaleString("en-US")) {
+  const el = document.querySelector(sel);
+  const o = { v: from };
+  el.textContent = fmt(from);
+  tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) , immediateRender: false}, t);
+}
+// Draw an SVG stroke that has pathLength="100".
+function draw(sel, t, d = 0.9, ease = "power2.inOut") {
+  tl.set(sel, { opacity: 1 }, t);
+  tl.fromTo(sel, { strokeDasharray: "100 120", strokeDashoffset: 110 }, { strokeDashoffset: 0, duration: d, ease }, t);
+}
+// Camera move on a wrapper.
+function cam(sel, t, to, d = 1.0, ease = "power2.inOut") {
+  tl.to(sel, { ...to, duration: d, ease, immediateRender: false }, t);
+}
+// A cursor click: move there, press.
+function clickAt(sel, t, x, y, d = 0.6) {
+  tl.to(sel, { x, y, duration: d, ease: "power3.inOut" }, t);
+  tl.to(sel, { scale: 0.86, duration: 0.07, ease: "power1.out", transformOrigin: "10% 5%" }, t + d);
+  tl.to(sel, { scale: 1, duration: 0.12, ease: "power1.out" }, t + d + 0.07);
+}
+
+// Chapter card: flood wipes in over the previous scene, title lands, wipes away at `out`.
+function card(id, out) {
+  const c = "#" + id + "-card";
+  tl.fromTo(c, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.4, ease: "power2.inOut" }, 0);
+  tl.fromTo(c + " .num", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 0.38);
+  words(c + " .ttl", 0.5, 0.08);
+  tl.fromTo(c, { clipPath: "inset(0% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 100% 0%)", duration: 0.45, ease: "power3.inOut", immediateRender: false }, out);
+}
+// Seeded random (deterministic).
+function rng(seed) {
+  let s = seed >>> 0;
+  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+}
+// Make n children of `parent` with class and style from fn(k) -> {cls, css, text, id}.
+function make(parentSel, n, fn) {
+  const p = document.querySelector(parentSel);
+  for (let k = 0; k < n; k++) {
+    const o = fn(k);
+    const el = document.createElement("div");
+    el.className = o.cls || "";
+    if (o.id) el.id = o.id;
+    if (o.text) el.textContent = o.text;
+    if (o.html) el.innerHTML = o.html;
+    Object.assign(el.style, o.css || {});
+    p.appendChild(el);
+  }
+}
+
+      card("shorts", 1.85);
+
+  // new viewers pouring toward the phone
+  const R = rng(21);
+  const pts = [];
+  for (let k = 0; k < 40; k++) pts.push({ sx: 1950 + R() * 300, sy: 100 + R() * 880, tx: 330 + R() * 400, ty: 120 + R() * 820 });
+  make("#sh-dots", pts.length, (k) => ({ cls: "dot", id: "sh-d" + k, css: { left: pts[k].tx + "px", top: pts[k].ty + "px", opacity: 0 } }));
+  // series shelf
+  const eps = ["$2 FRIED RICE", "$4 CURRY", "$3 TACOS", "$5 STIR FRY", "$3 SOUP", "$4 PASTA"];
+  make("#sh-shelf", 6, (k) => ({ cls: "sh-ep", id: "sh-e" + k, html: `<div class="th"><b>${eps[k]}</b><i></i></div><div class="tt b40 paper">Under $5 · Ep ${k + 1}</div>`, css: { left: k * 470 + "px" } }));
+  const links = document.getElementById("sh-links");
+  for (let k = 0; k < 5; k++) {
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    const x0 = k * 470 + 400, x1 = (k + 1) * 470;
+    Object.entries({ id: "sh-ln" + k, d: `M${x0 - 60} 310 C ${x0} 390, ${x1} 390, ${x1 + 60} 310`, pathLength: 100, stroke: "#ff5a1f", "stroke-width": 10, fill: "none", "stroke-linecap": "round", opacity: 0 }).forEach(([a, v]) => p.setAttribute(a, v));
+    links.appendChild(p);
+  }
+
+  // s1: the Short
+  on("#sh-phone", C.s1 - 0.3, "up");
+  words("#sh-h", C.s1 + 0.1);
+  // s2: new people pour in
+  on("#sh-new", C.s2 + 0.2, "blur");
+  pts.forEach((p, k) => {
+    tl.fromTo("#sh-d" + k, { opacity: 0, x: p.sx - p.tx, y: p.sy - p.ty }, { opacity: 1, x: 0, y: 0, duration: 1.6, ease: "power2.out" }, C.s2 + 0.4 + k * 0.05);
+  });
+  tl.to("#sh-dots", { opacity: 0, duration: 0.3 }, C.s3 - 0.3);
+  off("#sh-h", C.s3 - 0.3, "up");
+  off("#sh-new", C.s3 - 0.3, "up");
+  // s3: best moment of the long video becomes the Short
+  on("#sh-stripl", C.s3, "blur");
+  tl.fromTo("#sh-strip", { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.s3);
+  tl.set("#sh-best", { opacity: 1 }, C.s3 + 0.9);
+  tl.fromTo("#sh-best", { scale: 1 }, { scale: 1.15, duration: 0.3, ease: "power2.out", immediateRender: false }, C.s3 + 0.9);
+  tl.to("#sh-best", { x: 300 + 18 - 1310, y: 70 + 18 - 560, width: 434, height: 904, borderRadius: 40, opacity: 0, duration: 0.9, ease: "power3.inOut" }, C.s3 + 1.3);
+  tl.fromTo("#sh-short", { scale: 1.12 }, { scale: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, C.s3 + 2.0);
+  on("#sh-t1", C.s3 + 2.2, "pop");
+  on("#sh-t2", C.s3 + 3.2, "pop");
+  on("#sh-t3", C.s3 + 4.4, "pop");
+  // s4: new eyes -> fans
+  ["#sh-stripl", "#sh-t1", "#sh-t2", "#sh-t3"].forEach((s) => off(s, C.s4 - 0.35, "blur"));
+  tl.to("#sh-strip", { opacity: 0, duration: 0.3 }, C.s4 - 0.35);
+  on("#sh-eyes", C.s4 + 0.4, "blur");
+  tl.set("#sh-dots", { opacity: 1 }, C.s4 + 0.2);
+  pts.forEach((p, k) => {
+    if (k % 3) { tl.to("#sh-d" + k, { opacity: 0.25, duration: 0.3, immediateRender: false }, C.s4 + 1.4); return; }
+    tl.to("#sh-d" + k, { x: 1150 + 40 + (k % 9) * 60 - p.tx, y: 330 + 380 - p.ty, backgroundColor: "#ff5a1f", duration: 1.2, ease: "power3.inOut", immediateRender: false }, C.s4 + 1.6 + (k % 9) * 0.04);
+  });
+  tl.fromTo("#sh-long", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.s4 + 1.4);
+  on("#sh-fans", C.s4 + 2.0, "blur");
+  // s4b: tap through to the channel
+  ["#sh-eyes", "#sh-fans"].forEach((s) => off(s, C.s4b - 0.35, "blur"));
+  tl.to(["#sh-dots", "#sh-long"], { opacity: 0, duration: 0.3 }, C.s4b - 0.35);
+  tl.set("#sh-tap", { opacity: 1 }, C.s4b + 0.4);
+  draw("#sh-tapp", C.s4b + 0.4, 0.7, "power2.out");
+  tl.fromTo("#sh-chan", { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.s4b + 0.9);
+  words("#sh-stay", C.s4b + 1.6);
+  // s5: series shelf
+  off("#sh-stay", C.s5 - 0.35, "blur");
+  tl.to(["#sh-tap", "#sh-chan"], { opacity: 0, duration: 0.3 }, C.s5 - 0.35);
+  tl.to("#sh-phone", { x: -800, duration: 0.5, ease: "power3.in" }, C.s5 - 0.5);
+  words("#sh-sh", C.s5);
+  q(".sh-ep").forEach((el, k) => tl.fromTo(el, { opacity: 0, x: 400 }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out" }, C.s5 + 0.8 + k * 0.25));
+  tl.to("#sh-shelf", { x: -1020, duration: 3.6, ease: "power1.inOut" }, C.s5 + 2.0);
+  tl.to("#sh-links", { x: -1020, duration: 3.6, ease: "power1.inOut" }, C.s5 + 2.0);
+  // s6: linked
+  for (let k = 0; k < 5; k++) {
+    tl.set("#sh-ln" + k, { opacity: 1 }, C.s6 + 0.4 + k * 0.6);
+    draw("#sh-ln" + k, C.s6 + 0.4 + k * 0.6, 0.5, "power2.out");
+  }
+  words("#sh-next", C.s6 + 0.6);
+
+      window.__timelines = window.__timelines || {};
+      window.__timelines["shorts"] = tl;
+    })();
+  </script>
+</template>

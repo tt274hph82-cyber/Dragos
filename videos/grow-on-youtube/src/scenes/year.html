@@ -1,0 +1,109 @@
+<!--SFX [["whoosh-cinematic","y1",-0.4,0.3],["sparkle","y2",0.4,0.25],["pop","y2",4.4,0.5],["pop","y3",0.6,0.3],["whoosh","y3b",-0.3,0.35],["pop","y3b",0.3,0.35],["pop","y3b",2.0,0.35],["pop","y3b",3.6,0.35],["riser","y5",-6.0,0.22],["impact-bass-1","y5",0.0,0.35],["pop","y5",1.9,0.35],["pop","y5",3.0,0.35],["pop","y5",4.0,0.35],["click","y6",2.1,0.7]]-->
+<style>
+  #yr-later { left: 150px; top: 300px; }
+  #yr-wk { left: 156px; top: 560px; }
+  #yr-wall { position: absolute; left: 150px; top: 200px; width: 1620px; height: 720px; }
+  .yr-t { position: absolute; width: 110px; height: 62px; border-radius: 8px; background: #6f6359; opacity: 0; }
+  #yr-52 { left: 150px; top: 80px; }
+  #yr-okay { left: 150px; top: 940px; }
+  #yr-stairs { position: absolute; left: 150px; top: 260px; width: 1620px; height: 640px; }
+  .yr-st { position: absolute; bottom: 0; width: 120px; background: #2b211b; border-top: 10px solid #f5f0e8; transform-origin: 50% 100%; }
+  #yr-climb { position: absolute; left: 0; top: 0; width: 70px; height: 70px; border-radius: 50%; background: #ff5a1f; opacity: 0; }
+  #yr-trick { left: 150px; top: 90px; width: 1600px; }
+  .yr-m { position: absolute; left: 150px; display: flex; align-items: center; gap: 40px; opacity: 0; }
+  .yr-m svg { flex: none; }
+  #yr-line { left: 150px; top: 380px; width: 1700px; }
+  .yr-p { position: absolute; left: 150px; opacity: 0; }
+  #yr-laptop { left: 360px; top: 40px; width: 1200px; height: 760px; }
+  #yr-base { left: 280px; top: 795px; width: 1360px; }
+  #yr-btn { position: absolute; left: 204px; top: 300px; padding: 44px 110px; border-radius: 30px; background: #ff5a1f; color: #16110e; font-family: "Archivo Black", sans-serif; font-size: 110px; }
+  #yr-track { position: absolute; left: 90px; top: 560px; width: 968px; height: 26px; border-radius: 13px; background: #d9cfc4; overflow: hidden; opacity: 0; }
+  #yr-fill { width: 100%; height: 100%; background: #ff5a1f; transform-origin: left center; }
+  #yr-up { position: absolute; left: 90px; top: 70px; }
+  #yr-cursor { left: 1000px; top: 620px; }
+  #yr-press { left: 150px; top: 870px; width: 1700px; }
+</style>
+
+<div class="desk"></div>
+
+<div class="disp t160 paper pn" id="yr-later">One year later</div>
+<div class="b56 mut pn" id="yr-wk">Week <span id="yr-wkn">1</span> of 52</div>
+
+<div class="disp t80 paper pn" id="yr-52"><span class="acc">52</span> videos</div>
+<div id="yr-wall"></div>
+<div class="b46 paper pn" id="yr-okay">Most did okay. A few did great. <span class="acc">One took off.</span></div>
+
+<div class="disp t80 paper pn" id="yr-trick">Not a trick. Each video a little better than the last.</div>
+<div id="yr-stairs"><div id="yr-climb"></div></div>
+
+<div class="yr-m" id="yr-m1" style="top: 250px"><svg width="90" height="110" viewBox="0 0 90 110"><path d="M45 104 L45 14 M10 46 L45 10 L80 46" stroke="#ff5a1f" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="disp t80 paper">Click-through rate</div></div>
+<div class="yr-m" id="yr-m2" style="top: 470px"><svg width="90" height="110" viewBox="0 0 90 110"><path d="M45 104 L45 14 M10 46 L45 10 L80 46" stroke="#ff5a1f" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="disp t80 paper">Watch time</div></div>
+<div class="yr-m" id="yr-m3" style="top: 690px"><svg width="90" height="110" viewBox="0 0 90 110"><path d="M45 104 L45 14 M10 46 L45 10 L80 46" stroke="#ff5a1f" stroke-width="16" fill="none" stroke-linecap="round" stroke-linejoin="round" /></svg><div class="disp t80 paper">Returning viewers, every week</div></div>
+
+<div class="disp t110 paper pn" id="yr-line">The whole thing, in one line</div>
+<div class="disp t96 paper yr-p" id="yr-p1" style="top: 170px">Make videos for one clear viewer.</div>
+<div class="disp t96 paper yr-p" id="yr-p2" style="top: 360px">Earn the click.</div>
+<div class="disp t96 paper yr-p" id="yr-p3" style="top: 550px">Keep the promise.</div>
+<div class="disp t96 paper yr-p" id="yr-p4" style="top: 740px">Get a little <span class="acc">better</span> every time.</div>
+
+<div class="laptop pn" id="yr-laptop">
+  <div class="screen">
+    <div class="disp t80 ink" id="yr-up">Your next video</div>
+    <div id="yr-btn">Upload</div>
+    <div id="yr-track"><div id="yr-fill"></div></div>
+    <svg class="cursor pn" id="yr-cursor" viewBox="0 0 54 70"><path d="M4 4 L4 56 L18 44 L28 66 L38 61 L28 40 L46 40 Z" fill="#fbf8f3" stroke="#16110e" stroke-width="4" stroke-linejoin="round" /></svg>
+  </div>
+</div>
+<div class="laptop-base pn" id="yr-base"></div>
+<div class="disp t96 paper pn" id="yr-press">Press <span class="acc">upload.</span></div>
+
+<script>
+  // 52 tiles: 13 x 4; a few "great", one "took off"
+  const great = [7, 15, 22, 33, 41, 46];
+  const hit = 38;
+  make("#yr-wall", 52, (k) => ({ cls: "yr-t", id: "yr-t" + k, css: { left: (k % 13) * 124 + "px", top: Math.floor(k / 13) * 90 + 100 + "px" } }));
+  const H = [60, 90, 110, 150, 170, 210, 240, 290, 320, 370, 410, 460];
+  make("#yr-stairs", H.length, (k) => ({ cls: "yr-st", id: "yr-s" + k, css: { left: k * 134 + "px", height: H[k] + "px" } }));
+
+  // y1: one year later
+  words("#yr-later", C.y1 - 0.3, 0.09);
+  on("#yr-wk", C.y1, "blur");
+  count("#yr-wkn", C.y1, 1, 52, 1.4, (v) => String(Math.round(v)));
+  // y2: 52 videos
+  off("#yr-later", C.y2 - 0.35, "up");
+  off("#yr-wk", C.y2 - 0.35, "up");
+  words("#yr-52", C.y2);
+  q(".yr-t").forEach((el, k) => tl.fromTo(el, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(1.6)" }, C.y2 + 0.3 + k * 0.025));
+  on("#yr-okay", C.y2 + 1.6, "blur");
+  great.forEach((k) => tl.to("#yr-t" + k, { backgroundColor: "#ff8a5c", duration: 0.25, immediateRender: false }, C.y2 + 2.6));
+  tl.to("#yr-t" + hit, { backgroundColor: "#ff5a1f", scale: 3.2, zIndex: 5, duration: 0.5, ease: "back.out(1.4)", immediateRender: false }, C.y2 + 4.4);
+  // y3: the staircase
+  off("#yr-52", C.y3 - 0.35, "up");
+  off("#yr-okay", C.y3 - 0.35, "blur");
+  tl.to("#yr-wall", { opacity: 0, duration: 0.3, ease: "power2.in" }, C.y3 - 0.35);
+  words("#yr-trick", C.y3 + 0.1);
+  q(".yr-st").forEach((el, k) => tl.fromTo(el, { scaleY: 0 }, { scaleY: 1, duration: 0.4, ease: "expo.out" }, C.y3 + 0.4 + k * 0.08));
+  tl.set("#yr-climb", { opacity: 1, x: 25, y: 640 - H[0] - 80 }, C.y3 + 1.4);
+  H.forEach((h, k) => { if (k) tl.to("#yr-climb", { x: k * 134 + 25, y: 640 - h - 80, duration: 0.22, ease: "power2.out" }, C.y3 + 1.4 + k * 0.24); });
+  // y3b: three arrows up
+  off("#yr-trick", C.y3b - 0.35, "up");
+  tl.to("#yr-stairs", { opacity: 0, duration: 0.3 }, C.y3b - 0.35);
+  [["#yr-m1", 0.3], ["#yr-m2", 2.0], ["#yr-m3", 3.6]].forEach(([s, dt]) => tl.fromTo(s, { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, C.y3b + dt));
+  // y4: in one line
+  ["#yr-m1", "#yr-m2", "#yr-m3"].forEach((s) => off(s, C.y4 - 0.35, "up"));
+  words("#yr-line", C.y4);
+  off("#yr-line", C.y5 - 0.3, "blur");
+  // y5: the line in four parts
+  [["#yr-p1", 0.0], ["#yr-p2", 1.9], ["#yr-p3", 3.0], ["#yr-p4", 4.0]].forEach(([s, dt]) => tl.fromTo(s, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, C.y5 + dt));
+  // y6: back to the laptop
+  ["#yr-p1", "#yr-p2", "#yr-p3", "#yr-p4"].forEach((s, k) => off(s, C.y6 - 0.4 + k * 0.04, "up"));
+  on("#yr-laptop", C.y6 - 0.1, "scale");
+  on("#yr-base", C.y6 - 0.1, "fade");
+  on("#yr-cursor", C.y6 + 0.3, "fade");
+  clickAt("#yr-cursor", C.y6 + 0.6, -420, -270, 1.5);
+  tl.to("#yr-btn", { scale: 0.94, duration: 0.07, ease: "power1.out" }, C.y6 + 2.1);
+  tl.to("#yr-btn", { scale: 1, duration: 0.15, ease: "power1.out" }, C.y6 + 2.17);
+  tl.set("#yr-track", { opacity: 1 }, C.y6 + 2.3);
+  tl.fromTo("#yr-fill", { scaleX: 0 }, { scaleX: 1, duration: 4.5, ease: "power1.inOut" }, C.y6 + 2.3);
+  words("#yr-press", C.y6 + 0.2);
+</script>
