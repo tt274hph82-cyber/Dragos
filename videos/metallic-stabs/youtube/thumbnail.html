@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: "Archivo Black"; src: url("fonts/ArchivoBlack-400.woff2") format("woff2"); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; background: #050608; }
+  .bg { position: absolute; inset: 0; background: url("bg.png") center / cover; }
+  .shade { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(5,6,8,0) 30%, rgba(5,6,8,0.75) 100%), linear-gradient(180deg, rgba(5,6,8,0) 45%, rgba(5,6,8,0.85) 100%); }
+  .t { position: absolute; left: 0; width: 1280px; top: 470px; text-align: center; font-family: "Archivo Black", sans-serif; font-size: 118px; line-height: 1; letter-spacing: -0.01em;
+       background: linear-gradient(180deg, #ffffff 0%, #cfd6df 45%, #6d7683 60%, #e6ebf0 100%); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.8)); }
+  .bar { position: absolute; left: 250px; top: 610px; width: 780px; height: 10px; background: #ff2d3d; }
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="shade"></div>
+  <div class="t">METALLIC STABS</div>
+  <div class="bar"></div>
+</body>
+</html>
