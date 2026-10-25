@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1350" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Reflex Display"; font-weight: 800; src: local("Inter Display ExtraBold"), local("InterDisplay-ExtraBold"); }
+      @font-face { font-family: "Reflex Display"; font-weight: 600; src: local("Inter Display SemiBold"), local("InterDisplay-SemiBold"); }
+      @font-face { font-family: "Reflex Display"; font-weight: 500; src: local("Inter Display Medium"), local("InterDisplay-Medium"); }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1350px; overflow: hidden; background: #060a10; }
+      #stage { position: relative; width: 1080px; height: 1350px; overflow: hidden; font-family: "Reflex Display", sans-serif; color: #f6f8fb; }
+      #film, #frame, #lens { position: absolute; inset: 0; }
+      #world { position: absolute; left: 0; top: 0; width: 1408px; height: 1760px; transform-origin: 0 0; }
+      #world img, #world svg { position: absolute; left: 0; top: 0; width: 1408px; height: 1760px; }
+      #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+      #grad { position: absolute; left: 0; right: 0; bottom: 0; height: 420px; background: linear-gradient(180deg, rgba(6,10,16,0) 0%, rgba(6,10,16,0.82) 70%, rgba(6,10,16,0.92) 100%); }
+      .cap { position: absolute; left: 80px; right: 80px; bottom: 96px; visibility: hidden; }
+      .step { font-weight: 600; font-size: 26px; letter-spacing: 0.32em; text-transform: uppercase; color: #8fe3ff; margin-bottom: 14px; }
+      .line { font-weight: 800; font-size: 76px; line-height: 1.0; letter-spacing: -0.02em; }
+      .line .w { display: inline-block; }
+      .motor .step { color: #ffb15c; }
+      #end { text-align: center; }
+      #end .line { font-size: 92px; }
+      #end .sub { margin-top: 20px; font-weight: 500; font-size: 34px; color: #c9d6e3; }
+      #end .sub b { color: #8fe3ff; font-weight: 600; } #end .sub i { font-style: normal; color: #ffb15c; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="main" data-start="0" data-duration="10" data-fps="30" data-width="1080" data-height="1350">
+      <audio id="score" src="assets/score.wav" data-start="0" data-duration="10" data-track-index="1" data-volume="1.25"></audio>
+      <div id="film" class="clip" data-start="0" data-duration="10" data-track-index="0">
+        <div id="frame">
+          <div id="lens">
+            <div id="world">
+              <img src="assets/scene.jpg" alt="" />
+              <svg viewBox="0 0 1408 1760" fill="none" stroke-linecap="round">
+                <defs>
+                  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="9" result="b" />
+                    <feMerge><feMergeNode in="b" /><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  </filter>
+                  <radialGradient id="burstS"><stop offset="0" stop-color="#ffffff" /><stop offset="0.35" stop-color="#8fe3ff" stop-opacity="0.9" /><stop offset="1" stop-color="#8fe3ff" stop-opacity="0" /></radialGradient>
+                  <radialGradient id="burstM"><stop offset="0" stop-color="#ffffff" /><stop offset="0.35" stop-color="#ffb15c" stop-opacity="0.9" /><stop offset="1" stop-color="#ffb15c" stop-opacity="0" /></radialGradient>
+                </defs>
+                <!-- traced along the glowing nerves in the source image -->
+                <path id="pUp" d="M622,1002 C650,1040 670,1075 705,1082 C780,1070 880,1050 980,1048 C1060,1046 1110,1020 1135,960 L1145,905" />
+                <path id="pBrain" d="M1145,905 C1158,800 1158,700 1145,620 C1130,540 1105,460 1088,400 L1068,345" />
+                <path id="pDown" d="M1145,905 C1140,990 1110,1050 1040,1060 C930,1075 800,1080 705,1095 C660,1150 560,1260 500,1330 C460,1380 440,1410 425,1435 C360,1460 280,1440 200,1395 C150,1370 115,1350 98,1338" />
+
+                <g filter="url(#glow)">
+                  <use id="litUp" href="#pUp" stroke="#8fe3ff" stroke-width="7" opacity="0.55" />
+                  <use id="litDown" href="#pDown" stroke="#ffb15c" stroke-width="7" opacity="0.55" />
+                  <use id="litBrain" href="#pBrain" stroke="#d9f6ff" stroke-width="4" opacity="0.35" />
+                  <use id="trUp" href="#pUp" stroke="#e8fbff" stroke-width="12" />
+                  <use id="trDown" href="#pDown" stroke="#ffe2bd" stroke-width="12" />
+                  <use id="trBrain" href="#pBrain" stroke="#e8fbff" stroke-width="6" opacity="0.6" />
+                  <circle id="hdUp" r="16" fill="#ffffff" opacity="0" />
+                  <circle id="hdDown" r="16" fill="#ffffff" opacity="0" />
+                  <circle id="hdBrain" r="9" fill="#ffffff" opacity="0" />
+                </g>
+                <circle id="bTap" cx="622" cy="1002" r="90" fill="url(#burstS)" opacity="0" />
+                <circle id="ringTap" cx="622" cy="1002" r="40" stroke="#bff0ff" stroke-width="5" opacity="0" />
+                <circle id="bSpine" cx="1145" cy="905" r="120" fill="url(#burstS)" opacity="0" />
+                <circle id="ringSpine" cx="1145" cy="905" r="40" stroke="#e8fbff" stroke-width="5" opacity="0" />
+                <circle id="bFoot" cx="110" cy="1345" r="130" fill="url(#burstM)" opacity="0" />
+              </svg>
+            </div>
+          </div>
+          <div id="flash"></div>
+          <div id="grad"></div>
+
+          <div id="c1" class="cap"><div class="step">1 · Tap</div><div class="line"><span class="w">The</span> <span class="w">hammer</span> <span class="w">stretches</span> <span class="w">the</span> <span class="w">tendon.</span></div></div>
+          <div id="c2" class="cap"><div class="step">2 · Spinal cord</div><div class="line"><span class="w">The</span> <span class="w">signal</span> <span class="w">races</span> <span class="w">to</span> <span class="w">the</span> <span class="w">spine…</span></div></div>
+          <div id="c3" class="cap motor"><div class="step">3 · Straight back</div><div class="line"><span class="w">…and</span> <span class="w">fires</span> <span class="w">right</span> <span class="w">back</span> <span class="w">down.</span></div></div>
+          <div id="c4" class="cap motor"><div class="step">4 · Kick</div><div class="line"><span class="w">The</span> <span class="w">leg</span> <span class="w">kicks.</span> <span class="w">No</span> <span class="w">brain</span> <span class="w">needed.</span></div></div>
+          <div id="end" class="cap"><div class="line"><span class="w">The</span> <span class="w">knee-jerk</span> <span class="w">reflex</span></div><div class="sub"><b>Tap</b> → spine → <i>kick</i> in a split second</div></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const W = 1080, H = 1350, BASE = W / 1408;
+      const world = document.getElementById("world");
+      const cam = { cx: 704, cy: 880, z: 1, sx: 0, sy: 0 };
+      function applyCam() {
+        const s = BASE * cam.z;
+        let x = W / 2 - cam.cx * s, y = H / 2 - cam.cy * s;
+        x = Math.min(0, Math.max(W - 1408 * s, x));    // never show past the image edge
+        y = Math.min(0, Math.max(H - 1760 * s, y));
+        world.style.transform = `translate(${(x + cam.sx).toFixed(2)}px, ${(y + cam.sy).toFixed(2)}px) scale(${s.toFixed(4)})`;
+      }
+
+      // Pulses: each travels its path between t0 and t1; a bright head with a short trail, plus a dimmer lit wake.
+      const P = {};
+      for (const k of ["Up", "Down", "Brain"]) {
+        const path = document.getElementById("p" + k);
+        P[k] = { path, L: path.getTotalLength(), tr: document.getElementById("tr" + k), lit: document.getElementById("lit" + k), hd: document.getElementById("hd" + k) };
+      }
+      const pulses = [
+        { k: "Up", t0: 1.6, t1: 3.4, trail: 260 },
+        { k: "Down", t0: 3.6, t1: 5.6, trail: 300 },
+        { k: "Brain", t0: 3.6, t1: 6.0, trail: 160 },
+      ];
+      const ease = (p) => (p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2);
+      function drawPulses(t) {
+        for (const q of pulses) {
+          const o = P[q.k];
+          const p = ease(Math.min(1, Math.max(0, (t - q.t0) / (q.t1 - q.t0))));
+          const d = p * o.L, live = t >= q.t0 && t <= q.t1 + 0.15;
+          o.tr.setAttribute("stroke-dasharray", `${Math.min(q.trail, d)} ${o.L * 2}`);
+          o.tr.setAttribute("stroke-dashoffset", (-(d - Math.min(q.trail, d))).toFixed(1));
+          o.tr.style.opacity = live ? 1 : 0;
+          const fade = t < 6.2 ? 1 : Math.max(0.35, 1 - (t - 6.2) / 1.5);
+          o.lit.setAttribute("stroke-dasharray", `${d} ${o.L * 2}`);
+          o.lit.style.opacity = (t >= q.t0 ? 0.55 * fade : 0).toFixed(3);
+          const pt = o.path.getPointAtLength(d);
+          o.hd.setAttribute("cx", pt.x.toFixed(1)); o.hd.setAttribute("cy", pt.y.toFixed(1));
+          o.hd.style.opacity = live ? 1 : 0;
+        }
+      }
+
+      const tl = gsap.timeline({ paused: true });
+      const clock = { t: 0 };
+      tl.to(clock, { t: 10, duration: 10, ease: "none", onUpdate: () => { drawPulses(clock.t); applyCam(); } }, 0);
+
+      // Camera: in on the knee, follow the signal up, then down to the foot, then pull back.
+      tl.fromTo(cam, { cx: 704, cy: 880, z: 1 }, { cx: 680, cy: 1030, z: 1.75, duration: 1.5, ease: "power2.inOut" }, 0);
+      tl.to(cam, { cx: 1000, cy: 960, z: 1.55, duration: 1.0, ease: "sine.inOut" }, 1.75);
+      tl.to(cam, { cx: 1130, cy: 880, z: 1.75, duration: 0.8, ease: "power2.out" }, 2.75);
+      tl.to(cam, { cx: 800, cy: 1100, z: 1.3, duration: 1.0, ease: "sine.inOut" }, 3.65);
+      tl.to(cam, { cx: 330, cy: 1300, z: 1.6, duration: 1.0, ease: "power2.out" }, 4.65);
+      tl.to(cam, { cx: 704, cy: 880, z: 1.0, duration: 1.4, ease: "power3.inOut" }, 6.05);
+      tl.to(cam, { z: 1.04, duration: 2.55, ease: "none" }, 7.45);
+      // impact shakes
+      [[1.5, 10], [5.6, 14]].forEach(([at, a]) => {
+        tl.to(cam, { keyframes: [{ sx: a, sy: -a * 0.6, duration: 0.04 }, { sx: -a * 0.7, sy: a * 0.4, duration: 0.05 }, { sx: a * 0.3, sy: 0, duration: 0.05 }, { sx: 0, sy: 0, duration: 0.08 }] }, at);
+      });
+
+      tl.fromTo("#frame", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out" }, 0);
+      tl.to("#frame", { opacity: 0, duration: 0.35, ease: "power1.in" }, 9.65);
+
+      // bursts
+      const burst = (b, ring, at, big) => {
+        tl.fromTo(b, { opacity: 0, scale: 0.4, transformOrigin: "50% 50%" }, { opacity: 1, scale: big, duration: 0.12, ease: "power2.out" }, at);
+        tl.to(b, { opacity: 0, duration: 0.6, ease: "power2.in" }, at + 0.15);
+        if (ring) tl.fromTo(ring, { opacity: 0.9, scale: 1, transformOrigin: "50% 50%" }, { opacity: 0, scale: 5, duration: 0.7, ease: "power2.out" }, at);
+      };
+      burst("#bTap", "#ringTap", 1.5, 1.4);
+      burst("#bSpine", "#ringSpine", 3.4, 1.6);
+      burst("#bFoot", null, 5.6, 1.6);
+      tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.35, duration: 0.05 }, 1.5);
+      tl.to("#flash", { opacity: 0, duration: 0.3 }, 1.56);
+      tl.to("#flash", { opacity: 0.25, duration: 0.05 }, 5.6);
+      tl.to("#flash", { opacity: 0, duration: 0.3 }, 5.66);
+
+      // captions
+      function cap(sel, at, until) {
+        tl.set(sel, { autoAlpha: 1 }, at);
+        tl.fromTo(sel + " .step", { autoAlpha: 0, x: -24 }, { autoAlpha: 1, x: 0, duration: 0.35, ease: "power3.out" }, at);
+        tl.fromTo(sel + " .w", { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.4, ease: "expo.out", stagger: 0.05 }, at + 0.05);
+        if (until) tl.to(sel, { autoAlpha: 0, y: -16, duration: 0.25, ease: "power2.in" }, until);
+      }
+      cap("#c1", 1.5, 2.45);
+      cap("#c2", 2.6, 3.55);
+      cap("#c3", 3.7, 5.45);
+      cap("#c4", 5.6, 6.6);
+      tl.set("#end", { autoAlpha: 1 }, 6.9);
+      tl.fromTo("#end .w", { autoAlpha: 0, scale: 1.15 }, { autoAlpha: 1, scale: 1, duration: 0.6, ease: "expo.out", stagger: 0.08 }, 6.9);
+      tl.fromTo("#end .sub", { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" }, 7.3);
+
+      drawPulses(0); applyCam();
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
