@@ -13,7 +13,7 @@
 ## Checked
 - `hyperframes check`: 0 errors. Kept warnings: "composition file too large" (scenes are long by design: one per lesson) and one "repeated fromTo on a proxy" (number counters; they render correctly when seeked).
 - Snapshots of every phrase in every chapter were looked at; overlaps, clipped thumbnail text, a hidden tile and mis-anchored shapes were fixed and re-checked.
-- Sound was measured, not heard: narration peak about -1 dBFS, music bed at 0.13 volume, effects 0.25–0.7.
+- Sound was measured, not heard: final mix -15 LUFS, peak -1.0 dBFS (normalized after render with ffmpeg loudnorm); music bed at 0.13, effects 0.25–0.7.
 
 ## Not checked
 - Nobody listened to the final mix. The music is a 31 s MusicGen loop crossfaded to full length; it may sound repetitive.
