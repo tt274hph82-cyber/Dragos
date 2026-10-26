@@ -27,23 +27,29 @@
 #root .glass {
   position: absolute;
   border-radius: 40px;
-  /* clear, iPhone-style Liquid Glass: light blur, strong specular rim */
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.17) 0%, rgba(255, 255, 255, 0.03) 48%, rgba(255, 255, 255, 0.09) 100%);
-  backdrop-filter: blur(14px) saturate(190%) brightness(0.7);
-  -webkit-backdrop-filter: blur(14px) saturate(190%) brightness(0.7);
-  text-shadow: 0 2px 14px rgba(0, 0, 20, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.38);
-  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.85), inset -1.5px -1.5px 0 rgba(255, 255, 255, 0.4), inset 0 0 36px rgba(255, 255, 255, 0.08), 0 26px 70px rgba(0, 0, 20, 0.32);
+  /* translucent Liquid Glass (iOS 26 style): almost no blur, clear body, bright lensing rim */
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.0) 42%, rgba(255, 255, 255, 0.0) 62%, rgba(255, 255, 255, 0.06) 100%);
+  backdrop-filter: blur(2.5px) saturate(170%) brightness(0.8) contrast(1.05);
+  -webkit-backdrop-filter: blur(2.5px) saturate(170%) brightness(0.8) contrast(1.05);
+  text-shadow: 0 1px 2px rgba(0, 0, 20, 0.45), 0 2px 14px rgba(0, 0, 20, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 3px 3px 1px -1px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 1px -1px rgba(255, 255, 255, 0.55),
+    inset 14px 14px 26px -16px rgba(255, 255, 255, 0.55),
+    inset -14px -14px 26px -16px rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 22px 50px rgba(0, 0, 20, 0.28);
   overflow: hidden;
 }
 #root .glass::before {
-  content: ""; position: absolute; left: -20%; top: -70%; width: 70%; height: 120%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 62%);
+  content: ""; position: absolute; left: -12%; top: -45%; width: 72%; height: 95%;
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0) 65%);
   pointer-events: none;
 }
 #root .glass::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(115deg, rgba(255,255,255,0) 40%, rgba(255,255,255,0.10) 50%, rgba(255,255,255,0) 60%);
+  background: linear-gradient(115deg, rgba(255,255,255,0) 38%, rgba(255,255,255,0.07) 48%, rgba(255,255,255,0) 58%);
 }
 #root .glass.pill { border-radius: 999px; white-space: nowrap; }
 #root .glass.dark { background: linear-gradient(140deg, rgba(10, 20, 36, 0.55), rgba(10, 20, 36, 0.35)); }

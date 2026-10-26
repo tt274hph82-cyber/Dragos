@@ -1,6 +1,6 @@
 # How to Write YouTube Titles People Can't Resist — spec
 
-- Style: Liquid Glass (started from `videos/shorts-vs-long/`), with clearer, iPhone-style glass: lighter blur, strong specular rim,
+- Style: Liquid Glass (started from `videos/shorts-vs-long/`), with translucent iPhone-style Liquid Glass: lighter blur, strong specular rim,
   and crisp shapes (rings, balls, bars) drifting behind the panels so the transparency shows.
 - Font: Inter, the same font as the previous Liquid Glass video (a free, close match to the iPhone system font).
 - Voice: Kokoro af_heart at 0.92 (`script/make_voice.py`). Length 8:30.

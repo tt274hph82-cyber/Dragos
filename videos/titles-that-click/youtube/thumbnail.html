@@ -11,12 +11,13 @@
   .sh { position: absolute; }
   .glass {
     position: absolute; border-radius: 34px; overflow: hidden;
-    background: linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.03) 48%, rgba(255,255,255,0.09));
-    backdrop-filter: blur(12px) saturate(190%) brightness(0.72);
-    border: 1px solid rgba(255,255,255,0.4);
-    box-shadow: inset 2px 2px 0 rgba(255,255,255,0.85), inset -1.5px -1.5px 0 rgba(255,255,255,0.4), 0 26px 70px rgba(0,0,20,0.4);
+    background: linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0) 42%, rgba(255,255,255,0) 62%, rgba(255,255,255,0.06));
+    backdrop-filter: blur(2.5px) saturate(170%) brightness(0.8) contrast(1.05);
+    border: 1px solid rgba(255,255,255,0.5);
+    text-shadow: 0 1px 2px rgba(0,0,20,0.45), 0 2px 14px rgba(0,0,20,0.55);
+    box-shadow: inset 3px 3px 1px -1px rgba(255,255,255,0.95), inset -3px -3px 1px -1px rgba(255,255,255,0.55), inset 14px 14px 26px -16px rgba(255,255,255,0.55), inset -14px -14px 26px -16px rgba(255,255,255,0.35), 0 22px 50px rgba(0,0,20,0.3);
   }
-  .glass::before { content: ""; position: absolute; left: -20%; top: -70%; width: 70%; height: 120%; background: radial-gradient(ellipse, rgba(255,255,255,0.28), rgba(255,255,255,0) 62%); }
+  .glass::before { content: ""; position: absolute; left: -12%; top: -45%; width: 72%; height: 95%; background: radial-gradient(ellipse, rgba(255,255,255,0.16), rgba(255,255,255,0) 65%); }
   .t { position: absolute; font-weight: 900; letter-spacing: -0.045em; line-height: 0.92; text-shadow: 0 6px 30px rgba(0,0,20,0.45); }
   .bar { display: flex; align-items: center; gap: 22px; padding: 0 34px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
   .x, .ok { width: 58px; height: 58px; border-radius: 50%; flex: none; position: relative; }
@@ -36,8 +37,8 @@
   <div class="bl" style="left: 420px; top: 330px; width: 760px; height: 760px; background: radial-gradient(circle, rgba(255,61,127,0.8), rgba(255,61,127,0) 68%)"></div>
   <div class="bl" style="left: -260px; top: 380px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(90,110,255,0.7), rgba(90,110,255,0) 68%)"></div>
   <div class="sh" style="left: 1010px; top: 380px; width: 230px; height: 230px; border-radius: 50%; border: 24px solid rgba(255,255,255,0.25)"></div>
-  <div class="sh" style="left: 120px; top: 440px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(63,224,208,0.8) 45%, rgba(40,80,200,0.6))"></div>
-  <div class="sh" style="left: 640px; top: 600px; width: 420px; height: 64px; border-radius: 999px; transform: rotate(-12deg); background: linear-gradient(90deg, rgba(255,61,127,0.8), rgba(150,110,255,0.7))"></div>
+  <div class="sh" style="left: 560px; top: 330px; width: 170px; height: 170px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(63,224,208,0.8) 45%, rgba(40,80,200,0.6))"></div>
+  <div class="sh" style="left: 700px; top: 540px; width: 460px; height: 70px; border-radius: 999px; transform: rotate(-12deg); background: linear-gradient(90deg, rgba(255,61,127,0.8), rgba(150,110,255,0.7))"></div>
 
   <div class="t" style="left: 56px; top: 44px; font-size: 132px">Titles that</div>
   <div class="t" style="left: 56px; top: 166px; font-size: 132px; color: #ff7a3d">get clicked</div>
