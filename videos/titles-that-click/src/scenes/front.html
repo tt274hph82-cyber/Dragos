@@ -1,0 +1,66 @@
+<!--SFX [["pop","f1",0.3,0.4],["click-soft","f2",0.4,0.5],["typing","f4",0.1,0.35],["typing","f4",1.6,0.35],["whoosh-short","f6",0.0,0.5],["sparkle","f6",0.8,0.35],["pop","f7",0.4,0.4]]-->
+<style>
+  #fr-rule { left: 150px; top: 120px; }
+  #fr-h { left: 150px; top: 230px; width: 1600px; }
+  #fr-ph { left: 1290px; top: 90px; }
+  #fr-ph .scr { background: #101d30; }
+  .fr-item { position: absolute; left: 22px; width: 394px; }
+  .fr-th { width: 394px; height: 222px; border-radius: 18px; background: linear-gradient(150deg, #3a2618, #6a3a1e 60%, #1b2638); position: relative; overflow: hidden; }
+  .fr-th .plate { left: 120px; top: 30px; width: 160px; height: 160px; }
+  .fr-tt { margin-top: 12px; font-size: 26px; font-weight: 800; line-height: 1.2; height: 64px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .fr-mt { font-size: 20px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+  #fr-i1 { top: 70px; } #fr-i2 { top: 70px; opacity: 0; display: none; }
+  #fr-i3 { top: 440px; }
+  #fr-ruler { left: 150px; top: 460px; width: 1050px; height: 150px; padding: 30px 40px; }
+  #fr-rb { position: absolute; left: 40px; top: 92px; height: 18px; width: 970px; border-radius: 9px; background: rgba(255,255,255,0.18); }
+  #fr-rf { position: absolute; left: 40px; top: 92px; height: 18px; width: 970px; border-radius: 9px; background: linear-gradient(90deg, #3fe0d0, #ff7a3d); transform-origin: 0 50%; }
+  #fr-long { left: 150px; top: 680px; width: 1050px; white-space: normal; font-size: 44px; line-height: 1.25; }
+  #fr-cnt { left: 150px; top: 920px; font-size: 32px; }
+  #fr-new { left: 150px; top: 680px; width: 1050px; white-space: normal; font-size: 52px; line-height: 1.2; }
+  #fr-tgt { left: 150px; top: 380px; width: 1050px; height: 520px; padding: 50px 56px; }
+  #fr-tgt .stat { font-size: 150px; }
+</style>
+
+<div class="glass pill rule pn" id="fr-rule">Rule 1</div>
+<div class="disp t110 paper pn shadowed" id="fr-h">Put the <span class="acc">best words</span> first</div>
+<div class="glass phone pn" id="fr-ph"><div class="scr">
+  <div class="fr-item" id="fr-i1"><div class="fr-th"><div class="plate"><i></i><i></i><i></i></div></div><div class="fr-tt">In today's video I'm going to show you how I make pasta in ten minutes</div><div class="fr-mt">Maya Cooks · 3 days ago</div></div>
+  <div class="fr-item" id="fr-i2"><div class="fr-th"><div class="plate"><i></i><i></i><i></i></div></div><div class="fr-tt">10-Minute Pasta I Make Every Week</div><div class="fr-mt">Maya Cooks · 3 days ago</div></div>
+  <div class="fr-item" id="fr-i3"><div class="fr-th" style="background: linear-gradient(150deg,#1b3a3a,#2a5a50 60%,#16233a)"></div><div class="fr-tt">Another video in the feed</div><div class="fr-mt">Some channel · 1 day ago</div></div>
+</div></div>
+<div class="glass pn" id="fr-ruler"><div class="lab">On a phone, titles often get cut after <span class="paper">~50–60 characters</span></div><div id="fr-rb"></div><div id="fr-rf"></div></div>
+<div class="glass tbar pn" id="fr-long"><span id="fr-la">In today's video I'm going to show you</span><span id="fr-lb"> how I make pasta in ten minutes</span></div>
+<div class="r32 mut pn" id="fr-cnt">70 characters · the good part is at the end</div>
+<div class="glass tbar pn" id="fr-new"><span class="acc">10-Minute Pasta</span> I Make Every Week</div>
+<div class="glass pn" id="fr-tgt">
+  <div class="lab">Aim for</div>
+  <div class="stat">&lt; 60</div>
+  <div class="b46" style="margin-top:6px">characters</div>
+  <div class="b40 mut" style="margin-top:40px">and let the <span class="acc">first few words</span> do the heavy lifting</div>
+</div>
+
+<script>
+  on("#fr-rule", C.f1, "pop");
+  words("#fr-h", C.f1 + 0.15);
+  off("#fr-h", C.f2 - 0.2, "fade");
+  gIn("#fr-ph", C.f2, { x: 80, y: 0 });
+  gIn("#fr-ruler", C.f2 + 0.3);
+  tl.fromTo("#fr-rf", { scaleX: 0 }, { scaleX: 0.62, duration: 1.4, ease: "power2.out" }, C.f2 + 0.8);
+  tl.to("#fr-ph", { scale: 1.06, duration: 1.2, ease: "power2.inOut" }, C.f3);
+  tl.to("#fr-ph", { scale: 1, duration: 1.0, ease: "power2.inOut" }, C.f4);
+  gIn("#fr-long", C.f4 + 0.1);
+  tl.set(["#fr-la", "#fr-lb"], { opacity: 0 }, 0);
+  type("#fr-la", C.f4 + 0.2, 24);
+  type("#fr-lb", C.f4 + 1.85, 24);
+  on("#fr-cnt", C.f4 + 3.4, "fade");
+  tl.to("#fr-lb", { opacity: 0.22, duration: 0.5 }, C.f5 + 0.6);
+  tl.to("#fr-i1 .fr-tt", { color: "#ffd2bf", duration: 0.4, yoyo: true, repeat: 1 }, C.f5 + 0.6);
+  off(["#fr-long", "#fr-cnt"], C.f6 - 0.2, "fade");
+  gIn("#fr-new", C.f6 + 0.1);
+  tl.to("#fr-i1", { opacity: 0, duration: 0.3 }, C.f6 + 0.6);
+  tl.set("#fr-i1", { display: "none" }, C.f6 + 0.9);
+  tl.set("#fr-i2", { display: "block" }, C.f6 + 0.9);
+  tl.to("#fr-i2", { opacity: 1, duration: 0.3 }, C.f6 + 0.92);
+  off(["#fr-new", "#fr-ruler"], C.f7 - 0.2, "fade");
+  gIn("#fr-tgt", C.f7 + 0.2);
+</script>

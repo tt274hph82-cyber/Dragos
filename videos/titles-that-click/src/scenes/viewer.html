@@ -1,0 +1,44 @@
+<!--SFX [["pop","v1",0.3,0.4],["click-soft","v2",0.3,0.5],["pop","v3",0.3,0.45],["click","v4",0.3,0.5],["typing","v6",0.4,0.35],["sparkle","v7",0.3,0.35]]-->
+<style>
+  #vw-rule { left: 150px; top: 120px; }
+  #vw-h { left: 150px; top: 230px; width: 1600px; }
+  .vw-t { left: 150px; width: 1100px; height: 150px; padding: 0 50px; display: flex; align-items: center; font-size: 56px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
+  #vw-a { top: 420px; } #vw-b { top: 620px; }
+  .vw-l { position: absolute; left: 1300px; padding: 16px 32px; font-size: 40px; font-weight: 700; }
+  #vw-la { top: 444px; } #vw-lb { top: 644px; }
+  #vw-q { left: 150px; top: 840px; padding: 20px 40px; font-size: 44px; font-weight: 700; }
+  #vw-m { left: 150px; top: 380px; width: 1620px; height: 560px; padding: 50px 60px; }
+  #vw-m .av { width: 110px; height: 110px; border-radius: 50%; background: #ff7a3d; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 60px; color: #0a1424; }
+  .vw-mt { position: absolute; left: 60px; font-size: 64px; font-weight: 900; letter-spacing: -0.03em; }
+  #vw-mo { top: 220px; } #vw-mn { top: 360px; }
+  #vw-your { display: inline-block; }
+</style>
+
+<div class="glass pill rule pn" id="vw-rule">Rule 3</div>
+<div class="disp t110 paper pn shadowed" id="vw-h">Make it about the <span class="acc">viewer</span></div>
+<div class="glass vw-t pn" id="vw-a">My Trip to Rome</div>
+<div class="glass vw-t pn" id="vw-b">How to See Rome in One Day, on a Budget</div>
+<div class="glass pill vw-l pn" id="vw-la"><span class="mut">about</span> you</div>
+<div class="glass pill vw-l pn" id="vw-lb"><span class="mut">about</span> <span class="teal">them</span></div>
+<div class="glass pill pn" id="vw-q">Who is it for? What do they get?</div>
+<div class="glass pn" id="vw-m">
+  <div class="row"><div class="av">M</div><div class="b46">Maya's titles</div></div>
+  <div class="vw-mt" id="vw-mo"><span class="dim" style="position:relative">My new sourdough attempt<span class="strike"></span></span></div>
+  <div class="vw-mt pn" id="vw-mn"><span id="vw-your" class="acc">Your</span> First Sourdough, the Easy Way</div>
+</div>
+
+<script>
+  on("#vw-rule", C.v1, "pop");
+  words("#vw-h", C.v1 + 0.15);
+  gIn("#vw-a", C.v2 + 0.1);
+  on("#vw-la", C.v2 + 1.2, "pop");
+  gIn("#vw-b", C.v3 + 0.1);
+  on("#vw-lb", C.v3 + 1.5, "pop");
+  tl.to(["#vw-a", "#vw-la"], { opacity: 0.4, duration: 0.4 }, C.v3 + 1.2);
+  gIn("#vw-q", C.v4 + 0.1);
+  off(["#vw-a", "#vw-b", "#vw-la", "#vw-lb", "#vw-q", "#vw-h", "#vw-rule"], C.v5 - 0.3, "fade");
+  gIn("#vw-m", C.v5);
+  tl.fromTo("#vw-mo .strike", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, C.v6);
+  on("#vw-mn", C.v6 + 0.3, "rise");
+  tl.fromTo("#vw-your", { scale: 1 }, { scale: 1.25, duration: 0.35, ease: "back.out(2)", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, C.v7 + 0.6);
+</script>

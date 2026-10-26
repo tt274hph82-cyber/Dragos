@@ -1,0 +1,79 @@
+<!--SFX [["pop","r1",1.4,0.4],["pop","r1",3.2,0.4],["typing","r2",0.6,0.35],["typing","r2",1.6,0.35],["typing","r4",3.0,0.35],["pop","r4",4.2,0.3],["click","r4b",0.4,0.5],["sparkle","r4b",1.6,0.35],["whoosh-short","r5",0.0,0.5],["pop","r6",0.4,0.35],["pop","r6",1.0,0.35],["pop","r6",1.6,0.35],["sparkle","r7",1.2,0.4]]-->
+<style>
+  #se-h { left: 150px; top: 110px; width: 1620px; }
+  #se-p1 { left: 150px; top: 320px; width: 780px; height: 600px; padding: 50px; }
+  #se-p2 { left: 990px; top: 320px; width: 780px; height: 600px; padding: 50px; }
+  .se-ic { font-size: 120px; line-height: 1; }
+  .se-pt { font-size: 70px; font-weight: 900; letter-spacing: -0.03em; margin-top: 24px; }
+  .se-pd { font-size: 38px; color: rgba(255,255,255,0.75); margin-top: 16px; font-weight: 600; }
+  #se-bar { left: 150px; top: 180px; width: 1620px; height: 130px; padding: 0 50px; display: flex; align-items: center; gap: 30px; border-radius: 999px; font-size: 50px; font-weight: 600; }
+  #se-bar svg { flex: none; }
+  #se-q1, #se-q2 { white-space: nowrap; }
+  #se-cur { display: inline-block; width: 4px; height: 56px; background: #fff; margin-left: 4px; }
+  #se-tip { left: 150px; top: 380px; width: 1620px; height: 220px; padding: 40px 56px; }
+  #se-sug { left: 150px; top: 330px; width: 1620px; height: 380px; padding: 20px 0; }
+  .se-s { height: 110px; padding: 0 60px; display: flex; align-items: center; gap: 30px; font-size: 46px; font-weight: 600; }
+  #se-s1 { position: relative; }
+  #se-hl { position: absolute; left: 14px; top: 20px; width: 1590px; height: 110px; border-radius: 26px; background: rgba(63,224,208,0.22); opacity: 0; }
+  #se-ttl { left: 150px; top: 790px; width: 1620px; white-space: normal; font-size: 54px; }
+  #se-grid { left: 150px; top: 300px; width: 1620px; height: 600px; padding: 40px; }
+  .se-g { position: absolute; width: 470px; height: 250px; border-radius: 22px; background: rgba(255,255,255,0.10); }
+  .se-g i { position: absolute; left: 0; top: 0; width: 470px; height: 175px; border-radius: 22px; background: linear-gradient(150deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05)); }
+  .se-g b { position: absolute; left: 10px; top: 192px; width: 340px; height: 20px; border-radius: 10px; background: rgba(255,255,255,0.3); }
+  .se-g s { position: absolute; left: 10px; top: 224px; width: 220px; height: 16px; border-radius: 8px; background: rgba(255,255,255,0.18); }
+  #se-g5 { outline: 4px solid #ff7a3d; outline-offset: 6px; }
+  #se-g5 i { background: linear-gradient(150deg, #6a3a1e, #ff7a3d); }
+  .se-ch { position: absolute; padding: 18px 36px; font-size: 46px; font-weight: 800; top: 930px; }
+  #se-c1 { left: 220px; } #se-c2 { left: 760px; } #se-c3 { left: 1200px; }
+  #se-both { left: 150px; top: 400px; width: 1620px; height: 300px; padding: 0 60px; display: flex; flex-direction: column; justify-content: center; }
+</style>
+
+<div class="disp t96 paper pn shadowed" id="se-h">Two ways people find videos</div>
+<div class="glass pn" id="se-p1"><div class="se-ic"><svg width="120" height="120" viewBox="0 0 54 54"><circle cx="22" cy="22" r="16" fill="none" stroke="#fff" stroke-width="6"/><path d="M34 34 L50 50" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg></div><div class="se-pt">Search</div><div class="se-pd">They type a question</div></div>
+<div class="glass pn" id="se-p2"><div class="se-ic"><svg width="120" height="120" viewBox="0 0 54 54"><rect x="4" y="4" width="20" height="20" rx="5" fill="#fff"/><rect x="30" y="4" width="20" height="20" rx="5" fill="#fff" opacity="0.7"/><rect x="4" y="30" width="20" height="20" rx="5" fill="#fff" opacity="0.7"/><rect x="30" y="30" width="20" height="20" rx="5" fill="#ff7a3d"/></svg></div><div class="se-pt">Browse</div><div class="se-pd">Home page and suggested videos</div></div>
+<div class="glass pn" id="se-bar"><svg width="54" height="54" viewBox="0 0 54 54"><circle cx="22" cy="22" r="16" fill="none" stroke="#fff" stroke-width="6"/><path d="M34 34 L50 50" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg><span id="se-q1">how to fix runny scrambled eggs</span><span id="se-q2" style="display:none">how to make fl</span><span id="se-cur"></span></div>
+<div class="glass pn" id="se-tip"><div class="b56">Use the words people <span class="teal">actually type</span></div><div class="b46 mut" style="margin-top:16px">Plain and clear beats clever</div></div>
+<div class="glass pn" id="se-sug">
+  <div id="se-hl"></div>
+  <div class="se-s" id="se-s1"><svg width="40" height="40" viewBox="0 0 54 54"><circle cx="22" cy="22" r="16" fill="none" stroke="#fff" stroke-width="6"/><path d="M34 34 L50 50" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg> <span>how to make <b>fluffy pancakes</b></span></div>
+  <div class="se-s"><svg width="40" height="40" viewBox="0 0 54 54"><circle cx="22" cy="22" r="16" fill="none" stroke="#fff" stroke-width="6"/><path d="M34 34 L50 50" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg> <span>how to make <b>fluffy rice</b></span></div>
+  <div class="se-s"><svg width="40" height="40" viewBox="0 0 54 54"><circle cx="22" cy="22" r="16" fill="none" stroke="#fff" stroke-width="6"/><path d="M34 34 L50 50" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg> <span>how to make <b>flatbread</b></span></div>
+</div>
+<div class="glass tbar pn" id="se-ttl"><span class="teal">How to Make Fluffy Pancakes</span> (Every Time)</div>
+<div class="glass pn" id="se-grid">
+  <div class="se-g" style="left:40px;top:40px"><i></i><b></b><s></s></div>
+  <div class="se-g" style="left:575px;top:40px"><i></i><b></b><s></s></div>
+  <div class="se-g" style="left:1110px;top:40px"><i></i><b></b><s></s></div>
+  <div class="se-g" style="left:40px;top:320px"><i></i><b></b><s></s></div>
+  <div class="se-g" id="se-g5" style="left:575px;top:320px"><i></i><b></b><s></s></div>
+  <div class="se-g" style="left:1110px;top:320px"><i></i><b></b><s></s></div>
+</div>
+<div class="glass pill se-ch pn" id="se-c1">Curiosity</div>
+<div class="glass pill se-ch pn" id="se-c2">Feeling</div>
+<div class="glass pill se-ch pn" id="se-c3">Specific results</div>
+<div class="glass pn" id="se-both"><div class="lab">Best of both</div><div class="disp t80" style="margin-top:16px"><span class="teal">How to Make Fluffy Pancakes</span> <span class="acc">(The 1 Mistake)</span></div><div class="b40 mut" style="margin-top:20px">a searchable phrase + a little spark</div></div>
+
+<script>
+  words("#se-h", C.r1 + 0.1);
+  gIn("#se-p1", C.r1 + 1.4);
+  gIn("#se-p2", C.r1 + 3.2);
+  off(["#se-h", "#se-p1", "#se-p2"], C.r2 - 0.3, "fade");
+  gIn("#se-bar", C.r2 + 0.1);
+  tl.set("#se-q1", { opacity: 0 }, 0);
+  type("#se-q1", C.r2 + 0.6, 16);
+  tl.fromTo("#se-cur", { opacity: 1 }, { opacity: 0, duration: 0.4, repeat: 18, yoyo: true, ease: "steps(1)" }, C.r2);
+  gIn("#se-tip", C.r3 + 0.1);
+  off("#se-tip", C.r4 - 0.2, "fade");
+  tl.set("#se-q1", { display: "none" }, C.r4 + 2.2);
+  tl.set("#se-q2", { display: "inline", opacity: 0 }, C.r4 + 2.2);
+  type("#se-q2", C.r4 + 2.9, 12);
+  gIn("#se-sug", C.r4 + 4.2);
+  tl.to("#se-hl", { opacity: 1, duration: 0.3 }, C.r4b + 0.4);
+  gIn("#se-ttl", C.r4b + 1.6);
+  off(["#se-bar", "#se-sug", "#se-ttl"], C.r5 - 0.3, "fade");
+  gIn("#se-grid", C.r5 + 0.1);
+  tl.to("#se-g5", { scale: 1.06, duration: 0.6, ease: "back.out(2)" }, C.r5 + 3.5);
+  ["#se-c1", "#se-c2", "#se-c3"].forEach((s, k) => on(s, C.r6 + 0.4 + k * 0.6, "pop"));
+  off(["#se-grid", "#se-c1", "#se-c2", "#se-c3"], C.r7 - 0.3, "fade");
+  gIn("#se-both", C.r7 + 0.2);
+</script>

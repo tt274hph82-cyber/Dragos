@@ -1,0 +1,55 @@
+<!--SFX [["pop","w1",0.3,0.4],["pop","w2",1.0,0.3],["pop","w2",1.6,0.3],["pop","w2",2.2,0.3],["pop","w2",2.8,0.3],["pop","w2",3.4,0.3],["pop","w2",4.0,0.3],["click-soft","w3",0.3,0.5],["click-soft","w3",2.0,0.5],["sparkle","w4",0.3,0.35],["click","w6",1.5,0.5],["pop","w6",4.5,0.4]]-->
+<style>
+  #wd-rule { left: 150px; top: 120px; }
+  #wd-h { left: 150px; top: 230px; width: 1600px; }
+  .wd-c { position: absolute; padding: 20px 40px; font-size: 56px; font-weight: 800; }
+  #wd-1 { left: 190px; top: 470px; } #wd-2 { left: 620px; top: 420px; } #wd-3 { left: 1130px; top: 480px; }
+  #wd-4 { left: 300px; top: 690px; } #wd-5 { left: 760px; top: 660px; } #wd-6 { left: 1200px; top: 700px; }
+  .wd-t { left: 150px; width: 1300px; height: 150px; padding: 0 50px; display: flex; align-items: center; gap: 30px; font-size: 56px; font-weight: 800; white-space: nowrap; }
+  #wd-a { top: 420px; } #wd-b { top: 620px; }
+  #wd-wl { position: absolute; left: 1500px; top: 650px; width: 300px; font-size: 38px; font-weight: 700; color: #3fe0d0; opacity: 0; }
+  #wd-salt { left: 150px; top: 400px; width: 1620px; height: 230px; padding: 0 60px; display: flex; flex-direction: column; justify-content: center; }
+  .wd-r { left: 150px; width: 1620px; height: 150px; padding: 0 50px; display: flex; align-items: center; gap: 36px; font-size: 54px; font-weight: 800; white-space: nowrap; }
+  #wd-r1 { top: 680px; } #wd-r2 { top: 850px; }
+  #wd-caps { left: 150px; top: 380px; width: 1620px; }
+  .wd-cr { position: absolute; left: 0; width: 1620px; height: 170px; padding: 0 56px; display: flex; align-items: center; gap: 40px; font-size: 62px; font-weight: 900; letter-spacing: -0.02em; white-space: nowrap; }
+  #wd-c1 { top: 0; } #wd-c2 { top: 230px; }
+</style>
+
+<div class="glass pill rule pn" id="wd-rule">Rule 5</div>
+<div class="disp t110 paper pn shadowed" id="wd-h">Words with <span class="acc">feeling</span></div>
+<div class="glass pill wd-c pn" id="wd-1">Easy</div>
+<div class="glass pill wd-c pn" id="wd-2">Mistake</div>
+<div class="glass pill wd-c pn" id="wd-3">Finally</div>
+<div class="glass pill wd-c pn" id="wd-4">Never</div>
+<div class="glass pill wd-c pn" id="wd-5">Secret</div>
+<div class="glass pill wd-c pn" id="wd-6">Surprising</div>
+<div class="glass wd-t pn" id="wd-a"><span class="mut">Tips for Better Rice</span></div>
+<div class="glass wd-t pn" id="wd-b">Stop Making This Rice <span class="acc">Mistake</span></div>
+<div id="wd-wl">speaks to a worry they already have</div>
+<div class="glass pn" id="wd-salt"><div class="disp t80">Use them like <span class="acc">salt</span></div><div class="b46 mut" style="margin-top:14px">A little brings out the flavor. Too much, and nobody trusts it.</div></div>
+<div class="glass wd-r pn" id="wd-r1"><div class="ok"></div><span>Stop Making This Rice <span class="acc">Mistake</span></span></div>
+<div class="glass wd-r pn" id="wd-r2"><div class="xk"></div><span>SHOCKING Secret Rice Mistake NEVER Seen</span></div>
+<div class="pn" id="wd-caps">
+  <div class="glass wd-cr" id="wd-c1"><div class="xk"></div>THE BEST PASTA EVER MADE</div>
+  <div class="glass wd-cr" id="wd-c2" style="opacity:0"><div class="ok"></div>The <span class="acc">BEST</span> Pasta I've Ever Made</div>
+</div>
+
+<script>
+  on("#wd-rule", C.w1, "pop");
+  words("#wd-h", C.w1 + 0.15);
+  ["#wd-1", "#wd-2", "#wd-3", "#wd-4", "#wd-5", "#wd-6"].forEach((s, k) => on(s, C.w2 + 1.0 + k * 0.6, "pop"));
+  off(["#wd-1", "#wd-2", "#wd-3", "#wd-4", "#wd-5", "#wd-6"], C.w3 - 0.3, "shrink");
+  gIn("#wd-a", C.w3 + 0.2);
+  gIn("#wd-b", C.w3 + 1.9);
+  tl.to("#wd-a", { opacity: 0.45, duration: 0.4 }, C.w4);
+  tl.to("#wd-b", { scale: 1.04, duration: 0.5, ease: "back.out(2)" }, C.w4 + 0.2);
+  on("#wd-wl", C.w4 + 0.6, "rise");
+  off(["#wd-a", "#wd-b", "#wd-wl"], C.w5 - 0.3, "fade");
+  gIn("#wd-salt", C.w5);
+  gIn("#wd-r1", C.w5 + 2.0);
+  gIn("#wd-r2", C.w5 + 3.4);
+  off(["#wd-salt", "#wd-r1", "#wd-r2", "#wd-h", "#wd-rule"], C.w6 - 0.3, "fade");
+  gIn("#wd-caps", C.w6 + 0.2);
+  tl.to("#wd-c2", { opacity: 1, duration: 0.5, ease: "power2.out" }, C.w6 + 4.5);
+</script>

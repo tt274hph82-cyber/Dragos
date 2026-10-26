@@ -1,0 +1,43 @@
+<!--SFX [["pop","t1",0.4,0.4],["click","t3",1.0,0.5],["click-soft","t4",0.3,0.5],["click-soft","t4",1.2,0.5],["whoosh-short","t5",0.2,0.5],["typing","t5",3.0,0.35],["sparkle","t6",0.3,0.35]]-->
+<style>
+  #tm-h { left: 150px; top: 110px; width: 1620px; }
+  #tm-card { left: 150px; top: 250px; }
+  #tm-card .th .tch { left: 50px; top: 150px; font-size: 78px; padding: 14px 30px; }
+  #tm-card .plate { opacity: 0.55; }
+  #tm-tt2 { display: none; }
+  #tm-tt1 { color: #fff; }
+  #tm-rep { left: 1010px; top: 330px; width: 760px; height: 300px; padding: 46px; }
+  #tm-rule { left: 1010px; top: 680px; width: 760px; height: 250px; padding: 40px 46px; }
+  .tm-two { display: flex; gap: 20px; margin-top: 20px; }
+  .tm-two div { padding: 14px 28px; font-size: 40px; font-weight: 800; position: relative; }
+  #tm-timer { position: absolute; right: 40px; top: 40px; width: 110px; height: 110px; border-radius: 50%; border: 10px solid #fff; opacity: 0; }
+  #tm-timer::after { content: ""; position: absolute; left: 40px; top: 12px; width: 10px; height: 38px; border-radius: 5px; background: #fff; }
+  #tm-story { left: 1010px; top: 330px; width: 760px; height: 600px; padding: 50px; }
+  #tm-next { position: absolute; left: 50px; top: 330px; width: 660px; padding: 24px 30px; border-radius: 26px; font-size: 36px; font-weight: 700; }
+</style>
+
+<div class="disp t96 paper pn shadowed" id="tm-h">Title + thumbnail = <span class="acc">one team</span></div>
+<div class="glass ytc pn" id="tm-card">
+  <div class="th"><div class="plate"><i></i><i></i><i></i></div><div class="tch" id="tm-tch">10-MIN PASTA</div><div id="tm-timer"></div><div class="dur">8:42</div></div>
+  <div class="mrow"><div class="av">M</div><div><div class="tt" id="tm-tt1">10 Minute Pasta</div><div class="tt" id="tm-tt2">The Pasta I Make Every Week, In 10 Minutes</div><div class="mt">Maya Cooks · 2.4K views</div></div></div>
+</div>
+<div class="glass pn" id="tm-rep"><div class="row"><div class="xk"></div><div class="b56">Same words twice</div></div><div class="b40 mut" style="margin-top:20px">The title wastes its space</div></div>
+<div class="glass pn" id="tm-rule"><div class="b46">Thumbnail <span class="teal">shows</span>.</div><div class="b46" style="margin-top:10px">Title <span class="acc">tells</span>.</div></div>
+<div class="glass pn" id="tm-story"><div class="row"><div class="ok"></div><div class="b56">One story</div></div><div class="b40 mut" style="margin-top:20px">The picture shows the result. The title adds what a picture can't.</div><div class="glass" id="tm-next">More on thumbnails: <span class="acc">How to Make Thumbnails People Click</span></div></div>
+
+<script>
+  words("#tm-h", C.t1 + 0.1);
+  gIn("#tm-card", C.t1 + 0.4);
+  gIn("#tm-rep", C.t3 + 1.0, { x: 60, y: 0 });
+  tl.to(["#tm-tch", "#tm-tt1"], { color: "#ffd0c0", duration: 0.3, yoyo: true, repeat: 3 }, C.t3 + 1.2);
+  gIn("#tm-rule", C.t4 + 0.2, { x: 60, y: 0 });
+  off(["#tm-rep", "#tm-rule"], C.t5 - 0.2, "fade");
+  tl.to("#tm-tch", { opacity: 0, scale: 0.8, duration: 0.35 }, C.t5 + 0.2);
+  tl.to("#tm-card .plate", { opacity: 1, duration: 0.4 }, C.t5 + 0.3);
+  tl.to("#tm-timer", { opacity: 1, duration: 0.4 }, C.t5 + 0.6);
+  tl.to("#tm-tt1", { opacity: 0, duration: 0.25 }, C.t5 + 2.6);
+  tl.set("#tm-tt1", { display: "none" }, C.t5 + 2.9);
+  tl.set("#tm-tt2", { display: "block", opacity: 0 }, C.t5 + 2.9);
+  type("#tm-tt2", C.t5 + 3.0, 22);
+  gIn("#tm-story", C.t6 + 0.1, { x: 60, y: 0 });
+</script>

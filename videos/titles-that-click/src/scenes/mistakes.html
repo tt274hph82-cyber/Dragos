@@ -1,0 +1,31 @@
+<!--SFX [["pop","m1",0.3,0.4],["click","m2",0.2,0.5],["click","m3",0.2,0.5],["click","m4",0.2,0.5],["click","m5",0.2,0.5],["sparkle","m5b",0.3,0.4]]-->
+<style>
+  #mk-h { left: 150px; top: 90px; width: 1620px; }
+  .mk-r { left: 150px; width: 1620px; padding: 0 46px; display: flex; align-items: center; gap: 34px; height: 156px; }
+  #mk-1 { top: 230px; } #mk-2 { top: 406px; } #mk-3 { top: 582px; } #mk-4 { top: 758px; }
+  .mk-tx { display: flex; flex-direction: column; gap: 6px; }
+  .mk-t { font-size: 50px; font-weight: 800; letter-spacing: -0.015em; }
+  .mk-d { font-size: 32px; color: rgba(255,255,255,0.75); font-weight: 600; white-space: nowrap; }
+  #mk-ret { position: absolute; right: 50px; top: 28px; }
+  #mk-good { left: 150px; top: 940px; padding: 18px 40px; font-size: 44px; font-weight: 800; display: flex; align-items: center; gap: 24px; }
+  #mk-good .ok { width: 54px; height: 54px; }
+  #mk-good .ok::after { left: 18px; top: 9px; width: 13px; height: 25px; }
+</style>
+
+<div class="disp t96 paper pn shadowed" id="mk-h">Mistakes to <span class="acc">avoid</span></div>
+<div class="glass mk-r pn" id="mk-1"><div class="xk"></div><div class="mk-tx"><div class="mk-t">A promise the video doesn't keep</div><div class="mk-d">People feel tricked and leave fast, and YouTube notices</div></div>
+  <svg id="mk-ret" width="260" height="100" viewBox="0 0 260 100"><path id="mk-rp" d="M6 14 C40 16 50 80 90 86 L254 92" pathLength="100" fill="none" stroke="#ff3d5a" stroke-width="7" stroke-linecap="round" opacity="0"/></svg></div>
+<div class="glass mk-r pn" id="mk-2"><div class="xk"></div><div class="mk-tx"><div class="mk-t">Keyword stuffing</div><div class="mk-d">Pasta Recipe | Easy Pasta | Best Pasta | Pasta 2026</div></div></div>
+<div class="glass mk-r pn" id="mk-3"><div class="xk"></div><div class="mk-tx"><div class="mk-t">Inside jokes</div><div class="mk-d">If it only makes sense after watching, nobody clicks</div></div></div>
+<div class="glass mk-r pn" id="mk-4"><div class="xk"></div><div class="mk-tx"><div class="mk-t">Copying a big channel's exact title</div><div class="mk-d">You'll look like the smaller version of them</div></div></div>
+<div class="glass pill pn" id="mk-good"><div class="ok"></div>Let your titles sound like <span class="acc">you</span></div>
+
+<script>
+  words("#mk-h", C.m1 + 0.1);
+  gIn("#mk-1", C.m2 + 0.1, { x: 80, y: 0 });
+  draw("#mk-rp", C.m2 + 3.5, 1.4);
+  gIn("#mk-2", C.m3 + 0.1, { x: 80, y: 0 });
+  gIn("#mk-3", C.m4 + 0.1, { x: 80, y: 0 });
+  gIn("#mk-4", C.m5 + 0.1, { x: 80, y: 0 });
+  gIn("#mk-good", C.m5b + 0.2);
+</script>

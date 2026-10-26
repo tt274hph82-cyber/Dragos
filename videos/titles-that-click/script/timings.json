@@ -1,0 +1,850 @@
+{
+ "total": 510.488,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Same video, two titles",
+   "start": 0.0,
+   "beats": [
+    {
+     "id": "o1",
+     "text": "Maya posts a video of her favorite weeknight pasta.",
+     "start": 0.6,
+     "end": 3.716,
+     "local": 0.6,
+     "localEnd": 3.716
+    },
+    {
+     "id": "o2",
+     "text": "She calls it: My Pasta Recipe.",
+     "start": 4.466,
+     "end": 6.616,
+     "local": 4.466,
+     "localEnd": 6.616
+    },
+    {
+     "id": "o3",
+     "text": "A week later, it has barely moved.",
+     "start": 7.366,
+     "end": 9.331,
+     "local": 7.366,
+     "localEnd": 9.331
+    },
+    {
+     "id": "o4",
+     "text": "So she changes one thing. Not the video. Not the thumbnail. Just the title.",
+     "start": 10.081,
+     "end": 14.661,
+     "local": 10.081,
+     "localEnd": 14.661
+    },
+    {
+     "id": "o4b",
+     "text": "Because a title is often the reason someone gives your video a chance, or scrolls right past it.",
+     "start": 15.411,
+     "end": 20.929,
+     "local": 15.411,
+     "localEnd": 20.929
+    },
+    {
+     "id": "o5",
+     "text": "The new one says: The Ten Minute Pasta I Make Every Week.",
+     "start": 21.679,
+     "end": 24.993,
+     "local": 21.679,
+     "localEnd": 24.993
+    },
+    {
+     "id": "o6",
+     "text": "Same video, same thumbnail. And more people start clicking.",
+     "start": 25.743,
+     "end": 29.354,
+     "local": 25.743,
+     "localEnd": 29.354
+    },
+    {
+     "id": "o7",
+     "text": "In this video, you'll learn how to write titles like that, step by step, with formulas you can use today.",
+     "start": 30.104,
+     "end": 36.29,
+     "local": 30.104,
+     "localEnd": 36.29
+    }
+   ],
+   "end": 38.49,
+   "duration": 38.49
+  },
+  {
+   "id": "job",
+   "title": "What a title is for",
+   "start": 38.49,
+   "beats": [
+    {
+     "id": "j1",
+     "text": "First, what is a title actually for?",
+     "start": 38.49,
+     "end": 40.662,
+     "local": 0.0,
+     "localEnd": 2.172
+    },
+    {
+     "id": "j2",
+     "text": "When someone sees your video, they see two things: a thumbnail, and a title.",
+     "start": 41.412,
+     "end": 45.705,
+     "local": 2.922,
+     "localEnd": 7.215
+    },
+    {
+     "id": "j3",
+     "text": "The thumbnail grabs their eye. The title tells them why this video is worth their time.",
+     "start": 46.455,
+     "end": 51.531,
+     "local": 7.965,
+     "localEnd": 13.041
+    },
+    {
+     "id": "j4",
+     "text": "Think of it as a promise. If you click, here's what you'll get.",
+     "start": 52.281,
+     "end": 55.532,
+     "local": 13.791,
+     "localEnd": 17.042
+    },
+    {
+     "id": "j4b",
+     "text": "Click, and you'll learn something. Click, and you'll laugh. Click, and you'll see how the story ends.",
+     "start": 56.282,
+     "end": 61.501,
+     "local": 17.792,
+     "localEnd": 23.011
+    },
+    {
+     "id": "j5",
+     "text": "A great title makes that promise clear, makes it interesting, and then the video keeps it.",
+     "start": 62.251,
+     "end": 67.448,
+     "local": 23.761,
+     "localEnd": 28.958
+    },
+    {
+     "id": "j6",
+     "text": "Keep that word in mind: promise. Everything in this video comes back to it.",
+     "start": 68.198,
+     "end": 72.732,
+     "local": 29.708,
+     "localEnd": 34.242
+    }
+   ],
+   "end": 74.932,
+   "duration": 36.442
+  },
+  {
+   "id": "front",
+   "title": "Put the best words first",
+   "start": 74.932,
+   "beats": [
+    {
+     "id": "f1",
+     "text": "Rule number one: put the best words first.",
+     "start": 74.932,
+     "end": 77.416,
+     "local": 0.0,
+     "localEnd": 2.484
+    },
+    {
+     "id": "f2",
+     "text": "On a phone, long titles often get cut off after about fifty or sixty characters.",
+     "start": 78.166,
+     "end": 83.039,
+     "local": 3.234,
+     "localEnd": 8.107
+    },
+    {
+     "id": "f3",
+     "text": "So if your title starts slow, the good part might never be seen.",
+     "start": 83.789,
+     "end": 87.458,
+     "local": 8.857,
+     "localEnd": 12.526
+    },
+    {
+     "id": "f4",
+     "text": "Look at this one: In today's video I'm going to show you how I make pasta in ten minutes.",
+     "start": 88.208,
+     "end": 93.715,
+     "local": 13.276,
+     "localEnd": 18.783
+    },
+    {
+     "id": "f5",
+     "text": "On a small screen, people only read: In today's video I'm going to show you.",
+     "start": 94.465,
+     "end": 99.155,
+     "local": 19.533,
+     "localEnd": 24.223
+    },
+    {
+     "id": "f6",
+     "text": "Flip it around. Ten Minute Pasta. Now the most interesting words land first.",
+     "start": 99.905,
+     "end": 104.953,
+     "local": 24.973,
+     "localEnd": 30.021
+    },
+    {
+     "id": "f7",
+     "text": "A simple target: aim for under sixty characters, and make the first few words do the heavy lifting.",
+     "start": 105.703,
+     "end": 111.574,
+     "local": 30.771,
+     "localEnd": 36.642
+    }
+   ],
+   "end": 113.774,
+   "duration": 38.842
+  },
+  {
+   "id": "specific",
+   "title": "Be specific",
+   "start": 113.774,
+   "beats": [
+    {
+     "id": "s1",
+     "text": "Rule two: be specific.",
+     "start": 113.774,
+     "end": 115.399,
+     "local": 0.0,
+     "localEnd": 1.625
+    },
+    {
+     "id": "s2",
+     "text": "Vague titles are easy to scroll past, because they could be about anything.",
+     "start": 116.149,
+     "end": 120.511,
+     "local": 2.375,
+     "localEnd": 6.737
+    },
+    {
+     "id": "s3",
+     "text": "Easy Dinner Ideas could be any video on YouTube.",
+     "start": 121.261,
+     "end": 124.277,
+     "local": 7.487,
+     "localEnd": 10.503
+    },
+    {
+     "id": "s4",
+     "text": "Three Dinners Under Five Dollars is a picture in your head.",
+     "start": 125.027,
+     "end": 128.187,
+     "local": 11.253,
+     "localEnd": 14.413
+    },
+    {
+     "id": "s5",
+     "text": "Numbers help. Times, prices, amounts, days.",
+     "start": 128.937,
+     "end": 132.07,
+     "local": 15.163,
+     "localEnd": 18.296
+    },
+    {
+     "id": "s5b",
+     "text": "Ten minutes is more believable than fast. Five dollars is more believable than cheap.",
+     "start": 132.82,
+     "end": 138.14,
+     "local": 19.046,
+     "localEnd": 24.366
+    },
+    {
+     "id": "s6",
+     "text": "Results help too. Not, how I cook, but, how I cook a week of meals in one hour.",
+     "start": 138.89,
+     "end": 143.704,
+     "local": 25.116,
+     "localEnd": 29.93
+    },
+    {
+     "id": "s7",
+     "text": "The more exact the promise, the easier it is to believe, and the easier it is to want.",
+     "start": 144.454,
+     "end": 149.506,
+     "local": 30.68,
+     "localEnd": 35.732
+    }
+   ],
+   "end": 151.706,
+   "duration": 37.932
+  },
+  {
+   "id": "viewer",
+   "title": "Make it about the viewer",
+   "start": 151.706,
+   "beats": [
+    {
+     "id": "v1",
+     "text": "Rule three: make it about the viewer, not about you.",
+     "start": 151.706,
+     "end": 154.539,
+     "local": 0.0,
+     "localEnd": 2.833
+    },
+    {
+     "id": "v2",
+     "text": "My Trip to Rome is about you. Unless people already know you, it's hard to care.",
+     "start": 155.289,
+     "end": 159.976,
+     "local": 3.583,
+     "localEnd": 8.27
+    },
+    {
+     "id": "v3",
+     "text": "How to See Rome in One Day, on a Budget, is about them.",
+     "start": 160.726,
+     "end": 164.031,
+     "local": 9.02,
+     "localEnd": 12.325
+    },
+    {
+     "id": "v4",
+     "text": "Ask yourself: who is this for, and what do they get?",
+     "start": 164.781,
+     "end": 167.63,
+     "local": 13.075,
+     "localEnd": 15.924
+    },
+    {
+     "id": "v5",
+     "text": "Maya used to write: My new sourdough attempt.",
+     "start": 168.38,
+     "end": 171.141,
+     "local": 16.674,
+     "localEnd": 19.435
+    },
+    {
+     "id": "v6",
+     "text": "Now she writes: Your First Sourdough, the Easy Way.",
+     "start": 171.891,
+     "end": 174.775,
+     "local": 20.185,
+     "localEnd": 23.069
+    },
+    {
+     "id": "v7",
+     "text": "Same bread. But now the viewer can see themselves in the title.",
+     "start": 175.525,
+     "end": 179.076,
+     "local": 23.819,
+     "localEnd": 27.37
+    }
+   ],
+   "end": 181.276,
+   "duration": 29.57
+  },
+  {
+   "id": "curious",
+   "title": "Open a loop",
+   "start": 181.276,
+   "beats": [
+    {
+     "id": "c1",
+     "text": "Rule four: open a loop.",
+     "start": 181.276,
+     "end": 182.934,
+     "local": 0.0,
+     "localEnd": 1.658
+    },
+    {
+     "id": "c2",
+     "text": "People click when there's a small gap between what they know and what they want to know.",
+     "start": 183.684,
+     "end": 188.111,
+     "local": 2.408,
+     "localEnd": 6.835
+    },
+    {
+     "id": "c3",
+     "text": "I Tried Cooking Without Oil for Thirty Days. What happened?",
+     "start": 188.861,
+     "end": 192.294,
+     "local": 7.585,
+     "localEnd": 11.018
+    },
+    {
+     "id": "c4",
+     "text": "The Mistake That Ruins Most Homemade Pizza. Which mistake? Am I making it?",
+     "start": 193.044,
+     "end": 198.048,
+     "local": 11.768,
+     "localEnd": 16.772
+    },
+    {
+     "id": "c5",
+     "text": "That little itch is curiosity, and it's one of the strongest reasons to click.",
+     "start": 198.798,
+     "end": 203.373,
+     "local": 17.522,
+     "localEnd": 22.097
+    },
+    {
+     "id": "c6",
+     "text": "But here's the rule: always close the loop. Give the answer in the video, and don't make people wait forever for it.",
+     "start": 204.123,
+     "end": 210.515,
+     "local": 22.847,
+     "localEnd": 29.239
+    },
+    {
+     "id": "c7",
+     "text": "A loop you never close isn't curiosity. It's a trick, and viewers remember tricks.",
+     "start": 211.265,
+     "end": 216.48,
+     "local": 29.989,
+     "localEnd": 35.204
+    }
+   ],
+   "end": 218.68,
+   "duration": 37.404
+  },
+  {
+   "id": "words",
+   "title": "Words with feeling",
+   "start": 218.68,
+   "beats": [
+    {
+     "id": "w1",
+     "text": "Rule five: pick words with feeling.",
+     "start": 218.68,
+     "end": 220.775,
+     "local": 0.0,
+     "localEnd": 2.095
+    },
+    {
+     "id": "w2",
+     "text": "Some words carry emotion on their own. Easy. Mistake. Finally. Never. Secret. Surprising.",
+     "start": 221.525,
+     "end": 227.839,
+     "local": 2.845,
+     "localEnd": 9.159
+    },
+    {
+     "id": "w3",
+     "text": "Compare: Tips for Better Rice, with: Stop Making This Rice Mistake.",
+     "start": 228.589,
+     "end": 232.682,
+     "local": 9.909,
+     "localEnd": 14.002
+    },
+    {
+     "id": "w4",
+     "text": "The second one feels urgent. It speaks to a worry the viewer already has.",
+     "start": 233.432,
+     "end": 237.774,
+     "local": 14.752,
+     "localEnd": 19.094
+    },
+    {
+     "id": "w5",
+     "text": "Use these words like salt. A little brings out the flavor. Too much, and nobody trusts it.",
+     "start": 238.524,
+     "end": 243.837,
+     "local": 19.844,
+     "localEnd": 25.157
+    },
+    {
+     "id": "w6",
+     "text": "And skip the all caps titles. One word in capitals can add punch. A whole title in capitals just looks like shouting.",
+     "start": 244.587,
+     "end": 252.16,
+     "local": 25.907,
+     "localEnd": 33.48
+    }
+   ],
+   "end": 254.36,
+   "duration": 35.68
+  },
+  {
+   "id": "search",
+   "title": "Search or browse",
+   "start": 254.36,
+   "beats": [
+    {
+     "id": "r1",
+     "text": "Now, people find videos in two main ways, and each one wants a slightly different title.",
+     "start": 254.36,
+     "end": 259.684,
+     "local": 0.0,
+     "localEnd": 5.324
+    },
+    {
+     "id": "r2",
+     "text": "Search is when someone types a question. How to fix runny scrambled eggs.",
+     "start": 260.434,
+     "end": 264.911,
+     "local": 6.074,
+     "localEnd": 10.551
+    },
+    {
+     "id": "r3",
+     "text": "For search, use the words people actually type. Plain and clear beats clever.",
+     "start": 265.661,
+     "end": 270.368,
+     "local": 11.301,
+     "localEnd": 16.008
+    },
+    {
+     "id": "r4",
+     "text": "Here's a free trick: start typing your topic into the YouTube search bar, and look at the suggestions. Those are real searches.",
+     "start": 271.118,
+     "end": 278.928,
+     "local": 16.758,
+     "localEnd": 24.568
+    },
+    {
+     "id": "r4b",
+     "text": "If you see how to make fluffy pancakes, and your video shows exactly that, you have your title's first words.",
+     "start": 279.678,
+     "end": 286.011,
+     "local": 25.318,
+     "localEnd": 31.651
+    },
+    {
+     "id": "r5",
+     "text": "Browse is the home page and suggested videos. Nobody asked for your video. It has to catch their interest on its own.",
+     "start": 286.761,
+     "end": 294.175,
+     "local": 32.401,
+     "localEnd": 39.815
+    },
+    {
+     "id": "r6",
+     "text": "For browse, lean on curiosity, feeling and specific results.",
+     "start": 294.925,
+     "end": 298.964,
+     "local": 40.565,
+     "localEnd": 44.604
+    },
+    {
+     "id": "r7",
+     "text": "The best titles often do both: a searchable phrase, with a little spark.",
+     "start": 299.714,
+     "end": 304.224,
+     "local": 45.354,
+     "localEnd": 49.864
+    }
+   ],
+   "end": 306.424,
+   "duration": 52.064
+  },
+  {
+   "id": "team",
+   "title": "Title and thumbnail, one team",
+   "start": 306.424,
+   "beats": [
+    {
+     "id": "t1",
+     "text": "Your title never works alone. It sits right next to your thumbnail.",
+     "start": 306.424,
+     "end": 310.316,
+     "local": 0.0,
+     "localEnd": 3.892
+    },
+    {
+     "id": "t2",
+     "text": "So don't make them say the same thing.",
+     "start": 311.066,
+     "end": 312.811,
+     "local": 4.642,
+     "localEnd": 6.387
+    },
+    {
+     "id": "t3",
+     "text": "If the thumbnail already says Ten Minute Pasta, a title that also says Ten Minute Pasta wastes the space.",
+     "start": 313.561,
+     "end": 320.09,
+     "local": 7.137,
+     "localEnd": 13.666
+    },
+    {
+     "id": "t4",
+     "text": "Let the thumbnail show, and let the title tell.",
+     "start": 320.84,
+     "end": 323.385,
+     "local": 14.416,
+     "localEnd": 16.961
+    },
+    {
+     "id": "t5",
+     "text": "The thumbnail shows the finished pasta and a timer. The title adds the part a picture can't: The Pasta I Make Every Week, In Ten Minutes.",
+     "start": 324.135,
+     "end": 332.865,
+     "local": 17.711,
+     "localEnd": 26.441
+    },
+    {
+     "id": "t6",
+     "text": "Together they tell one story. And if you missed it, the thumbnails video in this series goes deeper on that half.",
+     "start": 333.615,
+     "end": 339.98,
+     "local": 27.191,
+     "localEnd": 33.556
+    }
+   ],
+   "end": 342.18,
+   "duration": 35.756
+  },
+  {
+   "id": "formulas",
+   "title": "Five title formulas",
+   "start": 342.18,
+   "beats": [
+    {
+     "id": "x1",
+     "text": "Here are five formulas you can steal.",
+     "start": 342.18,
+     "end": 344.106,
+     "local": 0.0,
+     "localEnd": 1.926
+    },
+    {
+     "id": "x2",
+     "text": "One. How to get a result, without the pain. How to Make Bread Without Kneading.",
+     "start": 344.856,
+     "end": 348.863,
+     "local": 2.676,
+     "localEnd": 6.683
+    },
+    {
+     "id": "x3",
+     "text": "Two. I tried something, for a set time. I Cooked Only From My Freezer for a Week.",
+     "start": 349.613,
+     "end": 354.621,
+     "local": 7.433,
+     "localEnd": 12.441
+    },
+    {
+     "id": "x4",
+     "text": "Three. A number, and the mistakes. Five Mistakes That Make Your Cookies Flat.",
+     "start": 355.371,
+     "end": 360.222,
+     "local": 13.191,
+     "localEnd": 18.042
+    },
+    {
+     "id": "x5",
+     "text": "Four. Why something surprising is true. Why Restaurant Rice Tastes Better Than Yours.",
+     "start": 360.972,
+     "end": 366.085,
+     "local": 18.792,
+     "localEnd": 23.905
+    },
+    {
+     "id": "x6",
+     "text": "Five. This versus that. Cheap Pan Versus Expensive Pan.",
+     "start": 366.835,
+     "end": 370.732,
+     "local": 24.655,
+     "localEnd": 28.552
+    },
+    {
+     "id": "x7",
+     "text": "Formulas aren't cheating. They're a starting shape. You fill them with your own topic and your own words.",
+     "start": 371.482,
+     "end": 377.189,
+     "local": 29.302,
+     "localEnd": 35.009
+    }
+   ],
+   "end": 379.389,
+   "duration": 37.209
+  },
+  {
+   "id": "test",
+   "title": "Write ten, pick one",
+   "start": 379.389,
+   "beats": [
+    {
+     "id": "e1",
+     "text": "The best way to find a great title? Write a lot of bad ones first.",
+     "start": 379.389,
+     "end": 383.107,
+     "local": 0.0,
+     "localEnd": 3.718
+    },
+    {
+     "id": "e2",
+     "text": "Maya writes ten titles for every video. Fast, no judging.",
+     "start": 383.857,
+     "end": 387.789,
+     "local": 4.468,
+     "localEnd": 8.4
+    },
+    {
+     "id": "e3",
+     "text": "Then she crosses out the boring ones, the long ones, and the ones that promise too much.",
+     "start": 388.539,
+     "end": 393.415,
+     "local": 9.15,
+     "localEnd": 14.026
+    },
+    {
+     "id": "e4",
+     "text": "She reads the last two out loud, and asks: which one would I click?",
+     "start": 394.165,
+     "end": 397.852,
+     "local": 14.776,
+     "localEnd": 18.463
+    },
+    {
+     "id": "e4b",
+     "text": "Out loud is the secret. If it sounds clumsy when you say it, it'll read clumsy too.",
+     "start": 398.602,
+     "end": 403.898,
+     "local": 19.213,
+     "localEnd": 24.509
+    },
+    {
+     "id": "e5",
+     "text": "After posting, she checks YouTube Studio. It shows how often people click when they see the video. That's called click through rate.",
+     "start": 404.648,
+     "end": 412.326,
+     "local": 25.259,
+     "localEnd": 32.937
+    },
+    {
+     "id": "e6",
+     "text": "If a video gets seen but not clicked, she tries a new title. You can change a title any time, it doesn't hurt the video.",
+     "start": 413.076,
+     "end": 420.53,
+     "local": 33.687,
+     "localEnd": 41.141
+    }
+   ],
+   "end": 422.73,
+   "duration": 43.341
+  },
+  {
+   "id": "mistakes",
+   "title": "Mistakes to avoid",
+   "start": 422.73,
+   "beats": [
+    {
+     "id": "m1",
+     "text": "A few mistakes to avoid.",
+     "start": 422.73,
+     "end": 424.201,
+     "local": 0.0,
+     "localEnd": 1.471
+    },
+    {
+     "id": "m2",
+     "text": "Promising something the video doesn't deliver. People click, feel tricked, and leave fast. And YouTube notices when viewers leave.",
+     "start": 424.951,
+     "end": 432.871,
+     "local": 2.221,
+     "localEnd": 10.141
+    },
+    {
+     "id": "m3",
+     "text": "Stuffing in keywords. Pasta Recipe, Easy Pasta, Best Pasta, Pasta Twenty Twenty Six. That reads like a robot wrote it.",
+     "start": 433.621,
+     "end": 442.292,
+     "local": 10.891,
+     "localEnd": 19.562
+    },
+    {
+     "id": "m4",
+     "text": "Inside jokes. A title that only makes sense if you've seen the video won't make anyone click it.",
+     "start": 443.042,
+     "end": 448.861,
+     "local": 20.312,
+     "localEnd": 26.131
+    },
+    {
+     "id": "m5",
+     "text": "And copying the exact title of a big channel. You'll just look like the smaller version of them.",
+     "start": 449.611,
+     "end": 454.904,
+     "local": 26.881,
+     "localEnd": 32.174
+    },
+    {
+     "id": "m5b",
+     "text": "Your channel is yours. Let your titles sound like you.",
+     "start": 455.654,
+     "end": 458.779,
+     "local": 32.924,
+     "localEnd": 36.049
+    }
+   ],
+   "end": 460.979,
+   "duration": 38.249
+  },
+  {
+   "id": "close",
+   "title": "Your title checklist",
+   "start": 460.979,
+   "beats": [
+    {
+     "id": "k1",
+     "text": "So, a month later, Maya looks back at her channel.",
+     "start": 460.979,
+     "end": 463.717,
+     "local": 0.0,
+     "localEnd": 2.738
+    },
+    {
+     "id": "k2",
+     "text": "The videos are the same quality as before. But now the titles tell people exactly why to watch, and more of them do.",
+     "start": 464.467,
+     "end": 471.517,
+     "local": 3.488,
+     "localEnd": 10.538
+    },
+    {
+     "id": "k3",
+     "text": "Here's your checklist. Best words first. Be specific. Make it about the viewer. Open a loop, and close it. Use words with feeling, but not too many.",
+     "start": 472.267,
+     "end": 481.554,
+     "local": 11.288,
+     "localEnd": 20.575
+    },
+    {
+     "id": "k4",
+     "text": "And every title is a promise. Write one you can keep.",
+     "start": 482.304,
+     "end": 485.266,
+     "local": 21.325,
+     "localEnd": 24.287
+    },
+    {
+     "id": "k5",
+     "text": "Next time you upload, write ten titles before you pick one. Then come back and tell me which one won.",
+     "start": 486.016,
+     "end": 491.987,
+     "local": 25.037,
+     "localEnd": 31.008
+    },
+    {
+     "id": "k5b",
+     "text": "It feels slow at first. After a few videos, it takes five minutes, and it becomes the most valuable five minutes of your upload.",
+     "start": 492.737,
+     "end": 500.8,
+     "local": 31.758,
+     "localEnd": 39.821
+    },
+    {
+     "id": "k6",
+     "text": "And if you want your thumbnails to match, watch How to Make Thumbnails People Click next. See you there.",
+     "start": 501.55,
+     "end": 507.288,
+     "local": 40.571,
+     "localEnd": 46.309
+    }
+   ],
+   "end": 510.488,
+   "duration": 49.509
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: "Inter"; font-weight: 700; src: url("fonts/Inter-700.woff2") format("woff2"); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; }
+  body { position: relative; background: #0a1424; font-family: Inter, sans-serif; color: #fff; }
+  .bl { position: absolute; border-radius: 50%; }
+  .sh { position: absolute; }
+  .glass {
+    position: absolute; border-radius: 34px; overflow: hidden;
+    background: linear-gradient(145deg, rgba(255,255,255,0.18), rgba(255,255,255,0.03) 48%, rgba(255,255,255,0.09));
+    backdrop-filter: blur(12px) saturate(190%) brightness(0.72);
+    border: 1px solid rgba(255,255,255,0.4);
+    box-shadow: inset 2px 2px 0 rgba(255,255,255,0.85), inset -1.5px -1.5px 0 rgba(255,255,255,0.4), 0 26px 70px rgba(0,0,20,0.4);
+  }
+  .glass::before { content: ""; position: absolute; left: -20%; top: -70%; width: 70%; height: 120%; background: radial-gradient(ellipse, rgba(255,255,255,0.28), rgba(255,255,255,0) 62%); }
+  .t { position: absolute; font-weight: 900; letter-spacing: -0.045em; line-height: 0.92; text-shadow: 0 6px 30px rgba(0,0,20,0.45); }
+  .bar { display: flex; align-items: center; gap: 22px; padding: 0 34px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
+  .x, .ok { width: 58px; height: 58px; border-radius: 50%; flex: none; position: relative; }
+  .x { background: #ff3d5a; }
+  .x::before, .x::after { content: ""; position: absolute; left: 26px; top: 13px; width: 7px; height: 32px; border-radius: 4px; background: #fff; transform: rotate(45deg); }
+  .x::after { transform: rotate(-45deg); }
+  .ok { background: #3fe0d0; }
+  .ok::after { content: ""; position: absolute; left: 20px; top: 10px; width: 14px; height: 28px; border-right: 7px solid #0a1424; border-bottom: 7px solid #0a1424; transform: rotate(45deg); }
+  .strike { position: relative; color: rgba(255,255,255,0.7); }
+  .strike::after { content: ""; position: absolute; left: -4px; right: -4px; top: 52%; height: 6px; border-radius: 3px; background: #ff3d5a; }
+  .cur { display: inline-block; width: 5px; height: 52px; background: #fff; margin-left: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+  <div class="bl" style="left: -220px; top: -280px; width: 820px; height: 820px; background: radial-gradient(circle, rgba(255,90,31,0.95), rgba(255,90,31,0) 68%)"></div>
+  <div class="bl" style="left: 720px; top: -260px; width: 820px; height: 820px; background: radial-gradient(circle, rgba(24,166,160,0.95), rgba(24,166,160,0) 68%)"></div>
+  <div class="bl" style="left: 420px; top: 330px; width: 760px; height: 760px; background: radial-gradient(circle, rgba(255,61,127,0.8), rgba(255,61,127,0) 68%)"></div>
+  <div class="bl" style="left: -260px; top: 380px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(90,110,255,0.7), rgba(90,110,255,0) 68%)"></div>
+  <div class="sh" style="left: 1010px; top: 380px; width: 230px; height: 230px; border-radius: 50%; border: 24px solid rgba(255,255,255,0.25)"></div>
+  <div class="sh" style="left: 120px; top: 440px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.95), rgba(63,224,208,0.8) 45%, rgba(40,80,200,0.6))"></div>
+  <div class="sh" style="left: 640px; top: 600px; width: 420px; height: 64px; border-radius: 999px; transform: rotate(-12deg); background: linear-gradient(90deg, rgba(255,61,127,0.8), rgba(150,110,255,0.7))"></div>
+
+  <div class="t" style="left: 56px; top: 44px; font-size: 132px">Titles that</div>
+  <div class="t" style="left: 56px; top: 166px; font-size: 132px; color: #ff7a3d">get clicked</div>
+
+  <div class="glass bar" style="left: 56px; top: 360px; width: 760px; height: 112px; font-size: 48px"><div class="x"></div><span class="strike">My Pasta Recipe</span></div>
+  <div class="glass bar" style="left: 160px; top: 500px; width: 1060px; height: 130px; font-size: 48px"><div class="ok"></div><span>The <span style="color:#ff7a3d">10-Minute</span> Pasta I Make Every Week</span></div>
+</body>
+</html>

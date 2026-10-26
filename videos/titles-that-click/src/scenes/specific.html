@@ -1,0 +1,51 @@
+<!--SFX [["pop","s1",0.3,0.4],["click-soft","s3",0.3,0.5],["pop","s4",0.3,0.45],["pop","s5",0.4,0.35],["pop","s5",0.9,0.35],["pop","s5",1.4,0.35],["pop","s5",1.9,0.35],["typing","s6",1.6,0.35],["sparkle","s7",0.3,0.35]]-->
+<style>
+  #sp-rule { left: 150px; top: 120px; }
+  #sp-h { left: 150px; top: 230px; width: 1600px; }
+  #sp-a { left: 150px; top: 420px; width: 760px; height: 420px; padding: 40px 48px; }
+  #sp-b { left: 1010px; top: 420px; width: 760px; height: 420px; padding: 40px 48px; }
+  .sp-t { font-size: 62px; font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; margin-top: 20px; }
+  #sp-a .sp-t { filter: blur(2px); color: rgba(255,255,255,0.6); }
+  .sp-plates { position: absolute; left: 48px; top: 270px; display: flex; gap: 30px; }
+  .sp-plates .plate { position: relative; width: 120px; height: 120px; }
+  #sp-anyl { position: absolute; left: 48px; top: 300px; }
+  .sp-chip { position: absolute; padding: 18px 34px; font-size: 48px; font-weight: 800; }
+  #sp-k1 { left: 180px; top: 520px; } #sp-k2 { left: 620px; top: 480px; } #sp-k3 { left: 1000px; top: 540px; } #sp-k4 { left: 1400px; top: 500px; }
+  .sp-cmp { left: 150px; width: 1620px; height: 130px; padding: 0 50px; display: flex; align-items: center; gap: 40px; font-size: 52px; font-weight: 800; }
+  #sp-c1 { top: 470px; } #sp-c2 { top: 630px; }
+  .sp-arr { color: #3fe0d0; }
+  #sp-res { left: 150px; top: 800px; width: 1620px; white-space: normal; font-size: 50px; }
+  #sp-sum { left: 150px; top: 330px; width: 1620px; height: 420px; display: flex; flex-direction: column; justify-content: center; padding: 0 80px; gap: 26px; }
+</style>
+
+<div class="glass pill rule pn" id="sp-rule">Rule 2</div>
+<div class="disp t110 paper pn shadowed" id="sp-h">Be <span class="acc">specific</span></div>
+<div class="glass pn" id="sp-a"><div class="lab">Vague</div><div class="sp-t">Easy Dinner Ideas</div><div class="b40 mut pn" id="sp-anyl">Could be any video on YouTube</div></div>
+<div class="glass pn" id="sp-b"><div class="lab teal">Specific</div><div class="sp-t">3 Dinners Under $5</div><div class="sp-plates"><div class="plate"><i></i><i></i><i></i></div><div class="plate"><i></i><i></i><i></i></div><div class="plate"><i></i><i></i><i></i></div></div></div>
+<div class="glass pill sp-chip pn" id="sp-k1">10 minutes</div>
+<div class="glass pill sp-chip pn" id="sp-k2">$5</div>
+<div class="glass pill sp-chip pn" id="sp-k3">3 meals</div>
+<div class="glass pill sp-chip pn" id="sp-k4">30 days</div>
+<div class="glass sp-cmp pn" id="sp-c1"><span class="dim">fast</span><span class="sp-arr">→</span><span>10 minutes</span></div>
+<div class="glass sp-cmp pn" id="sp-c2"><span class="dim">cheap</span><span class="sp-arr">→</span><span>$5</span></div>
+<div class="glass tbar pn" id="sp-res"><span class="dim">How I cook</span> <span id="sp-rx">→ How I Cook a Week of Meals in 1 Hour</span></div>
+<div class="glass pn" id="sp-sum"><div class="disp t96">The more <span class="acc">exact</span> the promise,</div><div class="b56 mut">the easier it is to believe, and to want.</div></div>
+
+<script>
+  on("#sp-rule", C.s1, "pop");
+  words("#sp-h", C.s1 + 0.15);
+  gIn("#sp-a", C.s2 + 0.2);
+  on("#sp-anyl", C.s3 + 0.3, "rise");
+  gIn("#sp-b", C.s4 + 0.1, { x: 60, y: 0 });
+  tl.to("#sp-a", { opacity: 0.45, scale: 0.96, duration: 0.5 }, C.s4 + 0.5);
+  off(["#sp-a", "#sp-b"], C.s5 - 0.2, "fade");
+  ["#sp-k1", "#sp-k2", "#sp-k3", "#sp-k4"].forEach((s, k) => on(s, C.s5 + 0.4 + k * 0.5, "pop"));
+  off(["#sp-k1", "#sp-k2", "#sp-k3", "#sp-k4"], C.s5b - 0.2, "up");
+  gIn("#sp-c1", C.s5b + 0.1);
+  gIn("#sp-c2", C.s5b + 2.6);
+  tl.set("#sp-rx", { opacity: 0 }, 0);
+  gIn("#sp-res", C.s6 + 0.2);
+  type("#sp-rx", C.s6 + 1.6, 26);
+  off(["#sp-c1", "#sp-c2", "#sp-res", "#sp-h", "#sp-rule"], C.s7 - 0.2, "fade");
+  gIn("#sp-sum", C.s7 + 0.1);
+</script>

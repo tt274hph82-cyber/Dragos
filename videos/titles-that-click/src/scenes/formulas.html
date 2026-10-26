@@ -1,0 +1,26 @@
+<!--SFX [["pop","x1",0.3,0.4],["whoosh-short","x2",0.1,0.45],["whoosh-short","x3",0.1,0.45],["whoosh-short","x4",0.1,0.45],["whoosh-short","x5",0.1,0.45],["whoosh-short","x6",0.1,0.45],["sparkle","x7",0.4,0.35]]-->
+<style>
+  #fm-h { left: 150px; top: 80px; width: 1620px; }
+  .fm-r { left: 150px; width: 1620px; height: 150px; padding: 0 40px; display: flex; align-items: center; gap: 36px; }
+  #fm-1 { top: 230px; } #fm-2 { top: 395px; } #fm-3 { top: 560px; } #fm-4 { top: 725px; } #fm-5 { top: 890px; }
+  .fm-n { width: 86px; height: 86px; border-radius: 50%; background: #ff7a3d; color: #0a1424; font-weight: 900; font-size: 50px; display: flex; align-items: center; justify-content: center; flex: none; }
+  .fm-f { font-size: 32px; font-weight: 800; color: #ffb48f; }
+  .fm-tx { display: flex; flex-direction: column; gap: 6px; }
+  .fm-e { font-size: 42px; font-weight: 700; white-space: nowrap; }
+  #fm-end { left: 260px; top: 380px; width: 1400px; height: 320px; padding: 0 70px; display: flex; flex-direction: column; justify-content: center; }
+</style>
+
+<div class="disp t96 paper pn shadowed" id="fm-h">5 title <span class="acc">formulas</span></div>
+<div class="glass fm-r pn" id="fm-1"><div class="fm-n">1</div><div class="fm-tx"><div class="fm-f">How to [result] without [pain]</div><div class="fm-e">How to Make Bread Without Kneading</div></div></div>
+<div class="glass fm-r pn" id="fm-2"><div class="fm-n">2</div><div class="fm-tx"><div class="fm-f">I tried [thing] for [time]</div><div class="fm-e">I Cooked Only From My Freezer for a Week</div></div></div>
+<div class="glass fm-r pn" id="fm-3"><div class="fm-n">3</div><div class="fm-tx"><div class="fm-f">[Number] mistakes</div><div class="fm-e">5 Mistakes That Make Your Cookies Flat</div></div></div>
+<div class="glass fm-r pn" id="fm-4"><div class="fm-n">4</div><div class="fm-tx"><div class="fm-f">Why [surprising thing]</div><div class="fm-e">Why Restaurant Rice Tastes Better Than Yours</div></div></div>
+<div class="glass fm-r pn" id="fm-5"><div class="fm-n">5</div><div class="fm-tx"><div class="fm-f">[This] vs. [that]</div><div class="fm-e">Cheap Pan vs. Expensive Pan</div></div></div>
+<div class="glass pn" id="fm-end"><div class="disp t80">A starting <span class="acc">shape</span>,</div><div class="b46 mut" style="margin-top:18px">filled with your topic and your words.</div></div>
+
+<script>
+  words("#fm-h", C.x1 + 0.1);
+  ["x2", "x3", "x4", "x5", "x6"].forEach((c, k) => gIn("#fm-" + (k + 1), C[c] + 0.1, { x: 80, y: 0 }));
+  off(["#fm-h", "#fm-1", "#fm-2", "#fm-3", "#fm-4", "#fm-5"], C.x7 - 0.3, "fade");
+  gIn("#fm-end", C.x7 + 0.1);
+</script>

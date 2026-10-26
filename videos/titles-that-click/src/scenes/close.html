@@ -1,0 +1,67 @@
+<!--SFX [["pop","k1",0.3,0.4],["sparkle","k2",3.0,0.35],["pop","k3",1.2,0.35],["pop","k3",2.4,0.35],["pop","k3",4.0,0.35],["pop","k3",5.6,0.35],["pop","k3",7.0,0.35],["impact-bass-1","k4",0.2,0.3],["typing","k5",0.6,0.35],["whoosh","k6",0.0,0.5],["sparkle","k6",1.0,0.4]]-->
+<style>
+  #cl-h { left: 150px; top: 100px; width: 1620px; }
+  #cl-ch { left: 150px; top: 260px; width: 1620px; height: 640px; padding: 50px 60px; }
+  #cl-ch .av { width: 110px; height: 110px; border-radius: 50%; background: #ff7a3d; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 60px; color: #0a1424; }
+  #cl-g { position: absolute; left: 60px; top: 220px; }
+  #cl-ill { position: absolute; right: 60px; top: 60px; font-size: 28px; color: rgba(255,255,255,0.7); }
+  .cl-b { position: absolute; bottom: 60px; width: 150px; border-radius: 16px 16px 6px 6px; background: rgba(255,255,255,0.28); transform-origin: 50% 100%; }
+  #cl-list { left: 150px; top: 120px; width: 1620px; height: 760px; padding: 50px 70px; }
+  .cl-r { position: absolute; left: 70px; opacity: 0; }
+  #cl-r1 { top: 60px; } #cl-r2 { top: 200px; } #cl-r3 { top: 340px; } #cl-r4 { top: 480px; } #cl-r5 { top: 620px; }
+  #cl-prom { left: 150px; top: 360px; width: 1620px; text-align: center; }
+  #cl-ten { left: 360px; top: 280px; width: 1200px; height: 460px; padding: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  #cl-end { left: 150px; top: 200px; width: 1620px; height: 680px; }
+  #cl-nx { left: 120px; top: 70px; }
+  #cl-nx .tt { font-size: 38px; }
+  #cl-nx .th { background: linear-gradient(150deg, #1d1a2e, #3a2a1a 60%, #6a3a1e); }
+  #cl-nx .th .tch { left: 40px; top: 140px; font-size: 64px; }
+  #cl-wn { position: absolute; left: 950px; top: 140px; width: 600px; }
+  #cl-sub { position: absolute; left: 950px; top: 470px; padding: 22px 46px; font-size: 44px; font-weight: 800; background: rgba(255,90,31,0.85); border-radius: 999px; color: #fff; }
+</style>
+
+<div class="disp t96 paper pn shadowed" id="cl-h">A month <span class="acc">later</span></div>
+<div class="glass pn" id="cl-ch">
+  <div class="row"><div class="av">M</div><div><div class="b56">Maya Cooks</div><div class="r32 mut">Views per video, by week</div></div></div>
+  <div id="cl-ill">illustrative</div>
+  <div id="cl-g"></div>
+</div>
+<div class="glass pn" id="cl-list">
+  <div class="cl-r row" id="cl-r1"><div class="ok"></div><div class="b56">Best words first</div></div>
+  <div class="cl-r row" id="cl-r2"><div class="ok"></div><div class="b56">Be specific</div></div>
+  <div class="cl-r row" id="cl-r3"><div class="ok"></div><div class="b56">Make it about the viewer</div></div>
+  <div class="cl-r row" id="cl-r4"><div class="ok"></div><div class="b56">Open a loop, <span class="teal">and close it</span></div></div>
+  <div class="cl-r row" id="cl-r5"><div class="ok"></div><div class="b56">Words with feeling, <span class="mut">not too many</span></div></div>
+</div>
+<div class="disp t110 paper pn shadowed" id="cl-prom">Every title is a <span class="acc">promise</span>.<br><span class="b56 mut">Write one you can keep.</span></div>
+<div class="glass pn" id="cl-ten"><div class="lab">Next upload</div><div class="disp t110" style="margin-top:16px">Write <span class="acc">10</span> titles</div><div class="b46 mut" style="margin-top:20px">then tell me which one won</div></div>
+<div class="pn" id="cl-end">
+  <div class="glass ytc" id="cl-nx">
+    <div class="th"><div class="tch">CLICK ME</div><div class="dur">8:18</div></div>
+    <div class="mrow"><div class="av">M</div><div><div class="tt">How to Make Thumbnails People Click</div><div class="mt">Watch next</div></div></div>
+  </div>
+  <div class="disp t96" id="cl-wn">Watch <span class="acc">next</span></div>
+  <div id="cl-sub">Subscribe</div>
+</div>
+
+<script>
+  const g = document.getElementById("cl-g");
+  const H = [70, 80, 75, 90, 150, 190, 230, 260];
+  H.forEach((h, k) => { const b = document.createElement("div"); b.className = "cl-b"; b.id = "cl-b" + k; b.style.left = k * 190 + "px"; b.style.height = h + "px"; b.style.bottom = "0px"; b.style.top = 300 - h + "px"; if (k >= 4) b.style.background = "linear-gradient(180deg, #ff7a3d, rgba(255,122,61,0.55))"; g.appendChild(b); });
+  g.style.width = "1500px"; g.style.height = "300px";
+  words("#cl-h", C.k1 + 0.1);
+  gIn("#cl-ch", C.k1 + 0.4);
+  H.forEach((h, k) => tl.fromTo("#cl-b" + k, { scaleY: 0 }, { scaleY: 1, duration: 0.5, ease: "expo.out" }, (k < 4 ? C.k1 + 0.9 : C.k2 + 2.4) + (k % 4) * 0.2));
+  off(["#cl-h", "#cl-ch"], C.k3 - 0.3, "fade");
+  gIn("#cl-list", C.k3);
+  [1.2, 2.4, 4.0, 5.6, 7.0].forEach((d, k) => tl.fromTo("#cl-r" + (k + 1), { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, C.k3 + d));
+  off("#cl-list", C.k4 - 0.3, "fade");
+  words("#cl-prom", C.k4 + 0.1, 0.09);
+  off("#cl-prom", C.k5 - 0.3, "up");
+  gIn("#cl-ten", C.k5 + 0.1);
+  off("#cl-ten", C.k6 - 0.3, "fade");
+  on("#cl-end", C.k6, "fade");
+  gIn("#cl-nx", C.k6 + 0.1);
+  on("#cl-wn", C.k6 + 0.7, "rise");
+  on("#cl-sub", C.k6 + 1.4, "pop");
+</script>

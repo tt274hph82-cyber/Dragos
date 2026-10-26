@@ -1,0 +1,450 @@
+{
+ "voice": "af_heart",
+ "speed": 0.92,
+ "gap_s": 0.75,
+ "chapter_gap_s": 2.2,
+ "chapters": [
+  {
+   "id": "open",
+   "title": "Same video, two titles",
+   "beats": [
+    [
+     "o1",
+     "Maya posts a video of her favorite weeknight pasta."
+    ],
+    [
+     "o2",
+     "She calls it: My Pasta Recipe."
+    ],
+    [
+     "o3",
+     "A week later, it has barely moved."
+    ],
+    [
+     "o4",
+     "So she changes one thing. Not the video. Not the thumbnail. Just the title."
+    ],
+    [
+     "o4b",
+     "Because a title is often the reason someone gives your video a chance, or scrolls right past it."
+    ],
+    [
+     "o5",
+     "The new one says: The Ten Minute Pasta I Make Every Week."
+    ],
+    [
+     "o6",
+     "Same video, same thumbnail. And more people start clicking."
+    ],
+    [
+     "o7",
+     "In this video, you'll learn how to write titles like that, step by step, with formulas you can use today."
+    ]
+   ]
+  },
+  {
+   "id": "job",
+   "title": "What a title is for",
+   "beats": [
+    [
+     "j1",
+     "First, what is a title actually for?"
+    ],
+    [
+     "j2",
+     "When someone sees your video, they see two things: a thumbnail, and a title."
+    ],
+    [
+     "j3",
+     "The thumbnail grabs their eye. The title tells them why this video is worth their time."
+    ],
+    [
+     "j4",
+     "Think of it as a promise. If you click, here's what you'll get."
+    ],
+    [
+     "j4b",
+     "Click, and you'll learn something. Click, and you'll laugh. Click, and you'll see how the story ends."
+    ],
+    [
+     "j5",
+     "A great title makes that promise clear, makes it interesting, and then the video keeps it."
+    ],
+    [
+     "j6",
+     "Keep that word in mind: promise. Everything in this video comes back to it."
+    ]
+   ]
+  },
+  {
+   "id": "front",
+   "title": "Put the best words first",
+   "beats": [
+    [
+     "f1",
+     "Rule number one: put the best words first."
+    ],
+    [
+     "f2",
+     "On a phone, long titles often get cut off after about fifty or sixty characters."
+    ],
+    [
+     "f3",
+     "So if your title starts slow, the good part might never be seen."
+    ],
+    [
+     "f4",
+     "Look at this one: In today's video I'm going to show you how I make pasta in ten minutes."
+    ],
+    [
+     "f5",
+     "On a small screen, people only read: In today's video I'm going to show you."
+    ],
+    [
+     "f6",
+     "Flip it around. Ten Minute Pasta. Now the most interesting words land first."
+    ],
+    [
+     "f7",
+     "A simple target: aim for under sixty characters, and make the first few words do the heavy lifting."
+    ]
+   ]
+  },
+  {
+   "id": "specific",
+   "title": "Be specific",
+   "beats": [
+    [
+     "s1",
+     "Rule two: be specific."
+    ],
+    [
+     "s2",
+     "Vague titles are easy to scroll past, because they could be about anything."
+    ],
+    [
+     "s3",
+     "Easy Dinner Ideas could be any video on YouTube."
+    ],
+    [
+     "s4",
+     "Three Dinners Under Five Dollars is a picture in your head."
+    ],
+    [
+     "s5",
+     "Numbers help. Times, prices, amounts, days."
+    ],
+    [
+     "s5b",
+     "Ten minutes is more believable than fast. Five dollars is more believable than cheap."
+    ],
+    [
+     "s6",
+     "Results help too. Not, how I cook, but, how I cook a week of meals in one hour."
+    ],
+    [
+     "s7",
+     "The more exact the promise, the easier it is to believe, and the easier it is to want."
+    ]
+   ]
+  },
+  {
+   "id": "viewer",
+   "title": "Make it about the viewer",
+   "beats": [
+    [
+     "v1",
+     "Rule three: make it about the viewer, not about you."
+    ],
+    [
+     "v2",
+     "My Trip to Rome is about you. Unless people already know you, it's hard to care."
+    ],
+    [
+     "v3",
+     "How to See Rome in One Day, on a Budget, is about them."
+    ],
+    [
+     "v4",
+     "Ask yourself: who is this for, and what do they get?"
+    ],
+    [
+     "v5",
+     "Maya used to write: My new sourdough attempt."
+    ],
+    [
+     "v6",
+     "Now she writes: Your First Sourdough, the Easy Way."
+    ],
+    [
+     "v7",
+     "Same bread. But now the viewer can see themselves in the title."
+    ]
+   ]
+  },
+  {
+   "id": "curious",
+   "title": "Open a loop",
+   "beats": [
+    [
+     "c1",
+     "Rule four: open a loop."
+    ],
+    [
+     "c2",
+     "People click when there's a small gap between what they know and what they want to know."
+    ],
+    [
+     "c3",
+     "I Tried Cooking Without Oil for Thirty Days. What happened?"
+    ],
+    [
+     "c4",
+     "The Mistake That Ruins Most Homemade Pizza. Which mistake? Am I making it?"
+    ],
+    [
+     "c5",
+     "That little itch is curiosity, and it's one of the strongest reasons to click."
+    ],
+    [
+     "c6",
+     "But here's the rule: always close the loop. Give the answer in the video, and don't make people wait forever for it."
+    ],
+    [
+     "c7",
+     "A loop you never close isn't curiosity. It's a trick, and viewers remember tricks."
+    ]
+   ]
+  },
+  {
+   "id": "words",
+   "title": "Words with feeling",
+   "beats": [
+    [
+     "w1",
+     "Rule five: pick words with feeling."
+    ],
+    [
+     "w2",
+     "Some words carry emotion on their own. Easy. Mistake. Finally. Never. Secret. Surprising."
+    ],
+    [
+     "w3",
+     "Compare: Tips for Better Rice, with: Stop Making This Rice Mistake."
+    ],
+    [
+     "w4",
+     "The second one feels urgent. It speaks to a worry the viewer already has."
+    ],
+    [
+     "w5",
+     "Use these words like salt. A little brings out the flavor. Too much, and nobody trusts it."
+    ],
+    [
+     "w6",
+     "And skip the all caps titles. One word in capitals can add punch. A whole title in capitals just looks like shouting."
+    ]
+   ]
+  },
+  {
+   "id": "search",
+   "title": "Search or browse",
+   "beats": [
+    [
+     "r1",
+     "Now, people find videos in two main ways, and each one wants a slightly different title."
+    ],
+    [
+     "r2",
+     "Search is when someone types a question. How to fix runny scrambled eggs."
+    ],
+    [
+     "r3",
+     "For search, use the words people actually type. Plain and clear beats clever."
+    ],
+    [
+     "r4",
+     "Here's a free trick: start typing your topic into the YouTube search bar, and look at the suggestions. Those are real searches."
+    ],
+    [
+     "r4b",
+     "If you see how to make fluffy pancakes, and your video shows exactly that, you have your title's first words."
+    ],
+    [
+     "r5",
+     "Browse is the home page and suggested videos. Nobody asked for your video. It has to catch their interest on its own."
+    ],
+    [
+     "r6",
+     "For browse, lean on curiosity, feeling and specific results."
+    ],
+    [
+     "r7",
+     "The best titles often do both: a searchable phrase, with a little spark."
+    ]
+   ]
+  },
+  {
+   "id": "team",
+   "title": "Title and thumbnail, one team",
+   "beats": [
+    [
+     "t1",
+     "Your title never works alone. It sits right next to your thumbnail."
+    ],
+    [
+     "t2",
+     "So don't make them say the same thing."
+    ],
+    [
+     "t3",
+     "If the thumbnail already says Ten Minute Pasta, a title that also says Ten Minute Pasta wastes the space."
+    ],
+    [
+     "t4",
+     "Let the thumbnail show, and let the title tell."
+    ],
+    [
+     "t5",
+     "The thumbnail shows the finished pasta and a timer. The title adds the part a picture can't: The Pasta I Make Every Week, In Ten Minutes."
+    ],
+    [
+     "t6",
+     "Together they tell one story. And if you missed it, the thumbnails video in this series goes deeper on that half."
+    ]
+   ]
+  },
+  {
+   "id": "formulas",
+   "title": "Five title formulas",
+   "beats": [
+    [
+     "x1",
+     "Here are five formulas you can steal."
+    ],
+    [
+     "x2",
+     "One. How to get a result, without the pain. How to Make Bread Without Kneading."
+    ],
+    [
+     "x3",
+     "Two. I tried something, for a set time. I Cooked Only From My Freezer for a Week."
+    ],
+    [
+     "x4",
+     "Three. A number, and the mistakes. Five Mistakes That Make Your Cookies Flat."
+    ],
+    [
+     "x5",
+     "Four. Why something surprising is true. Why Restaurant Rice Tastes Better Than Yours."
+    ],
+    [
+     "x6",
+     "Five. This versus that. Cheap Pan Versus Expensive Pan."
+    ],
+    [
+     "x7",
+     "Formulas aren't cheating. They're a starting shape. You fill them with your own topic and your own words."
+    ]
+   ]
+  },
+  {
+   "id": "test",
+   "title": "Write ten, pick one",
+   "beats": [
+    [
+     "e1",
+     "The best way to find a great title? Write a lot of bad ones first."
+    ],
+    [
+     "e2",
+     "Maya writes ten titles for every video. Fast, no judging."
+    ],
+    [
+     "e3",
+     "Then she crosses out the boring ones, the long ones, and the ones that promise too much."
+    ],
+    [
+     "e4",
+     "She reads the last two out loud, and asks: which one would I click?"
+    ],
+    [
+     "e4b",
+     "Out loud is the secret. If it sounds clumsy when you say it, it'll read clumsy too."
+    ],
+    [
+     "e5",
+     "After posting, she checks YouTube Studio. It shows how often people click when they see the video. That's called click through rate."
+    ],
+    [
+     "e6",
+     "If a video gets seen but not clicked, she tries a new title. You can change a title any time, it doesn't hurt the video."
+    ]
+   ]
+  },
+  {
+   "id": "mistakes",
+   "title": "Mistakes to avoid",
+   "beats": [
+    [
+     "m1",
+     "A few mistakes to avoid."
+    ],
+    [
+     "m2",
+     "Promising something the video doesn't deliver. People click, feel tricked, and leave fast. And YouTube notices when viewers leave."
+    ],
+    [
+     "m3",
+     "Stuffing in keywords. Pasta Recipe, Easy Pasta, Best Pasta, Pasta Twenty Twenty Six. That reads like a robot wrote it."
+    ],
+    [
+     "m4",
+     "Inside jokes. A title that only makes sense if you've seen the video won't make anyone click it."
+    ],
+    [
+     "m5",
+     "And copying the exact title of a big channel. You'll just look like the smaller version of them."
+    ],
+    [
+     "m5b",
+     "Your channel is yours. Let your titles sound like you."
+    ]
+   ]
+  },
+  {
+   "id": "close",
+   "title": "Your title checklist",
+   "beats": [
+    [
+     "k1",
+     "So, a month later, Maya looks back at her channel."
+    ],
+    [
+     "k2",
+     "The videos are the same quality as before. But now the titles tell people exactly why to watch, and more of them do."
+    ],
+    [
+     "k3",
+     "Here's your checklist. Best words first. Be specific. Make it about the viewer. Open a loop, and close it. Use words with feeling, but not too many."
+    ],
+    [
+     "k4",
+     "And every title is a promise. Write one you can keep."
+    ],
+    [
+     "k5",
+     "Next time you upload, write ten titles before you pick one. Then come back and tell me which one won."
+    ],
+    [
+     "k5b",
+     "It feels slow at first. After a few videos, it takes five minutes, and it becomes the most valuable five minutes of your upload."
+    ],
+    [
+     "k6",
+     "And if you want your thumbnails to match, watch How to Make Thumbnails People Click next. See you there."
+    ]
+   ]
+  }
+ ]
+}

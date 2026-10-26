@@ -1,0 +1,57 @@
+<!--SFX [["pop","j2",0.6,0.4],["pop","j2",1.2,0.4],["click-soft","j3",0.4,0.5],["pop","j4b",0.3,0.4],["pop","j4b",1.6,0.4],["pop","j4b",3.0,0.4],["sparkle","j6",0.4,0.4]]-->
+<style>
+  #jb-q { left: 150px; top: 400px; width: 1620px; text-align: center; }
+  #jb-card { left: 140px; top: 180px; }
+  #jb-card .tt { font-size: 40px; }
+  .jb-tag { padding: 14px 28px; font-size: 34px; }
+  #jb-t1 { left: 560px; top: 120px; } #jb-t2 { left: 560px; top: 820px; }
+  #jb-t1 .b, #jb-t2 .b { position: absolute; left: 28px; top: 14px; }
+  #jb-pane { left: 1000px; top: 160px; width: 780px; height: 760px; padding: 50px 56px; }
+  #jb-pr { font-size: 84px; }
+  .jb-c { position: absolute; left: 56px; padding: 14px 30px; font-size: 38px; font-weight: 700; }
+  #jb-c1 { top: 300px; } #jb-c2 { top: 400px; } #jb-c3 { top: 500px; }
+  .jb-r { position: absolute; left: 56px; opacity: 0; }
+  #jb-r1 { top: 300px; } #jb-r2 { top: 430px; } #jb-r3 { top: 560px; }
+  #jb-big { left: 260px; top: 300px; width: 1400px; height: 480px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+</style>
+
+<div class="disp t130 paper pn shadowed" id="jb-q">What is a title <span class="acc">for</span>?</div>
+<div class="glass ytc pn" id="jb-card">
+  <div class="th"><div class="plate"><i></i><i></i><i></i></div><div class="tch" style="left: 26px; top: 26px">10 MIN</div><div class="dur">8:42</div></div>
+  <div class="mrow"><div class="av">M</div><div><div class="tt">The 10-Minute Pasta I Make Every Week</div><div class="mt">Maya Cooks · 2.4K views</div></div></div>
+</div>
+<div class="glass pill jb-tag pn" id="jb-t1"><span id="jb-t1a">Thumbnail</span><span id="jb-t1b" class="teal" style="opacity:0; position:absolute; left:28px; top:14px">Grabs the eye</span></div>
+<div class="glass pill jb-tag pn" id="jb-t2"><span id="jb-t2a">Title</span><span id="jb-t2b" class="acc" style="opacity:0; position:absolute; left:28px; top:14px">Says why it's worth it</span></div>
+<div class="glass gc pn" id="jb-pane">
+  <div class="lab">A title is a</div>
+  <div class="disp acc" id="jb-pr">promise</div>
+  <div class="glass pill jb-c pn" id="jb-c1">Click, and you'll learn something</div>
+  <div class="glass pill jb-c pn" id="jb-c2">Click, and you'll laugh</div>
+  <div class="glass pill jb-c pn" id="jb-c3">Click, and see how it ends</div>
+  <div class="jb-r row" id="jb-r1"><div class="ok"></div><div class="b56">Clear</div></div>
+  <div class="jb-r row" id="jb-r2"><div class="ok"></div><div class="b56">Interesting</div></div>
+  <div class="jb-r row" id="jb-r3"><div class="ok"></div><div class="b56">Kept by the video</div></div>
+</div>
+<div class="glass pn" id="jb-big"><div class="lab">Remember one word</div><div class="disp t160 acc">promise</div></div>
+
+<script>
+  words("#jb-q", C.j1 + 0.05);
+  off("#jb-q", C.j2 - 0.3, "up");
+  gIn("#jb-card", C.j2);
+  tl.fromTo("#jb-t1", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }, C.j2 + 0.6);
+  tl.fromTo("#jb-t2", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.6)" }, C.j2 + 1.2);
+  tl.to(["#jb-t1a", "#jb-t2a"], { opacity: 0, duration: 0.2 }, C.j3 + 0.3);
+  tl.to(["#jb-t1b", "#jb-t2b"], { opacity: 1, duration: 0.3 }, C.j3 + 0.45);
+  tl.to("#jb-t1", { width: 330, duration: 0.3, ease: "power2.out" }, C.j3 + 0.3);
+  tl.to("#jb-t2", { width: 470, duration: 0.3, ease: "power2.out" }, C.j3 + 0.3);
+  gIn("#jb-pane", C.j4, { x: 60, y: 0 });
+  gIn("#jb-c1", C.j4b + 0.3, { x: 40, y: 0 });
+  gIn("#jb-c2", C.j4b + 1.6, { x: 40, y: 0 });
+  gIn("#jb-c3", C.j4b + 3.0, { x: 40, y: 0 });
+  off(["#jb-c1", "#jb-c2", "#jb-c3"], C.j5 - 0.2, "fade");
+  tl.fromTo("#jb-r1", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, C.j5 + 0.9);
+  tl.fromTo("#jb-r2", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, C.j5 + 1.9);
+  tl.fromTo("#jb-r3", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, C.j5 + 3.2);
+  ["#jb-card", "#jb-t1", "#jb-t2", "#jb-pane"].forEach((s) => off(s, C.j6 - 0.3, "fade"));
+  gIn("#jb-big", C.j6 + 0.1);
+</script>
