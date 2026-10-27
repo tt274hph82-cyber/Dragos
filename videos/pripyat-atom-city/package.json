@@ -1,0 +1,27 @@
+{
+  "name": "pripyat-atom-city",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "narration": "python3 scripts/make_narration.py",
+    "render": "remotion render Documentary out/pripyat-atom-city.mp4",
+    "still": "remotion still Documentary out/still.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.539",
+    "@remotion/google-fonts": "^4.0.539",
+    "d3-geo": "^3.1.1",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "remotion": "^4.0.539",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/d3-geo": "^3.1.0",
+    "@types/react": "^19.1.8",
+    "@types/topojson-client": "^3.1.5",
+    "typescript": "^5.8.3"
+  }
+}
