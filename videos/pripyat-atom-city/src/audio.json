@@ -1,0 +1,5 @@
+{
+ "narrationExt": "wav",
+ "music": [{ "file": "audio/drone.mp3", "segment": null, "until": null, "volume": 0.32 }],
+ "sfx": []
+}

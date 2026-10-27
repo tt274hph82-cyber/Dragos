@@ -1,6 +1,28 @@
 import React from "react";
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { timeline, TOTAL, LEAD, XFADE, Timed } from "./timeline";
+import audioJson from "./audio.json";
+
+type Cue = { file: string; segment: string | null; until: string | null; volume: number };
+type Sfx = { file: string; segment: string; offset: number; volume: number };
+const audio = audioJson as { narrationExt: string; music: Cue[]; sfx: Sfx[] };
+const startOf = (id: string | null) => (id === null ? 0 : timeline.find((s) => s.id === id)?.from ?? 0);
+
+/** Music cue with fade in/out; loops if the generated track is shorter than its slot. */
+const MusicCue: React.FC<{ cue: Cue }> = ({ cue }) => {
+  const from = startOf(cue.segment);
+  const to = cue.until === null ? TOTAL : startOf(cue.until) + 3 * FPS;
+  const len = to - from;
+  return (
+    <Sequence from={from} durationInFrames={len} name={"music " + cue.file}>
+      <Audio
+        src={staticFile(cue.file)}
+        loop
+        volume={(f) => interpolate(f, [0, 2 * FPS, len - 3 * FPS, len], [0, cue.volume, cue.volume, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+      />
+    </Sequence>
+  );
+};
 import { FPS } from "./theme";
 import { Film } from "./overlays/Film";
 import { Subtitle } from "./overlays/Subtitle";
@@ -40,8 +62,6 @@ const Fade: React.FC<{ children: React.ReactNode; first: boolean }> = ({ childre
 export const Documentary: React.FC<{ subtitles: boolean }> = ({ subtitles }) => {
   const frame = useCurrentFrame();
   const lead = Math.round(LEAD * FPS);
-  const musicVol = (f: number) =>
-    interpolate(f, [0, 60, TOTAL - 240, TOTAL], [0, 0.32, 0.32, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ background: "#000" }}>
       {timeline.map((s, i) => (
@@ -53,10 +73,15 @@ export const Documentary: React.FC<{ subtitles: boolean }> = ({ subtitles }) => 
       ))}
       {timeline.filter((s) => s.audio).map((s) => (
         <Sequence key={"a" + s.id} from={s.from + lead} durationInFrames={Math.ceil((s.audio as number) * FPS) + 2} name={"vo " + s.id}>
-          <Audio src={staticFile(`narration/${s.id}.wav`)} />
+          <Audio src={staticFile(`narration/${s.id}.${audio.narrationExt}`)} />
         </Sequence>
       ))}
-      <Audio src={staticFile("audio/drone.mp3")} volume={musicVol} />
+      {audio.music.map((cue) => <MusicCue key={cue.file} cue={cue} />)}
+      {audio.sfx.map((fx, i) => (
+        <Sequence key={"fx" + i} from={startOf(fx.segment) + Math.round(fx.offset * FPS)} name={"sfx " + fx.file}>
+          <Audio src={staticFile(fx.file)} volume={fx.volume} />
+        </Sequence>
+      ))}
       <Film />
       {subtitles && timeline.filter((s) => s.audio).map((s) =>
         frame >= s.from && frame < s.from + s.dur + 8 ? (

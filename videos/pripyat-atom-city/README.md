@@ -23,3 +23,19 @@ To use your own voice instead of the synthetic one, record one file per segment 
 
 ## Render on GitHub
 The workflow `.github/workflows/render-pripyat.yml` renders the video on GitHub Actions. It runs on every push that changes this folder. You can also start it by hand from the **Actions** tab: open **Render Pripyat documentary**, then **Run workflow**. When the run finishes, download the **pripyat-atom-city-video** artifact. It contains the full 1080p MP4 and a smaller 720p copy.
+
+## ElevenLabs audio (narration, sound effects, music)
+`scripts/elevenlabs_audio.mjs` regenerates three things:
+- the narration, using the newest "v4" voice model on your account (or eleven_v3 if there isn't one)
+- 14 sound effects, placed at specific scenes
+- a music score in three acts
+
+It writes the results to `src/audio.json`, and the video picks them up automatically.
+
+**On GitHub (easiest):**
+1. Add your ElevenLabs API key (starts with `sk_`) as a repository secret named `ELEVENLABS_API_KEY`: Settings → Secrets and variables → Actions.
+2. Go to Actions → **Generate ElevenLabs audio + render** → Run workflow.
+
+The workflow commits the new audio and then renders the video.
+
+**Locally:** `ELEVENLABS_API_KEY=sk_... node scripts/elevenlabs_audio.mjs`

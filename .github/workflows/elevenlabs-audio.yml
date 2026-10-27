@@ -1,0 +1,56 @@
+name: Generate ElevenLabs audio + render
+
+on:
+  workflow_dispatch:
+    inputs:
+      parts:
+        description: "What to generate (space separated: narration sfx music)"
+        default: "narration sfx music"
+      voice_id:
+        description: "ElevenLabs voice ID (blank = George, documentary narrator)"
+        default: ""
+      model_id:
+        description: "TTS model ID (blank = newest v4 model on your account)"
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    defaults:
+      run:
+        working-directory: videos/pripyat-atom-city
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: videos/pripyat-atom-city/package-lock.json
+      - run: npm ci
+      - name: Generate audio with ElevenLabs
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_ID: ${{ inputs.voice_id }}
+          ELEVENLABS_MODEL_ID: ${{ inputs.model_id }}
+        run: node scripts/elevenlabs_audio.mjs ${{ inputs.parts }}
+      - name: Commit generated audio
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public src/narration.json src/audio.json
+          git commit -m "Regenerate documentary audio with ElevenLabs" || echo "no changes"
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  render:
+    needs: audio
+    uses: ./.github/workflows/render-pripyat.yml
+    with:
+      ref: ${{ needs.audio.outputs.sha }}
