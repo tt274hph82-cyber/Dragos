@@ -24,7 +24,7 @@ const API = "https://api.elevenlabs.io/v1";
 async function pickModel() {
   if (process.env.ELEVENLABS_MODEL_ID) return process.env.ELEVENLABS_MODEL_ID;
   const res = await fetch(`${API}/models`, { headers: { "xi-api-key": KEY } });
-  if (!res.ok) throw new Error(`Could not list models: ${res.status} ${(await res.text()).slice(0, 300)}`);
+  if (!res.ok) { console.log(`Cannot list models (${res.status}); using eleven_v4`); return "eleven_v4"; }
   const ids = (await res.json()).filter((m) => m.can_do_text_to_speech !== false).map((m) => m.model_id);
   console.log("Available TTS models:", ids.join(", "));
   return ids.find((id) => /v4/i.test(id)) || ids.find((id) => id === "eleven_v3") || "eleven_multilingual_v2";
