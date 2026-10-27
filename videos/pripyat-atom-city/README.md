@@ -20,3 +20,6 @@ Render without subtitles: `npx remotion render Documentary out/nosubs.mp4 --prop
 
 ## Swap in your own voiceover
 To use your own voice instead of the synthetic one, record one file per segment id (s01.wav, s02.wav, …) into `public/narration/`. Then update the durations in `src/narration.json`. Every scene re-times automatically.
+
+## Render on GitHub
+The workflow `.github/workflows/render-pripyat.yml` renders the video on GitHub Actions. It runs on every push that changes this folder. You can also start it by hand from the **Actions** tab: open **Render Pripyat documentary**, then **Run workflow**. When the run finishes, download the **pripyat-atom-city-video** artifact. It contains the full 1080p MP4 and a smaller 720p copy.

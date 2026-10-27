@@ -1,0 +1,59 @@
+name: Render Pripyat documentary
+
+on:
+  workflow_dispatch:
+    inputs:
+      subtitles:
+        description: "Burn in subtitles"
+        type: boolean
+        default: true
+  push:
+    paths:
+      - "videos/pripyat-atom-city/**"
+      - ".github/workflows/render-pripyat.yml"
+
+concurrency:
+  group: render-pripyat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: videos/pripyat-atom-city
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: videos/pripyat-atom-city/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install headless browser
+        run: npx remotion browser ensure
+
+      - name: Render video
+        run: |
+          SUBS="${{ github.event_name != 'workflow_dispatch' || inputs.subtitles }}"
+          npx remotion render Documentary out/pripyat-atom-city.mp4 \
+            --props="{\"subtitles\": $SUBS}" --concurrency=4
+
+      - name: Make smaller upload copy (720p)
+        run: |
+          npx remotion ffmpeg -y -v error -i out/pripyat-atom-city.mp4 -vf scale=1280:720 \
+            -c:v libx264 -crf 24 -preset medium -pix_fmt yuv420p -c:a aac -b:a 160k out/pripyat-atom-city-720p.mp4
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pripyat-atom-city-video
+          path: |
+            videos/pripyat-atom-city/out/pripyat-atom-city.mp4
+            videos/pripyat-atom-city/out/pripyat-atom-city-720p.mp4
+          retention-days: 30
