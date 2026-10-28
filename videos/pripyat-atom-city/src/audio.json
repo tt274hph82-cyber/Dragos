@@ -145,13 +145,13 @@
    "file": "sfx/drafting.mp3",
    "segment": "s14",
    "offset": 0,
-   "volume": 0.35
+   "volume": 0.2
   },
   {
    "file": "sfx/construction.mp3",
    "segment": "s11",
    "offset": 0,
-   "volume": 0.25
+   "volume": 0.14
   },
   {
    "file": "sfx/children.mp3",
@@ -181,7 +181,7 @@
    "file": "sfx/explosion.mp3",
    "segment": "s34",
    "offset": 1.2,
-   "volume": 0.5
+   "volume": 0.35
   },
   {
    "file": "sfx/clock.mp3",
@@ -193,13 +193,13 @@
    "file": "sfx/radio.mp3",
    "segment": "s39",
    "offset": 0,
-   "volume": 0.3
+   "volume": 0.14
   },
   {
    "file": "sfx/buses.mp3",
    "segment": "s41",
    "offset": 0,
-   "volume": 0.3
+   "volume": 0.09
   },
   {
    "file": "sfx/door.mp3",

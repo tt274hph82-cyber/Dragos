@@ -78,7 +78,7 @@ export const Documentary: React.FC<{ subtitles: boolean }> = ({ subtitles }) => 
       {audio.music.map((cue) => <MusicCue key={cue.file} cue={cue} />)}
       {audio.sfx.map((fx, i) => (
         <Sequence key={"fx" + i} from={startOf(fx.segment) + Math.round(fx.offset * FPS)} name={"sfx " + fx.file}>
-          <Audio src={staticFile(fx.file)} volume={fx.volume} />
+          <Audio src={staticFile(fx.file)} volume={(f) => fx.volume * interpolate(f, [0, 10], [0, 1], { extrapolateRight: "clamp" })} />
         </Sequence>
       ))}
       <Film />
