@@ -1,0 +1,54 @@
+name: Publish video as a release
+
+# Puts the rendered MP4s on a GitHub Release page, which has plain download
+# links that work in a phone browser (workflow artifacts don't on mobile).
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Render run ID to publish (blank = latest successful render)"
+        default: ""
+  push:
+    paths:
+      - ".github/workflows/publish-video-release.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find render run
+        id: run
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run_id }}
+        run: |
+          if [ -z "$RUN_ID" ]; then
+            RUN_ID=$(gh run list -R "$GITHUB_REPOSITORY" --workflow render-pripyat.yml --status success --limit 1 --json databaseId -q '.[0].databaseId')
+          fi
+          echo "id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "Publishing render run $RUN_ID"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: pripyat-atom-city-video
+          run-id: ${{ steps.run.outputs.id }}
+          github-token: ${{ github.token }}
+          path: video
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ls -la video
+          TAG=pripyat-atom-city
+          NOTES="Pripyat: The Soviet Atom-City — rendered by workflow run ${{ steps.run.outputs.id }}. Tap a file below to download."
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$TAG" -R "$GITHUB_REPOSITORY" --notes "$NOTES"
+          else
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "Pripyat: The Soviet Atom-City (video)" --notes "$NOTES"
+          fi
+          gh release upload "$TAG" video/*.mp4 -R "$GITHUB_REPOSITORY" --clobber
