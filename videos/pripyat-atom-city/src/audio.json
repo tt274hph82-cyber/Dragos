@@ -1,5 +1,211 @@
 {
- "narrationExt": "wav",
- "music": [{ "file": "audio/drone.mp3", "segment": null, "until": null, "volume": 0.32 }],
- "sfx": []
+ "narrationExt": "mp3",
+ "music": [
+  {
+   "file": "music/act1.mp3",
+   "segment": "s01",
+   "until": "c4",
+   "volume": 0.22
+  },
+  {
+   "file": "music/act2.mp3",
+   "segment": "c4",
+   "until": "c6",
+   "volume": 0.22
+  },
+  {
+   "file": "music/act3.mp3",
+   "segment": "c6",
+   "until": null,
+   "volume": 0.22
+  }
+ ],
+ "sfx": [
+  {
+   "file": "sfx/wind.mp3",
+   "segment": "s01",
+   "offset": 0,
+   "volume": 0.22
+  },
+  {
+   "file": "sfx/wind.mp3",
+   "segment": "s06",
+   "offset": 0,
+   "volume": 0.22
+  },
+  {
+   "file": "sfx/wind.mp3",
+   "segment": "s42",
+   "offset": 0,
+   "volume": 0.25
+  },
+  {
+   "file": "sfx/wind.mp3",
+   "segment": "s60",
+   "offset": 0,
+   "volume": 0.22
+  },
+  {
+   "file": "sfx/wind.mp3",
+   "segment": "s63",
+   "offset": 0,
+   "volume": 0.2
+  },
+  {
+   "file": "sfx/ferris.mp3",
+   "segment": "s04",
+   "offset": 0.3,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/ferris.mp3",
+   "segment": "title",
+   "offset": 0.5,
+   "volume": 0.3
+  },
+  {
+   "file": "sfx/ferris.mp3",
+   "segment": "s64",
+   "offset": 0.5,
+   "volume": 0.4
+  },
+  {
+   "file": "sfx/boom.mp3",
+   "segment": "title",
+   "offset": 0,
+   "volume": 0.55
+  },
+  {
+   "file": "sfx/boom.mp3",
+   "segment": "c4",
+   "offset": 0,
+   "volume": 0.5
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c1",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c2",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c3",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c5",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c6",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c7",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c8",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/whoosh.mp3",
+   "segment": "c9",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/typewriter.mp3",
+   "segment": "s12",
+   "offset": 0.2,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/typewriter.mp3",
+   "segment": "s46",
+   "offset": 0.2,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/drafting.mp3",
+   "segment": "s14",
+   "offset": 0,
+   "volume": 0.35
+  },
+  {
+   "file": "sfx/construction.mp3",
+   "segment": "s11",
+   "offset": 0,
+   "volume": 0.25
+  },
+  {
+   "file": "sfx/children.mp3",
+   "segment": "s28",
+   "offset": 0,
+   "volume": 0.18
+  },
+  {
+   "file": "sfx/children.mp3",
+   "segment": "s29",
+   "offset": 0,
+   "volume": 0.15
+  },
+  {
+   "file": "sfx/geiger.mp3",
+   "segment": "s33",
+   "offset": 0.5,
+   "volume": 0.3
+  },
+  {
+   "file": "sfx/geiger.mp3",
+   "segment": "s35",
+   "offset": 0,
+   "volume": 0.25
+  },
+  {
+   "file": "sfx/explosion.mp3",
+   "segment": "s34",
+   "offset": 1.2,
+   "volume": 0.5
+  },
+  {
+   "file": "sfx/clock.mp3",
+   "segment": "s36",
+   "offset": 0,
+   "volume": 0.2
+  },
+  {
+   "file": "sfx/radio.mp3",
+   "segment": "s39",
+   "offset": 0,
+   "volume": 0.3
+  },
+  {
+   "file": "sfx/buses.mp3",
+   "segment": "s41",
+   "offset": 0,
+   "volume": 0.3
+  },
+  {
+   "file": "sfx/door.mp3",
+   "segment": "s44",
+   "offset": 0.8,
+   "volume": 0.35
+  }
+ ]
 }

@@ -8,7 +8,7 @@ type Sfx = { file: string; segment: string; offset: number; volume: number };
 const audio = audioJson as { narrationExt: string; music: Cue[]; sfx: Sfx[] };
 const startOf = (id: string | null) => (id === null ? 0 : timeline.find((s) => s.id === id)?.from ?? 0);
 
-/** Music cue with fade in/out; loops if the generated track is shorter than its slot. */
+/** Music cue with fade in and out over its act. */
 const MusicCue: React.FC<{ cue: Cue }> = ({ cue }) => {
   const from = startOf(cue.segment);
   const to = cue.until === null ? TOTAL : startOf(cue.until) + 3 * FPS;
@@ -17,7 +17,6 @@ const MusicCue: React.FC<{ cue: Cue }> = ({ cue }) => {
     <Sequence from={from} durationInFrames={len} name={"music " + cue.file}>
       <Audio
         src={staticFile(cue.file)}
-        loop
         volume={(f) => interpolate(f, [0, 2 * FPS, len - 3 * FPS, len], [0, cue.volume, cue.volume, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
       />
     </Sequence>
@@ -73,7 +72,7 @@ export const Documentary: React.FC<{ subtitles: boolean }> = ({ subtitles }) => 
       ))}
       {timeline.filter((s) => s.audio).map((s) => (
         <Sequence key={"a" + s.id} from={s.from + lead} durationInFrames={Math.ceil((s.audio as number) * FPS) + 2} name={"vo " + s.id}>
-          <Audio src={staticFile(`narration/${s.id}.${audio.narrationExt}`)} />
+          <Audio src={staticFile(`narration/${s.id}.${audio.narrationExt}`)} volume={audio.narrationExt === "mp3" ? 1.5 : 1} />
         </Sequence>
       ))}
       {audio.music.map((cue) => <MusicCue key={cue.file} cue={cue} />)}
