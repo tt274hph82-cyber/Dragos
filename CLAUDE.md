@@ -17,5 +17,8 @@ Rules:
 - **Check before rendering the full video.** Render 2–3 stills (`npx remotion still <Comp> out/x.jpg --frame=N`) and look at them first.
 - **Render on GitHub** with Actions → **Render 3D video** (`.github/workflows/render-3d.yml`).
 
+## Cartoon explainer style
+For the flat cartoon look (bold outlines, round-headed stick-limb characters, one-word captions), copy `videos/cartoon-doctor/`. It is the same stack, with a reusable style kit (`src/toon.tsx`) and character (`src/Character.tsx`).
+
 ## Other notes
 - Never commit API keys. ElevenLabs uses the env var / GitHub secret `ELEVENLABS_API_KEY`.

@@ -1,0 +1,7 @@
+[
+ {"text": "Then", "startMs": 150, "endMs": 750, "timestampMs": 450, "confidence": 1},
+ {"text": "doctors", "startMs": 750, "endMs": 1400, "timestampMs": 1075, "confidence": 1},
+ {"text": "noticed", "startMs": 1400, "endMs": 2100, "timestampMs": 1750, "confidence": 1},
+ {"text": "something", "startMs": 2100, "endMs": 2950, "timestampMs": 2525, "confidence": 1},
+ {"text": "strange.", "startMs": 2950, "endMs": 3900, "timestampMs": 3425, "confidence": 1}
+]
