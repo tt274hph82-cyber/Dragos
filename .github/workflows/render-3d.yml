@@ -1,0 +1,33 @@
+name: Render 3D video
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: "Project folder"
+        default: "videos/3d-template"
+      composition:
+        description: "Composition ID"
+        default: "Scene3D"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    defaults:
+      run:
+        working-directory: ${{ inputs.project }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx remotion browser ensure
+      - name: Render
+        run: npx remotion render ${{ inputs.composition }} out/${{ inputs.composition }}.mp4 --gl=swangle
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.composition }}-video
+          path: ${{ inputs.project }}/out/${{ inputs.composition }}.mp4
+          retention-days: 30

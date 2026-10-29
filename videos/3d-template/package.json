@@ -1,0 +1,25 @@
+{
+  "name": "3d-template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio",
+    "render": "remotion render Scene3D out/scene3d.mp4",
+    "still": "remotion still Scene3D out/still.png --frame=90"
+  },
+  "dependencies": {
+    "@react-three/fiber": "^9.8.2",
+    "@remotion/captions": "^4.0.539",
+    "@remotion/cli": "^4.0.539",
+    "@remotion/three": "^4.0.539",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "remotion": "^4.0.539",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.8",
+    "@types/three": "^0.186.0",
+    "typescript": "^5.8.3"
+  }
+}
