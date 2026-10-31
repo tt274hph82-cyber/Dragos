@@ -29,9 +29,9 @@ export type Look = {
   shoe: string;
   face: string;
   hair: string;
-  extra?: 'hood' | 'curls' | 'bunches' | 'bob' | 'suit';
+  extra?: 'hood' | 'curls' | 'bunches' | 'bob' | 'suit' | 'swoosh' | 'goggles' | 'bun';
 };
-export type CastName = 'pip' | 'pipHood' | 'pipInk' | 'mo' | 'sis' | 'mom' | 'suit';
+export type CastName = 'pip' | 'pipHood' | 'pipInk' | 'mo' | 'sis' | 'mom' | 'suit' | 'nova' | 'kit' | 'juno';
 export const LOOKS: Record<CastName, Look> = {
   // A: Pip as built
   pip: { skin: C.skin, skinShade: C.skinShade, hand: C.skin, jacket: C.jacket, jacketShade: C.jacketShade, accent: C.jacketShade, limb: C.limb, line: C.ink, shoe: C.shoe, face: C.ink, hair: C.ink },
@@ -45,8 +45,18 @@ export const LOOKS: Record<CastName, Look> = {
   // and the man in a suit who notices the power. All three are ours: plain shapes, no famous silhouettes.
   sis: { skin: C.skin, skinShade: C.skinShade, hand: C.skin, jacket: '#3E8C86', jacketShade: '#2F6E69', accent: '#F28C6A', limb: '#3A3446', line: '#14121C', shoe: '#F28C6A', face: C.ink, hair: '#3A2620', extra: 'bunches' },
   mom: { skin: C.skin, skinShade: C.skinShade, hand: C.skin, jacket: '#8A5A6A', jacketShade: '#704858', accent: '#E9C46A', limb: '#3A3446', line: '#14121C', shoe: '#5A4A6A', face: C.ink, hair: '#5A3226', extra: 'bob' },
+  // Hero candidates made for this channel (original designs): each has one silhouette piece no other cast member has.
+  // Nova: a tall swept quiff and a coral scarf whose ends swing with sway; teal jacket.
+  nova: { skin: '#F3E6D6', skinShade: '#DFCDB8', hand: '#F3E6D6', jacket: '#2C8C8C', jacketShade: '#1F6E6E', accent: '#FF7A5C', limb: '#EFE2CC', line: '#141826', shoe: '#FF7A5C', face: C.ink, hair: '#4A3020', extra: 'swoosh' },
+  // Kit: workshop goggles pushed up on the forehead over short hair; rust-orange jacket with a chest pocket.
+  kit: { skin: '#B9825E', skinShade: '#A06E4E', hand: '#B9825E', jacket: '#C8582E', jacketShade: '#A44522', accent: '#F2D16B', limb: '#EADCC4', line: '#16131C', shoe: '#3C4A63', face: C.ink, hair: '#1E1A1F', extra: 'goggles' },
+  // Juno: a round top bun with a yellow star clip; lilac hoodie, mint trainers.
+  juno: { skin: '#F1D9C2', skinShade: '#DCC2A8', hand: '#F1D9C2', jacket: '#8E7CC3', jacketShade: '#7563A8', accent: '#FFD45C', limb: '#EFE2CC', line: '#17131F', shoe: '#5FD3B0', face: C.ink, hair: '#2B1E1A', extra: 'bun' },
   suit: { skin: '#D9C6AE', skinShade: '#C2AE96', hand: '#D9C6AE', jacket: '#2B2F3A', jacketShade: '#20232C', accent: '#A8323E', limb: '#2B2F3A', line: '#0E0F14', shoe: '#14151A', face: C.ink, hair: '#17141A', extra: 'suit' },
 };
+
+/** The channel's hero: Juno (top bun with a star clip, lilac hoodie). Every new episode stars her: <Hero look={HERO} />. */
+export const HERO: Look = LOOKS.juno;
 
 // ---------- the hero ----------
 /** Mitten hands: open (a palm and a thumb) or pointing (a fist with the index finger out). */
@@ -309,7 +319,7 @@ const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number;
   );
 };
 
-export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?: Look }> = ({ pose, shadow = 1, rimId = 'rimR', look = LOOKS.pipHood }) => {
+export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?: Look }> = ({ pose, shadow = 1, rimId = 'rimR', look = HERO }) => {
   const j = joints(pose);
   const L = look;
   // limbs are light with a dark outline, so they read on the dark sets (navy limbs vanished on navy walls)
@@ -362,13 +372,30 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
       ) : (
         <path d="M -22 -118 Q 0 -100 22 -118" stroke={L.accent} strokeWidth={6} fill="none" strokeLinecap="round" />
       )}
+      {L.extra === 'swoosh' ? (
+        // a coral scarf round the neck, one end hanging and swinging with sway
+        <g>
+          <path d="M -40 -122 Q 0 -98 40 -122 L 38 -104 Q 0 -84 -38 -104 Z" fill={L.accent} stroke={L.line} strokeWidth={4} strokeLinejoin="round" />
+          <path d={`M 18 -100 L ${24 + pose.sway * 0.6} -40 L ${8 + pose.sway * 0.6} -38 L 4 -98 Z`} fill={L.accent} stroke={L.line} strokeWidth={4} strokeLinejoin="round" />
+          <path d={`M ${10 + pose.sway * 0.6} -44 l 4 10 M ${18 + pose.sway * 0.6} -44 l 4 10`} stroke={L.line} strokeWidth={3} />
+        </g>
+      ) : null}
+      {L.extra === 'goggles' ? (
+        <g>
+          <rect x={-34} y={-88} width={24} height={20} rx={3} fill={L.jacketShade} stroke={L.line} strokeWidth={3} />
+          <path d="M -30 -80 L -22 -80" stroke={L.accent} strokeWidth={3} strokeLinecap="round" />
+        </g>
+      ) : null}
+      {L.extra === 'bun' ? (
+        <path d="M -26 -40 L 26 -40 L 30 -10 L -30 -10 Z" fill={L.jacketShade} stroke={L.line} strokeWidth={3} strokeLinejoin="round" />
+      ) : null}
     </g>
   );
   const head = (
     <g transform={`rotate(${pose.tilt}) rotate(${pose.headTilt} 0 ${HEAD.y + 40})`}>
       <circle cx={HEAD.x} cy={HEAD.y} r={HEAD.r} fill={L.skin} stroke={L.line} strokeWidth={4} />
       <path d={`M ${HEAD.x + 14} ${HEAD.y + 58} A ${HEAD.r} ${HEAD.r} 0 0 0 ${HEAD.x + 60} ${HEAD.y + 14} A 70 70 0 0 1 ${HEAD.x + 14} ${HEAD.y + 58} Z`} fill={L.skinShade} />
-      {L.extra === 'bunches' || L.extra === 'bob' || L.extra === 'suit' ? null : (
+      {L.extra === 'bunches' || L.extra === 'bob' || L.extra === 'suit' || L.extra === 'swoosh' || L.extra === 'goggles' || L.extra === 'bun' ? null : (
         <path transform={`translate(${-pose.yaw * 16} 0)`} d={`M -6 ${HEAD.y - 60} q 10 -26 30 -18 q -16 2 -14 16 q -8 -10 -16 2 Z`} fill={L.hair} />
       )}
       {L.extra === 'bunches' ? (
@@ -397,6 +424,37 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
       {L.extra === 'suit' ? (
         // short combed-back hair with a hard side parting
         <path transform={`translate(${-pose.yaw * 14} 0)`} d={`M -60 ${HEAD.y - 18} Q -64 ${HEAD.y - 70} 4 ${HEAD.y - 68} Q 64 ${HEAD.y - 64} 60 ${HEAD.y - 18} Q 52 ${HEAD.y - 44} 18 ${HEAD.y - 46} L 12 ${HEAD.y - 54} L 6 ${HEAD.y - 46} Q -44 ${HEAD.y - 46} -60 ${HEAD.y - 18} Z`} fill={L.hair} />
+      ) : null}
+      {L.extra === 'swoosh' ? (
+        // a short crop with one tall quiff swept back and up: the silhouette reads from any angle
+        <g transform={`translate(${-pose.yaw * 14} 0)`}>
+          <path d={`M -60 ${HEAD.y - 16} Q -66 ${HEAD.y - 62} -10 ${HEAD.y - 66} Q 40 ${HEAD.y - 70} 60 ${HEAD.y - 20} Q 44 ${HEAD.y - 44} 14 ${HEAD.y - 44} Q -30 ${HEAD.y - 42} -60 ${HEAD.y - 16} Z`} fill={L.hair} />
+          {/* the quiff: a rounded wave rising off the fringe and curling back over itself */}
+          <path d={`M -46 ${HEAD.y - 44} Q -52 ${HEAD.y - 92} -6 ${HEAD.y - 100} Q 40 ${HEAD.y - 106} 52 ${HEAD.y - 76} Q 34 ${HEAD.y - 90} 14 ${HEAD.y - 80} Q 30 ${HEAD.y - 70} 34 ${HEAD.y - 52} Q 0 ${HEAD.y - 64} -46 ${HEAD.y - 44} Z`} fill={L.hair} stroke={L.line} strokeWidth={4} strokeLinejoin="round" />
+          <path d={`M -24 ${HEAD.y - 70} Q 0 ${HEAD.y - 88} 28 ${HEAD.y - 86}`} stroke="#ffffff" strokeOpacity={0.18} strokeWidth={5} fill="none" strokeLinecap="round" />
+        </g>
+      ) : null}
+      {L.extra === 'goggles' ? (
+        // short dark hair, then a strap round the head and two round goggles pushed up on the forehead
+        <g transform={`translate(${-pose.yaw * 14} 0)`}>
+          <path d={`M -60 ${HEAD.y - 14} Q -64 ${HEAD.y - 68} 0 ${HEAD.y - 68} Q 64 ${HEAD.y - 68} 60 ${HEAD.y - 14} Q 50 ${HEAD.y - 40} 0 ${HEAD.y - 42} Q -50 ${HEAD.y - 40} -60 ${HEAD.y - 14} Z`} fill={L.hair} />
+          <path d={`M -62 ${HEAD.y - 28} Q 0 ${HEAD.y - 50} 62 ${HEAD.y - 28}`} stroke="#3A2F2A" strokeWidth={9} fill="none" />
+          {[-24, 24].map((gx) => (
+            <g key={gx}>
+              <circle cx={gx} cy={HEAD.y - 40} r={20} fill="#6E5B4E" stroke={L.line} strokeWidth={4} />
+              <circle cx={gx} cy={HEAD.y - 40} r={12} fill="#9FD9E8" />
+              <path d={`M ${gx - 6} ${HEAD.y - 44} L ${gx + 2} ${HEAD.y - 50}`} stroke="#ffffff" strokeWidth={3.5} strokeLinecap="round" />
+            </g>
+          ))}
+        </g>
+      ) : null}
+      {L.extra === 'bun' ? (
+        // a fringe cap, a round bun on top and a star clip on its side
+        <g transform={`translate(${-pose.yaw * 14} 0)`}>
+          <circle cx={4} cy={HEAD.y - 82} r={30} fill={L.hair} stroke={L.line} strokeWidth={4} />
+          <path d={`M -62 ${HEAD.y - 10} Q -66 ${HEAD.y - 68} 0 ${HEAD.y - 68} Q 66 ${HEAD.y - 68} 62 ${HEAD.y - 10} Q 46 ${HEAD.y - 38} 20 ${HEAD.y - 36} Q 0 ${HEAD.y - 50} -22 ${HEAD.y - 36} Q -48 ${HEAD.y - 36} -62 ${HEAD.y - 10} Z`} fill={L.hair} />
+          <path transform={`translate(30 ${HEAD.y - 84}) scale(0.9)`} d="M 0 -14 L 4 -4 L 14 -4 L 6 3 L 9 13 L 0 7 L -9 13 L -6 3 L -14 -4 L -4 -4 Z" fill={L.accent} stroke={L.line} strokeWidth={2.5} strokeLinejoin="round" />
+        </g>
       ) : null}
       <Face expr={pose.expr} blink={pose.blink} look={pose.look} glasses={pose.glasses} yaw={pose.yaw} ink={L.face} glint={pose.glint} glintColor={pose.glintColor} />
       {L.extra === 'curls'

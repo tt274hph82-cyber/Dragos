@@ -24,6 +24,7 @@ For the flat cartoon look (bold outlines, round-headed stick-limb characters, on
 For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/what-if-animation/` (follow its `SKILL.md`). This style is 2D SVG drawn in Remotion, not Three.js, so the 3D rule above doesn't apply.
 - The studio is already set up at `videos/what-if-studio/`, so run the skill's steps there. `<skill>` = `/home/user/Dragos/.claude/skills/what-if-animation`.
 - Fonts load from `public/fonts` (patched from Google Fonts), so rendering works offline and in the sandbox.
+- **The hero is Juno** (top bun + star clip, lilac hoodie), not the skill's Pip. Use `<Hero look={HERO} />`, where `HERO` = `LOOKS.juno`. In scripts, "you" = Juno. Her design rules are in `videos/what-if-studio/CHARACTER.md`; never redesign her.
 - Its credit reports need an ElevenLabs key with the "User read" and "History read" permissions.
 
 ## Other notes

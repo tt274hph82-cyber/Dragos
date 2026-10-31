@@ -12,10 +12,10 @@ const Label: React.FC<{ x: number; y: number; text: string }> = ({ x, y, text })
   </text>
 );
 const P = (o: Partial<Pose>): Pose => ({ ...basePose, ...o });
-const NAMES: Record<CastName, string> = { pip: 'PIP A', pipHood: 'PIP B (HERO)', pipInk: 'PIP C', mo: 'MO, FRIEND', sis: 'SISTER', mom: 'MUM', suit: 'THE SUIT', nova: 'NOVA', kit: 'KIT', juno: 'JUNO' };
+const NAMES: Record<CastName, string> = { pip: 'PIP A', pipHood: 'PIP B (HERO)', pipInk: 'PIP C', mo: 'MO, FRIEND', sis: 'SISTER', mom: 'MUM', suit: 'THE SUIT', nova: 'NOVA', kit: 'KIT', juno: 'JUNO (HERO)' };
 
 export const CastSheet: React.FC = () => {
-  const cast = (Object.keys(LOOKS) as CastName[]).filter((c) => !['nova', 'kit', 'juno'].includes(c));
+  const cast: CastName[] = ['juno', 'mo', 'sis', 'mom', 'suit', 'nova', 'kit'];
   const row1 = 430;
   const row2 = 900;
   const poses: { name: string; p: Partial<Pose> }[] = [
@@ -46,7 +46,7 @@ export const CastSheet: React.FC = () => {
         })}
         {poses.map((q, i) => (
           <g key={q.name}>
-            <Hero look={LOOKS.pipHood} pose={P({ x: 220 + i * 370, y: row2 - 40, scale: 0.72, ...q.p })} shadow={0.6} />
+            <Hero look={LOOKS.juno} pose={P({ x: 220 + i * 370, y: row2 - 40, scale: 0.72, ...q.p })} shadow={0.6} />
             <Label x={220 + i * 370} y={row2 + 110} text={q.name.toUpperCase()} />
           </g>
         ))}
