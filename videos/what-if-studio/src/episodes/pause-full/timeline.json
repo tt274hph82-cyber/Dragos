@@ -2178,6 +2178,11 @@
   }
  ],
  "audio": {
-  "voice": "pause-full/voice.wav"
+  "voice": "pause-full/voice.wav",
+  "sfx": "pause-full/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.3185,
+  "music": "pause-full/music.wav",
+  "musicVol": 0.0773
  }
 }
