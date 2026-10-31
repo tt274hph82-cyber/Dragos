@@ -12,10 +12,10 @@ const Label: React.FC<{ x: number; y: number; text: string }> = ({ x, y, text })
   </text>
 );
 const P = (o: Partial<Pose>): Pose => ({ ...basePose, ...o });
-const NAMES: Record<CastName, string> = { pip: 'PIP A', pipHood: 'PIP B (HERO)', pipInk: 'PIP C', mo: 'MO, FRIEND', sis: 'SISTER', mom: 'MUM', suit: 'THE SUIT' };
+const NAMES: Record<CastName, string> = { pip: 'PIP A', pipHood: 'PIP B (HERO)', pipInk: 'PIP C', mo: 'MO, FRIEND', sis: 'SISTER', mom: 'MUM', suit: 'THE SUIT', nova: 'NOVA', kit: 'KIT', juno: 'JUNO' };
 
 export const CastSheet: React.FC = () => {
-  const cast = Object.keys(LOOKS) as CastName[];
+  const cast = (Object.keys(LOOKS) as CastName[]).filter((c) => !['nova', 'kit', 'juno'].includes(c));
   const row1 = 430;
   const row2 = 900;
   const poses: { name: string; p: Partial<Pose> }[] = [
