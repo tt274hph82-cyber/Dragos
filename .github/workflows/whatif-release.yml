@@ -1,0 +1,54 @@
+name: What If episode → release
+
+# Renders a What If episode from videos/what-if-studio on GitHub, masters it to -14 LUFS with the skill's
+# master.py, and publishes the MP4s on a Release page (plain download links that work in a phone browser).
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Episode slug"
+        default: "pause-full"
+  push:
+    paths:
+      - ".github/workflows/whatif-release.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      SLUG: ${{ inputs.slug || 'pause-full' }}
+    defaults:
+      run:
+        working-directory: videos/what-if-studio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: videos/what-if-studio/package-lock.json
+      - name: Tools
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install numpy pillow
+          npm ci
+          npx remotion browser ensure
+      - name: Render and master
+        run: python3 ../../.claude/skills/what-if-animation/scripts/master.py "$SLUG"
+      - name: Phone copy (720p)
+        run: |
+          ffmpeg -y -v error -i "out/$SLUG/$SLUG-final.mp4" -vf scale=1280:720 -c:v libx264 -crf 25 -preset medium \
+            -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart "out/$SLUG/$SLUG-720p.mp4"
+          ls -la "out/$SLUG"
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="whatif-$SLUG"
+          NOTES="What If episode: $SLUG. Rendered by run ${{ github.run_id }}. Tap a file to download."
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --target "$GITHUB_SHA" --title "What If: $SLUG" --notes "$NOTES"
+          gh release upload "$TAG" "out/$SLUG/$SLUG-final.mp4" "out/$SLUG/$SLUG-720p.mp4" --clobber
