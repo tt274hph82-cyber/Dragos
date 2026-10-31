@@ -1546,5 +1546,942 @@
    "kind": "flash",
    "o": 0.4
   }
- ]
+ ],
+ "sound": {
+  "clips": {
+   "title_boom": [
+    "a cinematic whoosh rising into a deep boom impact",
+    1.6
+   ],
+   "drone_hit": [
+    "a dark ominous low drone hit, deep cinematic horror sting",
+    2.6
+   ],
+   "gasp": [
+    "two young people gasping in surprise at the same moment, cartoon, short",
+    0.8
+   ],
+   "gulp": [
+    "a nervous cartoon gulp, short",
+    0.5
+   ],
+   "sparkle": [
+    "a short bright magical sparkle twinkle, cartoon",
+    0.8
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "room_tone": [
+    "quiet indoor room tone in the evening, faint distant city hum, no voices",
+    12.5
+   ],
+   "roof_wind": [
+    "a gentle evening breeze on a city rooftop, distant traffic",
+    7.0
+   ],
+   "laugh": [
+    "a small classroom of kids bursting out laughing",
+    1.6
+   ],
+   "class_murmur": [
+    "a quiet classroom murmur, kids whispering, chairs shuffling",
+    2.0
+   ],
+   "step": [
+    "a single sneaker footstep on a wooden stair, close",
+    0.5
+   ],
+   "land": [
+    "a heavy body landing flat on a wooden floor, cartoon thud",
+    0.6
+   ],
+   "ding": [
+    "a correct answer ding, bright bell chime",
+    0.8
+   ],
+   "cat_chirp": [
+    "a cat making a short curious chirp meow",
+    0.6
+   ],
+   "cat_yowl": [
+    "an angry cat yowl and hiss, short and startled",
+    0.9
+   ],
+   "fall_whoosh": [
+    "a small object falling fast through the air, short soft whoosh",
+    0.6
+   ],
+   "catch": [
+    "a hand catching a ceramic mug mid-air, soft slap and thud",
+    0.5
+   ],
+   "counter_tick": [
+    "a fast mechanical counter ticking up rapidly, digits rolling over, getting faster",
+    1.6
+   ],
+   "big_step": [
+    "a cartoon exaggerated careful tiptoe step, light airy whoosh",
+    0.7
+   ],
+   "clink": [
+    "a ceramic coffee mug knocked by a hand on a wooden desk, short clink and scrape",
+    0.7
+   ],
+   "freeze": [
+    "time freezing: a soft deep whoosh that stops dead into silence, a muffled sub thump and a faint high ringing tone",
+    1.2
+   ],
+   "unfreeze": [
+    "sound rushing back in: a quick reversed whoosh into normal room sound, short",
+    0.8
+   ],
+   "hiccup": [
+    "a single cartoon hiccup from a young girl, short",
+    0.5
+   ],
+   "breath_in": [
+    "a young girl takes one big deep breath in and holds it, close mic",
+    1.0
+   ],
+   "breath_out": [
+    "a young girl gasping for air after holding her breath for a long time, one big exhale, close",
+    1.2
+   ],
+   "paper_whiz": [
+    "a crumpled paper ball whizzing past an ear very fast, short whoosh",
+    0.6
+   ],
+   "clock_tick": [
+    "a classroom wall clock ticking, three loud ticks",
+    2.0
+   ],
+   "bus": [
+    "a city bus pulling up to a stop, diesel engine and air brakes hiss",
+    3.0
+   ],
+   "whistle": [
+    "a sports referee whistle blown sharply once, outdoors",
+    0.8
+   ],
+   "crowd": [
+    "a school sports day crowd cheering in the distance, outdoors, no clear words",
+    4.0
+   ],
+   "wasp": [
+    "a wasp buzzing close by, circling",
+    2.0
+   ],
+   "marker": [
+    "a marker pen squeaking as it draws on a mirror, two quick strokes",
+    1.0
+   ],
+   "heartbeat": [
+    "a heavy slow heartbeat thumping, tense, close and muffled",
+    3.0
+   ],
+   "ringing": [
+    "a high pitched ringing in the ears slowly fading in, head pressure, tense",
+    2.5
+   ],
+   "ui_blip": [
+    "a soft clean digital interface blip, short",
+    0.4
+   ],
+   "splash": [
+    "a small child falling into a garden pond, one big water splash",
+    1.5
+   ],
+   "bubbles": [
+    "muffled underwater bubbles rising, deep and quiet",
+    3.0
+   ],
+   "cough": [
+    "a small child coughing up water then catching her breath, close",
+    1.6
+   ],
+   "shutter": [
+    "a single professional camera shutter click, close and crisp",
+    0.5
+   ],
+   "envelope": [
+    "a paper envelope sliding under a wooden door, a soft scrape",
+    1.2
+   ],
+   "street_amb": [
+    "an evening suburban street ambience, distant traffic and birds, no voices",
+    10.0
+   ],
+   "garden_amb": [
+    "an evening back garden ambience, birds and a soft breeze in the trees, no voices",
+    10.0
+   ],
+   "field_amb": [
+    "an open school sports field at dusk, a breeze and distant children, no clear words",
+    8.0
+   ],
+   "m1": [
+    "playful curious cartoon underscore, pizzicato strings, glockenspiel, light bass and soft brushed drums, bright and mischievous, 110 bpm, no vocals",
+    116,
+    "music"
+   ],
+   "m2": [
+    "uneasy documentary underscore, slow ticking clock rhythm, soft low strings and a sparse piano, quietly worried, no vocals",
+    70,
+    "music"
+   ],
+   "m3": [
+    "tense thriller underscore, low pulsing synth, muted percussion, a slow menacing build, no vocals",
+    38,
+    "music"
+   ],
+   "m4": [
+    "urgent emotional underscore, racing heartbeat pulse, rising strings, desperate, then a soft relieved resolve at the end, no vocals",
+    46,
+    "music"
+   ],
+   "m5": [
+    "mysterious cliffhanger underscore, dark music box melody over a low drone, unresolved, ends on a question, no vocals",
+    36,
+    "music"
+   ]
+  },
+  "events": [
+   [
+    "C1",
+    "room_tone",
+    0.12,
+    "onset",
+    "C5"
+   ],
+   [
+    "C5",
+    "class_murmur",
+    0.15,
+    "onset",
+    "C6"
+   ],
+   [
+    "C7",
+    "class_murmur",
+    0.15,
+    "onset",
+    "C8"
+   ],
+   [
+    "C8",
+    "room_tone",
+    0.12,
+    "onset",
+    "C9"
+   ],
+   [
+    "C11",
+    "roof_wind",
+    0.15,
+    "onset",
+    "F01"
+   ],
+   [
+    "F01",
+    "class_murmur",
+    0.15,
+    "onset",
+    "F04"
+   ],
+   [
+    "F01",
+    "room_tone",
+    0.1,
+    "onset",
+    "F04"
+   ],
+   [
+    "F09",
+    "class_murmur",
+    0.15,
+    "onset",
+    "F12"
+   ],
+   [
+    "F12",
+    "room_tone",
+    0.1,
+    "onset",
+    "F17"
+   ],
+   [
+    "F22",
+    "roof_wind",
+    0.15,
+    "onset",
+    "F23"
+   ],
+   [
+    "F23",
+    "street_amb",
+    0.18,
+    "onset",
+    "F24"
+   ],
+   [
+    "F25",
+    "street_amb",
+    0.18,
+    "onset",
+    "F26"
+   ],
+   [
+    "F26",
+    "room_tone",
+    0.1,
+    "onset",
+    "F27"
+   ],
+   [
+    "F29",
+    "field_amb",
+    0.2,
+    "onset",
+    "F31"
+   ],
+   [
+    "F32",
+    "field_amb",
+    0.2,
+    "onset",
+    "F33"
+   ],
+   [
+    "F34",
+    "room_tone",
+    0.1,
+    "onset",
+    "F35"
+   ],
+   [
+    "F36",
+    "room_tone",
+    0.1,
+    "onset",
+    "F37"
+   ],
+   [
+    "F37",
+    "garden_amb",
+    0.15,
+    "onset",
+    "F38"
+   ],
+   [
+    "F39",
+    "roof_wind",
+    0.15,
+    "onset",
+    "F40"
+   ],
+   [
+    "F40",
+    "room_tone",
+    0.1,
+    "onset",
+    "F43"
+   ],
+   [
+    "F43",
+    "roof_wind",
+    0.15,
+    "onset",
+    "F44"
+   ],
+   [
+    "F44",
+    "room_tone",
+    0.1,
+    "onset",
+    "F61"
+   ],
+   [
+    "F61",
+    "roof_wind",
+    0.15,
+    "onset",
+    "F62"
+   ],
+   [
+    "F67",
+    "street_amb",
+    0.18,
+    "onset",
+    "F81"
+   ],
+   [
+    "F82",
+    "garden_amb",
+    0.18,
+    "onset",
+    "F91"
+   ],
+   [
+    "F97",
+    "garden_amb",
+    0.18,
+    "onset",
+    "F102"
+   ],
+   [
+    "F106",
+    "roof_wind",
+    0.12,
+    "onset",
+    "F108"
+   ],
+   [
+    "C3+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "C6+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "C9+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F04+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F24+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F27+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F31+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F35+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F38+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F62+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F81+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "F91+14",
+    "freeze",
+    0.5
+   ],
+   [
+    "C4+12",
+    "unfreeze",
+    0.45
+   ],
+   [
+    "C7+12",
+    "unfreeze",
+    0.45
+   ],
+   [
+    "F25+12",
+    "unfreeze",
+    0.45
+   ],
+   [
+    "F36+12",
+    "unfreeze",
+    0.45
+   ],
+   [
+    "C1+6",
+    "clink",
+    0.3
+   ],
+   [
+    "C2+4",
+    "fall_whoosh",
+    0.35
+   ],
+   [
+    "C3+20",
+    "catch",
+    0.4
+   ],
+   [
+    "C4+6",
+    "sparkle",
+    0.2
+   ],
+   [
+    "C5+24",
+    "paper_whiz",
+    0.35
+   ],
+   [
+    "C6+20",
+    "big_step",
+    0.3
+   ],
+   [
+    "C7+2",
+    "paper_whiz",
+    0.4,
+    "peak"
+   ],
+   [
+    "C8",
+    "laugh",
+    0.2,
+    "onset",
+    "C9"
+   ],
+   [
+    "C11",
+    "title_boom",
+    0.5,
+    "peak"
+   ],
+   [
+    "C12+4",
+    "breath_in",
+    0.45
+   ],
+   [
+    "F02+14",
+    "hiccup",
+    0.5
+   ],
+   [
+    "F03+6",
+    "breath_in",
+    0.45
+   ],
+   [
+    "F05+4",
+    "clock_tick",
+    0.3
+   ],
+   [
+    "F08+2",
+    "breath_out",
+    0.5
+   ],
+   [
+    "F09+10",
+    "clink",
+    0.3
+   ],
+   [
+    "F13",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "F14",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "F15+2",
+    "breath_out",
+    0.4
+   ],
+   [
+    "F16",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "F18",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "F19+6",
+    "gulp",
+    0.35
+   ],
+   [
+    "F20",
+    "bubbles",
+    0.25,
+    "onset",
+    "F21"
+   ],
+   [
+    "F21",
+    "counter_tick",
+    0.25
+   ],
+   [
+    "F22+4",
+    "sparkle",
+    0.25
+   ],
+   [
+    "F23+10",
+    "bus",
+    0.35,
+    "onset",
+    "F24"
+   ],
+   [
+    "F25+16",
+    "ding",
+    0.3
+   ],
+   [
+    "F28+16",
+    "gasp",
+    0.3
+   ],
+   [
+    "F30+8",
+    "whistle",
+    0.45
+   ],
+   [
+    "F32+10",
+    "crowd",
+    0.3,
+    "onset",
+    "F33"
+   ],
+   [
+    "F33+20",
+    "sparkle",
+    0.2
+   ],
+   [
+    "F35+6",
+    "pop",
+    0.15
+   ],
+   [
+    "F36+10",
+    "cat_yowl",
+    0.35
+   ],
+   [
+    "F37",
+    "wasp",
+    0.3,
+    "onset",
+    "F38"
+   ],
+   [
+    "F40+6",
+    "cat_chirp",
+    0.3
+   ],
+   [
+    "F41+8",
+    "marker",
+    0.35
+   ],
+   [
+    "F42",
+    "ui_blip",
+    0.25
+   ],
+   [
+    "F43+12",
+    "sparkle",
+    0.25
+   ],
+   [
+    "F45",
+    "heartbeat",
+    0.35,
+    "onset",
+    "F47"
+   ],
+   [
+    "F45+4",
+    "ringing",
+    0.18,
+    "onset",
+    "F47"
+   ],
+   [
+    "F46+6",
+    "heartbeat",
+    0.3
+   ],
+   [
+    "F47",
+    "ui_blip",
+    0.25
+   ],
+   [
+    "F49",
+    "clock_tick",
+    0.3
+   ],
+   [
+    "F50",
+    "ui_blip",
+    0.25
+   ],
+   [
+    "F53+10",
+    "ringing",
+    0.2,
+    "onset",
+    "F54"
+   ],
+   [
+    "F54",
+    "drone_hit",
+    0.35
+   ],
+   [
+    "F56",
+    "breath_in",
+    0.35
+   ],
+   [
+    "F56+12",
+    "breath_in",
+    0.3
+   ],
+   [
+    "F57",
+    "counter_tick",
+    0.25
+   ],
+   [
+    "F58+8",
+    "bubbles",
+    0.25,
+    "onset",
+    "F59"
+   ],
+   [
+    "F60",
+    "drone_hit",
+    0.3
+   ],
+   [
+    "F63",
+    "clock_tick",
+    0.25
+   ],
+   [
+    "F64",
+    "counter_tick",
+    0.25
+   ],
+   [
+    "F65+6",
+    "drone_hit",
+    0.35
+   ],
+   [
+    "F67",
+    "drone_hit",
+    0.3
+   ],
+   [
+    "F72+8",
+    "clink",
+    0.3
+   ],
+   [
+    "F73",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "F74",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "F76+4",
+    "heartbeat",
+    0.3
+   ],
+   [
+    "F80+6",
+    "breath_in",
+    0.45
+   ],
+   [
+    "F81",
+    "heartbeat",
+    0.3,
+    "onset",
+    "F82"
+   ],
+   [
+    "F85+8",
+    "splash",
+    0.55
+   ],
+   [
+    "F86",
+    "bubbles",
+    0.3,
+    "onset",
+    "F87"
+   ],
+   [
+    "F87",
+    "heartbeat",
+    0.35,
+    "onset",
+    "F90"
+   ],
+   [
+    "F87+4",
+    "ringing",
+    0.2,
+    "onset",
+    "F90"
+   ],
+   [
+    "F89",
+    "bubbles",
+    0.25,
+    "onset",
+    "F90"
+   ],
+   [
+    "F90+8",
+    "breath_in",
+    0.45
+   ],
+   [
+    "F94+8",
+    "catch",
+    0.3
+   ],
+   [
+    "F95",
+    "heartbeat",
+    0.35,
+    "onset",
+    "F97"
+   ],
+   [
+    "F96",
+    "ringing",
+    0.3,
+    "onset",
+    "F97"
+   ],
+   [
+    "F97+2",
+    "breath_out",
+    0.55
+   ],
+   [
+    "F97+2",
+    "unfreeze",
+    0.4
+   ],
+   [
+    "F98+2",
+    "cough",
+    0.45
+   ],
+   [
+    "F101+12",
+    "shutter",
+    0.5
+   ],
+   [
+    "F102+4",
+    "envelope",
+    0.4
+   ],
+   [
+    "F104+4",
+    "marker",
+    0.15
+   ],
+   [
+    "F105",
+    "drone_hit",
+    0.35
+   ],
+   [
+    "F106",
+    "title_boom",
+    0.45,
+    "peak"
+   ],
+   [
+    "F107+6",
+    "breath_in",
+    0.35
+   ]
+  ],
+  "music": [
+   {
+    "clip": "m1",
+    "from": "f:0",
+    "until": "F44",
+    "fade_in": 0.5,
+    "fade_out": 2.5
+   },
+   {
+    "clip": "m2",
+    "from": "F44",
+    "until": "F67",
+    "fade_in": 2.0,
+    "fade_out": 2.0
+   },
+   {
+    "clip": "m3",
+    "from": "F67",
+    "until": "F82",
+    "fade_in": 1.5,
+    "fade_out": 1.5
+   },
+   {
+    "clip": "m4",
+    "from": "F82",
+    "until": "F102",
+    "fade_in": 1.0,
+    "fade_out": 3.0
+   },
+   {
+    "clip": "m5",
+    "from": "F102",
+    "fade_in": 1.5,
+    "fade_out": 3.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -1.0,
+   "music_lu": -10.0
+  }
+ }
 }

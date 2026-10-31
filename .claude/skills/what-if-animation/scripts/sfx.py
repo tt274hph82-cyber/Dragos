@@ -8,12 +8,14 @@ Writes public/<slug>/sfx.wav and music.wav, sets their volumes in timeline.json,
 
 "sound": {
   "clips":   {"name": ["prompt", seconds], ...}       generated once, cached in library/sfx/ by name + prompt + length
+             {"name": ["prompt", seconds, "music"]}     a third field "music" uses ElevenLabs' music model (10 s to 5 min)
   "events":  [[cue, clip, gain, align, until], ...]   align "onset" (default: the attack lands on the cue) or "peak"
                                                         (the loudest moment does, for whooshes and booms); until = a cue
                                                         where the clip is cut with a short fade
   "repeats": [{"at": cue, "clip": name, "n": 15, "every": 2, "gain": [lo, hi], "pitch": [lo, hi]}]
                                                         one clip many times, each pitched a little differently
   "music":   {"clip": name, "until": cue, "reverse_looks": ["rewind"], "from": cue}
+             or a list of cues [{"clip", "from", "until", "fade_in", "fade_out"}, ...] for long episodes (one per act)
                                                         the bed starts at "from" (default 0), cut at "until"; during a look
                                                         listed in reverse_looks it plays what just played, backwards
   "levels":  {"sfx_lu": 1.5, "music_lu": -9.5}         integrated loudness of each stem against the voice's
@@ -43,7 +45,10 @@ DUR = tl['total'] / FPS + 0.4
 
 # ---------------------------------------------------------------- the clips
 need = {}
-for name, (prompt, secs) in S['clips'].items():
+kinds = {}
+for name, spec in S['clips'].items():
+    prompt, secs = spec[0], spec[1]
+    kinds[name] = spec[2] if len(spec) > 2 else 'sfx'
     need[name] = (prompt, secs, clip_path(name, prompt, secs))
 missing = [n for n, (_, _, p) in need.items() if not p.exists()]
 print(f'{len(need)} clips, {len(need) - len(missing)} already in the library, {len(missing)} to generate: {", ".join(missing) or "none"}')
@@ -54,7 +59,10 @@ if missing:
     t0 = time.time()
     for n in missing:
         prompt, secs, p = need[n]
-        p.write_bytes(api('/v1/sound-generation?output_format=mp3_44100_128', {'text': prompt, 'duration_seconds': secs, 'prompt_influence': 0.45}))
+        if kinds[n] == 'music':
+            p.write_bytes(api('/v1/music?output_format=mp3_44100_128', {'prompt': prompt, 'music_length_ms': int(secs * 1000), 'model_id': 'music_v1'}, timeout=600))
+        else:
+            p.write_bytes(api('/v1/sound-generation?output_format=mp3_44100_128', {'text': prompt, 'duration_seconds': secs, 'prompt_influence': 0.45}))
         print('  generated', n)
     used, items = spent_since(t0, expect=len(missing))
     after, _ = credits_used()
@@ -112,19 +120,33 @@ for r in S.get('repeats', []):
 # ---------------------------------------------------------------- music
 music = np.zeros(int(DUR * SR))
 M = S.get('music')
-if M:
+if isinstance(M, list):
+    # one cue per act: each placed from its cue, cut at "until", with fades so neighbouring cues crossfade
+    for q in M:
+        m = clips[q['clip']]
+        m0 = int(cue(q['from']) / FPS * SR) if q.get('from') else 0
+        end = int(cue(q['until']) / FPS * SR) if q.get('until') else len(music)
+        n = max(0, min(end - m0, len(m), len(music) - m0))
+        seg = m[:n].copy()
+        fi, fo = int(q.get('fade_in', 1.0) * SR), int(q.get('fade_out', 2.0) * SR)
+        if fi and len(seg) > fi:
+            seg[:fi] *= np.linspace(0, 1, fi)
+        if fo and len(seg) > fo:
+            seg[-fo:] *= np.linspace(1, 0, fo)
+        music[m0:m0 + n] += seg * q.get('gain', 1.0)
+elif M:
     m = clips[M['clip']]
     m0 = int(cue(M['from']) / FPS * SR) if M.get('from') else 0
     n = min(len(music) - m0, len(m))
     music[m0:m0 + n] = m[:n]
     for seg_look in M.get('reverse_looks', []):
         runs = []
-        for s in tl['segments']:
-            if s.get('look') == seg_look:
-                if runs and runs[-1][1] == s['a']:
-                    runs[-1][1] = s['b']
+        for s_ in tl['segments']:
+            if s_.get('look') == seg_look:
+                if runs and runs[-1][1] == s_['a']:
+                    runs[-1][1] = s_['b']
                 else:
-                    runs.append([s['a'], s['b']])
+                    runs.append([s_['a'], s_['b']])
         for a, b in runs:
             i, j = int(a / FPS * SR), int(b / FPS * SR)
             seg = music[max(0, i - 2 * (j - i)): i][::-2][: j - i]  # what just played, backwards at double speed
