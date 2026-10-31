@@ -20,5 +20,11 @@ Rules:
 ## Cartoon explainer style
 For the flat cartoon look (bold outlines, round-headed stick-limb characters, one-word captions), copy `videos/cartoon-doctor/`. It is the same stack, with a reusable style kit (`src/toon.tsx`) and character (`src/Character.tsx`).
 
+## "What If" episodes (2D stick-figure style)
+For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/what-if-animation/` (follow its `SKILL.md`). This style is 2D SVG drawn in Remotion, not Three.js, so the 3D rule above doesn't apply.
+- The studio is already set up at `videos/what-if-studio/`, so run the skill's steps there. `<skill>` = `/home/user/Dragos/.claude/skills/what-if-animation`.
+- Fonts load from `public/fonts` (patched from Google Fonts), so rendering works offline and in the sandbox.
+- Its credit reports need an ElevenLabs key with the "User read" and "History read" permissions.
+
 ## Other notes
 - Never commit API keys. ElevenLabs uses the env var / GitHub secret `ELEVENLABS_API_KEY`.
