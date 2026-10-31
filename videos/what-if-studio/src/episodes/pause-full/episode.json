@@ -1,0 +1,1550 @@
+{
+ "id": "PauseFull",
+ "slug": "pause-full",
+ "topic": "What if you could pause time, but only while you hold your breath? (full episode)",
+ "title": [
+  "WHAT IF YOU COULD",
+  "PAUSE TIME?"
+ ],
+ "accent": "PAUSE",
+ "voice": {
+  "id": "TX3LPaxmHKxFdv7VOQHJ",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.4,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "1. Cold open: three quick demos (0:00–0:24)",
+   "text": "You drop your phone. Pause. Catch it. Play. A paper ball flies at your face. Pause. Step aside. Play. Your best friend, mid-laugh. Pause. Not even blinking. What if you could pause time, but only while you hold your breath?"
+  },
+  {
+   "beat": "2. The premise and its rules (0:24–1:05)",
+   "text": "It starts on a Tuesday. You hiccup in the middle of maths, you hold your breath to make it stop, and the room goes silent. The clock's second hand is stuck. A pencil hangs in mid-air. Your teacher's mouth is frozen open, halfway through a word. You gasp. And everything starts again, like nothing happened. Nobody else noticed. Not even Mo. So you test it. Three rules. One: hold your breath, and the world stops. Breathe, and it plays. Two: anything you're touching moves with you. Everything else is stuck. Three: you can only stop it for as long as you can hold your breath. And right now, that's forty seconds."
+  },
+  {
+   "beat": "3. The fun part (1:05–2:05)",
+   "text": "So you train. Every night, in the bath, you count. Forty seconds. Fifty. A minute. And life gets very, very easy. Late for the bus? Pause. Walk to the front of the queue. Play. Last slice of pizza? Pause. It's yours. Mo is still reaching for the box. Sports day. The whistle goes. Pause. You stroll to the finish line and stand there, out of breath, as the whole school freezes mid-sprint. Mum asks who ate the cookies. Pause. You brush the crumbs onto the cat. Play. A wasp lands on your sandwich. Pause. You carry the whole sandwich outside, wasp and all. You hide Mo's shoes on the roof. You put the cat on the fridge. You draw a moustache on your own reflection, just because you can. For two weeks, you're the luckiest person alive."
+  },
+  {
+   "beat": "4. The not-so-fun part (2:05–3:15)",
+   "text": "But you start to notice things. Your head pounds after every pause. Your chest burns. Each time, the burning comes a little sooner. At night you lie awake, counting. Not sheep. Seconds. Here's why. The urge to breathe isn't your body running out of oxygen. It's carbon dioxide building up in your blood. Your brain reads it as an alarm, and the alarm only gets louder. That's real. So you try a trick from the internet: breathe fast and deep before you hold it. It works. You last much longer. It's also the trick that makes swimmers black out underwater without any warning. Breathing fast flushes out the carbon dioxide, so the alarm comes late, sometimes after your oxygen has already run low. That's real too. And there's one more problem nobody warned you about. When the world is paused, you are not. A minute here, a minute there. Pause a hundred times a day, and you've lived a hundred extra minutes the world never saw. That's twenty-five extra days a year. You're getting older faster than everyone you know."
+  },
+  {
+   "beat": "5. Someone powerful notices (3:15–3:55)",
+   "text": "Then a man in a grey suit starts appearing. Outside the school gates. Across the street from your house. In the back of the café, watching you. One day he sits down next to you on a bench and puts a phone on the table. Security footage from sports day. In one frame you're at the starting line. In the next, you're at the finish. Zero frames in between. He knows your name. He knows your school. He knows exactly how long you can hold your breath. \"Interesting,\" he says. \"Can you do it again?\" You hold your breath. When the world freezes, you run."
+  },
+  {
+   "beat": "6. The choice (3:55–4:35)",
+   "text": "You make it home. Your little sister is in the garden, by the pond, chasing a ball. She's four. She can't swim yet. She slips. She goes under. You haven't breathed properly since the bench. Your lungs are already burning. If you pause now, you might black out. If you don't, you might be too late. You hold your breath one more time. The world stops. The water stops. Your sister stops, halfway under. You pull her out. You're counting. Forty. Fifty. Your vision goes grey at the edges. You breathe. She coughs, and she's fine. She's fine. Behind the garden fence, something clicks. A camera."
+  },
+  {
+   "beat": "7. Cliffhanger (4:35–5:00)",
+   "text": "The next morning, there's a letter under the door. No stamp. No name. Just one line: \"How long can you hold your breath, Juno? We'd like to find out.\" Part one of two. So how long can you hold yours? Tell us in the comments. And don't try it underwater."
+  }
+ ],
+ "gaps": {
+  "word": 0.12,
+  "comma": 0.26,
+  "sentence": 0.48,
+  "question": 0.6,
+  "pairs": {
+   "breath|It": 4.0,
+   "silent|The": 1.1,
+   "seconds|So": 3.6,
+   "alive|But": 3.8,
+   "real|So": 1.1,
+   "too|And": 1.2,
+   "know|Then": 3.8,
+   "run|You": 3.6,
+   "under|You": 1.3,
+   "breathe|She": 2.0,
+   "fine|Shes": 0.9,
+   "fine|Behind": 1.2,
+   "camera|The": 4.0,
+   "line|How": 0.9,
+   "out|Part": 2.4,
+   "two|So": 1.6
+  }
+ },
+ "science": [
+  {
+   "claim": "Most people can hold their breath for about a minute.",
+   "working": "Clinical and science sources put an untrained healthy adult at about 30 to 90 seconds; 'about a minute' is the middle of that range, and Outside notes most people struggle to reach one minute without practice.",
+   "source": "Acibadem (most healthy adults 30-90 s); BBC Science Focus (no longer than 90 s); Outside Online"
+  },
+  {
+   "claim": "The world record, on pure oxygen, is twenty-nine minutes.",
+   "working": "Vitomir Maričić, 29 min 03.07 s, Opatija, Croatia, 14 June 2025, Guinness 'Longest time breath held voluntarily underwater (male)', oxygen-assisted (pure oxygen breathed beforehand). It beat Budimir Šobat's 24:37 (2021). 29:03 rounds to 'twenty-nine minutes'.",
+   "source": "Guinness World Records, longest-time-breath-held-voluntarily-male; Guinness news, Sept 2025"
+  },
+  {
+   "claim": "The urge to breathe isn't your body running out of oxygen; it's carbon dioxide building up in the blood.",
+   "working": "Breathing is driven mainly by blood CO2 sensed by the central chemoreceptors (about 80% of the response to high CO2); during a breath-hold rising CO2 triggers the urge before oxygen falls.",
+   "source": "Central chemoreceptor (respiratory physiology); Pearson / Lecturio physiology notes"
+  },
+  {
+   "claim": "Breathing fast and deep before holding your breath can make swimmers black out underwater without warning.",
+   "working": "Hyperventilation lowers CO2 and delays the urge to breathe; oxygen can fall to the point of unconsciousness first. Called hypoxic blackout.",
+   "source": "StatPearls, NCBI NBK554620; American Red Cross, YMCA of the USA and USA Swimming joint statement on hypoxic blackout (2022)"
+  },
+  {
+   "claim": "Pause a hundred times a day and that's twenty-five extra days a year.",
+   "working": "Each pause is about a minute: 100 min a day x 365 = 36,500 min = 25.3 days.",
+   "source": "arithmetic"
+  }
+ ],
+ "tail": 14,
+ "shots": [
+  {
+   "id": "C1",
+   "size": "wide",
+   "set": "study",
+   "key": 12,
+   "note": "Juno knocks the phone"
+  },
+  {
+   "id": "C2",
+   "size": "insert",
+   "set": "study",
+   "key": 12,
+   "note": "phone falls"
+  },
+  {
+   "id": "C3",
+   "size": "medium",
+   "set": "study",
+   "key": 12,
+   "note": "phone frozen, caught"
+  },
+  {
+   "id": "C4",
+   "size": "close-up",
+   "set": "study",
+   "key": 12,
+   "note": "smug"
+  },
+  {
+   "id": "C5",
+   "size": "ots",
+   "set": "classroom",
+   "key": 12,
+   "note": "paper ball flies"
+  },
+  {
+   "id": "C6",
+   "size": "wide",
+   "set": "classroom",
+   "key": 12,
+   "note": "ball frozen, step aside"
+  },
+  {
+   "id": "C7",
+   "size": "medium",
+   "set": "classroom",
+   "key": 12,
+   "note": "ball whizzes past"
+  },
+  {
+   "id": "C8",
+   "size": "two-shot",
+   "set": "kitchen",
+   "key": 12,
+   "note": "Mo mid-laugh"
+  },
+  {
+   "id": "C9",
+   "size": "close-up",
+   "set": "kitchen",
+   "key": 12,
+   "note": "Mo frozen, hand wave"
+  },
+  {
+   "id": "C10",
+   "size": "ecu",
+   "set": "kitchen",
+   "key": 12,
+   "note": "not blinking"
+  },
+  {
+   "id": "C11",
+   "size": "title",
+   "set": "rooftop",
+   "key": 12,
+   "note": "title"
+  },
+  {
+   "id": "C12",
+   "size": "low medium",
+   "set": "rooftop",
+   "key": 12,
+   "note": "holds breath"
+  },
+  {
+   "id": "F01",
+   "size": "wide",
+   "set": "classroom",
+   "key": 12,
+   "note": "Tuesday"
+  },
+  {
+   "id": "F02",
+   "size": "medium",
+   "set": "classroom",
+   "key": 12,
+   "note": "hiccup"
+  },
+  {
+   "id": "F03",
+   "size": "close-up",
+   "set": "classroom",
+   "key": 12,
+   "note": "holds breath"
+  },
+  {
+   "id": "F04",
+   "size": "wide",
+   "set": "classroom",
+   "key": 12,
+   "note": "room freezes"
+  },
+  {
+   "id": "F05",
+   "size": "insert",
+   "set": "classroom",
+   "key": 12,
+   "note": "second hand stuck"
+  },
+  {
+   "id": "F06",
+   "size": "insert",
+   "set": "classroom",
+   "key": 12,
+   "note": "pencil mid-air"
+  },
+  {
+   "id": "F07",
+   "size": "close-up",
+   "set": "classroom",
+   "key": 12,
+   "note": "teacher frozen mid-word"
+  },
+  {
+   "id": "F08",
+   "size": "close-up",
+   "set": "classroom",
+   "key": 12,
+   "note": "gasp"
+  },
+  {
+   "id": "F09",
+   "size": "wide",
+   "set": "classroom",
+   "key": 12,
+   "note": "pencil drops, life resumes"
+  },
+  {
+   "id": "F10",
+   "size": "wide",
+   "set": "classroom",
+   "key": 12,
+   "note": "nobody noticed"
+  },
+  {
+   "id": "F11",
+   "size": "close-up",
+   "set": "classroom",
+   "key": 12,
+   "note": "not even Mo"
+  },
+  {
+   "id": "F12",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "testing at night"
+  },
+  {
+   "id": "F13",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "3 rules"
+  },
+  {
+   "id": "F14",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "rule 1"
+  },
+  {
+   "id": "F15",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "breathe = play"
+  },
+  {
+   "id": "F16",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "rule 2"
+  },
+  {
+   "id": "F17",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "book moves, plane frozen"
+  },
+  {
+   "id": "F18",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "rule 3"
+  },
+  {
+   "id": "F19",
+   "size": "close-up",
+   "set": "bedroom",
+   "key": 12,
+   "note": "forty seconds"
+  },
+  {
+   "id": "F20",
+   "size": "top-down",
+   "set": "bath",
+   "key": 12,
+   "note": "training in the bath"
+  },
+  {
+   "id": "F21",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "personal best"
+  },
+  {
+   "id": "F22",
+   "size": "low medium",
+   "set": "rooftop",
+   "key": 12,
+   "note": "life gets easy"
+  },
+  {
+   "id": "F23",
+   "size": "wide",
+   "set": "street",
+   "key": 12,
+   "note": "bus queue"
+  },
+  {
+   "id": "F24",
+   "size": "wide",
+   "set": "street",
+   "key": 12,
+   "note": "walk to the front"
+  },
+  {
+   "id": "F25",
+   "size": "medium",
+   "set": "street",
+   "key": 12,
+   "note": "front of the queue"
+  },
+  {
+   "id": "F26",
+   "size": "insert",
+   "set": "kitchen",
+   "key": 12,
+   "note": "last slice"
+  },
+  {
+   "id": "F27",
+   "size": "two-shot",
+   "set": "kitchen",
+   "key": 12,
+   "note": "takes the slice"
+  },
+  {
+   "id": "F28",
+   "size": "close-up",
+   "set": "kitchen",
+   "key": 12,
+   "note": "Mo still reaching"
+  },
+  {
+   "id": "F29",
+   "size": "wide",
+   "set": "field",
+   "key": 12,
+   "note": "start line"
+  },
+  {
+   "id": "F30",
+   "size": "close-up",
+   "set": "field",
+   "key": 12,
+   "note": "whistle"
+  },
+  {
+   "id": "F31",
+   "size": "wide",
+   "set": "field",
+   "key": 12,
+   "note": "strolls past frozen runners"
+  },
+  {
+   "id": "F32",
+   "size": "medium",
+   "set": "field",
+   "key": 12,
+   "note": "at the finish"
+  },
+  {
+   "id": "F33",
+   "size": "wide",
+   "set": "field",
+   "key": 12,
+   "note": "whole school frozen"
+  },
+  {
+   "id": "F34",
+   "size": "two-shot",
+   "set": "kitchen",
+   "key": 12,
+   "note": "who ate the cookies"
+  },
+  {
+   "id": "F35",
+   "size": "insert",
+   "set": "kitchen",
+   "key": 12,
+   "note": "crumbs onto the cat"
+  },
+  {
+   "id": "F36",
+   "size": "two-shot",
+   "set": "kitchen",
+   "key": 12,
+   "note": "mum sees the cat"
+  },
+  {
+   "id": "F37",
+   "size": "insert",
+   "set": "garden table",
+   "key": 12,
+   "note": "wasp on sandwich"
+  },
+  {
+   "id": "F38",
+   "size": "wide",
+   "set": "garden",
+   "key": 12,
+   "note": "carries it outside"
+  },
+  {
+   "id": "F39",
+   "size": "medium",
+   "set": "rooftop",
+   "key": 12,
+   "note": "shoes on the roof"
+  },
+  {
+   "id": "F40",
+   "size": "insert",
+   "set": "kitchen",
+   "key": 12,
+   "note": "cat on the fridge"
+  },
+  {
+   "id": "F41",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "moustache in the mirror"
+  },
+  {
+   "id": "F42",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "two weeks"
+  },
+  {
+   "id": "F43",
+   "size": "wide",
+   "set": "rooftop",
+   "key": 12,
+   "note": "luckiest person alive"
+  },
+  {
+   "id": "F44",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "noticing"
+  },
+  {
+   "id": "F45",
+   "size": "close-up",
+   "set": "bedroom",
+   "key": 12,
+   "note": "head pounds"
+  },
+  {
+   "id": "F46",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "chest burns"
+  },
+  {
+   "id": "F47",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "burn comes sooner"
+  },
+  {
+   "id": "F48",
+   "size": "close-up",
+   "set": "bedroom",
+   "key": 12,
+   "note": "awake at night"
+  },
+  {
+   "id": "F49",
+   "size": "insert",
+   "set": "bedroom",
+   "key": 12,
+   "note": "counting seconds"
+  },
+  {
+   "id": "F50",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "why"
+  },
+  {
+   "id": "F51",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "not oxygen"
+  },
+  {
+   "id": "F52",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "CO2 builds"
+  },
+  {
+   "id": "F53",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "alarm"
+  },
+  {
+   "id": "F54",
+   "size": "ecu",
+   "set": "bedroom",
+   "key": 12,
+   "note": "that's real"
+  },
+  {
+   "id": "F55",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "internet tip"
+  },
+  {
+   "id": "F56",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "breathing fast"
+  },
+  {
+   "id": "F57",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "new best"
+  },
+  {
+   "id": "F58",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "hypoxic blackout"
+  },
+  {
+   "id": "F59",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "alarm late, oxygen low"
+  },
+  {
+   "id": "F60",
+   "size": "close-up",
+   "set": "bedroom",
+   "key": 12,
+   "note": "that's real too"
+  },
+  {
+   "id": "F61",
+   "size": "low medium",
+   "set": "rooftop",
+   "key": 12,
+   "note": "one more problem"
+  },
+  {
+   "id": "F62",
+   "size": "wide",
+   "set": "street",
+   "key": 12,
+   "note": "world paused, you're not"
+  },
+  {
+   "id": "F63",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "a minute here"
+  },
+  {
+   "id": "F64",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "100 pauses"
+  },
+  {
+   "id": "F65",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "25 days"
+  },
+  {
+   "id": "F66",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 12,
+   "note": "older in the mirror"
+  },
+  {
+   "id": "F67",
+   "size": "wide",
+   "set": "street",
+   "key": 12,
+   "note": "the suit appears"
+  },
+  {
+   "id": "F68",
+   "size": "medium",
+   "set": "street",
+   "key": 12,
+   "note": "at the school gates"
+  },
+  {
+   "id": "F69",
+   "size": "wide",
+   "set": "street",
+   "key": 12,
+   "note": "across the street"
+  },
+  {
+   "id": "F70",
+   "size": "close-up",
+   "set": "cafe",
+   "key": 12,
+   "note": "in the cafe"
+  },
+  {
+   "id": "F71",
+   "size": "two-shot",
+   "set": "street",
+   "key": 12,
+   "note": "on the bench"
+  },
+  {
+   "id": "F72",
+   "size": "insert",
+   "set": "street",
+   "key": 12,
+   "note": "the phone"
+  },
+  {
+   "id": "F73",
+   "size": "insert",
+   "set": "phone",
+   "key": 12,
+   "note": "frame 1042"
+  },
+  {
+   "id": "F74",
+   "size": "insert",
+   "set": "phone",
+   "key": 12,
+   "note": "frame 1043"
+  },
+  {
+   "id": "F75",
+   "size": "close-up",
+   "set": "street",
+   "key": 12,
+   "note": "zero frames"
+  },
+  {
+   "id": "F76",
+   "size": "ecu",
+   "set": "street",
+   "key": 12,
+   "note": "knows your name"
+  },
+  {
+   "id": "F77",
+   "size": "close-up",
+   "set": "street",
+   "key": 12,
+   "note": "knows your school"
+  },
+  {
+   "id": "F78",
+   "size": "close-up",
+   "set": "street",
+   "key": 12,
+   "note": "how long"
+  },
+  {
+   "id": "F79",
+   "size": "two-shot",
+   "set": "street",
+   "key": 12,
+   "note": "interesting"
+  },
+  {
+   "id": "F80",
+   "size": "ecu",
+   "set": "street",
+   "key": 12,
+   "note": "holds breath"
+  },
+  {
+   "id": "F81",
+   "size": "wide",
+   "set": "street",
+   "key": 12,
+   "note": "she runs"
+  },
+  {
+   "id": "F82",
+   "size": "wide",
+   "set": "garden",
+   "key": 12,
+   "note": "home"
+  },
+  {
+   "id": "F83",
+   "size": "medium",
+   "set": "garden",
+   "key": 12,
+   "note": "sister and ball"
+  },
+  {
+   "id": "F84",
+   "size": "close-up",
+   "set": "garden",
+   "key": 12,
+   "note": "she's four"
+  },
+  {
+   "id": "F85",
+   "size": "medium",
+   "set": "garden",
+   "key": 12,
+   "note": "she slips"
+  },
+  {
+   "id": "F86",
+   "size": "insert",
+   "set": "garden",
+   "key": 12,
+   "note": "splash"
+  },
+  {
+   "id": "F87",
+   "size": "close-up",
+   "set": "garden",
+   "key": 12,
+   "note": "out of breath"
+  },
+  {
+   "id": "F88",
+   "size": "close-up",
+   "set": "garden",
+   "key": 12,
+   "note": "dial nearly empty"
+  },
+  {
+   "id": "F89",
+   "size": "insert",
+   "set": "garden",
+   "key": 12,
+   "note": "bubbles fewer"
+  },
+  {
+   "id": "F90",
+   "size": "ecu",
+   "set": "garden",
+   "key": 12,
+   "note": "one more time"
+  },
+  {
+   "id": "F91",
+   "size": "wide",
+   "set": "garden",
+   "key": 12,
+   "note": "the world stops"
+  },
+  {
+   "id": "F92",
+   "size": "insert",
+   "set": "garden",
+   "key": 12,
+   "note": "the water stops"
+  },
+  {
+   "id": "F93",
+   "size": "insert",
+   "set": "garden",
+   "key": 12,
+   "note": "her hand, frozen"
+  },
+  {
+   "id": "F94",
+   "size": "medium",
+   "set": "garden",
+   "key": 12,
+   "note": "pulls her out"
+  },
+  {
+   "id": "F95",
+   "size": "close-up",
+   "set": "garden",
+   "key": 12,
+   "note": "forty, fifty"
+  },
+  {
+   "id": "F96",
+   "size": "ecu",
+   "set": "garden",
+   "key": 12,
+   "note": "vision greys"
+  },
+  {
+   "id": "F97",
+   "size": "ecu",
+   "set": "garden",
+   "key": 12,
+   "note": "she breathes"
+  },
+  {
+   "id": "F98",
+   "size": "two-shot",
+   "set": "garden",
+   "key": 12,
+   "note": "sister coughs"
+  },
+  {
+   "id": "F99",
+   "size": "close-up",
+   "set": "garden",
+   "key": 12,
+   "note": "she's fine"
+  },
+  {
+   "id": "F100",
+   "size": "wide",
+   "set": "garden",
+   "key": 12,
+   "note": "behind the fence"
+  },
+  {
+   "id": "F101",
+   "size": "insert",
+   "set": "fence",
+   "key": 12,
+   "note": "a camera"
+  },
+  {
+   "id": "F102",
+   "size": "insert",
+   "set": "hall",
+   "key": 12,
+   "note": "letter under the door"
+  },
+  {
+   "id": "F103",
+   "size": "insert",
+   "set": "table",
+   "key": 12,
+   "note": "no stamp, no name"
+  },
+  {
+   "id": "F104",
+   "size": "insert",
+   "set": "letter",
+   "key": 12,
+   "note": "the line"
+  },
+  {
+   "id": "F105",
+   "size": "ecu",
+   "set": "bedroom",
+   "key": 12,
+   "note": "we'd like to find out"
+  },
+  {
+   "id": "F106",
+   "size": "title",
+   "set": "rooftop",
+   "key": 12,
+   "note": "part 1 of 2"
+  },
+  {
+   "id": "F107",
+   "size": "low angle",
+   "set": "rooftop",
+   "key": 12,
+   "note": "how long can you hold yours"
+  },
+  {
+   "id": "F108",
+   "size": "card",
+   "set": "schematic",
+   "key": 12,
+   "note": "safety"
+  },
+  {
+   "id": "F109",
+   "size": "end card",
+   "set": "rooftop",
+   "key": 12,
+   "note": "part 2 coming soon"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "C1",
+   "at": "f:0"
+  },
+  {
+   "shot": "C2",
+   "at": "phone"
+  },
+  {
+   "shot": "C3",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "C4",
+   "at": "Play"
+  },
+  {
+   "shot": "C5",
+   "at": "A"
+  },
+  {
+   "shot": "C6",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "C7",
+   "at": "Play"
+  },
+  {
+   "shot": "C8",
+   "at": "Your"
+  },
+  {
+   "shot": "C9",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "C10",
+   "at": "Not",
+   "look": "pause"
+  },
+  {
+   "shot": "C11",
+   "at": "What"
+  },
+  {
+   "shot": "C12",
+   "at": "but"
+  },
+  {
+   "shot": "F01",
+   "at": "It"
+  },
+  {
+   "shot": "F02",
+   "at": "hiccup"
+  },
+  {
+   "shot": "F03",
+   "at": "hold"
+  },
+  {
+   "shot": "F04",
+   "at": "room",
+   "look": "pause"
+  },
+  {
+   "shot": "F05",
+   "at": "clock's",
+   "look": "pause"
+  },
+  {
+   "shot": "F06",
+   "at": "pencil",
+   "look": "pause"
+  },
+  {
+   "shot": "F07",
+   "at": "teacher's",
+   "look": "pause"
+  },
+  {
+   "shot": "F08",
+   "at": "gasp"
+  },
+  {
+   "shot": "F09",
+   "at": "everything"
+  },
+  {
+   "shot": "F10",
+   "at": "Nobody"
+  },
+  {
+   "shot": "F11",
+   "at": "Not"
+  },
+  {
+   "shot": "F12",
+   "at": "So"
+  },
+  {
+   "shot": "F13",
+   "at": "Three"
+  },
+  {
+   "shot": "F14",
+   "at": "One"
+  },
+  {
+   "shot": "F15",
+   "at": "Breathe"
+  },
+  {
+   "shot": "F16",
+   "at": "Two"
+  },
+  {
+   "shot": "F17",
+   "at": "anything",
+   "look": "pause"
+  },
+  {
+   "shot": "F18",
+   "at": "Three"
+  },
+  {
+   "shot": "F19",
+   "at": "forty"
+  },
+  {
+   "shot": "F20",
+   "at": "train"
+  },
+  {
+   "shot": "F21",
+   "at": "Forty"
+  },
+  {
+   "shot": "F22",
+   "at": "life"
+  },
+  {
+   "shot": "F23",
+   "at": "Late"
+  },
+  {
+   "shot": "F24",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "F25",
+   "at": "Play"
+  },
+  {
+   "shot": "F26",
+   "at": "Last"
+  },
+  {
+   "shot": "F27",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "F28",
+   "at": "Mo"
+  },
+  {
+   "shot": "F29",
+   "at": "Sports"
+  },
+  {
+   "shot": "F30",
+   "at": "whistle"
+  },
+  {
+   "shot": "F31",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "F32",
+   "at": "finish"
+  },
+  {
+   "shot": "F33",
+   "at": "freezes",
+   "look": "pause"
+  },
+  {
+   "shot": "F34",
+   "at": "Mum"
+  },
+  {
+   "shot": "F35",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "F36",
+   "at": "Play"
+  },
+  {
+   "shot": "F37",
+   "at": "wasp"
+  },
+  {
+   "shot": "F38",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "F39",
+   "at": "hide"
+  },
+  {
+   "shot": "F40",
+   "at": "cat"
+  },
+  {
+   "shot": "F41",
+   "at": "draw"
+  },
+  {
+   "shot": "F42",
+   "at": "two"
+  },
+  {
+   "shot": "F43",
+   "at": "luckiest"
+  },
+  {
+   "shot": "F44",
+   "at": "But"
+  },
+  {
+   "shot": "F45",
+   "at": "head"
+  },
+  {
+   "shot": "F46",
+   "at": "chest"
+  },
+  {
+   "shot": "F47",
+   "at": "Each"
+  },
+  {
+   "shot": "F48",
+   "at": "night"
+  },
+  {
+   "shot": "F49",
+   "at": "Seconds"
+  },
+  {
+   "shot": "F50",
+   "at": "Here's"
+  },
+  {
+   "shot": "F51",
+   "at": "urge"
+  },
+  {
+   "shot": "F52",
+   "at": "carbon"
+  },
+  {
+   "shot": "F53",
+   "at": "brain"
+  },
+  {
+   "shot": "F54",
+   "at": "That's"
+  },
+  {
+   "shot": "F55",
+   "at": "trick"
+  },
+  {
+   "shot": "F56",
+   "at": "breathe"
+  },
+  {
+   "shot": "F57",
+   "at": "works"
+  },
+  {
+   "shot": "F58",
+   "at": "also"
+  },
+  {
+   "shot": "F59",
+   "at": "Breathing"
+  },
+  {
+   "shot": "F60",
+   "at": "That's"
+  },
+  {
+   "shot": "F61",
+   "at": "one"
+  },
+  {
+   "shot": "F62",
+   "at": "When",
+   "look": "pause"
+  },
+  {
+   "shot": "F63",
+   "at": "minute"
+  },
+  {
+   "shot": "F64",
+   "at": "Pause"
+  },
+  {
+   "shot": "F65",
+   "at": "That's"
+  },
+  {
+   "shot": "F66",
+   "at": "You're"
+  },
+  {
+   "shot": "F67",
+   "at": "Then"
+  },
+  {
+   "shot": "F68",
+   "at": "Outside"
+  },
+  {
+   "shot": "F69",
+   "at": "Across"
+  },
+  {
+   "shot": "F70",
+   "at": "In"
+  },
+  {
+   "shot": "F71",
+   "at": "One"
+  },
+  {
+   "shot": "F72",
+   "at": "phone"
+  },
+  {
+   "shot": "F73",
+   "at": "In"
+  },
+  {
+   "shot": "F74",
+   "at": "In"
+  },
+  {
+   "shot": "F75",
+   "at": "Zero"
+  },
+  {
+   "shot": "F76",
+   "at": "He"
+  },
+  {
+   "shot": "F77",
+   "at": "He"
+  },
+  {
+   "shot": "F78",
+   "at": "He"
+  },
+  {
+   "shot": "F79",
+   "at": "Interesting"
+  },
+  {
+   "shot": "F80",
+   "at": "You"
+  },
+  {
+   "shot": "F81",
+   "at": "freezes",
+   "look": "pause"
+  },
+  {
+   "shot": "F82",
+   "at": "You"
+  },
+  {
+   "shot": "F83",
+   "at": "sister"
+  },
+  {
+   "shot": "F84",
+   "at": "four"
+  },
+  {
+   "shot": "F85",
+   "at": "slips"
+  },
+  {
+   "shot": "F86",
+   "at": "goes"
+  },
+  {
+   "shot": "F87",
+   "at": "haven't"
+  },
+  {
+   "shot": "F88",
+   "at": "If"
+  },
+  {
+   "shot": "F89",
+   "at": "If"
+  },
+  {
+   "shot": "F90",
+   "at": "You"
+  },
+  {
+   "shot": "F91",
+   "at": "world",
+   "look": "pause"
+  },
+  {
+   "shot": "F92",
+   "at": "water",
+   "look": "pause"
+  },
+  {
+   "shot": "F93",
+   "at": "sister",
+   "look": "pause"
+  },
+  {
+   "shot": "F94",
+   "at": "pull",
+   "look": "pause"
+  },
+  {
+   "shot": "F95",
+   "at": "counting",
+   "look": "pause"
+  },
+  {
+   "shot": "F96",
+   "at": "vision",
+   "look": "pause"
+  },
+  {
+   "shot": "F97",
+   "at": "breathe"
+  },
+  {
+   "shot": "F98",
+   "at": "coughs"
+  },
+  {
+   "shot": "F99",
+   "at": "fine#2"
+  },
+  {
+   "shot": "F100",
+   "at": "Behind"
+  },
+  {
+   "shot": "F101",
+   "at": "camera"
+  },
+  {
+   "shot": "F102",
+   "at": "The"
+  },
+  {
+   "shot": "F103",
+   "at": "No"
+  },
+  {
+   "shot": "F104",
+   "at": "Just"
+  },
+  {
+   "shot": "F105",
+   "at": "We'd"
+  },
+  {
+   "shot": "F106",
+   "at": "Part"
+  },
+  {
+   "shot": "F107",
+   "at": "So"
+  },
+  {
+   "shot": "F108",
+   "at": "don't"
+  },
+  {
+   "shot": "F109",
+   "at": "s:277.2"
+  }
+ ],
+ "fx": [
+  {
+   "at": "C3",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "C6",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "C9",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F04",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F24",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F27",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F31",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F35",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F38",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F62",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F81",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F91",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.45
+  },
+  {
+   "at": "F97",
+   "kind": "flash",
+   "o": 0.6
+  },
+  {
+   "at": "F86",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "F101",
+   "kind": "flash",
+   "o": 0.4
+  }
+ ]
+}

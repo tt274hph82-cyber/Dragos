@@ -2,5 +2,6 @@
 import { rewind } from './rewind';
 import { copyPaste } from './copy-paste';
 import { pause } from './pause';
+import { pauseFull } from './pause-full';
 
-export const EPISODES = [rewind, copyPaste, pause];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull];

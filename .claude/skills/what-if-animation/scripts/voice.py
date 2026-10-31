@@ -10,7 +10,8 @@ gaps is free.
 episode.json "voice" (all optional): {"id": "TX3LPaxmHKxFdv7VOQHJ", "model": "eleven_multilingual_v2",
   "settings": {"stability": 0.4, "similarity_boost": 0.8, "style": 0.35, "use_speaker_boost": true}}
 episode.json "gaps" (seconds, all optional): {"word": 0.12, "comma": 0.2, "sentence": 0.3, "question": 0.45,
-  "pairs": {"anything|One": 0.6}}  -> every pause longer than its limit is cut to the limit, from its middle.
+  "pairs": {"anything|One": 0.6}}  -> every pause longer than its limit is cut to the limit, from its middle; a pair
+  set longer than the take's pause gets silence inserted (chapter breaks, dramatic holds in long episodes).
 """
 import base64, hashlib, json, re, sys, time
 
@@ -71,6 +72,7 @@ def bare(w):
     return re.sub(r'[^\w]', '', w)
 
 
+ops = []  # (start, end, kind): 'cut' removes [start, end); 'pad' inserts (end - start) seconds of silence at start
 for a, b in zip(words, words[1:]):
     gap = b['s'] - a['e']
     key = bare(a['w']) + '|' + bare(b['w'])
@@ -84,14 +86,22 @@ for a, b in zip(words, words[1:]):
         keep = G['comma']
     else:
         keep = G['word']
+    mid = (a['e'] + b['s']) / 2
     if gap > keep:
-        mid = (a['e'] + b['s']) / 2
         rm = gap - keep
-        cuts.append((mid - rm / 2, mid + rm / 2))
+        ops.append((mid - rm / 2, mid + rm / 2, 'cut'))
+    elif key in G['pairs'] and keep > gap + 0.02:
+        # a pair asked for a longer pause than the take has: insert silence (chapter breaks, dramatic holds)
+        ops.append((mid, mid + (keep - gap), 'pad'))
+cuts = [(s0, e0) for s0, e0, k in ops if k == 'cut']
 parts, last = [], 0.0
-for s, e in cuts:
-    parts.append(x[int(last * SR):int(s * SR)])
-    last = e
+for s0, e0, kind in ops:
+    parts.append(x[int(last * SR):int(s0 * SR)])
+    if kind == 'cut':
+        last = e0
+    else:
+        parts.append(np.zeros(int((e0 - s0) * SR), dtype=x.dtype))
+        last = s0
 parts.append(x[int(last * SR):])
 fade = int(0.004 * SR)  # a 4 ms fade either side of each join, so no click
 for i, part in enumerate(parts):
@@ -106,10 +116,13 @@ write_wav(pub_dir(slug) / 'voice.wav', y)
 
 
 def shift(t):
-    return t - sum(min(e, t) - s for s, e in cuts if t > s)
+    removed = sum(min(e0, t) - s0 for s0, e0, k in ops if k == 'cut' and t > s0)
+    added = sum(e0 - s0 for s0, e0, k in ops if k == 'pad' and t > s0)
+    return t - removed + added
 
 
 out = [{'w': w['w'], 's': round(shift(w['s']), 3), 'e': round(shift(w['e']), 3), 'p': w.get('p', '')} for w in words]
 save_json(ep_dir(slug) / 'words.json', out)
-print(f'Tightened {len(cuts)} pauses, removed {sum(e - s for s, e in cuts):.2f} s: {len(x) / SR:.2f} s -> {len(y) / SR:.2f} s')
+pads = [(s0, e0) for s0, e0, k in ops if k == 'pad']
+print(f'Tightened {len(cuts)} pauses (-{sum(e0 - s0 for s0, e0 in cuts):.2f} s), held {len(pads)} (+{sum(e0 - s0 for s0, e0 in pads):.2f} s): {len(x) / SR:.2f} s -> {len(y) / SR:.2f} s')
 print(' '.join(f"{w['w']}@{w['s']}" for w in out))
