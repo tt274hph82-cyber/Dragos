@@ -96,9 +96,25 @@ def api(path, body=None, timeout=180):
         return r.read()
 
 
+# Set when the key can't read the account (no "User read" / "History read" permission): credit reports are skipped,
+# generation still works. Check the ElevenLabs usage page for the cost instead.
+CREDITS_UNREADABLE = False
+
+
+def _note_unreadable(err):
+    global CREDITS_UNREADABLE
+    if not CREDITS_UNREADABLE:
+        print(f'Note: credits not readable with this key ({err}); generation continues, check the usage page for the cost.')
+    CREDITS_UNREADABLE = True
+
+
 def credits_used():
     """Characters/credits used so far this billing period (ElevenLabs' counter; it can lag by minutes)."""
-    s = json.loads(api('/v1/user/subscription'))
+    try:
+        s = json.loads(api('/v1/user/subscription'))
+    except Exception as e:  # missing user_read permission, or the counter is unreachable
+        _note_unreadable(e)
+        return 0, 0
     return s['character_count'], s['character_limit']
 
 
@@ -107,7 +123,11 @@ def spent_since(t0, expect=1, tries=6):
     cost (the subscription counter lags). Waits a little for `expect` items to appear. Returns (credits, items)."""
     items = []
     for i in range(tries):
-        h = json.loads(api('/v1/history?page_size=100'))
+        try:
+            h = json.loads(api('/v1/history?page_size=100'))
+        except Exception as e:  # missing history_read permission
+            _note_unreadable(e)
+            return 0, 0
         items = [it for it in h.get('history', []) if it.get('date_unix', 0) >= int(t0) - 2]
         if len(items) >= expect:
             break
