@@ -1,0 +1,272 @@
+{
+ "id": "Pause",
+ "slug": "pause",
+ "topic": "What if you could pause time, but only while you hold your breath?",
+ "title": [
+  "WHAT IF YOU COULD",
+  "PAUSE TIME?"
+ ],
+ "accent": "PAUSE",
+ "voice": {
+  "id": "TX3LPaxmHKxFdv7VOQHJ",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.4,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "1 cold open, demo 1 (small and selfish)",
+   "text": "You drop your phone. Pause. Catch it. Play."
+  },
+  {
+   "beat": "1 cold open, demo 2 (useful)",
+   "text": "A paper ball flies at your face. Pause. Step aside. Play."
+  },
+  {
+   "beat": "1 cold open, demo 3 (a little uncanny)",
+   "text": "Your best friend, mid-laugh. Pause. Not even blinking."
+  },
+  {
+   "beat": "2 the premise and its rule (title card)",
+   "text": "What if you could pause time, but only while you hold your breath?"
+  },
+  {
+   "beat": "4 the turn: the cost, one real fact",
+   "text": "Most people last about a minute. The world record, on pure oxygen, is twenty-nine minutes. That's real."
+  },
+  {
+   "beat": "5-7 folded into a question",
+   "text": "So how long can you hold yours?"
+  }
+ ],
+ "science": [
+  {
+   "claim": "Most people can hold their breath for about a minute.",
+   "working": "Clinical and science sources put an untrained healthy adult at about 30 to 90 seconds; 'about a minute' is the middle of that range, and Outside notes most people struggle to reach one minute without practice.",
+   "source": "Acibadem (most healthy adults 30-90 s); BBC Science Focus (no longer than 90 s); Outside Online"
+  },
+  {
+   "claim": "The world record, on pure oxygen, is twenty-nine minutes.",
+   "working": "Vitomir Maričić, 29 min 03.07 s, Opatija, Croatia, 14 June 2025, Guinness 'Longest time breath held voluntarily underwater (male)', oxygen-assisted (pure oxygen breathed beforehand). It beat Budimir Šobat's 24:37 (2021). 29:03 rounds to 'twenty-nine minutes'.",
+   "source": "Guinness World Records, longest-time-breath-held-voluntarily-male; Guinness news, Sept 2025"
+  }
+ ],
+ "cast": [
+  "juno",
+  "mo"
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "set": "study",
+   "key": 13,
+   "note": "Juno at her desk, her elbow knocks the phone off the edge"
+  },
+  {
+   "id": "S2",
+   "size": "macro insert, high angle",
+   "set": "study (desk edge)",
+   "key": 10,
+   "note": "the phone tumbles off the desk"
+  },
+  {
+   "id": "S3",
+   "size": "medium, paused",
+   "set": "study",
+   "key": 28,
+   "note": "PAUSE: the phone hangs mid-air, Juno plucks it out of the frozen world"
+  },
+  {
+   "id": "S4",
+   "size": "close-up",
+   "set": "study",
+   "key": 10,
+   "note": "PLAY: smug, phone in hand"
+  },
+  {
+   "id": "S5",
+   "size": "over the shoulder",
+   "set": "classroom",
+   "key": 52,
+   "note": "a paper ball flies at Juno's face, a kid in the blurred foreground"
+  },
+  {
+   "id": "S6",
+   "size": "wide, paused",
+   "set": "classroom",
+   "key": 24,
+   "note": "PAUSE: the ball hangs in the air, Juno steps aside"
+  },
+  {
+   "id": "S7",
+   "size": "medium",
+   "set": "classroom",
+   "key": 3,
+   "note": "PLAY: the ball whizzes past her ear, she doesn't flinch"
+  },
+  {
+   "id": "S8",
+   "size": "medium two-shot",
+   "set": "kitchen",
+   "key": 10,
+   "note": "Mo mid-laugh at the island, Juno beside him"
+  },
+  {
+   "id": "S9",
+   "size": "close-up, paused",
+   "set": "kitchen",
+   "key": 18,
+   "note": "PAUSE: Mo frozen mid-laugh, Juno waves a hand in front of his face"
+  },
+  {
+   "id": "S10",
+   "size": "extreme close-up, paused",
+   "set": "kitchen",
+   "key": 20,
+   "note": "Mo's frozen face: not even blinking"
+  },
+  {
+   "id": "S11",
+   "size": "title, wide",
+   "set": "rooftop",
+   "key": 40,
+   "note": "the title over the dusk city"
+  },
+  {
+   "id": "S12",
+   "size": "low angle, medium",
+   "set": "rooftop",
+   "key": 24,
+   "note": "Juno takes a big breath and holds it; a breath dial starts draining"
+  },
+  {
+   "id": "S13",
+   "size": "schematic",
+   "set": "schematic",
+   "key": 40,
+   "note": "most people: about 1:00"
+  },
+  {
+   "id": "S14",
+   "size": "schematic",
+   "set": "schematic",
+   "key": 70,
+   "note": "world record on pure oxygen: 29:03, counting up"
+  },
+  {
+   "id": "S15",
+   "size": "extreme close-up",
+   "set": "rooftop",
+   "key": 8,
+   "note": "Juno's shocked face"
+  },
+  {
+   "id": "S16",
+   "size": "low angle, slow push in",
+   "set": "rooftop (red)",
+   "key": 40,
+   "note": "the red sky, Juno holding her breath, the dial nearly empty"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "phone"
+  },
+  {
+   "shot": "S3",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "S4",
+   "at": "Play"
+  },
+  {
+   "shot": "S5",
+   "at": "A"
+  },
+  {
+   "shot": "S6",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "S7",
+   "at": "Play"
+  },
+  {
+   "shot": "S8",
+   "at": "Your"
+  },
+  {
+   "shot": "S9",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "S10",
+   "at": "Not",
+   "look": "pause"
+  },
+  {
+   "shot": "S11",
+   "at": "What"
+  },
+  {
+   "shot": "S12",
+   "at": "but"
+  },
+  {
+   "shot": "S13",
+   "at": "Most"
+  },
+  {
+   "shot": "S14",
+   "at": "The"
+  },
+  {
+   "shot": "S15",
+   "at": "That's"
+  },
+  {
+   "shot": "S16",
+   "at": "So"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S3",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5
+  },
+  {
+   "at": "S6",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5
+  },
+  {
+   "at": "S9",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5
+  },
+  {
+   "at": "S16",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  }
+ ]
+}

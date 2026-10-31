@@ -61,7 +61,7 @@ export const HERO: Look = LOOKS.juno;
 // ---------- the hero ----------
 /** Mitten hands: open (a palm and a thumb) or pointing (a fist with the index finger out). */
 export type HandKind = 'open' | 'point';
-export type Expr = 'neutral' | 'happy' | 'smug' | 'shock' | 'worried' | 'oops' | 'cool' | 'dizzy' | 'tired';
+export type Expr = 'neutral' | 'happy' | 'smug' | 'shock' | 'worried' | 'oops' | 'cool' | 'dizzy' | 'tired' | 'puff' | 'laugh';
 export type Limb = { a: number; b: number }; // a: upper segment angle, b: bend of the lower segment (degrees)
 export type Pose = {
   x: number;
@@ -273,6 +273,9 @@ const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number;
     cool: '',
     dizzy: '',
     tired: `M -33 ${eyeY - 17} Q -22 ${eyeY - 21} -11 ${eyeY - 19} M 11 ${eyeY - 19} Q 22 ${eyeY - 21} 33 ${eyeY - 17}`,
+    // holding a breath: brows pushed up and in with the effort
+    puff: `M -32 ${eyeY - 20} L -12 ${eyeY - 25} M 12 ${eyeY - 25} L 32 ${eyeY - 20}`,
+    laugh: `M -32 ${eyeY - 22} Q -21 ${eyeY - 30} -10 ${eyeY - 24} M 10 ${eyeY - 24} Q 21 ${eyeY - 30} 32 ${eyeY - 22}`,
   };
   const mY = HEAD.y + 28;
   const mouth: Record<Expr, React.ReactNode> = {
@@ -285,6 +288,16 @@ const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number;
     cool: <path d={`M -12 ${mY + 2} Q 4 ${mY + 8} 16 ${mY - 6}`} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
     dizzy: <path d={`M -14 ${mY + 4} Q -7 ${mY - 4} 0 ${mY + 4} Q 7 ${mY + 12} 14 ${mY + 4}`} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
     tired: <path d={`M -11 ${mY + 4} Q 0 ${mY} 11 ${mY + 4}`} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" />,
+    // cheeks puffed out round a pressed mouth
+    puff: (
+      <g>
+        <circle cx={-34} cy={mY - 2} r={15} fill="#F2A99A" opacity={0.55} />
+        <circle cx={34} cy={mY - 2} r={15} fill="#F2A99A" opacity={0.55} />
+        <path d={`M -7 ${mY + 2} Q 0 ${mY - 2} 7 ${mY + 2}`} stroke={ink} strokeWidth={5} fill="none" strokeLinecap="round" />
+      </g>
+    ),
+    // a big open laugh, eyes still open (frozen mid-laugh reads uncanny)
+    laugh: <path d={`M -22 ${mY - 6} Q 0 ${mY + 30} 22 ${mY - 6} Z`} fill={ink} />,
   };
   return (
     <g transform={`translate(${yaw * 30} 0) scale(${1 - 0.28 * ay} 1)`}>

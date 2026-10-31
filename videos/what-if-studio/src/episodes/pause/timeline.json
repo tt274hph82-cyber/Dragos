@@ -1,0 +1,315 @@
+{
+ "slug": "pause",
+ "title": "WHAT IF YOU COULD PAUSE TIME?",
+ "fps": 30,
+ "total": 711,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 18,
+   "t0": 0,
+   "t1": 18,
+   "line": "You drop your"
+  },
+  {
+   "shot": "S2",
+   "a": 18,
+   "b": 33,
+   "t0": 0,
+   "t1": 15,
+   "line": "phone."
+  },
+  {
+   "shot": "S3",
+   "a": 33,
+   "b": 78,
+   "t0": 0,
+   "t1": 45,
+   "line": "Pause. Catch it.",
+   "look": "pause"
+  },
+  {
+   "shot": "S4",
+   "a": 78,
+   "b": 93,
+   "t0": 0,
+   "t1": 15,
+   "line": "Play."
+  },
+  {
+   "shot": "S5",
+   "a": 93,
+   "b": 157,
+   "t0": 0,
+   "t1": 64,
+   "line": "A paper ball flies at your face."
+  },
+  {
+   "shot": "S6",
+   "a": 157,
+   "b": 209,
+   "t0": 0,
+   "t1": 52,
+   "line": "Pause. Step aside.",
+   "look": "pause"
+  },
+  {
+   "shot": "S7",
+   "a": 209,
+   "b": 224,
+   "t0": 0,
+   "t1": 15,
+   "line": "Play."
+  },
+  {
+   "shot": "S8",
+   "a": 224,
+   "b": 281,
+   "t0": 0,
+   "t1": 57,
+   "line": "Your best friend, mid- laugh."
+  },
+  {
+   "shot": "S9",
+   "a": 281,
+   "b": 304,
+   "t0": 0,
+   "t1": 23,
+   "line": "Pause.",
+   "look": "pause"
+  },
+  {
+   "shot": "S10",
+   "a": 304,
+   "b": 339,
+   "t0": 0,
+   "t1": 35,
+   "line": "Not even blinking.",
+   "look": "pause"
+  },
+  {
+   "shot": "S11",
+   "a": 339,
+   "b": 387,
+   "t0": 0,
+   "t1": 48,
+   "line": "What if you could pause time,"
+  },
+  {
+   "shot": "S12",
+   "a": 387,
+   "b": 449,
+   "t0": 0,
+   "t1": 62,
+   "line": "but only while you hold your breath?"
+  },
+  {
+   "shot": "S13",
+   "a": 449,
+   "b": 504,
+   "t0": 0,
+   "t1": 55,
+   "line": "Most people last about a minute."
+  },
+  {
+   "shot": "S14",
+   "a": 504,
+   "b": 614,
+   "t0": 0,
+   "t1": 110,
+   "line": "The world record, on pure oxygen, is twenty- nine minutes."
+  },
+  {
+   "shot": "S15",
+   "a": 614,
+   "b": 639,
+   "t0": 0,
+   "t1": 25,
+   "line": "That's real."
+  },
+  {
+   "shot": "S16",
+   "a": 639,
+   "b": 711,
+   "t0": 0,
+   "t1": 72,
+   "line": "So how long can you hold yours?"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "key": 13,
+   "len": 18,
+   "first": 0,
+   "line": "You drop your",
+   "note": "Juno at her desk, her elbow knocks the phone off the edge"
+  },
+  {
+   "id": "S2",
+   "size": "macro insert, high angle",
+   "key": 10,
+   "len": 15,
+   "first": 18,
+   "line": "phone.",
+   "note": "the phone tumbles off the desk"
+  },
+  {
+   "id": "S3",
+   "size": "medium, paused",
+   "key": 28,
+   "len": 45,
+   "first": 33,
+   "line": "Pause. Catch it.",
+   "note": "PAUSE: the phone hangs mid-air, Juno plucks it out of the frozen world"
+  },
+  {
+   "id": "S4",
+   "size": "close-up",
+   "key": 10,
+   "len": 15,
+   "first": 78,
+   "line": "Play.",
+   "note": "PLAY: smug, phone in hand"
+  },
+  {
+   "id": "S5",
+   "size": "over the shoulder",
+   "key": 52,
+   "len": 64,
+   "first": 93,
+   "line": "A paper ball flies at your face.",
+   "note": "a paper ball flies at Juno's face, a kid in the blurred foreground"
+  },
+  {
+   "id": "S6",
+   "size": "wide, paused",
+   "key": 24,
+   "len": 52,
+   "first": 157,
+   "line": "Pause. Step aside.",
+   "note": "PAUSE: the ball hangs in the air, Juno steps aside"
+  },
+  {
+   "id": "S7",
+   "size": "medium",
+   "key": 3,
+   "len": 15,
+   "first": 209,
+   "line": "Play.",
+   "note": "PLAY: the ball whizzes past her ear, she doesn't flinch"
+  },
+  {
+   "id": "S8",
+   "size": "medium two-shot",
+   "key": 10,
+   "len": 57,
+   "first": 224,
+   "line": "Your best friend, mid- laugh.",
+   "note": "Mo mid-laugh at the island, Juno beside him"
+  },
+  {
+   "id": "S9",
+   "size": "close-up, paused",
+   "key": 18,
+   "len": 23,
+   "first": 281,
+   "line": "Pause.",
+   "note": "PAUSE: Mo frozen mid-laugh, Juno waves a hand in front of his face"
+  },
+  {
+   "id": "S10",
+   "size": "extreme close-up, paused",
+   "key": 20,
+   "len": 35,
+   "first": 304,
+   "line": "Not even blinking.",
+   "note": "Mo's frozen face: not even blinking"
+  },
+  {
+   "id": "S11",
+   "size": "title, wide",
+   "key": 40,
+   "len": 48,
+   "first": 339,
+   "line": "What if you could pause time,",
+   "note": "the title over the dusk city"
+  },
+  {
+   "id": "S12",
+   "size": "low angle, medium",
+   "key": 24,
+   "len": 62,
+   "first": 387,
+   "line": "but only while you hold your breath?",
+   "note": "Juno takes a big breath and holds it; a breath dial starts draining"
+  },
+  {
+   "id": "S13",
+   "size": "schematic",
+   "key": 40,
+   "len": 55,
+   "first": 449,
+   "line": "Most people last about a minute.",
+   "note": "most people: about 1:00"
+  },
+  {
+   "id": "S14",
+   "size": "schematic",
+   "key": 70,
+   "len": 110,
+   "first": 504,
+   "line": "The world record, on pure oxygen, is twenty- nine minutes.",
+   "note": "world record on pure oxygen: 29:03, counting up"
+  },
+  {
+   "id": "S15",
+   "size": "extreme close-up",
+   "key": 8,
+   "len": 25,
+   "first": 614,
+   "line": "That's real.",
+   "note": "Juno's shocked face"
+  },
+  {
+   "id": "S16",
+   "size": "low angle, slow push in",
+   "key": 40,
+   "len": 72,
+   "first": 639,
+   "line": "So how long can you hold yours?",
+   "note": "the red sky, Juno holding her breath, the dial nearly empty"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5,
+   "f": 33
+  },
+  {
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5,
+   "f": 157
+  },
+  {
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5,
+   "f": 281
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 639
+  }
+ ],
+ "audio": {
+  "voice": "pause/voice.wav"
+ }
+}
