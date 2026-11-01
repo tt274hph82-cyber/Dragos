@@ -332,6 +332,41 @@ const Face: React.FC<{ expr: Expr; blink: number; look: number; glasses: number;
   );
 };
 
+
+/**
+ * Grounding: a long soft cast shadow thrown away from the light, a soft ambient pool, and a tight contact shadow
+ * under each foot that fades and shrinks as the foot lifts (so walks and jumps read as touching the floor).
+ */
+const CharacterShadow: React.FC<{ pose: Pose; j: ReturnType<typeof joints>; shadow: number; lightFrom: 1 | -1 }> = ({ pose, j, shadow, lightFrom }) => {
+  const sc = pose.scale;
+  const feet = [toWorld(pose, j.legL.end), toWorld(pose, j.legR.end)];
+  const ground = Math.max(feet[0].y, feet[1].y) + 12 * sc;
+  const midX = (feet[0].x + feet[1].x) / 2;
+  const lift = Math.max(0, -pose.squash) * 4;
+  return (
+    <g style={{ mixBlendMode: 'multiply' }}>
+      {/* cast shadow: the body's height laid along the floor, away from the light, fading with distance */}
+      <g transform={`translate(${midX} ${ground}) skewX(${-lightFrom * 58}) scale(1 0.32)`} opacity={0.5 * shadow * (1 - lift)}>
+        <defs>
+          <linearGradient id={`cs${Math.round(pose.x)}_${Math.round(pose.y)}`} x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="#0A0612" stopOpacity={0.9} />
+            <stop offset="100%" stopColor="#0A0612" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <path d={`M ${-40 * sc} 0 Q ${-52 * sc} ${-260 * sc} 0 ${-300 * sc} Q ${52 * sc} ${-260 * sc} ${40 * sc} 0 Z`} fill={`url(#cs${Math.round(pose.x)}_${Math.round(pose.y)})`} filter="url(#blur6)" />
+      </g>
+      {/* soft ambient pool */}
+      <ellipse cx={midX} cy={ground} rx={(84 + 30 * lift) * sc} ry={15 * sc} fill="#0A0612" opacity={(0.42 - 0.15 * lift) * shadow} filter="url(#blur6)" />
+      {/* contact shadows under each foot */}
+      {feet.map((ft, i) => {
+        const up = Math.max(0, ground - 12 * sc - ft.y) / (40 * sc);
+        const k = Math.max(0, 1 - up);
+        return <ellipse key={i} cx={ft.x + pose.facing * 8 * sc} cy={ground - 2 * sc} rx={(28 - 8 * up) * sc} ry={8 * sc} fill="#05030A" opacity={0.8 * shadow * k} />;
+      })}
+    </g>
+  );
+};
+
 export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?: Look }> = ({ pose, shadow = 1, rimId = 'rimR', look = HERO }) => {
   const j = joints(pose);
   const L = look;
@@ -480,7 +515,7 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
   );
   return (
     <g>
-      {shadow > 0 ? <ellipse cx={pose.x} cy={pose.y + LEG_LEN * pose.scale + 10} rx={70 * pose.scale} ry={12 * pose.scale} fill="#000" opacity={0.25 * shadow} /> : null}
+      {shadow > 0 ? <CharacterShadow pose={pose} j={j} shadow={shadow} lightFrom={rimId === 'rimL' || rimId === 'rimBlueL' ? -1 : 1} /> : null}
       <g transform={`translate(${pose.x} ${pose.y}) scale(${pose.scale}) rotate(${pose.spin} 0 -90)`} filter={`url(#${rimId})`}>
         <g transform={`translate(0 ${LEG_LEN}) scale(${1 + 0.6 * pose.squash} ${1 - pose.squash}) translate(0 ${-LEG_LEN})`}>
           {/* the far side is drawn first, so a turned body overlaps itself the right way */}
@@ -527,22 +562,34 @@ export const Actor = Hero;
  * loose things (the drawstrings) a beat behind the body.
  */
 export const walkPose = (x: number, phase: number, ground: number | ((x: number) => number), scale = 0.9, extra: Partial<Pose> = {}, facing: 1 | -1 = 1): Pose => {
+  // One cycle = two steps. sin(phase) > 0: left leg forward. The leg moving forward (the swing leg) lifts its foot by
+  // bending the knee most at the passing position; the stance leg stays near straight. The hips sit lowest at contact
+  // (legs spread) and highest at passing, worked out from the stance leg's angle so the planted foot stays on the floor.
   const s = Math.sin(phase);
+  const c = Math.cos(phase);
   const g = typeof ground === 'number' ? ground : ground(x);
+  const SW = 30; // stride angle
+  const aL = SW * s;
+  const aR = -SW * s;
+  const swingL = c > 0; // left leg is travelling forward
+  const knee = (swing: boolean, cv: number) => (swing ? -58 * Math.abs(cv) : -6 * (1 - Math.abs(cv)));
+  const stanceA = swingL ? aR : aL;
+  const hipDrop = Math.cos((stanceA * Math.PI) / 180);
   return {
     ...basePose,
     x,
-    y: g - LEG_LEN * scale - Math.abs(Math.cos(phase)) * 7,
+    y: g - LEG_LEN * scale * hipDrop + 3 * scale,
     scale,
     facing,
     yaw: facing,
-    tilt: 5 * facing,
-    headTilt: 2 * Math.sin(phase * 2),
+    tilt: (4 + 2 * Math.abs(c)) * facing,
+    headTilt: -1.5 * Math.sin(phase * 2),
     sway: 10 * Math.sin(phase + 0.8),
-    legL: { a: 28 * s, b: -Math.max(0, 40 * Math.sin(phase + 1.2)) },
-    legR: { a: -28 * s, b: -Math.max(0, 40 * Math.sin(phase + 1.2 + Math.PI)) },
-    armL: { a: 24 * s, b: 12 + 14 * Math.abs(s) },
-    armR: { a: 24 * s, b: 12 + 14 * Math.abs(s) },
+    legL: { a: aL, b: knee(swingL, c) },
+    legR: { a: aR, b: knee(!swingL, c) },
+    // arms counter-swing against their own side's leg, elbows bending more on the forward swing
+    armL: { a: -22 * s, b: 14 + 16 * Math.max(0, -s) },
+    armR: { a: 22 * s, b: 14 + 16 * Math.max(0, s) },
     ...extra,
   };
 };

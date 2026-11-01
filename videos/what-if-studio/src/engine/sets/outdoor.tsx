@@ -56,6 +56,45 @@ const Tree: React.FC<{ x: number; base: number; t: number; frozen?: boolean; s?:
   );
 };
 
+
+/** A long soft shadow cast along the ground by an object of width w and height h standing at x, away from the sun. */
+const LongShadow: React.FC<{ x: number; base: number; w: number; h: number; sunX: number; o?: number }> = ({ x, base, w, h, sunX, o = 0.45 }) => {
+  const dir = x >= sunX ? 1 : -1;
+  const len = Math.min(1.6, 0.5 + Math.abs(x - sunX) / 900) * h * 0.55;
+  return (
+    <path d={`M ${x - w / 2} ${base} L ${x + w / 2} ${base} L ${x + w / 2 + dir * len} ${base + h * 0.12} L ${x - w / 2 + dir * len} ${base + h * 0.12} Z`}
+      fill="#0A0612" opacity={o} filter="url(#blur6)" style={{ mixBlendMode: 'multiply' }} />
+  );
+};
+/** A warm pool of light on the ground (lamps, doorways, windows): a soft radial falloff, no hard edge. */
+const Pool: React.FC<{ x: number; y: number; rx: number; ry: number; o?: number; color?: string }> = ({ x, y, rx, ry, o = 0.35, color = '#FFB070' }) => {
+  const id = `pool${Math.round(x)}_${Math.round(y)}_${Math.round(rx)}`;
+  return (
+    <g style={{ mixBlendMode: 'screen' }}>
+      <defs>
+        <radialGradient id={id}>
+          <stop offset="0%" stopColor={color} stopOpacity={o} />
+          <stop offset="55%" stopColor={color} stopOpacity={o * 0.35} />
+          <stop offset="100%" stopColor={color} stopOpacity={0} />
+        </radialGradient>
+      </defs>
+      <ellipse cx={x} cy={y} rx={rx} ry={ry} fill={`url(#${id})`} />
+    </g>
+  );
+};
+/** Darkens the ground toward the camera and the frame edges, so the middle distance (where people stand) reads. */
+const GroundShade: React.FC<{ id: string; top: number }> = ({ id, top }) => (
+  <g style={{ mixBlendMode: 'multiply' }}>
+    <defs>
+      <linearGradient id={`${id}gs`} x1="0" y1={top} x2="0" y2={top + 500} gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0} />
+        <stop offset="100%" stopColor="#1A1028" stopOpacity={0.6} />
+      </linearGradient>
+    </defs>
+    <rect x={-400} y={top} width={2720} height={900} fill={`url(#${id}gs)`} />
+  </g>
+);
+
 export const Outdoor: React.FC<{ t: number; kind: 'field' | 'street' | 'garden'; id?: string; red?: number; frozen?: boolean; sunX?: number; sunY?: number }> = ({
   t, kind, id = 'out', red = 0, frozen = false, sunX = 1400, sunY = 560,
 }) => {
@@ -68,15 +107,15 @@ export const Outdoor: React.FC<{ t: number; kind: 'field' | 'street' | 'garden';
       <Birds t={tt} />
       <Skyline y={horizon} seed={kind === 'street' ? 71 : 41} color={red > 0.5 ? '#3A1222' : '#4A3560'} h={170} />
       <Haze y={horizon - 120} o={0.25} />
-      {kind === 'field' ? <Field t={tt} /> : null}
-      {kind === 'street' ? <Street t={tt} /> : null}
-      {kind === 'garden' ? <Garden t={tt} frozen={frozen} /> : null}
+      {kind === 'field' ? <Field t={tt} sunX={sunX} id={id} /> : null}
+      {kind === 'street' ? <Street t={tt} sunX={sunX} id={id} /> : null}
+      {kind === 'garden' ? <Garden t={tt} frozen={frozen} sunX={sunX} id={id} /> : null}
       {red > 0 ? <rect x={-400} y={-400} width={2720} height={1900} fill="#16000A" opacity={0.42 * red} /> : null}
     </g>
   );
 };
 
-const Field: React.FC<{ t: number }> = ({ t }) => (
+const Field: React.FC<{ t: number; sunX: number; id: string }> = ({ t, sunX, id }) => (
   <g>
     {/* the school building behind, lit windows */}
     <rect x={240} y={450} width={900} height={260} fill="#3A2C48" />
@@ -99,10 +138,15 @@ const Field: React.FC<{ t: number }> = ({ t }) => (
       <rect key={i} x={OUT.finish + (i % 2) * 12} y={800 + i * 20} width={12} height={20} fill={i % 2 ? '#F3E6D6' : '#1A1424'} />
     ))}
     <rect x={-400} y={1060} width={2720} height={400} fill="#3B4A33" />
+    {/* the low sun throws the building and the stands across the grass and the track */}
+    <LongShadow x={690} base={712} w={900} h={260} sunX={sunX} o={0.35} />
+    <LongShadow x={1580} base={712} w={640} h={180} sunX={sunX} o={0.3} />
+    <Pool x={sunX} y={760} rx={700} ry={70} o={0.25} />
+    <GroundShade id={id} top={760} />
   </g>
 );
 
-const Street: React.FC<{ t: number }> = ({ t }) => (
+const Street: React.FC<{ t: number; sunX: number; id: string }> = ({ t, sunX, id }) => (
   <g>
     {/* houses across the road */}
     {[[-300, 360], [120, 400], [520, 340], [1180, 380], [1620, 350], [2000, 390]].map(([x, top], i) => (
@@ -143,10 +187,20 @@ const Street: React.FC<{ t: number }> = ({ t }) => (
     <path d="M 1560 860 L 1560 560 M 1900 860 L 1900 560 M 1560 600 Q 1730 470 1900 600" stroke="#1A1424" strokeWidth={14} fill="none" />
     {Array.from({ length: 9 }).map((_, i) => <path key={i} d={`M ${1590 + i * 36} 860 L ${1590 + i * 36} ${600 - Math.sin((i / 8) * Math.PI) * 90}`} stroke="#1A1424" strokeWidth={6} />)}
     <text x={1730} y={590} textAnchor="middle" fontFamily="Fragment Mono" fontSize={24} fill="#E9C46A">SCHOOL</text>
+    {/* shadows from the low sun, pools of lamp and window light on the pavement */}
+    <LongShadow x={300} base={862} w={300} h={300} sunX={sunX} o={0.4} />
+    <LongShadow x={600} base={862} w={14} h={390} sunX={sunX} o={0.5} />
+    <LongShadow x={1500} base={862} w={14} h={390} sunX={sunX} o={0.5} />
+    <LongShadow x={1350} base={862} w={200} h={70} sunX={sunX} o={0.45} />
+    <LongShadow x={1730} base={862} w={340} h={300} sunX={sunX} o={0.3} />
+    <Pool x={645} y={866} rx={220} ry={40} o={0.4} />
+    <Pool x={1545} y={866} rx={220} ry={40} o={0.4} />
+    <Pool x={975} y={850} rx={300} ry={46} o={0.35} />
+    <GroundShade id={id} top={860} />
   </g>
 );
 
-const Garden: React.FC<{ t: number; frozen?: boolean }> = ({ t, frozen }) => {
+const Garden: React.FC<{ t: number; frozen?: boolean; sunX: number; id: string }> = ({ t, frozen, sunX, id }) => {
   const P = OUT.pond;
   return (
     <g>
@@ -170,6 +224,12 @@ const Garden: React.FC<{ t: number; frozen?: boolean }> = ({ t, frozen }) => {
       {Array.from({ length: 80 }).map((_, i) => (
         <path key={i} d={`M ${-300 + rnd(95, i) * 2400} ${800 + rnd(96, i) * 260} l 4 -14 l 4 14`} stroke="#4E6044" strokeWidth={3} fill="none" />
       ))}
+      {/* the fence's shadow along the grass, the tree and shed's long shadows, the back door's light spilling out */}
+      <rect x={-400} y={780} width={2720} height={40} fill="#0A0612" opacity={0.3} filter="url(#blur6)" />
+      <LongShadow x={1700} base={790} w={60} h={420} sunX={sunX} o={0.4} />
+      <LongShadow x={2030} base={800} w={300} h={240} sunX={sunX} o={0.35} />
+      <Pool x={250} y={830} rx={260} ry={70} o={0.45} />
+      <GroundShade id={id} top={790} />
       {/* the pond: stones round the edge, water holding the sky, reeds; ripples stop when frozen */}
       {Array.from({ length: 16 }).map((_, i) => {
         const a = (i / 16) * Math.PI * 2;
