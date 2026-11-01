@@ -235,7 +235,7 @@
  ],
  "fx": [
   {
-   "at": "S7+4",
+   "at": "S7+14",
    "kind": "flash",
    "color": "#FFFFFF",
    "o": 0.5
@@ -333,7 +333,7 @@
     "S9"
    ],
    [
-    "S7+4",
+    "S7+14",
     "rope_snap",
     0.5
    ],
@@ -386,8 +386,9 @@
    }
   ],
   "levels": {
-   "sfx_lu": -6.0,
-   "music_lu": -13.0
-  }
+   "sfx_lu": -14.0,
+   "music_lu": -17.0
+  },
+  "music_model": "music_v1"
  }
 }

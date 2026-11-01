@@ -161,9 +161,9 @@ export const S6: React.FC<ShotProps> = ({ t, len }) => (
 
 // ---------- S7: insert, the cord is cut: a blade, a snap, the two ends fly apart ----------
 export const S7: React.FC<ShotProps> = ({ t }) => {
-  const cut = t >= 4;
-  const gap = cut ? easeOut(clamp((t - 4) / 8)) * 220 : 0;
-  const blade = clamp(t / 4);
+  const cut = t >= 14;
+  const gap = cut ? easeOut(clamp((t - 14) / 8)) * 220 : 0;
+  const blade = clamp(t / 14);
   return (
     <g>
       <HighSky id="pc7" t={t} />
@@ -175,7 +175,7 @@ export const S7: React.FC<ShotProps> = ({ t }) => {
         <path d="M 0 -18 L 160 -6 L 180 0 L 160 8 L 0 18 Z" fill="#C8CCD4" stroke={INK} strokeWidth={4} />
         <rect x={-120} y={-20} width={120} height={40} rx={10} fill={INK} />
       </g>
-      <Bold x={960} y={220} t={t - 4} text="SNIP!" size={140} fill="#FFD24A" rot={-6} />
+      <Bold x={960} y={220} t={t - 14} text="SNIP!" size={140} fill="#FFD24A" rot={-6} />
     </g>
   );
 };

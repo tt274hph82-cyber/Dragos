@@ -47,4 +47,7 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
   - Voice: `eleven_v4`, with `output_format=mp3_44100_128` (128 kbps).
   - Sound effects: SFX v3 (`model_id: eleven_text_to_sound_v3`). The skill's `sfx.py` keys its clip cache by model, so clips made with an older model aren't reused.
   - Music: Music v2.5 (`model_id: music_v2_5`). The clip cache is keyed by model here too.
+- **Mix: the narrator always stays clearly on top.**
+  - Effects sit about 14 LU under the voice and music about 17 LU under it. These are the skill's defaults: `sfx_lu: -14` and `music_lu: -17`.
+  - Sound hits land just after the word they illustrate, never on it.
 - Never commit API keys. ElevenLabs uses the env var / GitHub secret `ELEVENLABS_API_KEY`.

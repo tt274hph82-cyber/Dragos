@@ -18,7 +18,7 @@ Writes public/<slug>/sfx.wav and music.wav, sets their volumes in timeline.json,
              or a list of cues [{"clip", "from", "until", "fade_in", "fade_out"}, ...] for long episodes (one per act)
                                                         the bed starts at "from" (default 0), cut at "until"; during a look
                                                         listed in reverse_looks it plays what just played, backwards
-  "levels":  {"sfx_lu": 1.5, "music_lu": -9.5}         integrated loudness of each stem against the voice's
+  "levels":  {"sfx_lu": -14, "music_lu": -17}         integrated loudness of each stem against the voice's
 }
 Cues are the same as in plan.py: "S3+2", "f:46", "s:1.5", "paste+3".
 """
@@ -44,7 +44,7 @@ cue = lambda c: resolve(c, words, FPS, tl['segments'], ids)
 DUR = tl['total'] / FPS + 0.4
 
 SFX_MODEL = 'eleven_text_to_sound_v3'  # ElevenLabs SFX v3
-MUSIC_MODEL = 'music_v2_5'  # ElevenLabs Music v2.5
+MUSIC_MODEL = S.get('music_model', 'music_v2_5')  # ElevenLabs Music v2.5 (an episode can pin an older one)
 
 # ---------------------------------------------------------------- the clips
 need = {}
@@ -52,7 +52,7 @@ kinds = {}
 for name, spec in S['clips'].items():
     prompt, secs = spec[0], spec[1]
     kinds[name] = spec[2] if len(spec) > 2 else 'sfx'
-    need[name] = (prompt, secs, clip_path(name, prompt, secs, SFX_MODEL if kinds[name] == 'sfx' else MUSIC_MODEL))
+    need[name] = (prompt, secs, clip_path(name, prompt, secs, SFX_MODEL if kinds[name] == 'sfx' else (None if MUSIC_MODEL == 'music_v1' else MUSIC_MODEL)))
 missing = [n for n, (_, _, p) in need.items() if not p.exists()]
 print(f'{len(need)} clips, {len(need) - len(missing)} already in the library, {len(missing)} to generate: {", ".join(missing) or "none"}')
 if dry:
@@ -165,7 +165,7 @@ pub = pub_dir(slug)
 write_wav(pub / 'sfx.wav', sfx, 0.98)
 if M:
     write_wav(pub / 'music.wav', music, 0.98)
-L = {'sfx_lu': 1.5, 'music_lu': -9.5}
+L = {'sfx_lu': -14.0, 'music_lu': -17.0}  # the narrator must stay clearly on top
 L.update(S.get('levels', {}))
 v_lufs, _ = loudness(stem(slug, 'voice'))
 s_lufs, _ = loudness(pub / 'sfx.wav')

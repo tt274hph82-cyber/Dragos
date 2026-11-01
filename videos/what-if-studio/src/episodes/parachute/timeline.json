@@ -250,7 +250,7 @@
    "kind": "flash",
    "color": "#FFFFFF",
    "o": 0.5,
-   "f": 511
+   "f": 521
   },
   {
    "kind": "shake",
@@ -260,11 +260,11 @@
   }
  ],
  "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.201,
+  "musicVol": 0.0643,
   "voice": "parachute/voice.wav",
   "sfx": "parachute/sfx.wav",
-  "voiceVol": 0.8,
-  "sfxVol": 0.4247,
-  "music": "parachute/music.wav",
-  "musicVol": 0.1019
+  "music": "parachute/music.wav"
  }
 }
