@@ -1,0 +1,45 @@
+name: Wild Africa hippo → release
+
+# Renders the hippo documentary (videos/wild-africa-hippo) on GitHub, masters it to -14 LUFS, and puts the 1080p
+# and 720p MP4s on a Release page (plain download links that work in a phone browser).
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/hippo-release.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    defaults:
+      run:
+        working-directory: videos/wild-africa-hippo
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: npm ci
+      - run: npx remotion render Documentary out/hippo-raw.mp4
+      - name: Master and compress
+        run: |
+          ffmpeg -nostdin -y -v error -i out/hippo-raw.mp4 -c:v copy -af "loudnorm=I=-14:TP=-1.5:LRA=11" -c:a aac -b:a 192k -movflags +faststart out/hippo-1080p.mp4
+          ffmpeg -nostdin -y -v error -i out/hippo-1080p.mp4 -vf scale=1280:-2 -c:v libx264 -crf 26 -preset medium -c:a aac -b:a 128k -movflags +faststart out/hippo-720p.mp4
+          ls -la out
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG=wild-africa-hippo
+          NOTES="Wild Africa, episode 1: The Hippo, Africa's Deadliest Giant (7 min). Tap a file below to download. Photo credits are in the video's end roll and videos/wild-africa-hippo/src/credits.json."
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --notes "$NOTES"
+          else
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Wild Africa: The Hippo (video)" --notes "$NOTES"
+          fi
+          gh release upload "$TAG" out/hippo-1080p.mp4 out/hippo-720p.mp4 --clobber
