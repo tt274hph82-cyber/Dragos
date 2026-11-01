@@ -62,9 +62,52 @@ else:
 
 # ---------------------------------------------------------------- tighten the pauses
 words = load_json(raw_words)
+x = decode(raw_mp3)
+
+
+def real_silences(sig, min_len=0.09, rel=0.06):
+    """Spans where the take is actually quiet: a 10 ms energy envelope under rel x its 95th percentile, at least min_len long."""
+    hop = int(0.01 * SR)
+    env = np.sqrt(np.convolve(sig[: len(sig) // hop * hop].reshape(-1, hop).__pow__(2).mean(1), np.ones(3) / 3, mode='same'))
+    thr = rel * np.percentile(env, 95)
+    quiet = env < thr
+    out, start = [], None
+    for i, q in enumerate(np.append(quiet, False)):
+        if q and start is None:
+            start = i
+        elif not q and start is not None:
+            if (i - start) * 0.01 >= min_len:
+                out.append([start * 0.01, i * 0.01])
+            start = None
+    return out
+
+
+# ElevenLabs' character timestamps can drift (by ~0.4 s late in a long eleven_v4 take), so cutting pauses at the
+# reported word gaps sliced through real words. Re-anchor every reported gap to the nearest real silence in the audio,
+# then warp all word times between those anchors, so cuts only ever happen inside actual silence.
+sil = real_silences(x)
+anchors, used = [(0.0, 0.0)], -1
+for a, b in zip(words, words[1:]):
+    if b['s'] - a['e'] < 0.06:
+        continue
+    c = (a['e'] + b['s']) / 2
+    best = None
+    for k in range(used + 1, len(sil)):
+        sc = (sil[k][0] + sil[k][1]) / 2
+        if abs(sc - c) <= 0.7 and (best is None or abs(sc - c) < abs((sil[best][0] + sil[best][1]) / 2 - c)):
+            best = k
+        if sc > c + 0.7:
+            break
+    if best is not None:
+        anchors += [(a['e'], sil[best][0]), (b['s'], sil[best][1])]
+        used = best
+anchors.append((max(words[-1]['e'], anchors[-1][0]) + 0.01, max(len(x) / SR, anchors[-1][1]) + 0.01))
+anchors.sort()
+ax, ay = [p[0] for p in anchors], [p[1] for p in anchors]
+for w in words:
+    w['s'], w['e'] = float(np.interp(w['s'], ax, ay)), float(np.interp(w['e'], ax, ay))
 G = {'word': 0.12, 'comma': 0.2, 'sentence': 0.3, 'question': 0.45, 'pairs': {}}
 G.update(ep.get('gaps', {}))
-x = decode(raw_mp3)
 cuts = []
 
 
@@ -89,7 +132,15 @@ for a, b in zip(words, words[1:]):
     mid = (a['e'] + b['s']) / 2
     if gap > keep:
         rm = gap - keep
-        ops.append((mid - rm / 2, mid + rm / 2, 'cut'))
+        # only ever cut inside a real silence (30 ms in from its edges); no silence under the gap means no cut
+        span = next((q for q in sil if q[0] - 0.05 <= mid <= q[1] + 0.05), None)
+        if span is not None:
+            lo, hi = span[0] + 0.03, span[1] - 0.03
+            room = hi - lo - keep
+            if room > 0.02:
+                rm = min(rm, room)
+                c0 = max(lo, min(mid - rm / 2, hi - rm))
+                ops.append((c0, c0 + rm, 'cut'))
     elif key in G['pairs'] and keep > gap + 0.02:
         # a pair asked for a longer pause than the take has: insert silence (chapter breaks, dramatic holds)
         ops.append((mid, mid + (keep - gap), 'pad'))
