@@ -1,0 +1,213 @@
+{
+ "slug": "fountain-pen",
+ "title": "WHO INVENTED THE FOUNTAIN PEN?",
+ "fps": 30,
+ "total": 864,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 74,
+   "t0": 0,
+   "t1": 74,
+   "line": "Who invented the fountain pen?"
+  },
+  {
+   "shot": "S2",
+   "a": 74,
+   "b": 153,
+   "t0": 0,
+   "t1": 79,
+   "line": "Some American? Ha! Not even close."
+  },
+  {
+   "shot": "S3",
+   "a": 153,
+   "b": 223,
+   "t0": 0,
+   "t1": 70,
+   "line": "Paris, 1827."
+  },
+  {
+   "shot": "S4",
+   "a": 223,
+   "b": 308,
+   "t0": 0,
+   "t1": 85,
+   "line": "A Romanian student is writing with a feather."
+  },
+  {
+   "shot": "S5",
+   "a": 308,
+   "b": 412,
+   "t0": 0,
+   "t1": 104,
+   "line": "Drip. Blot. Drip. Another blot."
+  },
+  {
+   "shot": "S6",
+   "a": 412,
+   "b": 511,
+   "t0": 0,
+   "t1": 99,
+   "line": "So he invents a pen that refills itself with ink."
+  },
+  {
+   "shot": "S7",
+   "a": 511,
+   "b": 570,
+   "t0": 0,
+   "t1": 59,
+   "line": "On May twenty- fifth, he gets French patent"
+  },
+  {
+   "shot": "S11",
+   "a": 570,
+   "b": 622,
+   "t0": 0,
+   "t1": 52,
+   "line": "number 3208."
+  },
+  {
+   "shot": "S8",
+   "a": 622,
+   "b": 698,
+   "t0": 0,
+   "t1": 76,
+   "line": "His name? Petrache Poenaru."
+  },
+  {
+   "shot": "S9",
+   "a": 698,
+   "b": 743,
+   "t0": 0,
+   "t1": 45,
+   "line": "And the best part?"
+  },
+  {
+   "shot": "S10",
+   "a": 743,
+   "b": 864,
+   "t0": 0,
+   "t1": 121,
+   "line": "It never made it to a single shop."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "key": 20,
+   "len": 74,
+   "first": 0,
+   "line": "Who invented the fountain pen?",
+   "note": "Nea Costel, title pops"
+  },
+  {
+   "id": "S2",
+   "size": "close-up",
+   "key": 14,
+   "len": 79,
+   "first": 74,
+   "line": "Some American? Ha! Not even close.",
+   "note": "Americanii? Ei, as! wags finger"
+  },
+  {
+   "id": "S3",
+   "size": "wide",
+   "key": 14,
+   "len": 70,
+   "first": 153,
+   "line": "Paris, 1827.",
+   "note": "Paris 1827"
+  },
+  {
+   "id": "S4",
+   "size": "medium",
+   "key": 14,
+   "len": 85,
+   "first": 223,
+   "line": "A Romanian student is writing with a feather.",
+   "note": "student writing with a quill"
+  },
+  {
+   "id": "S5",
+   "size": "insert",
+   "key": 30,
+   "len": 104,
+   "first": 308,
+   "line": "Drip. Blot. Drip. Another blot.",
+   "note": "ink drips, blots"
+  },
+  {
+   "id": "S6",
+   "size": "schematic",
+   "key": 40,
+   "len": 99,
+   "first": 412,
+   "line": "So he invents a pen that refills itself with ink.",
+   "note": "pen with a quill reservoir fills itself"
+  },
+  {
+   "id": "S7",
+   "size": "insert",
+   "key": 30,
+   "len": 59,
+   "first": 511,
+   "line": "On May twenty- fifth, he gets French patent",
+   "note": "Brevet nr. 3208, 25 mai 1827, stamp"
+  },
+  {
+   "id": "S11",
+   "size": "ecu",
+   "key": 14,
+   "len": 52,
+   "first": 570,
+   "line": "number 3208.",
+   "note": "the number 3208"
+  },
+  {
+   "id": "S8",
+   "size": "card",
+   "key": 20,
+   "len": 76,
+   "first": 622,
+   "line": "His name? Petrache Poenaru.",
+   "note": "Petrache Poenaru"
+  },
+  {
+   "id": "S9",
+   "size": "close-up",
+   "key": 14,
+   "len": 45,
+   "first": 698,
+   "line": "And the best part?",
+   "note": "si stii ce-i mai tare?"
+  },
+  {
+   "id": "S10",
+   "size": "wide",
+   "key": 20,
+   "len": 121,
+   "first": 743,
+   "line": "It never made it to a single shop.",
+   "note": "empty shop window, host shrugs"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 6,
+   "f": 551
+  }
+ ],
+ "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.2229,
+  "musicVol": 0.0996,
+  "voice": "fountain-pen/voice.wav",
+  "sfx": "fountain-pen/sfx.wav",
+  "music": "fountain-pen/music.wav"
+ }
+}
