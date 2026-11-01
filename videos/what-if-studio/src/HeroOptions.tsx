@@ -6,7 +6,7 @@ import { Hero, basePose, Pose, LOOKS, CastName, KitDefs, SetDefs, Study, FONT } 
 // judged where they'll live. Render: npx remotion still src/index.ts HeroOptions out/hero-options.png
 const P = (o: Partial<Pose>): Pose => ({ ...basePose, ...o });
 const CANDS: { c: CastName; name: string; tag: string }[] = [
-  { c: 'nova', name: 'NOVA', tag: 'swept quiff · coral scarf' },
+  { c: 'costel', name: 'NEA COSTEL', tag: 'flat cap · moustache · cardigan' },
   { c: 'kit', name: 'KIT', tag: 'workshop goggles · rust jacket' },
   { c: 'juno', name: 'JUNO', tag: 'top bun + star clip · lilac hoodie' },
 ];

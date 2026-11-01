@@ -1,0 +1,348 @@
+{
+ "id": "Stilou",
+ "slug": "stilou",
+ "topic": "Cine a inventat stiloul? (history explainer, host Nea Costel)",
+ "title": [
+  "CINE A INVENTAT",
+  "STILOUL?"
+ ],
+ "accent": "STILOUL",
+ "voice": {
+  "id": "pqHfZKP75CvOlQylNhV4",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.4,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "host hook",
+   "text": "Cine a inventat stiloul? Americanii? Ei, aș!"
+  },
+  {
+   "beat": "place and time",
+   "text": "Paris, o mie opt sute douăzeci și șapte. Un student român scrie cu pana."
+  },
+  {
+   "beat": "the problem, comic",
+   "text": "Pic. Pată. Pic. Încă o pată."
+  },
+  {
+   "beat": "the idea",
+   "text": "Așa că inventează un toc care se umple singur cu cerneală."
+  },
+  {
+   "beat": "the fact",
+   "text": "Pe douăzeci și cinci mai primește brevetul francez numărul trei mii două sute opt."
+  },
+  {
+   "beat": "the name",
+   "text": "Numele lui? Petrache Poenaru."
+  },
+  {
+   "beat": "host twist",
+   "text": "Și știi ce-i mai tare? N-a ajuns niciodată în magazine."
+  }
+ ],
+ "science": [
+  {
+   "claim": "In 1827 Petrache Poenaru, a Romanian student in Paris, patented a self-filling pen.",
+   "working": "French patent no. 3208, granted 25 May 1827, for 'plume portable sans fin, qui s'alimente elle-même avec de l'encre'. A swan quill served as the ink reservoir. First patent obtained by a Romanian.",
+   "source": "TVR Info; AGIR (Asociația Generală a Inginerilor din România); BZI"
+  },
+  {
+   "claim": "It never went into mass production.",
+   "working": "Accounts agree the pen was not manufactured commercially; Waterman's capillary-feed pen (1884) became the commercial fountain pen.",
+   "source": "TVR Info; Știri pe surse"
+  }
+ ],
+ "gaps": {
+  "pairs": {
+   "aș|Paris": 0.5,
+   "pana|Pic": 0.45,
+   "pată|Așa": 0.45,
+   "cerneală|Pe": 0.4,
+   "opt|Numele": 0.45,
+   "Poenaru|Și": 0.6
+  }
+ },
+ "tail": 1.8,
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "set": "host corner",
+   "key": 20,
+   "note": "Nea Costel, title pops"
+  },
+  {
+   "id": "S2",
+   "size": "close-up",
+   "set": "host corner",
+   "key": 14,
+   "note": "Americanii? Ei, as! wags finger"
+  },
+  {
+   "id": "S3",
+   "size": "wide",
+   "set": "Paris dusk silhouette",
+   "key": 14,
+   "note": "Paris 1827"
+  },
+  {
+   "id": "S4",
+   "size": "medium",
+   "set": "attic window silhouette",
+   "key": 14,
+   "note": "student writing with a quill"
+  },
+  {
+   "id": "S5",
+   "size": "insert",
+   "set": "desk paper",
+   "key": 30,
+   "note": "ink drips, blots"
+  },
+  {
+   "id": "S6",
+   "size": "schematic",
+   "set": "schematic",
+   "key": 40,
+   "note": "pen with a quill reservoir fills itself"
+  },
+  {
+   "id": "S7",
+   "size": "insert",
+   "set": "patent",
+   "key": 30,
+   "note": "Brevet nr. 3208, 25 mai 1827, stamp"
+  },
+  {
+   "id": "S8",
+   "size": "card",
+   "set": "name card",
+   "key": 20,
+   "note": "Petrache Poenaru"
+  },
+  {
+   "id": "S9",
+   "size": "close-up",
+   "set": "host corner",
+   "key": 14,
+   "note": "si stii ce-i mai tare?"
+  },
+  {
+   "id": "S10",
+   "size": "wide",
+   "set": "shop window",
+   "key": 20,
+   "note": "empty shop window, host shrugs"
+  },
+  {
+   "id": "S11",
+   "size": "ecu",
+   "set": "patent",
+   "key": 14,
+   "note": "the number 3208"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "Americanii"
+  },
+  {
+   "shot": "S3",
+   "at": "Paris"
+  },
+  {
+   "shot": "S4",
+   "at": "Un"
+  },
+  {
+   "shot": "S5",
+   "at": "Pic"
+  },
+  {
+   "shot": "S6",
+   "at": "Așa"
+  },
+  {
+   "shot": "S7",
+   "at": "Pe"
+  },
+  {
+   "shot": "S11",
+   "at": "numărul"
+  },
+  {
+   "shot": "S8",
+   "at": "Numele"
+  },
+  {
+   "shot": "S9",
+   "at": "Și"
+  },
+  {
+   "shot": "S10",
+   "at": "N"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S7+40",
+   "kind": "shake",
+   "len": 6,
+   "amp": 6
+  }
+ ],
+ "sound": {
+  "clips": {
+   "title_boom": [
+    "a cinematic whoosh rising into a deep boom impact",
+    1.6
+   ],
+   "room_tone": [
+    "quiet indoor room tone in the evening, faint distant city hum, no voices",
+    12.5
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "paper_land": [
+    "a thick stack of paper sheets dropped flat on a wooden desk, a soft slap and rustle",
+    0.7
+   ],
+   "ding": [
+    "a correct answer ding, bright bell chime",
+    0.8
+   ],
+   "ink_drip": [
+    "a single fat drop of ink falling and splatting on paper, wet cartoon plip",
+    0.5
+   ],
+   "quill_scratch": [
+    "a goose quill pen scratching on rough paper, writing quickly, close",
+    2.5
+   ],
+   "paris_dusk": [
+    "an old cobbled city street at dusk in the 1800s, horse hooves and carriage wheels in the distance, church bell far away, no voices",
+    3.0
+   ],
+   "stamp": [
+    "a heavy rubber stamp slammed down hard on a wooden desk, one thud",
+    0.7
+   ],
+   "shrug_horn": [
+    "a comedic sad trombone wah wah, short, cartoon",
+    1.6
+   ],
+   "mc": [
+    "playful light comedic documentary underscore, pizzicato strings and a gentle accordion, curious and cheeky, steady tempo, no vocals",
+    31,
+    "music"
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "room_tone",
+    0.1,
+    "onset",
+    "S3"
+   ],
+   [
+    "S1+10",
+    "title_boom",
+    0.35,
+    "peak"
+   ],
+   [
+    "S2+34",
+    "pop",
+    0.3
+   ],
+   [
+    "S3",
+    "paris_dusk",
+    0.25,
+    "onset",
+    "S4"
+   ],
+   [
+    "S4",
+    "quill_scratch",
+    0.3,
+    "onset",
+    "S5"
+   ],
+   [
+    "S5+7",
+    "ink_drip",
+    0.5
+   ],
+   [
+    "S5+39",
+    "ink_drip",
+    0.5
+   ],
+   [
+    "S5+65",
+    "ink_drip",
+    0.5
+   ],
+   [
+    "S6+40",
+    "ding",
+    0.25
+   ],
+   [
+    "S7",
+    "paper_land",
+    0.3
+   ],
+   [
+    "S7+40",
+    "stamp",
+    0.55
+   ],
+   [
+    "S8+2",
+    "pop",
+    0.25
+   ],
+   [
+    "S9",
+    "room_tone",
+    0.1,
+    "onset",
+    "S10"
+   ],
+   [
+    "s:28.9",
+    "shrug_horn",
+    0.4
+   ]
+  ],
+  "music": [
+   {
+    "clip": "mc",
+    "from": "f:0",
+    "fade_in": 0.3,
+    "fade_out": 1.2
+   }
+  ],
+  "levels": {
+   "sfx_lu": -6.0,
+   "music_lu": -13.0
+  }
+ }
+}
