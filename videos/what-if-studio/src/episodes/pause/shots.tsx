@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Hero, HERO, LOOKS, Pose, basePose, poseAt, faceAt, kf, clamp, lerp, easeOut, easeIn, backOut, settle, camT, joints, toWorld, reachAngle,
   LEG_LEN, HEAD, Study, Desk, Classroom, SchoolDesk, Kid, Kitchen, KitchenIsland, KITCHEN, stand, Rooftop, Schematic, SCH, SchLabel, DrawOn,
   Tabletop, Phone, PaperBall, Foreground, Glow, LightVeil, TitleCard, Dial, Sparkle, FocusRings, ShotProps,
+  VerticalCtx, FONT,
 } from '../../engine';
 
 // "What if you could pause time, but only while you hold your breath?" Sixteen shots on four sets (study,
@@ -292,13 +293,24 @@ export const S11: React.FC<ShotProps> = ({ t, len }) => {
     <g transform={camT(960, kf(t, [[0, 520], [len, 545]]), kf(t, [[0, 1.0], [len, 1.06]]))}>
       <Rooftop clock t={t < 26 ? t : 26} sunY={650} spin={spin} />
       <Hero look={JUNO} pose={{ ...pose, ...faceAt(t, [[0, 'happy']]) }} shadow={0.6} rimId="rimR" />
-      <TitleCard t={t} lines={['WHAT IF YOU COULD', 'PAUSE TIME?']} accent="PAUSE" accentT={26} />
+      {useContext(VerticalCtx) ? (
+        // tall frame: the title stacked inside the 608-wide window
+        <g>
+          {[['WHAT IF YOU COULD', 170, 40, '#F6EFE3', 2], ['PAUSE', 285, 120, '#FF8A3D', 6], ['TIME?', 400, 120, '#FF8A3D', 10]].map(([txt, y, size, fill, d]) => (
+            <text key={txt as string} x={960} y={y as number} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={size as number} fill={fill as string}
+              stroke="#1A1230" strokeWidth={(size as number) * 0.12} paintOrder="stroke" opacity={Math.min(1, Math.max(0, (t - (d as number)) / 7))}>{txt as string}</text>
+          ))}
+        </g>
+      ) : (
+        <TitleCard t={t} lines={['WHAT IF YOU COULD', 'PAUSE TIME?']} accent="PAUSE" accentT={26} />
+      )}
     </g>
   );
 };
 
 // ---------- S12: low angle, medium: Juno takes a big breath and holds it; the breath dial starts draining ----------
 export const S12: React.FC<ShotProps> = ({ t, len }) => {
+  const vx = useContext(VerticalCtx) ? 1180 : 1500; // tall frame: the dial moves inside the window
   const pose = poseAt(t, [
     { f: 0, p: { x: 900, y: 790, scale: 1.8, yaw: 0.15, armL: { a: 20, b: 6 }, armR: { a: 20, b: 6 } } },
     { f: 8, p: { squash: -0.04, armL: { a: 34, b: 14 }, armR: { a: 34, b: 14 }, headTilt: -6 }, ease: easeOut },
@@ -310,8 +322,8 @@ export const S12: React.FC<ShotProps> = ({ t, len }) => {
     <g transform={camT(960, 540, kf(t, [[0, 1.0], [len, 1.05]]))}>
       <Rooftop clock t={26} sunX={1080} sunY={520} spin={156} low={260} />
       <Hero look={JUNO} pose={{ ...pose, ...faceAt(t, [[0, 'neutral'], [14, 'puff']]) }} shadow={0} rimId="rimR" />
-      {t > 14 ? <Dial x={1500} y={330} r={110} p={1 - drain * 0.1} readout={`0:${String(Math.floor(secs)).padStart(2, '0')}`} size={44} /> : null}
-      {t > 14 ? <SchLabel x={1500} y={490} t={t - 14} text="BREATH" size={30} color="#F6EFE3" /> : null}
+      {t > 14 ? <Dial x={vx} y={330} r={110} p={1 - drain * 0.1} readout={`0:${String(Math.floor(secs)).padStart(2, '0')}`} size={44} /> : null}
+      {t > 14 ? <SchLabel x={vx} y={490} t={t - 14} text="BREATH" size={30} color="#F6EFE3" /> : null}
     </g>
   );
 };
