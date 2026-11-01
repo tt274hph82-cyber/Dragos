@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
-  basePose, kf, clamp, lerp, easeOut, OUT, LEG_LEN, Hero, camT, Schematic, SchLabel, DrawOn, SCH, Dial, TitleCard, Glow, ShotProps,
+  VerticalCtx, FONT, basePose, kf, clamp, lerp, easeOut, OUT, LEG_LEN, Hero, camT, Schematic, SchLabel, DrawOn, SCH, Dial, TitleCard, Glow, ShotProps,
 } from '../../engine';
 import { JUNO, SUIT, ICE, Act, scene, closeUp, sets, Arm, Frozen } from '../pause-full/parts';
 
@@ -26,7 +26,9 @@ const guards = (freeze?: number): Act[] => [
 const suit = (o: Partial<Act> = {}): Act => ({ look: SUIT, x: 1520, feet: FEET, scale: 0.9, pose: { yaw: -0.5, look: -0.8, armR: { a: 60, b: 70 } }, face: [[0, 'smug']], rim: 'rimL', shadow: 0.4, ...o });
 const juno = (o: Partial<Act> = {}): Act => ({ look: JUNO, x: 960, feet: FEET, scale: 0.9, pose: { yaw: 0.2, look: 0.5 }, face: [[0, 'worried']], shadow: 0.4, ...o });
 const BigDial: React.FC<{ t: number; from: number; to: number; dur: number; x?: number; y?: number; r?: number }> = ({ t, from, to, dur, x = 1640, y = 220, r = 120 }) => {
+  const vert = useContext(VerticalCtx);
   const s = Math.round(lerp(from, to, clamp(t / dur)));
+  if (vert) return null;
   return <Dial x={x} y={y} r={r} p={Math.min(1, s / 100)} readout={`${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`} size={r * 0.42} />;
 };
 
@@ -68,26 +70,55 @@ export const S8: React.FC<ShotProps> = ({ t, len }) => {
     </g>
   );
 };
-export const S9: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, kf(t, [[0, 520], [len, 545]]), kf(t, [[0, 1.0], [len, 1.06]]))}>
-    {sets.roof(t, { sunX: 960, sunY: 650, clock: true, spin: 156, red: 0.25 })}
-    <Hero look={JUNO} pose={{ ...basePose, x: 960, y: 820 - LEG_LEN * 0.62, scale: 0.62, expr: 'worried' }} shadow={0.6} rimId="rimR" />
-    <TitleCard t={t} lines={['WHAT IF YOU COULD', 'PAUSE TIME? PART 2']} accent="2" accentT={20} size={110} />
-  </g>
-);
+const TallTitle: React.FC<{ t: number }> = ({ t }) => {
+  const pop = (d: number) => Math.min(1, Math.max(0, (t - d) / 7));
+  const L = (y: number, text: string, size: number, fill: string, d: number) => (
+    <text x={960} y={y} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={size} fill={fill} stroke="#1A1230" strokeWidth={size * 0.12} paintOrder="stroke" opacity={pop(d)} transform={`translate(960 ${y}) scale(${0.8 + 0.2 * pop(d)}) translate(-960 ${-y})`}>{text}</text>
+  );
+  return <g>{L(150, 'WHAT IF YOU COULD', 40, '#F6EFE3', 2)}{L(250, 'PAUSE', 100, '#FF8A3D', 5)}{L(350, 'TIME?', 100, '#FF8A3D', 8)}{L(470, 'PART 2', 90, '#FF6A5A', 18)}</g>;
+};
+export const S9: React.FC<ShotProps> = ({ t, len }) => {
+  const vert = useContext(VerticalCtx);
+  return (
+    <g transform={camT(960, kf(t, [[0, 520], [len, 545]]), kf(t, [[0, 1.0], [len, 1.06]]))}>
+      {sets.roof(t, { sunX: 960, sunY: 650, clock: true, spin: 156, red: 0.25 })}
+      <Hero look={JUNO} pose={{ ...basePose, x: 960, y: 820 - LEG_LEN * 0.62, scale: 0.62, expr: 'worried' }} shadow={0.6} rimId="rimR" />
+      {vert ? <TallTitle t={t} /> : <TitleCard t={t} lines={['WHAT IF YOU COULD', 'PAUSE TIME? PART 2']} accent="2" accentT={20} size={110} />}
+    </g>
+  );
+};
 const BRAIN = 'M 780 560 Q 760 400 900 380 Q 960 300 1060 360 Q 1180 340 1200 460 Q 1260 560 1160 620 Q 1100 700 980 660 Q 860 700 800 620 Z M 960 380 Q 940 480 990 560 M 1060 420 Q 1100 500 1060 600';
-export const S10: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={`translate(960 540) scale(${kf(t, [[0, 1], [len, 1.04]])}) translate(-960 -540)`}>
-    <Schematic t={t + 60} id="p2s10" />
-    <g transform="translate(-380 0)"><DrawOn d={BRAIN} t={t} dur={12} width={7} /></g>
-    <SchLabel x={1280} y={440} t={t - 6} text="2% OF YOUR WEIGHT" size={44} color={SCH.dim} />
-    <SchLabel x={1280} y={600} t={t - 14} text="20% OF YOUR OXYGEN" size={64} color={SCH.live} />
-    {[0, 1, 2].map((k) => {
-      const p = ((t + k * 10) % 30) / 30;
-      return <circle key={k} cx={620} cy={520} r={160 + p * 220} fill="none" stroke="#FF6A5A" strokeWidth={5} opacity={(1 - p) * clamp((t - 16) / 6)} />;
-    })}
-  </g>
-);
+export const S10: React.FC<ShotProps> = ({ t, len }) => {
+  const vert = useContext(VerticalCtx);
+  // tall: the brain small at the top, the two numbers stacked below it, inside the 608-wide window
+  const bx = vert ? 0 : -380;
+  const by = vert ? -230 : 0;
+  const bs = vert ? 0.55 : 1;
+  const ring = { x: vert ? 960 : 620, y: vert ? 520 * 0.55 + 230 * 0.45 - 230 + 40 : 520 };
+  return (
+    <g transform={`translate(960 540) scale(${kf(t, [[0, 1], [len, 1.04]])}) translate(-960 -540)`}>
+      <Schematic t={t + 60} id="p2s10" />
+      <g transform={`translate(${bx} ${by}) translate(1000 520) scale(${bs}) translate(-1000 -520)`}><DrawOn d={BRAIN} t={t} dur={12} width={7 / bs} /></g>
+      {vert ? (
+        <>
+          <SchLabel x={960} y={560} t={t - 6} text="2% OF YOUR" size={40} color={SCH.dim} />
+          <SchLabel x={960} y={610} t={t - 6} text="WEIGHT" size={40} color={SCH.dim} />
+          <SchLabel x={960} y={760} t={t - 14} text="20% OF YOUR" size={56} color={SCH.live} />
+          <SchLabel x={960} y={830} t={t - 14} text="OXYGEN" size={56} color={SCH.live} />
+        </>
+      ) : (
+        <>
+          <SchLabel x={1280} y={440} t={t - 6} text="2% OF YOUR WEIGHT" size={44} color={SCH.dim} />
+          <SchLabel x={1280} y={600} t={t - 14} text="20% OF YOUR OXYGEN" size={64} color={SCH.live} />
+        </>
+      )}
+      {[0, 1, 2].map((k) => {
+        const p = ((t + k * 10) % 30) / 30;
+        return <circle key={k} cx={vert ? 960 : ring.x} cy={vert ? 290 : ring.y} r={(160 + p * 220) * bs} fill="none" stroke="#FF6A5A" strokeWidth={5} opacity={(1 - p) * clamp((t - 16) / 6)} />;
+      })}
+    </g>
+  );
+};
 export const S11 = closeUp({ look: JUNO, face: [[0, 'tired'], [3, 'shock']], bg: (t) => sets.street(t, false, 'p2s11b', 0.3), bgT: 'translate(-1500 -800) scale(2)', x: 960, y: 600, sc: 5, yaw: 0.1, pose: { squash: -0.06 } });
 export const S12: React.FC<ShotProps> = ({ t, len }) => (
   <g transform={camT(kf(t, [[0, 1300], [len, 1320]]), 600, kf(t, [[0, 1.7], [len, 1.82]]))}>

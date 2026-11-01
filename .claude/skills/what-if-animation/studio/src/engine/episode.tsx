@@ -38,7 +38,7 @@ export type ShotMap = Record<string, React.FC<ShotProps>>;
 export type LookDef = {
   grade?: (lv: number) => string;
   jitter?: number; // sideways picture jitter in px at full strength
-  Overlay?: React.FC<{ f: number; lv: number; p: number; n: number }>; // p: progress through this run, n: which run (0, 1, 2...)
+  Overlay?: React.FC<{ f: number; lv: number; p: number; n: number; w?: number; h?: number }>; // p: progress through this run, n: which run (0, 1, 2...); w, h: the frame (1080 x 1920 when vertical)
 };
 
 const segAt = (tl: Timeline, f: number) => tl.segments.find((s) => f >= s.a && f < s.b) ?? tl.segments[tl.segments.length - 1];
@@ -82,8 +82,8 @@ const fxAt = (tl: Timeline, f: number) => {
 };
 
 /** Vignette and a fine grain that changes on twos, to take the vector edge off (the genre's finish). */
-const Grade: React.FC<{ f: number; grain: boolean; vignette: boolean }> = ({ f, grain, vignette }) => (
-  <svg width={1920} height={1080} viewBox="0 0 1920 1080" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+const Grade: React.FC<{ f: number; grain: boolean; vignette: boolean; w?: number; h?: number }> = ({ f, grain, vignette, w = 1920, h = 1080 }) => (
+  <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
     <defs>
       <radialGradient id="epVig" cx="50%" cy="50%" r="75%">
         <stop offset="55%" stopColor="#000" stopOpacity={0} />
@@ -94,23 +94,29 @@ const Grade: React.FC<{ f: number; grain: boolean; vignette: boolean }> = ({ f, 
         <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0" />
       </filter>
     </defs>
-    {vignette ? <rect width="1920" height="1080" fill="url(#epVig)" /> : null}
-    {grain ? <rect width="1920" height="1080" filter="url(#epGrain)" /> : null}
+    {vignette ? <rect width={w} height={h} fill="url(#epVig)" /> : null}
+    {grain ? <rect width={w} height={h} filter="url(#epGrain)" /> : null}
   </svg>
 );
 
 /** One shot drawn in the shared defs (filters, gradients), in a 1920 x 1080 world. */
-export const ShotFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <svg width={1920} height={1080} viewBox="0 0 1920 1080">
+export const ShotFrame: React.FC<{ children: React.ReactNode; w?: number; h?: number; viewBox?: string }> = ({ children, w = 1920, h = 1080, viewBox = '0 0 1920 1080' }) => (
+  <svg width={w} height={h} viewBox={viewBox} preserveAspectRatio="xMidYMid slice">
     <KitDefs />
     <SetDefs />
     {children}
   </svg>
 );
 
-export type EpisodeProps = { timeline: Timeline; shots: ShotMap; looks?: Record<string, LookDef>; grain?: boolean; vignette?: boolean; bg?: string };
+/**
+ * Vertical (9:16) framing: for each shot, the x (in the 1920-wide frame) the tall 608 x 1080 window centres on.
+ * A pair [from, to] pans across the shot. Shots read `useContext(VerticalCtx)` to swap in tall layouts (titles, cards).
+ */
+export type VerticalFraming = Record<string, number | [number, number]>;
+export const VerticalCtx = React.createContext(false);
+export type EpisodeProps = { timeline: Timeline; shots: ShotMap; looks?: Record<string, LookDef>; grain?: boolean; vignette?: boolean; bg?: string; vertical?: VerticalFraming };
 
-export const Episode: React.FC<EpisodeProps> = ({ timeline: tl, shots, looks = {}, grain = true, vignette = true, bg = '#0E0C1E' }) => {
+export const Episode: React.FC<EpisodeProps & { vert?: boolean }> = ({ timeline: tl, shots, looks = {}, grain = true, vignette = true, bg = '#0E0C1E', vertical, vert = false }) => {
   const f = useCurrentFrame();
   const seg = segAt(tl, f);
   const Shot = shots[seg.shot];
@@ -121,15 +127,28 @@ export const Episode: React.FC<EpisodeProps> = ({ timeline: tl, shots, looks = {
   const jitter = def?.jitter && lv > 0 ? Math.sin(f * 13.7) * def.jitter * lv : 0;
   const { flash, x, y } = fxAt(tl, f);
   const A = tl.audio;
+  const W = vert ? 1080 : 1920;
+  const H = vert ? 1920 : 1080;
+  let viewBox = '0 0 1920 1080';
+  if (vert) {
+    const len = info?.len ?? seg.b - seg.a;
+    const fr = vertical?.[seg.shot] ?? 960;
+    const k = clamp(clockAt(seg, f) / Math.max(1, len));
+    const cx = Array.isArray(fr) ? fr[0] + (fr[1] - fr[0]) * (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2) : fr;
+    const cw = (1080 * 1080) / 1920;
+    viewBox = `${Math.max(0, Math.min(1920 - cw, cx - cw / 2))} 0 ${cw} 1080`;
+  }
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
       <AbsoluteFill style={{ transform: `translate(${x + jitter}px, ${y}px) scale(${x || y ? 1.02 : 1})`, filter: def?.grade && lv > 0 ? def.grade(lv) : undefined }}>
-        <ShotFrame>{Shot ? <Shot t={clockAt(seg, f)} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</ShotFrame>
+        <VerticalCtx.Provider value={vert}>
+          <ShotFrame w={W} h={H} viewBox={viewBox}>{Shot ? <Shot t={clockAt(seg, f)} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</ShotFrame>
+        </VerticalCtx.Provider>
       </AbsoluteFill>
-      <Grade f={f} grain={grain} vignette={vignette} />
+      <Grade f={f} grain={grain} vignette={vignette} w={W} h={H} />
       {def?.Overlay && run ? (
-        <svg width={1920} height={1080} viewBox="0 0 1920 1080" style={{ position: 'absolute', inset: 0, opacity: lv }}>
-          <def.Overlay f={f} lv={lv} p={clamp((f - run.a) / (run.b - run.a))} n={run.n} />
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', inset: 0, opacity: lv }}>
+          <def.Overlay f={f} lv={lv} p={clamp((f - run.a) / (run.b - run.a))} n={run.n} w={W} h={H} />
         </svg>
       ) : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
@@ -160,5 +179,6 @@ export const defineEpisode = (id: string, p: EpisodeProps) => ({
   shotCount: p.timeline.shots.length,
   Main: () => <Episode {...p} />,
   Board: () => <Board timeline={p.timeline} shots={p.shots} grain={p.grain} vignette={p.vignette} bg={p.bg} />,
+  Vertical: p.vertical ? () => <Episode {...p} vert /> : null,
 });
 export type EpisodeDef = ReturnType<typeof defineEpisode>;
