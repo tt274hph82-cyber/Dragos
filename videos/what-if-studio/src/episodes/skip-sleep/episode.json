@@ -57,10 +57,15 @@
    "wall|yawns": 0.7,
    "yawns|What": 0.6,
    "sleep|In": 0.5,
-   "real|So": 0.5
+   "real|So": 0.9,
+   "So|whos": 0.28,
+   "whos|yawning": 0.22,
+   "yawning|on": 0.16,
+   "on|your": 0.1,
+   "your|wall": 0.14
   }
  },
- "tail": 0.8,
+ "tail": 2.6,
  "shots": [
   {
    "id": "S1",
@@ -413,12 +418,12 @@
     "S13"
    ],
    [
-    "S13+6",
+    "s:22.45",
     "yawn",
-    0.35
+    0.4
    ],
    [
-    "S13+14",
+    "s:23.0",
     "drone_hit",
     0.3
    ]

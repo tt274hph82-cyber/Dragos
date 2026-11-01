@@ -2,7 +2,7 @@
  "slug": "skip-sleep",
  "title": "WHAT IF YOU COULD SKIP SLEEP?",
  "fps": 30,
- "total": 670,
+ "total": 747,
  "segments": [
   {
    "shot": "S1",
@@ -97,17 +97,17 @@
   {
    "shot": "S12",
    "a": 564,
-   "b": 597,
+   "b": 609,
    "t0": 0,
-   "t1": 33,
+   "t1": 45,
    "line": "That's real."
   },
   {
    "shot": "S13",
-   "a": 597,
-   "b": 670,
+   "a": 609,
+   "b": 747,
    "t0": 0,
-   "t1": 73,
+   "t1": 138,
    "line": "So who's yawning on your wall?"
   }
  ],
@@ -215,7 +215,7 @@
    "id": "S12",
    "size": "ecu",
    "key": 14,
-   "len": 33,
+   "len": 45,
    "first": 564,
    "line": "That's real.",
    "note": "dark rings, shadow out of step"
@@ -224,8 +224,8 @@
    "id": "S13",
    "size": "wide",
    "key": 14,
-   "len": 73,
-   "first": 597,
+   "len": 138,
+   "first": 609,
    "line": "So who's yawning on your wall?",
    "note": "the shadow waves on its own"
   }
@@ -247,15 +247,15 @@
    "kind": "shake",
    "len": 8,
    "amp": 5,
-   "f": 597
+   "f": 609
   }
  ],
  "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.1833,
+  "musicVol": 0.0705,
   "voice": "skip-sleep/voice.wav",
   "sfx": "skip-sleep/sfx.wav",
-  "voiceVol": 0.8,
-  "sfxVol": 0.1812,
-  "music": "skip-sleep/music.wav",
-  "musicVol": 0.0697
+  "music": "skip-sleep/music.wav"
  }
 }
