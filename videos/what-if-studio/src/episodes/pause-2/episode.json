@@ -1,0 +1,389 @@
+{
+ "id": "Pause2",
+ "slug": "pause-2",
+ "topic": "What if you could pause time? Part 2: The Suit's test",
+ "title": [
+  "WHAT IF YOU COULD",
+  "PAUSE TIME? PART 2"
+ ],
+ "accent": "2",
+ "voice": {
+  "id": "TX3LPaxmHKxFdv7VOQHJ",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.4,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "1 cold open: the test",
+   "text": "The man in the grey suit wants a test. A stopwatch. A glass room. Hold your breath. Pause."
+  },
+  {
+   "beat": "1 cold open: escalating demos",
+   "text": "Thirty seconds. The guards freeze. Sixty. You walk out the door. Ninety. Your vision goes grey."
+  },
+  {
+   "beat": "2 the premise (title card)",
+   "text": "What if you could pause time? Part two."
+  },
+  {
+   "beat": "4 the turn: one real fact",
+   "text": "Your brain burns a fifth of your body's oxygen. That's real."
+  },
+  {
+   "beat": "5-7 cliffhanger",
+   "text": "So you breathe. And he's right behind you. He never froze."
+  }
+ ],
+ "science": [
+  {
+   "claim": "Your brain burns a fifth of your body's oxygen.",
+   "working": "The human brain is about 2% of body weight but uses roughly 20% of the oxygen the body takes up at rest (adults, at rest).",
+   "source": "Crile (1941) and Mink et al. (1981), as cited in J. Exp. Biol. 199(3):603 (1996); Hockenbury, Psychology (citing Magistretti 2009)"
+  }
+ ],
+ "gaps": {
+  "pairs": {
+   "Pause|Thirty": 0.6,
+   "grey|What": 0.5,
+   "two|Your": 0.5,
+   "real|So": 0.5,
+   "you|He": 0.5
+  }
+ },
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "set": "lab",
+   "key": 14,
+   "note": "the test room, the Suit, the guards"
+  },
+  {
+   "id": "S2",
+   "size": "insert",
+   "set": "lab",
+   "key": 14,
+   "note": "the stopwatch"
+  },
+  {
+   "id": "S3",
+   "size": "medium",
+   "set": "lab",
+   "key": 14,
+   "note": "inside the glass room"
+  },
+  {
+   "id": "S4",
+   "size": "close-up",
+   "set": "lab",
+   "key": 14,
+   "note": "holds her breath"
+  },
+  {
+   "id": "S5",
+   "size": "wide",
+   "set": "lab",
+   "key": 14,
+   "note": "everything freezes"
+  },
+  {
+   "id": "S6",
+   "size": "medium",
+   "set": "lab",
+   "key": 14,
+   "note": "walks past the frozen guards"
+  },
+  {
+   "id": "S7",
+   "size": "wide",
+   "set": "street",
+   "key": 14,
+   "note": "walks out, still paused"
+  },
+  {
+   "id": "S8",
+   "size": "ecu",
+   "set": "street",
+   "key": 14,
+   "note": "vision goes grey"
+  },
+  {
+   "id": "S9",
+   "size": "title",
+   "set": "rooftop",
+   "key": 14,
+   "note": "Part 2 title"
+  },
+  {
+   "id": "S10",
+   "size": "schematic",
+   "set": "schematic",
+   "key": 30,
+   "note": "brain: 20% of your oxygen"
+  },
+  {
+   "id": "S11",
+   "size": "close-up",
+   "set": "street",
+   "key": 14,
+   "note": "she breathes"
+  },
+  {
+   "id": "S12",
+   "size": "two-shot",
+   "set": "street",
+   "key": 14,
+   "note": "he's right behind her"
+  },
+  {
+   "id": "S13",
+   "size": "ecu",
+   "set": "street",
+   "key": 14,
+   "note": "he never froze"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "stopwatch"
+  },
+  {
+   "shot": "S3",
+   "at": "glass"
+  },
+  {
+   "shot": "S4",
+   "at": "Hold"
+  },
+  {
+   "shot": "S5",
+   "at": "Pause",
+   "look": "pause"
+  },
+  {
+   "shot": "S6",
+   "at": "Thirty",
+   "look": "pause"
+  },
+  {
+   "shot": "S7",
+   "at": "Sixty",
+   "look": "pause"
+  },
+  {
+   "shot": "S8",
+   "at": "Ninety",
+   "look": "pause"
+  },
+  {
+   "shot": "S9",
+   "at": "What"
+  },
+  {
+   "shot": "S10",
+   "at": "Your"
+  },
+  {
+   "shot": "S11",
+   "at": "So"
+  },
+  {
+   "shot": "S12",
+   "at": "And"
+  },
+  {
+   "shot": "S13",
+   "at": "He"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S5",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5
+  },
+  {
+   "at": "S11",
+   "kind": "flash",
+   "o": 0.5
+  },
+  {
+   "at": "S13",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  }
+ ],
+ "tail": 0.7,
+ "sound": {
+  "clips": {
+   "freeze": [
+    "time freezing: a soft deep whoosh that stops dead into silence, a muffled sub thump and a faint high ringing tone",
+    1.2
+   ],
+   "unfreeze": [
+    "sound rushing back in: a quick reversed whoosh into normal room sound, short",
+    0.8
+   ],
+   "breath_in": [
+    "a young girl takes one big deep breath in and holds it, close mic",
+    1.0
+   ],
+   "breath_out": [
+    "a young girl gasping for air after holding her breath for a long time, one big exhale, close",
+    1.2
+   ],
+   "heartbeat": [
+    "a heavy slow heartbeat thumping, tense, close and muffled",
+    3.0
+   ],
+   "ringing": [
+    "a high pitched ringing in the ears slowly fading in, head pressure, tense",
+    2.5
+   ],
+   "title_boom": [
+    "a cinematic whoosh rising into a deep boom impact",
+    1.6
+   ],
+   "drone_hit": [
+    "a dark ominous low drone hit, deep cinematic horror sting",
+    2.6
+   ],
+   "clock_tick": [
+    "a classroom wall clock ticking, three loud ticks",
+    2.0
+   ],
+   "street_amb": [
+    "an evening suburban street ambience, distant traffic and birds, no voices",
+    10.0
+   ],
+   "ui_blip": [
+    "a soft clean digital interface blip, short",
+    0.5
+   ],
+   "step": [
+    "a single sneaker footstep on a wooden stair, close",
+    0.5
+   ],
+   "m3": [
+    "tense thriller underscore, low pulsing synth, muted percussion, a slow menacing build, no vocals",
+    38,
+    "music"
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "clock_tick",
+    0.25,
+    "onset",
+    "S2"
+   ],
+   [
+    "S2+4",
+    "ui_blip",
+    0.3
+   ],
+   [
+    "S4+4",
+    "breath_in",
+    0.3,
+    "onset",
+    "S5"
+   ],
+   [
+    "S5+12",
+    "freeze",
+    0.35,
+    "onset",
+    "S6"
+   ],
+   [
+    "S6",
+    "heartbeat",
+    0.15,
+    "onset",
+    "S9"
+   ],
+   [
+    "S8",
+    "ringing",
+    0.15,
+    "onset",
+    "S9"
+   ],
+   [
+    "S9",
+    "title_boom",
+    0.4,
+    "peak"
+   ],
+   [
+    "S10",
+    "ui_blip",
+    0.25
+   ],
+   [
+    "S11+12",
+    "breath_out",
+    0.4,
+    "onset",
+    "S12"
+   ],
+   [
+    "S11+12",
+    "unfreeze",
+    0.3,
+    "onset",
+    "S12"
+   ],
+   [
+    "S11",
+    "street_amb",
+    0.08,
+    "onset"
+   ],
+   [
+    "S12+2",
+    "step",
+    0.35
+   ],
+   [
+    "S13+10",
+    "drone_hit",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "m3",
+    "from": "f:0",
+    "until": "S9",
+    "fade_in": 0.5,
+    "fade_out": 0.8
+   },
+   {
+    "clip": "m3",
+    "from": "S10",
+    "fade_in": 1.0,
+    "fade_out": 1.5,
+    "gain": 0.9
+   }
+  ],
+  "levels": {
+   "sfx_lu": -5.0,
+   "music_lu": -12.0
+  }
+ }
+}

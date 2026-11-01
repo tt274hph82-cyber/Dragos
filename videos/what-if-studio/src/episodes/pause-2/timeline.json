@@ -1,0 +1,262 @@
+{
+ "slug": "pause-2",
+ "title": "WHAT IF YOU COULD PAUSE TIME? PART 2",
+ "fps": 30,
+ "total": 745,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 68,
+   "t0": 0,
+   "t1": 68,
+   "line": "The man in the grey suit wants a test."
+  },
+  {
+   "shot": "S2",
+   "a": 68,
+   "b": 101,
+   "t0": 0,
+   "t1": 33,
+   "line": "A stopwatch."
+  },
+  {
+   "shot": "S3",
+   "a": 101,
+   "b": 132,
+   "t0": 0,
+   "t1": 31,
+   "line": "A glass room."
+  },
+  {
+   "shot": "S4",
+   "a": 132,
+   "b": 162,
+   "t0": 0,
+   "t1": 30,
+   "line": "Hold your breath."
+  },
+  {
+   "shot": "S5",
+   "a": 162,
+   "b": 195,
+   "t0": 0,
+   "t1": 33,
+   "line": "Pause.",
+   "look": "pause"
+  },
+  {
+   "shot": "S6",
+   "a": 195,
+   "b": 269,
+   "t0": 0,
+   "t1": 74,
+   "line": "Thirty seconds. The guards freeze.",
+   "look": "pause"
+  },
+  {
+   "shot": "S7",
+   "a": 269,
+   "b": 327,
+   "t0": 0,
+   "t1": 58,
+   "line": "Sixty. You walk out the door.",
+   "look": "pause"
+  },
+  {
+   "shot": "S8",
+   "a": 327,
+   "b": 401,
+   "t0": 0,
+   "t1": 74,
+   "line": "Ninety. Your vision goes grey.",
+   "look": "pause"
+  },
+  {
+   "shot": "S9",
+   "a": 401,
+   "b": 489,
+   "t0": 0,
+   "t1": 88,
+   "line": "What if you could pause time? Part two."
+  },
+  {
+   "shot": "S10",
+   "a": 489,
+   "b": 604,
+   "t0": 0,
+   "t1": 115,
+   "line": "Your brain burns a fifth of your body's oxygen. That's real."
+  },
+  {
+   "shot": "S11",
+   "a": 604,
+   "b": 639,
+   "t0": 0,
+   "t1": 35,
+   "line": "So you breathe."
+  },
+  {
+   "shot": "S12",
+   "a": 639,
+   "b": 692,
+   "t0": 0,
+   "t1": 53,
+   "line": "And he's right behind you."
+  },
+  {
+   "shot": "S13",
+   "a": 692,
+   "b": 745,
+   "t0": 0,
+   "t1": 53,
+   "line": "He never froze."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "key": 14,
+   "len": 68,
+   "first": 0,
+   "line": "The man in the grey suit wants a test.",
+   "note": "the test room, the Suit, the guards"
+  },
+  {
+   "id": "S2",
+   "size": "insert",
+   "key": 14,
+   "len": 33,
+   "first": 68,
+   "line": "A stopwatch.",
+   "note": "the stopwatch"
+  },
+  {
+   "id": "S3",
+   "size": "medium",
+   "key": 14,
+   "len": 31,
+   "first": 101,
+   "line": "A glass room.",
+   "note": "inside the glass room"
+  },
+  {
+   "id": "S4",
+   "size": "close-up",
+   "key": 14,
+   "len": 30,
+   "first": 132,
+   "line": "Hold your breath.",
+   "note": "holds her breath"
+  },
+  {
+   "id": "S5",
+   "size": "wide",
+   "key": 14,
+   "len": 33,
+   "first": 162,
+   "line": "Pause.",
+   "note": "everything freezes"
+  },
+  {
+   "id": "S6",
+   "size": "medium",
+   "key": 14,
+   "len": 74,
+   "first": 195,
+   "line": "Thirty seconds. The guards freeze.",
+   "note": "walks past the frozen guards"
+  },
+  {
+   "id": "S7",
+   "size": "wide",
+   "key": 14,
+   "len": 58,
+   "first": 269,
+   "line": "Sixty. You walk out the door.",
+   "note": "walks out, still paused"
+  },
+  {
+   "id": "S8",
+   "size": "ecu",
+   "key": 14,
+   "len": 74,
+   "first": 327,
+   "line": "Ninety. Your vision goes grey.",
+   "note": "vision goes grey"
+  },
+  {
+   "id": "S9",
+   "size": "title",
+   "key": 14,
+   "len": 88,
+   "first": 401,
+   "line": "What if you could pause time? Part two.",
+   "note": "Part 2 title"
+  },
+  {
+   "id": "S10",
+   "size": "schematic",
+   "key": 30,
+   "len": 115,
+   "first": 489,
+   "line": "Your brain burns a fifth of your body's oxygen. That's real.",
+   "note": "brain: 20% of your oxygen"
+  },
+  {
+   "id": "S11",
+   "size": "close-up",
+   "key": 14,
+   "len": 35,
+   "first": 604,
+   "line": "So you breathe.",
+   "note": "she breathes"
+  },
+  {
+   "id": "S12",
+   "size": "two-shot",
+   "key": 14,
+   "len": 53,
+   "first": 639,
+   "line": "And he's right behind you.",
+   "note": "he's right behind her"
+  },
+  {
+   "id": "S13",
+   "size": "ecu",
+   "key": 14,
+   "len": 53,
+   "first": 692,
+   "line": "He never froze.",
+   "note": "he never froze"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.5,
+   "f": 162
+  },
+  {
+   "kind": "flash",
+   "o": 0.5,
+   "f": 604
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 692
+  }
+ ],
+ "audio": {
+  "voice": "pause-2/voice.wav",
+  "sfx": "pause-2/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1671,
+  "music": "pause-2/music.wav",
+  "musicVol": 0.0791
+ }
+}
