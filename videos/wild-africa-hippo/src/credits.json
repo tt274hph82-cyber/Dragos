@@ -230,5 +230,37 @@
   "artist": "Jorge Láscar from Australia",
   "license": "CC BY 2.0",
   "page": "https://commons.wikimedia.org/wiki/File:Hippopotamuses_(4613006687).jpg"
+ },
+ {
+  "key": "bank",
+  "file": "bank.jpg",
+  "title": "Gambian wild hippo.jpg",
+  "artist": "Ikiwaner",
+  "license": "CC BY-SA 3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Gambian_wild_hippo.jpg"
+ },
+ {
+  "key": "charge",
+  "file": "charge.jpg",
+  "title": "Hippopotamuses , Lake Naivasha (30676515958).jpg",
+  "artist": "Ray in Manila",
+  "license": "CC BY 2.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hippopotamuses_,_Lake_Naivasha_(30676515958).jpg"
+ },
+ {
+  "key": "canoe",
+  "file": "canoe.jpg",
+  "title": "Vista aérea del delta del Okavango, Botsuana, 2018-08-01, DD 24.jpg",
+  "artist": "Diego Delso",
+  "license": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Vista_a%C3%A9rea_del_delta_del_Okavango,_Botsuana,_2018-08-01,_DD_24.jpg"
+ },
+ {
+  "key": "golden",
+  "file": "golden.jpg",
+  "title": "Hipopótamos (Hippopotamus amphibius), parque nacional de Chobe, Botsuana, 2018-07-28, DD 79.jpg",
+  "artist": "Diego Delso",
+  "license": "CC BY-SA 4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Hipop%C3%B3tamos_(Hippopotamus_amphibius),_parque_nacional_de_Chobe,_Botsuana,_2018-07-28,_DD_79.jpg"
  }
 ]
