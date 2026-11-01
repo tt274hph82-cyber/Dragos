@@ -89,7 +89,7 @@ export const S1: React.FC<ShotProps> = ({ t, len }) => {
 };
 
 // ---------- S2: close-up, "Leonardo da Vinci? Sure...": a knowing, sideways look ----------
-const S2C = closeUp({ look: COSTEL, vertSc: 0.62, face: [[0, 'smug']], bg: (t) => corner(t, 'pc2b'), x: 960, y: 560, sc: 4.6, yaw: 0.2, eyes: 0.6, tilt: 6 });
+const S2C = closeUp({ look: COSTEL, vertSc: 0.55, vertY: 500, face: [[0, 'smug']], bg: (t) => corner(t, 'pc2b'), x: 960, y: 560, sc: 4.6, yaw: 0.2, eyes: 0.6, tilt: 6 });
 export const S2: React.FC<ShotProps> = (p) => (
   <g>
     <S2C {...p} />
@@ -117,7 +117,7 @@ export const S3: React.FC<ShotProps> = ({ t, len }) => (
 );
 
 // ---------- S4: close-up, "But he never jumped.": eyebrows up, a shrug ----------
-const S4C = closeUp({ look: COSTEL, vertSc: 0.62, face: [[0, 'oops']], bg: (t) => corner(t, 'pc4b'), x: 960, y: 600, sc: 5.2, yaw: -0.05, eyes: 0, pose: { armL: { a: 40, b: 80 }, armR: { a: 40, b: 80 } } });
+const S4C = closeUp({ look: COSTEL, vertSc: 0.55, vertY: 500, face: [[0, 'oops']], bg: (t) => corner(t, 'pc4b'), x: 960, y: 600, sc: 5.2, yaw: -0.05, eyes: 0, pose: { armL: { a: 40, b: 80 }, armR: { a: 40, b: 80 } } });
 export const S4: React.FC<ShotProps> = (p) => (
   <g>
     <S4C {...p} />
@@ -229,7 +229,7 @@ export const S10: React.FC<ShotProps> = ({ t, len }) => (
 );
 
 // ---------- S11: close-up, "And Leonardo's design?": he leans in ----------
-const S11C = closeUp({ look: COSTEL, vertSc: 0.62, face: [[0, 'smug']], bg: (t) => corner(t, 'pc11b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8 });
+const S11C = closeUp({ look: COSTEL, vertSc: 0.55, vertY: 500, face: [[0, 'smug']], bg: (t) => corner(t, 'pc11b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8 });
 export const S11: React.FC<ShotProps> = (p) => (
   <g>
     <S11C {...p} />

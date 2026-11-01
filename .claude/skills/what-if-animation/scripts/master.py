@@ -1,8 +1,9 @@
 """Step 8: the master. Renders the episode, then brings the mix to -14 LUFS with true peaks under -1 dBTP (two-pass
 loudnorm, video copied untouched), measures the result and writes the report.
 
-python <skill>/scripts/master.py <slug> [--skip-render] [--concurrency 6]
+python <skill>/scripts/master.py <slug> [--vertical] [--skip-render] [--concurrency 6]
 Writes out/<slug>/<slug>-raw.mp4, out/<slug>/<slug>-final.mp4 and out/<slug>/report.json
+--vertical renders only the 9:16 composition (<Id>Vertical, 1080x1920): the Shorts/Reels deliverable.
 """
 import json, re, subprocess, sys, time
 
@@ -19,7 +20,8 @@ npx = 'npx.cmd' if sys.platform == 'win32' else 'npx'
 
 if '--skip-render' not in args:
     t0 = time.time()
-    cmd = [npx, 'remotion', 'render', 'src/index.ts', ep['id'], str(raw), '--log', 'error']
+    comp = ep['id'] + ('Vertical' if '--vertical' in args else '')
+    cmd = [npx, 'remotion', 'render', 'src/index.ts', comp, str(raw), '--log', 'error']
     if conc:
         cmd += ['--concurrency', conc]
     print(' '.join(cmd))

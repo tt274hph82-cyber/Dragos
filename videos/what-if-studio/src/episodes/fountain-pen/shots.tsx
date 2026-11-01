@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Hero, LOOKS, Look, Pose, basePose, poseAt, faceAt, kf, clamp, lerp, easeOut, camT, HEAD, LEG_LEN, FONT,
-  Study, Schematic, SchLabel, DrawOn, SCH, Glow, TitleCard, ShotProps, walkPose, joints, toWorld,
+  Study, Schematic, SchLabel, DrawOn, SCH, Glow, TitleCard, ShotProps, walkPose, joints, toWorld, VerticalCtx,
 } from '../../engine';
 import { closeUp } from '../pause-full/parts';
 
@@ -24,7 +24,12 @@ export const backOut = (x: number) => 1 + 2.7 * Math.pow(x - 1, 3) + 1.7 * Math.
 export const pop = (t: number, d = 6) => (t <= 0 ? 0 : backOut(clamp(t / d)));
 
 /** Big bold caption in the Romanian-explainer style: white or yellow, thick dark outline. */
-export const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: number; fill?: string; rot?: number }> = ({ x, y, t, text, size = 96, fill = '#FFFFFF', rot = 0 }) => {
+// Reels/Shorts safe band: the apps cover the top ~14% and the bottom ~35% of a 9:16 frame, so in the vertical crop
+// captions move into source y ≈ 230..700 (≈ 280..1250 px of 1920). Top captions drop 80 px; bottom ones rise into the band.
+const safeY = (y: number) => (y >= 760 ? y - 380 : y + 80);
+export const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: number; fill?: string; rot?: number }> = ({ x, y: y0, t, text, size = 96, fill = '#FFFFFF', rot = 0 }) => {
+  const vert = useContext(VerticalCtx);
+  const y = vert ? safeY(y0) : y0;
   if (t < 0) return null;
   return (
     <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${pop(t)})`}>
@@ -108,7 +113,7 @@ export const S1: React.FC<ShotProps> = ({ t, len }) => {
 
 // ---------- S2: close-up, "Americanii? Ei, aș!": he scoffs and wags a finger ----------
 const S2C = closeUp({
-  look: COSTEL, vertSc: 0.62, face: [[0, 'smug'], [34, 'laugh']], bg: (t) => corner(t, 'st2b'), x: 960, y: 560, sc: 4.6, yaw: 0.15, eyes: 0.4,
+  look: COSTEL, vertSc: 0.55, vertY: 500, face: [[0, 'smug'], [34, 'laugh']], bg: (t) => corner(t, 'st2b'), x: 960, y: 560, sc: 4.6, yaw: 0.15, eyes: 0.4,
   pose: { armR: { a: 150, b: 30 }, handR: 'point' },
 });
 export const S2: React.FC<ShotProps> = (p) => (
@@ -255,8 +260,8 @@ export const S6: React.FC<ShotProps> = ({ t, len }) => {
       <DrawOn d={`M ${TUBE.x + 10} ${TUBE.y + TUBE.h} L ${TUBE.x + 60} ${TUBE.y + TUBE.h + 200} L ${TUBE.x + TUBE.w - 10} ${TUBE.y + TUBE.h} M ${TUBE.x + 60} ${TUBE.y + TUBE.h + 40} L ${TUBE.x + 60} ${TUBE.y + TUBE.h + 190}`} t={t - 8} dur={10} width={8} color={SCH.live} />
       {/* a drop running down to the tip, again and again */}
       {fill > 0.3 ? <circle cx={TUBE.x + 60} cy={TUBE.y + TUBE.h + 40 + ((t * 6) % 150)} r={9} fill="#4A5CFF" /> : null}
-      <SchLabel x={960} y={110} t={t - 4} text="BUILT-IN INK TANK" size={44} color={SCH.live} />
-      <SchLabel x={960} y={1000} t={t - 40} text="REFILLS ITSELF" size={60} />
+      <SchLabel x={960} y={200} t={t - 4} text="BUILT-IN INK TANK" size={44} color={SCH.live} />
+      <SchLabel x={960} y={660} t={t - 40} text="REFILLS ITSELF" size={60} />
     </g>
   );
 };
@@ -321,7 +326,7 @@ export const S8: React.FC<ShotProps> = ({ t, len }) => {
 
 // ---------- S9: close-up, "Și știi ce-i mai tare?": he leans in, conspiratorial ----------
 const S9C = closeUp({
-  look: COSTEL, vertSc: 0.62, face: [[0, 'smug']], bg: (t) => corner(t, 'st9b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8,
+  look: COSTEL, vertSc: 0.55, vertY: 500, face: [[0, 'smug']], bg: (t) => corner(t, 'st9b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8,
 });
 export const S9: React.FC<ShotProps> = (p) => (
   <g>

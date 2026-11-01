@@ -32,5 +32,15 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 - **The hero is Juno** (top bun + star clip, lilac hoodie), not the skill's Pip. Use `<Hero look={HERO} />`, where `HERO` = `LOOKS.juno`. In scripts, "you" = Juno. Her design rules are in `videos/what-if-studio/CHARACTER.md`; never redesign her.
 - Its credit reports need an ElevenLabs key with the "User read" and "History read" permissions.
 
+## Shorts / Reels: 9:16 only
+- Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.
+- **Keep everything inside the Reels/Shorts safe zone.** Facebook Reels and YouTube Shorts cover about the top 14% and the bottom 35% of the frame, and the Facebook feed can crop the video to 4:5.
+  - Put captions and key content between roughly 280 and 1250 px of the 1920 px height.
+  - Keep a margin of at least 6% on each side.
+- **Gentle zooms only.** The 9:16 crop is 607 px of the 1920 px source frame.
+  - Close-ups use `vertSc`/`vertY` (see `closeUp` in `pause-full/parts.tsx`).
+  - Shot zooms go through `camV` in `fountain-pen/shots.tsx`.
+  - Check stills of every shot at its most zoomed frame before rendering.
+
 ## Other notes
 - Never commit API keys. ElevenLabs uses the env var / GitHub secret `ELEVENLABS_API_KEY`.

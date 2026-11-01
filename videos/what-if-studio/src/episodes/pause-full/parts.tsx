@@ -93,11 +93,12 @@ export const closeUp = (o: {
   over?: (t: number, len: number, head: { x: number; y: number; sc: number }) => React.ReactNode;
   dim?: number;
   vertSc?: number; // scale the head by this in the 9:16 crop, so a big close-up still fits its width
+  vertY?: number; // where the head's centre sits in the 9:16 crop (keep faces out of the Reels/Shorts button zone)
 }): React.FC<ShotProps> =>
   ({ t, len }) => {
     const vert = useContext(VerticalCtx);
     const sc = (o.sc ?? 3.6) * (vert ? o.vertSc ?? 1 : 1) * (1 + 0.05 * clamp(t / len));
-    const head = { x: o.x ?? 960, y: o.y ?? 560 };
+    const head = { x: o.x ?? 960, y: (vert ? o.vertY : undefined) ?? o.y ?? 560 };
     const pose: Pose = {
       ...basePose, x: head.x, y: head.y - HEAD.y * sc, scale: sc, yaw: o.yaw ?? 0.2, look: o.eyes ?? 0.3, headTilt: o.tilt ?? 0,
       armL: { a: 14, b: -6 }, armR: { a: 14, b: -6 }, ...(o.pose ?? {}), ...faceAt(t, o.face),
