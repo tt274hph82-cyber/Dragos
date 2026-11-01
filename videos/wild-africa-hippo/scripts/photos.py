@@ -8,17 +8,17 @@ PICKS = {  # key: "File:..." (exact) or a search query
  'pod_nile': 'File:Hippopotamuses in the Nile at Murchison Falls National Park.jpg',
  'eyes_water': 'hippopotamus eyes above water',
  'yawn_big': 'File:Hippo Tilting Its Head While Yawning.jpg',
- 'face': 'hippopotamus head close portrait water',
+ 'face': 'hippopotamus head close-up',
  'whale': 'humpback whale breaching',
  'bank': 'hippopotamus resting riverbank',
  'walking': 'hippopotamus walking on land savanna',
  'skin': 'hippopotamus skin close-up',
  'pod_water': 'hippo pool hippos group water Africa',
  'underwater': 'hippopotamus underwater',
- 'ears': 'hippopotamus ears nostrils water surface',
+ 'ears': 'hippopotamus nostrils ears water',
  'surface': 'hippopotamus surfacing water head',
- 'red_sweat': 'hippopotamus red skin secretion',
- 'red_sweat2': 'hippopotamus pink skin out of water',
+ 'red_sweat': 'hippopotamus pink skin',
+ 'red_sweat2': 'hippopotamus out of water sun',
  'sunset': 'hippo sunset river Africa',
  'grazing': 'hippopotamus grazing grass',
  'dawn': 'hippos river morning mist',
@@ -52,7 +52,7 @@ def api(params):
             print('  api retry', e); time.sleep(10 * (i + 1))
     raise SystemExit('Commons API failed')
 PROPS = dict(prop='imageinfo', iiprop='size|extmetadata|url', iiurlwidth=1920)
-BAD = re.compile(r'zoo|tiergarten|zoolog|museum|skull|skelet|drawing|illustration|\(1[89]\d\d\)|stamp|map', re.I)
+BAD = re.compile(r'zoo|tiergarten|zoolog|museum|skull|skelet|drawing|illustration|painting|\(1[89]\d\d\)|stamp|map|guide to|antiqu|kuhnert|statue|toy|figurine', re.I)
 def info(p):
     ii = p['imageinfo'][0]; m = ii.get('extmetadata', {})
     strip = lambda s: re.sub('<[^>]+>', '', html.unescape(s or '')).strip()
@@ -68,13 +68,15 @@ def choose(q, used):
     for p in pages:
         if 'imageinfo' not in p: continue
         c = info(p)
-        ok_lic = re.search(r'CC BY|CC0|Public domain|No restrictions', c['license'], re.I) and 'NC' not in c['license']
+        ok_lic = re.search(r'CC BY|CC0', c['license'], re.I) and 'NC' not in c['license']
+        needs_hippo = 'hippo' in q.lower()
+        if needs_hippo and not re.search(r'hippo|flodh|nijlpaard|nilpferd', c['title'], re.I): continue
         if c['w'] >= 1600 and c['w'] / c['h'] >= 1.25 and ok_lic and not BAD.search(c['title']) and c['title'] not in used:
             return c
-    if '|' not in q and 'Hippopotamus amphibius' not in q:
+    if 'hippo' in q.lower() and q != 'Hippopotamus amphibius wild':
         print('  fallback for', q)
-        return choose(q.split()[-1] + ' Hippopotamus amphibius' if 'hippo' in q.lower() else q + ' Africa', used)
-    raise SystemExit(f'No photo for {q}')
+        return choose('Hippopotamus amphibius wild', used)
+    return None
 force = dict(a.split('=', 1) for a in sys.argv[1:] if '=' in a)
 cpath = ROOT / 'src/credits.json'
 credits = {c['key']: c for c in json.loads(cpath.read_text())} if cpath.exists() else {}
@@ -83,14 +85,18 @@ for key, q in PICKS.items():
     if key in force: q = force[key] if force[key].startswith('File:') else force[key]
     out = ROOT / f'public/photos/{key}.jpg'
     if out.exists() and key not in force: continue
-    c = choose(q, used); used.add(c['title'])
+    c = choose(q, used)
+    if c is None:
+        print('  NO PHOTO for', key, q); continue
+    used.add(c['title'])
     data = None
     for i in range(6):
         try:
             data = urllib.request.urlopen(urllib.request.Request(c['url'], headers=UA), timeout=120).read(); break
         except Exception as e:
             print('  retry', key, e); time.sleep(6 * (i + 1))
-    if data is None: raise SystemExit(f'download failed: {key}')
+    if data is None:
+        print('  download failed:', key); continue
     out.write_bytes(data)
     credits[key] = dict(key=key, file=f'{key}.jpg', title=c['title'], artist=c['artist'][:90], license=c['license'], page=c['page'])
     print(f'{key:12s} {c["license"]:14s} {c["title"][:70]}')
