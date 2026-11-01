@@ -8,14 +8,15 @@
  ],
  "accent": "STILOUL",
  "voice": {
-  "id": "pqHfZKP75CvOlQylNhV4",
+  "id": "2V7k6GOisfFlHlBdz8ec",
   "model": "eleven_v4",
   "settings": {
    "stability": 0.45,
    "similarity_boost": 0.8,
    "style": 0.4,
    "use_speaker_boost": true
-  }
+  },
+  "language": "ro"
  },
  "script": [
   {

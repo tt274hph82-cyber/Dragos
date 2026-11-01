@@ -7,89 +7,89 @@
   {
    "shot": "S1",
    "a": 0,
-   "b": 56,
+   "b": 54,
    "t0": 0,
-   "t1": 56,
+   "t1": 54,
    "line": "Cine a inventat stiloul?"
   },
   {
    "shot": "S2",
-   "a": 56,
-   "b": 134,
+   "a": 54,
+   "b": 128,
    "t0": 0,
-   "t1": 78,
+   "t1": 74,
    "line": "Americanii? Ei, aș!"
   },
   {
    "shot": "S3",
-   "a": 134,
-   "b": 222,
+   "a": 128,
+   "b": 219,
    "t0": 0,
-   "t1": 88,
+   "t1": 91,
    "line": "Paris, o mie opt sute douăzeci și șapte."
   },
   {
    "shot": "S4",
-   "a": 222,
-   "b": 304,
+   "a": 219,
+   "b": 300,
    "t0": 0,
-   "t1": 82,
+   "t1": 81,
    "line": "Un student român scrie cu pana."
   },
   {
    "shot": "S5",
-   "a": 304,
-   "b": 407,
+   "a": 300,
+   "b": 401,
    "t0": 0,
-   "t1": 103,
+   "t1": 101,
    "line": "Pic. Pată. Pic. Încă o pată."
   },
   {
    "shot": "S6",
-   "a": 407,
-   "b": 507,
+   "a": 401,
+   "b": 514,
    "t0": 0,
-   "t1": 100,
+   "t1": 113,
    "line": "Așa că inventează un toc care se umple singur cu cerneală."
   },
   {
    "shot": "S7",
-   "a": 507,
-   "b": 604,
+   "a": 514,
+   "b": 612,
    "t0": 0,
-   "t1": 97,
+   "t1": 98,
    "line": "Pe douăzeci și cinci mai primește brevetul francez"
   },
   {
    "shot": "S11",
-   "a": 604,
-   "b": 676,
+   "a": 612,
+   "b": 674,
    "t0": 0,
-   "t1": 72,
+   "t1": 62,
    "line": "numărul trei mii două sute opt."
   },
   {
    "shot": "S8",
-   "a": 676,
-   "b": 742,
+   "a": 674,
+   "b": 750,
    "t0": 0,
-   "t1": 66,
+   "t1": 76,
    "line": "Numele lui? Petrache Poenaru."
   },
   {
    "shot": "S9",
-   "a": 742,
-   "b": 799,
+   "a": 750,
+   "b": 806,
    "t0": 0,
-   "t1": 57,
+   "t1": 56,
    "line": "Și știi ce- i mai tare?"
   },
   {
    "shot": "S10",
-   "a": 799,
+   "a": 806,
    "b": 909,
    "t0": 0,
-   "t1": 110,
+   "t1": 103,
    "line": "N- a ajuns niciodată în magazine."
   }
  ],
@@ -98,7 +98,7 @@
    "id": "S1",
    "size": "wide",
    "key": 20,
-   "len": 56,
+   "len": 54,
    "first": 0,
    "line": "Cine a inventat stiloul?",
    "note": "Nea Costel, title pops"
@@ -107,8 +107,8 @@
    "id": "S2",
    "size": "close-up",
    "key": 14,
-   "len": 78,
-   "first": 56,
+   "len": 74,
+   "first": 54,
    "line": "Americanii? Ei, aș!",
    "note": "Americanii? Ei, as! wags finger"
   },
@@ -116,8 +116,8 @@
    "id": "S3",
    "size": "wide",
    "key": 14,
-   "len": 88,
-   "first": 134,
+   "len": 91,
+   "first": 128,
    "line": "Paris, o mie opt sute douăzeci și șapte.",
    "note": "Paris 1827"
   },
@@ -125,8 +125,8 @@
    "id": "S4",
    "size": "medium",
    "key": 14,
-   "len": 82,
-   "first": 222,
+   "len": 81,
+   "first": 219,
    "line": "Un student român scrie cu pana.",
    "note": "student writing with a quill"
   },
@@ -134,8 +134,8 @@
    "id": "S5",
    "size": "insert",
    "key": 30,
-   "len": 103,
-   "first": 304,
+   "len": 101,
+   "first": 300,
    "line": "Pic. Pată. Pic. Încă o pată.",
    "note": "ink drips, blots"
   },
@@ -143,8 +143,8 @@
    "id": "S6",
    "size": "schematic",
    "key": 40,
-   "len": 100,
-   "first": 407,
+   "len": 113,
+   "first": 401,
    "line": "Așa că inventează un toc care se umple singur cu cerneală.",
    "note": "pen with a quill reservoir fills itself"
   },
@@ -152,8 +152,8 @@
    "id": "S7",
    "size": "insert",
    "key": 30,
-   "len": 97,
-   "first": 507,
+   "len": 98,
+   "first": 514,
    "line": "Pe douăzeci și cinci mai primește brevetul francez",
    "note": "Brevet nr. 3208, 25 mai 1827, stamp"
   },
@@ -161,8 +161,8 @@
    "id": "S11",
    "size": "ecu",
    "key": 14,
-   "len": 72,
-   "first": 604,
+   "len": 62,
+   "first": 612,
    "line": "numărul trei mii două sute opt.",
    "note": "the number 3208"
   },
@@ -170,8 +170,8 @@
    "id": "S8",
    "size": "card",
    "key": 20,
-   "len": 66,
-   "first": 676,
+   "len": 76,
+   "first": 674,
    "line": "Numele lui? Petrache Poenaru.",
    "note": "Petrache Poenaru"
   },
@@ -179,8 +179,8 @@
    "id": "S9",
    "size": "close-up",
    "key": 14,
-   "len": 57,
-   "first": 742,
+   "len": 56,
+   "first": 750,
    "line": "Și știi ce- i mai tare?",
    "note": "si stii ce-i mai tare?"
   },
@@ -188,8 +188,8 @@
    "id": "S10",
    "size": "wide",
    "key": 20,
-   "len": 110,
-   "first": 799,
+   "len": 103,
+   "first": 806,
    "line": "N- a ajuns niciodată în magazine.",
    "note": "empty shop window, host shrugs"
   }
@@ -199,15 +199,15 @@
    "kind": "shake",
    "len": 6,
    "amp": 6,
-   "f": 547
+   "f": 554
   }
  ],
  "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.1833,
+  "musicVol": 0.0738,
   "voice": "stilou/voice.wav",
   "sfx": "stilou/sfx.wav",
-  "voiceVol": 0.8,
-  "sfxVol": 0.2444,
-  "music": "stilou/music.wav",
-  "musicVol": 0.0984
+  "music": "stilou/music.wav"
  }
 }
