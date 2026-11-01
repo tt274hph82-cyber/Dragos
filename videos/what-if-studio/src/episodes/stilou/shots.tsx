@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Hero, LOOKS, Look, Pose, basePose, poseAt, faceAt, kf, clamp, lerp, easeOut, camT, HEAD, LEG_LEN, FONT,
-  Study, Schematic, SchLabel, DrawOn, SCH, Glow, TitleCard, ShotProps, walkPose,
+  Study, Schematic, SchLabel, DrawOn, SCH, Glow, TitleCard, ShotProps, walkPose, joints, toWorld,
 } from '../../engine';
 import { closeUp } from '../pause-full/parts';
 
@@ -12,8 +12,9 @@ import { closeUp } from '../pause-full/parts';
 const COSTEL = LOOKS.costel;
 const INK = '#160C1E';
 /** A figure from the past: the rig in solid ink, the face drawn in the ink too (pure silhouette). */
-const SIL: Look = { ...COSTEL, skin: INK, skinShade: INK, hand: INK, jacket: INK, jacketShade: INK, accent: INK, limb: INK, line: INK, shoe: INK, hair: INK, face: INK, extra: 'suit' };
+const SIL: Look = { ...COSTEL, skin: INK, skinShade: INK, hand: INK, jacket: INK, jacketShade: INK, accent: INK, limb: INK, line: INK, shoe: INK, hair: INK, face: INK, extra: undefined };
 
+type P = { x: number; y: number };
 const backOut = (x: number) => 1 + 2.7 * Math.pow(x - 1, 3) + 1.7 * Math.pow(x - 1, 2);
 const pop = (t: number, d = 6) => (t <= 0 ? 0 : backOut(clamp(t / d)));
 
@@ -127,46 +128,73 @@ export const S3: React.FC<ShotProps> = ({ t, len }) => (
 );
 
 // ---------- S4: medium, an attic window at dusk: the student writes standing at a lectern, a quill in his hand ----------
+// The quill is held the way a pen is: the nib on the page just ahead of the fingers, the shaft resting back over the
+// hand toward the shoulder, the feather rising above the wrist. The page sits where his hand comes down.
 const studentPose = (t: number): Pose => {
-  const scrib = Math.sin(t * 0.9) * 6;
+  const scrib = Math.sin(t * 0.9) * 2.5;
   return {
-    ...basePose, x: 880, y: 900 - LEG_LEN * 1.25, scale: 1.25, yaw: 0.75, look: 0.8, headTilt: 12,
-    armR: { a: 70 + scrib, b: 60 - scrib }, armL: { a: 40, b: 50 }, tilt: 6,
+    ...basePose, x: 860, y: 900 - LEG_LEN * 1.25, scale: 1.25, yaw: 1, look: 1, headTilt: 8,
+    armR: { a: 58 + scrib, b: 40 - scrib * 0.5 }, armL: { a: -30, b: -62 }, tilt: 6,
   };
 };
-export const S4: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(kf(t, [[0, 940], [len, 980]]), 520, kf(t, [[0, 1.0], [len, 1.1]]))}>
-    <rect x={-200} y={-200} width={2400} height={1500} fill="#24132E" />
-    {/* the round attic window with the dusk city behind it */}
-    <defs><clipPath id="win4"><circle cx={980} cy={420} r={300} /></clipPath></defs>
-    <g clipPath="url(#win4)">
-      <Sky id="s4" sunY={560} />
-      <Roofs y={-80} c="#3A1E3E" />
+const BASE4 = studentPose(0);
+const HAND4 = (() => {
+  const j = joints(BASE4);
+  return toWorld(BASE4, j.armR.end);
+})();
+const DESK4 = { y: HAND4.y + 22, x0: HAND4.x - 110, x1: HAND4.x + 120 }; // the writing board's top edge at the hand
+const Quill: React.FC<{ nib: P; len?: number }> = ({ nib, len = 175 }) => {
+  // the shaft runs from the nib back through the fingers and on past the wrist
+  // a pen held in writing grip leans back at about 70 degrees: up, and a little back toward the writer
+  const ux = -0.26, uy = -0.97;
+  const tip = { x: nib.x + ux * len, y: nib.y + uy * len };
+  const nx = -uy, ny = ux; // normal, for the vane width
+  const v0 = { x: nib.x + ux * len * 0.45, y: nib.y + uy * len * 0.45 };
+  return (
+    <g fill={INK}>
+      <path d={`M ${nib.x} ${nib.y} L ${tip.x} ${tip.y}`} stroke={INK} strokeWidth={6} strokeLinecap="round" />
+      <path d={`M ${v0.x} ${v0.y} Q ${(v0.x + tip.x) / 2 + nx * 34} ${(v0.y + tip.y) / 2 + ny * 34} ${tip.x + ux * 14} ${tip.y + uy * 14} Q ${(v0.x + tip.x) / 2 - nx * 8} ${(v0.y + tip.y) / 2 - ny * 8} ${v0.x} ${v0.y} Z`} />
     </g>
-    <circle cx={980} cy={420} r={300} fill="none" stroke={INK} strokeWidth={30} />
-    <path d="M 980 120 L 980 720 M 680 420 L 1280 420" stroke={INK} strokeWidth={18} />
-    {/* the lectern */}
-    <path d="M 1010 720 L 1170 690 L 1150 740 L 1030 760 Z" fill={INK} />
-    <rect x={1080} y={740} width={26} height={150} fill={INK} />
-    <rect x={1030} y={880} width={130} height={16} fill={INK} />
-    <rect x={-200} y={890} width={2400} height={400} fill={INK} />
-    <Hero look={SIL} pose={studentPose(t)} shadow={0} rimId="none" />
-    {/* the quill: a long feather up from his hand to the page */}
-    <g transform={`translate(${1070 + Math.sin(t * 0.9) * 8} ${700 + Math.cos(t * 0.9) * 3}) rotate(-28)`}>
-      <path d="M 0 0 Q 18 -90 6 -190 Q -14 -100 0 0 Z" fill={INK} />
+  );
+};
+export const S4: React.FC<ShotProps> = ({ t, len }) => {
+  const pose = studentPose(t);
+  const hand = toWorld(pose, joints(pose).armR.end);
+  const nib = { x: hand.x + 16, y: DESK4.y - 2 + Math.sin(t * 1.8) * 1.5 };
+  return (
+    <g transform={camT(kf(t, [[0, 940], [len, 1000]]), kf(t, [[0, 520], [len, 600]]), kf(t, [[0, 1.0], [len, 1.18]]))}>
+      <rect x={-200} y={-200} width={2400} height={1500} fill="#24132E" />
+      {/* the round attic window with the dusk city behind it */}
+      <defs><clipPath id="win4"><circle cx={980} cy={420} r={300} /></clipPath></defs>
+      <g clipPath="url(#win4)">
+        <Sky id="s4" sunY={560} />
+        <Roofs y={-80} c="#3A1E3E" />
+      </g>
+      <circle cx={980} cy={420} r={300} fill="none" stroke={INK} strokeWidth={30} />
+      <path d="M 820 140 L 820 700 M 1160 140 L 1160 700 M 680 300 L 1280 300" stroke={INK} strokeWidth={16} />
+      <rect x={-200} y={890} width={2400} height={400} fill={INK} />
+      <Hero look={SIL} pose={pose} shadow={0} rimId="none" />
+      {/* the lectern, in front of his body: a sloped board, the page on it, a post and a foot */}
+      <path d={`M ${DESK4.x0} ${DESK4.y + 26} L ${DESK4.x1} ${DESK4.y - 6} L ${DESK4.x1} ${DESK4.y + 14} L ${DESK4.x0} ${DESK4.y + 46} Z`} fill={INK} />
+      <path d={`M ${DESK4.x0 + 30} ${DESK4.y + 18} L ${DESK4.x1 - 20} ${DESK4.y - 2}`} stroke="#E9D9B4" strokeWidth={3} opacity={0.55} />
+      <rect x={HAND4.x - 6} y={DESK4.y + 20} width={26} height={890 - DESK4.y - 20} fill={INK} />
+      <rect x={HAND4.x - 60} y={880} width={130} height={16} fill={INK} />
+      <Quill nib={nib} />
+      {/* the ink pot on the board's upper corner */}
+      <path d={`M ${DESK4.x1 - 46} ${DESK4.y - 2} l 4 -26 l 26 0 l 4 26 Z`} fill={INK} />
+      {/* a candle on the sill */}
+      <rect x={1190} y={640} width={16} height={46} fill={INK} />
+      <ellipse cx={1198} cy={630} rx={6} ry={12 + Math.sin(t * 1.3) * 2} fill="#FFD27A" />
+      <Glow x={1198} y={630} r={160} kind="warm" o={0.5} />
     </g>
-    {/* a candle on the sill */}
-    <rect x={1190} y={640} width={16} height={46} fill={INK} />
-    <ellipse cx={1198} cy={630} rx={6} ry={12 + Math.sin(t * 1.3) * 2} fill="#FFD27A" />
-    <Glow x={1198} y={630} r={160} kind="warm" o={0.5} />
-  </g>
-);
+  );
+};
 
 // ---------- S5: insert, top-down on the page: the quill drips, PIC, a blot, PIC, another ----------
 const Blot: React.FC<{ x: number; y: number; t: number; r: number }> = ({ x, y, t, r }) => {
   if (t < 0) return null;
   const fall = clamp(t / 5);
-  if (fall < 1) return <ellipse cx={x} cy={lerp(y - 360, y, fall * fall)} rx={10} ry={16} fill="#1A1440" />;
+  if (fall < 1) return <ellipse cx={x} cy={lerp(y - 250, y, fall * fall)} rx={10} ry={16} fill="#1A1440" />;
   const s = easeOut(clamp((t - 5) / 6));
   const arms = [0, 50, 110, 170, 230, 290];
   return (
@@ -185,6 +213,20 @@ export const S5: React.FC<ShotProps> = ({ t, len }) => (
         <text key={i} x={690} y={220 + i * 80} fontFamily="Kalam" fontWeight={700} fontSize={50} fill="#2A2050" opacity={0.85}>{ln}</text>
       ))}
     </g>
+    {/* the quill hovers over the page, and each drop falls from its nib */}
+    {(() => {
+      const nx = kf(t, [[0, 900], [22, 900], [30, 1050], [48, 1050], [56, 820]]);
+      const ny = kf(t, [[0, 200], [22, 200], [30, 390], [48, 390], [56, 550]]);
+      const bob = Math.sin(t * 0.5) * 4;
+      return (
+        <g transform={`translate(${nx} ${ny + bob}) rotate(50)`}>
+          <path d="M 0 0 L -9 -40 L 9 -40 Z" fill="#2A1E18" />
+          <path d="M 0 -36 L 0 -360" stroke="#5A4634" strokeWidth={9} strokeLinecap="round" />
+          <path d="M 0 -150 Q 54 -260 8 -400 Q -40 -270 0 -150 Z" fill="#EDE6DA" stroke="#5A4634" strokeWidth={4} />
+          <path d="M 2 -170 L 4 -380" stroke="#B8A890" strokeWidth={3} />
+        </g>
+      );
+    })()}
     <Blot x={900} y={450} t={t - 2} r={46} />
     <Blot x={1050} y={640} t={t - 34} r={70} />
     <Blot x={820} y={800} t={t - 60} r={90} />
