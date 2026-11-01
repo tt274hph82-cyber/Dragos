@@ -1,0 +1,34 @@
+{
+ "narrationExt": "mp3",
+ "music": [
+  {"file": "music/act1.mp3", "segment": "h01", "until": "c3", "volume": 0.16},
+  {"file": "music/act2.mp3", "segment": "c3", "until": "c5", "volume": 0.16},
+  {"file": "music/act3.mp3", "segment": "c5", "until": null, "volume": 0.16}
+ ],
+ "sfx": [
+  {"file": "sfx/river.mp3", "segment": "h01", "offset": 0, "volume": 0.28},
+  {"file": "sfx/eagle.mp3", "segment": "h02", "offset": 3.5, "volume": 0.18},
+  {"file": "sfx/hippo.mp3", "segment": "h03", "offset": 0.2, "volume": 0.45},
+  {"file": "sfx/boom.mp3", "segment": "title", "offset": 0.3, "volume": 0.45},
+  {"file": "sfx/whoosh.mp3", "segment": "c1", "offset": 0, "volume": 0.3},
+  {"file": "sfx/whoosh.mp3", "segment": "c2", "offset": 0, "volume": 0.3},
+  {"file": "sfx/river.mp3", "segment": "h11", "offset": 0, "volume": 0.22},
+  {"file": "sfx/splash.mp3", "segment": "h13", "offset": 0.1, "volume": 0.35},
+  {"file": "sfx/whoosh.mp3", "segment": "c3", "offset": 0, "volume": 0.3},
+  {"file": "sfx/night.mp3", "segment": "h19", "offset": 0, "volume": 0.25},
+  {"file": "sfx/roar.mp3", "segment": "h20", "offset": 5.0, "volume": 0.12},
+  {"file": "sfx/river.mp3", "segment": "h22", "offset": 0, "volume": 0.2},
+  {"file": "sfx/whoosh.mp3", "segment": "c4", "offset": 0, "volume": 0.3},
+  {"file": "sfx/hippo.mp3", "segment": "h26", "offset": 0.2, "volume": 0.4},
+  {"file": "sfx/boom.mp3", "segment": "h27", "offset": 0.1, "volume": 0.3},
+  {"file": "sfx/hippo.mp3", "segment": "h29", "offset": 0.2, "volume": 0.35},
+  {"file": "sfx/splash.mp3", "segment": "h33", "offset": 0.2, "volume": 0.25},
+  {"file": "sfx/whoosh.mp3", "segment": "c5", "offset": 0, "volume": 0.3},
+  {"file": "sfx/river.mp3", "segment": "h35", "offset": 0, "volume": 0.2},
+  {"file": "sfx/hippo.mp3", "segment": "h36", "offset": 0.3, "volume": 0.35},
+  {"file": "sfx/roar.mp3", "segment": "h40", "offset": 4.5, "volume": 0.15},
+  {"file": "sfx/whoosh.mp3", "segment": "c6", "offset": 0, "volume": 0.3},
+  {"file": "sfx/river.mp3", "segment": "h46", "offset": 0, "volume": 0.2},
+  {"file": "sfx/eagle.mp3", "segment": "h48", "offset": 1.0, "volume": 0.15}
+ ]
+}
