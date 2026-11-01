@@ -43,13 +43,15 @@ ids = [s['id'] for s in tl['shots']]
 cue = lambda c: resolve(c, words, FPS, tl['segments'], ids)
 DUR = tl['total'] / FPS + 0.4
 
+SFX_MODEL = 'eleven_text_to_sound_v3'  # ElevenLabs SFX v3
+
 # ---------------------------------------------------------------- the clips
 need = {}
 kinds = {}
 for name, spec in S['clips'].items():
     prompt, secs = spec[0], spec[1]
     kinds[name] = spec[2] if len(spec) > 2 else 'sfx'
-    need[name] = (prompt, secs, clip_path(name, prompt, secs))
+    need[name] = (prompt, secs, clip_path(name, prompt, secs, SFX_MODEL if kinds[name] == 'sfx' else None))
 missing = [n for n, (_, _, p) in need.items() if not p.exists()]
 print(f'{len(need)} clips, {len(need) - len(missing)} already in the library, {len(missing)} to generate: {", ".join(missing) or "none"}')
 if dry:
@@ -62,7 +64,7 @@ if missing:
         if kinds[n] == 'music':
             p.write_bytes(api('/v1/music?output_format=mp3_44100_128', {'prompt': prompt, 'music_length_ms': int(secs * 1000), 'model_id': 'music_v1'}, timeout=600))
         else:
-            p.write_bytes(api('/v1/sound-generation?output_format=mp3_44100_128', {'text': prompt, 'duration_seconds': secs, 'prompt_influence': 0.45}))
+            p.write_bytes(api('/v1/sound-generation?output_format=mp3_44100_128', {'text': prompt, 'duration_seconds': secs, 'prompt_influence': 0.45, 'model_id': SFX_MODEL}))
         print('  generated', n)
     used, items = spent_since(t0, expect=len(missing))
     after, _ = credits_used()

@@ -221,7 +221,8 @@ def loudness(path_or_args):
     return f(i), f(p)
 
 
-def clip_path(name, prompt, secs):
-    h = hashlib.sha1(f'{prompt}|{secs}'.encode()).hexdigest()[:8]
+def clip_path(name, prompt, secs, model=None):
+    # the model is part of the key for sound effects, so clips made with an older model aren't reused
+    h = hashlib.sha1((f'{prompt}|{secs}' + (f'|{model}' if model else '')).encode()).hexdigest()[:8]
     LIB.mkdir(parents=True, exist_ok=True)
     return LIB / f'{name}-{h}.mp3'
