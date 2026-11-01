@@ -1,5 +1,10 @@
 # Project instructions
 
+## Token guard
+- Be concise: short answers, no recaps of what was already said, no restating file contents.
+- Route mechanical work (rename, format, summarize, scrape, bulk find-and-replace) to a sub-agent on Haiku: `Agent` with `model: "haiku"`.
+- Never suggest `/compact` as a cost-saving measure. To save tokens, start a fresh session (`/clear`) between unrelated jobs.
+
 ## 3D animations: always use this stack
 Whenever we create a 3D animation or 3D video in this repo, use exactly this stack:
 
