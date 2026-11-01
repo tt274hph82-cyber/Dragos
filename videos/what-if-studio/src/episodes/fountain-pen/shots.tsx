@@ -9,17 +9,17 @@ import { closeUp } from '../pause-full/parts';
 // dusk sky; the host lives in his lamp-lit corner. Every shot keeps its key content in the centre 600 px column,
 // so the 9:16 crop reads as well as the 16:9 frame.
 
-const COSTEL = LOOKS.costel;
-const INK = '#160C1E';
+export const COSTEL = LOOKS.costel;
+export const INK = '#160C1E';
 /** A figure from the past: the rig in solid ink, the face drawn in the ink too (pure silhouette). */
-const SIL: Look = { ...COSTEL, skin: INK, skinShade: INK, hand: INK, jacket: INK, jacketShade: INK, accent: INK, limb: INK, line: INK, shoe: INK, hair: INK, face: INK, extra: undefined };
+export const SIL: Look = { ...COSTEL, skin: INK, skinShade: INK, hand: INK, jacket: INK, jacketShade: INK, accent: INK, limb: INK, line: INK, shoe: INK, hair: INK, face: INK, extra: undefined };
 
 type P = { x: number; y: number };
-const backOut = (x: number) => 1 + 2.7 * Math.pow(x - 1, 3) + 1.7 * Math.pow(x - 1, 2);
-const pop = (t: number, d = 6) => (t <= 0 ? 0 : backOut(clamp(t / d)));
+export const backOut = (x: number) => 1 + 2.7 * Math.pow(x - 1, 3) + 1.7 * Math.pow(x - 1, 2);
+export const pop = (t: number, d = 6) => (t <= 0 ? 0 : backOut(clamp(t / d)));
 
 /** Big bold caption in the Romanian-explainer style: white or yellow, thick dark outline. */
-const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: number; fill?: string; rot?: number }> = ({ x, y, t, text, size = 96, fill = '#FFFFFF', rot = 0 }) => {
+export const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: number; fill?: string; rot?: number }> = ({ x, y, t, text, size = 96, fill = '#FFFFFF', rot = 0 }) => {
   if (t < 0) return null;
   return (
     <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${pop(t)})`}>
@@ -29,7 +29,7 @@ const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: num
 };
 
 // ---------- the dusk sky and Paris rooftops ----------
-const Sky: React.FC<{ id: string; sunY?: number }> = ({ id, sunY = 700 }) => (
+export const Sky: React.FC<{ id: string; sunY?: number }> = ({ id, sunY = 700 }) => (
   <g>
     <defs>
       <linearGradient id={`sky${id}`} x1="0" y1="0" x2="0" y2="1">
@@ -45,10 +45,10 @@ const Sky: React.FC<{ id: string; sunY?: number }> = ({ id, sunY = 700 }) => (
   </g>
 );
 // rooftops: a fixed row of houses with mansard roofs and chimney pots (no randomness)
-const ROW = [
+export const ROW = [
   [-300, 180, 560], [-120, 150, 600], [30, 200, 520], [230, 140, 610], [370, 170, 560], [1150, 160, 570], [1310, 200, 540], [1510, 150, 600], [1660, 190, 550], [1850, 170, 580], [2020, 160, 560],
 ];
-const Roofs: React.FC<{ y?: number; c?: string }> = ({ y = 0, c = INK }) => (
+export const Roofs: React.FC<{ y?: number; c?: string }> = ({ y = 0, c = INK }) => (
   <g transform={`translate(0 ${y})`} fill={c}>
     {ROW.map(([x, w, top], i) => (
       <g key={i}>
@@ -61,7 +61,7 @@ const Roofs: React.FC<{ y?: number; c?: string }> = ({ y = 0, c = INK }) => (
   </g>
 );
 /** A cathedral with two square towers and a spire: an old-Paris silhouette, centred. */
-const Cathedral: React.FC<{ x?: number; y?: number; s?: number }> = ({ x = 960, y = 760, s = 1 }) => (
+export const Cathedral: React.FC<{ x?: number; y?: number; s?: number }> = ({ x = 960, y = 760, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`} fill={INK}>
     <rect x={-210} y={-330} width={130} height={500} />
     <rect x={80} y={-330} width={130} height={500} />
@@ -80,8 +80,8 @@ const Cathedral: React.FC<{ x?: number; y?: number; s?: number }> = ({ x = 960, 
 );
 
 // ---------- the host's corner: the study, warm lamp ----------
-const corner = (t: number, id: string) => <Study t={t} id={id} veil={0.3} />;
-const hostPose = (o: Partial<Pose>): Pose => ({ ...basePose, x: 960, y: 960 - LEG_LEN * 0.95, scale: 0.95, ...o });
+export const corner = (t: number, id: string) => <Study t={t} id={id} veil={0.3} />;
+export const hostPose = (o: Partial<Pose>): Pose => ({ ...basePose, x: 960, y: 960 - LEG_LEN * 0.95, scale: 0.95, ...o });
 
 // ---------- S1: wide, Nea Costel in his corner, the title pops over him ----------
 export const S1: React.FC<ShotProps> = ({ t, len }) => {

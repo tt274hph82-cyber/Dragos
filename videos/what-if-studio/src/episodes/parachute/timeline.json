@@ -1,0 +1,270 @@
+{
+ "slug": "parachute",
+ "title": "WHO INVENTED THE PARACHUTE?",
+ "fps": 30,
+ "total": 1087,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 58,
+   "t0": 0,
+   "t1": 58,
+   "line": "Who invented the parachute?"
+  },
+  {
+   "shot": "S2",
+   "a": 58,
+   "b": 129,
+   "t0": 0,
+   "t1": 71,
+   "line": "Leonardo da Vinci? Sure, he"
+  },
+  {
+   "shot": "S3",
+   "a": 129,
+   "b": 210,
+   "t0": 0,
+   "t1": 81,
+   "line": "drew one. Around 1485."
+  },
+  {
+   "shot": "S4",
+   "a": 210,
+   "b": 262,
+   "t0": 0,
+   "t1": 52,
+   "line": "But he never jumped."
+  },
+  {
+   "shot": "S5",
+   "a": 262,
+   "b": 332,
+   "t0": 0,
+   "t1": 70,
+   "line": "Paris, 1797."
+  },
+  {
+   "shot": "S14",
+   "a": 332,
+   "b": 436,
+   "t0": 0,
+   "t1": 104,
+   "line": "André- Jacques Garnerin goes up in a hydrogen balloon."
+  },
+  {
+   "shot": "S6",
+   "a": 436,
+   "b": 507,
+   "t0": 0,
+   "t1": 71,
+   "line": "About nine hundred metres up, he"
+  },
+  {
+   "shot": "S7",
+   "a": 507,
+   "b": 542,
+   "t0": 0,
+   "t1": 35,
+   "line": "cuts the rope."
+  },
+  {
+   "shot": "S8",
+   "a": 542,
+   "b": 622,
+   "t0": 0,
+   "t1": 80,
+   "line": "The basket swings like crazy. But he"
+  },
+  {
+   "shot": "S9",
+   "a": 622,
+   "b": 676,
+   "t0": 0,
+   "t1": 54,
+   "line": "lands. Alive. The"
+  },
+  {
+   "shot": "S10",
+   "a": 676,
+   "b": 744,
+   "t0": 0,
+   "t1": 68,
+   "line": "first parachute jump in history."
+  },
+  {
+   "shot": "S11",
+   "a": 744,
+   "b": 803,
+   "t0": 0,
+   "t1": 59,
+   "line": "And Leonardo's design?"
+  },
+  {
+   "shot": "S12",
+   "a": 803,
+   "b": 954,
+   "t0": 0,
+   "t1": 151,
+   "line": "In 2000, a skydiver built it from wood and canvas. It worked."
+  },
+  {
+   "shot": "S13",
+   "a": 954,
+   "b": 1087,
+   "t0": 0,
+   "t1": 133,
+   "line": "He still cut away and landed on a modern chute."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "key": 20,
+   "len": 58,
+   "first": 0,
+   "line": "Who invented the parachute?",
+   "note": "Nea Costel, title pops"
+  },
+  {
+   "id": "S2",
+   "size": "close-up",
+   "key": 14,
+   "len": 71,
+   "first": 58,
+   "line": "Leonardo da Vinci? Sure, he",
+   "note": "Leonardo? sure"
+  },
+  {
+   "id": "S3",
+   "size": "insert",
+   "key": 40,
+   "len": 81,
+   "first": 129,
+   "line": "drew one. Around 1485.",
+   "note": "Leonardo's pyramid parachute drawn on parchment, c. 1485"
+  },
+  {
+   "id": "S4",
+   "size": "close-up",
+   "key": 14,
+   "len": 52,
+   "first": 210,
+   "line": "But he never jumped.",
+   "note": "but he never jumped"
+  },
+  {
+   "id": "S5",
+   "size": "wide",
+   "key": 40,
+   "len": 70,
+   "first": 262,
+   "line": "Paris, 1797.",
+   "note": "balloon rises over Paris, 1797"
+  },
+  {
+   "id": "S14",
+   "size": "card",
+   "key": 20,
+   "len": 104,
+   "first": 332,
+   "line": "André- Jacques Garnerin goes up in a hydrogen balloon.",
+   "note": "name card: André-Jacques Garnerin"
+  },
+  {
+   "id": "S6",
+   "size": "medium",
+   "key": 30,
+   "len": 71,
+   "first": 436,
+   "line": "About nine hundred metres up, he",
+   "note": "Garnerin in the basket, 900 m"
+  },
+  {
+   "id": "S7",
+   "size": "insert",
+   "key": 20,
+   "len": 35,
+   "first": 507,
+   "line": "cuts the rope.",
+   "note": "the rope is cut"
+  },
+  {
+   "id": "S8",
+   "size": "wide",
+   "key": 40,
+   "len": 80,
+   "first": 542,
+   "line": "The basket swings like crazy. But he",
+   "note": "parachute opens, basket swings wildly"
+  },
+  {
+   "id": "S9",
+   "size": "wide",
+   "key": 40,
+   "len": 54,
+   "first": 622,
+   "line": "lands. Alive. The",
+   "note": "lands, crowd cheers, alive"
+  },
+  {
+   "id": "S10",
+   "size": "card",
+   "key": 20,
+   "len": 68,
+   "first": 676,
+   "line": "first parachute jump in history.",
+   "note": "first parachute jump, 22 Oct 1797"
+  },
+  {
+   "id": "S11",
+   "size": "close-up",
+   "key": 14,
+   "len": 59,
+   "first": 744,
+   "line": "And Leonardo's design?",
+   "note": "and Leonardo's design?"
+  },
+  {
+   "id": "S12",
+   "size": "wide",
+   "key": 40,
+   "len": 151,
+   "first": 803,
+   "line": "In 2000, a skydiver built it from wood and canvas. It worked.",
+   "note": "pyramid parachute descending, 2000"
+  },
+  {
+   "id": "S13",
+   "size": "medium",
+   "key": 30,
+   "len": 133,
+   "first": 954,
+   "line": "He still cut away and landed on a modern chute.",
+   "note": "host laughs, cut away"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.5,
+   "f": 511
+  },
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 6,
+   "f": 630
+  }
+ ],
+ "audio": {
+  "voice": "parachute/voice.wav",
+  "sfx": "parachute/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.3297,
+  "music": "parachute/music.wav",
+  "musicVol": 0.1019
+ }
+}

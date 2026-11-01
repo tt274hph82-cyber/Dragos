@@ -7,5 +7,6 @@ import { pause2 } from './pause-2';
 import { skipSleep } from './skip-sleep';
 import { stilou } from './stilou';
 import { fountainPen } from './fountain-pen';
+import { parachute } from './parachute';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute];

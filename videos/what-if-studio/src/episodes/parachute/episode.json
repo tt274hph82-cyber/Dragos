@@ -1,0 +1,393 @@
+{
+ "id": "Parachute",
+ "slug": "parachute",
+ "topic": "Who invented the parachute? (history explainer, host Nea Costel)",
+ "title": [
+  "WHO INVENTED THE",
+  "PARACHUTE?"
+ ],
+ "accent": "PARACHUTE",
+ "voice": {
+  "id": "pqHfZKP75CvOlQylNhV4",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.4,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "host hook",
+   "text": "Who invented the parachute? Leonardo da Vinci? Sure, he drew one. Around 1485."
+  },
+  {
+   "beat": "twist 1",
+   "text": "But he never jumped."
+  },
+  {
+   "beat": "place and time",
+   "text": "Paris, 1797. André-Jacques Garnerin goes up in a hydrogen balloon."
+  },
+  {
+   "beat": "the moment",
+   "text": "About nine hundred metres up, he cuts the rope."
+  },
+  {
+   "beat": "the fall",
+   "text": "The basket swings like crazy. But he lands. Alive."
+  },
+  {
+   "beat": "the fact",
+   "text": "The first parachute jump in history."
+  },
+  {
+   "beat": "host twist",
+   "text": "And Leonardo's design? In 2000, a skydiver built it from wood and canvas. It worked. He still cut away and landed on a modern chute."
+  }
+ ],
+ "science": [
+  {
+   "claim": "Leonardo da Vinci sketched a pyramid parachute around 1485 but never tested it.",
+   "working": "Codex Atlanticus sketch, c. 1485.",
+   "source": "Britannica, Leonardo da Vinci’s parachute"
+  },
+  {
+   "claim": "Garnerin made the first recorded parachute descent from a balloon on 22 October 1797 over Parc Monceau, Paris, from about 900 m; the basket swung violently.",
+   "working": "Guinness gives ~914 m (3,000 ft); Smithsonian Air & Space gives 2,000 ft; script says about 900 m.",
+   "source": "Guinness World Records; Smithsonian Air & Space; Wikipedia"
+  },
+  {
+   "claim": "In 2000 Adrian Nicholas jumped with a replica of Leonardo’s design (wood and canvas) over South Africa; it worked, but he cut away at about 600 m and landed on a conventional parachute.",
+   "working": "26 June 2000, from about 3,000 m.",
+   "source": "Britannica; Wikipedia, Adrian Nicholas"
+  }
+ ],
+ "gaps": {
+  "pairs": {
+   "1485|But": 0.45,
+   "jumped|Paris": 0.5,
+   "balloon|About": 0.4,
+   "rope|The": 0.5,
+   "Alive|The": 0.45,
+   "history|And": 0.6
+  }
+ },
+ "tail": 2.0,
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "set": "host corner",
+   "key": 20,
+   "note": "Nea Costel, title pops"
+  },
+  {
+   "id": "S2",
+   "size": "close-up",
+   "set": "host corner",
+   "key": 14,
+   "note": "Leonardo? sure"
+  },
+  {
+   "id": "S3",
+   "size": "insert",
+   "set": "sketch",
+   "key": 40,
+   "note": "Leonardo's pyramid parachute drawn on parchment, c. 1485"
+  },
+  {
+   "id": "S4",
+   "size": "close-up",
+   "set": "host corner",
+   "key": 14,
+   "note": "but he never jumped"
+  },
+  {
+   "id": "S5",
+   "size": "wide",
+   "set": "Paris dusk",
+   "key": 40,
+   "note": "balloon rises over Paris, 1797"
+  },
+  {
+   "id": "S6",
+   "size": "medium",
+   "set": "sky",
+   "key": 30,
+   "note": "Garnerin in the basket, 900 m"
+  },
+  {
+   "id": "S7",
+   "size": "insert",
+   "set": "sky",
+   "key": 20,
+   "note": "the rope is cut"
+  },
+  {
+   "id": "S8",
+   "size": "wide",
+   "set": "sky",
+   "key": 40,
+   "note": "parachute opens, basket swings wildly"
+  },
+  {
+   "id": "S9",
+   "size": "wide",
+   "set": "park",
+   "key": 40,
+   "note": "lands, crowd cheers, alive"
+  },
+  {
+   "id": "S10",
+   "size": "card",
+   "set": "card",
+   "key": 20,
+   "note": "first parachute jump, 22 Oct 1797"
+  },
+  {
+   "id": "S11",
+   "size": "close-up",
+   "set": "host corner",
+   "key": 14,
+   "note": "and Leonardo's design?"
+  },
+  {
+   "id": "S12",
+   "size": "wide",
+   "set": "sky day",
+   "key": 40,
+   "note": "pyramid parachute descending, 2000"
+  },
+  {
+   "id": "S13",
+   "size": "medium",
+   "set": "host corner",
+   "key": 30,
+   "note": "host laughs, cut away"
+  },
+  {
+   "id": "S14",
+   "size": "card",
+   "set": "dusk",
+   "key": 20,
+   "note": "name card: André-Jacques Garnerin"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "Leonardo"
+  },
+  {
+   "shot": "S3",
+   "at": "drew"
+  },
+  {
+   "shot": "S4",
+   "at": "But"
+  },
+  {
+   "shot": "S5",
+   "at": "Paris"
+  },
+  {
+   "shot": "S14",
+   "at": "André"
+  },
+  {
+   "shot": "S6",
+   "at": "About"
+  },
+  {
+   "shot": "S7",
+   "at": "cuts"
+  },
+  {
+   "shot": "S8",
+   "at": "basket"
+  },
+  {
+   "shot": "S9",
+   "at": "lands"
+  },
+  {
+   "shot": "S10",
+   "at": "first"
+  },
+  {
+   "shot": "S11",
+   "at": "And"
+  },
+  {
+   "shot": "S12",
+   "at": "In"
+  },
+  {
+   "shot": "S13",
+   "at": "He"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S7+4",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.5
+  },
+  {
+   "at": "S9+8",
+   "kind": "shake",
+   "len": 6,
+   "amp": 6
+  }
+ ],
+ "sound": {
+  "clips": {
+   "title_boom": [
+    "a cinematic whoosh rising into a deep boom impact",
+    1.6
+   ],
+   "room_tone": [
+    "quiet indoor room tone in the evening, faint distant city hum, no voices",
+    12.5
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "ding": [
+    "a correct answer ding, bright bell chime",
+    0.8
+   ],
+   "paris_dusk": [
+    "an old cobbled city street at dusk in the 1800s, horse hooves and carriage wheels in the distance, church bell far away, no voices",
+    3.0
+   ],
+   "shrug_horn": [
+    "a comedic sad trombone wah wah, short, cartoon",
+    1.6
+   ],
+   "mc": [
+    "playful light comedic documentary underscore, pizzicato strings and a gentle accordion, curious and cheeky, steady tempo, no vocals",
+    31,
+    "music"
+   ],
+   "wind_high": [
+    "strong high altitude wind rushing, open sky, no voices",
+    6.0
+   ],
+   "rope_snap": [
+    "a thick rope cut with a knife and snapping, sharp",
+    0.8
+   ],
+   "crowd_cheer": [
+    "a small 18th century crowd cheering and clapping outdoors",
+    2.5
+   ],
+   "fabric_whump": [
+    "a big canvas parachute snapping open with a loud whump",
+    1.0
+   ],
+   "creak": [
+    "a wicker basket creaking and swinging on ropes",
+    2.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "room_tone",
+    0.1,
+    "onset",
+    "S5"
+   ],
+   [
+    "S1+10",
+    "title_boom",
+    0.35,
+    "peak"
+   ],
+   [
+    "S2+20",
+    "pop",
+    0.25
+   ],
+   [
+    "S5",
+    "paris_dusk",
+    0.15,
+    "onset",
+    "S6"
+   ],
+   [
+    "S6",
+    "wind_high",
+    0.25,
+    "onset",
+    "S9"
+   ],
+   [
+    "S7+4",
+    "rope_snap",
+    0.5
+   ],
+   [
+    "S8",
+    "fabric_whump",
+    0.45
+   ],
+   [
+    "S8+6",
+    "creak",
+    0.35
+   ],
+   [
+    "s:21.55",
+    "crowd_cheer",
+    0.13
+   ],
+   [
+    "S10",
+    "ding",
+    0.25
+   ],
+   [
+    "S11",
+    "room_tone",
+    0.1,
+    "onset",
+    "S12"
+   ],
+   [
+    "S12",
+    "wind_high",
+    0.12,
+    "onset",
+    "S13"
+   ],
+   [
+    "S13",
+    "room_tone",
+    0.1
+   ]
+  ],
+  "music": [
+   {
+    "clip": "mc",
+    "from": "f:0",
+    "fade_in": 0.3,
+    "fade_out": 1.2
+   }
+  ],
+  "levels": {
+   "sfx_lu": -6.0,
+   "music_lu": -13.0
+  }
+ }
+}
