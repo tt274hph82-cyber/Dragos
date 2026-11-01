@@ -10,36 +10,36 @@ PICKS = {  # key: "File:..." (exact) or a search query
  'yawn_big': 'File:Hippo Tilting Its Head While Yawning.jpg',
  'face': 'hippopotamus head close-up',
  'whale': 'humpback whale breaching',
- 'bank': 'hippopotamus resting riverbank',
- 'walking': 'hippopotamus walking on land savanna',
- 'skin': 'hippopotamus skin close-up',
- 'pod_water': 'hippo pool hippos group water Africa',
+ 'bank': 'hippos resting on sandbank river Africa',
+ 'walking': 'Dainty hippo - Flickr - Matt Biddulph.jpg',
+ 'skin': 'hippopotamus close up Kruger',
+ 'pod_water': 'hippo pool Tanzania',
  'underwater': 'hippopotamus underwater',
- 'ears': 'hippopotamus nostrils ears water',
+ 'ears': 'hippopotamus head water Botswana',
  'surface': 'hippopotamus surfacing water head',
- 'red_sweat': 'hippopotamus pink skin',
+ 'red_sweat': 'hippopotamus out of water Uganda',
  'red_sweat2': 'hippopotamus out of water sun',
- 'sunset': 'hippo sunset river Africa',
- 'grazing': 'hippopotamus grazing grass',
- 'dawn': 'hippos river morning mist',
+ 'sunset': 'unused',
+ 'grazing': 'hippopotamus eating grass',
+ 'dawn': 'hippos river morning Zambia',
  'mara_river': 'Mara River hippos',
- 'charge': 'hippopotamus charging',
- 'bull': 'hippopotamus bull water Kruger',
+ 'charge': 'hippopotamus aggressive Hippopotamus amphibius',
+ 'bull': 'hippopotamus male river Africa',
  'yawn2': 'File:Yawning hippopotamus (28021668971).jpg',
  'teeth': 'File:See My fangs.jpg',
- 'canoe': 'dugout canoe river fishermen Africa',
- 'pod_big': 'File:Hippopotamuses in the Nile at Murchison Falls National Park 01.jpg',
+ 'canoe': 'dugout canoe Okavango',
+ 'pod_big': 'hippopotamus group Serengeti',
  'fight': 'hippopotamus fighting',
  'behind': 'hippopotamus walking out of water',
- 'calf': 'hippopotamus calf mother wild',
+ 'calf': 'hippopotamus baby Hippopotamus amphibius',
  'calf2': 'baby hippo mother water',
- 'croc': 'Nile crocodile basking riverbank',
- 'croc_hippo': 'crocodile and hippopotamus',
- 'lone': 'hippopotamus alone river',
+ 'croc': 'Crocodylus niloticus Kenya',
+ 'croc_hippo': 'hippopotamus crocodile river',
+ 'lone': 'hippopotamus Kenya',
  'dry_river': 'dry riverbed Africa drought',
- 'village': 'river fishermen boats Africa village',
+ 'village': 'fishermen canoes Lake Victoria',
  'yawn3': 'File:Hippo (Hippopotamus amphibius) yawning ... (31187613621).jpg',
- 'golden': 'hippopotamus golden light',
+ 'golden': 'hippopotamus evening light',
  'title_bg': 'hippopotamus river dusk',
 }
 def api(params):
@@ -52,7 +52,7 @@ def api(params):
             print('  api retry', e); time.sleep(10 * (i + 1))
     raise SystemExit('Commons API failed')
 PROPS = dict(prop='imageinfo', iiprop='size|extmetadata|url', iiurlwidth=1920)
-BAD = re.compile(r'zoo|tiergarten|zoolog|museum|skull|skelet|drawing|illustration|painting|\(1[89]\d\d\)|stamp|map|guide to|antiqu|kuhnert|statue|toy|figurine', re.I)
+BAD = re.compile(r'zoo|tiergarten|zoolog|museum|skull|skelet|drawing|illustration|painting|\(1[89]\d\d\)|stamp|map|guide to|antiqu|kuhnert|statue|toy|figurine|pygmy|1956|19[0-5]\d|disney|animal kingdom|giraffen', re.I)
 def info(p):
     ii = p['imageinfo'][0]; m = ii.get('extmetadata', {})
     strip = lambda s: re.sub('<[^>]+>', '', html.unescape(s or '')).strip()
@@ -60,7 +60,9 @@ def info(p):
                 license=strip(m.get('LicenseShortName', {}).get('value')), artist=strip(m.get('Artist', {}).get('value')) or 'Unknown',
                 page=ii.get('descriptionurl', ''))
 def choose(q, used):
-    if q.startswith('File:'):
+    if q == 'unused': return None
+    if q.startswith('File:') or q.endswith('.jpg'):
+        q = q if q.startswith('File:') else 'File:' + q
         r = api(dict(action='query', titles=q, **PROPS))
         return info(next(iter(r['query']['pages'].values())))
     r = api(dict(action='query', generator='search', gsrsearch=q + ' filetype:bitmap', gsrnamespace=6, gsrlimit=40, **PROPS))
