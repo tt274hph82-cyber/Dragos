@@ -516,7 +516,7 @@ export const Hero: React.FC<{ pose: Pose; shadow?: number; rimId?: string; look?
   return (
     <g>
       {shadow > 0 ? <CharacterShadow pose={pose} j={j} shadow={shadow} lightFrom={rimId === 'rimL' || rimId === 'rimBlueL' ? -1 : 1} /> : null}
-      <g transform={`translate(${pose.x} ${pose.y}) scale(${pose.scale}) rotate(${pose.spin} 0 -90)`} filter={`url(#${rimId})`}>
+      <g transform={`translate(${pose.x} ${pose.y}) scale(${pose.scale}) rotate(${pose.spin} 0 -90)`} filter={rimId === 'none' ? undefined : `url(#${rimId})`}>
         <g transform={`translate(0 ${LEG_LEN}) scale(${1 + 0.6 * pose.squash} ${1 - pose.squash}) translate(0 ${-LEG_LEN})`}>
           {/* the far side is drawn first, so a turned body overlaps itself the right way */}
           {pose.yaw < 0 ? <>{limb(j.legR, 12)}{shoe(j.legR)}{limb(j.legL, 12)}{shoe(j.legL)}</> : <>{limb(j.legL, 12)}{shoe(j.legL)}{limb(j.legR, 12)}{shoe(j.legR)}</>}

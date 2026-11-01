@@ -1,0 +1,446 @@
+{
+ "id": "SkipSleep",
+ "slug": "skip-sleep",
+ "topic": "What if you could skip sleep, but the hours went to your shadow?",
+ "title": [
+  "WHAT IF YOU COULD",
+  "SKIP SLEEP?"
+ ],
+ "accent": "SKIP",
+ "voice": {
+  "id": "TX3LPaxmHKxFdv7VOQHJ",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.4,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "1 cold open, demo 1 (small and selfish)",
+   "text": "Midnight. Homework's due. Skip sleep. Done by one."
+  },
+  {
+   "beat": "1 cold open, demo 2 (useful)",
+   "text": "Three a.m. A whole guitar song. Skip. Nailed it."
+  },
+  {
+   "beat": "1 cold open, demo 3 (uncanny)",
+   "text": "Five a.m. Your shadow on the wall... yawns."
+  },
+  {
+   "beat": "2 the premise (title card)",
+   "text": "What if you could skip sleep?"
+  },
+  {
+   "beat": "4 the turn: one real fact",
+   "text": "In 1964, a student stayed awake for eleven days. By day five, he was seeing things. That's real."
+  },
+  {
+   "beat": "5-7 cliffhanger",
+   "text": "So who's yawning on your wall?"
+  }
+ ],
+ "science": [
+  {
+   "claim": "In 1964 a student stayed awake for eleven days; by day five he was seeing things.",
+   "working": "Randy Gardner, 17, stayed awake 264.4 hours (11 days 25 minutes), ending 8 January 1964. Accounts put his first hallucinations on day four or five; the script says day five.",
+   "source": "Scientific American, How Long Can Humans Stay Awake?; IFLScience; Grunge"
+  }
+ ],
+ "gaps": {
+  "pairs": {
+   "one|Three": 0.5,
+   "it|Five": 0.5,
+   "wall|yawns": 0.7,
+   "yawns|What": 0.6,
+   "sleep|In": 0.5,
+   "real|So": 0.5
+  }
+ },
+ "tail": 0.8,
+ "shots": [
+  {
+   "id": "S1",
+   "size": "wide",
+   "set": "study night",
+   "key": 14,
+   "note": "midnight, homework"
+  },
+  {
+   "id": "S2",
+   "size": "insert, top-down",
+   "set": "desk",
+   "key": 20,
+   "note": "the sheet fills itself, clock races"
+  },
+  {
+   "id": "S3",
+   "size": "medium",
+   "set": "study",
+   "key": 14,
+   "note": "finished stack, smug"
+  },
+  {
+   "id": "S4",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 14,
+   "note": "3 a.m., guitar, struggling"
+  },
+  {
+   "id": "S5",
+   "size": "medium",
+   "set": "bedroom",
+   "key": 14,
+   "note": "strumming in a blur, notes fly"
+  },
+  {
+   "id": "S6",
+   "size": "close-up",
+   "set": "bedroom",
+   "key": 14,
+   "note": "nailed it"
+  },
+  {
+   "id": "S7",
+   "size": "wide",
+   "set": "bedroom",
+   "key": 14,
+   "note": "5 a.m., her shadow big on the wall"
+  },
+  {
+   "id": "S8",
+   "size": "medium",
+   "set": "bedroom wall",
+   "key": 14,
+   "note": "the shadow yawns on its own"
+  },
+  {
+   "id": "S9",
+   "size": "title",
+   "set": "rooftop at dawn",
+   "key": 14,
+   "note": "title"
+  },
+  {
+   "id": "S10",
+   "size": "schematic",
+   "set": "schematic",
+   "key": 14,
+   "note": "1964, 11 days awake"
+  },
+  {
+   "id": "S11",
+   "size": "schematic",
+   "set": "schematic",
+   "key": 14,
+   "note": "day 5, seeing things"
+  },
+  {
+   "id": "S12",
+   "size": "ecu",
+   "set": "wall",
+   "key": 14,
+   "note": "dark rings, shadow out of step"
+  },
+  {
+   "id": "S13",
+   "size": "wide",
+   "set": "bedroom red",
+   "key": 14,
+   "note": "the shadow waves on its own"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "Skip",
+   "look": "skip"
+  },
+  {
+   "shot": "S3",
+   "at": "Done"
+  },
+  {
+   "shot": "S4",
+   "at": "Three"
+  },
+  {
+   "shot": "S5",
+   "at": "Skip",
+   "look": "skip"
+  },
+  {
+   "shot": "S6",
+   "at": "Nailed"
+  },
+  {
+   "shot": "S7",
+   "at": "Five"
+  },
+  {
+   "shot": "S8",
+   "at": "yawns"
+  },
+  {
+   "shot": "S9",
+   "at": "What"
+  },
+  {
+   "shot": "S10",
+   "at": "In"
+  },
+  {
+   "shot": "S11",
+   "at": "By"
+  },
+  {
+   "shot": "S12",
+   "at": "That's"
+  },
+  {
+   "shot": "S13",
+   "at": "So"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S2",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.4
+  },
+  {
+   "at": "S5",
+   "kind": "flash",
+   "color": "#BFE3FF",
+   "o": 0.4
+  },
+  {
+   "at": "S13",
+   "kind": "shake",
+   "len": 8,
+   "amp": 5
+  }
+ ],
+ "sound": {
+  "clips": {
+   "clock_tick": [
+    "a classroom wall clock ticking, three loud ticks",
+    2.0
+   ],
+   "ui_blip": [
+    "a soft clean digital interface blip, short",
+    0.5
+   ],
+   "heartbeat": [
+    "a heavy slow heartbeat thumping, tense, close and muffled",
+    3.0
+   ],
+   "ringing": [
+    "a high pitched ringing in the ears slowly fading in, head pressure, tense",
+    2.5
+   ],
+   "m5": [
+    "mysterious cliffhanger underscore, dark music box melody over a low drone, unresolved, ends on a question, no vocals",
+    36,
+    "music"
+   ],
+   "breath_out": [
+    "a young girl gasping for air after holding her breath for a long time, one big exhale, close",
+    1.2
+   ],
+   "room_tone": [
+    "quiet indoor room tone in the evening, faint distant city hum, no voices",
+    12.5
+   ],
+   "counter_tick": [
+    "a fast mechanical counter ticking up rapidly, digits rolling over, getting faster",
+    1.6
+   ],
+   "sparkle": [
+    "a short bright magical sparkle twinkle, cartoon",
+    0.8
+   ],
+   "drone_hit": [
+    "a dark ominous low drone hit, deep cinematic horror sting",
+    2.6
+   ],
+   "title_boom": [
+    "a cinematic whoosh rising into a deep boom impact",
+    1.6
+   ],
+   "paper_land": [
+    "a thick stack of paper sheets dropped flat on a wooden desk, a soft slap and rustle",
+    0.7
+   ],
+   "gasp": [
+    "two young people gasping in surprise at the same moment, cartoon, short",
+    0.8
+   ],
+   "roof_wind": [
+    "a gentle evening breeze on a city rooftop, distant traffic",
+    7.0
+   ],
+   "yawn": [
+    "a slow deep eerie yawn echoing in a dark empty room, distorted and unsettling",
+    1.6
+   ],
+   "strum": [
+    "a fast run of acoustic guitar strums, bright and quick, then one ringing chord",
+    1.6
+   ],
+   "tape_ff": [
+    "a cassette tape fast-forwarding, a high whirring whoosh rising in pitch, short",
+    0.9
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "room_tone",
+    0.1,
+    "onset",
+    "S9"
+   ],
+   [
+    "S1",
+    "clock_tick",
+    0.25,
+    "onset",
+    "S2"
+   ],
+   [
+    "S2",
+    "tape_ff",
+    0.4,
+    "onset",
+    "S3"
+   ],
+   [
+    "S2+4",
+    "counter_tick",
+    0.2
+   ],
+   [
+    "S3+6",
+    "paper_land",
+    0.35
+   ],
+   [
+    "S3+8",
+    "sparkle",
+    0.2
+   ],
+   [
+    "S5",
+    "tape_ff",
+    0.4,
+    "onset",
+    "S6"
+   ],
+   [
+    "S5+2",
+    "strum",
+    0.35,
+    "onset",
+    "S6"
+   ],
+   [
+    "S6+4",
+    "sparkle",
+    0.25
+   ],
+   [
+    "S7",
+    "clock_tick",
+    0.2,
+    "onset",
+    "S8"
+   ],
+   [
+    "S8+12",
+    "yawn",
+    0.5
+   ],
+   [
+    "S8+18",
+    "gasp",
+    0.25
+   ],
+   [
+    "S9",
+    "title_boom",
+    0.4,
+    "peak"
+   ],
+   [
+    "S9",
+    "roof_wind",
+    0.1,
+    "onset",
+    "S10"
+   ],
+   [
+    "S10",
+    "ui_blip",
+    0.25
+   ],
+   [
+    "S11",
+    "ui_blip",
+    0.25
+   ],
+   [
+    "S11",
+    "ringing",
+    0.12,
+    "onset",
+    "S12"
+   ],
+   [
+    "S12",
+    "heartbeat",
+    0.2,
+    "onset",
+    "S13"
+   ],
+   [
+    "S13+6",
+    "yawn",
+    0.35
+   ],
+   [
+    "S13+14",
+    "drone_hit",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "m5",
+    "from": "f:0",
+    "until": "S9",
+    "fade_in": 0.5,
+    "fade_out": 0.6
+   },
+   {
+    "clip": "m5",
+    "from": "S10",
+    "fade_in": 1.0,
+    "fade_out": 1.5
+   }
+  ],
+  "levels": {
+   "sfx_lu": -5.0,
+   "music_lu": -12.0
+  }
+ }
+}

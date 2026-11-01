@@ -4,5 +4,6 @@ import { copyPaste } from './copy-paste';
 import { pause } from './pause';
 import { pauseFull } from './pause-full';
 import { pause2 } from './pause-2';
+import { skipSleep } from './skip-sleep';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep];
