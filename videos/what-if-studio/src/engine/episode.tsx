@@ -81,6 +81,54 @@ const fxAt = (tl: Timeline, f: number) => {
   return { flash, x, y };
 };
 
+
+/**
+ * The virtual camera operator, applied on top of every shot (shots keep their own camera moves inside):
+ * - a slow push in or pull out on every shot, alternating cut to cut, with a little sideways drift on wides;
+ * - a light handheld sway (not on schematic cards and titles);
+ * - a whip-pan into every third cut (a fast slide with motion blur);
+ * - a punch-in when a power look starts (the frame snaps in, then settles).
+ */
+const cameraAt = (tl: Timeline, f: number, scale: number) => {
+  const i = tl.segments.findIndex((s) => f >= s.a && f < s.b);
+  const idx = i < 0 ? tl.segments.length - 1 : i;
+  const seg = tl.segments[idx];
+  const len = Math.max(1, seg.b - seg.a);
+  const k = clamp((f - seg.a) / len);
+  const ease = k * k * (3 - 2 * k);
+  const size = (tl.shots.find((s) => s.id === seg.shot)?.size ?? '').toLowerCase();
+  const steady = /schematic|card|title/.test(size);
+  const close = /close|ecu|insert|macro/.test(size);
+  const wide = /wide|two-shot|over the shoulder|ots/.test(size);
+  // push in / pull out
+  const amt = close ? 0.06 : wide ? 0.035 : 0.045;
+  let s = 1.03 + (idx % 2 === 0 ? amt * ease : amt * (1 - ease));
+  let tx = wide ? ((idx % 3) - 1) * 26 * (ease - 0.5) * scale : 0;
+  let ty = close ? -8 * ease * scale : 0;
+  // handheld: two slow sines, never on cards
+  const hh = steady ? 0 : close ? 1.4 : 1;
+  tx += hh * (Math.sin(f * 0.11) * 3.2 + Math.sin(f * 0.043 + 1.7) * 4.5) * scale;
+  ty += hh * (Math.cos(f * 0.09) * 2.4 + Math.sin(f * 0.031) * 3.2) * scale;
+  let r = hh * Math.sin(f * 0.037 + 0.6) * 0.22;
+  // whip-pan into every third cut, alternating direction
+  let blur = 0;
+  const into = f - seg.a;
+  if (idx > 0 && idx % 3 === 0 && len >= 24 && !steady && into < 6) {
+    const w = 1 - into / 6;
+    tx += (idx % 2 ? 1 : -1) * 130 * w * w * scale; // the extra zoom below keeps the frame edges covered
+    blur = 14 * w;
+    s += 0.14 * w;
+  }
+  // punch-in when a power look starts
+  const prev = tl.segments[idx - 1];
+  if (seg.look && (!prev || prev.look !== seg.look) && into < 8) {
+    const w = 1 - into / 8;
+    s += 0.09 * w * w;
+    r += 0.6 * w * (idx % 2 ? 1 : -1);
+  }
+  return { tx, ty, s, r, blur };
+};
+
 /** Vignette and a fine grain that changes on twos, to take the vector edge off (the genre's finish). */
 const Grade: React.FC<{ f: number; grain: boolean; vignette: boolean; w?: number; h?: number }> = ({ f, grain, vignette, w = 1920, h = 1080 }) => (
   <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -114,9 +162,9 @@ export const ShotFrame: React.FC<{ children: React.ReactNode; w?: number; h?: nu
  */
 export type VerticalFraming = Record<string, number | [number, number]>;
 export const VerticalCtx = React.createContext(false);
-export type EpisodeProps = { timeline: Timeline; shots: ShotMap; looks?: Record<string, LookDef>; grain?: boolean; vignette?: boolean; bg?: string; vertical?: VerticalFraming };
+export type EpisodeProps = { timeline: Timeline; shots: ShotMap; looks?: Record<string, LookDef>; grain?: boolean; vignette?: boolean; bg?: string; vertical?: VerticalFraming; camera?: boolean };
 
-export const Episode: React.FC<EpisodeProps & { vert?: boolean }> = ({ timeline: tl, shots, looks = {}, grain = true, vignette = true, bg = '#0E0C1E', vertical, vert = false }) => {
+export const Episode: React.FC<EpisodeProps & { vert?: boolean }> = ({ timeline: tl, shots, looks = {}, grain = true, vignette = true, bg = '#0E0C1E', vertical, vert = false, camera = true }) => {
   const f = useCurrentFrame();
   const seg = segAt(tl, f);
   const Shot = shots[seg.shot];
@@ -127,6 +175,7 @@ export const Episode: React.FC<EpisodeProps & { vert?: boolean }> = ({ timeline:
   const jitter = def?.jitter && lv > 0 ? Math.sin(f * 13.7) * def.jitter * lv : 0;
   const { flash, x, y } = fxAt(tl, f);
   const A = tl.audio;
+  const cam = camera ? cameraAt(tl, f, vert ? 0.75 : 1) : { tx: 0, ty: 0, s: 1, r: 0, blur: 0 };
   const W = vert ? 1080 : 1920;
   const H = vert ? 1920 : 1080;
   let viewBox = '0 0 1920 1080';
@@ -140,7 +189,10 @@ export const Episode: React.FC<EpisodeProps & { vert?: boolean }> = ({ timeline:
   }
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
-      <AbsoluteFill style={{ transform: `translate(${x + jitter}px, ${y}px) scale(${x || y ? 1.02 : 1})`, filter: def?.grade && lv > 0 ? def.grade(lv) : undefined }}>
+      <AbsoluteFill style={{
+        transform: `translate(${x + jitter + cam.tx}px, ${y + cam.ty}px) rotate(${cam.r}deg) scale(${cam.s * (x || y ? 1.02 : 1)})`,
+        filter: [def?.grade && lv > 0 ? def.grade(lv) : '', cam.blur > 0.3 ? `blur(${cam.blur.toFixed(1)}px)` : ''].join(' ').trim() || undefined,
+      }}>
         <VerticalCtx.Provider value={vert}>
           <ShotFrame w={W} h={H} viewBox={viewBox}>{Shot ? <Shot t={clockAt(seg, f)} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</ShotFrame>
         </VerticalCtx.Provider>
