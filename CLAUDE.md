@@ -43,7 +43,7 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
   - Check stills of every shot at its most zoomed frame before rendering.
 
 ## Other notes
-- **ElevenLabs models:**
+- **ElevenLabs models, for every project (new and old, any style):**
   - Voice: `eleven_v4`, with `output_format=mp3_44100_128` (128 kbps).
   - Sound effects: SFX v3 (`model_id: eleven_text_to_sound_v3`). The skill's `sfx.py` keys its clip cache by model, so older clips aren't reused.
   - Music: `music_v1`.

@@ -119,7 +119,7 @@ if (want.has("sfx")) {
   audioCfg.sfx = [];
   for (const fx of SFX) {
     const out = P("public/sfx", `${fx.id}.mp3`);
-    await post(`${API}/sound-generation?output_format=mp3_44100_128`, { text: fx.text, duration_seconds: fx.secs, prompt_influence: 0.4 }, out);
+    await post(`${API}/sound-generation?output_format=mp3_44100_128`, { text: fx.text, duration_seconds: fx.secs, prompt_influence: 0.4, model_id: "eleven_text_to_sound_v3" }, out);
     console.log(`  ${fx.id}`);
     for (const [segment, offset, volume] of fx.at) audioCfg.sfx.push({ file: `sfx/${fx.id}.mp3`, segment, offset, volume });
   }
