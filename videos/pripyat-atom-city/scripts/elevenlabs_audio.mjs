@@ -153,7 +153,7 @@ if (want.has("music")) {
     const to = i + 1 < ACTS.length ? starts[ACTS[i + 1].from] + 3 : total;
     let len = Math.min(300, Math.ceil(to - from + 2)); // API maximum is 5 minutes per cue
     const out = P("public/music", `${a.id}.mp3`);
-    await post(`${API}/music?output_format=mp3_44100_128`, { prompt: a.prompt, music_length_ms: len * 1000, model_id: "music_v1" }, out);
+    await post(`${API}/music?output_format=mp3_44100_128`, { prompt: a.prompt, music_length_ms: len * 1000, model_id: "music_v2_5" }, out);
     console.log(`  ${a.id} ${len}s`);
     audioCfg.music.push({ file: `music/${a.id}.mp3`, segment: a.from, until: ACTS[i + 1]?.from ?? null, volume: 0.22 });
   }

@@ -26,6 +26,6 @@ SFX = {
  'roar': ('a lion roaring in the distance across the savanna at dusk', 4),
 }
 for k, (p, sec) in MUSIC.items():
-    post('/music?output_format=mp3_44100_128', {'prompt': p, 'music_length_ms': sec * 1000, 'model_id': 'music_v1'}, ROOT / f'public/music/{k}.mp3')
+    post('/music?output_format=mp3_44100_128', {'prompt': p, 'music_length_ms': sec * 1000, 'model_id': 'music_v2_5'}, ROOT / f'public/music/{k}.mp3')
 for k, (p, sec) in SFX.items():
     post('/sound-generation?output_format=mp3_44100_128', {'text': p, 'duration_seconds': sec, 'prompt_influence': 0.4, 'model_id': 'eleven_text_to_sound_v3'}, ROOT / f'public/sfx/{k}.mp3')
