@@ -9,6 +9,11 @@ import { closeUp } from '../pause-full/parts';
 // dusk sky; the host lives in his lamp-lit corner. Every shot keeps its key content in the centre 600 px column,
 // so the 9:16 crop reads as well as the 16:9 frame.
 
+// In the 9:16 crop the frame is only 607 px wide, so shot zooms are softened there (VZ is set per render by index.tsx).
+let VZ = 1;
+export const setVertZoom = (vert: boolean) => { VZ = vert ? 0.3 : 1; };
+export const camV = (x: number, y: number, z: number) => camT(x, y, 1 + (z - 1) * VZ);
+
 export const COSTEL = LOOKS.costel;
 export const INK = '#160C1E';
 /** A figure from the past: the rig in solid ink, the face drawn in the ink too (pure silhouette). */
@@ -91,19 +96,19 @@ export const S1: React.FC<ShotProps> = ({ t, len }) => {
     { f: 30, p: hostPose({ yaw: 0.1, armL: { a: 70, b: 60 }, armR: { a: 70, b: 60 }, headTilt: 6, squash: -0.02 }) },
   ]);
   return (
-    <g transform={camT(960, 560, kf(t, [[0, 1.0], [len, 1.08]]))}>
+    <g transform={camV(960, 560, kf(t, [[0, 1.0], [len, 1.08]]))}>
       {corner(t, 'st1')}
       <Hero look={COSTEL} pose={{ ...p, ...faceAt(t, [[0, 'neutral'], [8, 'worried']]) }} shadow={0.7} />
       <Bold x={960} y={170} t={t - 2} text="WHO INVENTED THE" size={52} />
-      <Bold x={960} y={300} t={t - 10} text="FOUNTAIN" size={112} fill="#FFD24A" rot={-3} />
-      <Bold x={960} y={430} t={t - 14} text="PEN?" size={112} fill="#FFD24A" rot={-3} />
+      <Bold x={960} y={300} t={t - 10} text="FOUNTAIN" size={96} fill="#FFD24A" rot={-3} />
+      <Bold x={960} y={430} t={t - 14} text="PEN?" size={96} fill="#FFD24A" rot={-3} />
     </g>
   );
 };
 
 // ---------- S2: close-up, "Americanii? Ei, aș!": he scoffs and wags a finger ----------
 const S2C = closeUp({
-  look: COSTEL, face: [[0, 'smug'], [34, 'laugh']], bg: (t) => corner(t, 'st2b'), x: 960, y: 560, sc: 4.6, yaw: 0.15, eyes: 0.4,
+  look: COSTEL, vertSc: 0.62, face: [[0, 'smug'], [34, 'laugh']], bg: (t) => corner(t, 'st2b'), x: 960, y: 560, sc: 4.6, yaw: 0.15, eyes: 0.4,
   pose: { armR: { a: 150, b: 30 }, handR: 'point' },
 });
 export const S2: React.FC<ShotProps> = (p) => (
@@ -116,7 +121,7 @@ export const S2: React.FC<ShotProps> = (p) => (
 
 // ---------- S3: wide, Paris at dusk in silhouette, two walkers, the year ----------
 export const S3: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, kf(t, [[0, 480], [len, 560]]), kf(t, [[0, 1.12], [len, 1.0]]))}>
+  <g transform={camV(960, kf(t, [[0, 480], [len, 560]]), kf(t, [[0, 1.12], [len, 1.0]]))}>
     <Sky id="s3" sunY={kf(t, [[0, 660], [len, 700]])} />
     <Cathedral x={960} y={820} s={0.95} />
     <Roofs y={180} />
@@ -163,7 +168,7 @@ export const S4: React.FC<ShotProps> = ({ t, len }) => {
   const hand = toWorld(pose, joints(pose).armR.end);
   const nib = { x: hand.x + 16, y: DESK4.y - 2 + Math.sin(t * 1.8) * 1.5 };
   return (
-    <g transform={camT(kf(t, [[0, 940], [len, 1000]]), kf(t, [[0, 520], [len, 600]]), kf(t, [[0, 1.0], [len, 1.18]]))}>
+    <g transform={camV(kf(t, [[0, 940], [len, 1000]]), kf(t, [[0, 520], [len, 600]]), kf(t, [[0, 1.0], [len, 1.18]]))}>
       <rect x={-200} y={-200} width={2400} height={1500} fill="#24132E" />
       {/* the round attic window with the dusk city behind it */}
       <defs><clipPath id="win4"><circle cx={980} cy={420} r={300} /></clipPath></defs>
@@ -206,7 +211,7 @@ const Blot: React.FC<{ x: number; y: number; t: number; r: number }> = ({ x, y, 
   );
 };
 export const S5: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, 560, kf(t, [[0, 1.05], [len, 1.15]]))}>
+  <g transform={camV(960, 560, kf(t, [[0, 1.05], [len, 1.15]]))}>
     <rect x={-200} y={-200} width={2400} height={1500} fill="#3A2416" />
     <g transform="rotate(-4 960 560)">
       <rect x={640} y={80} width={640} height={980} fill="#EFE2C4" />
@@ -286,14 +291,14 @@ const Patent: React.FC<{ t: number }> = ({ t }) => {
   );
 };
 export const S7: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, kf(t, [[0, 420], [len, 560]]), kf(t, [[0, 1.25], [len, 1.0]]))}>
+  <g transform={camV(960, kf(t, [[0, 420], [len, 560]]), kf(t, [[0, 1.25], [len, 1.0]]))}>
     <Patent t={t} />
   </g>
 );
 // ---------- S11: extreme close-up on the number, as he says it ----------
 export const S11: React.FC<ShotProps> = ({ t, len }) => (
   <g>
-    <g transform={camT(960, 330, kf(t, [[0, 2.2], [len, 2.4]]))}>
+    <g transform={camV(960, 330, kf(t, [[0, 2.2], [len, 2.4]]))}>
       <Patent t={100} />
     </g>
   </g>
@@ -316,7 +321,7 @@ export const S8: React.FC<ShotProps> = ({ t, len }) => {
 
 // ---------- S9: close-up, "Și știi ce-i mai tare?": he leans in, conspiratorial ----------
 const S9C = closeUp({
-  look: COSTEL, face: [[0, 'smug']], bg: (t) => corner(t, 'st9b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8,
+  look: COSTEL, vertSc: 0.62, face: [[0, 'smug']], bg: (t) => corner(t, 'st9b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8,
 });
 export const S9: React.FC<ShotProps> = (p) => (
   <g>
@@ -334,7 +339,7 @@ export const S10: React.FC<ShotProps> = ({ t, len }) => {
     { f: 40, p: hostPose({ x: 960, yaw: 0.1, look: 0, armL: { a: 46, b: 84 }, armR: { a: 46, b: 84 }, headTilt: -12, squash: 0.02 }) },
   ]);
   return (
-    <g transform={camT(960, kf(t, [[0, 540], [len, 600]]), kf(t, [[0, 1.0], [len, 1.12]]))}>
+    <g transform={camV(960, kf(t, [[0, 540], [len, 600]]), kf(t, [[0, 1.0], [len, 1.12]]))}>
       <rect x={-200} y={-200} width={2400} height={1500} fill="#3A2A3A" />
       {/* the shop front */}
       <rect x={560} y={160} width={800} height={110} fill="#5A1E2A" stroke={INK} strokeWidth={8} />

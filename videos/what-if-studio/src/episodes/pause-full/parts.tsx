@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Hero, HERO, LOOKS, Look, Pose, Expr, basePose, poseAt, faceAt, walkPose, kf, clamp, lerp, camT, HEAD, LEG_LEN,
-  Study, Desk, Classroom, Kitchen, KitchenIsland, Bedroom, Rooftop, Schematic, Outdoor, Foreground, ShotProps,
+  Study, Desk, Classroom, Kitchen, KitchenIsland, Bedroom, Rooftop, Schematic, Outdoor, Foreground, ShotProps, VerticalCtx,
 } from '../../engine';
 
 // Building blocks for the long episode: most shots are a scene (a set, a camera, some actors), a close-up (one face
@@ -92,9 +92,11 @@ export const closeUp = (o: {
   pose?: Partial<Pose>;
   over?: (t: number, len: number, head: { x: number; y: number; sc: number }) => React.ReactNode;
   dim?: number;
+  vertSc?: number; // scale the head by this in the 9:16 crop, so a big close-up still fits its width
 }): React.FC<ShotProps> =>
   ({ t, len }) => {
-    const sc = (o.sc ?? 3.6) * (1 + 0.05 * clamp(t / len));
+    const vert = useContext(VerticalCtx);
+    const sc = (o.sc ?? 3.6) * (vert ? o.vertSc ?? 1 : 1) * (1 + 0.05 * clamp(t / len));
     const head = { x: o.x ?? 960, y: o.y ?? 560 };
     const pose: Pose = {
       ...basePose, x: head.x, y: head.y - HEAD.y * sc, scale: sc, yaw: o.yaw ?? 0.2, look: o.eyes ?? 0.3, headTilt: o.tilt ?? 0,

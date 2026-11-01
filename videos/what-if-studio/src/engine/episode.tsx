@@ -176,6 +176,8 @@ export const Episode: React.FC<EpisodeProps & { vert?: boolean }> = ({ timeline:
   const { flash, x, y } = fxAt(tl, f);
   const A = tl.audio;
   const cam = camera ? cameraAt(tl, f, vert ? 0.75 : 1) : { tx: 0, ty: 0, s: 1, r: 0, blur: 0 };
+  // the 9:16 crop is only 607 px of the 1920 frame: halve the operator's zoom there so nothing is pushed off the sides
+  if (vert) cam.s = 1 + (cam.s - 1) * 0.5;
   const W = vert ? 1080 : 1920;
   const H = vert ? 1920 : 1080;
   let viewBox = '0 0 1920 1080';

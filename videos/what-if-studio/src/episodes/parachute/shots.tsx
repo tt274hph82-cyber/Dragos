@@ -1,7 +1,7 @@
 import React from 'react';
-import { Hero, Pose, HEAD, basePose, poseAt, faceAt, kf, clamp, lerp, easeOut, camT, LEG_LEN, DrawOn, Glow, ShotProps } from '../../engine';
+import { Hero, Pose, HEAD, basePose, poseAt, faceAt, kf, clamp, lerp, easeOut, LEG_LEN, DrawOn, Glow, ShotProps } from '../../engine';
 import { closeUp } from '../pause-full/parts';
-import { COSTEL, INK, SIL, Bold, Sky, Roofs, Cathedral, corner, hostPose } from '../fountain-pen/shots';
+import { COSTEL, INK, SIL, Bold, Sky, Roofs, Cathedral, corner, hostPose, camV } from '../fountain-pen/shots';
 
 // "Who invented the parachute?" with Nea Costel. Leonardo's sketch, then Garnerin's 1797 jump over Paris in silhouette
 // against the dusk, then the 2000 test of Leonardo's design in a daytime sky. Key content stays in the centre column
@@ -79,17 +79,17 @@ export const S1: React.FC<ShotProps> = ({ t, len }) => {
     { f: 30, p: hostPose({ yaw: 0.1, armL: { a: 70, b: 60 }, armR: { a: 70, b: 60 }, headTilt: 6, squash: -0.02 }) },
   ]);
   return (
-    <g transform={camT(960, 560, kf(t, [[0, 1.0], [len, 1.08]]))}>
+    <g transform={camV(960, 560, kf(t, [[0, 1.0], [len, 1.08]]))}>
       {corner(t, 'pc1')}
       <Hero look={COSTEL} pose={{ ...p, ...faceAt(t, [[0, 'neutral'], [8, 'worried']]) }} shadow={0.7} />
       <Bold x={960} y={170} t={t - 2} text="WHO INVENTED THE" size={52} />
-      <Bold x={960} y={300} t={t - 10} text="PARACHUTE?" size={104} fill="#FFD24A" rot={-3} />
+      <Bold x={960} y={300} t={t - 10} text="PARACHUTE?" size={84} fill="#FFD24A" rot={-3} />
     </g>
   );
 };
 
 // ---------- S2: close-up, "Leonardo da Vinci? Sure...": a knowing, sideways look ----------
-const S2C = closeUp({ look: COSTEL, face: [[0, 'smug']], bg: (t) => corner(t, 'pc2b'), x: 960, y: 560, sc: 4.6, yaw: 0.2, eyes: 0.6, tilt: 6 });
+const S2C = closeUp({ look: COSTEL, vertSc: 0.62, face: [[0, 'smug']], bg: (t) => corner(t, 'pc2b'), x: 960, y: 560, sc: 4.6, yaw: 0.2, eyes: 0.6, tilt: 6 });
 export const S2: React.FC<ShotProps> = (p) => (
   <g>
     <S2C {...p} />
@@ -100,7 +100,7 @@ export const S2: React.FC<ShotProps> = (p) => (
 // ---------- S3: insert, Leonardo's sketch drawing itself on old paper: the pyramid parachute, c. 1485 ----------
 const SEPIA = '#5A3A1E';
 export const S3: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, 540, kf(t, [[0, 1.0], [len, 1.08]]))}>
+  <g transform={camV(960, 540, kf(t, [[0, 1.0], [len, 1.08]]))}>
     <rect x={-200} y={-200} width={2400} height={1500} fill="#2A1A10" />
     <rect x={560} y={60} width={800} height={960} fill="#E8D3A6" />
     <rect x={560} y={60} width={800} height={960} fill="none" stroke="#B89660" strokeWidth={6} />
@@ -117,7 +117,7 @@ export const S3: React.FC<ShotProps> = ({ t, len }) => (
 );
 
 // ---------- S4: close-up, "But he never jumped.": eyebrows up, a shrug ----------
-const S4C = closeUp({ look: COSTEL, face: [[0, 'oops']], bg: (t) => corner(t, 'pc4b'), x: 960, y: 600, sc: 5.2, yaw: -0.05, eyes: 0, pose: { armL: { a: 40, b: 80 }, armR: { a: 40, b: 80 } } });
+const S4C = closeUp({ look: COSTEL, vertSc: 0.62, face: [[0, 'oops']], bg: (t) => corner(t, 'pc4b'), x: 960, y: 600, sc: 5.2, yaw: -0.05, eyes: 0, pose: { armL: { a: 40, b: 80 }, armR: { a: 40, b: 80 } } });
 export const S4: React.FC<ShotProps> = (p) => (
   <g>
     <S4C {...p} />
@@ -130,7 +130,7 @@ export const S4: React.FC<ShotProps> = (p) => (
 export const S5: React.FC<ShotProps> = ({ t, len }) => {
   const by = lerp(820, 380, easeOut(clamp(t / len)));
   return (
-    <g transform={camT(960, kf(t, [[0, 600], [len, 480]]), kf(t, [[0, 1.0], [len, 1.06]]))}>
+    <g transform={camV(960, kf(t, [[0, 600], [len, 480]]), kf(t, [[0, 1.0], [len, 1.06]]))}>
       <Sky id="pc5" sunY={720} />
       <Cathedral x={1460} y={840} s={0.7} />
       <Balloon x={960} y={by} s={0.75} />
@@ -148,7 +148,7 @@ export const S5: React.FC<ShotProps> = ({ t, len }) => {
 
 // ---------- S6: medium, high above the city: the balloon and Garnerin's basket, an altitude tag ----------
 export const S6: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, kf(t, [[0, 520], [len, 560]]), kf(t, [[0, 1.0], [len, 1.1]]))}>
+  <g transform={camV(960, kf(t, [[0, 520], [len, 560]]), kf(t, [[0, 1.0], [len, 1.1]]))}>
     <HighSky id="pc6" t={t} />
     <g transform="translate(0 0)">
       <Balloon x={960} y={260} s={1} />
@@ -186,7 +186,7 @@ export const S8: React.FC<ShotProps> = ({ t, len }) => {
   const swing = Math.sin(t * 0.28) * 30 * (0.6 + 0.4 * Math.exp(-t / 90));
   const cy = lerp(300, 420, clamp(t / len));
   return (
-    <g transform={camT(960, 540, kf(t, [[0, 1.12], [len, 1.0]]))}>
+    <g transform={camV(960, 540, kf(t, [[0, 1.12], [len, 1.0]]))}>
       <HighSky id="pc8" t={t + 20} />
       <Balloon x={960} y={lerp(40, -500, easeOut(clamp(t / 20)))} s={0.8} />
       <Chute x={960} y={cy} s={1.25} open={open} swing={swing} />
@@ -200,7 +200,7 @@ export const S9: React.FC<ShotProps> = ({ t, len }) => {
   const land = clamp(t / 10);
   const cheer = (i: number) => Math.sin(t * 0.5 + i) * 20;
   return (
-    <g transform={camT(960, kf(t, [[0, 560], [len, 600]]), kf(t, [[0, 1.0], [len, 1.08]]))}>
+    <g transform={camV(960, kf(t, [[0, 560], [len, 600]]), kf(t, [[0, 1.0], [len, 1.08]]))}>
       <Sky id="pc9" sunY={780} />
       {/* park trees */}
       {[200, 420, 1500, 1720].map((x) => <g key={x} fill={INK}><rect x={x - 14} y={700} width={28} height={300} /><circle cx={x} cy={660} r={110} /></g>)}
@@ -219,17 +219,17 @@ export const S9: React.FC<ShotProps> = ({ t, len }) => {
 
 // ---------- S10: the card: the first parachute jump in history ----------
 export const S10: React.FC<ShotProps> = ({ t, len }) => (
-  <g transform={camT(960, 540, kf(t, [[0, 1.0], [len, 1.05]]))}>
+  <g transform={camV(960, 540, kf(t, [[0, 1.0], [len, 1.05]]))}>
     <HighSky id="pc10" t={t} />
     <Chute x={960} y={560} s={0.9} open={1} swing={Math.sin(t * 0.15) * 8} />
     <Bold x={960} y={170} t={t - 2} text="THE FIRST" size={76} />
-    <Bold x={960} y={280} t={t - 6} text="PARACHUTE JUMP" size={74} fill="#FFD24A" />
+    <Bold x={960} y={280} t={t - 6} text="PARACHUTE JUMP" size={58} fill="#FFD24A" />
     <Bold x={960} y={1010} t={t - 14} text="22 OCT 1797" size={64} />
   </g>
 );
 
 // ---------- S11: close-up, "And Leonardo's design?": he leans in ----------
-const S11C = closeUp({ look: COSTEL, face: [[0, 'smug']], bg: (t) => corner(t, 'pc11b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8 });
+const S11C = closeUp({ look: COSTEL, vertSc: 0.62, face: [[0, 'smug']], bg: (t) => corner(t, 'pc11b'), x: 960, y: 600, sc: 5.6, yaw: -0.1, eyes: -0.2, tilt: -8 });
 export const S11: React.FC<ShotProps> = (p) => (
   <g>
     <S11C {...p} />
@@ -243,7 +243,7 @@ export const S12: React.FC<ShotProps> = ({ t, len }) => {
   const y = lerp(380, 480, clamp(t / len));
   const sway = Math.sin(t * 0.12) * 4;
   return (
-    <g transform={camT(960, 540, kf(t, [[0, 1.0], [len, 1.08]]))}>
+    <g transform={camV(960, 540, kf(t, [[0, 1.0], [len, 1.08]]))}>
       <defs>
         <linearGradient id="pc12sky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#3E7FC4" />
@@ -264,7 +264,7 @@ export const S12: React.FC<ShotProps> = ({ t, len }) => {
           pose={{ ...basePose, x: 0, y: 330 + LEG_LEN * 0.38 + 60, scale: 0.38, armL: { a: 160, b: 0 }, armR: { a: 160, b: 0 }, expr: 'happy' }} shadow={0} rimId="none" />
       </g>
       <Bold x={960} y={170} t={t - 4} text="2000" size={110} fill="#FFD24A" />
-      <Bold x={960} y={1000} t={t - 30} text="IT WORKED!" size={96} />
+      <Bold x={960} y={1000} t={t - 30} text="IT WORKED!" size={80} />
     </g>
   );
 };
@@ -277,11 +277,11 @@ export const S13: React.FC<ShotProps> = ({ t, len }) => {
   ]);
   const bounce = t > 40 ? Math.abs(Math.sin(t * 0.5)) * 8 : 0;
   return (
-    <g transform={camT(960, kf(t, [[0, 600], [len, 560]]), kf(t, [[0, 1.15], [len, 1.3]]))}>
+    <g transform={camV(960, kf(t, [[0, 600], [len, 560]]), kf(t, [[0, 1.15], [len, 1.3]]))}>
       {corner(t, 'pc13')}
       <Hero look={COSTEL} pose={{ ...p, y: p.y - bounce, ...faceAt(t, [[0, 'oops'], [40, 'laugh']]) }} shadow={0.7} />
-      <Bold x={960} y={260} t={t - 6} text="...THEN USED A" size={60} />
-      <Bold x={960} y={350} t={t - 12} text="MODERN CHUTE" size={74} fill="#FFD24A" />
+      <Bold x={960} y={260} t={t - 6} text="...THEN USED A" size={50} />
+      <Bold x={960} y={350} t={t - 12} text="MODERN CHUTE" size={60} fill="#FFD24A" />
     </g>
   );
 };
@@ -299,7 +299,7 @@ export const S14: React.FC<ShotProps> = ({ t, len }) => {
         <rect x={-46} y={-58} width={92} height={60} rx={6} />
         <rect x={-70} y={-2} width={140} height={10} rx={5} />
       </g>
-      <Bold x={960} y={160} t={t - 2} text="ANDRÉ-JACQUES" size={72} fill="#FFD24A" />
+      <Bold x={960} y={160} t={t - 2} text="ANDRÉ-JACQUES" size={64} fill="#FFD24A" />
       <Bold x={960} y={270} t={t - 8} text="GARNERIN" size={100} fill="#FFD24A" />
       <Bold x={960} y={1010} t={t - 16} text="BALLOONIST" size={56} />
     </g>
