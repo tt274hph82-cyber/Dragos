@@ -10,28 +10,28 @@ PICKS = {  # key: "File:..." (exact) or a search query
  'yawn_big': 'File:Hippo Tilting Its Head While Yawning.jpg',
  'face': 'hippopotamus head close-up',
  'whale': 'humpback whale breaching',
- 'bank': 'hippos resting on sandbank river Africa',
+ 'bank': 'hippos sandbank river Kenya',
  'walking': 'Dainty hippo - Flickr - Matt Biddulph.jpg',
- 'skin': 'hippopotamus close up Kruger',
+ 'skin': 'hippopotamus portrait Masai Mara',
  'pod_water': 'hippo pool Tanzania',
  'underwater': 'hippopotamus underwater',
  'ears': 'hippopotamus head water Botswana',
  'surface': 'hippopotamus surfacing water head',
- 'red_sweat': 'hippopotamus out of water Uganda',
+ 'red_sweat': 'unused',
  'red_sweat2': 'hippopotamus out of water sun',
  'sunset': 'unused',
  'grazing': 'hippopotamus eating grass',
- 'dawn': 'hippos river morning Zambia',
+ 'dawn': 'hippos sunrise river',
  'mara_river': 'Mara River hippos',
- 'charge': 'hippopotamus aggressive Hippopotamus amphibius',
+ 'charge': 'hippopotamus open mouth Kenya',
  'bull': 'hippopotamus male river Africa',
  'yawn2': 'File:Yawning hippopotamus (28021668971).jpg',
  'teeth': 'File:See My fangs.jpg',
- 'canoe': 'dugout canoe Okavango',
+ 'canoe': 'mokoro Okavango Delta',
  'pod_big': 'hippopotamus group Serengeti',
  'fight': 'hippopotamus fighting',
  'behind': 'hippopotamus walking out of water',
- 'calf': 'hippopotamus baby Hippopotamus amphibius',
+ 'calf': 'hippo calf Masai Mara',
  'calf2': 'baby hippo mother water',
  'croc': 'Crocodylus niloticus Kenya',
  'croc_hippo': 'hippopotamus crocodile river',
@@ -39,7 +39,7 @@ PICKS = {  # key: "File:..." (exact) or a search query
  'dry_river': 'dry riverbed Africa drought',
  'village': 'fishermen canoes Lake Victoria',
  'yawn3': 'File:Hippo (Hippopotamus amphibius) yawning ... (31187613621).jpg',
- 'golden': 'hippopotamus evening light',
+ 'golden': 'hippopotamus Chobe',
  'title_bg': 'hippopotamus river dusk',
 }
 def api(params):
@@ -52,7 +52,7 @@ def api(params):
             print('  api retry', e); time.sleep(10 * (i + 1))
     raise SystemExit('Commons API failed')
 PROPS = dict(prop='imageinfo', iiprop='size|extmetadata|url', iiurlwidth=1920)
-BAD = re.compile(r'zoo|tiergarten|zoolog|museum|skull|skelet|drawing|illustration|painting|\(1[89]\d\d\)|stamp|map|guide to|antiqu|kuhnert|statue|toy|figurine|pygmy|1956|19[0-5]\d|disney|animal kingdom|giraffen', re.I)
+BAD = re.compile(r'zoo|tiergarten|zoolog|museum|skull|skelet|drawing|illustration|painting|\(1[89]\d\d\)|stamp|map|guide to|antiqu|kuhnert|statue|toy|figurine|pygmy|1956|19[0-5]\d|disney|animal kingdom|giraffen|wild animal\.jpg|8455340212|with its baby', re.I)
 def info(p):
     ii = p['imageinfo'][0]; m = ii.get('extmetadata', {})
     strip = lambda s: re.sub('<[^>]+>', '', html.unescape(s or '')).strip()
