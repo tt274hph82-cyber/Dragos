@@ -32,8 +32,13 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 - **The hero is Juno** (top bun + star clip, lilac hoodie), not the skill's Pip. Use `<Hero look={HERO} />`, where `HERO` = `LOOKS.juno`. In scripts, "you" = Juno. Her design rules are in `videos/what-if-studio/CHARACTER.md`; never redesign her.
 - Its credit reports need an ElevenLabs key with the "User read" and "History read" permissions.
 
-## Nea Costel "Who invented…?" Reels
-- The host is Nea Costel (`LOOKS.costel`). His reusable pieces live in `videos/what-if-studio/src/episodes/fountain-pen/shots.tsx` (`Bold`, `Sky`, `Roofs`, `camV`, …).
+## Main character (host) for Reels and Shorts
+- **The host is now the afro character (`LOOKS.afro`). He replaced Nea Costel** for all new Reels and Shorts, both story Reels and "Who invented…?".
+- His look: tall and lanky, a big crimson curly afro, a long curled handlebar moustache, a nose ring, sleepy heavy-lidded eyes, freckles and stubble, a navy velvet blazer over an open cream shirt with a gold chain, a belt with a gold buckle, rust pinstripe bell-bottoms and black boots. The palette comes from his model sheet. Never redesign him.
+- In 9:16 close-ups, keep his head smaller (about `sc 2.9` at `y ≈ 840`) so the afro doesn't swallow the titles.
+
+## "Who invented…?" Reels (formerly hosted by Nea Costel)
+- Nea Costel (`LOOKS.costel`) hosted the first three. Their reusable pieces live in `videos/what-if-studio/src/episodes/fountain-pen/shots.tsx` (`Bold`, `Sky`, `Roofs`, `camV`, …).
 - **Open with a hook, as in the What If formula (cold open).** The first ~10 s are a flash-forward into the story's most dramatic moment, told in 3 or 4 quick beats, before the title question.
   - Example: "London, 1770. A riot. One man gets locked up. All he has is a bone from his dinner. And what he makes with it is in your bathroom right now."
   - Only after that comes Nea Costel with "Who invented…?".
@@ -52,13 +57,13 @@ These rules come from measuring three reference Reels:
 - **Draw natively in 1080x1920.** Don't crop a 16:9 frame.
 - **Pace:** fast, a new picture about every 2 s (about 30 cuts a minute).
   - Split long lines into "wide, then close" pairs with `close()` in `molasses/shots.tsx`. Close variants hide titles via `CloseCtx`.
-  - Cut in Nea Costel reactions (`react()`).
+  - Cut in host reactions (`react()`).
 - **Detail in every scene:** lit windows, chimney smoke, ships and masts, gulls, dust motes, gas lamps, cobbles, hats on the crowd, bubbles and debris, a shaded tank with a ladder and pipes, and a blurred foreground (`Fore`).
 - **Camera:** a slow, steady push-in of about 3% a second on every shot. Change shots with 4-frame dissolves. No whip-pans or shake, except a shake on impacts.
 - **Karaoke captions** on every word, 3 at a time, with the spoken word in yellow, always at y ≈ 1170. They're timed from the aligned `words.json`.
 - **Slanted punch titles** at the top for key facts and numbers.
 - **Look:** one colour mood per scene; depth from layered flat silhouettes; figures as dark silhouettes with a glowing outline in the scene's light colour; colour only on the key object.
-- **Nea Costel stands inside the scenes,** full body or in close-up. End on a call to action.
+- **The host (`LOOKS.afro`) stands inside the scenes,** full body or in close-up. End on a call to action.
 
 ## Shorts / Reels: 9:16 only
 - Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.

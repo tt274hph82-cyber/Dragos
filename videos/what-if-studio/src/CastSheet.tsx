@@ -12,7 +12,7 @@ const Label: React.FC<{ x: number; y: number; text: string }> = ({ x, y, text })
   </text>
 );
 const P = (o: Partial<Pose>): Pose => ({ ...basePose, ...o });
-const NAMES: Record<CastName, string> = { pip: 'PIP A', pipHood: 'PIP B (HERO)', pipInk: 'PIP C', mo: 'MO, FRIEND', sis: 'SISTER', mom: 'MUM', suit: 'THE SUIT', nova: 'NOVA', kit: 'KIT', juno: 'JUNO (HERO)', costel: 'NEA COSTEL' };
+const NAMES: Record<CastName, string> = { pip: 'PIP A', pipHood: 'PIP B (HERO)', pipInk: 'PIP C', mo: 'MO, FRIEND', sis: 'SISTER', mom: 'MUM', suit: 'THE SUIT', nova: 'NOVA', kit: 'KIT', juno: 'JUNO (HERO)', costel: 'NEA COSTEL', afro: 'STORY HOST' };
 
 export const CastSheet: React.FC = () => {
   const cast: CastName[] = ['juno', 'mo', 'sis', 'mom', 'suit', 'nova', 'kit'];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCurrentFrame, random } from 'remotion';
-import { Hero, Look, Pose, basePose, clamp, lerp, easeOut, LEG_LEN, HEAD, FONT, Glow } from '../../engine';
+import { Hero, Look, Pose, LOOKS, basePose, clamp, lerp, easeOut, LEG_LEN, HEAD, FONT, Glow } from '../../engine';
 import { COSTEL, INK } from '../fountain-pen/shots';
 
 // The story-Reel kit, drawn natively in 1080 x 1920. Measured from the reference Reels: one colour mood per scene
@@ -237,13 +237,14 @@ export const Fore: React.FC<{ kind?: 'posts' | 'barrel' }> = ({ kind = 'posts' }
   </g>
 );
 
-/** Nea Costel standing inside the scene, full figure, the richer drawn host. */
+/** The story host (LOOKS.afro, who replaced Nea Costel) standing inside the scene, full figure, the richer drawn layer. */
+export const HOST = LOOKS.afro;
 export const Host: React.FC<{ x?: number; feet?: number; s?: number; pose?: Partial<Pose> }> = ({ x = 540, feet = 1700, s = 1.7, pose = {} }) => (
-  <Hero look={COSTEL} pose={{ ...basePose, x, y: feet - LEG_LEN * s, scale: s, ...pose }} shadow={0.8} />
+  <Hero look={HOST} pose={{ ...basePose, x, y: feet - LEG_LEN * s, scale: s, ...pose }} shadow={0.8} />
 );
 /** A host close-up: his head at (x, y) and the head scale sc. */
 export const HostClose: React.FC<{ x?: number; y?: number; sc?: number; pose?: Partial<Pose> }> = ({ x = 540, y = 760, sc = 3.6, pose = {} }) => (
-  <Hero look={COSTEL} pose={{ ...basePose, x, y: y - HEAD.y * sc, scale: sc, armL: { a: 14, b: -6 }, armR: { a: 14, b: -6 }, ...pose }} shadow={0} />
+  <Hero look={HOST} pose={{ ...basePose, x, y: y - HEAD.y * sc, scale: sc, armL: { a: 14, b: -6 }, armR: { a: 14, b: -6 }, ...pose }} shadow={0} />
 );
 
 /** The punch title: a slanted, heavy, outlined headline at the top (the references' "400 DE MORȚI"). */

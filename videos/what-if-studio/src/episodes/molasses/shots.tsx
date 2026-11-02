@@ -90,7 +90,7 @@ export const S7: S = ({ t }) => (
   <g>
     <Sky id="m7" mood="noon" sunY={380} />
     <City mood="noon" />
-    <HostClose y={760} sc={3.4} pose={{ yaw: -0.1, headTilt: -6, ...faceAt(t, [[0, 'smug']]), armR: { a: 150, b: 20 }, handR: 'point' }} />
+    <HostClose y={840} sc={2.9} pose={{ yaw: -0.1, headTilt: -6, ...faceAt(t, [[0, 'smug']]), armR: { a: 150, b: 20 }, handR: 'point' }} />
     <Punch t={t - 6} lines={['IT REALLY', 'HAPPENED']} y={330} size={80} />
   </g>
 );
@@ -307,7 +307,7 @@ export const S25: S = ({ t }) => (
   <g>
     <Sky id="m25" mood="danger" sunY={340} />
     <City mood="danger" />
-    <HostClose y={760} sc={3.4} pose={{ yaw: 0.05, armL: { a: 150, b: 120 }, armR: { a: 150, b: 120 }, ...faceAt(t, [[0, 'shock']]) }} />
+    <HostClose y={840} sc={2.9} pose={{ yaw: 0.05, armL: { a: 150, b: 120 }, armR: { a: 150, b: 120 }, ...faceAt(t, [[0, 'shock']]) }} />
     <Punch t={t - 4} lines={['THE WORST', 'PART']} y={330} size={90} color="#FF8A3D" />
   </g>
 );
@@ -448,7 +448,7 @@ export const S36: S = ({ t }) => (
   <g>
     <Sky id="m36" mood="brown" sunY={340} />
     <City mood="brown" />
-    <HostClose y={780} sc={3.4} pose={{ yaw: 0, ...faceAt(t, [[0, 'worried'], [60, 'neutral']]) }} />
+    <HostClose y={850} sc={2.9} pose={{ yaw: 0, ...faceAt(t, [[0, 'worried'], [60, 'neutral']]) }} />
     <Punch t={t - 30} lines={['21 DROWNED', 'IN SYRUP']} y={330} size={84} color="#FFD23F" />
   </g>
 );
@@ -502,7 +502,7 @@ const react = (mood: Mood, face: 'shock' | 'worried' | 'smug' | 'oops', pose: Pa
   <g>
     <Sky id={`r${mood}${face}`} mood={mood} sunY={360} />
     <City mood={mood} />
-    <HostClose y={760} sc={3.4} pose={{ ...pose, ...faceAt(t, [[0, face]]) }} />
+    <HostClose y={840} sc={2.9} pose={{ ...pose, ...faceAt(t, [[0, face]]) }} />
     {words ? <Punch t={t - 4} lines={words} y={330} size={84} color="#FFD23F" /> : null}
   </g>
 );
