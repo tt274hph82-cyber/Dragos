@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCurrentFrame, random } from 'remotion';
 import { Hero, Look, Pose, basePose, clamp, lerp, easeOut, LEG_LEN, HEAD, FONT, Glow } from '../../engine';
 import { COSTEL, INK } from '../fountain-pen/shots';
 
@@ -8,6 +9,8 @@ import { COSTEL, INK } from '../fountain-pen/shots';
 // richer, fully drawn host standing inside the scenes.
 
 export const W = 1080, H = 1920;
+/** True inside a pushed-in close variant: titles and sound words stay with the wide shot, so they never get cropped. */
+export const CloseCtx = React.createContext(false);
 export type Mood = 'noon' | 'warm' | 'danger' | 'brown' | 'night' | 'cold';
 export const MOODS: Record<Mood, { sky: [string, string]; layers: [string, string, string]; ground: string; rim: string; glow: 'warm' | 'cool' | 'red' }> = {
   noon: { sky: ['#9FB9D2', '#EADCC2'], layers: ['#8597AC', '#5F7086', '#3C4858'], ground: '#232833', rim: '#FFE2A8', glow: 'warm' },
@@ -16,6 +19,27 @@ export const MOODS: Record<Mood, { sky: [string, string]; layers: [string, strin
   brown: { sky: ['#24130A', '#8A5626'], layers: ['#6A4222', '#4E2E18', '#331C0E'], ground: '#1A0E07', rim: '#F2A33A', glow: 'warm' },
   night: { sky: ['#121230', '#4A2C62'], layers: ['#3A2A52', '#2A1E40', '#1C142C'], ground: '#0E0A18', rim: '#C9A2FF', glow: 'cool' },
   cold: { sky: ['#0C1E30', '#5E8FB6'], layers: ['#2E4E6A', '#203A52', '#14263A'], ground: '#0A1624', rim: '#9FE3FF', glow: 'cool' },
+};
+
+/** Life in the air: gulls gliding across, and dust motes drifting in the light (driven by the film's frame). */
+export const Air: React.FC<{ mood: Mood }> = ({ mood }) => {
+  const f = useCurrentFrame();
+  const dusk = mood === 'night' || mood === 'cold';
+  return (
+    <g>
+      {!dusk ? [0, 1, 2, 3].map((i) => {
+        const x = ((f * (1.2 + i * 0.3) + i * 290) % 1500) - 200;
+        const y = 300 + i * 70 + Math.sin(f * 0.05 + i) * 20;
+        const flap = Math.sin(f * 0.3 + i) * 8;
+        return <path key={i} d={`M ${x - 22} ${y - flap} Q ${x - 10} ${y - 10} ${x} ${y} Q ${x + 10} ${y - 10} ${x + 22} ${y - flap}`} stroke={MOODS[mood].layers[2]} strokeWidth={5} fill="none" strokeLinecap="round" />;
+      }) : null}
+      {Array.from({ length: 22 }, (_, i) => {
+        const x = (random(`dx${i}`) * W + f * (0.3 + random(`dv${i}`) * 0.6)) % W;
+        const y = 380 + ((random(`dy${i}`) * 900 - f * (0.2 + random(`du${i}`) * 0.4)) % 900 + 900) % 900;
+        return <circle key={i} cx={x} cy={y} r={2 + random(`dr${i}`) * 3} fill={MOODS[mood].rim} opacity={0.25 + 0.35 * Math.abs(Math.sin(f * 0.04 + i))} />;
+      })}
+    </g>
+  );
 };
 
 /** The sky: a soft vertical gradient and a big glow (sun or moon). */
@@ -32,6 +56,7 @@ export const Sky: React.FC<{ id: string; mood: Mood; sunY?: number; sunX?: numbe
       <rect x={-300} y={-300} width={W + 600} height={H + 600} fill={`url(#sk${id})`} />
       {moon ? <circle cx={sunX} cy={sunY} r={70} fill="#FFF2C8" /> : <circle cx={sunX} cy={sunY} r={120} fill="#FFF6DE" opacity={0.75} />}
       <Glow x={sunX} y={sunY} r={520} kind={m.glow} o={0.55} />
+      <Air mood={mood} />
     </g>
   );
 };
@@ -43,6 +68,7 @@ const MID = [[-80, 220, 1060], [130, 160, 1000], [280, 230, 1080], [500, 170, 10
 const NEAR = [[-60, 300, 1180], [230, 260, 1140], [480, 240, 1200], [710, 380, 1160]];
 export const City: React.FC<{ mood: Mood; shift?: number }> = ({ mood, shift = 0 }) => {
   const m = MOODS[mood];
+  const f = useCurrentFrame();
   const row = (rows: number[][], c: string, dx: number, roof: 'dome' | 'flat' | 'gable') => (
     <g fill={c} transform={`translate(${dx} 0)`}>
       {rows.map(([x, w, top], i) => (
@@ -52,15 +78,34 @@ export const City: React.FC<{ mood: Mood; shift?: number }> = ({ mood, shift = 0
           {roof === 'dome' && i % 3 === 2 ? <path d={`M ${x + w / 2 - 8} ${top} L ${x + w / 2} ${top - 160} L ${x + w / 2 + 8} ${top} Z`} /> : null}
           {roof === 'gable' ? <path d={`M ${x} ${top} L ${x + w / 2} ${top - w * 0.35} L ${x + w} ${top} Z`} /> : null}
           {roof !== 'dome' ? <rect x={x + w * 0.7} y={top - 50} width={22} height={50} /> : null}
+          {roof !== 'dome' ? Array.from({ length: Math.floor((w - 30) / 46) * 3 }, (_, k) => {
+            const cols = Math.floor((w - 30) / 46);
+            const cx = x + 22 + (k % cols) * 46, cy = top + 40 + Math.floor(k / cols) * 70;
+            const lit = random(`w${x}${k}`) < (mood === 'night' || mood === 'warm' || mood === 'danger' ? 0.55 : 0.25);
+            return <rect key={k} x={cx} y={cy} width={20} height={30} rx={3} fill={lit ? '#FFD27A' : '#000'} opacity={lit ? 0.75 : 0.18} />;
+          }) : null}
         </g>
       ))}
     </g>
   );
+  const smoke = (cx: number, cy: number, i: number) => (
+    <g key={i} opacity={0.35}>
+      {[0, 1, 2, 3].map((k) => {
+        const ph = ((f * 0.6 + k * 40 + i * 17) % 160) / 160;
+        return <circle key={k} cx={cx + ph * 70 + Math.sin(ph * 6 + i) * 10} cy={cy - ph * 220} r={14 + ph * 34} fill={m.layers[0]} opacity={1 - ph} />;
+      })}
+    </g>
+  );
   return (
     <g>
+      {/* ships' masts and rigging on the harbour, far right */}
+      <g stroke={m.layers[0]} strokeWidth={6} fill="none" transform={`translate(${shift * 0.15} 0)`}>
+        {[860, 990].map((mx) => <g key={mx}><path d={`M ${mx} 640 L ${mx} 900 M ${mx - 60} 700 L ${mx + 60} 700 M ${mx - 50} 770 L ${mx + 50} 770 M ${mx} 640 L ${mx + 120} 880`} /></g>)}
+      </g>
       {row(FAR, m.layers[0], shift * 0.2, 'dome')}
       {row(MID, m.layers[1], shift * 0.5, 'gable')}
       {row(NEAR, m.layers[2], shift, 'flat')}
+      {MID.filter((_, i) => i % 2 === 0).map(([x, w, top], i) => smoke(x + w * 0.7 + 11 + shift * 0.5, top - 50, i))}
     </g>
   );
 };
@@ -69,7 +114,18 @@ export const City: React.FC<{ mood: Mood; shift?: number }> = ({ mood, shift = 0
 export const Street: React.FC<{ mood: Mood; y?: number }> = ({ mood, y = 1270 }) => (
   <g>
     <rect x={-300} y={y} width={W + 600} height={H} fill={MOODS[mood].ground} />
-    {[0, 1, 2, 3, 4].map((i) => <path key={i} d={`M -300 ${y + 40 + i * 70} L ${W + 300} ${y + 40 + i * 70}`} stroke="#000" strokeOpacity={0.25} strokeWidth={4} />)}
+    {Array.from({ length: 8 }, (_, r) => Array.from({ length: 14 }, (_, c) => (
+      <rect key={`${r}-${c}`} x={-60 + c * 90 + (r % 2) * 45} y={y + 18 + r * 52} width={78} height={40} rx={14} fill="#000" opacity={0.16} />
+    )))}
+    {/* gas lamps at both kerbs, glowing */}
+    {[70, 1010].map((lx) => (
+      <g key={lx}>
+        <rect x={lx - 7} y={y - 330} width={14} height={340} fill="#0B0A10" />
+        <path d={`M ${lx - 26} ${y - 330} L ${lx + 26} ${y - 330} L ${lx + 16} ${y - 380} L ${lx - 16} ${y - 380} Z`} fill="#0B0A10" />
+        <circle cx={lx} cy={y - 352} r={12} fill="#FFE2A0" />
+        <Glow x={lx} y={y - 352} r={110} kind="warm" o={0.7} />
+      </g>
+    ))}
   </g>
 );
 
@@ -110,6 +166,16 @@ export const Tank: React.FC<{ x: number; y: number; s?: number; brown?: number; 
           ))}
         </g>
       ))}
+      {burst < 0.05 ? (
+        <g>
+          <rect x={-200} y={0} width={110} height={400} fill="#FFFFFF" opacity={0.07} />
+          <rect x={120} y={0} width={80} height={400} fill="#000" opacity={0.18} />
+          {/* a ladder up the side and the filling pipe from the wharf */}
+          <path d="M 150 400 L 150 20 M 180 400 L 180 20" stroke={INK} strokeWidth={5} />
+          {Array.from({ length: 12 }, (_, k) => <path key={k} d={`M 150 ${40 + k * 32} L 180 ${40 + k * 32}`} stroke={INK} strokeWidth={4} />)}
+          <path d="M -200 330 L -320 330 L -320 420" stroke={INK} strokeWidth={22} fill="none" />
+        </g>
+      ) : null}
       <path d={`M -210 0 L 0 -70 L 210 0 Z`} fill={body} stroke={INK} strokeWidth={6} transform={`translate(0 ${-burst * 160}) rotate(${burst * 25})`} />
       {/* leaks: dark streaks running down from seams, growing */}
       {leak > 0 ? [[-140, 140], [-40, 220], [70, 60], [150, 300]].map(([lx, ly], i) => (
@@ -136,6 +202,13 @@ export const Molasses: React.FC<{ id: string; top: number; crest?: number; t?: n
       <path d={`M ${x0} ${H + 300} L ${xs.map((x) => `${x} ${top + wob(x) - crest * Math.exp(-Math.pow((x - W / 2) / 260, 2))}`).join(' L ')} L ${x1} ${H + 300} Z`} fill={`url(#mo${id})`} />
       <path d={`M ${xs.map((x) => `${x} ${top + wob(x) + 18 - crest * Math.exp(-Math.pow((x - W / 2) / 260, 2))}`).join(' L ')}`} stroke="#E8A35A" strokeOpacity={0.5} strokeWidth={6} fill="none" />
       {[0, 1, 2].map((i) => <ellipse key={i} cx={200 + i * 330 + Math.sin(t * 0.1 + i) * 30} cy={top + 120 + i * 90} rx={70} ry={10} fill="#C98448" opacity={0.25} />)}
+      {/* slow bubbles swelling and popping, and planks drifting */}
+      {Array.from({ length: 7 }, (_, i) => {
+        const ph = ((t * 0.7 + i * 23) % 60) / 60;
+        const bx = Math.max(x0, Math.min(x1, 80 + ((i * 157) % 920)));
+        return <circle key={i} cx={bx} cy={top + 60 + (i % 3) * 70} r={6 + ph * 18} fill="none" stroke="#E8A35A" strokeWidth={3} opacity={(1 - ph) * 0.7} />;
+      })}
+      {[0, 1].map((i) => <rect key={`p${i}`} x={(i ? 760 : 160) + Math.sin(t * 0.04 + i) * 40} y={top + 40 + i * 30} width={150} height={22} rx={4} fill="#2A160A" transform={`rotate(${i ? 12 : -8} ${(i ? 835 : 235)} ${top + 50})`} />)}
     </g>
   );
 };
@@ -144,9 +217,23 @@ export const Molasses: React.FC<{ id: string; top: number; crest?: number; t?: n
 export const rimLook = (rim: string, extra?: Look['extra']): Look => ({
   ...COSTEL, skin: INK, skinShade: INK, hand: INK, jacket: INK, jacketShade: INK, accent: INK, limb: INK, line: rim, shoe: INK, hair: INK, face: INK, extra,
 });
-export const Figure: React.FC<{ x: number; feet: number; s: number; mood: Mood; pose?: Partial<Pose>; extra?: Look['extra'] }> = ({ x, feet, s, mood, pose = {}, extra }) => (
-  <g style={{ filter: `drop-shadow(0 0 6px ${MOODS[mood].rim})` }}>
-    <Hero look={rimLook(MOODS[mood].rim, extra)} pose={{ ...basePose, x, y: feet - LEG_LEN * s, scale: s, ...pose }} shadow={0} rimId="none" />
+export const Figure: React.FC<{ x: number; feet: number; s: number; mood: Mood; pose?: Partial<Pose>; extra?: Look['extra']; hat?: 'bowler' | 'cap' | 'none' }> = ({ x, feet, s, mood, pose = {}, extra, hat = 'none' }) => {
+  const hy = feet - LEG_LEN * s + HEAD.y * s;
+  const rim = MOODS[mood].rim;
+  return (
+    <g style={{ filter: `drop-shadow(0 0 6px ${rim})` }}>
+      <Hero look={rimLook(rim, extra)} pose={{ ...basePose, x, y: feet - LEG_LEN * s, scale: s, ...pose }} shadow={0} rimId="none" />
+      {hat === 'bowler' ? <g transform={`translate(${x} ${hy - 50 * s}) scale(${s})`} fill={INK} stroke={rim} strokeWidth={3}><path d="M -46 10 Q -46 -48 0 -50 Q 46 -48 46 10 Z" /><rect x={-74} y={4} width={148} height={14} rx={7} /></g> : null}
+      {hat === 'cap' ? <g transform={`translate(${x} ${hy - 40 * s}) scale(${s})`} fill={INK} stroke={rim} strokeWidth={3}><path d="M -64 12 Q -64 -40 0 -42 Q 64 -40 66 4 Q 90 10 92 18 L -64 18 Z" /></g> : null}
+    </g>
+  );
+};
+
+/** Blurred dark shapes right at the camera (posts, a barrel, a rope), for depth like the references' foregrounds. */
+export const Fore: React.FC<{ kind?: 'posts' | 'barrel' }> = ({ kind = 'posts' }) => (
+  <g style={{ filter: 'blur(8px)' }} fill="#07050A" opacity={0.92}>
+    {kind === 'posts' ? <g><rect x={-40} y={900} width={110} height={1200} /><rect x={1000} y={1000} width={130} height={1000} /><path d="M 60 980 Q 540 1100 1010 1060" stroke="#07050A" strokeWidth={18} fill="none" /></g>
+      : <g><ellipse cx={980} cy={1500} rx={190} ry={300} /><rect x={-60} y={1250} width={180} height={700} rx={40} /></g>}
   </g>
 );
 
@@ -161,6 +248,7 @@ export const HostClose: React.FC<{ x?: number; y?: number; sc?: number; pose?: P
 
 /** The punch title: a slanted, heavy, outlined headline at the top (the references' "400 DE MORȚI"). */
 export const Punch: React.FC<{ t: number; lines: string[]; y?: number; size?: number; color?: string }> = ({ t, lines, y = 380, size = 96, color = '#FFFFFF' }) => {
+  if (React.useContext(CloseCtx)) return null;
   if (t < 0) return null;
   const s = t < 6 ? 1 + 2.7 * Math.pow(t / 6 - 1, 3) + 1.7 * Math.pow(t / 6 - 1, 2) : 1;
   return (
@@ -176,7 +264,7 @@ export const Punch: React.FC<{ t: number; lines: string[]; y?: number; size?: nu
 
 /** An icon card: a big rounded panel that pops in, for numbers and objects. */
 export const popIn = (t: number, d = 7) => (t <= 0 ? 0 : t >= d ? 1 : 1 + 2.7 * Math.pow(t / d - 1, 3) + 1.7 * Math.pow(t / d - 1, 2));
-export const BigNumber: React.FC<{ t: number; text: string; sub?: string; y?: number; color?: string }> = ({ t, text, sub, y = 760, color = '#FFD23F' }) => (
+export const BigNumber: React.FC<{ t: number; text: string; sub?: string; y?: number; color?: string }> = ({ t, text, sub, y = 760, color = '#FFD23F' }) => React.useContext(CloseCtx) ? null : (
   <g transform={`translate(${W / 2} ${y}) scale(${popIn(t)})`}>
     <text textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={220} fill={color} stroke="#140A12" strokeWidth={26} paintOrder="stroke" strokeLinejoin="round">{text}</text>
     {sub ? <text y={110} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={64} fill="#FFFFFF" stroke="#140A12" strokeWidth={12} paintOrder="stroke">{sub}</text> : null}
@@ -237,6 +325,7 @@ export const Sparks: React.FC<{ x: number; y: number; t: number; seed?: number }
 
 /** Comic sound word, like the references' "PAF!". */
 export const Sfx: React.FC<{ t: number; text: string; x: number; y: number; rot?: number; size?: number }> = ({ t, text, x, y, rot = -8, size = 110 }) => {
+  if (React.useContext(CloseCtx)) return null;
   if (t < 0 || t > 40) return null;
   return (
     <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${popIn(t, 5)})`}>

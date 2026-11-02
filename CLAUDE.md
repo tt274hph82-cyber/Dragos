@@ -50,7 +50,10 @@ For story Reels (strange-history storytime, ~2 min), use the engine's story mode
 
 These rules come from measuring three reference Reels:
 - **Draw natively in 1080x1920.** Don't crop a 16:9 frame.
-- **Pace:** a new picture every 2–4 s, about 18–20 per minute.
+- **Pace:** fast, a new picture about every 2 s (about 30 cuts a minute).
+  - Split long lines into "wide, then close" pairs with `close()` in `molasses/shots.tsx`. Close variants hide titles via `CloseCtx`.
+  - Cut in Nea Costel reactions (`react()`).
+- **Detail in every scene:** lit windows, chimney smoke, ships and masts, gulls, dust motes, gas lamps, cobbles, hats on the crowd, bubbles and debris, a shaded tank with a ladder and pipes, and a blurred foreground (`Fore`).
 - **Camera:** a slow, steady push-in of about 3% a second on every shot. Change shots with 4-frame dissolves. No whip-pans or shake, except a shake on impacts.
 - **Karaoke captions** on every word, 3 at a time, with the spoken word in yellow, always at y ≈ 1170. They're timed from the aligned `words.json`.
 - **Slanted punch titles** at the top for key facts and numbers.

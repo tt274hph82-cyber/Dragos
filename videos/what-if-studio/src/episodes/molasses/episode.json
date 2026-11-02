@@ -424,6 +424,146 @@
    "set": "boston",
    "key": 30,
    "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S42"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S43"
+  },
+  {
+   "id": "S44",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S44"
+  },
+  {
+   "id": "S45",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S45"
+  },
+  {
+   "id": "S46",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S46"
+  },
+  {
+   "id": "S47",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S47"
+  },
+  {
+   "id": "S48",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S48"
+  },
+  {
+   "id": "S49",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S49"
+  },
+  {
+   "id": "S50",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S50"
+  },
+  {
+   "id": "S51",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S51"
+  },
+  {
+   "id": "S52",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S52"
+  },
+  {
+   "id": "S53",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S53"
+  },
+  {
+   "id": "S54",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S54"
+  },
+  {
+   "id": "S55",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S55"
+  },
+  {
+   "id": "S56",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S56"
+  },
+  {
+   "id": "S57",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S57"
+  },
+  {
+   "id": "S58",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S58"
   }
  ],
  "edit": [
@@ -440,12 +580,24 @@
    "at": "A"
   },
   {
+   "shot": "S39",
+   "at": "rips"
+  },
+  {
    "shot": "S4",
    "at": "Then"
   },
   {
+   "shot": "S40",
+   "at": "tall"
+  },
+  {
    "shot": "S5",
    "at": "But"
+  },
+  {
+   "shot": "S5",
+   "at": "It's"
   },
   {
    "shot": "S6",
@@ -460,8 +612,20 @@
    "at": "On"
   },
   {
+   "shot": "S41",
+   "at": "giant"
+  },
+  {
+   "shot": "S42",
+   "at": "fifteen"
+  },
+  {
    "shot": "S9",
    "at": "Inside"
+  },
+  {
+   "shot": "S55",
+   "at": "million"
   },
   {
    "shot": "S10",
@@ -476,8 +640,20 @@
    "at": "So"
   },
   {
+   "shot": "S43",
+   "at": "painted"
+  },
+  {
+   "shot": "S56",
+   "at": "nobody"
+  },
+  {
    "shot": "S13",
    "at": "Neighbours"
+  },
+  {
+   "shot": "S44",
+   "at": "buckets"
   },
   {
    "shot": "S14",
@@ -488,12 +664,20 @@
    "at": "After"
   },
   {
+   "shot": "S45",
+   "at": "suddenly"
+  },
+  {
    "shot": "S16",
    "at": "Just"
   },
   {
    "shot": "S17",
    "at": "rivets"
+  },
+  {
+   "shot": "S46",
+   "at": "like"
   },
   {
    "shot": "S18",
@@ -504,12 +688,24 @@
    "at": "A"
   },
   {
+   "shot": "S47",
+   "at": "seven"
+  },
+  {
    "shot": "S20",
    "at": "rushed"
   },
   {
+   "shot": "S48",
+   "at": "fifty"
+  },
+  {
    "shot": "S21",
    "at": "It"
+  },
+  {
+   "shot": "S57",
+   "at": "foundations"
   },
   {
    "shot": "S22",
@@ -532,36 +728,64 @@
    "at": "In"
   },
   {
+   "shot": "S49",
+   "at": "thick"
+  },
+  {
    "shot": "S27",
    "at": "People"
+  },
+  {
+   "shot": "S50",
+   "at": "harder"
   },
   {
    "shot": "S28",
    "at": "Sailors"
   },
   {
+   "shot": "S51",
+   "at": "pull"
+  },
+  {
    "shot": "S29",
    "at": "Twenty"
   },
   {
+   "shot": "S58",
+   "at": "hundred"
+  },
+  {
    "shot": "S30",
-   "at": "The"
+   "at": "clean"
   },
   {
    "shot": "S31",
    "at": "Fireboats"
   },
   {
+   "shot": "S24",
+   "at": "harbour"
+  },
+  {
    "shot": "S32",
-   "at": "The"
+   "at": "company"
   },
   {
    "shot": "S33",
-   "at": "The"
+   "at": "court"
+  },
+  {
+   "shot": "S52",
+   "at": "thin"
   },
   {
    "shot": "S34",
    "at": "After"
+  },
+  {
+   "shot": "S53",
+   "at": "designs"
   },
   {
    "shot": "S35",
@@ -572,8 +796,16 @@
    "at": "So"
   },
   {
+   "shot": "S7",
+   "at": "That's"
+  },
+  {
    "shot": "S37",
    "at": "Next"
+  },
+  {
+   "shot": "S54",
+   "at": "tell"
   },
   {
    "shot": "S38",

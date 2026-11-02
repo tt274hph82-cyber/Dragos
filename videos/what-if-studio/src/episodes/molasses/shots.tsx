@@ -2,7 +2,7 @@ import React from 'react';
 import { ShotProps, faceAt, kf, Hero, basePose, LEG_LEN } from '../../engine';
 import {
   W, H, Mood, MOODS, Sky, City, Street, ElRail, Tank, Molasses, Figure, Host, HostClose, Punch, BigNumber, Calendar, Clock, Thermometer,
-  Sparks, Sfx, popIn, clamp, lerp, easeOut, Glow, INK,
+  Sparks, Sfx, popIn, clamp, lerp, easeOut, Glow, INK, Fore, CloseCtx,
 } from './kit';
 
 // "The Great Molasses Flood" — a native 9:16 story Reel. Everything key sits between y = 280 and 1250 (the Reels safe
@@ -16,6 +16,7 @@ const crowd = (mood: Mood, t: number, n: number, x0: number, x1: number, feet: n
     const sw = Math.sin(ph) * (run ? 30 : 6);
     return (
       <Figure key={i} x={x} feet={feet + (i % 3) * 14} s={s * (0.92 + (i % 3) * 0.06)} mood={mood} extra={i % 4 === 1 ? 'bob' : i % 4 === 3 ? 'bunches' : undefined}
+        hat={i % 4 === 0 ? 'bowler' : i % 4 === 2 ? 'cap' : 'none'}
         pose={{ yaw: run ? -0.6 : i % 2 ? 0.4 : -0.3, legL: { a: sw, b: -Math.abs(sw) }, legR: { a: -sw, b: -Math.abs(sw) }, armL: { a: 20 - sw, b: 30 }, armR: { a: 20 + sw, b: 30 } }} />
     );
   });
@@ -28,6 +29,8 @@ const harbour = (id: string, mood: Mood, t: number, o: { tank?: boolean; rail?: 
     <Street mood={mood} />
   </g>
 );
+// a shot's foreground layer, drawn last: blurred posts and rope right at the lens
+const front = (kind: 'posts' | 'barrel' = 'posts') => <Fore kind={kind} />;
 
 // ---------------------------------------------------------------- the hook (0-12 s)
 export const S1: S = ({ t }) => (
@@ -35,6 +38,7 @@ export const S1: S = ({ t }) => (
     {harbour('m1', 'noon', t, { rail: 0 })}
     {crowd('noon', t, 6, 120, 980, 1330, 0.62)}
     <Punch t={t - 2} lines={['BOSTON,', '1919']} y={360} size={110} color="#FFD23F" />
+    {front()}
   </g>
 );
 export const S2: S = ({ t }) => (
@@ -161,6 +165,7 @@ export const S13: S = ({ t }) => (
         <rect x={x + 26} y={1320 - 245} width={38} height={44} rx={6} fill="#C98448" stroke={INK} strokeWidth={4} />
       </g>
     ))}
+    {front()}
   </g>
 );
 
@@ -336,6 +341,7 @@ export const S28: S = ({ t }) => (
     {/* rescuers wading in with a rope */}
     <path d={`M 120 1000 Q 540 ${1060 + Math.sin(t * 0.2) * 20} 960 1000`} stroke="#E8DCC8" strokeWidth={6} fill="none" />
     {[200, 420, 660, 880].map((x, i) => <Figure key={x} x={x} feet={1240} s={0.72} mood="night" pose={{ yaw: i < 2 ? 0.6 : -0.6, armR: { a: 80 + Math.sin(t * 0.3 + i) * 15, b: 40 }, armL: { a: 70, b: 50 } }} />)}
+    {front()}
   </g>
 );
 export const S29: S = ({ t }) => (
@@ -361,6 +367,7 @@ export const S30: S = ({ t }) => (
     <Molasses id="m30w" top={1250} t={t * 0.1} />
     {[200, 420, 660, 880].map((x, i) => <Figure key={x} x={x} feet={1280} s={0.66} mood="night" pose={{ yaw: 0.5, tilt: 18 + Math.sin(t * 0.3 + i) * 10, armL: { a: 60, b: 40 }, armR: { a: 50, b: 50 } }} />)}
     <Punch t={t - 10} lines={['WEEKS OF', 'CLEAN-UP']} y={380} size={88} />
+    {front()}
   </g>
 );
 export const S31: S = ({ t }) => (
@@ -466,3 +473,40 @@ export const S38: S = ({ t }) => (
     <Punch t={t - 4} lines={['FOLLOW FOR', 'STRANGE HISTORY']} y={330} size={76} color="#C9A2FF" />
   </g>
 );
+
+// ---------------------------------------------------------------- the faster cut: "wide, then close" and reactions
+// The references cut from a wide view to a close one in the same place. A close variant renders its parent shot
+// pushed in on (cx, cy), with the parent's clock carried on by `from` frames so the action doesn't restart.
+const close = (Shot: S, cx: number, cy: number, z: number, from: number): S => (p) => (
+  <CloseCtx.Provider value={true}><g transform={`translate(540 ${cy}) scale(${z}) translate(${-cx} ${-cy})`}><Shot {...p} t={p.t + from} /></g></CloseCtx.Provider>
+);
+export const S39 = close(S3, 560, 800, 1.6, 50);    // "rips through the harbour": on the sparks
+export const S40 = close(S4, 540, 900, 1.5, 60);    // "as tall as a house": the crest over the crowd
+export const S41 = close(S8, 540, 760, 1.5, 40);    // "giant steel tank"
+export const S42 = close(S8, 880, 760, 1.8, 90);    // "fifteen metres": the ruler
+export const S43 = close(S12, 880, 760, 1.7, 80);   // "painted it brown": the painter
+export const S44 = close(S13, 540, 1100, 1.6, 50);  // "cups and buckets"
+export const S45 = close(S15, 540, 700, 1.4, 70);   // "turned warm": the thermometer
+export const S46 = close(S17, 540, 780, 1.6, 40);   // "like gunshots"
+export const S47 = close(S19, 700, 900, 1.5, 60);   // "seven and a half metres"
+export const S48 = close(S20, 540, 600, 1.4, 50);   // "fifty-five kilometres an hour"
+export const S49 = close(S26, 540, 760, 1.6, 60);   // "like glue": the frost on the surface
+export const S50 = close(S27, 540, 820, 1.7, 70);   // "the deeper they sank"
+export const S51 = close(S28, 540, 1050, 1.6, 70);  // "pull people out"
+export const S52 = close(S33, 640, 800, 1.6, 40);   // "too thin": the gavel
+export const S53 = close(S34, 760, 1000, 1.6, 40);  // "designs": the stamp
+export const S54 = close(S37, 690, 880, 1.8, 60);   // "tell them about Boston": the jar
+
+/** Nea Costel reacting, cut in like the references' host inserts. */
+const react = (mood: Mood, face: 'shock' | 'worried' | 'smug' | 'oops', pose: Partial<import('../../engine').Pose>, words?: string[]): S => ({ t }) => (
+  <g>
+    <Sky id={`r${mood}${face}`} mood={mood} sunY={360} />
+    <City mood={mood} />
+    <HostClose y={760} sc={3.4} pose={{ ...pose, ...faceAt(t, [[0, face]]) }} />
+    {words ? <Punch t={t - 4} lines={words} y={330} size={84} color="#FFD23F" /> : null}
+  </g>
+);
+export const S55 = react('brown', 'shock', { armL: { a: 150, b: 120 }, armR: { a: 150, b: 120 } }, ['8.7 MILLION', 'LITRES!']);
+export const S56 = react('noon', 'smug', { yaw: 0.3, eyes: 0.8 } as any);
+export const S57 = react('danger', 'shock', { armL: { a: 60, b: 40 }, armR: { a: 60, b: 40 }, yaw: -0.2 });
+export const S58 = react('cold', 'worried', { headTilt: 10 });

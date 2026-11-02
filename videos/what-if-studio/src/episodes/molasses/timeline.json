@@ -23,26 +23,50 @@
   {
    "shot": "S3",
    "a": 101,
+   "b": 154,
+   "t0": 0,
+   "t1": 53,
+   "line": "A sound like a machine gun"
+  },
+  {
+   "shot": "S39",
+   "a": 154,
    "b": 201,
    "t0": 0,
-   "t1": 100,
-   "line": "A sound like a machine gun rips through the harbour."
+   "t1": 47,
+   "line": "rips through the harbour."
   },
   {
    "shot": "S4",
    "a": 201,
+   "b": 242,
+   "t0": 0,
+   "t1": 41,
+   "line": "Then a wave as"
+  },
+  {
+   "shot": "S40",
+   "a": 242,
    "b": 309,
    "t0": 0,
-   "t1": 108,
-   "line": "Then a wave as tall as a house comes down the street."
+   "t1": 67,
+   "line": "tall as a house comes down the street."
   },
   {
    "shot": "S5",
    "a": 309,
+   "b": 345,
+   "t0": 0,
+   "t1": 36,
+   "line": "But it isn't water."
+  },
+  {
+   "shot": "S5",
+   "a": 345,
    "b": 378,
    "t0": 0,
-   "t1": 69,
-   "line": "But it isn't water. It's syrup."
+   "t1": 33,
+   "line": "It's syrup."
   },
   {
    "shot": "S6",
@@ -63,18 +87,42 @@
   {
    "shot": "S8",
    "a": 519,
+   "b": 564,
+   "t0": 0,
+   "t1": 45,
+   "line": "On the waterfront stood a"
+  },
+  {
+   "shot": "S41",
+   "a": 564,
+   "b": 609,
+   "t0": 0,
+   "t1": 45,
+   "line": "giant steel tank,"
+  },
+  {
+   "shot": "S42",
+   "a": 609,
    "b": 657,
    "t0": 0,
-   "t1": 138,
-   "line": "On the waterfront stood a giant steel tank, fifteen metres tall."
+   "t1": 48,
+   "line": "fifteen metres tall."
   },
   {
    "shot": "S9",
    "a": 657,
+   "b": 728,
+   "t0": 0,
+   "t1": 71,
+   "line": "Inside: about eight point seven"
+  },
+  {
+   "shot": "S55",
+   "a": 728,
    "b": 788,
    "t0": 0,
-   "t1": 131,
-   "line": "Inside: about eight point seven million litres of molasses,"
+   "t1": 60,
+   "line": "million litres of molasses,"
   },
   {
    "shot": "S10",
@@ -95,18 +143,42 @@
   {
    "shot": "S12",
    "a": 894,
+   "b": 944,
+   "t0": 0,
+   "t1": 50,
+   "line": "So badly that the company"
+  },
+  {
+   "shot": "S43",
+   "a": 944,
+   "b": 987,
+   "t0": 0,
+   "t1": 43,
+   "line": "painted it brown, so"
+  },
+  {
+   "shot": "S56",
+   "a": 987,
    "b": 1040,
    "t0": 0,
-   "t1": 146,
-   "line": "So badly that the company painted it brown, so nobody could see the leaks."
+   "t1": 53,
+   "line": "nobody could see the leaks."
   },
   {
    "shot": "S13",
    "a": 1040,
+   "b": 1091,
+   "t0": 0,
+   "t1": 51,
+   "line": "Neighbours came with cups and"
+  },
+  {
+   "shot": "S44",
+   "a": 1091,
    "b": 1148,
    "t0": 0,
-   "t1": 108,
-   "line": "Neighbours came with cups and buckets to take the drips home."
+   "t1": 57,
+   "line": "buckets to take the drips home."
   },
   {
    "shot": "S14",
@@ -119,10 +191,18 @@
   {
    "shot": "S15",
    "a": 1218,
+   "b": 1303,
+   "t0": 0,
+   "t1": 85,
+   "line": "After days of freezing cold, the air"
+  },
+  {
+   "shot": "S45",
+   "a": 1303,
    "b": 1351,
    "t0": 0,
-   "t1": 133,
-   "line": "After days of freezing cold, the air suddenly turned warm."
+   "t1": 48,
+   "line": "suddenly turned warm."
   },
   {
    "shot": "S16",
@@ -135,10 +215,18 @@
   {
    "shot": "S17",
    "a": 1409,
+   "b": 1454,
+   "t0": 0,
+   "t1": 45,
+   "line": "rivets started popping,"
+  },
+  {
+   "shot": "S46",
+   "a": 1454,
    "b": 1493,
    "t0": 0,
-   "t1": 84,
-   "line": "rivets started popping, like gunshots."
+   "t1": 39,
+   "line": "like gunshots."
   },
   {
    "shot": "S18",
@@ -151,26 +239,50 @@
   {
    "shot": "S19",
    "a": 1548,
+   "b": 1599,
+   "t0": 0,
+   "t1": 51,
+   "line": "A brown wave, up to"
+  },
+  {
+   "shot": "S47",
+   "a": 1599,
    "b": 1655,
    "t0": 0,
-   "t1": 107,
-   "line": "A brown wave, up to seven and a half metres high,"
+   "t1": 56,
+   "line": "seven and a half metres high,"
   },
   {
    "shot": "S20",
    "a": 1655,
+   "b": 1716,
+   "t0": 0,
+   "t1": 61,
+   "line": "rushed through the streets at about"
+  },
+  {
+   "shot": "S48",
+   "a": 1716,
    "b": 1761,
    "t0": 0,
-   "t1": 106,
-   "line": "rushed through the streets at about fifty- five kilometres an hour."
+   "t1": 45,
+   "line": "fifty- five kilometres an hour."
   },
   {
    "shot": "S21",
    "a": 1761,
+   "b": 1803,
+   "t0": 0,
+   "t1": 42,
+   "line": "It knocked houses off their"
+  },
+  {
+   "shot": "S57",
+   "a": 1803,
    "b": 1837,
    "t0": 0,
-   "t1": 76,
-   "line": "It knocked houses off their foundations."
+   "t1": 34,
+   "line": "foundations."
   },
   {
    "shot": "S22",
@@ -207,74 +319,130 @@
   {
    "shot": "S26",
    "a": 2098,
+   "b": 2179,
+   "t0": 0,
+   "t1": 81,
+   "line": "In the cold winter air, the molasses got"
+  },
+  {
+   "shot": "S49",
+   "a": 2179,
    "b": 2227,
    "t0": 0,
-   "t1": 129,
-   "line": "In the cold winter air, the molasses got thick, like glue."
+   "t1": 48,
+   "line": "thick, like glue."
   },
   {
    "shot": "S27",
    "a": 2227,
+   "b": 2282,
+   "t0": 0,
+   "t1": 55,
+   "line": "People could not swim out. The"
+  },
+  {
+   "shot": "S50",
+   "a": 2282,
    "b": 2358,
    "t0": 0,
-   "t1": 131,
-   "line": "People could not swim out. The harder they fought, the deeper they sank."
+   "t1": 76,
+   "line": "harder they fought, the deeper they sank."
   },
   {
    "shot": "S28",
    "a": 2358,
+   "b": 2445,
+   "t0": 0,
+   "t1": 87,
+   "line": "Sailors, firemen and doctors waded in"
+  },
+  {
+   "shot": "S51",
+   "a": 2445,
    "b": 2493,
    "t0": 0,
-   "t1": 135,
-   "line": "Sailors, firemen and doctors waded in to pull people out."
+   "t1": 48,
+   "line": "to pull people out."
   },
   {
    "shot": "S29",
    "a": 2493,
-   "b": 2598,
+   "b": 2549,
    "t0": 0,
-   "t1": 105,
-   "line": "Twenty- one people died. About a hundred and fifty were hurt."
+   "t1": 56,
+   "line": "Twenty- one people died. About"
+  },
+  {
+   "shot": "S58",
+   "a": 2549,
+   "b": 2619,
+   "t0": 0,
+   "t1": 70,
+   "line": "a hundred and fifty were hurt. The"
   },
   {
    "shot": "S30",
-   "a": 2598,
+   "a": 2619,
    "b": 2657,
    "t0": 0,
-   "t1": 59,
-   "line": "The clean- up took weeks."
+   "t1": 38,
+   "line": "clean- up took weeks."
   },
   {
    "shot": "S31",
    "a": 2657,
-   "b": 2723,
+   "b": 2770,
    "t0": 0,
-   "t1": 66,
-   "line": "Fireboats sprayed sea water to wash"
+   "t1": 113,
+   "line": "Fireboats sprayed sea water to wash the streets, and the"
+  },
+  {
+   "shot": "S24",
+   "a": 2770,
+   "b": 2829,
+   "t0": 0,
+   "t1": 59,
+   "line": "harbour stayed brown until summer. The"
   },
   {
    "shot": "S32",
-   "a": 2723,
-   "b": 2750,
+   "a": 2829,
+   "b": 2895,
    "t0": 0,
-   "t1": 27,
-   "line": "the streets,"
+   "t1": 66,
+   "line": "company blamed anarchists."
   },
   {
    "shot": "S33",
-   "a": 2750,
+   "a": 2895,
+   "b": 2961,
+   "t0": 0,
+   "t1": 66,
+   "line": "The court said no: the tank was too"
+  },
+  {
+   "shot": "S52",
+   "a": 2961,
    "b": 3036,
    "t0": 0,
-   "t1": 286,
-   "line": "and the harbour stayed brown until summer. The company blamed anarchists. The court said no: the tank was too thin, and had never been properly tested."
+   "t1": 75,
+   "line": "thin, and had never been properly tested."
   },
   {
    "shot": "S34",
    "a": 3036,
+   "b": 3114,
+   "t0": 0,
+   "t1": 78,
+   "line": "After that, engineers had to sign off on their"
+  },
+  {
+   "shot": "S53",
+   "a": 3114,
    "b": 3147,
    "t0": 0,
-   "t1": 111,
-   "line": "After that, engineers had to sign off on their designs."
+   "t1": 33,
+   "line": "designs."
   },
   {
    "shot": "S35",
@@ -287,18 +455,34 @@
   {
    "shot": "S36",
    "a": 3221,
+   "b": 3315,
+   "t0": 0,
+   "t1": 94,
+   "line": "So yes, twenty- one people drowned in syrup."
+  },
+  {
+   "shot": "S7",
+   "a": 3315,
    "b": 3348,
    "t0": 0,
-   "t1": 127,
-   "line": "So yes, twenty- one people drowned in syrup. That's real."
+   "t1": 33,
+   "line": "That's real."
   },
   {
    "shot": "S37",
    "a": 3348,
+   "b": 3439,
+   "t0": 0,
+   "t1": 91,
+   "line": "Next time someone says slow as molasses,"
+  },
+  {
+   "shot": "S54",
+   "a": 3439,
    "b": 3488,
    "t0": 0,
-   "t1": 140,
-   "line": "Next time someone says slow as molasses, tell them about Boston."
+   "t1": 49,
+   "line": "tell them about Boston."
   },
   {
    "shot": "S38",
@@ -332,27 +516,45 @@
    "id": "S3",
    "size": "story",
    "key": 30,
-   "len": 100,
+   "len": 53,
    "first": 101,
-   "line": "A sound like a machine gun rips through the harbour.",
+   "line": "A sound like a machine gun",
    "note": "S3"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 30,
+   "len": 47,
+   "first": 154,
+   "line": "rips through the harbour.",
+   "note": "S39"
   },
   {
    "id": "S4",
    "size": "story",
    "key": 30,
-   "len": 108,
+   "len": 41,
    "first": 201,
-   "line": "Then a wave as tall as a house comes down the street.",
+   "line": "Then a wave as",
    "note": "S4"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 30,
+   "len": 67,
+   "first": 242,
+   "line": "tall as a house comes down the street.",
+   "note": "S40"
   },
   {
    "id": "S5",
    "size": "story",
    "key": 30,
-   "len": 69,
+   "len": 36,
    "first": 309,
-   "line": "But it isn't water. It's syrup.",
+   "line": "But it isn't water.",
    "note": "S5"
   },
   {
@@ -377,19 +579,46 @@
    "id": "S8",
    "size": "story",
    "key": 30,
-   "len": 138,
+   "len": 45,
    "first": 519,
-   "line": "On the waterfront stood a giant steel tank, fifteen metres tall.",
+   "line": "On the waterfront stood a",
    "note": "S8"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "key": 30,
+   "len": 45,
+   "first": 564,
+   "line": "giant steel tank,",
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "key": 30,
+   "len": 48,
+   "first": 609,
+   "line": "fifteen metres tall.",
+   "note": "S42"
   },
   {
    "id": "S9",
    "size": "story",
    "key": 30,
-   "len": 131,
+   "len": 71,
    "first": 657,
-   "line": "Inside: about eight point seven million litres of molasses,",
+   "line": "Inside: about eight point seven",
    "note": "S9"
+  },
+  {
+   "id": "S55",
+   "size": "story",
+   "key": 30,
+   "len": 60,
+   "first": 728,
+   "line": "million litres of molasses,",
+   "note": "S55"
   },
   {
    "id": "S10",
@@ -413,19 +642,46 @@
    "id": "S12",
    "size": "story",
    "key": 30,
-   "len": 146,
+   "len": 50,
    "first": 894,
-   "line": "So badly that the company painted it brown, so nobody could see the leaks.",
+   "line": "So badly that the company",
    "note": "S12"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "key": 30,
+   "len": 43,
+   "first": 944,
+   "line": "painted it brown, so",
+   "note": "S43"
+  },
+  {
+   "id": "S56",
+   "size": "story",
+   "key": 30,
+   "len": 53,
+   "first": 987,
+   "line": "nobody could see the leaks.",
+   "note": "S56"
   },
   {
    "id": "S13",
    "size": "story",
    "key": 30,
-   "len": 108,
+   "len": 51,
    "first": 1040,
-   "line": "Neighbours came with cups and buckets to take the drips home.",
+   "line": "Neighbours came with cups and",
    "note": "S13"
+  },
+  {
+   "id": "S44",
+   "size": "story",
+   "key": 30,
+   "len": 57,
+   "first": 1091,
+   "line": "buckets to take the drips home.",
+   "note": "S44"
   },
   {
    "id": "S14",
@@ -440,10 +696,19 @@
    "id": "S15",
    "size": "story",
    "key": 30,
-   "len": 133,
+   "len": 85,
    "first": 1218,
-   "line": "After days of freezing cold, the air suddenly turned warm.",
+   "line": "After days of freezing cold, the air",
    "note": "S15"
+  },
+  {
+   "id": "S45",
+   "size": "story",
+   "key": 30,
+   "len": 48,
+   "first": 1303,
+   "line": "suddenly turned warm.",
+   "note": "S45"
   },
   {
    "id": "S16",
@@ -458,10 +723,19 @@
    "id": "S17",
    "size": "story",
    "key": 30,
-   "len": 84,
+   "len": 45,
    "first": 1409,
-   "line": "rivets started popping, like gunshots.",
+   "line": "rivets started popping,",
    "note": "S17"
+  },
+  {
+   "id": "S46",
+   "size": "story",
+   "key": 30,
+   "len": 39,
+   "first": 1454,
+   "line": "like gunshots.",
+   "note": "S46"
   },
   {
    "id": "S18",
@@ -476,28 +750,55 @@
    "id": "S19",
    "size": "story",
    "key": 30,
-   "len": 107,
+   "len": 51,
    "first": 1548,
-   "line": "A brown wave, up to seven and a half metres high,",
+   "line": "A brown wave, up to",
    "note": "S19"
+  },
+  {
+   "id": "S47",
+   "size": "story",
+   "key": 30,
+   "len": 56,
+   "first": 1599,
+   "line": "seven and a half metres high,",
+   "note": "S47"
   },
   {
    "id": "S20",
    "size": "story",
    "key": 30,
-   "len": 106,
+   "len": 61,
    "first": 1655,
-   "line": "rushed through the streets at about fifty- five kilometres an hour.",
+   "line": "rushed through the streets at about",
    "note": "S20"
+  },
+  {
+   "id": "S48",
+   "size": "story",
+   "key": 30,
+   "len": 45,
+   "first": 1716,
+   "line": "fifty- five kilometres an hour.",
+   "note": "S48"
   },
   {
    "id": "S21",
    "size": "story",
    "key": 30,
-   "len": 76,
+   "len": 42,
    "first": 1761,
-   "line": "It knocked houses off their foundations.",
+   "line": "It knocked houses off their",
    "note": "S21"
+  },
+  {
+   "id": "S57",
+   "size": "story",
+   "key": 30,
+   "len": 34,
+   "first": 1803,
+   "line": "foundations.",
+   "note": "S57"
   },
   {
    "id": "S22",
@@ -521,7 +822,7 @@
    "id": "S24",
    "size": "story",
    "key": 30,
-   "len": 47,
+   "len": 59,
    "first": 1999,
    "line": "It took everything.",
    "note": "S24"
@@ -539,82 +840,136 @@
    "id": "S26",
    "size": "story",
    "key": 30,
-   "len": 129,
+   "len": 81,
    "first": 2098,
-   "line": "In the cold winter air, the molasses got thick, like glue.",
+   "line": "In the cold winter air, the molasses got",
    "note": "S26"
+  },
+  {
+   "id": "S49",
+   "size": "story",
+   "key": 30,
+   "len": 48,
+   "first": 2179,
+   "line": "thick, like glue.",
+   "note": "S49"
   },
   {
    "id": "S27",
    "size": "story",
    "key": 30,
-   "len": 131,
+   "len": 55,
    "first": 2227,
-   "line": "People could not swim out. The harder they fought, the deeper they sank.",
+   "line": "People could not swim out. The",
    "note": "S27"
+  },
+  {
+   "id": "S50",
+   "size": "story",
+   "key": 30,
+   "len": 76,
+   "first": 2282,
+   "line": "harder they fought, the deeper they sank.",
+   "note": "S50"
   },
   {
    "id": "S28",
    "size": "story",
    "key": 30,
-   "len": 135,
+   "len": 87,
    "first": 2358,
-   "line": "Sailors, firemen and doctors waded in to pull people out.",
+   "line": "Sailors, firemen and doctors waded in",
    "note": "S28"
+  },
+  {
+   "id": "S51",
+   "size": "story",
+   "key": 30,
+   "len": 48,
+   "first": 2445,
+   "line": "to pull people out.",
+   "note": "S51"
   },
   {
    "id": "S29",
    "size": "story",
    "key": 30,
-   "len": 105,
+   "len": 56,
    "first": 2493,
-   "line": "Twenty- one people died. About a hundred and fifty were hurt.",
+   "line": "Twenty- one people died. About",
    "note": "S29"
+  },
+  {
+   "id": "S58",
+   "size": "story",
+   "key": 30,
+   "len": 70,
+   "first": 2549,
+   "line": "a hundred and fifty were hurt. The",
+   "note": "S58"
   },
   {
    "id": "S30",
    "size": "story",
    "key": 30,
-   "len": 59,
-   "first": 2598,
-   "line": "The clean- up took weeks.",
+   "len": 38,
+   "first": 2619,
+   "line": "clean- up took weeks.",
    "note": "S30"
   },
   {
    "id": "S31",
    "size": "story",
    "key": 30,
-   "len": 66,
+   "len": 113,
    "first": 2657,
-   "line": "Fireboats sprayed sea water to wash",
+   "line": "Fireboats sprayed sea water to wash the streets, and the",
    "note": "S31"
   },
   {
    "id": "S32",
    "size": "story",
    "key": 30,
-   "len": 27,
-   "first": 2723,
-   "line": "the streets,",
+   "len": 66,
+   "first": 2829,
+   "line": "company blamed anarchists.",
    "note": "S32"
   },
   {
    "id": "S33",
    "size": "story",
    "key": 30,
-   "len": 286,
-   "first": 2750,
-   "line": "and the harbour stayed brown until summer. The company blamed anarchists. The court said no: the tank was too thin, and had never been properly tested.",
+   "len": 66,
+   "first": 2895,
+   "line": "The court said no: the tank was too",
    "note": "S33"
+  },
+  {
+   "id": "S52",
+   "size": "story",
+   "key": 30,
+   "len": 75,
+   "first": 2961,
+   "line": "thin, and had never been properly tested.",
+   "note": "S52"
   },
   {
    "id": "S34",
    "size": "story",
    "key": 30,
-   "len": 111,
+   "len": 78,
    "first": 3036,
-   "line": "After that, engineers had to sign off on their designs.",
+   "line": "After that, engineers had to sign off on their",
    "note": "S34"
+  },
+  {
+   "id": "S53",
+   "size": "story",
+   "key": 30,
+   "len": 33,
+   "first": 3114,
+   "line": "designs.",
+   "note": "S53"
   },
   {
    "id": "S35",
@@ -629,19 +984,28 @@
    "id": "S36",
    "size": "story",
    "key": 30,
-   "len": 127,
+   "len": 94,
    "first": 3221,
-   "line": "So yes, twenty- one people drowned in syrup. That's real.",
+   "line": "So yes, twenty- one people drowned in syrup.",
    "note": "S36"
   },
   {
    "id": "S37",
    "size": "story",
    "key": 30,
-   "len": 140,
+   "len": 91,
    "first": 3348,
-   "line": "Next time someone says slow as molasses, tell them about Boston.",
+   "line": "Next time someone says slow as molasses,",
    "note": "S37"
+  },
+  {
+   "id": "S54",
+   "size": "story",
+   "key": 30,
+   "len": 49,
+   "first": 3439,
+   "line": "tell them about Boston.",
+   "note": "S54"
   },
   {
    "id": "S38",
@@ -676,12 +1040,12 @@
    "kind": "shake",
    "len": 6,
    "amp": 5,
-   "f": 2784
+   "f": 2929
   }
  ],
  "audio": {
   "voiceVol": 0.8,
-  "sfxVol": 0.1691,
+  "sfxVol": 0.171,
   "musicVol": 0.058,
   "voice": "molasses/voice.wav",
   "sfx": "molasses/sfx.wav",
