@@ -1,0 +1,73 @@
+<title>The Great Emu War</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=block">
+<style>
+  /* Layout: a dark stage; the 720x1280 screen scaled to fit with letterboxing, a slim control bar below. Single dark look by choice. */
+  :root { --bg: #0d0604; --bar: #1c0f09; --ink: #f3e3c4; --dim: #b89571; --amber: #f2a85a; --rule: #3a2214; color-scheme: dark;
+    --ui: "Libre Baskerville", Georgia, serif; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--ui); margin: 0; display: grid; grid-template-rows: 1fr auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px; box-sizing: border-box; }
+  .stage { min-height: 0; display: grid; place-items: center; }
+  canvas { max-width: 100%; max-height: 100%; aspect-ratio: 9 / 16; height: 100%; background: #000; display: block; }
+  .bar { display: flex; align-items: center; gap: 12px; padding: 10px 4px 4px; max-width: 720px; width: 100%; margin: 0 auto; box-sizing: border-box; }
+  button { background: var(--bar); color: var(--ink); border: 1px solid var(--rule); border-radius: 6px; font: 13px var(--ui); padding: 7px 12px; cursor: pointer; min-width: 64px; }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  button[aria-pressed="true"] { color: var(--amber); border-color: var(--amber); }
+  input[type=range] { flex: 1; min-width: 0; accent-color: var(--amber); }
+  .time { font-variant-numeric: tabular-nums; color: var(--dim); font-size: 13px; min-width: 88px; text-align: right; }
+</style>
+<div class="stage"><canvas id="screen" width="720" height="1280" aria-label="The Great Emu War, a shadow play"></canvas></div>
+<div class="bar">
+  <button id="play" type="button">Play</button>
+  <input id="scrub" type="range" min="0" max="32" step="0.01" value="0" aria-label="Scrub">
+  <span class="time" id="time">0.0 / 32.0 s</span>
+  <button id="snd" type="button" aria-pressed="true">Sound</button>
+  <button id="loop" type="button" aria-pressed="true">Loop</button>
+</div>
+<script>/*HARNESS*/</script>
+<script>/*SOUND*/</script>
+<script>/*EMU*/</script>
+<script>/*SCORE*/</script>
+<script>/*VO*/</script>
+<script>
+const DURATION = EMU.D; window.DURATION = DURATION;
+const cv = document.getElementById('screen'), ctx = cv.getContext('2d');
+const playB = document.getElementById('play'), scrub = document.getElementById('scrub'), timeL = document.getElementById('time'), sndB = document.getElementById('snd'), loopB = document.getElementById('loop');
+let t = 0, playing = false, t0 = 0, wall0 = 0, soundOn = true, loop = true, stopSound = null, raf = 0;
+function draw(tt) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none'; EMU.explainer(ctx, 720, 1280, tt); }
+window.seek = (tt) => { t = Math.max(0, Math.min(DURATION, tt)); draw(t); scrub.value = t; timeL.textContent = `${t.toFixed(1)} / ${DURATION.toFixed(1)} s`; };
+// narration: Austin's lines, decoded once and scheduled on their own context in sync with the score
+let voBufs = null, voCtx = null;
+async function voLoad(ctx) {
+  if (voBufs) return voBufs;
+  voBufs = await Promise.all(window.VO.map(async (v) => { const bin = Uint8Array.from(atob(v.b64), (c) => c.charCodeAt(0)); return ctx.decodeAudioData(bin.buffer); }));
+  return voBufs;
+}
+function stopVO() { if (voCtx) { try { voCtx.close(); } catch (e) {} voCtx = null; } }
+async function startVO(from) {
+  stopVO(); const ctx = (voCtx = new (window.AudioContext || window.webkitAudioContext)()), bufs = await voLoad(ctx);
+  if (ctx !== voCtx) return;
+  const base = ctx.currentTime + 0.03;
+  window.VO.forEach((v, i) => {
+    if (v.start + v.dur <= from) return;
+    const src = ctx.createBufferSource(), g = ctx.createGain(); g.gain.value = 1.0; src.buffer = bufs[i]; src.connect(g); g.connect(ctx.destination);
+    if (v.start >= from) src.start(base + (v.start - from)); else src.start(base, from - v.start);
+  });
+}
+function stopS() { if (stopSound) { stopSound(); stopSound = null; } stopVO(); }
+function startS() { stopS(); if (soundOn && playing) { stopSound = SOUND.live(window.scoreSound, t, { voiceover: true }); startVO(t); } }
+function tick() {
+  if (!playing) return;
+  let tt = t0 + (performance.now() - wall0) / 1000;
+  if (tt >= DURATION) { if (loop) { t0 = 0; wall0 = performance.now(); tt = 0; window.seek(0); startS(); } else { window.seek(DURATION); pause(); return; } }
+  window.seek(tt); raf = requestAnimationFrame(tick);
+}
+function play() { if (t >= DURATION - 0.01) t = 0; playing = true; t0 = t; wall0 = performance.now(); playB.textContent = 'Pause'; startS(); raf = requestAnimationFrame(tick); }
+function pause() { playing = false; cancelAnimationFrame(raf); stopS(); playB.textContent = 'Play'; }
+playB.onclick = () => (playing ? pause() : play());
+scrub.oninput = () => { const was = playing; if (was) { playing = false; cancelAnimationFrame(raf); stopS(); } window.seek(+scrub.value); if (was) play(); };
+sndB.onclick = () => { soundOn = !soundOn; sndB.setAttribute('aria-pressed', soundOn); if (!soundOn) stopS(); else startS(); };
+loopB.onclick = () => { loop = !loop; loopB.setAttribute('aria-pressed', loop); };
+(async () => { try { await Promise.all(EMU.fonts.map((f) => document.fonts.load(f, 'AaZz09'))); await document.fonts.ready; } catch (e) {} window.seek(1.7); window.__ready = true; })();
+</script>

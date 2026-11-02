@@ -1,0 +1,120 @@
+<title>The Pig War Storyboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=block">
+<style>
+  /* Layout: a dark theatre programme. One single (dark) look by choice: a lit screen wall of panels, notes typed beneath. */
+  :root {
+    --bg: #160b07; --panel: #21110a; --ink: #f3e3c4; --dim: #c7a985; --amber: #f2a85a; --rule: #4a2a18;
+    --display: "IM Fell English", Georgia, serif; --body: "Libre Baskerville", Georgia, serif;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.55;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; }
+  header { max-width: 1180px; margin: 0 auto 26px; display: grid; gap: 8px; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 58px); line-height: 1.05; margin: 0; text-wrap: balance; }
+  h1 em { color: var(--amber); }
+  .meta { color: var(--dim); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .lede { max-width: 66ch; color: var(--ink); font-size: 15px; margin: 4px 0 0; }
+  .grid { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .beat { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+  .beat canvas { width: 100%; height: auto; aspect-ratio: 9 / 16; display: block; background: #000; }
+  .notes { padding: 12px 14px 16px; display: grid; gap: 8px; font-size: 13px; min-width: 0; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .num { font-family: var(--display); font-size: 26px; color: var(--amber); }
+  .time { font-variant-numeric: tabular-nums; color: var(--dim); font-size: 12.5px; letter-spacing: 0.04em; }
+  .label { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+  .onscreen { font-family: var(--display); font-size: 17px; color: var(--ink); }
+  .flow, .sound { color: var(--ink); opacity: 0.92; }
+  .flow b { color: var(--amber); font-weight: 400; font-style: italic; }
+  section.facts { max-width: 1180px; margin: 36px auto 0; border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 10px; }
+  section.facts h2 { font-family: var(--display); font-weight: 400; font-size: 30px; margin: 0; }
+  section.facts ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; font-size: 14px; }
+  .status { color: var(--dim); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="meta">Shadow Puppet Theatre · 9:16 · 720 × 1280 · 36.5 s · Austin narration · storyboard for approval</div>
+  <h1>The <em>Pig War</em></h1>
+  <p class="lede">San Juan Island, 1859: Britain and America both claim it, a pig eats a farmer's potatoes, he shoots the pig, and two empires end up in a standoff that lasts twelve years. Each panel is drawn by the real animation code at that beat's key moment. Still frames only; motion, sound and narration come after your OK.</p>
+  <div class="status" id="status">Drawing panels…</div>
+</header>
+<main class="grid" id="grid"></main>
+<section class="facts">
+  <h2>Facts and numbers I assumed</h2>
+  <ul>
+    <li>15 June 1859: American farmer Lyman Cutlar shot a Hudson's Bay Company pig that was rooting in his potato patch.</li>
+    <li>British officials threatened to arrest him; Captain George Pickett landed with 64 U.S. soldiers (27 July 1859).</li>
+    <li>Britain sent three warships at first; the standoff grew to several hundred U.S. troops facing over 2,000 British sailors and marines. I avoid more exact counts (some sources say 461 and 14 cannon), because they vary.</li>
+    <li>Rear Admiral Robert Baynes refused to start a war "over a squabble about a pig". "Not over a pig." is the play's shortening, shown as his quote.</li>
+    <li>Both sides then held the island together for 12 years; in 1872 Kaiser Wilhelm I, as arbiter, awarded it to the United States.</li>
+    <li>The only casualty of the "war" was the pig.</li>
+  </ul>
+</section>
+
+<script>/*HARNESS*/</script>
+<script>/*PIG*/</script>
+<script>
+const BEATS = [
+  { t: 1.7, a: 0, b: 2.4, text: 'San Juan Island, 1859 · The · Pig War', vo: 'San Juan Island, 1859.',
+    flow: '<b>Opening.</b> The oil lamp sputters alight; the title card drops on its strings and swings to rest, then is hoisted out.',
+    sound: 'lamp catching, hide rustle as the card falls, rod tap, one bronze gamelan note.' },
+  { t: 4.6, a: 2.4, b: 4.9, text: 'both claimed it', vo: 'Britain and America both claimed it…',
+    flow: '<b>Continuous.</b> The island rises behind (Mount Baker, a line of firs). Two flags are planted, U.S. then British, their stripes and crosses lit by red and blue gels.',
+    sound: 'two wooden thunks as each pole plants, cloth flutter, plaque tap.' },
+  { t: 6.9, a: 4.9, b: 7.6, text: 'a British pig · American potatoes', vo: '…Then a British pig ate an American\'s potatoes.',
+    flow: '<b>Continuous.</b> A pig puppet (pink gel in its snout and ear) trots in on its rod and roots up the potato patch; two plaques drop.',
+    sound: 'little trotter taps, grunts as soft wooden squeaks, earth scuffs, two plaque taps.' },
+  { t: 8.7, a: 7.6, b: 9.5, text: '(none)', vo: 'So he shot the pig.',
+    flow: '<b>Continuous.</b> The farmer walks in, raises his rifle: a flash, a red gel washes the screen, the pig keels over, legs up, X eyes.',
+    sound: 'a sharp wooden crack with a puff, a soft thud as the pig drops, silence for a beat.' },
+  { t: 10.9, a: 9.5, b: 12.2, text: 'arrest him!', vo: 'The British threatened to arrest him.',
+    flow: '<b>Continuous.</b> A redcoat officer in a shako (red gel in his coat) marches in and wags his arm; the tag drops. <b>Then the lamp is turned down and up</b> (weeks pass).',
+    sound: 'marching taps, tag tap, lamp sigh.' },
+  { t: 13.8, a: 12.2, b: 15.0, text: '64 · U.S. soldiers', vo: 'America sent in sixty-four soldiers.',
+    flow: '<b>New scene: the shore.</b> A rank of U.S. soldiers in kepis marches in, rifles on shoulders; the board drops.',
+    sound: 'a march on wooden taps, a snare-like rattle, board tap and a bronze note.' },
+  { t: 16.8, a: 15.0, b: 17.9, text: '3 · warships', vo: 'Britain sent three warships.',
+    flow: '<b>Continuous.</b> Three square-riggers sail into the bay (gun-ports lit orange), rolling on the cut-paper sea; the second board drops beside the first.',
+    sound: 'creaking timbers, wave washes, a low horn-like bronze, board tap.' },
+  { t: 20.4, a: 17.9, b: 21.3, text: 'hundreds of U.S. soldiers · 2,000+ · British sailors and marines', vo: 'Soon, hundreds of soldiers faced over two thousand British sailors.',
+    flow: '<b>Continuous, escalating.</b> The boards are hoisted away; a back rank and a cannon roll in; the plaque and a big 2,000+ board drop.',
+    sound: 'more marching, a cannon\'s wooden rumble, a rising drum roll, a heavy bronze hit on 2,000+.' },
+  { t: 24.8, a: 21.3, b: 25.2, text: 'Rear Admiral Baynes · “Not over a pig.”', vo: 'But the British admiral refused to start a war. Not over a pig.',
+    flow: '<b>Scene change: lace curtains close and part.</b> The admiral (bicorne, epaulets) walks in and raises his hand: stop. The quote card drops.',
+    sound: 'curtain swish, the drum roll cut short, a hand-raise whoosh, quote card drop and a calm bronze note.' },
+  { t: 27.6, a: 25.2, b: 28.8, text: '1860 → 1872 · 12 years, side by side', vo: 'Both armies shared the island for twelve years.',
+    flow: '<b>Scene change: lamp down and up.</b> Two camps of tents, one under each flag; a soldier from each side waves across. The year board counts 1860 to 1872.',
+    sound: 'lamp sigh, a counter tick per year, a bronze note at 1872, plaque tap.' },
+  { t: 31.6, a: 28.8, b: 32.3, text: 'Kaiser Wilhelm I · 1872 · San Juan Island → U.S.A. · to America ✓', vo: 'In 1872, the German Kaiser decided: it goes to America.',
+    flow: '<b>Continuous.</b> The camps blur back; the Kaiser (spiked helmet, whiskers) slides in front; the ruling drops; he stamps it with a red wax seal; the tag drops with a green tick.',
+    sound: 'a heavy slide, parchment rustle, a big stamp thud with a lamp flare, tick badge chime.' },
+  { t: 34.1, a: 32.3, b: 34.6, text: 'casualties · 1 · one pig', vo: 'Casualties? One pig.',
+    flow: '<b>Scene change: lamp down and up</b> into night (a cool blue gel). A little grave with a pig cut out of it; the 1 stamps down big.',
+    sound: 'lamp sigh, crickets as dry ticks, the biggest hit: a low gong under the 1, plaque tap.' },
+  { t: 36.0, a: 34.6, b: 36.5, text: 'The Pig War · only casualty: one pig', vo: '(held, no line)',
+    flow: '<b>Takeaway, continuous.</b> The labels lift away, the final card drops, the moon bursts into rays; held about 1.9 s.',
+    sound: 'card drop and tap, a resolving three-note bronze phrase over a low tone.' },
+];
+(async () => {
+  try { await Promise.all(PIG.fonts.map((f) => document.fonts.load(f, 'AaZz09'))); } catch (e) {}
+  const grid = document.getElementById('grid');
+  BEATS.forEach((b, i) => {
+    const el = document.createElement('article'); el.className = 'beat';
+    el.innerHTML = `<canvas width="720" height="1280" aria-label="Beat ${i + 1} key frame"></canvas>
+      <div class="notes"><div class="head"><span class="num">${i + 1}</span><span class="time">${b.a.toFixed(1)}–${b.b.toFixed(1)} s · key ${b.t.toFixed(2)} s</span></div>
+      <div><span class="label">On screen</span><span class="onscreen">${b.text}</span></div>
+      <div class="flow"><span class="label">Narration (Austin)</span>“${b.vo}”</div>
+      <div class="flow"><span class="label">From the last beat</span>${b.flow}</div>
+      <div class="sound"><span class="label">Key sounds</span>${b.sound}</div></div>`;
+    grid.appendChild(el);
+  });
+  const cs = grid.querySelectorAll('canvas');
+  for (let i = 0; i < BEATS.length; i++) {
+    await new Promise((r) => setTimeout(r, 0));
+    const ctx = cs[i].getContext('2d'); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    PIG.explainer(ctx, 720, 1280, BEATS[i].t);
+  }
+  document.getElementById('status').textContent = `${BEATS.length} beats · 0–36.5 s · drawn with the animation code`;
+})();
+</script>
