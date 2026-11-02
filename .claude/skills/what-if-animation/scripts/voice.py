@@ -176,4 +176,12 @@ out = [{'w': w['w'], 's': round(shift(w['s']), 3), 'e': round(shift(w['e']), 3),
 save_json(ep_dir(slug) / 'words.json', out)
 pads = [(s0, e0) for s0, e0, k in ops if k == 'pad']
 print(f'Tightened {len(cuts)} pauses (-{sum(e0 - s0 for s0, e0 in cuts):.2f} s), held {len(pads)} (+{sum(e0 - s0 for s0, e0 in pads):.2f} s): {len(x) / SR:.2f} s -> {len(y) / SR:.2f} s')
+# eleven_v4's timestamps drift inside a take: re-time every word from the cut voice itself (speech-to-text)
+if '--no-align' not in sys.argv:
+    from align import align
+    try:
+        align(slug)
+        out = load_json(ep_dir(slug) / 'words.json', out)
+    except Exception as err:  # keep the TTS timings if speech-to-text is unavailable, but say so
+        print(f'! could not align words to the audio ({err}); cuts may land late')
 print(' '.join(f"{w['w']}@{w['s']}" for w in out))

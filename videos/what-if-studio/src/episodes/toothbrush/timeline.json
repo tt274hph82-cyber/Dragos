@@ -2,118 +2,118 @@
  "slug": "toothbrush",
  "title": "WHO INVENTED THE TOOTHBRUSH?",
  "fps": 30,
- "total": 1247,
+ "total": 1240,
  "segments": [
   {
    "shot": "S4",
    "a": 0,
-   "b": 100,
+   "b": 102,
    "t0": 0,
-   "t1": 100,
+   "t1": 102,
    "line": "London, 1770. A riot."
   },
   {
    "shot": "S12",
-   "a": 100,
-   "b": 164,
+   "a": 102,
+   "b": 150,
    "t0": 0,
-   "t1": 64,
+   "t1": 48,
    "line": "One man gets locked up."
   },
   {
    "shot": "S13",
-   "a": 164,
+   "a": 150,
    "b": 224,
    "t0": 0,
-   "t1": 60,
+   "t1": 74,
    "line": "All he has is a bone from his dinner."
   },
   {
    "shot": "S14",
    "a": 224,
-   "b": 339,
+   "b": 340,
    "t0": 0,
-   "t1": 115,
+   "t1": 116,
    "line": "And what he makes with it is in your bathroom right now."
   },
   {
    "shot": "S1",
-   "a": 339,
-   "b": 399,
+   "a": 340,
+   "b": 402,
    "t0": 0,
-   "t1": 60,
+   "t1": 62,
    "line": "Who invented the toothbrush?"
   },
   {
    "shot": "S2",
-   "a": 399,
-   "b": 467,
+   "a": 402,
+   "b": 435,
    "t0": 0,
-   "t1": 68,
+   "t1": 33,
    "line": "Not a dentist."
   },
   {
    "shot": "S3",
-   "a": 467,
-   "b": 551,
+   "a": 435,
+   "b": 529,
    "t0": 0,
-   "t1": 84,
+   "t1": 94,
    "line": "China had bristle brushes over a thousand years ago."
   },
   {
    "shot": "S5",
-   "a": 551,
-   "b": 704,
+   "a": 529,
+   "b": 690,
    "t0": 0,
-   "t1": 153,
-   "line": "But the one you use? That rioter. William Addis. The story goes:"
+   "t1": 161,
+   "line": "But the one you use? That rioter. William Addis. The story goes: he"
   },
   {
    "shot": "S6",
-   "a": 704,
-   "b": 763,
+   "a": 690,
+   "b": 755,
    "t0": 0,
-   "t1": 59,
-   "line": "he drills tiny holes in the bone and"
+   "t1": 65,
+   "line": "drills tiny holes in the bone and"
   },
   {
    "shot": "S7",
-   "a": 763,
-   "b": 802,
+   "a": 755,
+   "b": 804,
    "t0": 0,
-   "t1": 39,
+   "t1": 49,
    "line": "ties in bristles."
   },
   {
    "shot": "S8",
-   "a": 802,
-   "b": 918,
+   "a": 804,
+   "b": 895,
    "t0": 0,
-   "t1": 116,
+   "t1": 91,
    "line": "Out of jail, by 1780, he's selling them."
   },
   {
    "shot": "S9",
-   "a": 918,
-   "b": 1099,
+   "a": 895,
+   "b": 1076,
    "t0": 0,
    "t1": 181,
    "line": "His company still makes toothbrushes, more than two hundred and forty years later. That's real."
   },
   {
    "shot": "S10",
-   "a": 1099,
-   "b": 1167,
+   "a": 1076,
+   "b": 1147,
    "t0": 0,
-   "t1": 68,
+   "t1": 71,
    "line": "So every morning, you brush with a"
   },
   {
    "shot": "S11",
-   "a": 1167,
-   "b": 1247,
+   "a": 1147,
+   "b": 1240,
    "t0": 0,
-   "t1": 80,
+   "t1": 93,
    "line": "rioter's idea."
   }
  ],
@@ -122,7 +122,7 @@
    "id": "S4",
    "size": "wide",
    "key": 30,
-   "len": 100,
+   "len": 102,
    "first": 0,
    "line": "London, 1770. A riot.",
    "note": "London 1770, a riot in silhouette"
@@ -131,8 +131,8 @@
    "id": "S12",
    "size": "medium",
    "key": 20,
-   "len": 64,
-   "first": 100,
+   "len": 48,
+   "first": 102,
    "line": "One man gets locked up.",
    "note": "cold open: the iron door slams"
   },
@@ -140,8 +140,8 @@
    "id": "S13",
    "size": "insert",
    "key": 20,
-   "len": 60,
-   "first": 164,
+   "len": 74,
+   "first": 150,
    "line": "All he has is a bone from his dinner.",
    "note": "cold open: a bone from his dinner in the moonlight"
   },
@@ -149,7 +149,7 @@
    "id": "S14",
    "size": "insert",
    "key": 40,
-   "len": 115,
+   "len": 116,
    "first": 224,
    "line": "And what he makes with it is in your bathroom right now.",
    "note": "cold open: the bone brush becomes a modern toothbrush"
@@ -158,8 +158,8 @@
    "id": "S1",
    "size": "medium",
    "key": 30,
-   "len": 60,
-   "first": 339,
+   "len": 62,
+   "first": 340,
    "line": "Who invented the toothbrush?",
    "note": "Nea Costel brushing at the sink, foam, turns to camera; title pops"
   },
@@ -167,8 +167,8 @@
    "id": "S2",
    "size": "close-up",
    "key": 14,
-   "len": 68,
-   "first": 399,
+   "len": 33,
+   "first": 402,
    "line": "Not a dentist.",
    "note": "foamy mouth: a dentist? nope"
   },
@@ -176,8 +176,8 @@
    "id": "S3",
    "size": "insert",
    "key": 30,
-   "len": 84,
-   "first": 467,
+   "len": 94,
+   "first": 435,
    "line": "China had bristle brushes over a thousand years ago.",
    "note": "China, bamboo-handled bristle brush, 1,000+ years ago"
   },
@@ -185,26 +185,26 @@
    "id": "S5",
    "size": "medium",
    "key": 30,
-   "len": 153,
-   "first": 551,
-   "line": "But the one you use? That rioter. William Addis. The story goes:",
+   "len": 161,
+   "first": 529,
+   "line": "But the one you use? That rioter. William Addis. The story goes: he",
    "note": "Addis in a cell, moonlight through bars"
   },
   {
    "id": "S6",
    "size": "insert",
    "key": 40,
-   "len": 59,
-   "first": 704,
-   "line": "he drills tiny holes in the bone and",
+   "len": 65,
+   "first": 690,
+   "line": "drills tiny holes in the bone and",
    "note": "a bone, holes drilled one by one"
   },
   {
    "id": "S7",
    "size": "insert",
    "key": 40,
-   "len": 39,
-   "first": 763,
+   "len": 49,
+   "first": 755,
    "line": "ties in bristles.",
    "note": "bristles tied in: the first brush"
   },
@@ -212,8 +212,8 @@
    "id": "S8",
    "size": "wide",
    "key": 30,
-   "len": 116,
-   "first": 802,
+   "len": 91,
+   "first": 804,
    "line": "Out of jail, by 1780, he's selling them.",
    "note": "a workshop, rows of brushes, 1780"
   },
@@ -222,7 +222,7 @@
    "size": "card",
    "key": 20,
    "len": 181,
-   "first": 918,
+   "first": 895,
    "line": "His company still makes toothbrushes, more than two hundred and forty years later. That's real.",
    "note": "still making toothbrushes today"
   },
@@ -230,8 +230,8 @@
    "id": "S10",
    "size": "close-up",
    "key": 14,
-   "len": 68,
-   "first": 1099,
+   "len": 71,
+   "first": 1076,
    "line": "So every morning, you brush with a",
    "note": "every morning..."
   },
@@ -239,8 +239,8 @@
    "id": "S11",
    "size": "medium",
    "key": 30,
-   "len": 80,
-   "first": 1167,
+   "len": 93,
+   "first": 1147,
    "line": "rioter's idea.",
    "note": "raises his toothbrush like a torch, laughs"
   }
@@ -250,13 +250,13 @@
    "kind": "shake",
    "len": 6,
    "amp": 7,
-   "f": 106
+   "f": 108
   }
  ],
  "audio": {
   "voiceVol": 0.8,
-  "sfxVol": 0.1312,
-  "musicVol": 0.0681,
+  "sfxVol": 0.1343,
+  "musicVol": 0.0673,
   "voice": "toothbrush/voice.wav",
   "sfx": "toothbrush/sfx.wav",
   "music": "toothbrush/music.wav"
