@@ -442,10 +442,17 @@
       both([p, g], (c) => c.restore());
     }
     // head, then hair, whiskers and the hat
-    p.beginPath(); p.ellipse(4, -380, 30, 34, 0, 0, TAU); p.fill();
-    p.beginPath(); p.moveTo(34, -384); p.lineTo(48, -372); p.lineTo(32, -364); p.fill();
-    cut(p, () => dot(p, 22, -388, 3.4));
-    if (o.stache) { p.beginPath(); p.moveTo(24, -360); p.quadraticCurveTo(50, -362, 62, -348); p.quadraticCurveTo(46, -354, 26, -352); p.fill(); p.beginPath(); p.moveTo(24, -360); p.quadraticCurveTo(10, -356, 4, -344); p.quadraticCurveTo(14, -352, 26, -352); p.fill(); }
+    // a human profile: skull, brow, a modest nose, lips, chin, jaw, neck
+    p.fillRect(-12, -352, 24, 30);
+    p.beginPath(); p.moveTo(-30, -372);
+    p.bezierCurveTo(-34, -404, -8, -418, 14, -414);
+    p.bezierCurveTo(28, -410, 32, -400, 31, -390);
+    p.lineTo(33, -384); p.quadraticCurveTo(41, -372, 38, -368); p.lineTo(32, -367);
+    p.quadraticCurveTo(35, -362, 32, -359); p.quadraticCurveTo(35, -355, 31, -351);
+    p.quadraticCurveTo(30, -343, 18, -343); p.quadraticCurveTo(4, -344, -6, -352);
+    p.quadraticCurveTo(-26, -352, -30, -372); p.closePath(); p.fill();
+    cut(p, () => { p.beginPath(); p.ellipse(18, -386, 3.6, 2.4, 0, 0, TAU); p.fill(); p.lineWidth = 2; p.beginPath(); p.arc(-4, -374, 7, -1.2, 1.6); p.stroke(); });
+    if (o.stache) { p.beginPath(); p.moveTo(26, -364); p.quadraticCurveTo(48, -366, 58, -352); p.quadraticCurveTo(44, -358, 28, -357); p.fill(); p.beginPath(); p.moveTo(26, -364); p.quadraticCurveTo(12, -360, 6, -348); p.quadraticCurveTo(16, -356, 28, -357); p.fill(); }
     if (o.whiskers) { p.beginPath(); p.moveTo(-14, -380); p.quadraticCurveTo(-20, -330, 8, -316); p.quadraticCurveTo(30, -322, 30, -340); p.quadraticCurveTo(10, -350, -2, -372); p.fill(); for (let k = 0; k < 5; k++) tear(p, -6 + k * 7, -322, 14, 5, Math.PI / 2 + 0.2); }
     if (o.beard) { p.beginPath(); p.moveTo(-10, -366); p.quadraticCurveTo(0, -320, 30, -330); p.lineTo(34, -360); p.fill(); }
     const hat = o.hat;
