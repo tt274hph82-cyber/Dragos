@@ -335,11 +335,12 @@ const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline
 };
 
 /** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
-export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string }) => ({
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean }) => ({
   id,
   total: p.timeline.total,
   shotCount: p.timeline.shots.length,
   Main: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
   Board: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
-  Vertical: () => <StoryEpisode {...p} />,
+  // karaoke captions are off by default (the user asked for no captions); pass captions: true to bring them back
+  Vertical: () => <StoryEpisode {...p} captions={p.captions ?? false} />,
 });

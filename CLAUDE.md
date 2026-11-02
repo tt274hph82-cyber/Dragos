@@ -69,7 +69,7 @@ These rules come from measuring three reference Reels:
   - Cut in host reactions (`react()`).
 - **Detail in every scene:** lit windows, chimney smoke, ships and masts, gulls, dust motes, gas lamps, cobbles, hats on the crowd, bubbles and debris, a shaded tank with a ladder and pipes, and a blurred foreground (`Fore`).
 - **Camera:** a slow, steady push-in of about 3% a second on every shot. Change shots with 4-frame dissolves. No whip-pans or shake, except a shake on impacts.
-- **Karaoke captions** on every word, 3 at a time, with the spoken word in yellow, always at y ≈ 1170. They're timed from the aligned `words.json`.
+- **No captions.** The user asked to remove them: story Reels render without karaoke captions by default. `defineStory` has `captions: false`; the code is still there (`captions: true`) if they're ever wanted again. Punch titles and big numbers stay.
 - **Slanted punch titles** at the top for key facts and numbers.
 - **Look:** one colour mood per scene; depth from layered flat silhouettes; figures as dark silhouettes with a glowing outline in the scene's light colour; colour only on the key object.
 - **The host (`LOOKS.afro`) stands inside the scenes,** full body or in close-up. End on a call to action.
