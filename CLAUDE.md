@@ -45,6 +45,18 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 - The study corner can still appear mid-episode, but not as the opening shot. Keep a list of the intros already used so none repeats.
   - Used so far: fountain pen = study corner; parachute = study corner; toothbrush = kitchen, caught brushing his teeth.
 
+## Story Reels (native 9:16, the reference style)
+For story Reels (strange-history storytime, ~2 min), use the engine's story mode (`defineStory` in `videos/what-if-studio/src/engine/episode.tsx`) and the scene kit in `src/episodes/molasses/kit.tsx`. The first one is `molasses`.
+
+These rules come from measuring three reference Reels:
+- **Draw natively in 1080x1920.** Don't crop a 16:9 frame.
+- **Pace:** a new picture every 2–4 s, about 18–20 per minute.
+- **Camera:** a slow, steady push-in of about 3% a second on every shot. Change shots with 4-frame dissolves. No whip-pans or shake, except a shake on impacts.
+- **Karaoke captions** on every word, 3 at a time, with the spoken word in yellow, always at y ≈ 1170. They're timed from the aligned `words.json`.
+- **Slanted punch titles** at the top for key facts and numbers.
+- **Look:** one colour mood per scene; depth from layered flat silhouettes; figures as dark silhouettes with a glowing outline in the scene's light colour; colour only on the key object.
+- **Nea Costel stands inside the scenes,** full body or in close-up. End on a call to action.
+
 ## Shorts / Reels: 9:16 only
 - Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.
 - **Keep everything inside the Reels/Shorts safe zone.** Facebook Reels and YouTube Shorts cover about the top 14% and the bottom 35% of the frame, and the Facebook feed can crop the video to 4:5.

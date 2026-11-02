@@ -1,0 +1,824 @@
+{
+ "id": "Molasses",
+ "slug": "molasses",
+ "topic": "The Great Molasses Flood of 1919 (story Reel, host Nea Costel)",
+ "title": [
+  "THE GREAT",
+  "MOLASSES FLOOD"
+ ],
+ "accent": "MOLASSES",
+ "voice": {
+  "id": "pqHfZKP75CvOlQylNhV4",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.4,
+   "use_speaker_boost": true
+  }
+ },
+ "tail": 2.5,
+ "script": [
+  {
+   "beat": "hook",
+   "text": "Boston, 1919. Lunchtime."
+  },
+  {
+   "beat": "hook",
+   "text": "A sound like a machine gun rips through the harbour."
+  },
+  {
+   "beat": "hook",
+   "text": "Then a wave as tall as a house comes down the street."
+  },
+  {
+   "beat": "hook",
+   "text": "But it isn't water. It's syrup."
+  },
+  {
+   "beat": "host",
+   "text": "This is the Great Molasses Flood. And yes, it really happened."
+  },
+  {
+   "beat": "setup",
+   "text": "On the waterfront stood a giant steel tank, fifteen metres tall."
+  },
+  {
+   "beat": "setup",
+   "text": "Inside: about eight point seven million litres of molasses, waiting to be turned into alcohol."
+  },
+  {
+   "beat": "warning",
+   "text": "But the tank leaked. So badly that the company painted it brown, so nobody could see the leaks."
+  },
+  {
+   "beat": "warning",
+   "text": "Neighbours came with cups and buckets to take the drips home."
+  },
+  {
+   "beat": "weather",
+   "text": "Then, January fifteenth. After days of freezing cold, the air suddenly turned warm."
+  },
+  {
+   "beat": "moment",
+   "text": "Just after half past twelve, the rivets started popping, like gunshots."
+  },
+  {
+   "beat": "moment",
+   "text": "And the tank burst open."
+  },
+  {
+   "beat": "wave",
+   "text": "A brown wave, up to seven and a half metres high, rushed through the streets at about fifty-five kilometres an hour."
+  },
+  {
+   "beat": "wave",
+   "text": "It knocked houses off their foundations. It bent the steel of the elevated railway."
+  },
+  {
+   "beat": "wave",
+   "text": "Wagons, horses, people. It took everything."
+  },
+  {
+   "beat": "trap",
+   "text": "And here comes the worst part."
+  },
+  {
+   "beat": "trap",
+   "text": "In the cold winter air, the molasses got thick, like glue. People could not swim out. The harder they fought, the deeper they sank."
+  },
+  {
+   "beat": "rescue",
+   "text": "Sailors, firemen and doctors waded in to pull people out."
+  },
+  {
+   "beat": "toll",
+   "text": "Twenty-one people died. About a hundred and fifty were hurt."
+  },
+  {
+   "beat": "cleanup",
+   "text": "The clean-up took weeks. Fireboats sprayed sea water to wash the streets, and the harbour stayed brown until summer."
+  },
+  {
+   "beat": "court",
+   "text": "The company blamed anarchists. The court said no: the tank was too thin, and had never been properly tested."
+  },
+  {
+   "beat": "legacy",
+   "text": "After that, engineers had to sign off on their designs. Rules that still protect us today."
+  },
+  {
+   "beat": "fact",
+   "text": "So yes, twenty-one people drowned in syrup. That's real."
+  },
+  {
+   "beat": "end",
+   "text": "Next time someone says slow as molasses, tell them about Boston. Follow for more strange history."
+  }
+ ],
+ "science": [
+  {
+   "claim": "15 Jan 1919, Boston North End, about 12:40 pm; tank 50 ft (15 m) tall held about 2.3 million US gallons (8.7 million L) of molasses for industrial alcohol (Purity Distilling / USIA).",
+   "working": "2.3e6 gal x 3.785 = 8.7e6 L",
+   "source": "Wikipedia, Great Molasses Flood; Boston Public Library"
+  },
+  {
+   "claim": "The tank leaked; it was painted brown to hide the leaks; residents collected leaking molasses.",
+   "working": "",
+   "source": "Wikipedia, Great Molasses Flood"
+  },
+  {
+   "claim": "Temperatures rose sharply the day of the disaster after a cold spell.",
+   "working": "from about -17 C to above 4 C",
+   "source": "Wikipedia"
+  },
+  {
+   "claim": "Witnesses described a machine-gun sound of rivets popping.",
+   "working": "",
+   "source": "Wikipedia; Smithsonian"
+  },
+  {
+   "claim": "Wave up to about 25 ft (7.6 m) at about 35 mph (56 km/h); buildings off foundations; elevated railway girders damaged; horses killed.",
+   "working": "Wave heights vary by source; script says up to 7.5 m.",
+   "source": "AP; Wikipedia"
+  },
+  {
+   "claim": "Molasses thickened in the cold, trapping victims.",
+   "working": "",
+   "source": "Scientific American / 2016 study (Sharp et al.)"
+  },
+  {
+   "claim": "21 dead, about 150 injured; cleanup took weeks; fireboats used salt water; harbor brown until summer.",
+   "working": "",
+   "source": "Wikipedia"
+  },
+  {
+   "claim": "Company blamed anarchists; court found the tank structurally unsound and inadequately tested; led to rules requiring engineers to sign off on calculations.",
+   "working": "",
+   "source": "Wikipedia; Boston Public Library"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "set": "boston",
+   "key": 30,
+   "note": "S38"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "Lunchtime"
+  },
+  {
+   "shot": "S3",
+   "at": "A"
+  },
+  {
+   "shot": "S4",
+   "at": "Then"
+  },
+  {
+   "shot": "S5",
+   "at": "But"
+  },
+  {
+   "shot": "S6",
+   "at": "This"
+  },
+  {
+   "shot": "S7",
+   "at": "And"
+  },
+  {
+   "shot": "S8",
+   "at": "On"
+  },
+  {
+   "shot": "S9",
+   "at": "Inside"
+  },
+  {
+   "shot": "S10",
+   "at": "waiting"
+  },
+  {
+   "shot": "S11",
+   "at": "But"
+  },
+  {
+   "shot": "S12",
+   "at": "So"
+  },
+  {
+   "shot": "S13",
+   "at": "Neighbours"
+  },
+  {
+   "shot": "S14",
+   "at": "Then"
+  },
+  {
+   "shot": "S15",
+   "at": "After"
+  },
+  {
+   "shot": "S16",
+   "at": "Just"
+  },
+  {
+   "shot": "S17",
+   "at": "rivets"
+  },
+  {
+   "shot": "S18",
+   "at": "And"
+  },
+  {
+   "shot": "S19",
+   "at": "A"
+  },
+  {
+   "shot": "S20",
+   "at": "rushed"
+  },
+  {
+   "shot": "S21",
+   "at": "It"
+  },
+  {
+   "shot": "S22",
+   "at": "It"
+  },
+  {
+   "shot": "S23",
+   "at": "Wagons"
+  },
+  {
+   "shot": "S24",
+   "at": "It"
+  },
+  {
+   "shot": "S25",
+   "at": "And"
+  },
+  {
+   "shot": "S26",
+   "at": "In"
+  },
+  {
+   "shot": "S27",
+   "at": "People"
+  },
+  {
+   "shot": "S28",
+   "at": "Sailors"
+  },
+  {
+   "shot": "S29",
+   "at": "Twenty"
+  },
+  {
+   "shot": "S30",
+   "at": "The"
+  },
+  {
+   "shot": "S31",
+   "at": "Fireboats"
+  },
+  {
+   "shot": "S32",
+   "at": "The"
+  },
+  {
+   "shot": "S33",
+   "at": "The"
+  },
+  {
+   "shot": "S34",
+   "at": "After"
+  },
+  {
+   "shot": "S35",
+   "at": "Rules"
+  },
+  {
+   "shot": "S36",
+   "at": "So"
+  },
+  {
+   "shot": "S37",
+   "at": "Next"
+  },
+  {
+   "shot": "S38",
+   "at": "Follow"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S3+4",
+   "kind": "shake",
+   "len": 10,
+   "amp": 6
+  },
+  {
+   "at": "S18+45",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.6
+  },
+  {
+   "at": "S18+45",
+   "kind": "shake",
+   "len": 12,
+   "amp": 9
+  },
+  {
+   "at": "S33+34",
+   "kind": "shake",
+   "len": 6,
+   "amp": 5
+  }
+ ],
+ "lead": 2,
+ "sound": {
+  "clips": {
+   "harbour": [
+    "a busy 1919 harbour street at noon, horse carts, distant ship horn, seagulls, crowd murmur, no clear words",
+    10.0
+   ],
+   "rivets": [
+    "steel rivets popping off a huge metal tank one after another, loud like machine gun fire",
+    3.0
+   ],
+   "rumble": [
+    "a deep low rumble growing louder, a huge thick wave of liquid approaching, ominous",
+    4.0
+   ],
+   "burst": [
+    "a giant steel tank bursting open with a metallic crack and a huge gush of thick liquid",
+    3.0
+   ],
+   "wave": [
+    "a thick heavy wave of syrup crashing through a street, wood snapping, metal groaning",
+    6.0
+   ],
+   "creak": [
+    "heavy steel girders bending and screeching under strain",
+    3.0
+   ],
+   "tick": [
+    "a mechanical clock ticking, close",
+    2.0
+   ],
+   "drip": [
+    "thick syrup slowly dripping into a metal bucket, sticky drips",
+    3.0
+   ],
+   "brush": [
+    "a paint roller rolling thick paint onto a metal wall",
+    2.5
+   ],
+   "whoosh": [
+    "a soft cinematic whoosh transition",
+    1.2
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "gavel": [
+    "a judge gavel banging twice on a wooden block in a quiet courtroom",
+    1.5
+   ],
+   "stamp": [
+    "a heavy rubber stamp slammed down hard on a wooden desk, one thud",
+    0.7
+   ],
+   "sea_spray": [
+    "a fireboat water cannon spraying, splashing water on cobblestones",
+    4.0
+   ],
+   "night_amb": [
+    "a quiet harbour at night, gentle water lapping, distant bell, no voices",
+    8.0
+   ],
+   "score": [
+    "cinematic documentary storytelling score, curious and slightly ominous strings and pizzicato, builds to tense drums in the middle, then calm and reflective, no vocals",
+    124,
+    "music"
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "harbour",
+    0.25,
+    "onset",
+    "S3"
+   ],
+   [
+    "S2",
+    "tick",
+    0.3
+   ],
+   [
+    "S3",
+    "rivets",
+    0.45
+   ],
+   [
+    "S4",
+    "rumble",
+    0.22
+   ],
+   [
+    "S5+28",
+    "pop",
+    0.25
+   ],
+   [
+    "S6",
+    "whoosh",
+    0.3
+   ],
+   [
+    "S8",
+    "whoosh",
+    0.2
+   ],
+   [
+    "S9+18",
+    "pop",
+    0.2
+   ],
+   [
+    "S11",
+    "drip",
+    0.35
+   ],
+   [
+    "S12",
+    "brush",
+    0.3
+   ],
+   [
+    "S13",
+    "drip",
+    0.25
+   ],
+   [
+    "S14",
+    "whoosh",
+    0.25
+   ],
+   [
+    "S16",
+    "tick",
+    0.35
+   ],
+   [
+    "S17",
+    "rivets",
+    0.5
+   ],
+   [
+    "S18+45",
+    "burst",
+    0.22
+   ],
+   [
+    "S19",
+    "wave",
+    0.45,
+    "onset",
+    "S21"
+   ],
+   [
+    "S22+12",
+    "creak",
+    0.25
+   ],
+   [
+    "S24",
+    "rumble",
+    0.25
+   ],
+   [
+    "S28",
+    "night_amb",
+    0.2,
+    "onset",
+    "S29"
+   ],
+   [
+    "S30",
+    "night_amb",
+    0.2
+   ],
+   [
+    "S31",
+    "sea_spray",
+    0.3
+   ],
+   [
+    "S33+32",
+    "gavel",
+    0.45
+   ],
+   [
+    "S34+24",
+    "stamp",
+    0.45
+   ],
+   [
+    "S35+4",
+    "pop",
+    0.2
+   ],
+   [
+    "S38+4",
+    "pop",
+    0.25
+   ]
+  ],
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -17.0
+  }
+ }
+}

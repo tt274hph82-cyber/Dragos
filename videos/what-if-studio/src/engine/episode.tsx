@@ -236,3 +236,110 @@ export const defineEpisode = (id: string, p: EpisodeProps) => ({
   Vertical: p.vertical ? () => <Episode {...p} vert /> : null,
 });
 export type EpisodeDef = ReturnType<typeof defineEpisode>;
+
+// ============================================================================================ native 9:16 story Reels
+// A story Reel is drawn natively in a 1080 x 1920 world (no crop of a 16:9 frame). Its grammar, measured from the
+// reference Reels: a new picture every 2-4 s, a slow steady push-in (about 3% a second) on every shot, 4-frame
+// dissolves between shots, and karaoke captions (3 words at a time, the spoken word in yellow) at the same height for
+// the whole video, inside the Reels safe zone.
+export type StoryWord = { w: string; s: number; e: number; p?: string };
+export const STORY = { w: 1080, h: 1920, capY: 1170, dissolve: 4, push: 0.028, pushMax: 0.14 };
+
+const chunkWords = (words: StoryWord[]) => {
+  const out: StoryWord[][] = [];
+  let cur: StoryWord[] = [];
+  for (const w of words) {
+    cur.push(w);
+    if (cur.length >= 3 || /[.,!?:;]/.test(w.p ?? '')) { out.push(cur); cur = []; }
+  }
+  if (cur.length) out.push(cur);
+  return out;
+};
+
+/** Karaoke captions: the chunk being spoken, uppercase, the current word in yellow. */
+export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ words, fps }) => {
+  const f = useCurrentFrame();
+  const t = f / fps;
+  const chunks = React.useMemo(() => chunkWords(words), [words]);
+  const i = chunks.findIndex((c, k) => t >= c[0].s - 0.05 && (k === chunks.length - 1 ? t <= c[c.length - 1].e + 0.6 : t < chunks[k + 1][0].s - 0.05));
+  if (i < 0) return null;
+  const c = chunks[i];
+  const pop = clamp((t - (c[0].s - 0.05)) * fps / 3);
+  return (
+    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <g transform={`translate(${STORY.w / 2} ${STORY.capY}) scale(${0.92 + 0.08 * pop})`}>
+        <text textAnchor="middle" fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={50} letterSpacing={1.5}
+          stroke="#120B18" strokeWidth={9} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.6))' }}>
+          {c.map((w, k) => (
+            <tspan key={k} fill={t >= w.s - 0.03 && (k === c.length - 1 || t < c[k + 1].s - 0.03) ? '#FFD23F' : '#FFFFFF'}>{(k ? ' ' : '') + w.w.toUpperCase()}</tspan>
+          ))}
+        </text>
+      </g>
+    </svg>
+  );
+};
+
+/** One shot of a story Reel at frame f of the film: its clock, with the slow push-in applied around its centre. */
+const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; f: number }> = ({ tl, shots, seg, f }) => {
+  const Shot = shots[seg.shot];
+  const info = tl.shots.find((s) => s.id === seg.shot);
+  const t = clockAt(seg, f);
+  const s = 1 + Math.min(STORY.pushMax, STORY.push * ((f - seg.a) / 30));
+  return (
+    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0 }}>
+      <KitDefs />
+      <SetDefs />
+      <g transform={`translate(540 960) scale(${s}) translate(-540 -960)`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
+    </svg>
+  );
+};
+
+export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true }) => {
+  const f = useCurrentFrame();
+  const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
+  const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
+  const prev = idx > 0 ? tl.segments[idx - 1] : null;
+  const k = prev ? clamp((f - seg.a) / STORY.dissolve) : 1;
+  const { flash, x, y } = fxAt(tl, f);
+  const A = tl.audio;
+  return (
+    <AbsoluteFill style={{ backgroundColor: bg }}>
+      <AbsoluteFill style={{ transform: x || y ? `translate(${x}px, ${y}px) scale(1.02)` : undefined }}>
+        {prev && k < 1 ? <StoryShot tl={tl} shots={shots} seg={prev} f={prev.b - 1} /> : null}
+        <AbsoluteFill style={{ opacity: k }}><StoryShot tl={tl} shots={shots} seg={seg} f={f} /></AbsoluteFill>
+      </AbsoluteFill>
+      <Grade f={f} grain vignette w={STORY.w} h={STORY.h} />
+      {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
+      {captions ? <StoryCaptions words={words} fps={tl.fps} /> : null}
+      {A.voice ? <Audio src={staticFile(A.voice)} volume={A.voiceVol ?? 1} /> : null}
+      {A.sfx ? <Audio src={staticFile(A.sfx)} volume={A.sfxVol ?? 1} /> : null}
+      {A.music ? <Audio src={staticFile(A.music)} volume={A.musicVol ?? 1} /> : null}
+    </AbsoluteFill>
+  );
+};
+
+/** The storyboard of a story Reel: each 9:16 shot at its key frame, centred in the 16:9 board frame. */
+const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline: tl, shots }) => {
+  const f = useCurrentFrame();
+  const info = tl.shots[Math.min(f, tl.shots.length - 1)];
+  const Shot = shots[info.id];
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#111' }}>
+      <svg width={1920} height={1080} viewBox="0 0 1920 1080">
+        <KitDefs />
+        <SetDefs />
+        <svg x={656} y={0} width={608} height={1080} viewBox={`0 0 ${STORY.w} ${STORY.h}`}>{Shot ? <Shot t={info.key} len={info.len} f={info.first + info.key} /> : null}</svg>
+      </svg>
+    </AbsoluteFill>
+  );
+};
+
+/** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string }) => ({
+  id,
+  total: p.timeline.total,
+  shotCount: p.timeline.shots.length,
+  Main: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
+  Board: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
+  Vertical: () => <StoryEpisode {...p} />,
+});

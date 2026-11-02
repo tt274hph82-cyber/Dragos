@@ -1,0 +1,690 @@
+{
+ "slug": "molasses",
+ "title": "THE GREAT MOLASSES FLOOD",
+ "fps": 30,
+ "total": 3622,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 72,
+   "t0": 0,
+   "t1": 72,
+   "line": "Boston, 1919."
+  },
+  {
+   "shot": "S2",
+   "a": 72,
+   "b": 101,
+   "t0": 0,
+   "t1": 29,
+   "line": "Lunchtime."
+  },
+  {
+   "shot": "S3",
+   "a": 101,
+   "b": 201,
+   "t0": 0,
+   "t1": 100,
+   "line": "A sound like a machine gun rips through the harbour."
+  },
+  {
+   "shot": "S4",
+   "a": 201,
+   "b": 309,
+   "t0": 0,
+   "t1": 108,
+   "line": "Then a wave as tall as a house comes down the street."
+  },
+  {
+   "shot": "S5",
+   "a": 309,
+   "b": 378,
+   "t0": 0,
+   "t1": 69,
+   "line": "But it isn't water. It's syrup."
+  },
+  {
+   "shot": "S6",
+   "a": 378,
+   "b": 452,
+   "t0": 0,
+   "t1": 74,
+   "line": "This is the Great Molasses Flood."
+  },
+  {
+   "shot": "S7",
+   "a": 452,
+   "b": 519,
+   "t0": 0,
+   "t1": 67,
+   "line": "And yes, it really happened."
+  },
+  {
+   "shot": "S8",
+   "a": 519,
+   "b": 657,
+   "t0": 0,
+   "t1": 138,
+   "line": "On the waterfront stood a giant steel tank, fifteen metres tall."
+  },
+  {
+   "shot": "S9",
+   "a": 657,
+   "b": 788,
+   "t0": 0,
+   "t1": 131,
+   "line": "Inside: about eight point seven million litres of molasses,"
+  },
+  {
+   "shot": "S10",
+   "a": 788,
+   "b": 852,
+   "t0": 0,
+   "t1": 64,
+   "line": "waiting to be turned into alcohol."
+  },
+  {
+   "shot": "S11",
+   "a": 852,
+   "b": 894,
+   "t0": 0,
+   "t1": 42,
+   "line": "But the tank leaked."
+  },
+  {
+   "shot": "S12",
+   "a": 894,
+   "b": 1040,
+   "t0": 0,
+   "t1": 146,
+   "line": "So badly that the company painted it brown, so nobody could see the leaks."
+  },
+  {
+   "shot": "S13",
+   "a": 1040,
+   "b": 1148,
+   "t0": 0,
+   "t1": 108,
+   "line": "Neighbours came with cups and buckets to take the drips home."
+  },
+  {
+   "shot": "S14",
+   "a": 1148,
+   "b": 1218,
+   "t0": 0,
+   "t1": 70,
+   "line": "Then, January fifteenth."
+  },
+  {
+   "shot": "S15",
+   "a": 1218,
+   "b": 1351,
+   "t0": 0,
+   "t1": 133,
+   "line": "After days of freezing cold, the air suddenly turned warm."
+  },
+  {
+   "shot": "S16",
+   "a": 1351,
+   "b": 1409,
+   "t0": 0,
+   "t1": 58,
+   "line": "Just after half past twelve, the"
+  },
+  {
+   "shot": "S17",
+   "a": 1409,
+   "b": 1493,
+   "t0": 0,
+   "t1": 84,
+   "line": "rivets started popping, like gunshots."
+  },
+  {
+   "shot": "S18",
+   "a": 1493,
+   "b": 1548,
+   "t0": 0,
+   "t1": 55,
+   "line": "And the tank burst open."
+  },
+  {
+   "shot": "S19",
+   "a": 1548,
+   "b": 1655,
+   "t0": 0,
+   "t1": 107,
+   "line": "A brown wave, up to seven and a half metres high,"
+  },
+  {
+   "shot": "S20",
+   "a": 1655,
+   "b": 1761,
+   "t0": 0,
+   "t1": 106,
+   "line": "rushed through the streets at about fifty- five kilometres an hour."
+  },
+  {
+   "shot": "S21",
+   "a": 1761,
+   "b": 1837,
+   "t0": 0,
+   "t1": 76,
+   "line": "It knocked houses off their foundations."
+  },
+  {
+   "shot": "S22",
+   "a": 1837,
+   "b": 1923,
+   "t0": 0,
+   "t1": 86,
+   "line": "It bent the steel of the elevated railway."
+  },
+  {
+   "shot": "S23",
+   "a": 1923,
+   "b": 1999,
+   "t0": 0,
+   "t1": 76,
+   "line": "Wagons, horses, people."
+  },
+  {
+   "shot": "S24",
+   "a": 1999,
+   "b": 2046,
+   "t0": 0,
+   "t1": 47,
+   "line": "It took everything."
+  },
+  {
+   "shot": "S25",
+   "a": 2046,
+   "b": 2098,
+   "t0": 0,
+   "t1": 52,
+   "line": "And here comes the worst part."
+  },
+  {
+   "shot": "S26",
+   "a": 2098,
+   "b": 2227,
+   "t0": 0,
+   "t1": 129,
+   "line": "In the cold winter air, the molasses got thick, like glue."
+  },
+  {
+   "shot": "S27",
+   "a": 2227,
+   "b": 2358,
+   "t0": 0,
+   "t1": 131,
+   "line": "People could not swim out. The harder they fought, the deeper they sank."
+  },
+  {
+   "shot": "S28",
+   "a": 2358,
+   "b": 2493,
+   "t0": 0,
+   "t1": 135,
+   "line": "Sailors, firemen and doctors waded in to pull people out."
+  },
+  {
+   "shot": "S29",
+   "a": 2493,
+   "b": 2598,
+   "t0": 0,
+   "t1": 105,
+   "line": "Twenty- one people died. About a hundred and fifty were hurt."
+  },
+  {
+   "shot": "S30",
+   "a": 2598,
+   "b": 2657,
+   "t0": 0,
+   "t1": 59,
+   "line": "The clean- up took weeks."
+  },
+  {
+   "shot": "S31",
+   "a": 2657,
+   "b": 2723,
+   "t0": 0,
+   "t1": 66,
+   "line": "Fireboats sprayed sea water to wash"
+  },
+  {
+   "shot": "S32",
+   "a": 2723,
+   "b": 2750,
+   "t0": 0,
+   "t1": 27,
+   "line": "the streets,"
+  },
+  {
+   "shot": "S33",
+   "a": 2750,
+   "b": 3036,
+   "t0": 0,
+   "t1": 286,
+   "line": "and the harbour stayed brown until summer. The company blamed anarchists. The court said no: the tank was too thin, and had never been properly tested."
+  },
+  {
+   "shot": "S34",
+   "a": 3036,
+   "b": 3147,
+   "t0": 0,
+   "t1": 111,
+   "line": "After that, engineers had to sign off on their designs."
+  },
+  {
+   "shot": "S35",
+   "a": 3147,
+   "b": 3221,
+   "t0": 0,
+   "t1": 74,
+   "line": "Rules that still protect us today."
+  },
+  {
+   "shot": "S36",
+   "a": 3221,
+   "b": 3348,
+   "t0": 0,
+   "t1": 127,
+   "line": "So yes, twenty- one people drowned in syrup. That's real."
+  },
+  {
+   "shot": "S37",
+   "a": 3348,
+   "b": 3488,
+   "t0": 0,
+   "t1": 140,
+   "line": "Next time someone says slow as molasses, tell them about Boston."
+  },
+  {
+   "shot": "S38",
+   "a": 3488,
+   "b": 3622,
+   "t0": 0,
+   "t1": 134,
+   "line": "Follow for more strange history."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 72,
+   "first": 0,
+   "line": "Boston, 1919.",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 29,
+   "first": 72,
+   "line": "Lunchtime.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 100,
+   "first": 101,
+   "line": "A sound like a machine gun rips through the harbour.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 108,
+   "first": 201,
+   "line": "Then a wave as tall as a house comes down the street.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 69,
+   "first": 309,
+   "line": "But it isn't water. It's syrup.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 74,
+   "first": 378,
+   "line": "This is the Great Molasses Flood.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 67,
+   "first": 452,
+   "line": "And yes, it really happened.",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 138,
+   "first": 519,
+   "line": "On the waterfront stood a giant steel tank, fifteen metres tall.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 131,
+   "first": 657,
+   "line": "Inside: about eight point seven million litres of molasses,",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 64,
+   "first": 788,
+   "line": "waiting to be turned into alcohol.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 42,
+   "first": 852,
+   "line": "But the tank leaked.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 146,
+   "first": 894,
+   "line": "So badly that the company painted it brown, so nobody could see the leaks.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 108,
+   "first": 1040,
+   "line": "Neighbours came with cups and buckets to take the drips home.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 70,
+   "first": 1148,
+   "line": "Then, January fifteenth.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 133,
+   "first": 1218,
+   "line": "After days of freezing cold, the air suddenly turned warm.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 58,
+   "first": 1351,
+   "line": "Just after half past twelve, the",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 84,
+   "first": 1409,
+   "line": "rivets started popping, like gunshots.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 55,
+   "first": 1493,
+   "line": "And the tank burst open.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 107,
+   "first": 1548,
+   "line": "A brown wave, up to seven and a half metres high,",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 106,
+   "first": 1655,
+   "line": "rushed through the streets at about fifty- five kilometres an hour.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 76,
+   "first": 1761,
+   "line": "It knocked houses off their foundations.",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 86,
+   "first": 1837,
+   "line": "It bent the steel of the elevated railway.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 76,
+   "first": 1923,
+   "line": "Wagons, horses, people.",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 47,
+   "first": 1999,
+   "line": "It took everything.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 52,
+   "first": 2046,
+   "line": "And here comes the worst part.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 129,
+   "first": 2098,
+   "line": "In the cold winter air, the molasses got thick, like glue.",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 131,
+   "first": 2227,
+   "line": "People could not swim out. The harder they fought, the deeper they sank.",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 135,
+   "first": 2358,
+   "line": "Sailors, firemen and doctors waded in to pull people out.",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 105,
+   "first": 2493,
+   "line": "Twenty- one people died. About a hundred and fifty were hurt.",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 59,
+   "first": 2598,
+   "line": "The clean- up took weeks.",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 66,
+   "first": 2657,
+   "line": "Fireboats sprayed sea water to wash",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 27,
+   "first": 2723,
+   "line": "the streets,",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 286,
+   "first": 2750,
+   "line": "and the harbour stayed brown until summer. The company blamed anarchists. The court said no: the tank was too thin, and had never been properly tested.",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 111,
+   "first": 3036,
+   "line": "After that, engineers had to sign off on their designs.",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 74,
+   "first": 3147,
+   "line": "Rules that still protect us today.",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 127,
+   "first": 3221,
+   "line": "So yes, twenty- one people drowned in syrup. That's real.",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 140,
+   "first": 3348,
+   "line": "Next time someone says slow as molasses, tell them about Boston.",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 134,
+   "first": 3488,
+   "line": "Follow for more strange history.",
+   "note": "S38"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 6,
+   "f": 105
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.6,
+   "f": 1538
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 9,
+   "f": 1538
+  },
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 5,
+   "f": 2784
+  }
+ ],
+ "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.1691,
+  "musicVol": 0.058,
+  "voice": "molasses/voice.wav",
+  "sfx": "molasses/sfx.wav",
+  "music": "molasses/music.wav"
+ }
+}
