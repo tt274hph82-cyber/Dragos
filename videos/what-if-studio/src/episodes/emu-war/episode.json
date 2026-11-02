@@ -8,12 +8,13 @@
  ],
  "accent": "EMU",
  "voice": {
-  "id": "pqHfZKP75CvOlQylNhV4",
+  "id": "Bj9UqZbhQsanLzgalpEG",
   "model": "eleven_v4",
+  "language": "en",
   "settings": {
    "stability": 0.45,
    "similarity_boost": 0.8,
-   "style": 0.4,
+   "style": 0.35,
    "use_speaker_boost": true
   }
  },

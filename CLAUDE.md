@@ -88,6 +88,9 @@ These rules come from measuring three reference Reels:
 ## Other notes
 - **ElevenLabs models, for every project (new and old, any style):**
   - Voice: `eleven_v4`, with `output_format=mp3_44100_128` (128 kbps).
+  - **Default narrator voice for all projects: "Austin – Deep, Raspy and Authentic"** (`Bj9UqZbhQsanLzgalpEG`), from the ElevenLabs voice library (US Southern, gravelly).
+    - In an episode's `voice` block: `{"id": "Bj9UqZbhQsanLzgalpEG", "model": "eleven_v4", "language": "en"}`.
+    - Use another voice only when the user asks (for example, a Romanian episode).
   - Sound effects: SFX v3 (`model_id: eleven_text_to_sound_v3`). The skill's `sfx.py` keys its clip cache by model, so clips made with an older model aren't reused.
   - Music: Music v2.5 (`model_id: music_v2_5`). The clip cache is keyed by model here too.
 - **Word timing comes from the audio, not from TTS timestamps.** eleven_v4's timestamps drift (up to about 1 s), so `voice.py` re-times every word with ElevenLabs speech-to-text (`align.py`, `scribe_v1`). Never skip it; cuts and sound hits are cued on those times.
