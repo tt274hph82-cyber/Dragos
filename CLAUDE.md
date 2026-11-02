@@ -50,6 +50,7 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 - **Keep everything inside the Reels/Shorts safe zone.** Facebook Reels and YouTube Shorts cover about the top 14% and the bottom 35% of the frame, and the Facebook feed can crop the video to 4:5.
   - Put captions and key content between roughly 280 and 1250 px of the 1920 px height.
   - Keep a margin of at least 6% on each side.
+- **Captions stay modest.** In 9:16, captions are 70% of their 16:9 size (`TXT` in `fountain-pen/shots.tsx`); don't make them bigger.
 - **Gentle zooms only.** The 9:16 crop is 607 px of the 1920 px source frame.
   - Close-ups use `vertSc`/`vertY` (see `closeUp` in `pause-full/parts.tsx`).
   - Shot zooms go through `camV` in `fountain-pen/shots.tsx`.

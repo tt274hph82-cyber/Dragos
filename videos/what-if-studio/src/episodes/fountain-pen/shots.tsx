@@ -26,10 +26,13 @@ export const pop = (t: number, d = 6) => (t <= 0 ? 0 : backOut(clamp(t / d)));
 /** Big bold caption in the Romanian-explainer style: white or yellow, thick dark outline. */
 // Reels/Shorts safe band: the apps cover the top ~14% and the bottom ~35% of a 9:16 frame, so in the vertical crop
 // captions move into source y ≈ 230..700 (≈ 280..1250 px of 1920). Top captions drop 80 px; bottom ones rise into the band.
-const safeY = (y: number) => (y >= 760 ? y - 380 : y + 80);
-export const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: number; fill?: string; rot?: number }> = ({ x, y: y0, t, text, size = 96, fill = '#FFFFFF', rot = 0 }) => {
+// captions are also 70% of their 16:9 size there, with the line spacing tightened to match
+const TXT = 0.7;
+const safeY = (y: number) => (y >= 760 ? 620 + (y - 1000) * TXT : 230 + (y - 150) * TXT);
+export const Bold: React.FC<{ x: number; y: number; t: number; text: string; size?: number; fill?: string; rot?: number }> = ({ x, y: y0, t, text, size: size0 = 96, fill = '#FFFFFF', rot = 0 }) => {
   const vert = useContext(VerticalCtx);
   const y = vert ? safeY(y0) : y0;
+  const size = vert ? size0 * TXT : size0;
   if (t < 0) return null;
   return (
     <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${pop(t)})`}>
