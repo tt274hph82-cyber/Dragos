@@ -32,6 +32,15 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 - **The hero is Juno** (top bun + star clip, lilac hoodie), not the skill's Pip. Use `<Hero look={HERO} />`, where `HERO` = `LOOKS.juno`. In scripts, "you" = Juno. Her design rules are in `videos/what-if-studio/CHARACTER.md`; never redesign her.
 - Its credit reports need an ElevenLabs key with the "User read" and "History read" permissions.
 
+## Nea Costel "Who invented…?" Reels
+- The host is Nea Costel (`LOOKS.costel`). His reusable pieces live in `videos/what-if-studio/src/episodes/fountain-pen/shots.tsx` (`Bold`, `Sky`, `Roofs`, `camV`, …).
+- **Never reuse the same intro.** Each episode opens in a different place that ties to its topic, never his study corner.
+  - Examples: on a hilltop or an airfield for the parachute; a street, a kitchen, a rooftop, a field, a garden or a classroom for other topics.
+  - Use the library's sets (`Outdoor`, `Rooftop`, `Kitchen`, `Classroom`, `Bedroom`, `Stairwell`), or build a new set for the topic.
+  - Vary his entrance too: he walks in, pops up into frame, gets caught mid-action, or turns to camera.
+- The study corner can still appear mid-episode, but not as the opening shot. Keep a list of the intros already used so none repeats.
+  - Used so far: fountain pen = study corner; parachute = study corner.
+
 ## Shorts / Reels: 9:16 only
 - Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.
 - **Keep everything inside the Reels/Shorts safe zone.** Facebook Reels and YouTube Shorts cover about the top 14% and the bottom 35% of the frame, and the Facebook feed can crop the video to 4:5.
