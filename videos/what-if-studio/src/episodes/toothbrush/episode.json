@@ -1,0 +1,315 @@
+{
+ "id": "Toothbrush",
+ "slug": "toothbrush",
+ "topic": "Who invented the toothbrush? (history explainer, host Nea Costel)",
+ "title": [
+  "WHO INVENTED THE",
+  "TOOTHBRUSH?"
+ ],
+ "accent": "TOOTHBRUSH",
+ "voice": {
+  "id": "pqHfZKP75CvOlQylNhV4",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.4,
+   "use_speaker_boost": true
+  }
+ },
+ "script": [
+  {
+   "beat": "host hook (kitchen, mid-brush)",
+   "text": "Who invented the toothbrush? A dentist? Nope."
+  },
+  {
+   "beat": "context",
+   "text": "China had bristle brushes more than a thousand years ago."
+  },
+  {
+   "beat": "place and time",
+   "text": "But the one you use? London, 1770. William Addis is thrown in jail for starting a riot."
+  },
+  {
+   "beat": "the idea",
+   "text": "The story goes: he saves a bone from his dinner, drills tiny holes in it, and ties in bristles."
+  },
+  {
+   "beat": "the fact",
+   "text": "Out of jail, he starts selling them. By 1780, he has a business."
+  },
+  {
+   "beat": "payoff",
+   "text": "And his company is still making toothbrushes today."
+  },
+  {
+   "beat": "host twist",
+   "text": "So every morning, you brush with a rioter's idea."
+  }
+ ],
+ "science": [
+  {
+   "claim": "Bristle toothbrushes existed in China over a thousand years ago.",
+   "working": "Tang dynasty (619–907) hog-bristle brushes.",
+   "source": "Wikipedia, Toothbrush"
+  },
+  {
+   "claim": "William Addis was jailed in 1770 for causing a riot; the story says he made a brush from a bone and bristles; he started production by 1780.",
+   "working": "Bone-from-dinner detail is legend (\"the story goes\"); company founded 1780.",
+   "source": "Addis company history (addis.co.uk); dentistry.co.uk"
+  },
+  {
+   "claim": "His company still makes toothbrushes.",
+   "working": "Addis Ltd (Wisdom brand) still operates.",
+   "source": "addis.co.uk"
+  }
+ ],
+ "gaps": {
+  "pairs": {
+   "Nope|China": 0.5,
+   "ago|But": 0.45,
+   "riot|The": 0.5,
+   "bristles|Out": 0.45,
+   "business|And": 0.45,
+   "today|So": 0.6
+  }
+ },
+ "tail": 2.0,
+ "shots": [
+  {
+   "id": "S1",
+   "size": "medium",
+   "set": "kitchen",
+   "key": 30,
+   "note": "Nea Costel brushing at the sink, foam, turns to camera; title pops"
+  },
+  {
+   "id": "S2",
+   "size": "close-up",
+   "set": "kitchen",
+   "key": 14,
+   "note": "foamy mouth: a dentist? nope"
+  },
+  {
+   "id": "S3",
+   "size": "insert",
+   "set": "parchment",
+   "key": 30,
+   "note": "China, bamboo-handled bristle brush, 1,000+ years ago"
+  },
+  {
+   "id": "S4",
+   "size": "wide",
+   "set": "London dusk",
+   "key": 30,
+   "note": "London 1770, a riot in silhouette"
+  },
+  {
+   "id": "S5",
+   "size": "medium",
+   "set": "prison cell",
+   "key": 30,
+   "note": "Addis in a cell, moonlight through bars"
+  },
+  {
+   "id": "S6",
+   "size": "insert",
+   "set": "cell table",
+   "key": 40,
+   "note": "a bone, holes drilled one by one"
+  },
+  {
+   "id": "S7",
+   "size": "insert",
+   "set": "cell table",
+   "key": 40,
+   "note": "bristles tied in: the first brush"
+  },
+  {
+   "id": "S8",
+   "size": "wide",
+   "set": "workshop",
+   "key": 30,
+   "note": "a workshop, rows of brushes, 1780"
+  },
+  {
+   "id": "S9",
+   "size": "card",
+   "set": "card",
+   "key": 20,
+   "note": "still making toothbrushes today"
+  },
+  {
+   "id": "S10",
+   "size": "close-up",
+   "set": "kitchen",
+   "key": 14,
+   "note": "every morning..."
+  },
+  {
+   "id": "S11",
+   "size": "medium",
+   "set": "kitchen",
+   "key": 30,
+   "note": "raises his toothbrush like a torch, laughs"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "A"
+  },
+  {
+   "shot": "S3",
+   "at": "China"
+  },
+  {
+   "shot": "S4",
+   "at": "London"
+  },
+  {
+   "shot": "S5",
+   "at": "William"
+  },
+  {
+   "shot": "S6",
+   "at": "drills"
+  },
+  {
+   "shot": "S7",
+   "at": "ties"
+  },
+  {
+   "shot": "S8",
+   "at": "Out"
+  },
+  {
+   "shot": "S9",
+   "at": "company"
+  },
+  {
+   "shot": "S10",
+   "at": "So"
+  },
+  {
+   "shot": "S11",
+   "at": "rioter's"
+  }
+ ],
+ "fx": [],
+ "sound": {
+  "clips": {
+   "title_boom": [
+    "a cinematic whoosh rising into a deep boom impact",
+    1.6
+   ],
+   "brushing": [
+    "someone brushing their teeth vigorously, close, foamy scrubbing",
+    3.0
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "riot": [
+    "an angry 18th century crowd shouting in a street, distant, no clear words",
+    4.0
+   ],
+   "cell_door": [
+    "a heavy iron prison cell door slamming shut with an echo",
+    1.5
+   ],
+   "drill": [
+    "a small hand drill boring into bone, short scraping twists",
+    2.0
+   ],
+   "ding": [
+    "a correct answer ding, bright bell chime",
+    0.8
+   ],
+   "workshop": [
+    "an old workshop ambience, wooden tools tapping, quiet chatter, no clear words",
+    4.0
+   ],
+   "room_tone": [
+    "quiet indoor room tone in the evening, faint distant city hum, no voices",
+    12.5
+   ],
+   "mc": [
+    "playful light comedic documentary underscore, pizzicato strings and a gentle accordion, curious and cheeky, steady tempo, no vocals",
+    31,
+    "music"
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "brushing",
+    0.35,
+    "onset",
+    "S2"
+   ],
+   [
+    "S1+20",
+    "title_boom",
+    0.3,
+    "peak"
+   ],
+   [
+    "S2+30",
+    "pop",
+    0.25
+   ],
+   [
+    "S4",
+    "riot",
+    0.25,
+    "onset",
+    "S5"
+   ],
+   [
+    "S5+4",
+    "cell_door",
+    0.4
+   ],
+   [
+    "S6+6",
+    "drill",
+    0.35
+   ],
+   [
+    "S7+30",
+    "ding",
+    0.25
+   ],
+   [
+    "S8",
+    "workshop",
+    0.2,
+    "onset",
+    "S9"
+   ],
+   [
+    "S10",
+    "room_tone",
+    0.1
+   ]
+  ],
+  "music": [
+   {
+    "clip": "mc",
+    "from": "f:0",
+    "fade_in": 0.3,
+    "fade_out": 1.2
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -17.0
+  }
+ }
+}

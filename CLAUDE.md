@@ -39,7 +39,7 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
   - Use the library's sets (`Outdoor`, `Rooftop`, `Kitchen`, `Classroom`, `Bedroom`, `Stairwell`), or build a new set for the topic.
   - Vary his entrance too: he walks in, pops up into frame, gets caught mid-action, or turns to camera.
 - The study corner can still appear mid-episode, but not as the opening shot. Keep a list of the intros already used so none repeats.
-  - Used so far: fountain pen = study corner; parachute = study corner.
+  - Used so far: fountain pen = study corner; parachute = study corner; toothbrush = kitchen, caught brushing his teeth.
 
 ## Shorts / Reels: 9:16 only
 - Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.

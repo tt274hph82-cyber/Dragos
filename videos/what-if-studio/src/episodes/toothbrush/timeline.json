@@ -1,0 +1,206 @@
+{
+ "slug": "toothbrush",
+ "title": "WHO INVENTED THE TOOTHBRUSH?",
+ "fps": 30,
+ "total": 1066,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 61,
+   "t0": 0,
+   "t1": 61,
+   "line": "Who invented the toothbrush?"
+  },
+  {
+   "shot": "S2",
+   "a": 61,
+   "b": 121,
+   "t0": 0,
+   "t1": 60,
+   "line": "A dentist? Nope."
+  },
+  {
+   "shot": "S3",
+   "a": 121,
+   "b": 274,
+   "t0": 0,
+   "t1": 153,
+   "line": "China had bristle brushes more than a thousand years ago. But the one you use?"
+  },
+  {
+   "shot": "S4",
+   "a": 274,
+   "b": 335,
+   "t0": 0,
+   "t1": 61,
+   "line": "London, 1770."
+  },
+  {
+   "shot": "S5",
+   "a": 335,
+   "b": 545,
+   "t0": 0,
+   "t1": 210,
+   "line": "William Addis is thrown in jail for starting a riot. The story goes: he saves a bone from his dinner,"
+  },
+  {
+   "shot": "S6",
+   "a": 545,
+   "b": 592,
+   "t0": 0,
+   "t1": 47,
+   "line": "drills tiny holes in it,"
+  },
+  {
+   "shot": "S7",
+   "a": 592,
+   "b": 636,
+   "t0": 0,
+   "t1": 44,
+   "line": "and ties in bristles."
+  },
+  {
+   "shot": "S8",
+   "a": 636,
+   "b": 798,
+   "t0": 0,
+   "t1": 162,
+   "line": "Out of jail, he starts selling them. By 1780, he has a business. And his"
+  },
+  {
+   "shot": "S9",
+   "a": 798,
+   "b": 902,
+   "t0": 0,
+   "t1": 104,
+   "line": "company is still making toothbrushes today."
+  },
+  {
+   "shot": "S10",
+   "a": 902,
+   "b": 981,
+   "t0": 0,
+   "t1": 79,
+   "line": "So every morning, you brush with a"
+  },
+  {
+   "shot": "S11",
+   "a": 981,
+   "b": 1066,
+   "t0": 0,
+   "t1": 85,
+   "line": "rioter's idea."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "medium",
+   "key": 30,
+   "len": 61,
+   "first": 0,
+   "line": "Who invented the toothbrush?",
+   "note": "Nea Costel brushing at the sink, foam, turns to camera; title pops"
+  },
+  {
+   "id": "S2",
+   "size": "close-up",
+   "key": 14,
+   "len": 60,
+   "first": 61,
+   "line": "A dentist? Nope.",
+   "note": "foamy mouth: a dentist? nope"
+  },
+  {
+   "id": "S3",
+   "size": "insert",
+   "key": 30,
+   "len": 153,
+   "first": 121,
+   "line": "China had bristle brushes more than a thousand years ago. But the one you use?",
+   "note": "China, bamboo-handled bristle brush, 1,000+ years ago"
+  },
+  {
+   "id": "S4",
+   "size": "wide",
+   "key": 30,
+   "len": 61,
+   "first": 274,
+   "line": "London, 1770.",
+   "note": "London 1770, a riot in silhouette"
+  },
+  {
+   "id": "S5",
+   "size": "medium",
+   "key": 30,
+   "len": 210,
+   "first": 335,
+   "line": "William Addis is thrown in jail for starting a riot. The story goes: he saves a bone from his dinner,",
+   "note": "Addis in a cell, moonlight through bars"
+  },
+  {
+   "id": "S6",
+   "size": "insert",
+   "key": 40,
+   "len": 47,
+   "first": 545,
+   "line": "drills tiny holes in it,",
+   "note": "a bone, holes drilled one by one"
+  },
+  {
+   "id": "S7",
+   "size": "insert",
+   "key": 40,
+   "len": 44,
+   "first": 592,
+   "line": "and ties in bristles.",
+   "note": "bristles tied in: the first brush"
+  },
+  {
+   "id": "S8",
+   "size": "wide",
+   "key": 30,
+   "len": 162,
+   "first": 636,
+   "line": "Out of jail, he starts selling them. By 1780, he has a business. And his",
+   "note": "a workshop, rows of brushes, 1780"
+  },
+  {
+   "id": "S9",
+   "size": "card",
+   "key": 20,
+   "len": 104,
+   "first": 798,
+   "line": "company is still making toothbrushes today.",
+   "note": "still making toothbrushes today"
+  },
+  {
+   "id": "S10",
+   "size": "close-up",
+   "key": 14,
+   "len": 79,
+   "first": 902,
+   "line": "So every morning, you brush with a",
+   "note": "every morning..."
+  },
+  {
+   "id": "S11",
+   "size": "medium",
+   "key": 30,
+   "len": 85,
+   "first": 981,
+   "line": "rioter's idea.",
+   "note": "raises his toothbrush like a torch, laughs"
+  }
+ ],
+ "fx": [],
+ "audio": {
+  "voice": "toothbrush/voice.wav",
+  "sfx": "toothbrush/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1359,
+  "music": "toothbrush/music.wav",
+  "musicVol": 0.0593
+ }
+}
