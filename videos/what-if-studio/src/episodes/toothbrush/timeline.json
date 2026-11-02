@@ -256,7 +256,7 @@
  "audio": {
   "voiceVol": 0.8,
   "sfxVol": 0.1312,
-  "musicVol": 0.0573,
+  "musicVol": 0.0681,
   "voice": "toothbrush/voice.wav",
   "sfx": "toothbrush/sfx.wav",
   "music": "toothbrush/music.wav"
