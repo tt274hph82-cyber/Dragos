@@ -1,0 +1,113 @@
+<title>The Great Emu War Storyboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=block">
+<style>
+  /* Layout: a dark theatre programme. One single (dark) look by choice: a lit screen wall of panels, notes typed beneath. */
+  :root {
+    --bg: #160b07; --panel: #21110a; --ink: #f3e3c4; --dim: #c7a985; --amber: #f2a85a; --rule: #4a2a18;
+    --display: "IM Fell English", Georgia, serif; --body: "Libre Baskerville", Georgia, serif;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.55;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; }
+  header { max-width: 1180px; margin: 0 auto 26px; display: grid; gap: 8px; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 58px); line-height: 1.05; margin: 0; text-wrap: balance; }
+  h1 em { color: var(--amber); }
+  .meta { color: var(--dim); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .lede { max-width: 66ch; color: var(--ink); font-size: 15px; margin: 4px 0 0; }
+  .grid { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .beat { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+  .beat canvas { width: 100%; height: auto; aspect-ratio: 9 / 16; display: block; background: #000; }
+  .notes { padding: 12px 14px 16px; display: grid; gap: 8px; font-size: 13px; min-width: 0; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .num { font-family: var(--display); font-size: 26px; color: var(--amber); }
+  .time { font-variant-numeric: tabular-nums; color: var(--dim); font-size: 12.5px; letter-spacing: 0.04em; }
+  .label { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+  .onscreen { font-family: var(--display); font-size: 17px; color: var(--ink); }
+  .flow, .sound { color: var(--ink); opacity: 0.92; }
+  .flow b { color: var(--amber); font-weight: 400; font-style: italic; }
+  section.facts { max-width: 1180px; margin: 36px auto 0; border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 10px; }
+  section.facts h2 { font-family: var(--display); font-weight: 400; font-size: 30px; margin: 0; }
+  section.facts ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; font-size: 14px; }
+  .status { color: var(--dim); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="meta">Shadow Puppet Theatre · 9:16 · 720 × 1280 · 32 s · storyboard for approval</div>
+  <h1>The Great <em>Emu War</em></h1>
+  <p class="lede">A little shadow play: in 1932 the Australian army takes two machine guns to the wheat fields of Western Australia, and the emus win. Each panel below is drawn by the real animation code at that beat's key moment. Still frames only; motion and sound come after your OK.</p>
+  <div class="status" id="status">Drawing panels…</div>
+</header>
+<main class="grid" id="grid"></main>
+<section class="facts">
+  <h2>Facts and numbers I assumed</h2>
+  <ul>
+    <li>Date and place: November–December 1932, the wheat belt of Western Australia (Campion district).</li>
+    <li>"About 20,000 emus" is a contemporary estimate, not a count.</li>
+    <li>Major G. P. W. Meredith led the operation with two Lewis machine guns and 10,000 rounds of ammunition.</li>
+    <li>9,860 rounds for 986 kills is Meredith's own report; historians treat these exact tens as suspiciously neat, so the play says "reported".</li>
+    <li>Emus can run at about 50 km/h. One gun jammed during an ambush, and a gun mounted on a truck could not keep up over rough ground.</li>
+    <li>The army withdrew in December 1932; "Emus 1, Army 0" is the play's joke, not an official score.</li>
+  </ul>
+</section>
+
+<script>/*HARNESS*/</script>
+<script>/*EMU*/</script>
+<script>
+const BEATS = [
+  { t: 1.7, a: 0, b: 2.6, text: 'Western Australia, 1932 · The Great · Emu War',
+    flow: '<b>Opening.</b> The oil lamp sputters alight; the title card drops on its strings and swings to rest. It is hoisted to the top in the next beat, so it carries over.',
+    sound: 'lamp catching (soft whump, three sputters), hide rustle as the card falls, rod tap when it lands, one bronze gamelan note.' },
+  { t: 7.2, a: 2.6, b: 7.4, text: '20,000 · emus · eating the wheat',
+    flow: '<b>Continuous.</b> Title card rises to the top; emu puppets hop in from the right on rods and peck; the counter board drops and counts up; a vine grows from the board down into a crop with bitten gaps; the plaque drops on its string.',
+    sound: 'hide rustles, rod taps on each hop landing, wooden counter ticks (max ~11 a second, slowing), bronze note at 20,000, brush stroke for the vine, plaque tap.' },
+  { t: 10.75, a: 7.4, b: 11.2, text: 'Major Meredith · 2 machine guns · 10,000 rounds',
+    flow: '<b>Scene change: the lamp is turned down and up</b> (time passes; the farmers ask the army for help). Same outback; a soldier puppet slides in from the left with his Lewis gun; plaque, tag and board drop one after another.',
+    sound: 'low lamp sigh, wooden slide of the rod, three taps (plaque, tag, board), a deeper bronze note for the board.' },
+  { t: 12.85, a: 11.2, b: 13.4, text: 'they split up',
+    flow: '<b>Continuous.</b> The rounds board is hoisted away; a red gel slides over the lamp while the gun flashes; the emus scatter three ways in small groups; two vines grow along their escape paths; the plaque drops.',
+    sound: 'the gun as rapid wooden clacks with a gritty rattle, running hide flaps, two brush strokes for the vines, plaque tap.' },
+  { t: 13.78, a: 13.4, b: 14.3, text: '(none)',
+    flow: '<b>Scene change, the medium\'s own way:</b> one emu runs straight at the lamp; its shadow swells and blurs until it fills the screen, then clears onto the chase.',
+    sound: 'a big hide whoosh rising and falling, flapping feet, a soft thud as the screen goes dark.' },
+  { t: 16.3, a: 14.3, b: 17.2, text: '50 km/h · an emu at full speed',
+    flow: '<b>New scene, continuous inside.</b> The army truck bounces in with the gun crew; the hills scroll past (panned on their own rod, softer); emus race ahead; the speed board drops.',
+    sound: 'a wooden roller rumble for the truck, wheel tocks, board tap and a bright bronze note.' },
+  { t: 17.95, a: 17.2, b: 19.4, text: 'jammed!',
+    flow: '<b>Continuous.</b> The gun fires, then jams: red gel flash, lace smoke rings rise from the breech, the tag drops with a red X badge; the truck lurches and the emus pull away.',
+    sound: 'two clacking bursts, then a metal clunk and a dry click (the jam), clashing bronze for "wrong", puffs, tag drop.' },
+  { t: 23.9, a: 19.4, b: 24.4, text: '9,860 · bullets fired · 986 · emus reported killed',
+    flow: '<b>Scene change: lace curtains close and part.</b> On a bare screen, the first board counts up 9,860; a second drops and counts 986; two vines curl down to where the answer will land.',
+    sound: 'curtain swish both sides, a soft thud, counter ticks for each board, a bronze note when each count settles, brush strokes for the vines.' },
+  { t: 25.15, a: 24.4, b: 26.4, text: '10 · bullets per bird',
+    flow: '<b>Emphasis, continuous.</b> The 10 stamps down big between the vines; the lamp flares; the plaque rises under it.',
+    sound: 'the biggest hit: a low gong with a deep thud, bronze over it, then the plaque tap.' },
+  { t: 27.9, a: 26.4, b: 29.0, text: '(none)',
+    flow: '<b>Scene change: lamp down and up.</b> Night on the ridge: the soldier marches off left with his gun; three emus stay by the windmill under a full moon.',
+    sound: 'lamp sigh, marching taps fading to the left, quiet emu "drum" thrums.' },
+  { t: 31.0, a: 29.0, b: 32.0, text: 'Emus 1 · Army 0',
+    flow: '<b>Takeaway, continuous.</b> The final card drops on its strings and the moon bursts into rays; held about 2.5 s.',
+    sound: 'card drop and tap, a resolving three-note bronze phrase over a low tone.' },
+];
+(async () => {
+  try { await Promise.all(EMU.fonts.map((f) => document.fonts.load(f, 'AaZz09'))); } catch (e) {}
+  const grid = document.getElementById('grid');
+  BEATS.forEach((b, i) => {
+    const el = document.createElement('article'); el.className = 'beat';
+    el.innerHTML = `<canvas width="720" height="1280" aria-label="Beat ${i + 1} key frame"></canvas>
+      <div class="notes"><div class="head"><span class="num">${i + 1}</span><span class="time">${b.a.toFixed(1)}–${b.b.toFixed(1)} s · key ${b.t.toFixed(2)} s</span></div>
+      <div><span class="label">On screen</span><span class="onscreen">${b.text}</span></div>
+      <div class="flow"><span class="label">From the last beat</span>${b.flow}</div>
+      <div class="sound"><span class="label">Key sounds</span>${b.sound}</div></div>`;
+    grid.appendChild(el);
+  });
+  const cs = grid.querySelectorAll('canvas');
+  for (let i = 0; i < BEATS.length; i++) {
+    await new Promise((r) => setTimeout(r, 0));
+    const ctx = cs[i].getContext('2d'); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    EMU.explainer(ctx, 720, 1280, BEATS[i].t);
+  }
+  document.getElementById('status').textContent = `${BEATS.length} beats · 0–32 s · drawn with the animation code`;
+})();
+</script>
