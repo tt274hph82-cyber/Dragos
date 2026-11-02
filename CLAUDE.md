@@ -33,9 +33,18 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 - Its credit reports need an ElevenLabs key with the "User read" and "History read" permissions.
 
 ## Main character (host) for Reels and Shorts
-- **The host is now the afro character (`LOOKS.afro`). He replaced Nea Costel** for all new Reels and Shorts, both story Reels and "Who invented…?".
-- His look: tall and lanky, a big crimson curly afro, a long curled handlebar moustache, a nose ring, sleepy heavy-lidded eyes, freckles and stubble, a navy velvet blazer over an open cream shirt with a gold chain, a belt with a gold buckle, rust pinstripe bell-bottoms and black boots. The palette comes from his model sheet. Never redesign him.
-- In 9:16 close-ups, keep his head smaller (about `sc 2.9` at `y ≈ 840`) so the afro doesn't swallow the titles.
+- **The host is the user's own character** from his model sheet (`videos/what-if-studio/public/host/sheet.png`). Use **his actual drawing, never a redraw.** He replaced Nea Costel for all new Reels and Shorts.
+- **Poses are transparent cut-outs** in `public/host/*.png`:
+  - full body: `stand`, `side`, `laugh_point`, `arms_crossed`, `sitting`, `rock`, `walk`;
+  - head and bust: `bust`, `yell`, `smug`, `confused`, `angry`.
+  - The cutting script is the flood-fill and largest-component cut used in this session. Re-cut at 2× if a new sheet arrives.
+- **Place him like the reference Reels:** use `HostCut` in `src/episodes/molasses/kit.tsx`.
+  - He stands inside the story scenes: pointing, sitting on a crate, arms crossed.
+  - Cut to his head expressions for reactions.
+  - He rises in over 7 frames, then breathes and sways a little.
+  - Pick the pose that matches the line.
+  - Keep his face inside the safe band.
+- `LOOKS.afro` (an SVG approximation of him) exists in the rig but is not used in films.
 
 ## "Who invented…?" Reels (formerly hosted by Nea Costel)
 - Nea Costel (`LOOKS.costel`) hosted the first three. Their reusable pieces live in `videos/what-if-studio/src/episodes/fountain-pen/shots.tsx` (`Bold`, `Sky`, `Roofs`, `camV`, …).

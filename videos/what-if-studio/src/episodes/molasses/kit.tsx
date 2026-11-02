@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCurrentFrame, random } from 'remotion';
+import { useCurrentFrame, random, staticFile, delayRender, continueRender } from 'remotion';
 import { Hero, Look, Pose, LOOKS, basePose, clamp, lerp, easeOut, LEG_LEN, HEAD, FONT, Glow } from '../../engine';
 import { COSTEL, INK } from '../fountain-pen/shots';
 
@@ -237,8 +237,40 @@ export const Fore: React.FC<{ kind?: 'posts' | 'barrel' }> = ({ kind = 'posts' }
   </g>
 );
 
-/** The story host (LOOKS.afro, who replaced Nea Costel) standing inside the scene, full figure, the richer drawn layer. */
+/** The story host (LOOKS.afro in the rig, kept for reference). In the films he is the user's own drawing: */
 export const HOST = LOOKS.afro;
+
+// ------------------------------------------------------------------ the host, as cut-outs from his model sheet
+// Each pose is a transparent PNG cut from public/host/sheet.png (the user's character, not a redraw). Like the
+// reference Reels, he is placed inside the scenes, pops in, breathes and sways while he talks.
+export type HostPose = 'stand' | 'side' | 'laugh_point' | 'arms_crossed' | 'sitting' | 'rock' | 'walk' | 'bust' | 'yell' | 'smug' | 'confused' | 'angry';
+const HOST_PX: Record<HostPose, [number, number]> = {
+  stand: [410, 1084], side: [270, 1082], laugh_point: [542, 918], arms_crossed: [320, 910], sitting: [420, 824], rock: [492, 912], walk: [442, 912],
+  bust: [546, 1054], yell: [502, 620], smug: [366, 624], confused: [422, 480], angry: [438, 538],
+};
+// load every pose before the first frame is captured
+if (typeof window !== 'undefined' && !(window as any).__hostLoaded) {
+  (window as any).__hostLoaded = true;
+  const h = delayRender('host sprites');
+  Promise.all(Object.keys(HOST_PX).map((k) => new Promise((res) => { const i = new Image(); i.onload = i.onerror = res; i.src = staticFile(`host/${k}.png`); })))
+    .then(() => continueRender(h));
+}
+/** The host at (x, bottom), `height` px tall. He rises in over 7 frames, then breathes and sways a little. */
+export const HostCut: React.FC<{ pose: HostPose; x?: number; bottom?: number; height: number; t: number; flip?: boolean; enter?: boolean }> = ({ pose, x = 540, bottom = 1640, height, t, flip, enter = true }) => {
+  const [pw, ph] = HOST_PX[pose];
+  const w = (pw / ph) * height;
+  const k = enter ? clamp(t / 7) : 1;
+  const rise = (1 - easeOut(k)) * 60;
+  const breathe = 1 + 0.012 * Math.sin(t * 0.12);
+  const sway = Math.sin(t * 0.05) * 1.2;
+  return (
+    <g opacity={k} transform={`translate(${x} ${bottom + rise}) rotate(${sway}) scale(${flip ? -1 : 1} ${breathe})`} style={{ filter: 'drop-shadow(0 10px 18px rgba(0,0,0,0.45))' }}>
+      <image href={staticFile(`host/${pose}.png`)} x={-w / 2} y={-height} width={w} height={height} />
+    </g>
+  );
+};
+
+/** Legacy rig host, no longer used in films. */
 export const Host: React.FC<{ x?: number; feet?: number; s?: number; pose?: Partial<Pose> }> = ({ x = 540, feet = 1700, s = 1.7, pose = {} }) => (
   <Hero look={HOST} pose={{ ...basePose, x, y: feet - LEG_LEN * s, scale: s, ...pose }} shadow={0.8} />
 );

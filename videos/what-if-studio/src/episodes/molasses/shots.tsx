@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShotProps, faceAt, kf, Hero, basePose, LEG_LEN } from '../../engine';
 import {
-  W, H, Mood, MOODS, Sky, City, Street, ElRail, Tank, Molasses, Figure, Host, HostClose, Punch, BigNumber, Calendar, Clock, Thermometer,
+  W, H, Mood, MOODS, Sky, City, Street, ElRail, Tank, Molasses, Figure, Host, HostClose, HostCut, Punch, BigNumber, Calendar, Clock, Thermometer,
   Sparks, Sfx, popIn, clamp, lerp, easeOut, Glow, INK, Fore, CloseCtx,
 } from './kit';
 
@@ -82,7 +82,7 @@ export const S6: S = ({ t }) => (
   <g>
     {harbour('m6', 'noon', t, { rail: 0 })}
     {[180, 900].map((x) => <g key={x}><rect x={x - 60} y={1270} width={120} height={150} rx={20} fill="#6A4222" stroke={INK} strokeWidth={6} /><path d={`M ${x - 60} 1310 L ${x + 60} 1310 M ${x - 60} 1380 L ${x + 60} 1380`} stroke={INK} strokeWidth={5} /></g>)}
-    <Host feet={1560} s={1.85} pose={{ yaw: 0.05, armR: { a: 120, b: 30 }, handR: 'point', ...faceAt(t, [[0, 'happy'], [20, 'smug']]) }} />
+    <HostCut pose="laugh_point" x={560} bottom={1640} height={980} t={t} />
     <Punch t={t - 3} lines={['THE GREAT', 'MOLASSES FLOOD']} y={330} size={84} color="#FFD23F" />
   </g>
 );
@@ -90,7 +90,7 @@ export const S7: S = ({ t }) => (
   <g>
     <Sky id="m7" mood="noon" sunY={380} />
     <City mood="noon" />
-    <HostClose y={840} sc={2.9} pose={{ yaw: -0.1, headTilt: -6, ...faceAt(t, [[0, 'smug']]), armR: { a: 150, b: 20 }, handR: 'point' }} />
+    <HostCut pose="smug" x={540} bottom={1500} height={880} t={t} />
     <Punch t={t - 6} lines={['IT REALLY', 'HAPPENED']} y={330} size={80} />
   </g>
 );
@@ -105,6 +105,7 @@ export const S8: S = ({ t }) => (
       <path d="M 0 -105 L 0 600 M -24 -105 L 24 -105 M -24 600 L 24 600" stroke="#FFD23F" strokeWidth={10} />
     </g>
     <Sfx t={t - 24} text="15 M" x={880} y={500} rot={0} size={80} />
+    <HostCut pose="sitting" x={860} bottom={1600} height={620} t={t} />
   </g>
 );
 export const S9: S = ({ t, len }) => (
@@ -166,6 +167,7 @@ export const S13: S = ({ t }) => (
       </g>
     ))}
     {front()}
+    <HostCut pose="walk" x={170} bottom={1640} height={700} t={t} flip />
   </g>
 );
 
@@ -307,7 +309,7 @@ export const S25: S = ({ t }) => (
   <g>
     <Sky id="m25" mood="danger" sunY={340} />
     <City mood="danger" />
-    <HostClose y={840} sc={2.9} pose={{ yaw: 0.05, armL: { a: 150, b: 120 }, armR: { a: 150, b: 120 }, ...faceAt(t, [[0, 'shock']]) }} />
+    <HostCut pose="angry" x={540} bottom={1520} height={900} t={t} />
     <Punch t={t - 4} lines={['THE WORST', 'PART']} y={330} size={90} color="#FF8A3D" />
   </g>
 );
@@ -410,6 +412,7 @@ export const S33: S = ({ t }) => {
         <rect x={-10} y={30} width={20} height={120} fill="#8A5A30" stroke={INK} strokeWidth={5} />
       </g>
       <Sfx t={t - 34} text="BANG!" x={800} y={700} size={90} />
+      <HostCut pose="arms_crossed" x={880} bottom={1640} height={720} t={t} />
       <Punch t={t - 40} lines={['TOO THIN.', 'NEVER TESTED.']} y={360} size={80} color="#FFD23F" />
     </g>
   );
@@ -448,7 +451,7 @@ export const S36: S = ({ t }) => (
   <g>
     <Sky id="m36" mood="brown" sunY={340} />
     <City mood="brown" />
-    <HostClose y={850} sc={2.9} pose={{ yaw: 0, ...faceAt(t, [[0, 'worried'], [60, 'neutral']]) }} />
+    <HostCut pose="bust" x={540} bottom={1700} height={1180} t={t} />
     <Punch t={t - 30} lines={['21 DROWNED', 'IN SYRUP']} y={330} size={84} color="#FFD23F" />
   </g>
 );
@@ -456,11 +459,7 @@ export const S37: S = ({ t }) => (
   <g>
     {harbour('m37', 'warm', t, { rail: 0 })}
     {/* he holds up a jar of molasses */}
-    <Host feet={1560} s={1.85} pose={{ yaw: 0.05, armR: { a: 150, b: 30 }, ...faceAt(t, [[0, 'smug'], [50, 'laugh']]) }} />
-    <g transform={`translate(${540 + 150} ${880})`}>
-      <rect x={-50} y={-70} width={100} height={130} rx={18} fill="#5A2A0A" stroke={INK} strokeWidth={6} />
-      <rect x={-56} y={-90} width={112} height={26} rx={6} fill="#C98448" stroke={INK} strokeWidth={5} />
-    </g>
+    <HostCut pose="rock" x={540} bottom={1640} height={980} t={t} />
     <Punch t={t - 6} lines={['"SLOW AS', 'MOLASSES"?']} y={330} size={84} color="#C98448" />
   </g>
 );
@@ -469,7 +468,7 @@ export const S38: S = ({ t }) => (
     <Sky id="m38" mood="night" moon sunX={800} sunY={380} />
     <City mood="night" />
     <Street mood="night" />
-    <Host feet={1560} s={1.85} pose={{ yaw: 0, armR: { a: 170, b: 0 }, handR: 'point', ...faceAt(t, [[0, 'happy']]) }} />
+    <HostCut pose="arms_crossed" x={540} bottom={1640} height={1000} t={t} />
     <Punch t={t - 4} lines={['FOLLOW FOR', 'STRANGE HISTORY']} y={330} size={76} color="#C9A2FF" />
   </g>
 );
@@ -502,7 +501,7 @@ const react = (mood: Mood, face: 'shock' | 'worried' | 'smug' | 'oops', pose: Pa
   <g>
     <Sky id={`r${mood}${face}`} mood={mood} sunY={360} />
     <City mood={mood} />
-    <HostClose y={840} sc={2.9} pose={{ ...pose, ...faceAt(t, [[0, face]]) }} />
+    <HostCut pose={face === 'shock' ? 'yell' : face === 'smug' ? 'smug' : face === 'worried' ? 'confused' : 'angry'} x={540} bottom={1500} height={face === 'shock' ? 760 : 820} t={t} />
     {words ? <Punch t={t - 4} lines={words} y={330} size={84} color="#FFD23F" /> : null}
   </g>
 );
