@@ -1,4 +1,4 @@
-// Render emu-war.html to MP4: seek every frame at 30 fps, pipe the canvas into ffmpeg, render the score offline
+// Render pig-war.html to MP4: seek every frame at 30 fps, pipe the canvas into ffmpeg, render the score offline
 // with SOUND.renderOffline and mux it in.  node render.js <html> <out.mp4>
 const { chromium } = require('playwright');
 const { spawn } = require('child_process');

@@ -593,7 +593,7 @@
   }
 
   // ---------- the story ----------
-  const D = 36.5;
+  const D0 = 36.5;   // storyboard clock length
   const T = {
     cardDrop: [0.2, 0.85], cardHoist: [2.4, 3.0],
     flagUS: 3.3, flagUK: 3.8, claimPlaque: 4.2,
@@ -778,7 +778,7 @@
     }));
   }
 
-  function explainer(ctx, W, Hh, t) {
+  function drawAt(ctx, W, Hh, t) {
     const st = begin(W, Hh);
     let b = sm(0, 0.55, t) * (1 - 0.35 * Math.max(0, NZ.n2(t * 23, 3.3)) * (1 - sm(0.35, 0.7, t)));
     for (const L of [T.lampDown1, T.lampDown2, T.lampDown3]) b *= 1 - 0.93 * Math.sin(Math.PI * cl((t - L[0]) / (L[1] - L[0])));
@@ -802,5 +802,12 @@
     end(ctx, st, t);
   }
 
-  window.PIG = { explainer, D, T, yearAt, fonts: ['400 132px "Libre Baskerville"', '400 70px "IM Fell English"', 'italic 400 44px "IM Fell English"'] };
+  // The beats above were laid out on a 36.5 s storyboard clock; Austin's lines set the real pace. WARP maps
+  // real time -> storyboard time piecewise-linearly (one segment per narration line), so each beat starts on its line.
+  const WARP = [[0, 0], [0.2, 0.2], [3.29, 2.8], [9.42, 7.6], [11.42, 9.6], [14.12, 12.3], [17.02, 15.2], [19.92, 18.1], [24.5, 22.0], [29.19, 25.8], [32.44, 28.9], [36.27, 32.6], [40.17, 36.5]];
+  const pw = (x, a, b) => { for (let i = 1; i < WARP.length; i++) if (x <= WARP[i][a] || i === WARP.length - 1) { const [p, q] = [WARP[i - 1], WARP[i]]; return p[b] + (q[b] - p[b]) * cl((x - p[a]) / (q[a] - p[a])); } };
+  const toStory = (t) => pw(t, 0, 1), toReal = (s) => pw(s, 1, 0);
+  function explainer(ctx, W, Hh, t) { drawAt(ctx, W, Hh, toStory(t)); }
+
+  window.PIG = { explainer, D: 40.17, T, toReal, toStory, yearAt, fonts: ['400 132px "Libre Baskerville"', '400 70px "IM Fell English"', 'italic 400 44px "IM Fell English"'] };
 })();

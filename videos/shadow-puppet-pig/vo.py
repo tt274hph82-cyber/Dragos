@@ -1,20 +1,21 @@
-"""Narration for the shadow-play Emu War: one ElevenLabs clip per beat (Austin, eleven_v4, 128 kbps), placed at the
+"""Narration for the shadow-play Pig War: one ElevenLabs clip per beat (Austin, eleven_v4, 128 kbps), placed at the
 beat's start time. Writes vo/<n>.mp3 and vo.json [{start, dur, file, text}]. Cached: delete a clip to redo it."""
 import json, os, pathlib, subprocess, urllib.request
 ROOT = pathlib.Path(__file__).resolve().parent
 VOICE, MODEL = 'Bj9UqZbhQsanLzgalpEG', 'eleven_v4'
 SET = {'stability': 0.45, 'similarity_boost': 0.8, 'style': 0.35, 'use_speaker_boost': True, 'speed': 1.12}
 LINES = [  # (start s, window end s, text)
-  (0.2, 2.8, 'Western Australia, 1932.'),
-  (2.9, 7.4, "Twenty thousand emus were eating the farmers' wheat."),
-  (7.7, 11.4, 'So the army sent two machine guns, and ten thousand bullets.'),
-  (11.7, 13.7, 'But the emus split up and ran.'),
-  (14.3, 17.2, 'Fifty kilometres an hour. No truck could keep up.'),
-  (17.55, 19.4, 'Then a gun jammed.'),
-  (19.85, 24.5, 'Nearly ten thousand bullets. Nine hundred and eighty-six emus.'),
-  (24.8, 26.4, 'Ten bullets per bird.'),
-  (27.4, 29.0, 'The army went home.'),
-  (29.6, 32.0, 'The emus won.'),
+  (0.2, 3.09, 'San Juan Island, 1859.'),
+  (3.29, 9.22, "Britain and America both claimed it. Then a British pig ate an American's potatoes."),
+  (9.42, 11.22, 'So he shot the pig.'),
+  (11.42, 13.92, 'The British threatened to arrest him.'),
+  (14.12, 16.82, 'America sent in sixty-four soldiers.'),
+  (17.02, 19.72, 'Britain sent three warships.'),
+  (19.92, 24.3, 'Soon, hundreds of soldiers faced two thousand British sailors.'),
+  (24.5, 28.99, 'But the British admiral refused to start a war. Not over a pig.'),
+  (29.19, 32.24, 'Both armies shared the island for twelve years.'),
+  (32.44, 36.07, 'Then the German Kaiser decided: America gets it.'),
+  (36.27, 38.27, 'Casualties? One pig.'),
 ]
 key = os.environ.get('ELEVENLABS_API_KEY')
 if not key:
