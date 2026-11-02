@@ -1,0 +1,406 @@
+{
+ "slug": "emu-war",
+ "title": "THE GREAT EMU WAR",
+ "fps": 30,
+ "total": 1462,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 128,
+   "t0": 0,
+   "t1": 128,
+   "line": "Nineteen thirty- two. The Australian army goes to war. The"
+  },
+  {
+   "shot": "S2",
+   "a": 128,
+   "b": 161,
+   "t0": 0,
+   "t1": 33,
+   "line": "enemy?"
+  },
+  {
+   "shot": "S3",
+   "a": 161,
+   "b": 212,
+   "t0": 0,
+   "t1": 51,
+   "line": "Twenty thousand emus."
+  },
+  {
+   "shot": "S4",
+   "a": 212,
+   "b": 259,
+   "t0": 0,
+   "t1": 47,
+   "line": "Machine guns."
+  },
+  {
+   "shot": "S5",
+   "a": 259,
+   "b": 301,
+   "t0": 0,
+   "t1": 42,
+   "line": "Ten thousand bullets."
+  },
+  {
+   "shot": "S6",
+   "a": 301,
+   "b": 353,
+   "t0": 0,
+   "t1": 52,
+   "line": "And the birds won."
+  },
+  {
+   "shot": "S7",
+   "a": 353,
+   "b": 421,
+   "t0": 0,
+   "t1": 68,
+   "line": "This is the Great Emu War."
+  },
+  {
+   "shot": "S8",
+   "a": 421,
+   "b": 461,
+   "t0": 0,
+   "t1": 40,
+   "line": "Yes, really."
+  },
+  {
+   "shot": "S9",
+   "a": 461,
+   "b": 557,
+   "t0": 0,
+   "t1": 96,
+   "line": "Emus were eating the wheat farms of Western Australia,"
+  },
+  {
+   "shot": "S10",
+   "a": 557,
+   "b": 630,
+   "t0": 0,
+   "t1": 73,
+   "line": "so the farmers asked for soldiers."
+  },
+  {
+   "shot": "S11",
+   "a": 630,
+   "b": 719,
+   "t0": 0,
+   "t1": 89,
+   "line": "Major Meredith arrived with two machine guns."
+  },
+  {
+   "shot": "S12",
+   "a": 719,
+   "b": 827,
+   "t0": 0,
+   "t1": 108,
+   "line": "But the emus split into tiny groups and ran, at"
+  },
+  {
+   "shot": "S13",
+   "a": 827,
+   "b": 870,
+   "t0": 0,
+   "t1": 43,
+   "line": "fifty kilometres an hour."
+  },
+  {
+   "shot": "S14",
+   "a": 870,
+   "b": 911,
+   "t0": 0,
+   "t1": 41,
+   "line": "One gun jammed."
+  },
+  {
+   "shot": "S15",
+   "a": 911,
+   "b": 957,
+   "t0": 0,
+   "t1": 46,
+   "line": "The trucks couldn't keep up."
+  },
+  {
+   "shot": "S16",
+   "a": 957,
+   "b": 1068,
+   "t0": 0,
+   "t1": 111,
+   "line": "After a month, he reported nine hundred and eighty- six kills,"
+  },
+  {
+   "shot": "S17",
+   "a": 1068,
+   "b": 1142,
+   "t0": 0,
+   "t1": 74,
+   "line": "with nearly ten thousand bullets."
+  },
+  {
+   "shot": "S18",
+   "a": 1142,
+   "b": 1206,
+   "t0": 0,
+   "t1": 64,
+   "line": "That's ten bullets per bird."
+  },
+  {
+   "shot": "S19",
+   "a": 1206,
+   "b": 1241,
+   "t0": 0,
+   "t1": 35,
+   "line": "That's real."
+  },
+  {
+   "shot": "S20",
+   "a": 1241,
+   "b": 1278,
+   "t0": 0,
+   "t1": 37,
+   "line": "The army pulled out."
+  },
+  {
+   "shot": "S21",
+   "a": 1278,
+   "b": 1341,
+   "t0": 0,
+   "t1": 63,
+   "line": "The emus kept the farms."
+  },
+  {
+   "shot": "S22",
+   "a": 1341,
+   "b": 1462,
+   "t0": 0,
+   "t1": 121,
+   "line": "Follow for more strange history."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 128,
+   "first": 0,
+   "line": "Nineteen thirty- two. The Australian army goes to war. The",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 33,
+   "first": 128,
+   "line": "enemy?",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 51,
+   "first": 161,
+   "line": "Twenty thousand emus.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 47,
+   "first": 212,
+   "line": "Machine guns.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 42,
+   "first": 259,
+   "line": "Ten thousand bullets.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 52,
+   "first": 301,
+   "line": "And the birds won.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 68,
+   "first": 353,
+   "line": "This is the Great Emu War.",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 40,
+   "first": 421,
+   "line": "Yes, really.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 96,
+   "first": 461,
+   "line": "Emus were eating the wheat farms of Western Australia,",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 73,
+   "first": 557,
+   "line": "so the farmers asked for soldiers.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 89,
+   "first": 630,
+   "line": "Major Meredith arrived with two machine guns.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 108,
+   "first": 719,
+   "line": "But the emus split into tiny groups and ran, at",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 43,
+   "first": 827,
+   "line": "fifty kilometres an hour.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 41,
+   "first": 870,
+   "line": "One gun jammed.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 46,
+   "first": 911,
+   "line": "The trucks couldn't keep up.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 111,
+   "first": 957,
+   "line": "After a month, he reported nine hundred and eighty- six kills,",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 74,
+   "first": 1068,
+   "line": "with nearly ten thousand bullets.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 64,
+   "first": 1142,
+   "line": "That's ten bullets per bird.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 35,
+   "first": 1206,
+   "line": "That's real.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 37,
+   "first": 1241,
+   "line": "The army pulled out.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 63,
+   "first": 1278,
+   "line": "The emus kept the farms.",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 121,
+   "first": 1341,
+   "line": "Follow for more strange history.",
+   "note": "S22"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 6,
+   "f": 216
+  },
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 4,
+   "f": 876
+  }
+ ],
+ "audio": {
+  "voice": "emu-war/voice.wav",
+  "sfx": "emu-war/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1297,
+  "music": "emu-war/music.wav",
+  "musicVol": 0.0406
+ }
+}

@@ -11,7 +11,7 @@ import { COSTEL, INK } from '../fountain-pen/shots';
 export const W = 1080, H = 1920;
 /** True inside a pushed-in close variant: titles and sound words stay with the wide shot, so they never get cropped. */
 export const CloseCtx = React.createContext(false);
-export type Mood = 'noon' | 'warm' | 'danger' | 'brown' | 'night' | 'cold';
+export type Mood = 'noon' | 'warm' | 'danger' | 'brown' | 'night' | 'cold' | 'outback';
 export const MOODS: Record<Mood, { sky: [string, string]; layers: [string, string, string]; ground: string; rim: string; glow: 'warm' | 'cool' | 'red' }> = {
   noon: { sky: ['#9FB9D2', '#EADCC2'], layers: ['#8597AC', '#5F7086', '#3C4858'], ground: '#232833', rim: '#FFE2A8', glow: 'warm' },
   warm: { sky: ['#E59A55', '#FBE1AC'], layers: ['#C08050', '#93603E', '#644230'], ground: '#2C1C14', rim: '#FFD27A', glow: 'warm' },
@@ -19,6 +19,7 @@ export const MOODS: Record<Mood, { sky: [string, string]; layers: [string, strin
   brown: { sky: ['#24130A', '#8A5626'], layers: ['#6A4222', '#4E2E18', '#331C0E'], ground: '#1A0E07', rim: '#F2A33A', glow: 'warm' },
   night: { sky: ['#121230', '#4A2C62'], layers: ['#3A2A52', '#2A1E40', '#1C142C'], ground: '#0E0A18', rim: '#C9A2FF', glow: 'cool' },
   cold: { sky: ['#0C1E30', '#5E8FB6'], layers: ['#2E4E6A', '#203A52', '#14263A'], ground: '#0A1624', rim: '#9FE3FF', glow: 'cool' },
+  outback: { sky: ['#E8743A', '#FFD08A'], layers: ['#C8643A', '#A04A2A', '#6E2E1A'], ground: '#5A2414', rim: '#FFC46A', glow: 'warm' },
 };
 
 /** Life in the air: gulls gliding across, and dust motes drifting in the light (driven by the film's frame). */

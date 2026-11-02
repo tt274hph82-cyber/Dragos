@@ -10,5 +10,6 @@ import { fountainPen } from './fountain-pen';
 import { parachute } from './parachute';
 import { toothbrush } from './toothbrush';
 import { molasses } from './molasses';
+import { emuWar } from './emu-war';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar];

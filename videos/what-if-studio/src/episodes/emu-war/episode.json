@@ -1,0 +1,484 @@
+{
+ "id": "EmuWar",
+ "slug": "emu-war",
+ "topic": "The Great Emu War (short story Reel)",
+ "title": [
+  "THE GREAT",
+  "EMU WAR"
+ ],
+ "accent": "EMU",
+ "voice": {
+  "id": "pqHfZKP75CvOlQylNhV4",
+  "model": "eleven_v4",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.4,
+   "use_speaker_boost": true
+  }
+ },
+ "tail": 2.0,
+ "lead": 2,
+ "script": [
+  {
+   "beat": "hook",
+   "text": "Nineteen thirty-two. The Australian army goes to war."
+  },
+  {
+   "beat": "hook",
+   "text": "The enemy? Twenty thousand emus."
+  },
+  {
+   "beat": "hook",
+   "text": "Machine guns. Ten thousand bullets."
+  },
+  {
+   "beat": "hook",
+   "text": "And the birds won."
+  },
+  {
+   "beat": "host",
+   "text": "This is the Great Emu War. Yes, really."
+  },
+  {
+   "beat": "setup",
+   "text": "Emus were eating the wheat farms of Western Australia, so the farmers asked for soldiers."
+  },
+  {
+   "beat": "setup",
+   "text": "Major Meredith arrived with two machine guns."
+  },
+  {
+   "beat": "twist",
+   "text": "But the emus split into tiny groups and ran, at fifty kilometres an hour."
+  },
+  {
+   "beat": "twist",
+   "text": "One gun jammed. The trucks couldn't keep up."
+  },
+  {
+   "beat": "fact",
+   "text": "After a month, he reported nine hundred and eighty-six kills, with nearly ten thousand bullets."
+  },
+  {
+   "beat": "fact",
+   "text": "That's ten bullets per bird. That's real."
+  },
+  {
+   "beat": "end",
+   "text": "The army pulled out. The emus kept the farms. Follow for more strange history."
+  }
+ ],
+ "science": [
+  {
+   "claim": "Nov-Dec 1932, Western Australia; about 20,000 emus; Major G.P.W. Meredith with two Lewis guns and 10,000 rounds; a gun jammed; a truck-mounted gun could not keep up; emus split into small groups; he reported 986 kills with 9,860 rounds; little effect on the emu population.",
+   "working": "9,860 / 986 = 10 rounds per bird. Emus run about 50 km/h.",
+   "source": "Wikipedia, Emu War; Australian Geographic; History Hit"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "outback",
+   "key": 30,
+   "note": "S22"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0"
+  },
+  {
+   "shot": "S2",
+   "at": "enemy"
+  },
+  {
+   "shot": "S3",
+   "at": "Twenty"
+  },
+  {
+   "shot": "S4",
+   "at": "Machine"
+  },
+  {
+   "shot": "S5",
+   "at": "Ten"
+  },
+  {
+   "shot": "S6",
+   "at": "And"
+  },
+  {
+   "shot": "S7",
+   "at": "This"
+  },
+  {
+   "shot": "S8",
+   "at": "Yes"
+  },
+  {
+   "shot": "S9",
+   "at": "Emus"
+  },
+  {
+   "shot": "S10",
+   "at": "so"
+  },
+  {
+   "shot": "S11",
+   "at": "Major"
+  },
+  {
+   "shot": "S12",
+   "at": "But"
+  },
+  {
+   "shot": "S13",
+   "at": "fifty"
+  },
+  {
+   "shot": "S14",
+   "at": "One"
+  },
+  {
+   "shot": "S15",
+   "at": "The"
+  },
+  {
+   "shot": "S16",
+   "at": "After"
+  },
+  {
+   "shot": "S17",
+   "at": "with"
+  },
+  {
+   "shot": "S18",
+   "at": "That's"
+  },
+  {
+   "shot": "S19",
+   "at": "That's"
+  },
+  {
+   "shot": "S20",
+   "at": "The"
+  },
+  {
+   "shot": "S21",
+   "at": "The"
+  },
+  {
+   "shot": "S22",
+   "at": "Follow"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S4+4",
+   "kind": "shake",
+   "len": 10,
+   "amp": 6
+  },
+  {
+   "at": "S14+6",
+   "kind": "shake",
+   "len": 6,
+   "amp": 4
+  }
+ ],
+ "sound": {
+  "clips": {
+   "outback": [
+    "hot Australian outback ambience, wind over dry grass, cicadas, distant birds, no voices",
+    8.0
+   ],
+   "march": [
+    "a small group of soldiers marching on dry dirt, boots, gear rattling",
+    3.0
+   ],
+   "mg": [
+    "a 1930s Lewis machine gun firing a short burst",
+    2.0
+   ],
+   "jam": [
+    "a machine gun jamming with a metallic clunk and a click, then silence",
+    1.5
+   ],
+   "emu": [
+    "emus drumming and grunting, a deep booming bird call, several birds",
+    3.0
+   ],
+   "run": [
+    "big birds running fast across dry ground, rapid heavy footsteps",
+    2.5
+   ],
+   "truck": [
+    "an old 1930s truck engine sputtering and bouncing over rough ground",
+    3.0
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "whoosh": [
+    "a soft cinematic whoosh transition",
+    1.2
+   ],
+   "ding": [
+    "a correct answer ding, bright bell chime",
+    0.8
+   ],
+   "score": [
+    "playful adventurous documentary score, marching snare and comic brass with a cheeky Australian outback feel, didgeridoo drone underneath, no vocals",
+    50,
+    "music"
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "march",
+    0.3
+   ],
+   [
+    "S1",
+    "outback",
+    0.18,
+    "onset",
+    "S4"
+   ],
+   [
+    "S3",
+    "emu",
+    0.3
+   ],
+   [
+    "S4",
+    "mg",
+    0.4
+   ],
+   [
+    "S6+10",
+    "pop",
+    0.2
+   ],
+   [
+    "S7",
+    "whoosh",
+    0.25
+   ],
+   [
+    "S9",
+    "emu",
+    0.2
+   ],
+   [
+    "S11",
+    "truck",
+    0.25
+   ],
+   [
+    "S12",
+    "run",
+    0.3
+   ],
+   [
+    "S13",
+    "run",
+    0.3
+   ],
+   [
+    "S14+6",
+    "jam",
+    0.4
+   ],
+   [
+    "S15",
+    "truck",
+    0.25
+   ],
+   [
+    "S16",
+    "ding",
+    0.2
+   ],
+   [
+    "S20",
+    "truck",
+    0.2
+   ],
+   [
+    "S21",
+    "emu",
+    0.25
+   ],
+   [
+    "S22+4",
+    "pop",
+    0.2
+   ]
+  ],
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.4,
+    "fade_out": 1.5
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -17.0
+  }
+ }
+}
