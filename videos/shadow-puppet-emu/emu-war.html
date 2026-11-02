@@ -979,8 +979,9 @@
     });
     // labels
     pup(st, {}, (p, g) => {
-      if (t > T.majorPlaque) plaque(p, { x: 360, y: lerp(-80, 360, EO(sm(T.majorPlaque, T.majorPlaque + 0.3, t))), text: 'Major Meredith', size: 46, rot: swing(t, T.majorPlaque + 0.3, 0.05, 3, 9), hang: 500 });
-      if (t > T.gunTag) tag(p, g, { x: 190, y: lerp(-60, 450, EO(sm(T.gunTag, T.gunTag + 0.25, t))), w: 300, h: 76, text: '2 machine guns', size: 36, rot: swing(t, T.gunTag + 0.25, 0.08, 2.5, 8) });
+      const lift = 900 * EIO(sm(T.fire[0] + 0.2, T.fire[0] + 0.8, t));   // earlier labels rise away when the shooting starts
+      if (t > T.majorPlaque && lift < 890) plaque(p, { x: 360, y: lerp(-80, 360, EO(sm(T.majorPlaque, T.majorPlaque + 0.3, t))) - lift, text: 'Major Meredith', size: 46, rot: swing(t, T.majorPlaque + 0.3, 0.05, 3, 9), hang: 500 });
+      if (t > T.gunTag && lift < 890) tag(p, g, { x: 190, y: lerp(-60, 450, EO(sm(T.gunTag, T.gunTag + 0.25, t))) - lift, w: 300, h: 76, text: '2 machine guns', size: 36, rot: swing(t, T.gunTag + 0.25, 0.08, 2.5, 8) });
       if (t > T.roundsBoard[0] && t < T.fire[0] + 0.9) board(p, { x: 520, y: lerp(-500, 640, EO(sm(T.roundsBoard[0], T.roundsBoard[1], t))) - 900 * EIO(sm(T.fire[0] + 0.2, T.fire[0] + 0.8, t)), text: '10,000', size: 96, hw: 170, label: 'rounds', rot: swing(t, T.roundsBoard[1], 0.04, 2.5, 7) });
       if (t > T.splitPlaque) {
         const vp = EIO(sm(T.splitPlaque - 0.25, T.splitPlaque + 0.3, t));

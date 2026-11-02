@@ -25,7 +25,7 @@ const fs = require('fs');
   console.log('audio peak', aud.peak.toFixed(3));
   // frames
   const N = Math.round((await pg.evaluate(() => window.DURATION)) * 30);
-  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', '-i', wav, '-c:v', 'libx264', '-crf', '18', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-vf', 'scale=1080:1920:flags=lanczos', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
+  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', '-i', wav, '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-vf', 'scale=1080:1920:flags=lanczos', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const t0 = Date.now();
   for (let i = 0; i < N; i++) {
     const data = await pg.evaluate((tt) => { window.seek(tt); return document.getElementById('screen').toDataURL('image/jpeg', 0.95).split(',')[1]; }, i / 30);
