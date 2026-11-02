@@ -138,7 +138,7 @@ export const S5: React.FC<ShotProps> = ({ t, len }) => (
     <Cell t={t} />
     <Hero look={SIL} pose={{ ...basePose, x: 900, y: 820 - LEG_LEN * 0.8 + 70, scale: 0.8, ...seated, armR: { a: 25, b: 55 }, armL: { a: 20, b: 50 } }} shadow={0} rimId="none" />
     <Bold x={960} y={160} t={t - 4} text="WILLIAM ADDIS" size={72} fill="#FFD24A" />
-    <Bold x={960} y={1000} t={t - 40} text="JAILED FOR A RIOT" size={58} />
+    <Bold x={960} y={1000} t={t - 40} text="THE RIOTER" size={70} />
   </g>
 );
 
@@ -231,7 +231,7 @@ export const S9: React.FC<ShotProps> = ({ t, len }) => {
       </g>
       <Bold x={960} y={170} t={t - 2} text="STILL MAKING" size={66} />
       <Bold x={960} y={280} t={t - 8} text="TOOTHBRUSHES" size={64} fill="#FFD24A" />
-      <Bold x={960} y={1000} t={t - 16} text="TODAY" size={90} />
+      <Bold x={960} y={1000} t={t - 16} text="240+ YEARS LATER" size={60} />
     </g>
   );
 };
@@ -261,6 +261,53 @@ export const S11: React.FC<ShotProps> = ({ t, len }) => {
       <Toothbrush at={hand} ang={-90} s={1.3} />
       <Bold x={960} y={170} t={t - 4} text="A RIOTER'S" size={80} />
       <Bold x={960} y={290} t={t - 8} text="IDEA!" size={120} fill="#FFD24A" />
+    </g>
+  );
+};
+
+// ---------- cold open S12: the iron door slams shut on him ----------
+export const S12: React.FC<ShotProps> = ({ t, len }) => {
+  const shut = easeOut(clamp((t - 1) / 5));
+  return (
+    <g transform={camV(960, 560, kf(t, [[0, 1.1], [len, 1.0]]))}>
+      <Cell t={t} />
+      <Hero look={SIL} pose={{ ...basePose, x: 960, y: 940 - LEG_LEN * 0.85, scale: 0.85, yaw: 0, headTilt: 18, armL: { a: 12, b: -6 }, armR: { a: 12, b: -6 } }} shadow={0} rimId="none" />
+      {/* the barred door slides in from the left and bangs shut */}
+      <g transform={`translate(${lerp(-900, 0, shut)} 0)`}>
+        {Array.from({ length: 10 }, (_, i) => <rect key={i} x={500 + i * 92} y={-100} width={22} height={1300} fill="#0B0D16" />)}
+        <rect x={480} y={240} width={940} height={22} fill="#0B0D16" />
+        <rect x={480} y={760} width={940} height={22} fill="#0B0D16" />
+      </g>
+      <Bold x={960} y={170} t={t - 6} text="LOCKED UP" size={100} fill="#FFD24A" />
+    </g>
+  );
+};
+
+// ---------- cold open S13: a bone from his dinner, lit by the moon through the bars ----------
+export const S13: React.FC<ShotProps> = ({ t, len }) => (
+  <g transform={camV(960, 560, kf(t, [[0, 1.0], [len, 1.2]]))}>
+    <Table />
+    <Glow x={960} y={560} r={360} kind="cool" o={0.5} />
+    <Bone holes={0} tufts={0} />
+    {/* bar shadows across the table */}
+    {[0, 1, 2, 3].map((i) => <rect key={i} x={640 + i * 200} y={-200} width={50} height={1500} fill="#000" opacity={0.25} transform="skewX(-20)" />)}
+    <Bold x={960} y={200} t={t - 4} text="A BONE." size={110} />
+  </g>
+);
+
+// ---------- cold open S14: the bone brush glows and becomes the toothbrush in your bathroom ----------
+export const S14: React.FC<ShotProps> = ({ t, len }) => {
+  const morph = clamp((t - 20) / 14);
+  return (
+    <g transform={camV(960, 560, kf(t, [[0, 1.2], [len, 1.05]]))}>
+      <Table />
+      <Glow x={1090} y={540} r={300 + 120 * morph} kind="warm" o={0.4 + 0.4 * morph} />
+      <g opacity={1 - morph}><Bone holes={6} tufts={Math.min(6, Math.floor(t / 3))} /></g>
+      <g opacity={morph} transform={`translate(960 560) rotate(-12) scale(${2.2 + 0.3 * morph})`}>
+        <Toothbrush at={{ x: -80, y: 0 }} ang={0} />
+      </g>
+      <Bold x={960} y={200} t={t - 18} text="IN YOUR BATHROOM" size={50} />
+      <Bold x={960} y={300} t={t - 24} text="RIGHT NOW" size={96} fill="#FFD24A" />
     </g>
   );
 };

@@ -19,31 +19,47 @@
  },
  "script": [
   {
-   "beat": "host hook (kitchen, mid-brush)",
-   "text": "Who invented the toothbrush? A dentist? Nope."
+   "beat": "1 cold open: flash-forward (riot)",
+   "text": "London, 1770. A riot."
+  },
+  {
+   "beat": "1 cold open: locked up",
+   "text": "One man gets locked up."
+  },
+  {
+   "beat": "1 cold open: the object",
+   "text": "All he has is a bone from his dinner."
+  },
+  {
+   "beat": "1 cold open: the stakes",
+   "text": "And what he makes with it is in your bathroom right now."
+  },
+  {
+   "beat": "2 premise: the title question (kitchen, mid-brush)",
+   "text": "Who invented the toothbrush? Not a dentist."
   },
   {
    "beat": "context",
-   "text": "China had bristle brushes more than a thousand years ago."
+   "text": "China had bristle brushes over a thousand years ago."
   },
   {
-   "beat": "place and time",
-   "text": "But the one you use? London, 1770. William Addis is thrown in jail for starting a riot."
+   "beat": "the man",
+   "text": "But the one you use? That rioter. William Addis."
   },
   {
    "beat": "the idea",
-   "text": "The story goes: he saves a bone from his dinner, drills tiny holes in it, and ties in bristles."
+   "text": "The story goes: he drills tiny holes in the bone and ties in bristles."
   },
   {
-   "beat": "the fact",
-   "text": "Out of jail, he starts selling them. By 1780, he has a business."
+   "beat": "the business",
+   "text": "Out of jail, by 1780, he's selling them."
   },
   {
-   "beat": "payoff",
-   "text": "And his company is still making toothbrushes today."
+   "beat": "4 the turn: one real fact",
+   "text": "His company still makes toothbrushes, more than two hundred and forty years later. That's real."
   },
   {
-   "beat": "host twist",
+   "beat": "5-7 punchline",
    "text": "So every morning, you brush with a rioter's idea."
   }
  ],
@@ -62,16 +78,25 @@
    "claim": "His company still makes toothbrushes.",
    "working": "Addis Ltd (Wisdom brand) still operates.",
    "source": "addis.co.uk"
+  },
+  {
+   "claim": "More than 240 years later the company still makes toothbrushes.",
+   "working": "1780 to 2026 = 246 years.",
+   "source": "addis.co.uk"
   }
  ],
  "gaps": {
   "pairs": {
-   "Nope|China": 0.5,
-   "ago|But": 0.45,
-   "riot|The": 0.5,
-   "bristles|Out": 0.45,
-   "business|And": 0.45,
-   "today|So": 0.6
+   "riot|One": 0.35,
+   "up|All": 0.3,
+   "dinner|And": 0.3,
+   "now|Who": 0.6,
+   "dentist|China": 0.45,
+   "ago|But": 0.4,
+   "Addis|The": 0.45,
+   "bristles|Out": 0.4,
+   "them|His": 0.45,
+   "real|So": 0.6
   }
  },
  "tail": 2.0,
@@ -152,28 +177,61 @@
    "set": "kitchen",
    "key": 30,
    "note": "raises his toothbrush like a torch, laughs"
+  },
+  {
+   "id": "S12",
+   "size": "medium",
+   "set": "prison cell",
+   "key": 20,
+   "note": "cold open: the iron door slams"
+  },
+  {
+   "id": "S13",
+   "size": "insert",
+   "set": "cell table",
+   "key": 20,
+   "note": "cold open: a bone from his dinner in the moonlight"
+  },
+  {
+   "id": "S14",
+   "size": "insert",
+   "set": "cell table",
+   "key": 40,
+   "note": "cold open: the bone brush becomes a modern toothbrush"
   }
  ],
  "edit": [
   {
-   "shot": "S1",
+   "shot": "S4",
    "at": "f:0"
   },
   {
+   "shot": "S12",
+   "at": "One"
+  },
+  {
+   "shot": "S13",
+   "at": "All"
+  },
+  {
+   "shot": "S14",
+   "at": "And"
+  },
+  {
+   "shot": "S1",
+   "at": "Who"
+  },
+  {
    "shot": "S2",
-   "at": "A"
+   "at": "Not"
   },
   {
    "shot": "S3",
    "at": "China"
   },
   {
-   "shot": "S4",
-   "at": "London"
-  },
-  {
    "shot": "S5",
-   "at": "William"
+   "at": "But"
   },
   {
    "shot": "S6",
@@ -189,7 +247,7 @@
   },
   {
    "shot": "S9",
-   "at": "company"
+   "at": "His"
   },
   {
    "shot": "S10",
@@ -200,7 +258,14 @@
    "at": "rioter's"
   }
  ],
- "fx": [],
+ "fx": [
+  {
+   "at": "S12+6",
+   "kind": "shake",
+   "len": 6,
+   "amp": 7
+  }
+ ],
  "sound": {
   "clips": {
    "title_boom": [
@@ -241,11 +306,35 @@
    ],
    "mc": [
     "playful light comedic documentary underscore, pizzicato strings and a gentle accordion, curious and cheeky, steady tempo, no vocals",
-    31,
+    44,
     "music"
    ]
   },
   "events": [
+   [
+    "S4",
+    "riot",
+    0.3,
+    "onset",
+    "S12"
+   ],
+   [
+    "S12+5",
+    "cell_door",
+    0.45
+   ],
+   [
+    "S13",
+    "room_tone",
+    0.1,
+    "onset",
+    "S1"
+   ],
+   [
+    "S14+20",
+    "ding",
+    0.25
+   ],
    [
     "S1",
     "brushing",
@@ -254,27 +343,15 @@
     "S2"
    ],
    [
-    "S1+20",
+    "S1+16",
     "title_boom",
     0.3,
     "peak"
    ],
    [
-    "S2+30",
+    "S2+24",
     "pop",
     0.25
-   ],
-   [
-    "S4",
-    "riot",
-    0.25,
-    "onset",
-    "S5"
-   ],
-   [
-    "S5+4",
-    "cell_door",
-    0.4
    ],
    [
     "S6+6",
@@ -284,7 +361,7 @@
    [
     "S7+30",
     "ding",
-    0.25
+    0.2
    ],
    [
     "S8",

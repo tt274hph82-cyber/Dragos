@@ -34,7 +34,11 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
 
 ## Nea Costel "Who invented…?" Reels
 - The host is Nea Costel (`LOOKS.costel`). His reusable pieces live in `videos/what-if-studio/src/episodes/fountain-pen/shots.tsx` (`Bold`, `Sky`, `Roofs`, `camV`, …).
-- **Never reuse the same intro.** Each episode opens in a different place that ties to its topic, never his study corner.
+- **Open with a hook, as in the What If formula (cold open).** The first ~10 s are a flash-forward into the story's most dramatic moment, told in 3 or 4 quick beats, before the title question.
+  - Example: "London, 1770. A riot. One man gets locked up. All he has is a bone from his dinner. And what he makes with it is in your bathroom right now."
+  - Only after that comes Nea Costel with "Who invented…?".
+  - End with one real fact with a number and "That's real.", then his punchline.
+- **Never reuse the same intro.** Each episode's host scene opens in a different place that ties to its topic, never his study corner.
   - Examples: on a hilltop or an airfield for the parachute; a street, a kitchen, a rooftop, a field, a garden or a classroom for other topics.
   - Use the library's sets (`Outdoor`, `Rooftop`, `Kitchen`, `Classroom`, `Bedroom`, `Stairwell`), or build a new set for the topic.
   - Vary his entrance too: he walks in, pops up into frame, gets caught mid-action, or turns to camera.
