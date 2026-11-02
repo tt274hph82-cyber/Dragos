@@ -12,7 +12,7 @@ const fs = require('fs');
   // audio first
   const wav = out.replace(/\.mp4$/, '.wav');
   const aud = await pg.evaluate(async () => {
-    const r = await SOUND.renderOffline(window.scoreSound, window.DURATION, 48000, { voiceover: false });
+    const r = await SOUND.renderOffline(window.scoreSound, window.DURATION, 48000, { voiceover: true });
     const n = r.inter.length, i16 = new Int16Array(n), norm = r.peak > 0.98 ? 0.98 / r.peak : 1;
     for (let i = 0; i < n; i++) i16[i] = Math.max(-32767, Math.min(32767, Math.round(r.inter[i] * norm * 32767)));
     let s = ''; const u8 = new Uint8Array(i16.buffer); for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
@@ -25,7 +25,12 @@ const fs = require('fs');
   console.log('audio peak', aud.peak.toFixed(3));
   // frames
   const N = Math.round((await pg.evaluate(() => window.DURATION)) * 30);
-  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', '-i', wav, '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-vf', 'scale=1080:1920:flags=lanczos', '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
+  // the narration: each line delayed to its start, mixed over the effects (voiceover mode), then -14 LUFS
+  const vo = JSON.parse(fs.readFileSync(require('path').join(__dirname, 'vo.json'), 'utf8'));
+  const ins = ['-i', wav]; vo.forEach((v) => ins.push('-i', require('path').join(__dirname, v.file)));
+  const chains = vo.map((v, i) => `[${i + 2}:a]aresample=48000,adelay=${Math.round(v.start * 1000)}|${Math.round(v.start * 1000)},volume=1.6[v${i}]`).join(';');
+  const mix = `${chains};[1:a]${vo.map((_, i) => `[v${i}]`).join('')}amix=inputs=${vo.length + 1}:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5:LRA=11[a]`;
+  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', ...ins, '-filter_complex', mix, '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-vf', 'scale=1080:1920:flags=lanczos', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const t0 = Date.now();
   for (let i = 0; i < N; i++) {
     const data = await pg.evaluate((tt) => { window.seek(tt); return document.getElementById('screen').toDataURL('image/jpeg', 0.95).split(',')[1]; }, i / 30);
