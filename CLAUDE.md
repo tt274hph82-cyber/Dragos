@@ -98,3 +98,7 @@ These rules come from measuring three reference Reels:
   - Effects sit about 14 LU under the voice and music about 17 LU under it. These are the skill's defaults: `sfx_lu: -14` and `music_lu: -17`.
   - Sound hits land just after the word they illustrate, never on it.
 - Never commit API keys. ElevenLabs uses the env var / GitHub secret `ELEVENLABS_API_KEY`.
+
+## Shadow Puppet Theatre explainers
+- Built from `videos/shadow-puppet-emu/` (emu war) and `videos/shadow-puppet-pig/` (pig war): one canvas file per story, `score.js`, `vo.py` (Austin narration, always included), `render.js` for the MP4. 9:16, at least 30 s.
+- **Storyboard approval is standing:** the user approves every storyboard. Still publish the storyboard artifact, then go straight on to the full animation, narration and MP4 without waiting.
