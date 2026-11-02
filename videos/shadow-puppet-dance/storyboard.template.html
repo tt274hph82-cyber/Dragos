@@ -1,0 +1,93 @@
+<title>The Dancing Plague Storyboard</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=block">
+<style>
+  /* Layout: a dark theatre programme. One single (dark) look by choice: a lit screen wall of panels, notes typed beneath. */
+  :root {
+    --bg: #160b07; --panel: #21110a; --ink: #f3e3c4; --dim: #c7a985; --amber: #f2a85a; --rule: #4a2a18;
+    --display: "IM Fell English", Georgia, serif; --body: "Libre Baskerville", Georgia, serif;
+    color-scheme: dark;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.55;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; }
+  header { max-width: 1180px; margin: 0 auto 26px; display: grid; gap: 8px; }
+  h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 58px); line-height: 1.05; margin: 0; text-wrap: balance; }
+  h1 em { color: var(--amber); }
+  .meta { color: var(--dim); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .lede { max-width: 66ch; color: var(--ink); font-size: 15px; margin: 4px 0 0; }
+  .grid { max-width: 1180px; margin: 0 auto; display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+  .beat { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-width: 0; }
+  .beat canvas { width: 100%; height: auto; aspect-ratio: 9 / 16; display: block; background: #000; }
+  .notes { padding: 12px 14px 16px; display: grid; gap: 8px; font-size: 13px; min-width: 0; }
+  .head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .num { font-family: var(--display); font-size: 26px; color: var(--amber); }
+  .time { font-variant-numeric: tabular-nums; color: var(--dim); font-size: 12.5px; letter-spacing: 0.04em; }
+  .label { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+  .onscreen { font-family: var(--display); font-size: 17px; color: var(--ink); }
+  .flow, .sound { color: var(--ink); opacity: 0.92; }
+  .flow b { color: var(--amber); font-weight: 400; font-style: italic; }
+  section.facts { max-width: 1180px; margin: 36px auto 0; border-top: 1px solid var(--rule); padding-top: 18px; display: grid; gap: 10px; }
+  section.facts h2 { font-family: var(--display); font-weight: 400; font-size: 30px; margin: 0; }
+  section.facts ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 80ch; font-size: 14px; }
+  .status { color: var(--dim); font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <div class="meta">Shadow Puppet Theatre · 9:16 · native 1080 × 1920 · 45 s · Austin narration · storyboard (standing approval)</div>
+  <h1>The <em>Dancing Plague</em></h1>
+  <p class="lede">Strasbourg, July 1518: one woman starts dancing in the street and can't stop. Hundreds join her, and the city's cure is more dancing. Each panel is drawn by the real animation code at that beat's key moment.</p>
+  <div class="status" id="status">Drawing panels…</div>
+</header>
+<main class="grid" id="grid"></main>
+<section class="facts">
+  <h2>Facts and numbers I assumed</h2>
+  <ul>
+    <li>It began in July 1518 in Strasbourg with a woman recorded as Frau Troffea, who danced in the street for days.</li>
+    <li>About 30 or more people had joined within a week (some sources say 34).</li>
+    <li>"Some accounts say 400" by late summer: a chroniclers' figure, not a firm count, so the narration hedges it.</li>
+    <li>Physicians blamed "hot blood" and prescribed more dancing; the council opened guild halls, built a stage and hired musicians.</li>
+    <li>Reports of many deaths are disputed, so the film only shows dancers collapsing.</li>
+    <li>The dancers were taken to a shrine of St. Vitus in the hills near Saverne, and the outbreak faded by September. The cause is still debated.</li>
+  </ul>
+</section>
+
+<script>/*HARNESS*/</script>
+<script>/*DANCE*/</script>
+<script>
+const BEATS = [
+  {"t": 1.7, "a": 0, "b": 3.0, "text": "Strasbourg, 1518 · The Dancing · Plague", "vo": "Strasbourg, 1518.", "flow": "<b>Opening.</b> The lamp sputters alight; the title card drops on its strings, then is hoisted out.", "sound": "lamp catching, hide rustle, rod tap, a bronze note."},
+  {"t": 6.5, "a": 3.0, "b": 9.3, "text": "Frau Troffea", "vo": "One July day, a woman named Frau Troffea stepped into the street, and began to dance.", "flow": "<b>Continuous.</b> The street rises: half-timbered houses with lit windows and chimney smoke, the cathedral spire behind. A woman (red gel in her skirt) walks in and starts to dance.", "sound": "footsteps, plaque tap, then a jingle as she begins."},
+  {"t": 11.0, "a": 9.3, "b": 12.1, "text": "day 1 → day 6", "vo": "She didn't stop. For days.", "flow": "<b>Continuous.</b> Sun and moon swing across the sky; the lamp dips each night; the board counts the days.", "sound": "a soft chime per day, her feet tapping steadily underneath."},
+  {"t": 13.9, "a": 12.1, "b": 15.0, "text": "30+ · joined her", "vo": "Within a week, thirty more had joined her.", "flow": "<b>Continuous.</b> Townsfolk dance in from both sides; the board drops.", "sound": "more feet taps, board tap and a bronze note."},
+  {"t": 18.9, "a": 15.0, "b": 19.4, "text": "400 · dancing", "vo": "By the end of summer, some accounts say four hundred people were dancing.", "flow": "<b>Continuous, escalating.</b> A blurred crowd rises behind; the board counts 30 to 400 and pops; the lamp flares.", "sound": "counter ticks, a rising rattle, a gong when it lands on 400."},
+  {"t": 21.5, "a": 19.4, "b": 23.8, "text": "the doctors' cure: · more dancing!", "vo": "The city's doctors had a cure: more dancing.", "flow": "<b>Scene change: lace curtains.</b> Two physicians in long robes and tall hats; a plaque, then the tag.", "sound": "curtain swish, plaque and tag taps, a bright bronze."},
+  {"t": 26.0, "a": 23.8, "b": 27.1, "text": "a stage and a band", "vo": "So they hired musicians, and built a stage.", "flow": "<b>Continuous.</b> A trestle stage with bunting rises; a drummer and a piper slide in; the dancers go faster.", "sound": "a drum beat and a pipe-like tune, stage thunk."},
+  {"t": 30.6, "a": 27.1, "b": 31.3, "text": "worse ✕", "vo": "It only made things worse. Dancers collapsed in the streets.", "flow": "<b>Continuous.</b> A red gel washes the screen; the tag drops with a red X; two dancers collapse on the stage.", "sound": "clashing bronze, two soft thuds, the music stops."},
+  {"t": 34.5, "a": 31.3, "b": 36.3, "text": "shrine of St. Vitus", "vo": "At last, they were carried to a mountain shrine, to pray.", "flow": "<b>Scene change: lamp down and up</b> into night (cool blue gel). A procession climbs the path to a chapel with a lit window.", "sound": "lamp sigh, slow steps, a distant bell."},
+  {"t": 37.6, "a": 36.3, "b": 39.5, "text": "(none)", "vo": "And slowly, the dancing stopped.", "flow": "<b>Continuous.</b> In front, Frau Troffea’s dance winds down until she stands still.", "sound": "her taps slowing to silence."},
+  {"t": 41.8, "a": 39.5, "b": 42.4, "text": "the cause · ?", "vo": "To this day, nobody knows why it started.", "flow": "<b>Continuous.</b> The hill fades back; the plaque drops; a big ? stamps down in a ring.", "sound": "plaque tap, a low gong under the ?."},
+  {"t": 44.5, "a": 42.4, "b": 45.0, "text": "The Dancing Plague · 1518 · still unexplained", "vo": "(held, no line)", "flow": "<b>Takeaway.</b> The final card drops; the moon bursts into rays; held about 2 s.", "sound": "card tap, a resolving three-note bronze phrase."}
+];
+(async () => {
+  try { await Promise.all(DANCE.fonts.map((f) => document.fonts.load(f, 'AaZz09'))); } catch (e) {}
+  const grid = document.getElementById('grid');
+  BEATS.forEach((b, i) => {
+    const el = document.createElement('article'); el.className = 'beat';
+    el.innerHTML = `<canvas width="720" height="1280" aria-label="Beat ${i + 1} key frame"></canvas>
+      <div class="notes"><div class="head"><span class="num">${i + 1}</span><span class="time">${b.a.toFixed(1)}–${b.b.toFixed(1)} s · key ${b.t.toFixed(2)} s</span></div>
+      <div><span class="label">On screen</span><span class="onscreen">${b.text}</span></div>
+      <div class="flow"><span class="label">Narration (Austin)</span>“${b.vo}”</div>
+      <div class="flow"><span class="label">From the last beat</span>${b.flow}</div>
+      <div class="sound"><span class="label">Key sounds</span>${b.sound}</div></div>`;
+    grid.appendChild(el);
+  });
+  const cs = grid.querySelectorAll('canvas');
+  for (let i = 0; i < BEATS.length; i++) {
+    await new Promise((r) => setTimeout(r, 0));
+    const ctx = cs[i].getContext('2d'); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    DANCE.explainer(ctx, 720, 1280, BEATS[i].t);
+  }
+  document.getElementById('status').textContent = `${BEATS.length} beats · 0–45 s · drawn with the animation code`;
+})();
+</script>

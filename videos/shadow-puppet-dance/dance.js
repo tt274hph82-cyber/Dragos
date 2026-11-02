@@ -1,0 +1,730 @@
+// "The Dancing Plague" (Strasbourg, 1518) as a shadow play, 9:16, drawn natively at any size (720 x 1280 logical stage).
+// lamp light on the cloth -> coloured gels (multiply) -> silhouettes (each puppet on its own scratch layer, holes
+// punched with destination-out, then laid on the shadow layer, blurred if held off the screen) -> cloth weave,
+// light diffusion, grain. Every frame is a pure function of t.
+(function () {
+  const INK = 'rgb(20,8,4)';
+  const FF = '"IM Fell English"';
+  const NF = '"Libre Baskerville"';
+  const TAU = Math.PI * 2;
+  const NZ = H.makeNoise(4242);
+  const sm = H.smooth, cl = H.clamp, lerp = H.lerp, EO = H.ease.out, EIO = H.ease.inOut;
+  const LAY = {};
+  // Native resolution: scenes are written on a 720 x 1280 logical stage; K = output width / 720 scales every layer,
+  // so a 1080 x 1920 canvas is drawn at full detail (not upscaled). lay() takes logical sizes.
+  let K = 1;
+  function lay(name, w, h) {
+    let c = LAY[name];
+    const pw = Math.round(w * K), ph = Math.round(h * K);
+    if (!c || c.width !== pw || c.height !== ph) c = LAY[name] = H.layer(pw, ph);
+    const x = c.getContext('2d');
+    x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, pw, ph); x.setTransform(K, 0, 0, K, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1; x.filter = 'none';
+    x.clearRect(0, 0, c.width, c.height);
+    return c;
+  }
+
+  // ---------- small drawing helpers (from the reference) ----------
+  function cut(p, fn) { p.save(); p.globalCompositeOperation = 'destination-out'; p.fillStyle = '#000'; p.strokeStyle = '#000'; fn(); p.restore(); }
+  function dot(c, x, y, r) { c.beginPath(); c.arc(x, y, Math.max(0.01, r), 0, TAU); c.fill(); }
+  function tear(c, x, y, len, w, a) {
+    c.save(); c.translate(x, y); c.rotate(a);
+    c.beginPath(); c.moveTo(0, -w / 2); c.quadraticCurveTo(len * 0.55, -w * 0.45, len, 0); c.quadraticCurveTo(len * 0.55, w * 0.45, 0, w / 2);
+    c.arc(0, 0, w / 2, Math.PI / 2, Math.PI * 1.5); c.fill(); c.restore();
+  }
+  function pin(p, x, y, r) { r = r || 8; cut(p, () => dot(p, x, y, r)); p.fillStyle = INK; dot(p, x, y, r * 0.55); }
+  const both = (cs, fn) => cs.forEach(fn);
+  const wpt = (p, x, y) => { const q = p.getTransform().transformPoint(new DOMPoint(x, y)); return [q.x / K, q.y / K]; };
+  const bz = (P, u) => { const v = 1 - u; return [v * v * v * P[0][0] + 3 * v * v * u * P[1][0] + 3 * v * u * u * P[2][0] + u * u * u * P[3][0], v * v * v * P[0][1] + 3 * v * v * u * P[1][1] + 3 * v * u * u * P[2][1] + u * u * u * P[3][1]]; };
+  const bzA = (P, u) => { const a = bz(P, Math.max(0, u - 0.01)), b = bz(P, Math.min(1, u + 0.01)); return Math.atan2(b[1] - a[1], b[0] - a[0]); };
+  const swing = (t, t0, amp, k, w) => (t > t0 ? amp * Math.exp(-(t - t0) * k) * Math.sin((t - t0) * w) : 0);
+  const blinkAt = (t, list) => list.reduce((m, b) => Math.max(m, 1 - Math.abs((t - b) / 0.08)), 0);
+  function star(p, x, y, r) { p.beginPath(); for (let i = 0; i < 10; i++) { const rr = i % 2 ? r * 0.42 : r, a = i * TAU / 10 - Math.PI / 2; p.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr); } p.fill(); }
+
+  // ---------- frame lifecycle (from the reference; lamp centred for the tall screen) ----------
+  function begin(W, Hh) { return { W, Hh, S: lay('S', W, Hh), G: lay('G', W, Hh), rods: [] }; }
+  function pup(st, o, fn) {
+    const P = lay('P', st.W, st.Hh), p = P.getContext('2d'), g = st.G.getContext('2d');
+    p.fillStyle = INK; p.strokeStyle = INK;
+    g.save(); fn(p, g, st.rods); g.restore();
+    const s = st.S.getContext('2d');
+    s.save(); s.globalAlpha = o.alpha == null ? 1 : o.alpha; if (o.blur) s.filter = `blur(${o.blur * K}px)`; s.drawImage(P, 0, 0, st.W, st.Hh); s.restore();
+  }
+  const STOPS = [[0, [255, 232, 168]], [0.16, [255, 200, 104]], [0.42, [238, 132, 46]], [0.68, [168, 60, 20]], [0.88, [84, 24, 9]], [1, [38, 10, 4]]];
+  function lamp(ctx, W, Hh, t, b, flare) {
+    const f = 1 + 0.045 * NZ.n2(t * 6.1, 0.3) + 0.025 * NZ.n2(t * 17.3, 2.2);
+    const B = Math.max(0, b * f);
+    const cx = W / 2 + NZ.n2(t * 0.9, 5) * 12, cy = Hh * 0.42 + NZ.n2(7, t * 0.8) * 9;
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, Hh);
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, 980 + (flare || 0) * 200);
+    STOPS.forEach(([o, c]) => g.addColorStop(o, H.rgba(c.map((v) => Math.min(255, v * B + (255 - v) * (flare || 0) * 0.7)), 1)));
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, Hh);
+  }
+  function weave(W, Hh) {
+    const key = '_weave' + W + 'x' + Hh;
+    if (LAY[key]) return LAY[key];
+    const c = H.layer(W, Hh), x = c.getContext('2d'), img = x.createImageData(W, Hh), d = img.data, r = H.rng(77);
+    const row = Float32Array.from({ length: Hh }, () => 0.6 + r() * 0.8), col = Float32Array.from({ length: W }, () => 0.6 + r() * 0.8);
+    for (let y = 0; y < Hh; y++) for (let X = 0; X < W; X++) {
+      const i = (y * W + X) * 4;
+      const th = (y % 3 === 0 ? 1 : y % 3 === 1 ? 0.35 : 0) * row[y] * (0.7 + 0.3 * Math.sin(X * 0.05 + row[y] * 9));
+      const tv = (X % 3 === 0 ? 1 : X % 3 === 1 ? 0.3 : 0) * col[X] * (0.7 + 0.3 * Math.sin(y * 0.043 + col[X] * 7));
+      const v = 255 * (1 - 0.075 * th - 0.06 * tv);
+      d[i] = v; d[i + 1] = v * 0.985; d[i + 2] = v * 0.97; d[i + 3] = 255;
+    }
+    x.putImageData(img, 0, 0);
+    const fw = Math.round(W / 8), fh = Math.round(Hh / 8);
+    const f = H.layer(fw, fh), fx = f.getContext('2d'), fi = fx.createImageData(fw, fh);
+    for (let y = 0; y < fh; y++) for (let X = 0; X < fw; X++) {
+      const v = 255 * (1 - 0.07 * (0.5 + 0.5 * NZ.fbm2(X * 0.05, y * 0.012, 3)) - 0.03 * (0.5 + 0.5 * NZ.n2(X * 0.4, y * 0.2)));
+      const i = (y * fw + X) * 4; fi.data[i] = fi.data[i + 1] = fi.data[i + 2] = v; fi.data[i + 3] = 255;
+    }
+    fx.putImageData(fi, 0, 0);
+    x.globalCompositeOperation = 'multiply'; x.imageSmoothingEnabled = true; x.drawImage(f, 0, 0, W, Hh);
+    // a vertical seam in the cloth
+    x.globalCompositeOperation = 'multiply'; x.fillStyle = 'rgba(200,190,180,1)'; x.fillRect(150, 0, 2, Hh); x.fillStyle = 'rgba(232,226,220,1)'; x.fillRect(147, 0, 7, Hh);
+    LAY[key] = c; return c;
+  }
+  function grainTile(k) {
+    const key = '_grain' + k;
+    if (LAY[key]) return LAY[key];
+    const c = H.layer(256, 256), x = c.getContext('2d'), img = x.createImageData(256, 256), r = H.rng(900 + k);
+    for (let i = 0; i < img.data.length; i += 4) { const w = r() < 0.5 ? 0 : 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = w; img.data[i + 3] = r() * 26; }
+    x.putImageData(img, 0, 0); LAY[key] = c; return c;
+  }
+  function end(ctx, st, t) {
+    const { W, Hh } = st;
+    if (st.rods.length) {
+      const R = lay('R', W, Hh), r = R.getContext('2d');
+      r.strokeStyle = INK; r.lineCap = 'round';
+      st.rods.forEach(([x, y, w, a]) => { r.globalAlpha = a == null ? 1 : a; r.lineWidth = w || 3.2; r.beginPath(); r.moveTo(x, y); r.lineTo(x + (x - W / 2) * 0.14 + 18, Hh + 40); r.stroke(); dot(r, x, y, (w || 3.2) * 1.2); });
+      r.globalAlpha = 1;
+      const s = st.S.getContext('2d'); s.save(); s.filter = `blur(${1.3 * K}px)`; s.globalAlpha = 0.9; s.drawImage(R, 0, 0, W, Hh); s.restore();
+    }
+    ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(st.G, 0, 0, W, Hh); ctx.restore();
+    ctx.save(); ctx.filter = `blur(${0.7 * K}px)`; ctx.globalAlpha = 0.97; ctx.drawImage(st.S, 0, 0, W, Hh); ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(weave(Math.round(W * K), Math.round(Hh * K)), 0, 0, W, Hh); ctx.restore();
+    const hl = lay('half', W / 4, Hh / 4), hx = hl.getContext('2d');
+    hx.filter = `blur(${5 * K}px)`; hx.drawImage(ctx.canvas, 0, 0, W / 4, Hh / 4);
+    ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = 0.13; ctx.drawImage(hl, 0, 0, W, Hh); ctx.restore();
+    const fr = Math.floor(t * 12), gt = grainTile(fr % 3), gr = H.rng(fr + 5);
+    ctx.save(); ctx.fillStyle = ctx.createPattern(gt, 'repeat'); ctx.translate(-gr() * 256, -gr() * 256); ctx.fillRect(0, 0, W + 256, Hh + 256); ctx.restore();
+    H.vignette(ctx, W, Hh, 0.38, '20,5,2');
+  }
+
+  // ---------- stage furniture (cached; from the reference) ----------
+  function valance(W) {
+    const key = '_val' + W + 'k' + K; if (LAY[key]) return LAY[key];
+    const c = H.layer(Math.round(W * K), Math.round(80 * K)), p = c.getContext('2d'); p.scale(K, K);
+    p.fillStyle = INK; p.fillRect(0, 0, W, 14);
+    for (let x = -16; x < W + 32; x += 32) { p.beginPath(); p.arc(x + 16, 13, 16, 0, Math.PI); p.fill(); }
+    for (let x = 32; x < W; x += 64) { p.fillRect(x - 1, 20, 2, 22); tear(p, x, 40, 18, 9, Math.PI / 2); dot(p, x, 40, 5); }
+    cut(p, () => { for (let x = 8; x < W; x += 12) dot(p, x, 6, 1.8); for (let x = -16; x < W + 32; x += 32) { dot(p, x + 16, 20, 3.2); tear(p, x + 10, 17, 7, 3.4, 2.4); tear(p, x + 22, 17, 7, 3.4, 0.74); } });
+    LAY[key] = c; return c;
+  }
+  function ground(W) {
+    const key = '_gnd' + W + 'k' + K; if (LAY[key]) return LAY[key];
+    const c = H.layer(Math.round(W * K), Math.round(110 * K)), p = c.getContext('2d'), r = H.rng(31); p.scale(K, K);
+    p.fillStyle = INK; p.strokeStyle = INK; p.fillRect(0, 96, W, 14);
+    for (let x = -10; x < W + 10; x += 5 + r() * 6) {
+      const h = 14 + r() * 34 * (0.6 + 0.4 * Math.sin(x * 0.013) ** 2), lean = (r() - 0.5) * 22, w = 2 + r() * 2.5;
+      p.beginPath(); p.moveTo(x - w, 100); p.quadraticCurveTo(x + lean * 0.3, 100 - h * 0.6, x + lean, 100 - h); p.quadraticCurveTo(x + lean * 0.3 + w * 0.6, 100 - h * 0.55, x + w, 100); p.fill();
+    }
+    p.lineCap = 'round';
+    for (let x = 60; x < W; x += 150 + r() * 90) {
+      const dir = r() < 0.5 ? -1 : 1, h = 40 + r() * 26;
+      p.lineWidth = 3; p.beginPath(); p.moveTo(x, 100); p.quadraticCurveTo(x + dir * 6, 100 - h * 0.6, x + dir * 2, 100 - h);
+      for (let a = 0; a < 5.5; a += 0.3) { const rr = 10 * (1 - a / 6.2); p.lineTo(x + dir * (2 + 10 - Math.cos(a) * rr), 100 - h - Math.sin(a) * rr * dir * dir); }
+      p.stroke();
+      for (let k = 1; k < 4; k++) tear(p, x + dir * 3, 100 - h * k / 4.2, 14, 6, dir > 0 ? -0.5 : Math.PI + 0.5);
+    }
+    LAY[key] = c; return c;
+  }
+  // a gum-tree branch hanging in from the top corner (the outback's own frame), cached and blurred: held near the lamp
+  function gumBranch(st, t, side, a) {
+    if (!LAY._gum) {
+      const c = H.layer(520, 520), raw = H.layer(520, 520), x = raw.getContext('2d');
+      x.fillStyle = INK; x.strokeStyle = INK; x.lineCap = 'round';
+      x.lineWidth = 16; x.beginPath(); x.moveTo(0, 0); x.quadraticCurveTo(220, 60, 460, 300); x.stroke();
+      for (let k = 0; k < 14; k++) { const u = k / 14, px = lerp(20, 440, u), py = lerp(10, 290, u * u); for (const sd of [-1, 1]) { x.lineWidth = 3; x.beginPath(); x.moveTo(px, py); x.lineTo(px + sd * 10, py + 50); x.stroke(); tear(x, px + sd * 10, py + 50, 70, 16, Math.PI / 2 + sd * 0.35); } }
+      const cx = c.getContext('2d'); cx.filter = 'blur(6px)'; cx.drawImage(raw, 0, 0); LAY._gum = c;
+    }
+    const s = st.S.getContext('2d');
+    s.save(); s.globalAlpha = a;
+    if (side > 0) { s.translate(st.W, 0); s.scale(-1, 1); }
+    s.translate(-40, -30); s.rotate(Math.sin(t * 0.7) * 0.025); s.drawImage(LAY._gum, 0, 0); s.restore();
+  }
+
+  // ---------- labels, vines, cards (from the reference) ----------
+  function plaque(p, o) {
+    p.save(); p.translate(o.x, o.y); p.rotate(o.rot || 0);
+    p.font = `italic 400 ${o.size}px ${FF}`;
+    const tw = p.measureText(o.text).width, w = tw + o.size * 1.1, h = o.size * 1.5;
+    p.fillStyle = INK; p.strokeStyle = INK;
+    if (o.hang) { p.lineWidth = 2; p.beginPath(); p.moveTo(0, -h / 2); p.lineTo(0, -h / 2 - o.hang); p.stroke(); }
+    p.beginPath(); p.roundRect(-w / 2, -h / 2, w, h, h * 0.28); p.fill();
+    dot(p, -w / 2 - 4, 0, h * 0.24); dot(p, w / 2 + 4, 0, h * 0.24);
+    cut(p, () => {
+      p.lineWidth = 2; p.beginPath(); p.roundRect(-w / 2 + 6, -h / 2 + 6, w - 12, h - 12, h * 0.2); p.stroke();
+      dot(p, -w / 2 - 4, 0, h * 0.09); dot(p, w / 2 + 4, 0, h * 0.09);
+      p.textAlign = 'center'; p.textBaseline = 'middle'; p.fillText(o.text, 0, 2);
+    });
+    p.restore();
+  }
+  function vine(p, P, prog, w) {
+    if (prog <= 0.001) return;
+    w = w || 7; p.fillStyle = INK; p.strokeStyle = INK; p.lineCap = 'round'; p.lineJoin = 'round';
+    const N = 60, n = Math.max(2, Math.ceil(N * prog));
+    p.lineWidth = w; p.beginPath();
+    for (let i = 0; i <= n; i++) { const q = bz(P, Math.min(prog, i / N)); if (i === 0) p.moveTo(q[0], q[1]); else p.lineTo(q[0], q[1]); }
+    p.stroke();
+    const s0 = bz(P, 0), a0 = bzA(P, 0);
+    p.lineWidth = 3.5; p.beginPath();
+    for (let a = 0; a < 5.2; a += 0.25) { const r = 16 * (1 - a / 6), aa = a0 + Math.PI + a; p.lineTo(s0[0] + Math.cos(a0 + Math.PI) * 4 + Math.cos(aa) * r - Math.cos(a0 + Math.PI) * 16, s0[1] + Math.sin(a0 + Math.PI) * 4 + Math.sin(aa) * r - Math.sin(a0 + Math.PI) * 16); }
+    p.stroke();
+    [0.18, 0.34, 0.5, 0.66, 0.8].forEach((u, i) => {
+      if (u > prog - 0.06) return;
+      const q = bz(P, u), a = bzA(P, u) + (i % 2 ? 1 : -1) * 0.9, gr = Math.min(1, (prog - u) / 0.12);
+      tear(p, q[0], q[1], 26 * gr, 11 * gr, a);
+      cut(p, () => { p.lineWidth = 1.4; p.beginPath(); p.moveTo(q[0] + Math.cos(a) * 5, q[1] + Math.sin(a) * 5); p.lineTo(q[0] + Math.cos(a) * 20 * gr, q[1] + Math.sin(a) * 20 * gr); p.stroke(); });
+    });
+    const e = bz(P, prog), ea = bzA(P, prog);
+    p.save(); p.translate(e[0], e[1]); p.rotate(ea);
+    p.beginPath(); p.moveTo(30, 0); p.quadraticCurveTo(8, -6, -4, -19); p.quadraticCurveTo(2, -6, -6, 0); p.quadraticCurveTo(2, 6, -4, 19); p.quadraticCurveTo(8, 6, 30, 0); p.fill();
+    cut(p, () => dot(p, 6, 0, 3.2));
+    p.restore();
+  }
+  function titleCard(p, g, o) {
+    both([p, g], (c) => { c.save(); c.translate(o.x, o.y - o.h / 2 * o.s); c.rotate(o.rot || 0); c.scale(o.s, o.s); c.translate(0, o.h / 2); });
+    const w = o.w, h = o.h;
+    p.fillStyle = INK; p.strokeStyle = INK; p.lineWidth = 2.4;
+    p.beginPath(); p.moveTo(-w * 0.32, -h / 2); p.lineTo(-w * 0.32, -h / 2 - 1400); p.moveTo(w * 0.32, -h / 2); p.lineTo(w * 0.32, -h / 2 - 1400); p.stroke();
+    p.beginPath(); p.roundRect(-w / 2, -h / 2, w, h, 14); p.fill();
+    for (let x = -w / 2 + 12; x <= w / 2 - 12; x += 16) { dot(p, x, -h / 2, 6); dot(p, x, h / 2, 6); }
+    for (const sx of [-1, 1]) { p.beginPath(); p.arc(sx * w / 2, 0, h * 0.18, -Math.PI / 2, Math.PI / 2, sx < 0); p.fill(); }
+    cut(p, () => {
+      p.lineWidth = 3; p.beginPath(); p.roundRect(-w / 2 + 14, -h / 2 + 14, w - 28, h - 28, 8); p.stroke();
+      for (let x = -w / 2 + 34; x <= w / 2 - 34; x += 11) { dot(p, x, -h / 2 + 24, 1.8); dot(p, x, h / 2 - 24, 1.8); }
+      for (const sx of [-1, 1]) for (const sy of [-1, 1]) {
+        const cx = sx * (w / 2 - 34), cy = sy * (h / 2 - 34);
+        dot(p, cx, cy, 4);
+        [0, 1, 2].forEach((k) => tear(p, cx, cy, 14, 6, Math.atan2(-sy, -sx) + (k - 1) * 0.7 + Math.PI));
+      }
+      for (const sx of [-1, 1]) { dot(p, sx * (w / 2 + h * 0.08), 0, h * 0.06); }
+      o.lines.forEach((L) => { p.font = `${L.italic ? 'italic ' : ''}400 ${L.size}px ${L.num ? NF : FF}`; p.textAlign = 'center'; p.textBaseline = 'alphabetic'; p.fillText(L.text, 0, L.y); });
+    });
+    both([p, g], (c) => c.restore());
+  }
+  // a hanging tag with cut-out letters and an optional x / tick badge (from the reference)
+  function tag(p, g, o) {
+    both([p, g], (c) => { c.save(); c.translate(o.x, o.y); c.rotate(o.rot || 0); });
+    p.fillStyle = INK; p.strokeStyle = INK; p.lineWidth = 2;
+    p.beginPath(); p.moveTo(0, 0); p.lineTo(0, 30); p.stroke(); dot(p, 0, 0, 4);
+    both([p, g], (c) => { c.translate(0, 30 + o.h / 2); });
+    const w = o.w, h = o.h;
+    p.beginPath(); p.roundRect(-w / 2, -h / 2, w, h, 12); p.fill();
+    for (let x = -w / 2 + 10; x <= w / 2 - 10; x += 14) { dot(p, x, -h / 2, 4.5); dot(p, x, h / 2, 4.5); }
+    cut(p, () => {
+      p.lineWidth = 2.4; p.beginPath(); p.roundRect(-w / 2 + 8, -h / 2 + 8, w - 16, h - 16, 7); p.stroke();
+      p.font = `italic 400 ${o.size}px ${FF}`; p.textAlign = 'center'; p.textBaseline = 'middle'; p.fillText(o.text, o.tx || 0, 3);
+    });
+    if (o.badge && o.badgeS > 0.01) badge(p, g, { x: w / 2 - 40, y: 0, s: o.badgeS, ok: o.badge === 'v' });
+    both([p, g], (c) => c.restore());
+  }
+  function badge(p, g, o) {
+    both([p, g], (c) => { c.save(); c.translate(o.x, o.y); c.scale(o.s, o.s); });
+    p.fillStyle = INK; dot(p, 0, 0, 40);
+    for (let k = 0; k < 12; k++) dot(p, Math.cos(k * TAU / 12) * 40, Math.sin(k * TAU / 12) * 40, 7);
+    cut(p, () => dot(p, 0, 0, 31));
+    g.fillStyle = o.ok ? 'rgb(110,220,120)' : 'rgb(240,60,46)'; dot(g, 0, 0, 33);
+    p.strokeStyle = INK; p.lineCap = 'round'; p.lineWidth = 11; p.beginPath();
+    if (o.ok) { p.moveTo(-16, 1); p.lineTo(-4, 14); p.lineTo(18, -14); } else { p.moveTo(-14, -14); p.lineTo(14, 14); p.moveTo(14, -14); p.lineTo(-14, 14); }
+    p.stroke();
+    both([p, g], (c) => c.restore());
+  }
+  // a counter board on two strings: a big number in lining figures, a plaque under it
+  function board(p, o) {
+    p.save(); p.translate(o.x, o.y); p.rotate(o.rot || 0); p.scale(o.s || 1, o.s || 1);
+    p.fillStyle = INK; p.strokeStyle = INK; p.lineWidth = 2;
+    const hw = o.hw || 230;
+    p.beginPath(); p.moveTo(-hw, 30); p.lineTo(-hw, -1400); p.moveTo(hw, 30); p.lineTo(hw, -1400); p.stroke();
+    p.fillRect(-hw - 6, 22, hw * 2 + 12, 7); dot(p, -hw - 6, 25, 8); dot(p, hw + 6, 25, 8);
+    p.save(); p.font = `400 ${o.size || 120}px ${NF}`; const cw = p.measureText(o.text).width, fit = Math.min(1, (hw * 2 - 30) / cw); p.translate(0, -14); p.scale((o.pop || 1) * fit, (o.pop || 1) * fit); p.textAlign = 'center'; p.textBaseline = 'alphabetic'; p.fillText(o.text, 0, 0); p.restore();
+    p.restore();
+    if (o.label) plaque(p, { x: o.x, y: o.y + 66 * (o.s || 1), text: o.label, size: 40 });
+  }
+  function moon(p, g, o) {
+    both([p, g], (c) => { c.save(); c.translate(o.x, o.y); });
+    const r = o.r; p.fillStyle = INK;
+    if (o.burst > 0.01) {
+      const L = 50 * o.burst;
+      for (let k = 0; k < 16; k++) {
+        const a = k / 16 * TAU + 0.1, l = (k % 2 ? 0.6 : 1) * L, w = 0.09;
+        p.beginPath(); p.moveTo(Math.cos(a - w) * (r + 12), Math.sin(a - w) * (r + 12)); p.lineTo(Math.cos(a) * (r + 16 + l), Math.sin(a) * (r + 16 + l)); p.lineTo(Math.cos(a + w) * (r + 12), Math.sin(a + w) * (r + 12)); p.fill();
+        dot(p, Math.cos(a) * (r + 22 + l), Math.sin(a) * (r + 22 + l), 4 * o.burst);
+      }
+    }
+    dot(p, 0, 0, r + 12);
+    for (let k = 0; k < 20; k++) dot(p, Math.cos(k * TAU / 20) * (r + 12), Math.sin(k * TAU / 20) * (r + 12), 5.5);
+    cut(p, () => { dot(p, 0, 0, r); for (let k = 0; k < 20; k++) dot(p, Math.cos((k + 0.5) * TAU / 20) * (r + 7), Math.sin((k + 0.5) * TAU / 20) * (r + 7), 1.8); });
+    g.fillStyle = o.gel || 'rgb(255,246,214)'; dot(g, 0, 0, r + 1);
+    p.fillStyle = INK; [[-0.3, -0.25, 0.16], [0.28, 0.1, 0.22], [-0.1, 0.42, 0.12]].forEach(([x, y, rr]) => { dot(p, x * r, y * r, rr * r); cut(p, () => dot(p, x * r + rr * r * 0.25, y * r - rr * r * 0.2, rr * r * 0.72)); });
+    both([p, g], (c) => c.restore());
+  }
+  function curtains(p, W, Hh, cover, t) {
+    const e = cover * (W / 2 + 40);
+    for (const sd of [-1, 1]) {
+      const wave = (y) => Math.sin(y * 0.018 + t * 2 + sd) * 10 + Math.sin(y * 0.05) * 4;
+      const inner = (y) => (sd < 0 ? e - 40 + wave(y) : W - e + 40 + wave(y));
+      const outer = sd < 0 ? -60 : W + 60;
+      p.fillStyle = INK; p.beginPath(); p.moveTo(outer, -10);
+      for (let y = -10; y <= Hh + 10; y += 20) p.lineTo(inner(y), y);
+      p.lineTo(outer, Hh + 10); p.closePath(); p.fill();
+      for (let y = 30; y < Hh; y += 24) { tear(p, inner(y), y, 18, 9, sd < 0 ? 0 : Math.PI); }
+      cut(p, () => {
+        for (let k = 1; k < 7; k++) {
+          const x = sd < 0 ? inner(0) - k * 64 : inner(0) + k * 64;
+          for (let y = 50; y < Hh - 20; y += 22) { const xx = x + wave(y) * 0.6 + Math.sin(y * 0.03 + k) * 6; p.save(); p.translate(xx, y); p.rotate(Math.PI / 4); p.fillRect(-3.4, -3.4, 6.8, 6.8); p.restore(); }
+        }
+        for (let y = 40; y < Hh - 20; y += 18) dot(p, inner(y) - sd * 18, y, 3);
+      });
+    }
+  }
+  // ---------- this story's puppets ----------
+  // a man (1518 dress via hat 'cap' / 'doctor' and robe; from the Pig War rig), feet at (0,0), facing right. o: x,y,s, walk, ph, armR/armL (rad), flip,
+  // hat: 'farmer' | 'kepi' | 'shako' | 'bicorne' | 'pickel', rifle (0..1 flash), stache, whiskers, coat ('red'|'blue'|null gel),
+  // epaulets, sash, roll (scroll in the front hand)
+  function man(p, g, o, rods) {
+    both([p, g], (c) => { c.save(); c.translate(o.x, o.y); c.scale(o.s * (o.flip ? -1 : 1), o.s); });
+    p.fillStyle = INK; p.strokeStyle = INK; p.lineCap = 'round';
+    const ph = o.ph || 0, wk = o.walk || 0;
+    for (const sd of [-1, 1]) {
+      const a = wk * Math.sin(ph + (sd > 0 ? 0 : Math.PI)) * 0.5;
+      both([p, g], (c) => { c.save(); c.translate(sd * 14, -170); c.rotate(-a); });
+      p.beginPath(); p.roundRect(-14, 0, 28, 100, 10); p.fill();
+      p.beginPath(); p.roundRect(-12, 92, 24, 76, 8); p.fill();
+      p.beginPath(); p.ellipse(14, 170, 26, 11, 0, 0, TAU); p.fill();
+      if (o.hat !== 'farmer' && o.hat !== 'cap' && o.hat !== 'doctor') cut(p, () => { p.fillRect(-2, 8, 4, 150); });   // trouser stripe
+      pin(p, 0, 96, 5);
+      both([p, g], (c) => c.restore());
+    }
+    if (o.robe) {   // a physician's long gown over the legs, a cut-lace hem
+      p.beginPath(); p.moveTo(-44, -330); p.lineTo(-74, -6); p.lineTo(78, -6); p.lineTo(46, -330); p.closePath(); p.fill();
+      cut(p, () => { for (let k = 0; k < 9; k++) dot(p, -64 + k * 17, -24, 3); p.lineWidth = 2; p.beginPath(); p.moveTo(2, -320); p.lineTo(2, -40); p.stroke(); });
+    }
+    // coat: a frock coat with tails; windows cut in its front take a coloured gel
+    p.beginPath(); p.moveTo(-50, -150); p.lineTo(-42, -330); p.quadraticCurveTo(0, -350, 40, -330); p.lineTo(50, -170); p.lineTo(20, -190); p.lineTo(-10, -150); p.closePath(); p.fill();
+    cut(p, () => {
+      p.fillRect(-44, -214, 92, 6);
+      if (o.hat === 'farmer') { p.lineWidth = 2.4; for (let k = 0; k < 3; k++) { p.beginPath(); p.moveTo(-34 + k * 26, -320); p.lineTo(-30 + k * 26, -230); p.stroke(); } }
+      else {
+        for (let k = 0; k < 5; k++) { dot(p, 12, -318 + k * 22, 3.2); dot(p, -12, -318 + k * 22, 3.2); }
+        if (o.coat) { p.beginPath(); p.roundRect(-34, -310, 16, 86, 4); p.roundRect(20, -310, 16, 86, 4); p.fill(); }
+      }
+      if (o.sash) { p.lineWidth = 5; p.beginPath(); p.moveTo(-38, -330); p.lineTo(40, -230); p.stroke(); }
+    });
+    if (o.coat) { g.fillStyle = o.coat === 'red' ? 'rgb(240,70,52)' : 'rgb(90,130,240)'; g.fillRect(-34, -310, 16, 86); g.fillRect(20, -310, 16, 86); }
+    if (o.epaulets) for (const sd of [-1, 1]) { p.beginPath(); p.ellipse(sd * 38, -332, 22, 9, 0, 0, TAU); p.fill(); for (let k = 0; k < 6; k++) tear(p, sd * 38 - 16 + k * 6.4, -326, 16, 4, Math.PI / 2); }
+    // arms: back arm first; the front arm holds a rifle, a scroll, or nothing
+    for (const sd of [-1, 1]) {
+      const a = sd > 0 ? (o.armR == null ? 0.2 : o.armR) : (o.armL == null ? -0.15 : o.armL) + wk * Math.sin(ph) * 0.4;
+      both([p, g], (c) => { c.save(); c.translate(sd * 36, -320); c.rotate(-a); });
+      p.beginPath(); p.roundRect(-11, 0, 22, 80, 9); p.fill();
+      p.beginPath(); p.roundRect(-9, 74, 18, 70, 8); p.fill();
+      dot(p, 0, 150, 13);
+      pin(p, 0, 0, 7); pin(p, 0, 76, 5);
+      if (sd > 0 && o.rifle != null) {
+        // a long rifle along the forearm: stock at the hand, barrel well past it
+        p.beginPath(); p.moveTo(-10, 96); p.lineTo(10, 96); p.lineTo(8, 170); p.lineTo(-8, 170); p.fill();
+        p.fillRect(-4, 160, 8, 220);
+        p.beginPath(); p.moveTo(-12, 60); p.lineTo(12, 60); p.lineTo(8, 110); p.lineTo(-8, 110); p.fill();
+        cut(p, () => { p.lineWidth = 1.6; p.beginPath(); p.moveTo(0, 176); p.lineTo(0, 360); p.stroke(); });
+        if (o.rifle > 0.02) {
+          const f = o.rifle, r = 44 * f;
+          p.save(); p.translate(0, 400);
+          for (let k = 0; k < 8; k++) tear(p, 0, 0, r * (k % 2 ? 0.7 : 1.3), 16 * f, k * TAU / 8);
+          cut(p, () => dot(p, 0, 0, r * 0.42));
+          p.restore(); g.fillStyle = 'rgb(255,214,96)'; dot(g, 0, 400, r * 0.6);
+        }
+      }
+      if (sd > 0 && o.roll) {
+        p.beginPath(); p.roundRect(-40, 138, 80, 22, 10); p.fill();
+        cut(p, () => { dot(p, -30, 149, 4); dot(p, 30, 149, 4); });
+      }
+      if (sd > 0 && rods && !o.noRods) rods.push([...wpt(p, 0, 150), 2.8]);
+      both([p, g], (c) => c.restore());
+    }
+    // head, then hair, whiskers and the hat
+    // a human profile: skull, brow, a modest nose, lips, chin, jaw, neck
+    p.fillRect(-12, -352, 24, 30);
+    p.beginPath(); p.moveTo(-30, -372);
+    p.bezierCurveTo(-34, -404, -8, -418, 14, -414);
+    p.bezierCurveTo(28, -410, 32, -400, 31, -390);
+    p.lineTo(33, -384); p.quadraticCurveTo(41, -372, 38, -368); p.lineTo(32, -367);
+    p.quadraticCurveTo(35, -362, 32, -359); p.quadraticCurveTo(35, -355, 31, -351);
+    p.quadraticCurveTo(30, -343, 18, -343); p.quadraticCurveTo(4, -344, -6, -352);
+    p.quadraticCurveTo(-26, -352, -30, -372); p.closePath(); p.fill();
+    cut(p, () => { p.beginPath(); p.ellipse(18, -386, 3.6, 2.4, 0, 0, TAU); p.fill(); p.lineWidth = 2; p.beginPath(); p.arc(-4, -374, 7, -1.2, 1.6); p.stroke(); });
+    if (o.stache) { p.beginPath(); p.moveTo(26, -364); p.quadraticCurveTo(48, -366, 58, -352); p.quadraticCurveTo(44, -358, 28, -357); p.fill(); p.beginPath(); p.moveTo(26, -364); p.quadraticCurveTo(12, -360, 6, -348); p.quadraticCurveTo(16, -356, 28, -357); p.fill(); }
+    if (o.whiskers) { p.beginPath(); p.moveTo(-14, -380); p.quadraticCurveTo(-20, -330, 8, -316); p.quadraticCurveTo(30, -322, 30, -340); p.quadraticCurveTo(10, -350, -2, -372); p.fill(); for (let k = 0; k < 5; k++) tear(p, -6 + k * 7, -322, 14, 5, Math.PI / 2 + 0.2); }
+    if (o.beard) { p.beginPath(); p.moveTo(-10, -366); p.quadraticCurveTo(0, -320, 30, -330); p.lineTo(34, -360); p.fill(); }
+    const hat = o.hat;
+    if (hat === 'farmer') {   // a wide, flat, battered brim
+      p.beginPath(); p.ellipse(4, -408, 74, 11, -0.04, 0, TAU); p.fill();
+      p.beginPath(); p.moveTo(-30, -410); p.quadraticCurveTo(-28, -452, 6, -454); p.quadraticCurveTo(38, -452, 38, -410); p.fill();
+      cut(p, () => { p.fillRect(-28, -420, 66, 4); dot(p, -50, -406, 2.4); dot(p, 54, -410, 2.4); });
+    } else if (hat === 'kepi') {   // a soft cap tipped forward, a short visor
+      p.beginPath(); p.moveTo(-30, -400); p.lineTo(-24, -446); p.quadraticCurveTo(10, -460, 44, -438); p.lineTo(34, -398); p.fill();
+      p.beginPath(); p.moveTo(28, -402); p.quadraticCurveTo(56, -404, 66, -394); p.lineTo(30, -392); p.fill();
+      cut(p, () => { p.fillRect(-24, -414, 56, 3.5); dot(p, 2, -428, 4); });
+    } else if (hat === 'shako') {   // a tall flat-topped cylinder with a plume pom
+      p.beginPath(); p.moveTo(-30, -400); p.lineTo(-26, -486); p.lineTo(32, -490); p.lineTo(36, -400); p.fill();
+      p.beginPath(); p.moveTo(30, -404); p.quadraticCurveTo(58, -404, 66, -394); p.lineTo(32, -394); p.fill();
+      dot(p, 4, -500, 13);
+      cut(p, () => { p.fillRect(-24, -416, 56, 4); p.fillRect(-24, -478, 54, 3); star(p, 4, -446, 12); for (let k = 0; k < 6; k++) dot(p, 4 + Math.cos(k) * 6, -500 + Math.sin(k) * 6, 2); });
+    } else if (hat === 'bicorne') {   // a wide crescent worn side to side, a cockade
+      p.beginPath(); p.moveTo(-92, -402); p.quadraticCurveTo(-60, -476, 4, -480); p.quadraticCurveTo(70, -476, 100, -402); p.quadraticCurveTo(4, -420, -92, -402); p.fill();
+      cut(p, () => { p.lineWidth = 2.4; p.beginPath(); p.moveTo(-76, -410); p.quadraticCurveTo(4, -466, 84, -410); p.stroke(); dot(p, 4, -446, 9); });
+      g.fillStyle = 'rgb(255,214,96)'; dot(g, 4, -446, 9);
+      for (const sd of [-1, 1]) for (let k = 0; k < 4; k++) tear(p, sd * (90 - k * 8), -402, 14, 5, Math.PI / 2 + sd * 0.4);
+    } else if (hat === 'pickel') {   // the spiked helmet
+      p.beginPath(); p.moveTo(-34, -396); p.quadraticCurveTo(-36, -466, 4, -470); p.quadraticCurveTo(44, -466, 42, -396); p.fill();
+      p.beginPath(); p.moveTo(-6, -466); p.lineTo(4, -522); p.lineTo(14, -466); p.fill(); dot(p, 4, -470, 11);
+      p.beginPath(); p.moveTo(34, -398); p.quadraticCurveTo(60, -398, 64, -388); p.lineTo(36, -388); p.fill();
+      cut(p, () => { p.lineWidth = 2.4; p.beginPath(); p.arc(4, -432, 16, 0, TAU); p.stroke(); dot(p, 4, -432, 6); p.fillRect(-28, -408, 66, 3.5); });
+      g.fillStyle = 'rgb(255,214,96)'; dot(g, 4, -432, 16);
+    } else if (hat === 'cap') {   // a soft, floppy Renaissance cap
+      p.beginPath(); p.moveTo(-34, -398); p.quadraticCurveTo(-46, -440, 0, -446); p.quadraticCurveTo(52, -446, 52, -414); p.quadraticCurveTo(40, -400, 30, -404); p.lineTo(-30, -396); p.fill();
+      cut(p, () => { p.lineWidth = 2; p.beginPath(); p.moveTo(-30, -406); p.quadraticCurveTo(10, -414, 40, -410); p.stroke(); });
+    } else if (hat === 'doctor') {   // a tall, round physician's hat with a rolled brim
+      p.beginPath(); p.ellipse(4, -404, 48, 10, 0, 0, TAU); p.fill();
+      p.beginPath(); p.moveTo(-30, -404); p.lineTo(-24, -490); p.quadraticCurveTo(4, -500, 32, -490); p.lineTo(38, -404); p.fill();
+      cut(p, () => { p.fillRect(-26, -420, 62, 4); p.fillRect(-22, -474, 54, 3); });
+    }
+    if (rods && !o.noRods) rods.push([...wpt(p, -10, -200), 3.4]);
+    both([p, g], (c) => c.restore());
+  }
+  // a woman of 1518, feet at (0,0), facing right. o: x,y,s, flip, dance (0..1), ph, armR/armL (rad), gel (skirt panels lit),
+  // fall (0..1: slumps to the ground). Coif headdress, laced bodice, a bell skirt that swings, a cut-lace hem.
+  function woman(p, g, o, rods) {
+    both([p, g], (c) => { c.save(); c.translate(o.x, o.y); c.scale(o.s * (o.flip ? -1 : 1), o.s); });
+    const fall = o.fall || 0;
+    if (fall > 0) both([p, g], (c) => { c.translate(-40 * fall, 0); c.rotate(-fall * 1.45); });
+    const dn = o.dance || 0, ph = o.ph || 0;
+    const sway = Math.sin(ph) * 0.12 * dn, swing = Math.sin(ph + 0.6) * 26 * dn;
+    p.fillStyle = INK; p.strokeStyle = INK; p.lineCap = 'round';
+    both([p, g], (c) => c.rotate(sway));
+    // feet peeking under the hem, kicking in turn
+    for (const sd of [-1, 1]) { const k = dn * Math.max(0, Math.sin(ph + (sd > 0 ? 0 : Math.PI))) * 20; p.beginPath(); p.ellipse(sd * 18 + 12 + k * 0.5, -6 - k, 22, 9, -k * 0.02, 0, TAU); p.fill(); }
+    // skirt: a bell that swings with the dance
+    p.beginPath(); p.moveTo(-34, -210); p.quadraticCurveTo(-70 - swing * 0.3, -110, -96 - swing, -14); p.lineTo(100 - swing, -14); p.quadraticCurveTo(70 - swing * 0.3, -110, 36, -210); p.closePath(); p.fill();
+    for (let k = 0; k < 13; k++) { const u = k / 12, x = lerp(-96 - swing, 100 - swing, u); p.beginPath(); p.arc(x, -14, 8.5, 0, Math.PI); p.fill(); }
+    const panels = [];
+    for (let k = 0; k < 4; k++) { const u = (k + 0.5) / 4; panels.push([lerp(-74 - swing * 0.8, 78 - swing * 0.8, u), -60]); }
+    cut(p, () => {
+      for (let k = 0; k < 13; k++) { const u = k / 12; dot(p, lerp(-90 - swing, 94 - swing, u), -30, 3); }
+      panels.forEach(([x, y]) => { p.beginPath(); p.moveTo(x, y - 70); p.lineTo(x + 12, y); p.lineTo(x - 12, y); p.closePath(); p.fill(); });
+      p.lineWidth = 2; p.beginPath(); p.moveTo(-60 - swing * 0.6, -96); p.quadraticCurveTo(0, -84 - swing * 0.1, 64 - swing * 0.6, -96); p.stroke();
+    });
+    if (o.gel) { g.fillStyle = o.gel; panels.forEach(([x, y]) => { g.beginPath(); g.moveTo(x, y - 72); g.lineTo(x + 14, y + 1); g.lineTo(x - 14, y + 1); g.closePath(); g.fill(); }); }
+    // bodice with lacing
+    p.beginPath(); p.moveTo(-32, -200); p.lineTo(-30, -310); p.quadraticCurveTo(0, -326, 30, -310); p.lineTo(34, -200); p.closePath(); p.fill();
+    cut(p, () => { p.lineWidth = 1.8; for (let k = 0; k < 5; k++) { p.beginPath(); p.moveTo(-8, -296 + k * 18); p.lineTo(8, -286 + k * 18); p.moveTo(8, -296 + k * 18); p.lineTo(-8, -286 + k * 18); p.stroke(); } p.fillRect(-30, -214, 64, 4); });
+    // arms
+    for (const sd of [-1, 1]) {
+      const base = sd > 0 ? (o.armR == null ? 0.25 : o.armR) : (o.armL == null ? -0.2 : o.armL);
+      const a = base + dn * Math.sin(ph * 1 + (sd > 0 ? 0 : 1.7)) * 0.6;
+      both([p, g], (c) => { c.save(); c.translate(sd * 26, -304); c.rotate(-a); });
+      p.beginPath(); p.roundRect(-9, 0, 18, 70, 8); p.fill();
+      p.beginPath(); p.roundRect(-8, 64, 16, 62, 7); p.fill();
+      p.beginPath(); p.moveTo(-14, 52); p.lineTo(14, 52); p.lineTo(18, 74); p.lineTo(-18, 74); p.fill();   // sleeve cuff flare
+      dot(p, 0, 130, 10);
+      pin(p, 0, 0, 6); pin(p, 0, 66, 4.5);
+      if (sd > 0 && rods && !o.noRods) rods.push([...wpt(p, 0, 130), 2.6]);
+      both([p, g], (c) => c.restore());
+    }
+    // head in profile under a coif with a long veil
+    p.fillRect(-10, -340, 20, 30);
+    p.beginPath(); p.moveTo(-26, -360);
+    p.bezierCurveTo(-30, -390, -8, -402, 12, -398);
+    p.bezierCurveTo(25, -394, 28, -385, 27, -376);
+    p.lineTo(29, -371); p.quadraticCurveTo(35, -361, 32, -358); p.lineTo(28, -357);
+    p.quadraticCurveTo(30, -352, 28, -349); p.quadraticCurveTo(30, -345, 27, -342);
+    p.quadraticCurveTo(25, -335, 14, -335); p.quadraticCurveTo(2, -336, -6, -342);
+    p.quadraticCurveTo(-22, -342, -26, -360); p.closePath(); p.fill();
+    p.beginPath(); p.moveTo(-34, -366); p.quadraticCurveTo(-30, -414, 8, -414); p.quadraticCurveTo(30, -412, 30, -392); p.lineTo(-6, -392); p.quadraticCurveTo(-14, -360, -40 - swing * 0.4, -290); p.lineTo(-48 - swing * 0.4, -300); p.closePath(); p.fill();
+    cut(p, () => { p.beginPath(); p.ellipse(16, -373, 3.2, 2.2, 0, 0, TAU); p.fill(); p.lineWidth = 2; p.beginPath(); p.moveTo(-26, -400); p.quadraticCurveTo(4, -410, 24, -398); p.stroke(); for (let k = 0; k < 4; k++) dot(p, -30 - k * 3 - swing * 0.1 * k, -370 + k * 18, 2); });
+    if (rods && !o.noRods) rods.push([...wpt(p, -6, -230), 3.2]);
+    both([p, g], (c) => c.restore());
+  }
+  // a half-timbered house: steep gable, beams cut as thin lines, lit windows (amber gel), a chimney with smoke
+  function house(p, g, x, gy, w, h, seed, t) {
+    const r = H.rng(seed), roof = w * (0.75 + r() * 0.3);
+    p.fillStyle = INK; p.strokeStyle = INK;
+    p.fillRect(x - w / 2, gy - h, w, h);
+    p.beginPath(); p.moveTo(x - w / 2 - 10, gy - h); p.lineTo(x, gy - h - roof); p.lineTo(x + w / 2 + 10, gy - h); p.fill();
+    const cx = x + w * 0.22; p.fillRect(cx, gy - h - roof * 0.62, 16, roof * 0.4);
+    // chimney smoke as lace puffs
+    for (let k = 0; k < 3; k++) { const u = ((t * 0.35 + k / 3 + seed * 0.13) % 1), rr = 8 + u * 16; p.save(); p.globalAlpha = 0.7 * (1 - u); dot(p, cx + 8 + u * 30, gy - h - roof * 0.62 - 14 - u * 90, rr); cut(p, () => dot(p, cx + 8 + u * 30, gy - h - roof * 0.62 - 14 - u * 90, rr * 0.6)); p.restore(); }
+    const wins = [];
+    cut(p, () => {
+      p.lineWidth = 2.2;
+      for (let fy = gy - h + 20; fy < gy - 10; fy += 70) { p.beginPath(); p.moveTo(x - w / 2 + 6, fy); p.lineTo(x + w / 2 - 6, fy); p.stroke(); }
+      for (let k = 0; k < 3; k++) { const bx = x - w / 2 + 10 + k * (w - 20) / 2; p.beginPath(); p.moveTo(bx, gy - h + 20); p.lineTo(bx + (w - 20) / 2, gy - h + 90); p.stroke(); }
+      for (let fy = gy - h + 104; fy < gy - 60; fy += 70) for (let k = 0; k < 2; k++) { const wx = x - w * 0.22 + k * w * 0.44; if (r() < 0.75) { p.fillRect(wx - 12, fy, 24, 30); wins.push([wx - 12, fy]); } }
+      p.beginPath(); p.moveTo(x - 4, gy - h - roof * 0.45); p.lineTo(x, gy - h - roof * 0.55); p.lineTo(x + 4, gy - h - roof * 0.45); p.fill();
+      p.beginPath(); p.arc(x, gy - h - roof * 0.3, 10, 0, TAU); p.fill();
+      p.fillRect(x + w * 0.12, gy - 54, 22, 54);
+    });
+    g.fillStyle = 'rgb(255,190,90)'; wins.forEach(([wx, wy]) => g.fillRect(wx, wy, 24, 30)); dot(g, x, gy - h - roof * 0.3, 10);
+    p.save(); cut(p, () => { wins.forEach(([wx, wy]) => p.fillRect(wx + 11, wy, 2, 30)); }); p.restore();
+    p.fillStyle = INK; wins.forEach(([wx, wy]) => p.fillRect(wx + 11, wy, 2, 30));
+  }
+  // Strasbourg cathedral far off: the facade with its one tall spire, a rose window
+  function cathedral(p, g, x, gy, s) {
+    both([p, g], (c) => { c.save(); c.translate(x, gy); c.scale(s, s); });
+    p.fillStyle = INK;
+    p.fillRect(-120, -360, 240, 360);
+    p.fillRect(30, -520, 80, 170);
+    p.beginPath(); p.moveTo(30, -520); p.lineTo(70, -800); p.lineTo(110, -520); p.fill();
+    p.beginPath(); p.moveTo(-120, -360); p.lineTo(-90, -400); p.lineTo(-60, -360); p.fill();
+    cut(p, () => {
+      p.lineWidth = 2; p.beginPath(); p.arc(-20, -250, 46, 0, TAU); p.stroke();
+      for (let k = 0; k < 12; k++) { const a = k * TAU / 12; p.beginPath(); p.moveTo(-20, -250); p.lineTo(-20 + Math.cos(a) * 40, -250 + Math.sin(a) * 40); p.stroke(); }
+      for (let k = 0; k < 3; k++) { p.beginPath(); p.moveTo(-60 + k * 40, -40); p.lineTo(-60 + k * 40, -130); p.arc(-50 + k * 40, -130, 10, Math.PI, TAU); p.lineTo(-40 + k * 40, -40); p.fill(); }
+      for (let y = -560; y > -760; y -= 34) { const hw = (y + 800) / 280 * 32; dot(p, 70, y, Math.max(2, hw * 0.25)); }
+      for (let k = 0; k < 4; k++) p.fillRect(44 + k * 16, -500, 6, 60);
+    });
+    g.fillStyle = 'rgb(255,190,120)'; dot(g, -20, -250, 44);
+    both([p, g], (c) => c.restore());
+  }
+  // a low trestle stage with cut bunting
+  function stage(p, x, gy, w, h) {
+    p.fillStyle = INK; p.strokeStyle = INK;
+    p.fillRect(x - w / 2, gy - h, w, 18);
+    for (let k = 0; k <= 4; k++) { const lx = x - w / 2 + 10 + k * (w - 20) / 4; p.lineWidth = 8; p.beginPath(); p.moveTo(lx, gy - h); p.lineTo(lx + (k % 2 ? 12 : -12), gy); p.stroke(); }
+    p.lineWidth = 2; p.beginPath(); p.moveTo(x - w / 2, gy - h + 18); p.quadraticCurveTo(x, gy - h + 60, x + w / 2, gy - h + 18); p.stroke();
+    for (let k = 0; k < 9; k++) { const u = (k + 0.5) / 9, bx = lerp(x - w / 2, x + w / 2, u), by = gy - h + 18 + Math.sin(u * Math.PI) * 38; p.beginPath(); p.moveTo(bx - 12, by - 2); p.lineTo(bx + 12, by - 2); p.lineTo(bx, by + 22); p.fill(); }
+    cut(p, () => { for (let x2 = x - w / 2 + 12; x2 < x + w / 2 - 8; x2 += 16) dot(p, x2, gy - h + 9, 2.4); });
+  }
+  // a drum (tabor) and a long pipe, held at the given points
+  function tabor(p, x, y, hit) {
+    p.fillStyle = INK; p.beginPath(); p.roundRect(x - 34, y - 26, 68, 52, 8); p.fill();
+    cut(p, () => { p.lineWidth = 2; p.beginPath(); for (let k = 0; k < 5; k++) { p.moveTo(x - 30 + k * 15, y - 22); p.lineTo(x - 22 + k * 15, y + 22); } p.stroke(); });
+    p.lineWidth = 4; p.beginPath(); p.moveTo(x + 10, y - 30 - hit * 20); p.lineTo(x + 60, y - 80 - hit * 10); p.stroke(); dot(p, x + 10, y - 30 - hit * 20, 6);
+  }
+  // the mountain shrine: a steep hill, a winding path, a chapel with a lit window, pines
+  function shrineHill(p, g, W, gy, t) {
+    p.fillStyle = INK;
+    p.beginPath(); p.moveTo(-20, gy); p.quadraticCurveTo(180, gy - 160, 300, gy - 430); p.quadraticCurveTo(360, gy - 520, 440, gy - 470); p.quadraticCurveTo(560, gy - 300, W + 20, gy - 120); p.lineTo(W + 20, gy + 20); p.lineTo(-20, gy + 20); p.fill();
+    const cx = 380, cy = gy - 490;
+    p.fillRect(cx - 50, cy - 70, 100, 76); p.beginPath(); p.moveTo(cx - 60, cy - 70); p.lineTo(cx, cy - 120); p.lineTo(cx + 60, cy - 70); p.fill();
+    p.fillRect(cx - 4, cy - 160, 8, 44); p.fillRect(cx - 16, cy - 146, 32, 7);
+    cut(p, () => {
+      p.beginPath(); p.moveTo(cx - 12, cy); p.lineTo(cx - 12, cy - 34); p.arc(cx, cy - 34, 12, Math.PI, TAU); p.lineTo(cx + 12, cy); p.fill();
+      p.lineWidth = 9; p.setLineDash([16, 12]); p.beginPath(); p.moveTo(40, gy - 10); p.quadraticCurveTo(320, gy - 60, 200, gy - 200); p.quadraticCurveTo(110, gy - 320, 330, gy - 440); p.stroke(); p.setLineDash([]);
+    });
+    g.fillStyle = 'rgb(255,200,110)'; g.beginPath(); g.arc(cx, cy - 34, 16, 0, TAU); g.fill(); g.fillRect(cx - 14, cy - 34, 28, 36);
+    for (const [fx, fy, fh] of [[520, gy - 330, 130], [580, gy - 260, 150], [640, gy - 200, 120], [90, gy - 90, 110]]) fir(p, fx, fy, fh);
+  }
+  function fir(p, x, y, h) {
+    p.fillStyle = INK; p.fillRect(x - h * 0.03, y - h * 0.2, h * 0.06, h * 0.2);
+    for (let k = 0; k < 4; k++) { const top = y - h + k * h * 0.2, w = h * (0.12 + k * 0.08), base = top + h * 0.32; p.beginPath(); p.moveTo(x, top); p.quadraticCurveTo(x - w * 0.4, base - h * 0.1, x - w, base); p.lineTo(x + w, base); p.quadraticCurveTo(x + w * 0.4, base - h * 0.1, x, top); p.fill(); }
+  }
+  // a sun / moon disc that swings across the sky; k in 0..1 per day, night when the arc is low
+  function skyDisc(p, g, x, y, r, night) {
+    p.fillStyle = INK; dot(p, x, y, r + 10);
+    for (let k = 0; k < 16; k++) dot(p, x + Math.cos(k * TAU / 16) * (r + 10), y + Math.sin(k * TAU / 16) * (r + 10), 5);
+    cut(p, () => dot(p, x, y, r));
+    g.fillStyle = night ? 'rgb(200,215,255)' : 'rgb(255,236,170)'; dot(g, x, y, r + 1);
+    if (night) { p.fillStyle = INK; dot(p, x + r * 0.35, y - r * 0.2, r * 0.85); }
+  }
+
+  // ---------- the story (times follow Austin's lines, see vo.json) ----------
+  const D = 45.0;
+  const T = {
+    cardDrop: [0.2, 0.85], cardHoist: [2.7, 3.3],
+    womanIn: [3.5, 5.0], namePlaque: 5.4, danceStart: 7.6,
+    days: [9.5, 12.0], daysBoard: [10.1, 10.4],
+    joinIn: [12.3, 14.0], joinBoard: [13.6, 13.9],
+    crowd: [15.2, 16.6], count: [16.6, 18.4], countPop: 18.4,
+    curtains: [19.35, 19.75, 19.95, 20.35],
+    doctorsIn: [20.3, 21.0], curePlaque: 21.0, cureTag: 22.6,
+    stageUp: [23.9, 24.5], bandIn: [24.5, 25.3], bandPlaque: 25.7,
+    worse: 27.6, worseTag: 27.9, fall1: [28.9, 29.5], fall2: [29.9, 30.5],
+    lampDown: [31.3, 32.1],
+    procession: [32.4, 36.0], shrinePlaque: 33.3,
+    slow: [36.3, 38.8],
+    causePlaque: 39.6, mark: 41.2, finalUp: [42.3, 42.7], finalCard: [42.5, 43.1],
+  };
+  const dayAt = (t) => 1 + Math.floor(5.999 * cl((t - T.days[0]) / (T.days[1] - T.days[0])));
+  const countAt = (t) => Math.round(30 + 370 * EO(sm(T.count[0], T.count[1], t)));
+  const danceAmt = (t) => sm(T.danceStart - 0.3, T.danceStart + 0.4, t) * (1 - 0.92 * sm(T.slow[0], T.slow[1], t));
+
+  function sceneHook(st, t) {
+    const hp = EIO(sm(T.cardHoist[0], T.cardHoist[1], t));
+    if (hp >= 1) return;
+    pup(st, {}, (p, g) => titleCard(p, g, {
+      x: 360, y: lerp(lerp(-300, 560, EO(sm(T.cardDrop[0], T.cardDrop[1], t))), -500, hp), w: 600, h: 420, s: 1,
+      rot: swing(t, T.cardDrop[1], 0.08, 2.2, 7),
+      lines: [{ text: 'Strasbourg, 1518', size: 46, y: -112, italic: true }, { text: 'The Dancing', size: 76, y: -6 }, { text: 'Plague', size: 116, y: 112, italic: true }],
+    }));
+  }
+  // the street: cathedral far off, houses, Frau Troffea steps out and starts to dance; days pass; others join; the crowd
+  const JOIN = [[150, 0, 'm'], [600, 0.25, 'w'], [250, 0.5, 'w'], [520, 0.75, 'm'], [80, 1.0, 'w'], [660, 1.2, 'm']];
+  function sceneStreet(st, t) {
+    const gy = 1130;
+    // the sky disc: sun and moon cycling through the days
+    if (t > T.days[0] - 0.2 && t < T.days[1] + 0.6) pup(st, { blur: 1.2 }, (p, g) => {
+      const u = cl((t - T.days[0]) / (T.days[1] - T.days[0])) * 6, f = u % 1, night = Math.floor(u * 2) % 2 === 1;
+      const a = Math.PI * (1 - (u * 2) % 1);
+      skyDisc(p, g, 360 + Math.cos(a) * 300, 720 - Math.sin(a) * 300, 40, night);
+    });
+    pup(st, { blur: 3.2, alpha: 0.45 }, (p, g) => cathedral(p, g, 470, 900, 0.95));
+    pup(st, { blur: 1.6, alpha: 0.75 }, (p, g) => { [[70, 150, 300, 3], [215, 120, 250, 7], [350, 140, 330, 11], [520, 130, 270, 13], [655, 140, 310, 19]].forEach(([x, w, h, sd]) => house(p, g, x, 960, w, h, sd, t)); });
+    // the crowd: blurred back rows bobbing
+    const crowd = EO(sm(T.crowd[0], T.crowd[1], t));
+    if (crowd > 0) pup(st, { blur: 2, alpha: 0.8 }, (p, g) => {
+      const r = H.rng(5);
+      for (let i = 0; i < 14; i++) { const x = 20 + i * 52 + r() * 20, ph = t * 7 + i * 1.3, hop = Math.abs(Math.sin(ph)) * 16; const y = gy - 120 + (1 - crowd) * 400 - hop;
+        if (i % 2) woman(p, g, { x, y, s: 0.36, flip: i % 3 === 0, dance: 1, ph, noRods: true }, null);
+        else man(p, g, { x, y, s: 0.36, flip: i % 3 === 0, walk: 1, ph, hat: 'cap', armR: 2.4 + Math.sin(ph) * 0.5, armL: 2.2 + Math.cos(ph) * 0.5, noRods: true }, null); }
+    });
+    // the people who joined
+    pup(st, {}, (p, g, rods) => {
+      JOIN.forEach(([x0, d, kind], i) => {
+        const u = sm(T.joinIn[0] + d, T.joinIn[0] + d + 0.7, t);
+        if (u <= 0) return;
+        const ph = t * 7 + i * 1.7, hop = Math.abs(Math.sin(ph)) * 18 * u, x = lerp(x0 < 360 ? -160 : st.W + 160, x0, EO(u));
+        if (kind === 'w') woman(p, g, { x, y: gy - 10 - hop, s: 0.5, flip: x0 > 360, dance: u, ph }, rods);
+        else man(p, g, { x, y: gy - 10 - hop, s: 0.5, flip: x0 > 360, walk: 1, ph, hat: 'cap', armR: lerp(0.2, 2.5, u) + Math.sin(ph) * 0.5, armL: lerp(-0.1, 2.0, u) + Math.cos(ph) * 0.5 }, rods);
+      });
+    });
+    // Frau Troffea, red gel in her skirt
+    pup(st, {}, (p, g, rods) => {
+      const u = EO(sm(T.womanIn[0], T.womanIn[1], t)), dn = danceAmt(t), ph = t * 7.5;
+      woman(p, g, { x: lerp(-180, 380, u) + Math.sin(ph * 0.5) * 30 * dn, y: gy + 10 - Math.abs(Math.sin(ph)) * 22 * dn, s: 0.72, flip: Math.sin(ph * 0.25) < 0 && dn > 0.5, dance: dn, ph, armR: lerp(0.2, 2.6, dn), armL: lerp(-0.2, 2.2, dn), gel: 'rgb(240,60,46)' }, rods);
+    });
+    // labels
+    pup(st, {}, (p, g) => {
+      const up1 = 900 * EIO(sm(T.days[0] - 0.4, T.days[0] + 0.1, t));
+      if (t > T.namePlaque && up1 < 890) plaque(p, { x: 360, y: lerp(-80, 300, EO(sm(T.namePlaque, T.namePlaque + 0.3, t))) - up1, text: 'Frau Troffea', size: 52, rot: swing(t, T.namePlaque + 0.3, 0.05, 3, 9), hang: 400 });
+      const up2 = 900 * EIO(sm(T.joinIn[0] - 0.2, T.joinIn[0] + 0.3, t));
+      if (t > T.daysBoard[0] && up2 < 890) board(p, { x: 360, y: lerp(-500, 330, EO(sm(T.daysBoard[0], T.daysBoard[1], t))) - up2, text: 'day ' + dayAt(t), size: 110, hw: 210, rot: swing(t, T.daysBoard[1], 0.04, 2.5, 7) });
+      const up3 = 900 * EIO(sm(T.crowd[0] + 0.6, T.count[0], t));
+      if (t > T.joinBoard[0] && up3 < 890) board(p, { x: 360, y: lerp(-500, 330, EO(sm(T.joinBoard[0], T.joinBoard[1], t))) - up3, text: '30+', size: 124, hw: 200, label: 'joined her', rot: swing(t, T.joinBoard[1], 0.04, 2.5, 7) });
+      if (t > T.count[0] - 0.3) {
+        const pop = t > T.countPop ? 1 + 0.12 * Math.exp(-(t - T.countPop) * 8) : 1;
+        board(p, { x: 360, y: lerp(-500, 360, EO(sm(T.count[0] - 0.3, T.count[0], t))), text: String(countAt(t)), size: 150, hw: 220, pop, label: 'dancing', rot: swing(t, T.count[0], 0.04, 2.5, 7) });
+      }
+    });
+  }
+  // the doctors' cure, the stage and the band; it gets worse
+  function sceneCure(st, t) {
+    const gy = 1130;
+    pup(st, { blur: 3.2, alpha: 0.45 }, (p, g) => cathedral(p, g, 470, 900, 0.95));
+    pup(st, { blur: 1.6, alpha: 0.7 }, (p, g) => { [[70, 150, 300, 3], [215, 120, 250, 7], [520, 130, 270, 13], [655, 140, 310, 19]].forEach(([x, w, h, sd]) => house(p, g, x, 960, w, h, sd, t)); });
+    const su = EO(sm(T.stageUp[0], T.stageUp[1], t)), sy = gy - 20 + (1 - su) * 400, sh = 150;
+    if (su > 0) pup(st, {}, (p) => stage(p, 380, sy, 520, sh));
+    // dancers on the stage, faster; two collapse
+    pup(st, {}, (p, g, rods) => {
+      const on = sm(T.stageUp[0], T.stageUp[1], t);
+      [[250, 'w', T.fall1], [400, 'm', null], [530, 'w', T.fall2]].forEach(([x, k, fl], i) => {
+        const ph = t * (t > T.bandIn[1] ? 10 : 7) + i * 1.9, f = fl ? EO(sm(fl[0], fl[1], t)) : 0, hop = Math.abs(Math.sin(ph)) * 20 * (1 - f);
+        const y = (su > 0 ? sy - sh : gy) - hop;
+        if (k === 'w') woman(p, g, { x, y, s: 0.5, flip: i === 2, dance: (1 - f) * (on > 0 ? 1 : 0.6), ph, fall: f, armR: 2.2 * (1 - f), armL: 1.8 * (1 - f), gel: i === 0 ? 'rgb(240,60,46)' : null }, rods);
+        else man(p, g, { x, y, s: 0.5, walk: 1, ph, hat: 'cap', armR: 2.5 + Math.sin(ph) * 0.5, armL: 2.0 + Math.cos(ph) * 0.5 }, rods);
+      });
+    });
+    // the band
+    const bu = EO(sm(T.bandIn[0], T.bandIn[1], t));
+    if (bu > 0) pup(st, {}, (p, g, rods) => {
+      const beat = Math.max(0, Math.sin(t * 4 * Math.PI));
+      man(p, g, { x: lerp(-160, 90, bu), y: gy + 20, s: 0.5, hat: 'cap', armR: 1.3, armL: 0.6, noRods: false }, rods);
+      tabor(p, lerp(-160, 90, bu) + 50, gy + 20 - 170, beat);
+      man(p, g, { x: lerp(st.W + 160, 650, bu), y: gy + 20, s: 0.5, hat: 'cap', flip: true, armR: 1.75, armL: 1.6, noRods: false }, rods);
+      p.save(); p.translate(lerp(st.W + 160, 650, bu) - 46, gy + 20 - 196); p.rotate(-0.55); p.fillStyle = INK; p.fillRect(-4, -4, 110, 8); p.beginPath(); p.moveTo(104, -6); p.lineTo(124, -14); p.lineTo(124, 14); p.lineTo(104, 6); p.fill(); cut(p, () => { for (let k = 0; k < 5; k++) dot(p, 30 + k * 14, 0, 2); }); p.restore();
+    });
+    // the doctors, before the stage arrives
+    const du = EO(sm(T.doctorsIn[0], T.doctorsIn[1], t)), dout = EIO(sm(T.stageUp[0] - 0.3, T.stageUp[0] + 0.3, t));
+    if (dout < 1) pup(st, {}, (p, g, rods) => {
+      man(p, g, { x: lerp(-200, 230, du) - dout * 500, y: gy + 20, s: 0.7, walk: 1 - du, ph: t * 8, hat: 'doctor', robe: true, beard: true, armR: 1.1 + Math.sin(t * 3) * 0.1, armL: 0.1 }, rods);
+      man(p, g, { x: lerp(st.W + 200, 520, du) + dout * 500, y: gy + 20, s: 0.66, flip: true, walk: 1 - du, ph: t * 8 + 1, hat: 'doctor', robe: true, armR: 0.5, armL: -0.1, roll: true }, rods);
+    });
+    pup(st, {}, (p, g) => {
+      const up = 900 * EIO(sm(T.stageUp[0] - 0.2, T.stageUp[0] + 0.4, t));
+      if (t > T.curePlaque && up < 890) plaque(p, { x: 360, y: lerp(-80, 280, EO(sm(T.curePlaque, T.curePlaque + 0.3, t))) - up, text: "the doctors' cure:", size: 50, rot: swing(t, T.curePlaque + 0.3, 0.05, 3, 9), hang: 400 });
+      if (t > T.cureTag && up < 890) tag(p, g, { x: 380, y: lerp(-80, 380, EO(sm(T.cureTag, T.cureTag + 0.25, t))) - up, w: 420, h: 96, text: 'more dancing!', size: 56, rot: swing(t, T.cureTag + 0.25, 0.08, 2.5, 8) });
+      const up2 = 900 * EIO(sm(T.worse - 0.3, T.worse + 0.2, t));
+      if (t > T.bandPlaque && up2 < 890) plaque(p, { x: 360, y: lerp(-80, 300, EO(sm(T.bandPlaque, T.bandPlaque + 0.3, t))) - up2, text: 'a stage and a band', size: 48, rot: swing(t, T.bandPlaque + 0.3, 0.05, 3, 9), hang: 400 });
+      if (t > T.worseTag) tag(p, g, { x: 360, y: lerp(-80, 330, EO(sm(T.worseTag, T.worseTag + 0.25, t))), w: 320, h: 96, text: 'worse', size: 60, tx: -36, rot: swing(t, T.worseTag + 0.25, 0.1, 2.5, 8), badge: 'x', badgeS: EO(sm(T.worseTag + 0.25, T.worseTag + 0.4, t)) * 0.95 });
+    });
+  }
+  // the mountain shrine: the dancers are led up the path; slowly the dancing stops; nobody knows why
+  function sceneShrine(st, t) {
+    const gy = 1130;
+    pup(st, {}, (p, g) => moon(p, g, { x: 600, y: 230, r: 52, burst: EO(sm(T.finalCard[1], T.finalCard[1] + 0.4, t)) * 0.8 }));
+    pup(st, { blur: 1.4 + 3 * sm(T.causePlaque, T.mark, t), alpha: 0.85 - 0.62 * sm(T.causePlaque, T.mark, t) }, (p, g) => shrineHill(p, g, st.W, 1010, t));
+    // the procession: small figures climbing the path
+    const path = [[40, 1000], [320, 950], [200, 810], [110, 690], [330, 570]];
+    const along = (u) => { const n = path.length - 1, i = Math.min(n - 1, Math.floor(u * n)), f = u * n - i; return [lerp(path[i][0], path[i + 1][0], f), lerp(path[i][1], path[i + 1][1], f)]; };
+    pup(st, { blur: 1.4, alpha: 0.9 }, (p, g) => {
+      for (let i = 0; i < 6; i++) {
+        const u = cl((t - T.procession[0]) / (T.procession[1] - T.procession[0]) * 0.8 - i * 0.07 + 0.08);
+        if (u <= 0 || u >= 1) continue;
+        const [x, y] = along(u), s = 0.2 - u * 0.07;
+        if (i % 2) woman(p, g, { x, y, s, dance: 0.4, ph: t * 6 + i, noRods: true }, null);
+        else man(p, g, { x, y, s, walk: 1, ph: t * 6 + i, hat: 'cap', noRods: true }, null);
+      }
+    });
+    // Frau Troffea in front, her dance winding down to stillness
+    pup(st, {}, (p, g, rods) => {
+      const dn = danceAmt(t), ph = t * 6;
+      woman(p, g, { x: 520, y: gy + 10 - Math.abs(Math.sin(ph)) * 18 * dn, s: 0.7, flip: true, dance: dn, ph, armR: lerp(-0.1, 2.4, dn), armL: lerp(-0.2, 2.0, dn), gel: 'rgb(240,60,46)' }, rods);
+    });
+    const up = 1000 * EIO(sm(T.finalUp[0], T.finalUp[1], t));
+    pup(st, {}, (p, g) => {
+      const up0 = 900 * EIO(sm(T.slow[0], T.slow[0] + 0.5, t));
+      if (t > T.shrinePlaque && up0 < 890) plaque(p, { x: 360, y: lerp(-80, 250, EO(sm(T.shrinePlaque, T.shrinePlaque + 0.3, t))) - up0, text: 'shrine of St. Vitus', size: 48, rot: swing(t, T.shrinePlaque + 0.3, 0.05, 3, 9), hang: 400 });
+      if (up < 990) {
+        if (t > T.causePlaque) plaque(p, { x: 400, y: lerp(-80, 260, EO(sm(T.causePlaque, T.causePlaque + 0.3, t))) - up, text: 'the cause', size: 52, rot: swing(t, T.causePlaque + 0.3, 0.05, 3, 9), hang: 400 });
+        if (t > T.mark - 0.05) {
+          const hit = Math.exp(-Math.max(0, t - T.mark) * 5), land = EO(sm(T.mark - 0.05, T.mark + 0.15, t));
+          // a ring with a solid ? inside; the hill has faded back behind it
+          p.save(); p.translate(400, 500 - up); const sc = lerp(1.7, 1, land) * (1 + hit * 0.12); p.scale(sc, sc); p.globalAlpha = land;
+          p.fillStyle = INK; p.strokeStyle = INK; p.lineWidth = 16; p.beginPath(); p.arc(0, 0, 124, 0, TAU); p.stroke(); for (let k = 0; k < 24; k++) dot(p, Math.cos(k * TAU / 24) * 128, Math.sin(k * TAU / 24) * 128, 9);
+          cut(p, () => { for (let k = 0; k < 24; k++) dot(p, Math.cos((k + 0.5) * TAU / 24) * 124, Math.sin((k + 0.5) * TAU / 24) * 124, 2.6); });
+          p.font = `italic 400 250px ${FF}`; p.textAlign = 'center'; p.textBaseline = 'middle'; p.fillText('?', 0, 14);
+          p.restore();
+        }
+      }
+      if (t > T.finalCard[0]) titleCard(p, g, { x: 360, y: lerp(-300, 600, EO(sm(T.finalCard[0], T.finalCard[1], t))), w: 600, h: 380, s: 1, rot: swing(t, T.finalCard[1], 0.06, 2.2, 6),
+        lines: [{ text: 'The Dancing Plague', size: 64, y: -54 }, { text: '1518', size: 72, y: 34, num: true }, { text: 'still unexplained', size: 46, y: 104, italic: true }] });
+    });
+  }
+
+  function drawAt(ctx, PW, PH, t) {
+    K = PW / 720; const W = 720, Hh = 1280;
+    ctx.setTransform(K, 0, 0, K, 0, 0);
+    const st = begin(W, Hh);
+    let b = sm(0, 0.55, t) * (1 - 0.35 * Math.max(0, NZ.n2(t * 23, 3.3)) * (1 - sm(0.35, 0.7, t)));
+    b *= 1 - 0.93 * Math.sin(Math.PI * cl((t - T.lampDown[0]) / (T.lampDown[1] - T.lampDown[0])));
+    // days and nights: the lamp dips each "night" while the days board counts
+    if (t > T.days[0] && t < T.days[1]) { const u = (t - T.days[0]) / (T.days[1] - T.days[0]) * 6; b *= 1 - 0.42 * (Math.floor(u * 2) % 2); }
+    const flare = Math.max(t > T.countPop ? Math.exp(-(t - T.countPop) * 3) * 0.3 : 0, t > T.mark ? Math.exp(-(t - T.mark) * 3) * 0.3 : 0);
+    lamp(ctx, W, Hh, t, b + flare * 0.3, flare);
+    const red = sm(T.worse, T.worse + 0.3, t) * (1 - sm(T.lampDown[0] - 0.4, T.lampDown[0], t));
+    if (red > 0) { ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = `rgba(255,70,50,${red * 0.55})`; ctx.fillRect(0, 0, W, Hh); ctx.restore(); }
+    if (t > 31.7) { ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.fillStyle = 'rgba(150,170,255,0.34)'; ctx.fillRect(0, 0, W, Hh); ctx.restore(); }
+    if (t < 19.85) { if (t > 2.7) sceneStreet(st, t); sceneHook(st, t); }
+    else if (t < 31.7) sceneCure(st, t);
+    else sceneShrine(st, t);
+    const s = st.S.getContext('2d');
+    s.drawImage(valance(W), 0, 0, W, 80); s.drawImage(ground(W), 0, Hh - 110, W, 110);
+    const cover = EIO(sm(T.curtains[0], T.curtains[1], t)) * (1 - EIO(sm(T.curtains[2], T.curtains[3], t)));
+    if (cover > 0.001) pup(st, {}, (p) => curtains(p, W, Hh, cover, t));
+    end(ctx, st, t);
+  }
+  function explainer(ctx, W, Hh, t) { drawAt(ctx, W, Hh, t); }
+
+  window.DANCE = { explainer, D, T, dayAt, countAt, fonts: ['400 132px "Libre Baskerville"', '400 70px "IM Fell English"', 'italic 400 44px "IM Fell English"'] };
+})();
