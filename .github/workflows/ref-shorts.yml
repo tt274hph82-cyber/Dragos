@@ -1,0 +1,44 @@
+name: Reference Shorts → frame sheets
+
+# Downloads the reference Shorts listed in research/shorts.txt (the cloud sandbox can't reach YouTube), cuts each
+# into frame sheets (4 frames a second, 8 per row) and a scene-cut list, and commits them to research/frames/.
+# Only small JPG sheets are committed, never the videos.
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "research/shorts.txt"
+      - ".github/workflows/ref-shorts.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  frames:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg && pip install -U yt-dlp
+      - name: Download and cut
+        continue-on-error: true
+        run: |
+          mkdir -p research/frames dl
+          while read -r url; do
+            [ -z "$url" ] && continue
+            id=$(echo "$url" | sed -E 's#.*/(shorts/)?([A-Za-z0-9_-]{11}).*#\2#')
+            yt-dlp -f "bv*[height<=720]+ba/b[height<=720]/b" -o "dl/$id.%(ext)s" "$url" || { echo "download failed: $id" >> research/frames/log.txt; continue; }
+            f=$(ls dl/$id.* | head -1)
+            ffprobe -v error -show_entries format=duration -of csv=p=0 "$f" > research/frames/$id-duration.txt
+            ffmpeg -v error -i "$f" -vf "fps=4,scale=180:-2,tile=8x6" -q:v 4 research/frames/$id-sheet-%02d.jpg
+            ffmpeg -v info -i "$f" -vf "select='gt(scene,0.2)',showinfo" -an -f null - 2>&1 | grep -o "pts_time:[0-9.]*" | cut -d: -f2 > research/frames/$id-cuts.txt
+            echo "ok: $id" >> research/frames/log.txt
+          done < research/shorts.txt
+      - name: Commit sheets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
+          git add research/frames || true
+          git diff --cached --quiet || git commit -m "Reference Shorts: frame sheets"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
