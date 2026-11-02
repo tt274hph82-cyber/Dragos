@@ -10,11 +10,15 @@
   const NZ = H.makeNoise(4242);
   const sm = H.smooth, cl = H.clamp, lerp = H.lerp, EO = H.ease.out, EIO = H.ease.inOut;
   const LAY = {};
+  // Native resolution: scenes are written on a 720 x 1280 logical stage; K = output width / 720 scales every layer,
+  // so a 1080 x 1920 canvas is drawn at full detail (not upscaled). lay() takes logical sizes.
+  let K = 1;
   function lay(name, w, h) {
     let c = LAY[name];
-    if (!c || c.width !== w || c.height !== h) c = LAY[name] = H.layer(w, h);
+    const pw = Math.round(w * K), ph = Math.round(h * K);
+    if (!c || c.width !== pw || c.height !== ph) c = LAY[name] = H.layer(pw, ph);
     const x = c.getContext('2d');
-    x.setTransform(1, 0, 0, 1, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1; x.filter = 'none';
+    x.setTransform(1, 0, 0, 1, 0, 0); x.clearRect(0, 0, pw, ph); x.setTransform(K, 0, 0, K, 0, 0); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1; x.filter = 'none';
     x.clearRect(0, 0, c.width, c.height);
     return c;
   }
@@ -29,7 +33,7 @@
   }
   function pin(p, x, y, r) { r = r || 8; cut(p, () => dot(p, x, y, r)); p.fillStyle = INK; dot(p, x, y, r * 0.55); }
   const both = (cs, fn) => cs.forEach(fn);
-  const wpt = (p, x, y) => { const q = p.getTransform().transformPoint(new DOMPoint(x, y)); return [q.x, q.y]; };
+  const wpt = (p, x, y) => { const q = p.getTransform().transformPoint(new DOMPoint(x, y)); return [q.x / K, q.y / K]; };
   const bz = (P, u) => { const v = 1 - u; return [v * v * v * P[0][0] + 3 * v * v * u * P[1][0] + 3 * v * u * u * P[2][0] + u * u * u * P[3][0], v * v * v * P[0][1] + 3 * v * v * u * P[1][1] + 3 * v * u * u * P[2][1] + u * u * u * P[3][1]]; };
   const bzA = (P, u) => { const a = bz(P, Math.max(0, u - 0.01)), b = bz(P, Math.min(1, u + 0.01)); return Math.atan2(b[1] - a[1], b[0] - a[0]); };
   const swing = (t, t0, amp, k, w) => (t > t0 ? amp * Math.exp(-(t - t0) * k) * Math.sin((t - t0) * w) : 0);
@@ -43,7 +47,7 @@
     p.fillStyle = INK; p.strokeStyle = INK;
     g.save(); fn(p, g, st.rods); g.restore();
     const s = st.S.getContext('2d');
-    s.save(); s.globalAlpha = o.alpha == null ? 1 : o.alpha; if (o.blur) s.filter = `blur(${o.blur}px)`; s.drawImage(P, 0, 0); s.restore();
+    s.save(); s.globalAlpha = o.alpha == null ? 1 : o.alpha; if (o.blur) s.filter = `blur(${o.blur * K}px)`; s.drawImage(P, 0, 0, st.W, st.Hh); s.restore();
   }
   const STOPS = [[0, [255, 232, 168]], [0.16, [255, 200, 104]], [0.42, [238, 132, 46]], [0.68, [168, 60, 20]], [0.88, [84, 24, 9]], [1, [38, 10, 4]]];
   function lamp(ctx, W, Hh, t, b, flare) {
@@ -94,13 +98,13 @@
       r.strokeStyle = INK; r.lineCap = 'round';
       st.rods.forEach(([x, y, w, a]) => { r.globalAlpha = a == null ? 1 : a; r.lineWidth = w || 3.2; r.beginPath(); r.moveTo(x, y); r.lineTo(x + (x - W / 2) * 0.14 + 18, Hh + 40); r.stroke(); dot(r, x, y, (w || 3.2) * 1.2); });
       r.globalAlpha = 1;
-      const s = st.S.getContext('2d'); s.save(); s.filter = 'blur(1.3px)'; s.globalAlpha = 0.9; s.drawImage(R, 0, 0); s.restore();
+      const s = st.S.getContext('2d'); s.save(); s.filter = `blur(${1.3 * K}px)`; s.globalAlpha = 0.9; s.drawImage(R, 0, 0, W, Hh); s.restore();
     }
-    ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(st.G, 0, 0); ctx.restore();
-    ctx.save(); ctx.filter = 'blur(0.7px)'; ctx.globalAlpha = 0.97; ctx.drawImage(st.S, 0, 0); ctx.restore();
-    ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(weave(W, Hh), 0, 0); ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(st.G, 0, 0, W, Hh); ctx.restore();
+    ctx.save(); ctx.filter = `blur(${0.7 * K}px)`; ctx.globalAlpha = 0.97; ctx.drawImage(st.S, 0, 0, W, Hh); ctx.restore();
+    ctx.save(); ctx.globalCompositeOperation = 'multiply'; ctx.drawImage(weave(Math.round(W * K), Math.round(Hh * K)), 0, 0, W, Hh); ctx.restore();
     const hl = lay('half', W / 4, Hh / 4), hx = hl.getContext('2d');
-    hx.filter = 'blur(5px)'; hx.drawImage(ctx.canvas, 0, 0, W / 4, Hh / 4);
+    hx.filter = `blur(${5 * K}px)`; hx.drawImage(ctx.canvas, 0, 0, W / 4, Hh / 4);
     ctx.save(); ctx.globalCompositeOperation = 'screen'; ctx.globalAlpha = 0.13; ctx.drawImage(hl, 0, 0, W, Hh); ctx.restore();
     const fr = Math.floor(t * 12), gt = grainTile(fr % 3), gr = H.rng(fr + 5);
     ctx.save(); ctx.fillStyle = ctx.createPattern(gt, 'repeat'); ctx.translate(-gr() * 256, -gr() * 256); ctx.fillRect(0, 0, W + 256, Hh + 256); ctx.restore();
@@ -109,8 +113,8 @@
 
   // ---------- stage furniture (cached; from the reference) ----------
   function valance(W) {
-    const key = '_val' + W; if (LAY[key]) return LAY[key];
-    const c = H.layer(W, 80), p = c.getContext('2d');
+    const key = '_val' + W + 'k' + K; if (LAY[key]) return LAY[key];
+    const c = H.layer(Math.round(W * K), Math.round(80 * K)), p = c.getContext('2d'); p.scale(K, K);
     p.fillStyle = INK; p.fillRect(0, 0, W, 14);
     for (let x = -16; x < W + 32; x += 32) { p.beginPath(); p.arc(x + 16, 13, 16, 0, Math.PI); p.fill(); }
     for (let x = 32; x < W; x += 64) { p.fillRect(x - 1, 20, 2, 22); tear(p, x, 40, 18, 9, Math.PI / 2); dot(p, x, 40, 5); }
@@ -118,8 +122,8 @@
     LAY[key] = c; return c;
   }
   function ground(W) {
-    const key = '_gnd' + W; if (LAY[key]) return LAY[key];
-    const c = H.layer(W, 110), p = c.getContext('2d'), r = H.rng(31);
+    const key = '_gnd' + W + 'k' + K; if (LAY[key]) return LAY[key];
+    const c = H.layer(Math.round(W * K), Math.round(110 * K)), p = c.getContext('2d'), r = H.rng(31); p.scale(K, K);
     p.fillStyle = INK; p.strokeStyle = INK; p.fillRect(0, 96, W, 14);
     for (let x = -10; x < W + 10; x += 5 + r() * 6) {
       const h = 14 + r() * 34 * (0.6 + 0.4 * Math.sin(x * 0.013) ** 2), lean = (r() - 0.5) * 22, w = 2 + r() * 2.5;
@@ -785,7 +789,9 @@
     }));
   }
 
-  function drawAt(ctx, W, Hh, t) {
+  function drawAt(ctx, PW, PH, t) {
+    K = PW / 720; const W = 720, Hh = 1280;
+    ctx.setTransform(K, 0, 0, K, 0, 0);
     const st = begin(W, Hh);
     let b = sm(0, 0.55, t) * (1 - 0.35 * Math.max(0, NZ.n2(t * 23, 3.3)) * (1 - sm(0.35, 0.7, t)));
     for (const L of [T.lampDown1, T.lampDown2, T.lampDown3]) b *= 1 - 0.93 * Math.sin(Math.PI * cl((t - L[0]) / (L[1] - L[0])));
@@ -802,7 +808,7 @@
     else if (t < 32.3) sceneCamps(st, t);
     else sceneEnd(st, t);
     const s = st.S.getContext('2d');
-    s.drawImage(valance(W), 0, 0); s.drawImage(ground(W), 0, Hh - 110);
+    s.drawImage(valance(W), 0, 0, W, 80); s.drawImage(ground(W), 0, Hh - 110, W, 110);
     firBranch(st, t, t < 21.75 || t > 32.3 ? 1 : -1, 0.85);
     const cover = EIO(sm(T.curtains[0], T.curtains[1], t)) * (1 - EIO(sm(T.curtains[2], T.curtains[3], t)));
     if (cover > 0.001) pup(st, {}, (p) => curtains(p, W, Hh, cover, t));

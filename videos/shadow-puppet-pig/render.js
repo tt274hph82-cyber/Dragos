@@ -5,7 +5,7 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 (async () => {
   const [html, out] = process.argv.slice(2);
-  const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: 800, height: 1400 } });
+  const b = await chromium.launch(); const pg = await b.newPage({ viewport: { width: 1200, height: 2100 } });
   const errs = []; pg.on('pageerror', (e) => errs.push(e.message));
   await pg.goto('file://' + require('path').resolve(html));
   await pg.waitForFunction(() => window.__ready === true, null, { timeout: 60000 });
@@ -30,7 +30,7 @@ const fs = require('fs');
   const ins = ['-i', wav]; vo.forEach((v) => ins.push('-i', require('path').join(__dirname, v.file)));
   const chains = vo.map((v, i) => `[${i + 2}:a]aresample=48000,adelay=${Math.round(v.start * 1000)}|${Math.round(v.start * 1000)},volume=1.6[v${i}]`).join(';');
   const mix = `${chains};[1:a]${vo.map((_, i) => `[v${i}]`).join('')}amix=inputs=${vo.length + 1}:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5:LRA=11[a]`;
-  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', ...ins, '-filter_complex', mix, '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-vf', 'scale=1080:1920:flags=lanczos', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
+  const ff = spawn('ffmpeg', ['-y', '-v', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', ...ins, '-filter_complex', mix, '-map', '0:v', '-map', '[a]', '-c:v', 'libx264', '-crf', '23', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out], { stdio: ['pipe', 'inherit', 'inherit'] });
   const t0 = Date.now();
   for (let i = 0; i < N; i++) {
     const data = await pg.evaluate((tt) => { window.seek(tt); return document.getElementById('screen').toDataURL('image/jpeg', 0.95).split(',')[1]; }, i / 30);

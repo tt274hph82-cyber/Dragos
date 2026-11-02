@@ -101,4 +101,5 @@ These rules come from measuring three reference Reels:
 
 ## Shadow Puppet Theatre explainers
 - Built from `videos/shadow-puppet-emu/` (emu war) and `videos/shadow-puppet-pig/` (pig war): one canvas file per story, `score.js`, `vo.py` (Austin narration, always included), `render.js` for the MP4. 9:16, at least 30 s.
+- **Native 1080p:** start new stories from `videos/shadow-puppet-pig/` (its `pig.js` theatre code draws at any size: scenes use a 720x1280 logical stage, scaled by `K`). The player canvas and `render.js` draw at 1080x1920 directly, with no upscaling. Storyboards can stay at 720.
 - **Storyboard approval is standing:** the user approves every storyboard. Still publish the storyboard artifact, then go straight on to the full animation, narration and MP4 without waiting.
