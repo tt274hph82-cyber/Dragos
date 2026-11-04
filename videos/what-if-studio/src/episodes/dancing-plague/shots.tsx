@@ -846,13 +846,13 @@ export const S7: S = ({ t }) => (
     </g>
     {t > 10 ? <path d="M 260 520 L 820 1200 M 820 520 L 260 1200" stroke="#E2262E" strokeWidth={50} strokeLinecap="round" transform={`translate(540 860) scale(${popIn(t - 10, 5)}) translate(-540 -860)`} /> : null}
     <Candle x={900} y={1420} t={t} />
-    <Punch t={t - 4} lines={["AIN'T NO", 'BEDTIME STORY']} y={300} size={92} color="#FFD23F" />
+    <Punch t={t - 4} lines={["AIN'T NO", 'TALL TALE']} y={300} size={92} color="#FFD23F" />
   </g>
 );
 export const S19: S = (p) => (
   <g>
     <S18 {...p} t={p.t + 40} />
-    <Punch t={p.t - 3} lines={['HER HUSBAND', 'RAN OFF?']} y={280} size={92} color="#FFD23F" />
+    <Punch t={p.t - 3} lines={['HUSBAND', 'RAN OFF?']} y={280} size={92} color="#FFD23F" />
   </g>
 );
 export const S80: S = ({ t }) => (
@@ -861,7 +861,7 @@ export const S80: S = ({ t }) => (
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#05030A" opacity={0.35 + 0.15 * Math.sin(t * 0.7)} />
     {[0, 1, 2].map((i) => <ellipse key={i} cx={((t * (2 + i) + i * 400) % 1600) - 300} cy={1260 + i * 70} rx={420} ry={60} fill="#C9A2FF" opacity={0.12} />)}
     <Dancer x={540} feet={1420} s={0.5} mood="night" t={t} red />
-    <Punch t={t - 3} lines={['THE CREEPY', 'PART']} y={320} size={110} color="#C9A2FF" kicker="AND NOW..." />
+    <Punch t={t - 3} lines={['CURL YOUR', 'TOES']} y={320} size={110} color="#C9A2FF" kicker="AND NOW..." />
   </g>
 );
 export const S71: S = ({ t }) => (
@@ -871,7 +871,7 @@ export const S71: S = ({ t }) => (
       {dancers('danger', t * 1.5, 9, 40, 1040, 1350, 0.75, 51)}
       {dancers('danger', t * 1.5, 7, 0, 1080, 1700, 1.2, 55)}
     </g>
-    <Burst t={t - 3} text="MADHOUSE!" x={540} y={680} size={100} />
+    <Burst t={t - 3} text="LOONS!" x={540} y={680} size={120} />
   </g>
 );
 export const S72: S = ({ t }) => (
@@ -914,7 +914,7 @@ export const S44: S = ({ t }) => (
     <Sky id="d44" mood="danger" sunY={1100} />
     <rect x={-200} y={1180} width={W + 400} height={900} fill="#1C0A0C" />
     <Barn t={t + 60} fire={1.8} />
-    <Punch t={t - 3} lines={['A DISASTER']} y={300} size={120} color="#FF5A5A" />
+    <Punch t={t - 3} lines={['IT WENT', 'SOUTH']} y={300} size={120} color="#FF5A5A" />
   </g>
 );
 export const S50: S = ({ t }) => (
@@ -958,7 +958,7 @@ export const S76: S = ({ t }) => (
       <path d={`M -20 -160 L 10 -90 L -24 -40 L 20 30 L -6 90`} stroke="#FFE27A" strokeWidth={10 * clamp(t / 6)} fill="none" strokeLinejoin="round" />
       <Glow x={0} y={-40} r={200} kind="red" o={clamp(t / 6)} />
     </g>
-    <Burst t={t - 3} text="SNAP!" x={540} y={520} size={130} color="#E2262E" />
+    <Burst t={t - 3} text="LOST IT!" x={540} y={520} size={110} color="#E2262E" />
   </g>
 );
 export const S77: S = ({ t }) => (
@@ -1000,3 +1000,35 @@ export const S81 = close(S21, 540, 1150, 1.6, 40);   // "no sleep": on her
 export const S84 = close(S26, 540, 1250, 1.5, 60);   // "right next to her"
 export const S85 = close(S37, 540, 1000, 1.5, 40);   // "the sickness": the doctor with the scroll
 export const S86 = close(S68, 540, 1250, 1.4, 40);   // "strange history": the crowd
+
+// the narrator's signature repeat, and the graveyard callback
+export const S87: S = ({ t }) => (
+  <g>
+    <Square id="d87" mood="night" t={t} moon sunX={300} sunY={360} />
+    {dancers('night', t, 5, 120, 960, 1480, 0.8, 75, 0.2)}
+    <Punch t={t - 2} lines={['YOU GET IT,', 'BUDDY?']} y={320} size={104} color="#FFD23F" />
+  </g>
+);
+export const S88: S = ({ t }) => (
+  <g>
+    <Square id="d88" mood="danger" t={t} moon sunX={300} sunY={360} />
+    <Burst t={t - 2} text="I SAID..." x={540} y={560} size={90} color="#FFD23F" />
+    <Punch t={t - 6} lines={['YOU GET IT?']} y={760} size={120} color="#FF5A5A" />
+  </g>
+);
+export const S89: S = ({ t }) => (
+  <g>
+    <Sky id="d89" mood="danger" sunY={1050} sunX={760} />
+    <path d="M -100 1180 Q 540 1110 1180 1180 L 1180 2000 L -100 2000 Z" fill={INK} />
+    <Graves n={11} t={t} />
+    {[0, 1, 2].map((i) => <Dancer key={i} x={lerp(-100, 700, clamp(t / 90)) + i * 110} feet={1150} s={0.3} mood="danger" t={t} ph={i * 2} dance={0.5} red={i === 0} />)}
+    <Punch t={t - 3} lines={['TO THE', 'GRAVEYARD']} y={300} size={110} color="#FF5A5A" />
+  </g>
+);
+export const S90 = close(S7, 540, 860, 1.5, 30);    // "tall tale": on the crossed-out storybook
+export const S91: S = (p) => (
+  <g>
+    <S8 {...p} t={p.t + 120} />
+    <Punch t={p.t - 3} lines={['MOST', 'HISTORIANS']} y={300} size={100} color="#9FE3FF" kicker="THEORY TWO" />
+  </g>
+);

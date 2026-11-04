@@ -2,63 +2,72 @@
  "slug": "dancing-plague",
  "title": "THE DANCING PLAGUE",
  "fps": 30,
- "total": 4887,
+ "total": 5358,
  "segments": [
   {
    "shot": "S2",
    "a": 0,
-   "b": 81,
+   "b": 76,
    "t0": 0,
-   "t1": 81,
-   "line": "Four hundred people danced in the street, for",
+   "t1": 76,
+   "line": "Four hundred people danced in the street for",
    "cam": "dive"
   },
   {
    "shot": "S3",
-   "a": 81,
-   "b": 103,
+   "a": 76,
+   "b": 95,
    "t0": 0,
-   "t1": 22,
+   "t1": 19,
    "line": "weeks,"
   },
   {
    "shot": "S4",
-   "a": 103,
-   "b": 117,
+   "a": 95,
+   "b": 105,
    "t0": 0,
-   "t1": 14,
-   "line": "until the",
+   "t1": 10,
+   "line": "till the",
    "tr": "zoom"
   },
   {
    "shot": "S5",
-   "a": 117,
-   "b": 174,
+   "a": 105,
+   "b": 175,
    "t0": 0,
-   "t1": 57,
-   "line": "blood ran out of their shoes."
+   "t1": 70,
+   "line": "blood was squishing out of their shoes."
   },
   {
    "shot": "S7",
-   "a": 174,
-   "b": 271,
+   "a": 175,
+   "b": 234,
    "t0": 0,
-   "t1": 97,
-   "line": "And no, buddy, this ain't some bedtime story. It's in the"
+   "t1": 59,
+   "line": "Now hold on, buddy. This ain't some"
+  },
+  {
+   "shot": "S90",
+   "a": 234,
+   "b": 302,
+   "t0": 0,
+   "t1": 68,
+   "line": "tall tale to put the young'uns to sleep. It's",
+   "tr": "zoom"
   },
   {
    "shot": "S8",
-   "a": 271,
-   "b": 299,
+   "a": 302,
+   "b": 363,
    "t0": 0,
-   "t1": 28,
-   "line": "history books.",
+   "t1": 61,
+   "line": "written down in every history book.",
    "tr": "whip"
   },
   {
    "shot": "S9",
-   "a": 299,
-   "b": 360,
+   "a": 363,
+   "b": 424,
    "t0": 0,
    "t1": 61,
    "line": "They called it the Dancing Plague.",
@@ -66,626 +75,663 @@
   },
   {
    "shot": "S10",
-   "a": 360,
-   "b": 425,
+   "a": 424,
+   "b": 528,
    "t0": 0,
-   "t1": 65,
-   "line": "Now listen to how this whole mess started.",
+   "t1": 104,
+   "line": "So sit tight, and listen how this whole circus got started.",
    "tr": "flash"
   },
   {
    "shot": "S1",
-   "a": 425,
-   "b": 512,
+   "a": 528,
+   "b": 609,
    "t0": 0,
-   "t1": 87,
-   "line": "Strasbourg, the year fifteen eighteen. A",
+   "t1": 81,
+   "line": "Strasbourg, the year fifteen eighteen.",
    "cam": "dive",
    "tr": "zoom"
   },
   {
    "shot": "S11",
-   "a": 512,
-   "b": 572,
+   "a": 609,
+   "b": 671,
    "t0": 0,
-   "t1": 60,
-   "line": "normal summer day in July."
+   "t1": 62,
+   "line": "Regular summer day in July."
   },
   {
    "shot": "S12",
-   "a": 572,
-   "b": 601,
+   "a": 671,
+   "b": 699,
    "t0": 0,
-   "t1": 29,
-   "line": "A woman named Frau",
+   "t1": 28,
+   "line": "A lady named Frau",
    "tr": "ghost"
   },
   {
    "shot": "S13",
-   "a": 601,
-   "b": 622,
+   "a": 699,
+   "b": 723,
    "t0": 0,
-   "t1": 21,
+   "t1": 24,
    "line": "Troffea",
    "cam": "push"
   },
   {
    "shot": "S69",
-   "a": 622,
-   "b": 719,
+   "a": 723,
+   "b": 836,
    "t0": 0,
-   "t1": 97,
-   "line": "walks out of her house, right into the middle of the street, and starts",
+   "t1": 113,
+   "line": "busts out of her house, plants herself in the middle of the street, and starts",
    "tr": "zoom"
   },
   {
    "shot": "S15",
-   "a": 719,
-   "b": 740,
+   "a": 836,
+   "b": 861,
    "t0": 0,
-   "t1": 21,
+   "t1": 25,
    "line": "dancing."
   },
   {
    "shot": "S14",
-   "a": 740,
-   "b": 774,
+   "a": 861,
+   "b": 896,
    "t0": 0,
-   "t1": 34,
-   "line": "All by herself.",
+   "t1": 35,
+   "line": "All by her lonesome.",
    "cam": "pull"
   },
   {
    "shot": "S16",
-   "a": 774,
-   "b": 871,
+   "a": 896,
+   "b": 1005,
    "t0": 0,
-   "t1": 97,
-   "line": "No fiddler, no music, not a drop of wine in her."
+   "t1": 109,
+   "line": "No fiddler, no music, not one drop of moonshine in her."
   },
   {
    "shot": "S17",
-   "a": 871,
-   "b": 960,
+   "a": 1005,
+   "b": 1108,
    "t0": 0,
-   "t1": 89,
-   "line": "Just hopping around like something bit her. The looked",
+   "t1": 103,
+   "line": "Just hopping around like she sat on a hornet's nest. The peek",
    "tr": "zoom"
   },
   {
    "shot": "S18",
-   "a": 960,
-   "b": 1002,
+   "a": 1108,
+   "b": 1182,
    "t0": 0,
-   "t1": 42,
-   "line": "neighbours out and said, well,",
+   "t1": 74,
+   "line": "neighbours out the window and go: well, I reckon",
    "tr": "whip"
   },
   {
    "shot": "S19",
-   "a": 1002,
-   "b": 1093,
+   "a": 1182,
+   "b": 1281,
    "t0": 0,
-   "t1": 91,
-   "line": "her husband must have finally run off, and she's celebrating."
+   "t1": 99,
+   "line": "her husband finally ran off, and now she's celebrating."
   },
   {
    "shot": "S20",
-   "a": 1093,
-   "b": 1174,
+   "a": 1281,
+   "b": 1388,
    "t0": 0,
-   "t1": 81,
-   "line": "Except she didn't dance for five minutes. She",
+   "t1": 107,
+   "line": "Except she didn't dance for five minutes. No sir. She",
    "tr": "ghost"
   },
   {
    "shot": "S21",
-   "a": 1174,
-   "b": 1237,
+   "a": 1388,
+   "b": 1451,
    "t0": 0,
    "t1": 63,
-   "line": "danced day and night, no"
+   "line": "danced day and night. No"
   },
   {
    "shot": "S81",
-   "a": 1237,
-   "b": 1322,
+   "a": 1451,
+   "b": 1543,
    "t0": 0,
-   "t1": 85,
-   "line": "sleep, barely any food, for almost a whole",
+   "t1": 92,
+   "line": "sleep, hardly a bite to eat, for almost a whole",
    "tr": "zoom"
   },
   {
    "shot": "S22",
-   "a": 1322,
-   "b": 1343,
+   "a": 1543,
+   "b": 1564,
    "t0": 0,
    "t1": 21,
    "line": "week. Her"
   },
   {
    "shot": "S23",
-   "a": 1343,
-   "b": 1425,
+   "a": 1564,
+   "b": 1656,
    "t0": 0,
-   "t1": 82,
-   "line": "shoes fell apart. Her feet were bleeding. She was",
+   "t1": 92,
+   "line": "shoes fell to pieces. Her feet were bleeding. She was",
    "tr": "zoom"
   },
   {
    "shot": "S24",
-   "a": 1425,
-   "b": 1480,
+   "a": 1656,
+   "b": 1712,
    "t0": 0,
-   "t1": 55,
-   "line": "crying that she couldn't stop. But her",
+   "t1": 56,
+   "line": "bawling that she couldn't stop. But them",
    "cam": "push"
   },
   {
    "shot": "S25",
-   "a": 1480,
-   "b": 1578,
+   "a": 1712,
+   "b": 1776,
    "t0": 0,
-   "t1": 98,
-   "line": "legs just kept on going. And now comes the really",
+   "t1": 64,
+   "line": "legs just kept on going.",
    "tr": "zoom"
   },
   {
    "shot": "S80",
-   "a": 1578,
-   "b": 1622,
+   "a": 1776,
+   "b": 1869,
    "t0": 0,
-   "t1": 44,
-   "line": "creepy part. A few days",
+   "t1": 93,
+   "line": "And here comes the part that'll curl your toes. A few days",
    "tr": "flash"
   },
   {
    "shot": "S26",
-   "a": 1622,
-   "b": 1681,
+   "a": 1869,
+   "b": 1924,
    "t0": 0,
-   "t1": 59,
-   "line": "later, other people started dancing"
+   "t1": 55,
+   "line": "later, other folks started hopping"
   },
   {
    "shot": "S84",
-   "a": 1681,
-   "b": 1777,
+   "a": 1924,
+   "b": 2019,
    "t0": 0,
-   "t1": 96,
-   "line": "right next to her. Within a week there were more than",
+   "t1": 95,
+   "line": "right next to her. Within a week, there were more than",
    "tr": "zoom"
   },
   {
    "shot": "S27",
-   "a": 1777,
-   "b": 1793,
+   "a": 2019,
+   "b": 2034,
    "t0": 0,
-   "t1": 16,
-   "line": "thirty. And within a"
+   "t1": 15,
+   "line": "thirty. And within"
   },
   {
    "shot": "S28",
-   "a": 1793,
-   "b": 1903,
+   "a": 2034,
+   "b": 2140,
    "t0": 0,
-   "t1": 110,
-   "line": "month, some say four hundred folks were jumping around the town",
+   "t1": 106,
+   "line": "a month, some say four hundred people were jumping around that town",
    "cam": "dive"
   },
   {
    "shot": "S29",
-   "a": 1903,
-   "b": 1930,
+   "a": 2140,
+   "b": 2169,
    "t0": 0,
-   "t1": 27,
+   "t1": 29,
    "line": "square, like a",
    "tr": "zoom"
   },
   {
    "shot": "S71",
-   "a": 1930,
-   "b": 1967,
+   "a": 2169,
+   "b": 2219,
    "t0": 0,
-   "t1": 37,
-   "line": "madhouse. And",
+   "t1": 50,
+   "line": "barn full of loons. And",
    "cam": "static"
   },
   {
    "shot": "S30",
-   "a": 1967,
-   "b": 2026,
+   "a": 2219,
+   "b": 2268,
    "t0": 0,
-   "t1": 59,
-   "line": "buddy, they were not dancing because"
+   "t1": 49,
+   "line": "buddy, they weren't dancing 'cause"
   },
   {
    "shot": "S72",
-   "a": 2026,
-   "b": 2078,
+   "a": 2268,
+   "b": 2321,
    "t0": 0,
-   "t1": 52,
-   "line": "bread got cheaper. They were",
+   "t1": 53,
+   "line": "the price of bread went down. They were",
    "tr": "whip"
   },
   {
    "shot": "S31",
-   "a": 2078,
-   "b": 2102,
+   "a": 2321,
+   "b": 2342,
    "t0": 0,
-   "t1": 24,
-   "line": "screaming,",
+   "t1": 21,
+   "line": "hollering,",
    "tr": "flash"
   },
   {
    "shot": "S32",
-   "a": 2102,
-   "b": 2143,
+   "a": 2342,
+   "b": 2382,
    "t0": 0,
-   "t1": 41,
+   "t1": 40,
    "line": "begging for help. But their"
   },
   {
    "shot": "S33",
-   "a": 2143,
-   "b": 2220,
+   "a": 2382,
+   "b": 2465,
    "t0": 0,
-   "t1": 77,
-   "line": "arms and legs were moving all on their own, like the",
+   "t1": 83,
+   "line": "arms and legs were flapping all on their own, like the",
    "tr": "zoom"
   },
   {
    "shot": "S73",
-   "a": 2220,
-   "b": 2288,
+   "a": 2465,
+   "b": 2532,
    "t0": 0,
-   "t1": 68,
-   "line": "devil himself got into them. And you know what",
+   "t1": 67,
+   "line": "devil himself had moved in. And you know what",
    "cam": "rise"
   },
   {
    "shot": "S34",
-   "a": 2288,
-   "b": 2343,
+   "a": 2532,
+   "b": 2616,
    "t0": 0,
-   "t1": 55,
-   "line": "the doctors and the city council did, to",
+   "t1": 84,
+   "line": "the doctors and the big shots at city hall came up with, to",
    "tr": "flash"
   },
   {
    "shot": "S35",
-   "a": 2343,
-   "b": 2378,
+   "a": 2616,
+   "b": 2650,
    "t0": 0,
-   "t1": 35,
-   "line": "cure them? They said the"
+   "t1": 34,
+   "line": "fix it? They said the"
   },
   {
    "shot": "S37",
-   "a": 2378,
-   "b": 2460,
+   "a": 2650,
+   "b": 2728,
    "t0": 0,
-   "t1": 82,
-   "line": "only cure was to let them dance, until the"
+   "t1": 78,
+   "line": "only cure was to let 'em dance, till the"
   },
   {
    "shot": "S85",
-   "a": 2460,
-   "b": 2528,
+   "a": 2728,
+   "b": 2798,
    "t0": 0,
-   "t1": 68,
-   "line": "sickness came out of their bones. So they",
+   "t1": 70,
+   "line": "sickness shook right out of their bones. So",
    "tr": "zoom"
   },
   {
    "shot": "S38",
-   "a": 2528,
-   "b": 2589,
+   "a": 2798,
+   "b": 2859,
    "t0": 0,
    "t1": 61,
-   "line": "built a big wooden stage, and paid",
+   "line": "they built a big wooden stage, and paid",
    "tr": "whip"
   },
   {
    "shot": "S39",
-   "a": 2589,
-   "b": 2614,
+   "a": 2859,
+   "b": 2883,
    "t0": 0,
-   "t1": 25,
+   "t1": 24,
    "line": "musicians with"
   },
   {
    "shot": "S70",
-   "a": 2614,
-   "b": 2670,
+   "a": 2883,
+   "b": 2937,
    "t0": 0,
-   "t1": 56,
+   "t1": 54,
    "line": "drums and pipes to play",
    "tr": "zoom"
   },
   {
    "shot": "S40",
-   "a": 2670,
-   "b": 2736,
+   "a": 2937,
+   "b": 2982,
    "t0": 0,
-   "t1": 66,
-   "line": "non- stop, to keep them in rhythm. Now how",
+   "t1": 45,
+   "line": "non- stop, to keep 'em in rhythm.",
    "cam": "dive"
   },
   {
    "shot": "S79",
-   "a": 2736,
-   "b": 2799,
+   "a": 2982,
+   "b": 3074,
    "t0": 0,
-   "t1": 63,
-   "line": "dumb can you be? That's like watching your",
+   "t1": 92,
+   "line": "Lord, how dumb can you be? That's like watching your",
    "tr": "flash"
   },
   {
    "shot": "S42",
-   "a": 2799,
-   "b": 2849,
+   "a": 3074,
+   "b": 3123,
    "t0": 0,
-   "t1": 50,
+   "t1": 49,
    "line": "barn burn down, and throwing more"
   },
   {
    "shot": "S43",
-   "a": 2849,
-   "b": 2949,
+   "a": 3123,
+   "b": 3233,
    "t0": 0,
-   "t1": 100,
-   "line": "wood on it, so the fire finishes faster. Of course, it was",
+   "t1": 110,
+   "line": "firewood on it, so the fire gets done quicker. Well of course, it went",
    "tr": "zoom"
   },
   {
    "shot": "S44",
-   "a": 2949,
-   "b": 3000,
+   "a": 3233,
+   "b": 3271,
    "t0": 0,
-   "t1": 51,
-   "line": "a disaster. In the summer"
+   "t1": 38,
+   "line": "south. In that summer"
   },
   {
    "shot": "S45",
-   "a": 3000,
-   "b": 3079,
+   "a": 3271,
+   "b": 3362,
    "t0": 0,
-   "t1": 79,
-   "line": "heat, starving and worn out, people started",
+   "t1": 91,
+   "line": "heat, starving and worn to the bone, people started",
    "tr": "ghost"
   },
   {
    "shot": "S46",
-   "a": 3079,
-   "b": 3121,
+   "a": 3362,
+   "b": 3407,
    "t0": 0,
-   "t1": 42,
+   "t1": 45,
    "line": "dropping like flies."
   },
   {
    "shot": "S47",
-   "a": 3121,
-   "b": 3227,
+   "a": 3407,
+   "b": 3509,
    "t0": 0,
-   "t1": 106,
+   "t1": 102,
    "line": "Chroniclers wrote that some of them died. One even claimed",
    "tr": "ghost"
   },
   {
    "shot": "S48",
-   "a": 3227,
-   "b": 3252,
+   "a": 3509,
+   "b": 3533,
    "t0": 0,
-   "t1": 25,
+   "t1": 24,
    "line": "fifteen a day, though"
   },
   {
    "shot": "S49",
-   "a": 3252,
-   "b": 3326,
+   "a": 3533,
+   "b": 3605,
    "t0": 0,
-   "t1": 74,
+   "t1": 72,
    "line": "historians still argue about that number. But",
    "tr": "whip"
   },
   {
    "shot": "S50",
-   "a": 3326,
-   "b": 3418,
+   "a": 3605,
+   "b": 3687,
    "t0": 0,
-   "t1": 92,
-   "line": "why on earth did this happen? There are two big",
+   "t1": 82,
+   "line": "why in tarnation did this happen? There are two big",
    "tr": "flash"
   },
   {
    "shot": "S74",
-   "a": 3418,
-   "b": 3474,
+   "a": 3687,
+   "b": 3744,
    "t0": 0,
-   "t1": 56,
-   "line": "theories. First: their"
+   "t1": 57,
+   "line": "theories. Number one: their"
   },
   {
    "shot": "S51",
-   "a": 3474,
-   "b": 3545,
+   "a": 3744,
+   "b": 3811,
    "t0": 0,
-   "t1": 71,
-   "line": "rye bread might have been spoiled by a poison",
+   "t1": 67,
+   "line": "rye bread might've been rotten with a poison",
    "tr": "zoom"
   },
   {
    "shot": "S52",
-   "a": 3545,
-   "b": 3636,
+   "a": 3811,
+   "b": 3900,
    "t0": 0,
-   "t1": 91,
-   "line": "fungus, called ergot. That fungus holds the same",
+   "t1": 89,
+   "line": "fungus, called ergot. That fungus carries the same",
    "tr": "zoom"
   },
   {
    "shot": "S53",
-   "a": 3636,
-   "b": 3666,
+   "a": 3900,
+   "b": 3930,
    "t0": 0,
    "t1": 30,
-   "line": "stuff they make"
+   "line": "stuff they cook"
   },
   {
    "shot": "S54",
-   "a": 3666,
-   "b": 3786,
+   "a": 3930,
+   "b": 4046,
    "t0": 0,
-   "t1": 120,
-   "line": "L S D from today. It gives you spasms and hallucinations, like seeing",
+   "t1": 116,
+   "line": "L S D from today. Gives you spasms and hallucinations, like seeing",
    "tr": "flash"
   },
   {
    "shot": "S75",
-   "a": 3786,
-   "b": 3833,
+   "a": 4046,
+   "b": 4099,
    "t0": 0,
-   "t1": 47,
-   "line": "devils on the walls."
+   "t1": 53,
+   "line": "devils dancing on the walls."
   },
   {
    "shot": "S55",
-   "a": 3833,
-   "b": 3933,
+   "a": 4099,
+   "b": 4146,
    "t0": 0,
-   "t1": 100,
-   "line": "Second, and most historians like this one: those people were",
+   "t1": 47,
+   "line": "Number two, and most",
    "tr": "whip"
   },
   {
-   "shot": "S56",
-   "a": 3933,
-   "b": 4031,
+   "shot": "S91",
+   "a": 4146,
+   "b": 4224,
    "t0": 0,
-   "t1": 98,
-   "line": "starving, scared to death, and they truly believed"
+   "t1": 78,
+   "line": "historians bet on this one: those folks were",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S56",
+   "a": 4224,
+   "b": 4336,
+   "t0": 0,
+   "t1": 112,
+   "line": "starving, scared half to death, and they truly believed"
   },
   {
    "shot": "S57",
-   "a": 4031,
-   "b": 4069,
+   "a": 4336,
+   "b": 4373,
    "t0": 0,
-   "t1": 38,
+   "t1": 37,
    "line": "Saint Vitus could curse you to",
    "tr": "ghost"
   },
   {
    "shot": "S58",
-   "a": 4069,
-   "b": 4140,
+   "a": 4373,
+   "b": 4438,
    "t0": 0,
-   "t1": 71,
-   "line": "dance until you dropped. So between the",
+   "t1": 65,
+   "line": "dance till you dropped. So between the",
    "tr": "zoom"
   },
   {
    "shot": "S59",
-   "a": 4140,
-   "b": 4230,
+   "a": 4438,
+   "b": 4518,
    "t0": 0,
-   "t1": 90,
-   "line": "bad bread and all that fear, their minds just"
+   "t1": 80,
+   "line": "bad bread and all that fear, they lost their"
   },
   {
    "shot": "S76",
-   "a": 4230,
-   "b": 4284,
+   "a": 4518,
+   "b": 4568,
    "t0": 0,
-   "t1": 54,
-   "line": "snapped, and they hopped around for",
+   "t1": 50,
+   "line": "plumb marbles, and hopped around for",
    "tr": "flash"
   },
   {
    "shot": "S66",
-   "a": 4284,
-   "b": 4340,
+   "a": 4568,
+   "b": 4623,
    "t0": 0,
-   "t1": 56,
+   "t1": 55,
    "line": "two whole months. In the"
   },
   {
    "shot": "S61",
-   "a": 4340,
-   "b": 4409,
+   "a": 4623,
+   "b": 4700,
    "t0": 0,
-   "t1": 69,
-   "line": "end, they hauled the dancers up to a mountain",
+   "t1": 77,
+   "line": "end, they hauled the dancers up a mountain, to",
    "tr": "ghost"
   },
   {
    "shot": "S62",
-   "a": 4409,
-   "b": 4482,
+   "a": 4700,
+   "b": 4768,
    "t0": 0,
-   "t1": 73,
-   "line": "shrine of Saint Vitus, to pray. And",
+   "t1": 68,
+   "line": "a shrine of Saint Vitus, to pray. And",
    "cam": "dive"
   },
   {
    "shot": "S63",
-   "a": 4482,
-   "b": 4539,
+   "a": 4768,
+   "b": 4811,
    "t0": 0,
-   "t1": 57,
-   "line": "slowly, it stopped. So",
+   "t1": 43,
+   "line": "slowly, it stopped.",
    "tr": "ghost"
   },
   {
+   "shot": "S87",
+   "a": 4811,
+   "b": 4842,
+   "t0": 0,
+   "t1": 31,
+   "line": "You get it, buddy?",
+   "tr": "flash"
+  },
+  {
+   "shot": "S88",
+   "a": 4842,
+   "b": 4882,
+   "t0": 0,
+   "t1": 40,
+   "line": "I said, you get it?",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
    "shot": "S77",
-   "a": 4539,
-   "b": 4639,
+   "a": 4882,
+   "b": 4982,
    "t0": 0,
    "t1": 100,
-   "line": "next time you complain your feet hurt after two hours at a wedding,",
+   "line": "So next time you whine your feet hurt after two hours at a wedding,",
    "tr": "flash"
   },
   {
    "shot": "S65",
-   "a": 4639,
-   "b": 4722,
+   "a": 4982,
+   "b": 5063,
    "t0": 0,
-   "t1": 83,
-   "line": "think about those poor folks who danced for two months"
+   "t1": 81,
+   "line": "think about them poor souls who danced two months"
   },
   {
    "shot": "S78",
-   "a": 4722,
-   "b": 4738,
+   "a": 5063,
+   "b": 5118,
    "t0": 0,
-   "t1": 16,
-   "line": "straight."
+   "t1": 55,
+   "line": "straight, some of 'em all the way to the"
+  },
+  {
+   "shot": "S89",
+   "a": 5118,
+   "b": 5148,
+   "t0": 0,
+   "t1": 30,
+   "line": "graveyard.",
+   "tr": "ghost"
   },
   {
    "shot": "S67",
-   "a": 4738,
-   "b": 4763,
+   "a": 5148,
+   "b": 5189,
    "t0": 0,
-   "t1": 25,
-   "line": "That's real.",
+   "t1": 41,
+   "line": "That's real. That's",
    "tr": "zoom"
   },
   {
    "shot": "S68",
-   "a": 4763,
-   "b": 4787,
+   "a": 5189,
+   "b": 5243,
    "t0": 0,
-   "t1": 24,
-   "line": "Follow for more",
+   "t1": 54,
+   "line": "about it, folks. Follow for more",
    "tr": "flash"
   },
   {
    "shot": "S86",
-   "a": 4787,
-   "b": 4887,
+   "a": 5243,
+   "b": 5358,
    "t0": 0,
-   "t1": 100,
-   "line": "strange history."
+   "t1": 115,
+   "line": "strange history. See ya!"
   }
  ],
  "shots": [
@@ -693,17 +739,17 @@
    "id": "S2",
    "size": "story",
    "key": 30,
-   "len": 81,
+   "len": 76,
    "first": 0,
-   "line": "Four hundred people danced in the street, for",
+   "line": "Four hundred people danced in the street for",
    "note": "S2"
   },
   {
    "id": "S3",
    "size": "story",
    "key": 30,
-   "len": 22,
-   "first": 81,
+   "len": 19,
+   "first": 76,
    "line": "weeks,",
    "note": "S3"
   },
@@ -711,36 +757,45 @@
    "id": "S4",
    "size": "story",
    "key": 30,
-   "len": 14,
-   "first": 103,
-   "line": "until the",
+   "len": 10,
+   "first": 95,
+   "line": "till the",
    "note": "S4"
   },
   {
    "id": "S5",
    "size": "story",
    "key": 30,
-   "len": 57,
-   "first": 117,
-   "line": "blood ran out of their shoes.",
+   "len": 70,
+   "first": 105,
+   "line": "blood was squishing out of their shoes.",
    "note": "S5"
   },
   {
    "id": "S7",
    "size": "story",
    "key": 30,
-   "len": 97,
-   "first": 174,
-   "line": "And no, buddy, this ain't some bedtime story. It's in the",
+   "len": 59,
+   "first": 175,
+   "line": "Now hold on, buddy. This ain't some",
    "note": "S7"
+  },
+  {
+   "id": "S90",
+   "size": "story",
+   "key": 30,
+   "len": 68,
+   "first": 234,
+   "line": "tall tale to put the young'uns to sleep. It's",
+   "note": "S90"
   },
   {
    "id": "S8",
    "size": "story",
    "key": 30,
-   "len": 28,
-   "first": 271,
-   "line": "history books.",
+   "len": 61,
+   "first": 302,
+   "line": "written down in every history book.",
    "note": "S8"
   },
   {
@@ -748,7 +803,7 @@
    "size": "story",
    "key": 30,
    "len": 61,
-   "first": 299,
+   "first": 363,
    "line": "They called it the Dancing Plague.",
    "note": "S9"
   },
@@ -756,44 +811,44 @@
    "id": "S10",
    "size": "story",
    "key": 30,
-   "len": 65,
-   "first": 360,
-   "line": "Now listen to how this whole mess started.",
+   "len": 104,
+   "first": 424,
+   "line": "So sit tight, and listen how this whole circus got started.",
    "note": "S10"
   },
   {
    "id": "S1",
    "size": "story",
    "key": 30,
-   "len": 87,
-   "first": 425,
-   "line": "Strasbourg, the year fifteen eighteen. A",
+   "len": 81,
+   "first": 528,
+   "line": "Strasbourg, the year fifteen eighteen.",
    "note": "S1"
   },
   {
    "id": "S11",
    "size": "story",
    "key": 30,
-   "len": 60,
-   "first": 512,
-   "line": "normal summer day in July.",
+   "len": 62,
+   "first": 609,
+   "line": "Regular summer day in July.",
    "note": "S11"
   },
   {
    "id": "S12",
    "size": "story",
    "key": 30,
-   "len": 29,
-   "first": 572,
-   "line": "A woman named Frau",
+   "len": 28,
+   "first": 671,
+   "line": "A lady named Frau",
    "note": "S12"
   },
   {
    "id": "S13",
    "size": "story",
    "key": 30,
-   "len": 21,
-   "first": 601,
+   "len": 24,
+   "first": 699,
    "line": "Troffea",
    "note": "S13"
   },
@@ -801,17 +856,17 @@
    "id": "S69",
    "size": "story",
    "key": 30,
-   "len": 97,
-   "first": 622,
-   "line": "walks out of her house, right into the middle of the street, and starts",
+   "len": 113,
+   "first": 723,
+   "line": "busts out of her house, plants herself in the middle of the street, and starts",
    "note": "S69"
   },
   {
    "id": "S15",
    "size": "story",
    "key": 30,
-   "len": 21,
-   "first": 719,
+   "len": 25,
+   "first": 836,
    "line": "dancing.",
    "note": "S15"
   },
@@ -819,54 +874,54 @@
    "id": "S14",
    "size": "story",
    "key": 30,
-   "len": 34,
-   "first": 740,
-   "line": "All by herself.",
+   "len": 35,
+   "first": 861,
+   "line": "All by her lonesome.",
    "note": "S14"
   },
   {
    "id": "S16",
    "size": "story",
    "key": 30,
-   "len": 97,
-   "first": 774,
-   "line": "No fiddler, no music, not a drop of wine in her.",
+   "len": 109,
+   "first": 896,
+   "line": "No fiddler, no music, not one drop of moonshine in her.",
    "note": "S16"
   },
   {
    "id": "S17",
    "size": "story",
    "key": 30,
-   "len": 89,
-   "first": 871,
-   "line": "Just hopping around like something bit her. The looked",
+   "len": 103,
+   "first": 1005,
+   "line": "Just hopping around like she sat on a hornet's nest. The peek",
    "note": "S17"
   },
   {
    "id": "S18",
    "size": "story",
    "key": 30,
-   "len": 42,
-   "first": 960,
-   "line": "neighbours out and said, well,",
+   "len": 74,
+   "first": 1108,
+   "line": "neighbours out the window and go: well, I reckon",
    "note": "S18"
   },
   {
    "id": "S19",
    "size": "story",
    "key": 30,
-   "len": 91,
-   "first": 1002,
-   "line": "her husband must have finally run off, and she's celebrating.",
+   "len": 99,
+   "first": 1182,
+   "line": "her husband finally ran off, and now she's celebrating.",
    "note": "S19"
   },
   {
    "id": "S20",
    "size": "story",
    "key": 30,
-   "len": 81,
-   "first": 1093,
-   "line": "Except she didn't dance for five minutes. She",
+   "len": 107,
+   "first": 1281,
+   "line": "Except she didn't dance for five minutes. No sir. She",
    "note": "S20"
   },
   {
@@ -874,17 +929,17 @@
    "size": "story",
    "key": 30,
    "len": 63,
-   "first": 1174,
-   "line": "danced day and night, no",
+   "first": 1388,
+   "line": "danced day and night. No",
    "note": "S21"
   },
   {
    "id": "S81",
    "size": "story",
    "key": 30,
-   "len": 85,
-   "first": 1237,
-   "line": "sleep, barely any food, for almost a whole",
+   "len": 92,
+   "first": 1451,
+   "line": "sleep, hardly a bite to eat, for almost a whole",
    "note": "S81"
   },
   {
@@ -892,7 +947,7 @@
    "size": "story",
    "key": 30,
    "len": 21,
-   "first": 1322,
+   "first": 1543,
    "line": "week. Her",
    "note": "S22"
   },
@@ -900,80 +955,80 @@
    "id": "S23",
    "size": "story",
    "key": 30,
-   "len": 82,
-   "first": 1343,
-   "line": "shoes fell apart. Her feet were bleeding. She was",
+   "len": 92,
+   "first": 1564,
+   "line": "shoes fell to pieces. Her feet were bleeding. She was",
    "note": "S23"
   },
   {
    "id": "S24",
    "size": "story",
    "key": 30,
-   "len": 55,
-   "first": 1425,
-   "line": "crying that she couldn't stop. But her",
+   "len": 56,
+   "first": 1656,
+   "line": "bawling that she couldn't stop. But them",
    "note": "S24"
   },
   {
    "id": "S25",
    "size": "story",
    "key": 30,
-   "len": 98,
-   "first": 1480,
-   "line": "legs just kept on going. And now comes the really",
+   "len": 64,
+   "first": 1712,
+   "line": "legs just kept on going.",
    "note": "S25"
   },
   {
    "id": "S80",
    "size": "story",
    "key": 30,
-   "len": 44,
-   "first": 1578,
-   "line": "creepy part. A few days",
+   "len": 93,
+   "first": 1776,
+   "line": "And here comes the part that'll curl your toes. A few days",
    "note": "S80"
   },
   {
    "id": "S26",
    "size": "story",
    "key": 30,
-   "len": 59,
-   "first": 1622,
-   "line": "later, other people started dancing",
+   "len": 55,
+   "first": 1869,
+   "line": "later, other folks started hopping",
    "note": "S26"
   },
   {
    "id": "S84",
    "size": "story",
    "key": 30,
-   "len": 96,
-   "first": 1681,
-   "line": "right next to her. Within a week there were more than",
+   "len": 95,
+   "first": 1924,
+   "line": "right next to her. Within a week, there were more than",
    "note": "S84"
   },
   {
    "id": "S27",
    "size": "story",
    "key": 30,
-   "len": 16,
-   "first": 1777,
-   "line": "thirty. And within a",
+   "len": 15,
+   "first": 2019,
+   "line": "thirty. And within",
    "note": "S27"
   },
   {
    "id": "S28",
    "size": "story",
    "key": 30,
-   "len": 110,
-   "first": 1793,
-   "line": "month, some say four hundred folks were jumping around the town",
+   "len": 106,
+   "first": 2034,
+   "line": "a month, some say four hundred people were jumping around that town",
    "note": "S28"
   },
   {
    "id": "S29",
    "size": "story",
    "key": 30,
-   "len": 27,
-   "first": 1903,
+   "len": 29,
+   "first": 2140,
    "line": "square, like a",
    "note": "S29"
   },
@@ -981,44 +1036,44 @@
    "id": "S71",
    "size": "story",
    "key": 30,
-   "len": 37,
-   "first": 1930,
-   "line": "madhouse. And",
+   "len": 50,
+   "first": 2169,
+   "line": "barn full of loons. And",
    "note": "S71"
   },
   {
    "id": "S30",
    "size": "story",
    "key": 30,
-   "len": 59,
-   "first": 1967,
-   "line": "buddy, they were not dancing because",
+   "len": 49,
+   "first": 2219,
+   "line": "buddy, they weren't dancing 'cause",
    "note": "S30"
   },
   {
    "id": "S72",
    "size": "story",
    "key": 30,
-   "len": 52,
-   "first": 2026,
-   "line": "bread got cheaper. They were",
+   "len": 53,
+   "first": 2268,
+   "line": "the price of bread went down. They were",
    "note": "S72"
   },
   {
    "id": "S31",
    "size": "story",
    "key": 30,
-   "len": 24,
-   "first": 2078,
-   "line": "screaming,",
+   "len": 21,
+   "first": 2321,
+   "line": "hollering,",
    "note": "S31"
   },
   {
    "id": "S32",
    "size": "story",
    "key": 30,
-   "len": 41,
-   "first": 2102,
+   "len": 40,
+   "first": 2342,
    "line": "begging for help. But their",
    "note": "S32"
   },
@@ -1026,54 +1081,54 @@
    "id": "S33",
    "size": "story",
    "key": 30,
-   "len": 77,
-   "first": 2143,
-   "line": "arms and legs were moving all on their own, like the",
+   "len": 83,
+   "first": 2382,
+   "line": "arms and legs were flapping all on their own, like the",
    "note": "S33"
   },
   {
    "id": "S73",
    "size": "story",
    "key": 30,
-   "len": 68,
-   "first": 2220,
-   "line": "devil himself got into them. And you know what",
+   "len": 67,
+   "first": 2465,
+   "line": "devil himself had moved in. And you know what",
    "note": "S73"
   },
   {
    "id": "S34",
    "size": "story",
    "key": 30,
-   "len": 55,
-   "first": 2288,
-   "line": "the doctors and the city council did, to",
+   "len": 84,
+   "first": 2532,
+   "line": "the doctors and the big shots at city hall came up with, to",
    "note": "S34"
   },
   {
    "id": "S35",
    "size": "story",
    "key": 30,
-   "len": 35,
-   "first": 2343,
-   "line": "cure them? They said the",
+   "len": 34,
+   "first": 2616,
+   "line": "fix it? They said the",
    "note": "S35"
   },
   {
    "id": "S37",
    "size": "story",
    "key": 30,
-   "len": 82,
-   "first": 2378,
-   "line": "only cure was to let them dance, until the",
+   "len": 78,
+   "first": 2650,
+   "line": "only cure was to let 'em dance, till the",
    "note": "S37"
   },
   {
    "id": "S85",
    "size": "story",
    "key": 30,
-   "len": 68,
-   "first": 2460,
-   "line": "sickness came out of their bones. So they",
+   "len": 70,
+   "first": 2728,
+   "line": "sickness shook right out of their bones. So",
    "note": "S85"
   },
   {
@@ -1081,16 +1136,16 @@
    "size": "story",
    "key": 30,
    "len": 61,
-   "first": 2528,
-   "line": "built a big wooden stage, and paid",
+   "first": 2798,
+   "line": "they built a big wooden stage, and paid",
    "note": "S38"
   },
   {
    "id": "S39",
    "size": "story",
    "key": 30,
-   "len": 25,
-   "first": 2589,
+   "len": 24,
+   "first": 2859,
    "line": "musicians with",
    "note": "S39"
   },
@@ -1098,8 +1153,8 @@
    "id": "S70",
    "size": "story",
    "key": 30,
-   "len": 56,
-   "first": 2614,
+   "len": 54,
+   "first": 2883,
    "line": "drums and pipes to play",
    "note": "S70"
   },
@@ -1107,26 +1162,26 @@
    "id": "S40",
    "size": "story",
    "key": 30,
-   "len": 66,
-   "first": 2670,
-   "line": "non- stop, to keep them in rhythm. Now how",
+   "len": 45,
+   "first": 2937,
+   "line": "non- stop, to keep 'em in rhythm.",
    "note": "S40"
   },
   {
    "id": "S79",
    "size": "story",
    "key": 30,
-   "len": 63,
-   "first": 2736,
-   "line": "dumb can you be? That's like watching your",
+   "len": 92,
+   "first": 2982,
+   "line": "Lord, how dumb can you be? That's like watching your",
    "note": "S79"
   },
   {
    "id": "S42",
    "size": "story",
    "key": 30,
-   "len": 50,
-   "first": 2799,
+   "len": 49,
+   "first": 3074,
    "line": "barn burn down, and throwing more",
    "note": "S42"
   },
@@ -1134,35 +1189,35 @@
    "id": "S43",
    "size": "story",
    "key": 30,
-   "len": 100,
-   "first": 2849,
-   "line": "wood on it, so the fire finishes faster. Of course, it was",
+   "len": 110,
+   "first": 3123,
+   "line": "firewood on it, so the fire gets done quicker. Well of course, it went",
    "note": "S43"
   },
   {
    "id": "S44",
    "size": "story",
    "key": 30,
-   "len": 51,
-   "first": 2949,
-   "line": "a disaster. In the summer",
+   "len": 38,
+   "first": 3233,
+   "line": "south. In that summer",
    "note": "S44"
   },
   {
    "id": "S45",
    "size": "story",
    "key": 30,
-   "len": 79,
-   "first": 3000,
-   "line": "heat, starving and worn out, people started",
+   "len": 91,
+   "first": 3271,
+   "line": "heat, starving and worn to the bone, people started",
    "note": "S45"
   },
   {
    "id": "S46",
    "size": "story",
    "key": 30,
-   "len": 42,
-   "first": 3079,
+   "len": 45,
+   "first": 3362,
    "line": "dropping like flies.",
    "note": "S46"
   },
@@ -1170,8 +1225,8 @@
    "id": "S47",
    "size": "story",
    "key": 30,
-   "len": 106,
-   "first": 3121,
+   "len": 102,
+   "first": 3407,
    "line": "Chroniclers wrote that some of them died. One even claimed",
    "note": "S47"
   },
@@ -1179,8 +1234,8 @@
    "id": "S48",
    "size": "story",
    "key": 30,
-   "len": 25,
-   "first": 3227,
+   "len": 24,
+   "first": 3509,
    "line": "fifteen a day, though",
    "note": "S48"
   },
@@ -1188,8 +1243,8 @@
    "id": "S49",
    "size": "story",
    "key": 30,
-   "len": 74,
-   "first": 3252,
+   "len": 72,
+   "first": 3533,
    "line": "historians still argue about that number. But",
    "note": "S49"
   },
@@ -1197,36 +1252,36 @@
    "id": "S50",
    "size": "story",
    "key": 30,
-   "len": 92,
-   "first": 3326,
-   "line": "why on earth did this happen? There are two big",
+   "len": 82,
+   "first": 3605,
+   "line": "why in tarnation did this happen? There are two big",
    "note": "S50"
   },
   {
    "id": "S74",
    "size": "story",
    "key": 30,
-   "len": 56,
-   "first": 3418,
-   "line": "theories. First: their",
+   "len": 57,
+   "first": 3687,
+   "line": "theories. Number one: their",
    "note": "S74"
   },
   {
    "id": "S51",
    "size": "story",
    "key": 30,
-   "len": 71,
-   "first": 3474,
-   "line": "rye bread might have been spoiled by a poison",
+   "len": 67,
+   "first": 3744,
+   "line": "rye bread might've been rotten with a poison",
    "note": "S51"
   },
   {
    "id": "S52",
    "size": "story",
    "key": 30,
-   "len": 91,
-   "first": 3545,
-   "line": "fungus, called ergot. That fungus holds the same",
+   "len": 89,
+   "first": 3811,
+   "line": "fungus, called ergot. That fungus carries the same",
    "note": "S52"
   },
   {
@@ -1234,52 +1289,61 @@
    "size": "story",
    "key": 30,
    "len": 30,
-   "first": 3636,
-   "line": "stuff they make",
+   "first": 3900,
+   "line": "stuff they cook",
    "note": "S53"
   },
   {
    "id": "S54",
    "size": "story",
    "key": 30,
-   "len": 120,
-   "first": 3666,
-   "line": "L S D from today. It gives you spasms and hallucinations, like seeing",
+   "len": 116,
+   "first": 3930,
+   "line": "L S D from today. Gives you spasms and hallucinations, like seeing",
    "note": "S54"
   },
   {
    "id": "S75",
    "size": "story",
    "key": 30,
-   "len": 47,
-   "first": 3786,
-   "line": "devils on the walls.",
+   "len": 53,
+   "first": 4046,
+   "line": "devils dancing on the walls.",
    "note": "S75"
   },
   {
    "id": "S55",
    "size": "story",
    "key": 30,
-   "len": 100,
-   "first": 3833,
-   "line": "Second, and most historians like this one: those people were",
+   "len": 47,
+   "first": 4099,
+   "line": "Number two, and most",
    "note": "S55"
+  },
+  {
+   "id": "S91",
+   "size": "story",
+   "key": 30,
+   "len": 78,
+   "first": 4146,
+   "line": "historians bet on this one: those folks were",
+   "note": "S91"
   },
   {
    "id": "S56",
    "size": "story",
    "key": 30,
-   "len": 98,
-   "first": 3933,
-   "line": "starving, scared to death, and they truly believed",
+   "len": 112,
+   "first": 4224,
+   "line": "starving, scared half to death, and they truly believed",
    "note": "S56"
   },
   {
    "id": "S57",
    "size": "story",
    "key": 30,
-   "len": 38,
-   "first": 4031,
+   "len": 37,
+   "first": 4336,
    "line": "Saint Vitus could curse you to",
    "note": "S57"
   },
@@ -1287,35 +1351,35 @@
    "id": "S58",
    "size": "story",
    "key": 30,
-   "len": 71,
-   "first": 4069,
-   "line": "dance until you dropped. So between the",
+   "len": 65,
+   "first": 4373,
+   "line": "dance till you dropped. So between the",
    "note": "S58"
   },
   {
    "id": "S59",
    "size": "story",
    "key": 30,
-   "len": 90,
-   "first": 4140,
-   "line": "bad bread and all that fear, their minds just",
+   "len": 80,
+   "first": 4438,
+   "line": "bad bread and all that fear, they lost their",
    "note": "S59"
   },
   {
    "id": "S76",
    "size": "story",
    "key": 30,
-   "len": 54,
-   "first": 4230,
-   "line": "snapped, and they hopped around for",
+   "len": 50,
+   "first": 4518,
+   "line": "plumb marbles, and hopped around for",
    "note": "S76"
   },
   {
    "id": "S66",
    "size": "story",
    "key": 30,
-   "len": 56,
-   "first": 4284,
+   "len": 55,
+   "first": 4568,
    "line": "two whole months. In the",
    "note": "S66"
   },
@@ -1323,100 +1387,134 @@
    "id": "S61",
    "size": "story",
    "key": 30,
-   "len": 69,
-   "first": 4340,
-   "line": "end, they hauled the dancers up to a mountain",
+   "len": 77,
+   "first": 4623,
+   "line": "end, they hauled the dancers up a mountain, to",
    "note": "S61"
   },
   {
    "id": "S62",
    "size": "story",
    "key": 30,
-   "len": 73,
-   "first": 4409,
-   "line": "shrine of Saint Vitus, to pray. And",
+   "len": 68,
+   "first": 4700,
+   "line": "a shrine of Saint Vitus, to pray. And",
    "note": "S62"
   },
   {
    "id": "S63",
    "size": "story",
    "key": 30,
-   "len": 57,
-   "first": 4482,
-   "line": "slowly, it stopped. So",
+   "len": 43,
+   "first": 4768,
+   "line": "slowly, it stopped.",
    "note": "S63"
+  },
+  {
+   "id": "S87",
+   "size": "story",
+   "key": 30,
+   "len": 31,
+   "first": 4811,
+   "line": "You get it, buddy?",
+   "note": "S87"
+  },
+  {
+   "id": "S88",
+   "size": "story",
+   "key": 30,
+   "len": 40,
+   "first": 4842,
+   "line": "I said, you get it?",
+   "note": "S88"
   },
   {
    "id": "S77",
    "size": "story",
    "key": 30,
    "len": 100,
-   "first": 4539,
-   "line": "next time you complain your feet hurt after two hours at a wedding,",
+   "first": 4882,
+   "line": "So next time you whine your feet hurt after two hours at a wedding,",
    "note": "S77"
   },
   {
    "id": "S65",
    "size": "story",
    "key": 30,
-   "len": 83,
-   "first": 4639,
-   "line": "think about those poor folks who danced for two months",
+   "len": 81,
+   "first": 4982,
+   "line": "think about them poor souls who danced two months",
    "note": "S65"
   },
   {
    "id": "S78",
    "size": "story",
    "key": 30,
-   "len": 16,
-   "first": 4722,
-   "line": "straight.",
+   "len": 55,
+   "first": 5063,
+   "line": "straight, some of 'em all the way to the",
    "note": "S78"
+  },
+  {
+   "id": "S89",
+   "size": "story",
+   "key": 30,
+   "len": 30,
+   "first": 5118,
+   "line": "graveyard.",
+   "note": "S89"
   },
   {
    "id": "S67",
    "size": "story",
    "key": 30,
-   "len": 25,
-   "first": 4738,
-   "line": "That's real.",
+   "len": 41,
+   "first": 5148,
+   "line": "That's real. That's",
    "note": "S67"
   },
   {
    "id": "S68",
    "size": "story",
    "key": 30,
-   "len": 24,
-   "first": 4763,
-   "line": "Follow for more",
+   "len": 54,
+   "first": 5189,
+   "line": "about it, folks. Follow for more",
    "note": "S68"
   },
   {
    "id": "S86",
    "size": "story",
    "key": 30,
-   "len": 100,
-   "first": 4787,
-   "line": "strange history.",
+   "len": 115,
+   "first": 5243,
+   "line": "strange history. See ya!",
    "note": "S86"
   }
  ],
  "fx": [
   {
-   "kind": "punch",
-   "amp": 0.08,
-   "f": 6
+   "kind": "flash",
+   "color": "#E8F0FF",
+   "o": 0.85,
+   "f": 1
+  },
+  {
+   "kind": "flash",
+   "color": "#E8F0FF",
+   "o": 0.6,
+   "f": 7
   },
   {
    "kind": "shake",
-   "len": 6,
-   "amp": 4,
-   "f": 2
+   "len": 10,
+   "amp": 7,
+   "f": 1
   },
   {
    "kind": "rewind",
    "len": 26,
-   "f": 362
+   "f": 426
   },
   {
    "kind": "iris",
@@ -1424,100 +1522,105 @@
    "y": 1150,
    "r": 230,
    "len": 45,
-   "f": 746
+   "f": 867
   },
   {
    "kind": "punch",
-   "f": 1803
+   "f": 2045
   },
   {
    "kind": "punch",
    "amp": 0.1,
-   "f": 1835
+   "f": 2076
   },
   {
    "kind": "bloom",
    "color": "#FFB13A",
    "o": 0.7,
-   "f": 1835
+   "f": 2076
   },
   {
    "kind": "shake",
    "len": 10,
    "amp": 6,
-   "f": 1933
+   "f": 2172
   },
   {
    "kind": "bloom",
    "color": "#FF3A2A",
    "o": 0.8,
-   "f": 2224
+   "f": 2469
   },
   {
    "kind": "punch",
    "amp": 0.09,
-   "f": 2738
+   "f": 2984
   },
   {
    "kind": "bloom",
    "color": "#FF8A1A",
    "o": 0.9,
    "len": 22,
-   "f": 2855
+   "f": 3129
   },
   {
    "kind": "shake",
    "len": 10,
    "amp": 7,
-   "f": 2951
+   "f": 3235
   },
   {
    "kind": "shake",
    "len": 8,
    "amp": 6,
-   "f": 3093
+   "f": 3376
   },
   {
    "kind": "punch",
-   "f": 3230
+   "f": 3512
   },
   {
    "kind": "flash",
    "color": "#FFFFFF",
    "o": 0.6,
-   "f": 3668
+   "f": 3932
   },
   {
    "kind": "bloom",
    "color": "#FF7AE0",
    "o": 0.7,
-   "f": 3668
+   "f": 3932
   },
   {
    "kind": "punch",
    "amp": 0.1,
-   "f": 4233
+   "f": 4521
   },
   {
    "kind": "bloom",
    "color": "#FFE27A",
    "o": 0.8,
-   "f": 4233
+   "f": 4521
   },
   {
    "kind": "punch",
-   "f": 4287
+   "f": 4571
   },
   {
    "kind": "punch",
    "amp": 0.06,
-   "f": 4741
+   "f": 5151
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 4845
   }
  ],
  "audio": {
   "voiceVol": 0.8,
-  "sfxVol": 0.1473,
-  "musicVol": 0.0697,
+  "sfxVol": 0.1791,
+  "musicVol": 0.0673,
   "voice": "dancing-plague/voice.wav",
   "sfx": "dancing-plague/sfx.wav",
   "music": "dancing-plague/music.wav"
