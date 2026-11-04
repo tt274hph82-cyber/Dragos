@@ -1,0 +1,1228 @@
+{
+ "slug": "dancing-plague",
+ "title": "THE DANCING PLAGUE",
+ "fps": 30,
+ "total": 3902,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 77,
+   "t0": 0,
+   "t1": 77,
+   "line": "Strasbourg, 1518."
+  },
+  {
+   "shot": "S2",
+   "a": 77,
+   "b": 164,
+   "t0": 0,
+   "t1": 87,
+   "line": "Four hundred people danced in the streets, for"
+  },
+  {
+   "shot": "S3",
+   "a": 164,
+   "b": 189,
+   "t0": 0,
+   "t1": 25,
+   "line": "weeks."
+  },
+  {
+   "shot": "S4",
+   "a": 189,
+   "b": 239,
+   "t0": 0,
+   "t1": 50,
+   "line": "Their shoes wore through. Their"
+  },
+  {
+   "shot": "S5",
+   "a": 239,
+   "b": 266,
+   "t0": 0,
+   "t1": 27,
+   "line": "feet bled."
+  },
+  {
+   "shot": "S6",
+   "a": 266,
+   "b": 318,
+   "t0": 0,
+   "t1": 52,
+   "line": "And they could not stop."
+  },
+  {
+   "shot": "S7",
+   "a": 318,
+   "b": 377,
+   "t0": 0,
+   "t1": 59,
+   "line": "This isn't a bedtime story. It's in"
+  },
+  {
+   "shot": "S8",
+   "a": 377,
+   "b": 405,
+   "t0": 0,
+   "t1": 28,
+   "line": "the history books."
+  },
+  {
+   "shot": "S9",
+   "a": 405,
+   "b": 418,
+   "t0": 0,
+   "t1": 13,
+   "line": "They called"
+  },
+  {
+   "shot": "S10",
+   "a": 418,
+   "b": 539,
+   "t0": 0,
+   "t1": 121,
+   "line": "it the Dancing Plague. It started on a normal summer day, in"
+  },
+  {
+   "shot": "S11",
+   "a": 539,
+   "b": 567,
+   "t0": 0,
+   "t1": 28,
+   "line": "July."
+  },
+  {
+   "shot": "S12",
+   "a": 567,
+   "b": 596,
+   "t0": 0,
+   "t1": 29,
+   "line": "A woman named Frau"
+  },
+  {
+   "shot": "S13",
+   "a": 596,
+   "b": 619,
+   "t0": 0,
+   "t1": 23,
+   "line": "Troffea"
+  },
+  {
+   "shot": "S69",
+   "a": 619,
+   "b": 668,
+   "t0": 0,
+   "t1": 49,
+   "line": "walked out of her house, into"
+  },
+  {
+   "shot": "S14",
+   "a": 668,
+   "b": 718,
+   "t0": 0,
+   "t1": 50,
+   "line": "the middle of the street, and started to"
+  },
+  {
+   "shot": "S15",
+   "a": 718,
+   "b": 743,
+   "t0": 0,
+   "t1": 25,
+   "line": "dance."
+  },
+  {
+   "shot": "S16",
+   "a": 743,
+   "b": 829,
+   "t0": 0,
+   "t1": 86,
+   "line": "No music. No band. No wine."
+  },
+  {
+   "shot": "S17",
+   "a": 829,
+   "b": 874,
+   "t0": 0,
+   "t1": 45,
+   "line": "Just dancing. The"
+  },
+  {
+   "shot": "S18",
+   "a": 874,
+   "b": 913,
+   "t0": 0,
+   "t1": 39,
+   "line": "neighbours laughed. Maybe her"
+  },
+  {
+   "shot": "S19",
+   "a": 913,
+   "b": 993,
+   "t0": 0,
+   "t1": 80,
+   "line": "husband had finally left, and she was celebrating."
+  },
+  {
+   "shot": "S20",
+   "a": 993,
+   "b": 1066,
+   "t0": 0,
+   "t1": 73,
+   "line": "But she didn't dance for five minutes. She"
+  },
+  {
+   "shot": "S21",
+   "a": 1066,
+   "b": 1136,
+   "t0": 0,
+   "t1": 70,
+   "line": "danced day and night, for almost a"
+  },
+  {
+   "shot": "S22",
+   "a": 1136,
+   "b": 1158,
+   "t0": 0,
+   "t1": 22,
+   "line": "week. Her"
+  },
+  {
+   "shot": "S23",
+   "a": 1158,
+   "b": 1223,
+   "t0": 0,
+   "t1": 65,
+   "line": "shoes split. Her feet bled. She"
+  },
+  {
+   "shot": "S24",
+   "a": 1223,
+   "b": 1283,
+   "t0": 0,
+   "t1": 60,
+   "line": "cried that she couldn't stop. But her"
+  },
+  {
+   "shot": "S25",
+   "a": 1283,
+   "b": 1321,
+   "t0": 0,
+   "t1": 38,
+   "line": "legs kept going."
+  },
+  {
+   "shot": "S26",
+   "a": 1321,
+   "b": 1400,
+   "t0": 0,
+   "t1": 79,
+   "line": "And then, it spread. Within a week,"
+  },
+  {
+   "shot": "S27",
+   "a": 1400,
+   "b": 1464,
+   "t0": 0,
+   "t1": 64,
+   "line": "thirty more people had joined her. Within"
+  },
+  {
+   "shot": "S28",
+   "a": 1464,
+   "b": 1555,
+   "t0": 0,
+   "t1": 91,
+   "line": "a month, some accounts say four hundred were dancing in"
+  },
+  {
+   "shot": "S29",
+   "a": 1555,
+   "b": 1582,
+   "t0": 0,
+   "t1": 27,
+   "line": "the square. And"
+  },
+  {
+   "shot": "S30",
+   "a": 1582,
+   "b": 1634,
+   "t0": 0,
+   "t1": 52,
+   "line": "nobody was having fun. They"
+  },
+  {
+   "shot": "S31",
+   "a": 1634,
+   "b": 1664,
+   "t0": 0,
+   "t1": 30,
+   "line": "screamed. They"
+  },
+  {
+   "shot": "S32",
+   "a": 1664,
+   "b": 1708,
+   "t0": 0,
+   "t1": 44,
+   "line": "begged for help. But their"
+  },
+  {
+   "shot": "S33",
+   "a": 1708,
+   "b": 1791,
+   "t0": 0,
+   "t1": 83,
+   "line": "arms and legs kept moving on their own. So what did"
+  },
+  {
+   "shot": "S34",
+   "a": 1791,
+   "b": 1870,
+   "t0": 0,
+   "t1": 79,
+   "line": "the doctors and the city council do? They said the only"
+  },
+  {
+   "shot": "S35",
+   "a": 1870,
+   "b": 1901,
+   "t0": 0,
+   "t1": 31,
+   "line": "cure was more"
+  },
+  {
+   "shot": "S36",
+   "a": 1901,
+   "b": 1928,
+   "t0": 0,
+   "t1": 27,
+   "line": "dancing."
+  },
+  {
+   "shot": "S37",
+   "a": 1928,
+   "b": 1971,
+   "t0": 0,
+   "t1": 43,
+   "line": "Let them dance it out. So"
+  },
+  {
+   "shot": "S38",
+   "a": 1971,
+   "b": 2022,
+   "t0": 0,
+   "t1": 51,
+   "line": "they built a wooden stage, and paid"
+  },
+  {
+   "shot": "S39",
+   "a": 2022,
+   "b": 2049,
+   "t0": 0,
+   "t1": 27,
+   "line": "musicians with"
+  },
+  {
+   "shot": "S70",
+   "a": 2049,
+   "b": 2083,
+   "t0": 0,
+   "t1": 34,
+   "line": "drums and pipes to"
+  },
+  {
+   "shot": "S40",
+   "a": 2083,
+   "b": 2129,
+   "t0": 0,
+   "t1": 46,
+   "line": "play, day and night."
+  },
+  {
+   "shot": "S41",
+   "a": 2129,
+   "b": 2183,
+   "t0": 0,
+   "t1": 54,
+   "line": "Think about that. That's like seeing your"
+  },
+  {
+   "shot": "S42",
+   "a": 2183,
+   "b": 2234,
+   "t0": 0,
+   "t1": 51,
+   "line": "barn on fire, and throwing more"
+  },
+  {
+   "shot": "S43",
+   "a": 2234,
+   "b": 2307,
+   "t0": 0,
+   "t1": 73,
+   "line": "wood on it, so it burns out faster. Of"
+  },
+  {
+   "shot": "S44",
+   "a": 2307,
+   "b": 2364,
+   "t0": 0,
+   "t1": 57,
+   "line": "course, it went badly. In the summer"
+  },
+  {
+   "shot": "S45",
+   "a": 2364,
+   "b": 2432,
+   "t0": 0,
+   "t1": 68,
+   "line": "heat, starving and exhausted, people"
+  },
+  {
+   "shot": "S46",
+   "a": 2432,
+   "b": 2467,
+   "t0": 0,
+   "t1": 35,
+   "line": "began to collapse."
+  },
+  {
+   "shot": "S47",
+   "a": 2467,
+   "b": 2557,
+   "t0": 0,
+   "t1": 90,
+   "line": "Chroniclers wrote that some of them died. One even claimed"
+  },
+  {
+   "shot": "S48",
+   "a": 2557,
+   "b": 2600,
+   "t0": 0,
+   "t1": 43,
+   "line": "fifteen a day, though"
+  },
+  {
+   "shot": "S49",
+   "a": 2600,
+   "b": 2660,
+   "t0": 0,
+   "t1": 60,
+   "line": "historians still argue about it. So"
+  },
+  {
+   "shot": "S50",
+   "a": 2660,
+   "b": 2735,
+   "t0": 0,
+   "t1": 75,
+   "line": "why did it happen? One idea: their"
+  },
+  {
+   "shot": "S51",
+   "a": 2735,
+   "b": 2784,
+   "t0": 0,
+   "t1": 49,
+   "line": "rye bread was poisoned by"
+  },
+  {
+   "shot": "S52",
+   "a": 2784,
+   "b": 2859,
+   "t0": 0,
+   "t1": 75,
+   "line": "a fungus called ergot. Ergot contains"
+  },
+  {
+   "shot": "S53",
+   "a": 2859,
+   "b": 2899,
+   "t0": 0,
+   "t1": 40,
+   "line": "a chemical related to"
+  },
+  {
+   "shot": "S54",
+   "a": 2899,
+   "b": 3008,
+   "t0": 0,
+   "t1": 109,
+   "line": "L S D. It causes spasms and wild hallucinations."
+  },
+  {
+   "shot": "S55",
+   "a": 3008,
+   "b": 3105,
+   "t0": 0,
+   "t1": 97,
+   "line": "But most historians favour the second idea. The people were"
+  },
+  {
+   "shot": "S56",
+   "a": 3105,
+   "b": 3186,
+   "t0": 0,
+   "t1": 81,
+   "line": "starving and terrified, and they believed Saint"
+  },
+  {
+   "shot": "S57",
+   "a": 3186,
+   "b": 3226,
+   "t0": 0,
+   "t1": 40,
+   "line": "Vitus could curse you to"
+  },
+  {
+   "shot": "S58",
+   "a": 3226,
+   "b": 3273,
+   "t0": 0,
+   "t1": 47,
+   "line": "dance until you dropped."
+  },
+  {
+   "shot": "S59",
+   "a": 3273,
+   "b": 3361,
+   "t0": 0,
+   "t1": 88,
+   "line": "Fear spread like a disease. Today we call it"
+  },
+  {
+   "shot": "S60",
+   "a": 3361,
+   "b": 3411,
+   "t0": 0,
+   "t1": 50,
+   "line": "mass hysteria. In the"
+  },
+  {
+   "shot": "S61",
+   "a": 3411,
+   "b": 3474,
+   "t0": 0,
+   "t1": 63,
+   "line": "end, the dancers were taken to a mountain"
+  },
+  {
+   "shot": "S62",
+   "a": 3474,
+   "b": 3546,
+   "t0": 0,
+   "t1": 72,
+   "line": "shrine of Saint Vitus, to pray. And"
+  },
+  {
+   "shot": "S63",
+   "a": 3546,
+   "b": 3590,
+   "t0": 0,
+   "t1": 44,
+   "line": "slowly, it stopped."
+  },
+  {
+   "shot": "S64",
+   "a": 3590,
+   "b": 3652,
+   "t0": 0,
+   "t1": 62,
+   "line": "So next time your feet hurt after a wedding,"
+  },
+  {
+   "shot": "S65",
+   "a": 3652,
+   "b": 3696,
+   "t0": 0,
+   "t1": 44,
+   "line": "remember Strasbourg."
+  },
+  {
+   "shot": "S66",
+   "a": 3696,
+   "b": 3753,
+   "t0": 0,
+   "t1": 57,
+   "line": "Some of them danced for two months."
+  },
+  {
+   "shot": "S67",
+   "a": 3753,
+   "b": 3778,
+   "t0": 0,
+   "t1": 25,
+   "line": "That's real."
+  },
+  {
+   "shot": "S68",
+   "a": 3778,
+   "b": 3902,
+   "t0": 0,
+   "t1": 124,
+   "line": "Follow for more strange history."
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 77,
+   "first": 0,
+   "line": "Strasbourg, 1518.",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 87,
+   "first": 77,
+   "line": "Four hundred people danced in the streets, for",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 25,
+   "first": 164,
+   "line": "weeks.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 50,
+   "first": 189,
+   "line": "Their shoes wore through. Their",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 27,
+   "first": 239,
+   "line": "feet bled.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 52,
+   "first": 266,
+   "line": "And they could not stop.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 59,
+   "first": 318,
+   "line": "This isn't a bedtime story. It's in",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 28,
+   "first": 377,
+   "line": "the history books.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 13,
+   "first": 405,
+   "line": "They called",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 121,
+   "first": 418,
+   "line": "it the Dancing Plague. It started on a normal summer day, in",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 28,
+   "first": 539,
+   "line": "July.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 29,
+   "first": 567,
+   "line": "A woman named Frau",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 23,
+   "first": 596,
+   "line": "Troffea",
+   "note": "S13"
+  },
+  {
+   "id": "S69",
+   "size": "story",
+   "key": 30,
+   "len": 49,
+   "first": 619,
+   "line": "walked out of her house, into",
+   "note": "S69"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 50,
+   "first": 668,
+   "line": "the middle of the street, and started to",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 25,
+   "first": 718,
+   "line": "dance.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 86,
+   "first": 743,
+   "line": "No music. No band. No wine.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 45,
+   "first": 829,
+   "line": "Just dancing. The",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 39,
+   "first": 874,
+   "line": "neighbours laughed. Maybe her",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 80,
+   "first": 913,
+   "line": "husband had finally left, and she was celebrating.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 73,
+   "first": 993,
+   "line": "But she didn't dance for five minutes. She",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 70,
+   "first": 1066,
+   "line": "danced day and night, for almost a",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 22,
+   "first": 1136,
+   "line": "week. Her",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 65,
+   "first": 1158,
+   "line": "shoes split. Her feet bled. She",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 60,
+   "first": 1223,
+   "line": "cried that she couldn't stop. But her",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 38,
+   "first": 1283,
+   "line": "legs kept going.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 79,
+   "first": 1321,
+   "line": "And then, it spread. Within a week,",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 64,
+   "first": 1400,
+   "line": "thirty more people had joined her. Within",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 91,
+   "first": 1464,
+   "line": "a month, some accounts say four hundred were dancing in",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 27,
+   "first": 1555,
+   "line": "the square. And",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 52,
+   "first": 1582,
+   "line": "nobody was having fun. They",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 30,
+   "first": 1634,
+   "line": "screamed. They",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 44,
+   "first": 1664,
+   "line": "begged for help. But their",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 83,
+   "first": 1708,
+   "line": "arms and legs kept moving on their own. So what did",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 79,
+   "first": 1791,
+   "line": "the doctors and the city council do? They said the only",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 31,
+   "first": 1870,
+   "line": "cure was more",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 27,
+   "first": 1901,
+   "line": "dancing.",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 43,
+   "first": 1928,
+   "line": "Let them dance it out. So",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 51,
+   "first": 1971,
+   "line": "they built a wooden stage, and paid",
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 30,
+   "len": 27,
+   "first": 2022,
+   "line": "musicians with",
+   "note": "S39"
+  },
+  {
+   "id": "S70",
+   "size": "story",
+   "key": 30,
+   "len": 34,
+   "first": 2049,
+   "line": "drums and pipes to",
+   "note": "S70"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 30,
+   "len": 46,
+   "first": 2083,
+   "line": "play, day and night.",
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "key": 30,
+   "len": 54,
+   "first": 2129,
+   "line": "Think about that. That's like seeing your",
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "key": 30,
+   "len": 51,
+   "first": 2183,
+   "line": "barn on fire, and throwing more",
+   "note": "S42"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "key": 30,
+   "len": 73,
+   "first": 2234,
+   "line": "wood on it, so it burns out faster. Of",
+   "note": "S43"
+  },
+  {
+   "id": "S44",
+   "size": "story",
+   "key": 30,
+   "len": 57,
+   "first": 2307,
+   "line": "course, it went badly. In the summer",
+   "note": "S44"
+  },
+  {
+   "id": "S45",
+   "size": "story",
+   "key": 30,
+   "len": 68,
+   "first": 2364,
+   "line": "heat, starving and exhausted, people",
+   "note": "S45"
+  },
+  {
+   "id": "S46",
+   "size": "story",
+   "key": 30,
+   "len": 35,
+   "first": 2432,
+   "line": "began to collapse.",
+   "note": "S46"
+  },
+  {
+   "id": "S47",
+   "size": "story",
+   "key": 30,
+   "len": 90,
+   "first": 2467,
+   "line": "Chroniclers wrote that some of them died. One even claimed",
+   "note": "S47"
+  },
+  {
+   "id": "S48",
+   "size": "story",
+   "key": 30,
+   "len": 43,
+   "first": 2557,
+   "line": "fifteen a day, though",
+   "note": "S48"
+  },
+  {
+   "id": "S49",
+   "size": "story",
+   "key": 30,
+   "len": 60,
+   "first": 2600,
+   "line": "historians still argue about it. So",
+   "note": "S49"
+  },
+  {
+   "id": "S50",
+   "size": "story",
+   "key": 30,
+   "len": 75,
+   "first": 2660,
+   "line": "why did it happen? One idea: their",
+   "note": "S50"
+  },
+  {
+   "id": "S51",
+   "size": "story",
+   "key": 30,
+   "len": 49,
+   "first": 2735,
+   "line": "rye bread was poisoned by",
+   "note": "S51"
+  },
+  {
+   "id": "S52",
+   "size": "story",
+   "key": 30,
+   "len": 75,
+   "first": 2784,
+   "line": "a fungus called ergot. Ergot contains",
+   "note": "S52"
+  },
+  {
+   "id": "S53",
+   "size": "story",
+   "key": 30,
+   "len": 40,
+   "first": 2859,
+   "line": "a chemical related to",
+   "note": "S53"
+  },
+  {
+   "id": "S54",
+   "size": "story",
+   "key": 30,
+   "len": 109,
+   "first": 2899,
+   "line": "L S D. It causes spasms and wild hallucinations.",
+   "note": "S54"
+  },
+  {
+   "id": "S55",
+   "size": "story",
+   "key": 30,
+   "len": 97,
+   "first": 3008,
+   "line": "But most historians favour the second idea. The people were",
+   "note": "S55"
+  },
+  {
+   "id": "S56",
+   "size": "story",
+   "key": 30,
+   "len": 81,
+   "first": 3105,
+   "line": "starving and terrified, and they believed Saint",
+   "note": "S56"
+  },
+  {
+   "id": "S57",
+   "size": "story",
+   "key": 30,
+   "len": 40,
+   "first": 3186,
+   "line": "Vitus could curse you to",
+   "note": "S57"
+  },
+  {
+   "id": "S58",
+   "size": "story",
+   "key": 30,
+   "len": 47,
+   "first": 3226,
+   "line": "dance until you dropped.",
+   "note": "S58"
+  },
+  {
+   "id": "S59",
+   "size": "story",
+   "key": 30,
+   "len": 88,
+   "first": 3273,
+   "line": "Fear spread like a disease. Today we call it",
+   "note": "S59"
+  },
+  {
+   "id": "S60",
+   "size": "story",
+   "key": 30,
+   "len": 50,
+   "first": 3361,
+   "line": "mass hysteria. In the",
+   "note": "S60"
+  },
+  {
+   "id": "S61",
+   "size": "story",
+   "key": 30,
+   "len": 63,
+   "first": 3411,
+   "line": "end, the dancers were taken to a mountain",
+   "note": "S61"
+  },
+  {
+   "id": "S62",
+   "size": "story",
+   "key": 30,
+   "len": 72,
+   "first": 3474,
+   "line": "shrine of Saint Vitus, to pray. And",
+   "note": "S62"
+  },
+  {
+   "id": "S63",
+   "size": "story",
+   "key": 30,
+   "len": 44,
+   "first": 3546,
+   "line": "slowly, it stopped.",
+   "note": "S63"
+  },
+  {
+   "id": "S64",
+   "size": "story",
+   "key": 30,
+   "len": 62,
+   "first": 3590,
+   "line": "So next time your feet hurt after a wedding,",
+   "note": "S64"
+  },
+  {
+   "id": "S65",
+   "size": "story",
+   "key": 30,
+   "len": 44,
+   "first": 3652,
+   "line": "remember Strasbourg.",
+   "note": "S65"
+  },
+  {
+   "id": "S66",
+   "size": "story",
+   "key": 30,
+   "len": 57,
+   "first": 3696,
+   "line": "Some of them danced for two months.",
+   "note": "S66"
+  },
+  {
+   "id": "S67",
+   "size": "story",
+   "key": 30,
+   "len": 25,
+   "first": 3753,
+   "line": "That's real.",
+   "note": "S67"
+  },
+  {
+   "id": "S68",
+   "size": "story",
+   "key": 30,
+   "len": 124,
+   "first": 3778,
+   "line": "Follow for more strange history.",
+   "note": "S68"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 2446
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.6,
+   "f": 2901
+  },
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 4,
+   "f": 80
+  }
+ ],
+ "audio": {
+  "voice": "dancing-plague/voice.wav",
+  "sfx": "dancing-plague/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1225,
+  "music": "dancing-plague/music.wav",
+  "musicVol": 0.0425
+ }
+}

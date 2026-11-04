@@ -11,5 +11,6 @@ import { parachute } from './parachute';
 import { toothbrush } from './toothbrush';
 import { molasses } from './molasses';
 import { emuWar } from './emu-war';
+import { dancingPlague } from './dancing-plague';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague];
