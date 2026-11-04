@@ -60,19 +60,19 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
   - Used so far: fountain pen = study corner; parachute = study corner; toothbrush = kitchen, caught brushing his teeth.
 
 ## Story Reels (native 9:16, the reference style)
-For story Reels (strange-history storytime, ~2 min), use the engine's story mode (`defineStory` in `videos/what-if-studio/src/engine/episode.tsx`) and the scene kit in `src/episodes/molasses/kit.tsx`. The first one is `molasses`.
+For story Reels (strange-history storytime, 2-3 min), use the engine's story mode (`defineStory` in `videos/what-if-studio/src/engine/episode.tsx`) and the scene kit in `src/episodes/molasses/kit.tsx`. The current model episode is `dancing-plague` (rebuilt from the user's reference Reel); `molasses` was the first. The reference channel's analysis is in `videos/what-if-studio/STORY-STYLE.md`.
 
-These rules come from measuring three reference Reels:
+- **No mascot/host in story Reels** (the user removed him). The narrator carries the personality instead.
+- **Captions are back on** (the user asked): karaoke, 2-3 words, uppercase, the spoken word in yellow and a touch bigger, over a dark band at the bottom, at y = 1200. `defineStory` has `captions: true` by default.
+- **Script in the reference's voice:** a blunt, folksy storyteller talking straight to the viewer ("buddy"), a shock hook first ("Four hundred people danced until the blood ran out of their shoes"), "this ain't some bedtime story", rhetorical questions ("And you know what the doctors did?"), one mocking comparison ("like throwing wood on a burning barn"), a recap of the causes, a relatable callback at the end ("next time your feet hurt after a wedding"), then "That's real." and the call to follow. Keep the facts right: hedge disputed numbers.
 - **Draw natively in 1080x1920.** Don't crop a 16:9 frame.
-- **Pace:** fast, a new picture about every 2 s (about 30 cuts a minute).
-  - Split long lines into "wide, then close" pairs with `close()` in `molasses/shots.tsx`. Close variants hide titles via `CloseCtx`.
-  - Cut in host reactions (`react()`).
-- **Detail in every scene:** lit windows, chimney smoke, ships and masts, gulls, dust motes, gas lamps, cobbles, hats on the crowd, bubbles and debris, a shaded tank with a ladder and pipes, and a blurred foreground (`Fore`).
-- **Camera:** a slow, steady push-in of about 3% a second on every shot. Change shots with 4-frame dissolves. No whip-pans or shake, except a shake on impacts.
-- **No captions.** The user asked to remove them: story Reels render without karaoke captions by default. `defineStory` has `captions: false`; the code is still there (`captions: true`) if they're ever wanted again. Punch titles and big numbers stay.
-- **Slanted punch titles** at the top for key facts and numbers.
-- **Look:** one colour mood per scene; depth from layered flat silhouettes; figures as dark silhouettes with a glowing outline in the scene's light colour; colour only on the key object.
-- **The host (`LOOKS.afro`) stands inside the scenes,** full body or in close-up. End on a call to action.
+- **Pace:** about 28-32 cuts a minute, no shot over 4 s. Split long lines with `close()` variants.
+- **Camera (engine, automatic):** every segment moves: `push`, `dive` (accelerating push), `pull`, `panL`/`panR`, `rise`, `static`. Set one per cut with `"cam"` in an `edit` entry; otherwise they rotate.
+- **Transitions (engine):** `"tr"` per edit entry: `ghost` (dissolve with a forward push and blur), `zoom` (zoom-through with motion blur), `flash` (white flash, used at each new part of the story), `whip` (sideways blur), `dissolve`, `cut`. Otherwise they rotate.
+- **Hits (`fx`):** `punch` (zoom bump on a key word or number), `bloom` (glow burst and ring on impacts), `shake`, `flash`, `rewind` (VHS ◀◀ REWIND when the story jumps back), `iris` (spotlight ring on the key thing, `x`, `y`, `r`).
+- **Kit:** `Punch` with an optional boxed `kicker` above the slanted title; `Burst` (comic starburst word); `Counter` (number ticking up, punch on landing); `BigNumber`, `Calendar`, `Sfx`.
+- **Detail in every scene:** lit windows, chimney smoke, torches, bunting, cobbles, crowds, a blurred foreground.
+- **Look:** one colour mood per scene; layered flat silhouettes; figures as dark silhouettes with a glowing outline in the scene's light colour; colour only on the key object.
 
 ## Shorts / Reels: 9:16 only
 - Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.

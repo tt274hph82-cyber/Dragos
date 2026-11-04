@@ -1,6 +1,6 @@
 import React from 'react';
 import { AbsoluteFill, Audio, staticFile, useCurrentFrame } from 'remotion';
-import { clamp, lerp } from './anim';
+import { clamp, lerp, easeInOut, easeOut, easeIn } from './anim';
 import { KitDefs } from './kit';
 import { SetDefs } from './light';
 
@@ -16,9 +16,11 @@ export type Seg = {
   t1: number; // the shot's clock at b (smaller than t0 when the segment plays backwards)
   look?: string; // a named power look (rewind, freeze...) the episode defines: grade + overlay while it runs
   line?: string; // the words spoken over it (for the storyboard)
+  cam?: string; // story Reels: the camera move (push, dive, pull, panL, panR, rise, static)
+  tr?: string; // story Reels: the transition into this segment (cut, dissolve, ghost, zoom, flash, whip)
 };
 export type ShotInfo = { id: string; size: string; key: number; len: number; first: number; line?: string; note?: string };
-export type Fx = { f: number; kind: 'flash' | 'shake'; color?: string; o?: number; len?: number; amp?: number };
+export type Fx = { f: number; kind: 'flash' | 'shake' | 'punch' | 'bloom' | 'rewind' | 'iris'; x?: number; y?: number; r?: number; color?: string; o?: number; len?: number; amp?: number };
 export type Timeline = {
   slug: string;
   title: string;
@@ -238,25 +240,54 @@ export const defineEpisode = (id: string, p: EpisodeProps) => ({
 export type EpisodeDef = ReturnType<typeof defineEpisode>;
 
 // ============================================================================================ native 9:16 story Reels
-// A story Reel is drawn natively in a 1080 x 1920 world (no crop of a 16:9 frame). Its grammar, measured from the
-// reference Reels: a new picture every 2-4 s, a slow steady push-in (about 3% a second) on every shot, 4-frame
-// dissolves between shots, and karaoke captions (3 words at a time, the spoken word in yellow) at the same height for
-// the whole video, inside the Reels safe zone.
+// A story Reel is drawn natively in a 1080 x 1920 world (no crop of a 16:9 frame). Its grammar, measured frame by frame
+// from the reference Reels (the Dancing Plague one most closely):
+// - every shot moves: a camera move per segment (push, dive, pull, pan, rise), eased, alternating cut to cut;
+// - cuts are transitions: a ghost dissolve with a forward push, a zoom-through with motion blur, a white flash between
+//   scenes, a sideways whip, or a plain 4-frame dissolve;
+// - hits: a punch zoom on key words, a bloom (glow burst and ring) on impacts, a shake, a flash;
+// - karaoke captions, 2-3 words, uppercase, the spoken word in yellow, over a dark band at the bottom.
 export type StoryWord = { w: string; s: number; e: number; p?: string };
-export const STORY = { w: 1080, h: 1920, capY: 1170, dissolve: 4, push: 0.028, pushMax: 0.14 };
+export const STORY = { w: 1080, h: 1920, capY: 1200, capSize: 58, dissolve: 4 };
+export type StoryCam = 'push' | 'dive' | 'pull' | 'panL' | 'panR' | 'rise' | 'static';
+export type StoryTr = 'cut' | 'dissolve' | 'ghost' | 'zoom' | 'flash' | 'whip';
+/** The automatic rotation when the edit doesn't name a move or a transition. */
+const AUTO_CAM: StoryCam[] = ['push', 'panL', 'dive', 'pull', 'panR', 'push', 'rise'];
+const AUTO_TR: StoryTr[] = ['ghost', 'dissolve', 'zoom', 'dissolve', 'ghost', 'whip', 'dissolve'];
+const TR_LEN: Record<StoryTr, number> = { cut: 0, dissolve: 4, ghost: 7, zoom: 7, flash: 9, whip: 6 };
+
+/** The camera on one segment at frame f: offset and scale around the frame centre. */
+const camAt = (seg: Seg & { cam?: StoryCam }, idx: number, f: number) => {
+  const cam = seg.cam ?? AUTO_CAM[idx % AUTO_CAM.length];
+  const len = Math.max(1, seg.b - seg.a);
+  const u = clamp((f - seg.a) / len, 0, 1.4);
+  const e = u <= 1 ? easeInOut(u) : 1 + (u - 1) * 0.6;
+  const sec = len / 30;
+  const k = Math.min(1, sec / 2.2); // short shots move less, so nothing lurches
+  switch (cam) {
+    case 'dive': return { s: 1 + 0.32 * k * e * e, x: 0, y: -50 * k * e };
+    case 'pull': return { s: 1.2 - 0.16 * k * e, x: 0, y: 0 };
+    case 'panL': return { s: 1.14, x: 70 * k - 140 * k * e, y: 0 };
+    case 'panR': return { s: 1.14, x: -70 * k + 140 * k * e, y: 0 };
+    case 'rise': return { s: 1.1 + 0.05 * k * e, x: 0, y: 60 * k - 120 * k * e };
+    case 'static': return { s: 1.03, x: 0, y: 0 };
+    default: return { s: 1 + 0.13 * k * e, x: 0, y: -12 * k * e };
+  }
+};
 
 const chunkWords = (words: StoryWord[]) => {
   const out: StoryWord[][] = [];
   let cur: StoryWord[] = [];
   for (const w of words) {
     cur.push(w);
-    if (cur.length >= 3 || /[.,!?:;]/.test(w.p ?? '')) { out.push(cur); cur = []; }
+    const long = cur.map((x) => x.w).join(' ').length > 16;
+    if (cur.length >= 3 || long || /[.,!?:;]/.test(w.p ?? '')) { out.push(cur); cur = []; }
   }
   if (cur.length) out.push(cur);
   return out;
 };
 
-/** Karaoke captions: the chunk being spoken, uppercase, the current word in yellow. */
+/** Karaoke captions: the chunk being spoken, uppercase, the current word in yellow and a touch bigger. */
 export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ words, fps }) => {
   const f = useCurrentFrame();
   const t = f / fps;
@@ -265,33 +296,52 @@ export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ w
   if (i < 0) return null;
   const c = chunks[i];
   const pop = clamp((t - (c[0].s - 0.05)) * fps / 3);
+  const z = STORY.capSize;
   return (
     <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-      <g transform={`translate(${STORY.w / 2} ${STORY.capY}) scale(${0.92 + 0.08 * pop})`}>
-        <text textAnchor="middle" fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={50} letterSpacing={1.5}
-          stroke="#120B18" strokeWidth={9} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.6))' }}>
-          {c.map((w, k) => (
-            <tspan key={k} fill={t >= w.s - 0.03 && (k === c.length - 1 || t < c[k + 1].s - 0.03) ? '#FFD23F' : '#FFFFFF'}>{(k ? ' ' : '') + w.w.toUpperCase()}</tspan>
-          ))}
+      <g transform={`translate(${STORY.w / 2} ${STORY.capY}) scale(${0.9 + 0.1 * pop})`} opacity={0.4 + 0.6 * pop}>
+        <text textAnchor="middle" fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={z} letterSpacing={1.5}
+          stroke="#120B18" strokeWidth={z * 0.2} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.7))' }}>
+          {c.map((w, k) => {
+            const on = t >= w.s - 0.03 && (k === c.length - 1 || t < c[k + 1].s - 0.03);
+            return <tspan key={k} fill={on ? '#FFD23F' : '#FFFFFF'} fontSize={on ? z * 1.08 : z}>{(k ? ' ' : '') + w.w.toUpperCase() + (w.p && /[!?]/.test(w.p) ? w.p.trim() : '')}</tspan>;
+          })}
         </text>
       </g>
     </svg>
   );
 };
 
-/** One shot of a story Reel at frame f of the film: its clock, with the slow push-in applied around its centre. */
-const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; f: number }> = ({ tl, shots, seg, f }) => {
+/** One shot of a story Reel at frame f: its clock, with its camera move (and any transition offset) applied. */
+const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; idx: number; f: number; xs?: number; blur?: number; dx?: number }> = ({ tl, shots, seg, idx, f, xs = 1, blur = 0, dx = 0 }) => {
   const Shot = shots[seg.shot];
   const info = tl.shots.find((s) => s.id === seg.shot);
   const t = clockAt(seg, f);
-  const s = 1 + Math.min(STORY.pushMax, STORY.push * ((f - seg.a) / 30));
+  const c = camAt(seg as any, idx, f);
   return (
-    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0 }}>
+    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, filter: blur > 0.3 ? `blur(${blur}px)` : undefined }}>
       <KitDefs />
       <SetDefs />
-      <g transform={`translate(540 960) scale(${s}) translate(-540 -960)`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
+      <g transform={`translate(${540 + c.x + dx} ${960 + c.y}) scale(${c.s * xs}) translate(-540 -960)`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
     </svg>
   );
+};
+
+/** Story hits: punch zooms, blooms, flashes and shakes (fx entries in the timeline). */
+const storyFxAt = (tl: Timeline, f: number) => {
+  const base = fxAt(tl, f);
+  let punch = 1;
+  const blooms: { k: number; color: string; o: number }[] = [];
+  let rewind = -1;
+  let iris: { k: number; x: number; y: number; r: number } | null = null;
+  for (const e of tl.fx as any[]) {
+    const d = f - e.f;
+    if (e.kind === 'rewind' && d >= 0 && d < (e.len ?? 20)) rewind = d / (e.len ?? 20);
+    if (e.kind === 'iris' && d >= 0 && d < (e.len ?? 40)) iris = { k: d / (e.len ?? 40), x: e.x ?? 540, y: e.y ?? 900, r: e.r ?? 260 };
+    if (e.kind === 'punch' && d >= 0 && d < (e.len ?? 10)) punch *= 1 + (e.amp ?? 0.07) * Math.exp(-d / 3) * Math.min(1, (d + 1) / 2);
+    if (e.kind === 'bloom' && d >= 0 && d < (e.len ?? 18)) blooms.push({ k: d / (e.len ?? 18), color: e.color ?? '#FFC24A', o: e.o ?? 0.8 });
+  }
+  return { ...base, punch, blooms, rewind, iris };
 };
 
 export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true }) => {
@@ -299,17 +349,58 @@ export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words:
   const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
   const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
   const prev = idx > 0 ? tl.segments[idx - 1] : null;
-  const k = prev ? clamp((f - seg.a) / STORY.dissolve) : 1;
-  const { flash, x, y } = fxAt(tl, f);
+  const tr: StoryTr = prev ? ((seg as any).tr ?? AUTO_TR[idx % AUTO_TR.length]) : 'cut';
+  const L = Math.min(TR_LEN[tr], Math.max(1, Math.floor((seg.b - seg.a) / 2)));
+  const k = L ? clamp((f - seg.a) / L) : 1;
+  const { flash, x, y, punch, blooms, rewind, iris } = storyFxAt(tl, f);
   const A = tl.audio;
+  // the transition: how the outgoing (prev) and incoming (seg) shots are drawn while k runs 0 -> 1
+  let out: React.ReactNode = null, inn: React.ReactNode;
+  let white = 0;
+  const P = (o: number, props: { xs?: number; blur?: number; dx?: number }) => prev ? <AbsoluteFill style={{ opacity: o }}><StoryShot tl={tl} shots={shots} seg={prev} idx={idx - 1} f={f} {...props} /></AbsoluteFill> : null;
+  const N = (o: number, props: { xs?: number; blur?: number; dx?: number }) => <AbsoluteFill style={{ opacity: o }}><StoryShot tl={tl} shots={shots} seg={seg} idx={idx} f={f} {...props} /></AbsoluteFill>;
+  if (k >= 1 || !prev) inn = N(1, {});
+  else if (tr === 'ghost') { out = P(1, {}); inn = N(easeInOut(k), { xs: lerp(1.1, 1, easeOut(k)), blur: (1 - k) * 6 }); }
+  else if (tr === 'zoom') { out = P(1 - easeIn(k), { xs: lerp(1, 1.6, easeIn(k)), blur: k * 12 }); inn = N(easeOut(k), { xs: lerp(1.3, 1, easeOut(k)), blur: (1 - k) * 9 }); }
+  else if (tr === 'whip') { out = P(1, { dx: -easeIn(k) * 700, blur: k * 14 }); inn = N(k, { dx: (1 - easeOut(k)) * 700, blur: (1 - k) * 14 }); }
+  else if (tr === 'flash') {
+    const h = 3 / L;
+    if (k < h) { out = P(1, { xs: 1 + 0.06 * (k / h) }); inn = null; white = k / h; }
+    else { inn = N(1, { xs: lerp(1.06, 1, (k - h) / (1 - h)) }); white = 1 - easeOut((k - h) / (1 - h)); }
+  }
+  else { out = P(1, {}); inn = N(k, {}); }
   return (
     <AbsoluteFill style={{ backgroundColor: bg }}>
-      <AbsoluteFill style={{ transform: x || y ? `translate(${x}px, ${y}px) scale(1.02)` : undefined }}>
-        {prev && k < 1 ? <StoryShot tl={tl} shots={shots} seg={prev} f={prev.b - 1} /> : null}
-        <AbsoluteFill style={{ opacity: k }}><StoryShot tl={tl} shots={shots} seg={seg} f={f} /></AbsoluteFill>
+      <AbsoluteFill style={{ transform: `translate(${x}px, ${y}px) scale(${(x || y ? 1.02 : 1) * punch})` }}>
+        {out}
+        {inn}
       </AbsoluteFill>
+      {blooms.map((b, i) => (
+        <AbsoluteFill key={i} style={{ mixBlendMode: 'screen', pointerEvents: 'none' }}>
+          <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 45%, ${b.color} 0%, transparent ${30 + 50 * b.k}%)`, opacity: b.o * (1 - b.k) }} />
+          <svg width={STORY.w} height={STORY.h} style={{ position: 'absolute', inset: 0 }}><circle cx={540} cy={860} r={120 + 900 * easeOut(b.k)} fill="none" stroke={b.color} strokeWidth={30 * (1 - b.k)} opacity={0.7 * (1 - b.k)} /></svg>
+        </AbsoluteFill>
+      ))}
+      {/* VHS rewind: scanlines, a colour split and the ◀◀ badge (the channel's REWIND jump back in time) */}
+      {rewind >= 0 ? <AbsoluteFill style={{ pointerEvents: 'none' }}>
+        <AbsoluteFill style={{ background: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 3px, transparent 3px, transparent 9px)', mixBlendMode: 'screen' }} />
+        <AbsoluteFill style={{ background: 'rgba(60,120,255,0.18)', mixBlendMode: 'screen', transform: `translateX(${Math.sin(f * 1.7) * 10}px)` }} />
+        <svg width={STORY.w} height={STORY.h} style={{ position: 'absolute', inset: 0 }}>
+          <rect x={0} y={(f * 47) % STORY.h} width={STORY.w} height={26} fill="#FFFFFF" opacity={0.25} />
+          <text x={90} y={330} fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={74} fill="#FFFFFF" stroke="#120B18" strokeWidth={10} paintOrder="stroke" opacity={Math.floor(f / 6) % 2 ? 1 : 0.6}>◀◀ REWIND</text>
+        </svg>
+      </AbsoluteFill> : null}
+      {/* iris: a spotlight ring closing around the key thing, the rest dimmed */}
+      {iris ? <svg width={STORY.w} height={STORY.h} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <defs><mask id="irisM"><rect width={STORY.w} height={STORY.h} fill="white" /><circle cx={iris.x} cy={iris.y} r={lerp(iris.r * 3, iris.r, easeOut(clamp(iris.k * 3)))} fill="black" /></mask></defs>
+        <rect width={STORY.w} height={STORY.h} fill="#05030A" opacity={0.6 * Math.min(1, iris.k * 4) * (1 - clamp((iris.k - 0.85) / 0.15))} mask="url(#irisM)" />
+        <circle cx={iris.x} cy={iris.y} r={lerp(iris.r * 3, iris.r, easeOut(clamp(iris.k * 3)))} fill="none" stroke="#FFD23F" strokeWidth={10} opacity={1 - clamp((iris.k - 0.85) / 0.15)} />
+      </svg> : null}
       <Grade f={f} grain vignette w={STORY.w} h={STORY.h} />
+      {white > 0 ? <AbsoluteFill style={{ backgroundColor: '#FFFFFF', opacity: white }} /> : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
+      {/* a dark band at the bottom, like the references, so the captions always read */}
+      {captions ? <AbsoluteFill style={{ background: 'linear-gradient(to bottom, transparent 52%, rgba(8,6,16,0.55) 66%, rgba(8,6,16,0.85) 100%)' }} /> : null}
       {captions ? <StoryCaptions words={words} fps={tl.fps} /> : null}
       {A.voice ? <Audio src={staticFile(A.voice)} volume={A.voiceVol ?? 1} /> : null}
       {A.sfx ? <Audio src={staticFile(A.sfx)} volume={A.sfxVol ?? 1} /> : null}
@@ -341,6 +432,6 @@ export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap;
   shotCount: p.timeline.shots.length,
   Main: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
   Board: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
-  // karaoke captions are off by default (the user asked for no captions); pass captions: true to bring them back
-  Vertical: () => <StoryEpisode {...p} captions={p.captions ?? false} />,
+  // karaoke captions are on (the user asked for them back); pass captions: false to hide them
+  Vertical: () => <StoryEpisode {...p} captions={p.captions ?? true} />,
 });

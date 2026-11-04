@@ -1,7 +1,7 @@
 {
  "id": "DancingPlague",
  "slug": "dancing-plague",
- "topic": "The Dancing Plague of 1518 (story Reel, recreated from a reference Reel's format)",
+ "topic": "The Dancing Plague of 1518 (story Reel in the reference Reel's style: folksy narrator, no host, captions)",
  "title": [
   "THE DANCING",
   "PLAGUE"
@@ -23,143 +23,135 @@
  "script": [
   {
    "beat": "hook",
-   "text": "Strasbourg, 1518."
+   "text": "Four hundred people danced in the street, for weeks, until the blood ran out of their shoes."
   },
   {
    "beat": "hook",
-   "text": "Four hundred people danced in the streets, for weeks."
+   "text": "And no, buddy, this ain't some bedtime story."
   },
   {
    "beat": "hook",
-   "text": "Their shoes wore through. Their feet bled."
-  },
-  {
-   "beat": "hook",
-   "text": "And they could not stop."
-  },
-  {
-   "beat": "host",
-   "text": "This isn't a bedtime story. It's in the history books."
-  },
-  {
-   "beat": "host",
-   "text": "They called it the Dancing Plague."
+   "text": "It's in the history books. They called it the Dancing Plague."
   },
   {
    "beat": "setup",
-   "text": "It started on a normal summer day, in July."
+   "text": "Now listen to how this whole mess started. Strasbourg, the year fifteen eighteen."
   },
   {
    "beat": "setup",
-   "text": "A woman named Frau Troffea walked out of her house, into the middle of the street, and started to dance."
+   "text": "A normal summer day in July. A woman named Frau Troffea walks out of her house, right into the middle of the street, and starts dancing."
   },
   {
    "beat": "setup",
-   "text": "No music. No band. No wine. Just dancing."
+   "text": "All by herself. No fiddler, no music, not a drop of wine in her."
   },
   {
    "beat": "setup",
-   "text": "The neighbours laughed. Maybe her husband had finally left, and she was celebrating."
+   "text": "Just hopping around like something bit her."
   },
   {
    "beat": "setup",
-   "text": "But she didn't dance for five minutes."
+   "text": "The neighbours looked out and said, well, her husband must have finally run off, and she's celebrating."
   },
   {
    "beat": "setup",
-   "text": "She danced day and night, for almost a week."
+   "text": "Except she didn't dance for five minutes."
   },
   {
    "beat": "setup",
-   "text": "Her shoes split. Her feet bled. She cried that she couldn't stop. But her legs kept going."
+   "text": "She danced day and night, no sleep, barely any food, for almost a whole week."
+  },
+  {
+   "beat": "setup",
+   "text": "Her shoes fell apart. Her feet were bleeding. She was crying that she couldn't stop. But her legs just kept on going."
   },
   {
    "beat": "twist",
-   "text": "And then, it spread."
+   "text": "And now comes the really creepy part."
   },
   {
    "beat": "twist",
-   "text": "Within a week, thirty more people had joined her."
+   "text": "A few days later, other people started dancing right next to her."
   },
   {
    "beat": "twist",
-   "text": "Within a month, some accounts say four hundred were dancing in the square."
+   "text": "Within a week there were more than thirty. And within a month, some say four hundred folks were jumping around the town square, like a madhouse."
   },
   {
    "beat": "twist",
-   "text": "And nobody was having fun."
+   "text": "And buddy, they were not dancing because bread got cheaper."
   },
   {
    "beat": "twist",
-   "text": "They screamed. They begged for help. But their arms and legs kept moving on their own."
+   "text": "They were screaming, begging for help. But their arms and legs were moving all on their own, like the devil himself got into them."
   },
   {
    "beat": "cure",
-   "text": "So what did the doctors and the city council do?"
+   "text": "And you know what the doctors and the city council did, to cure them?"
   },
   {
    "beat": "cure",
-   "text": "They said the only cure was more dancing. Let them dance it out."
+   "text": "They said the only cure was to let them dance, until the sickness came out of their bones."
   },
   {
    "beat": "cure",
-   "text": "So they built a wooden stage, and paid musicians with drums and pipes to play, day and night."
+   "text": "So they built a big wooden stage, and paid musicians with drums and pipes to play non-stop, to keep them in rhythm."
   },
   {
    "beat": "cure",
-   "text": "Think about that."
+   "text": "Now how dumb can you be?"
   },
   {
    "beat": "cure",
-   "text": "That's like seeing your barn on fire, and throwing more wood on it, so it burns out faster."
+   "text": "That's like watching your barn burn down, and throwing more wood on it, so the fire finishes faster."
   },
   {
    "beat": "cure",
-   "text": "Of course, it went badly."
+   "text": "Of course, it was a disaster."
   },
   {
    "beat": "cure",
-   "text": "In the summer heat, starving and exhausted, people began to collapse."
+   "text": "In the summer heat, starving and worn out, people started dropping like flies."
   },
   {
    "beat": "cure",
-   "text": "Chroniclers wrote that some of them died. One even claimed fifteen a day, though historians still argue about it."
+   "text": "Chroniclers wrote that some of them died. One even claimed fifteen a day, though historians still argue about that number."
   },
   {
    "beat": "why",
-   "text": "So why did it happen?"
+   "text": "But why on earth did this happen?"
   },
   {
    "beat": "why",
-   "text": "One idea: their rye bread was poisoned by a fungus called ergot."
+   "text": "There are two big theories."
   },
   {
    "beat": "why",
-   "text": "Ergot contains a chemical related to L S D. It causes spasms and wild hallucinations."
+   "text": "First: their rye bread might have been spoiled by a poison fungus, called ergot."
   },
   {
    "beat": "why",
-   "text": "But most historians favour the second idea."
+   "text": "That fungus holds the same stuff they make L S D from today. It gives you spasms and hallucinations, like seeing devils on the walls."
   },
   {
    "beat": "why",
-   "text": "The people were starving and terrified, and they believed Saint Vitus could curse you to dance until you dropped."
+   "text": "Second, and most historians like this one: those people were starving, scared to death, and they truly believed Saint Vitus could curse you to dance until you dropped."
   },
   {
    "beat": "why",
-   "text": "Fear spread like a disease. Today we call it mass hysteria."
+   "text": "So between the bad bread and all that fear, their minds just snapped, and they hopped around for two whole months."
   },
   {
    "beat": "why",
-   "text": "In the end, the dancers were taken to a mountain shrine of Saint Vitus, to pray. And slowly, it stopped."
+   "text": "In the end, they hauled the dancers up to a mountain shrine of Saint Vitus, to pray. And slowly, it stopped."
   },
   {
    "beat": "end",
-   "text": "So next time your feet hurt after a wedding, remember Strasbourg."
+   "text": "So next time you complain your feet hurt after two hours at a wedding, think about those poor folks who danced for two months straight."
   },
   {
    "beat": "end",
-   "text": "Some of them danced for two months. That's real."
+   "text": "That's real."
   },
   {
    "beat": "end",
@@ -180,12 +172,9 @@
  ],
  "edit": [
   {
-   "shot": "S1",
-   "at": "f:0"
-  },
-  {
    "shot": "S2",
-   "at": "Four"
+   "at": "f:0",
+   "cam": "dive"
   },
   {
    "shot": "S3",
@@ -193,55 +182,65 @@
   },
   {
    "shot": "S4",
-   "at": "Their"
+   "at": "until",
+   "tr": "zoom"
   },
   {
    "shot": "S5",
-   "at": "feet"
-  },
-  {
-   "shot": "S6",
-   "at": "And"
+   "at": "blood"
   },
   {
    "shot": "S7",
-   "at": "This"
+   "at": "And"
   },
   {
    "shot": "S8",
-   "at": "history"
+   "at": "history",
+   "tr": "whip"
   },
   {
    "shot": "S9",
-   "at": "They"
+   "at": "They",
+   "tr": "flash"
   },
   {
    "shot": "S10",
-   "at": "It"
+   "at": "Now",
+   "tr": "flash"
+  },
+  {
+   "shot": "S1",
+   "at": "Strasbourg",
+   "cam": "dive",
+   "tr": "zoom"
   },
   {
    "shot": "S11",
-   "at": "July"
+   "at": "normal"
   },
   {
    "shot": "S12",
-   "at": "woman"
+   "at": "woman",
+   "tr": "ghost"
   },
   {
    "shot": "S13",
-   "at": "Troffea"
+   "at": "Troffea",
+   "cam": "push"
   },
   {
    "shot": "S69",
-   "at": "walked"
-  },
-  {
-   "shot": "S14",
-   "at": "middle"
+   "at": "walks",
+   "tr": "zoom"
   },
   {
    "shot": "S15",
-   "at": "dance"
+   "at": "dancing"
+  },
+  {
+   "shot": "S14",
+   "at": "All",
+   "cam": "pull"
   },
   {
    "shot": "S16",
@@ -249,11 +248,13 @@
   },
   {
    "shot": "S17",
-   "at": "Just"
+   "at": "Just",
+   "tr": "zoom"
   },
   {
    "shot": "S18",
-   "at": "neighbours"
+   "at": "neighbours",
+   "tr": "whip"
   },
   {
    "shot": "S19",
@@ -261,11 +262,17 @@
   },
   {
    "shot": "S20",
-   "at": "But"
+   "at": "Except",
+   "tr": "ghost"
   },
   {
    "shot": "S21",
    "at": "danced"
+  },
+  {
+   "shot": "S81",
+   "at": "sleep",
+   "tr": "zoom"
   },
   {
    "shot": "S22",
@@ -273,19 +280,32 @@
   },
   {
    "shot": "S23",
-   "at": "shoes"
+   "at": "shoes",
+   "tr": "zoom"
   },
   {
    "shot": "S24",
-   "at": "cried"
+   "at": "crying",
+   "cam": "push"
   },
   {
    "shot": "S25",
-   "at": "legs"
+   "at": "legs",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S80",
+   "at": "creepy",
+   "tr": "flash"
   },
   {
    "shot": "S26",
-   "at": "And"
+   "at": "later"
+  },
+  {
+   "shot": "S84",
+   "at": "right",
+   "tr": "zoom"
   },
   {
    "shot": "S27",
@@ -293,47 +313,69 @@
   },
   {
    "shot": "S28",
-   "at": "month"
+   "at": "month",
+   "cam": "dive"
   },
   {
    "shot": "S29",
-   "at": "square"
+   "at": "square",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S71",
+   "at": "madhouse",
+   "cam": "static"
   },
   {
    "shot": "S30",
-   "at": "nobody"
+   "at": "buddy"
+  },
+  {
+   "shot": "S72",
+   "at": "bread",
+   "tr": "whip"
   },
   {
    "shot": "S31",
-   "at": "screamed"
+   "at": "screaming",
+   "tr": "flash"
   },
   {
    "shot": "S32",
-   "at": "begged"
+   "at": "begging"
   },
   {
    "shot": "S33",
-   "at": "arms"
+   "at": "arms",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S73",
+   "at": "devil",
+   "cam": "rise"
   },
   {
    "shot": "S34",
-   "at": "doctors"
+   "at": "doctors",
+   "tr": "flash"
   },
   {
    "shot": "S35",
    "at": "cure"
   },
   {
-   "shot": "S36",
-   "at": "dancing"
+   "shot": "S37",
+   "at": "only"
   },
   {
-   "shot": "S37",
-   "at": "Let"
+   "shot": "S85",
+   "at": "sickness",
+   "tr": "zoom"
   },
   {
    "shot": "S38",
-   "at": "built"
+   "at": "built",
+   "tr": "whip"
   },
   {
    "shot": "S39",
@@ -341,15 +383,18 @@
   },
   {
    "shot": "S70",
-   "at": "drums"
+   "at": "drums",
+   "tr": "zoom"
   },
   {
    "shot": "S40",
-   "at": "play"
+   "at": "non",
+   "cam": "dive"
   },
   {
-   "shot": "S41",
-   "at": "Think"
+   "shot": "S79",
+   "at": "dumb",
+   "tr": "flash"
   },
   {
    "shot": "S42",
@@ -357,23 +402,26 @@
   },
   {
    "shot": "S43",
-   "at": "wood"
+   "at": "wood",
+   "tr": "zoom"
   },
   {
    "shot": "S44",
-   "at": "course"
+   "at": "disaster"
   },
   {
    "shot": "S45",
-   "at": "heat"
+   "at": "heat",
+   "tr": "ghost"
   },
   {
    "shot": "S46",
-   "at": "began"
+   "at": "dropping"
   },
   {
    "shot": "S47",
-   "at": "Chroniclers"
+   "at": "Chroniclers",
+   "tr": "ghost"
   },
   {
    "shot": "S48",
@@ -381,31 +429,45 @@
   },
   {
    "shot": "S49",
-   "at": "historians"
+   "at": "historians",
+   "tr": "whip"
   },
   {
    "shot": "S50",
-   "at": "why"
+   "at": "why",
+   "tr": "flash"
+  },
+  {
+   "shot": "S74",
+   "at": "theories"
   },
   {
    "shot": "S51",
-   "at": "rye"
+   "at": "rye",
+   "tr": "zoom"
   },
   {
    "shot": "S52",
-   "at": "fungus"
+   "at": "fungus",
+   "tr": "zoom"
   },
   {
    "shot": "S53",
-   "at": "chemical"
+   "at": "stuff"
   },
   {
    "shot": "S54",
-   "at": "L"
+   "at": "L",
+   "tr": "flash"
+  },
+  {
+   "shot": "S75",
+   "at": "devils"
   },
   {
    "shot": "S55",
-   "at": "But"
+   "at": "Second",
+   "tr": "whip"
   },
   {
    "shot": "S56",
@@ -413,51 +475,68 @@
   },
   {
    "shot": "S57",
-   "at": "Vitus"
+   "at": "Vitus",
+   "tr": "ghost"
   },
   {
    "shot": "S58",
-   "at": "dance"
+   "at": "dance",
+   "tr": "zoom"
   },
   {
    "shot": "S59",
-   "at": "Fear"
+   "at": "bad"
   },
   {
-   "shot": "S60",
-   "at": "mass"
-  },
-  {
-   "shot": "S61",
-   "at": "end"
-  },
-  {
-   "shot": "S62",
-   "at": "shrine"
-  },
-  {
-   "shot": "S63",
-   "at": "slowly"
-  },
-  {
-   "shot": "S64",
-   "at": "next"
-  },
-  {
-   "shot": "S65",
-   "at": "remember"
+   "shot": "S76",
+   "at": "snapped",
+   "tr": "flash"
   },
   {
    "shot": "S66",
-   "at": "Some"
+   "at": "two"
+  },
+  {
+   "shot": "S61",
+   "at": "end",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S62",
+   "at": "shrine",
+   "cam": "dive"
+  },
+  {
+   "shot": "S63",
+   "at": "slowly",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S77",
+   "at": "next",
+   "tr": "flash"
+  },
+  {
+   "shot": "S65",
+   "at": "think"
+  },
+  {
+   "shot": "S78",
+   "at": "straight"
   },
   {
    "shot": "S67",
-   "at": "That's"
+   "at": "That's",
+   "tr": "zoom"
   },
   {
    "shot": "S68",
-   "at": "Follow"
+   "at": "Follow",
+   "tr": "flash"
+  },
+  {
+   "shot": "S86",
+   "at": "strange"
   }
  ],
  "shots": [
@@ -495,13 +574,6 @@
    "set": "strasbourg",
    "key": 30,
    "note": "S5"
-  },
-  {
-   "id": "S6",
-   "size": "story",
-   "set": "strasbourg",
-   "key": 30,
-   "note": "S6"
   },
   {
    "id": "S7",
@@ -707,13 +779,6 @@
    "note": "S35"
   },
   {
-   "id": "S36",
-   "size": "story",
-   "set": "strasbourg",
-   "key": 30,
-   "note": "S36"
-  },
-  {
    "id": "S37",
    "size": "story",
    "set": "strasbourg",
@@ -740,13 +805,6 @@
    "set": "strasbourg",
    "key": 30,
    "note": "S40"
-  },
-  {
-   "id": "S41",
-   "size": "story",
-   "set": "strasbourg",
-   "key": 30,
-   "note": "S41"
   },
   {
    "id": "S42",
@@ -875,13 +933,6 @@
    "note": "S59"
   },
   {
-   "id": "S60",
-   "size": "story",
-   "set": "strasbourg",
-   "key": 30,
-   "note": "S60"
-  },
-  {
    "id": "S61",
    "size": "story",
    "set": "strasbourg",
@@ -901,13 +952,6 @@
    "set": "strasbourg",
    "key": 30,
    "note": "S63"
-  },
-  {
-   "id": "S64",
-   "size": "story",
-   "set": "strasbourg",
-   "key": 30,
-   "note": "S64"
   },
   {
    "id": "S65",
@@ -950,14 +994,185 @@
    "set": "strasbourg",
    "key": 30,
    "note": "S70"
+  },
+  {
+   "id": "S71",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S71"
+  },
+  {
+   "id": "S72",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S72"
+  },
+  {
+   "id": "S73",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S73"
+  },
+  {
+   "id": "S74",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S74"
+  },
+  {
+   "id": "S75",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S75"
+  },
+  {
+   "id": "S76",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S76"
+  },
+  {
+   "id": "S77",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S77"
+  },
+  {
+   "id": "S78",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S78"
+  },
+  {
+   "id": "S79",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S79"
+  },
+  {
+   "id": "S80",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S80"
+  },
+  {
+   "id": "S81",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S81"
+  },
+  {
+   "id": "S84",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S84"
+  },
+  {
+   "id": "S85",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S85"
+  },
+  {
+   "id": "S86",
+   "size": "story",
+   "set": "strasbourg",
+   "key": 30,
+   "note": "S86"
   }
  ],
  "fx": [
+  {
+   "at": "S2+6",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S2+2",
+   "kind": "shake",
+   "len": 6,
+   "amp": 4
+  },
+  {
+   "at": "S10+2",
+   "kind": "rewind",
+   "len": 26
+  },
+  {
+   "at": "S14+6",
+   "kind": "iris",
+   "x": 540,
+   "y": 1150,
+   "r": 230,
+   "len": 45
+  },
+  {
+   "at": "S27+26",
+   "kind": "punch"
+  },
+  {
+   "at": "S28+42",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S28+42",
+   "kind": "bloom",
+   "color": "#FFB13A",
+   "o": 0.7
+  },
+  {
+   "at": "S71+3",
+   "kind": "shake",
+   "len": 10,
+   "amp": 6
+  },
+  {
+   "at": "S73+4",
+   "kind": "bloom",
+   "color": "#FF3A2A",
+   "o": 0.8
+  },
+  {
+   "at": "S79+2",
+   "kind": "punch",
+   "amp": 0.09
+  },
+  {
+   "at": "S43+6",
+   "kind": "bloom",
+   "color": "#FF8A1A",
+   "o": 0.9,
+   "len": 22
+  },
+  {
+   "at": "S44+2",
+   "kind": "shake",
+   "len": 10,
+   "amp": 7
+  },
   {
    "at": "S46+14",
    "kind": "shake",
    "len": 8,
    "amp": 6
+  },
+  {
+   "at": "S48+3",
+   "kind": "punch"
   },
   {
    "at": "S54+2",
@@ -966,10 +1181,30 @@
    "o": 0.6
   },
   {
-   "at": "S2+3",
-   "kind": "shake",
-   "len": 6,
-   "amp": 4
+   "at": "S54+2",
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.7
+  },
+  {
+   "at": "S76+3",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S76+3",
+   "kind": "bloom",
+   "color": "#FFE27A",
+   "o": 0.8
+  },
+  {
+   "at": "S66+3",
+   "kind": "punch"
+  },
+  {
+   "at": "S67+3",
+   "kind": "punch",
+   "amp": 0.06
   }
  ],
  "sound": {
@@ -1064,48 +1299,28 @@
    ],
    "score": [
     "cinematic documentary storytelling score with a dark medieval folk feel, hurdy-gurdy and frame drum, curious and ominous, builds to frantic drums in the middle, then calm and reflective at the end, no vocals",
-    132,
+    165,
     "music"
    ]
   },
   "events": [
    [
-    "S1",
+    "S2",
     "square_night",
     0.22,
     "onset",
     "S7"
    ],
    [
-    "S1+2",
-    "gong",
-    0.35,
-    "peak"
-   ],
-   [
     "S2",
-    "feet",
-    0.35
-   ],
-   [
-    "S3",
-    "tick",
-    0.25
-   ],
-   [
-    "S4",
-    "feet",
-    0.45
+    "gong",
+    0.3,
+    "peak"
    ],
    [
     "S5",
     "heartbeat",
     0.35
-   ],
-   [
-    "S7+3",
-    "pop",
-    0.25
    ],
    [
     "S8+2",
@@ -1124,11 +1339,16 @@
     0.3
    ],
    [
+    "S10+2",
+    "tick",
+    0.3
+   ],
+   [
     "S11",
     "square_day",
     0.18,
     "onset",
-    "S26"
+    "S80"
    ],
    [
     "S12+6",
@@ -1146,17 +1366,17 @@
     0.35
    ],
    [
-    "S16+8",
+    "S16+4",
     "pop",
     0.25
    ],
    [
-    "S16+26",
+    "S16+30",
     "pop",
     0.25
    ],
    [
-    "S16+44",
+    "S16+74",
     "pop",
     0.25
    ],
@@ -1186,11 +1406,17 @@
     0.35
    ],
    [
-    "S26",
+    "S80",
     "square_night",
     0.2,
     "onset",
     "S34"
+   ],
+   [
+    "S80",
+    "gong",
+    0.25,
+    "peak"
    ],
    [
     "S26+6",
@@ -1198,7 +1424,7 @@
     0.35
    ],
    [
-    "S27+4",
+    "S27+26",
     "pop",
     0.25
    ],
@@ -1208,9 +1434,24 @@
     0.25
    ],
    [
+    "S71",
+    "feet",
+    0.4
+   ],
+   [
+    "S71+3",
+    "pop",
+    0.3
+   ],
+   [
+    "S72+20",
+    "pop",
+    0.25
+   ],
+   [
     "S31",
     "crowd_wail",
-    0.4
+    0.25
    ],
    [
     "S32+4",
@@ -1218,14 +1459,20 @@
     0.3
    ],
    [
+    "S73",
+    "heartbeat",
+    0.4
+   ],
+   [
+    "S73+4",
+    "gong",
+    0.3,
+    "peak"
+   ],
+   [
     "S34",
     "whoosh",
     0.3
-   ],
-   [
-    "S36+16",
-    "gasp",
-    0.25
    ],
    [
     "S38+4",
@@ -1237,7 +1484,7 @@
     "tabor",
     0.35,
     "onset",
-    "S41"
+    "S79"
    ],
    [
     "S40",
@@ -1245,21 +1492,27 @@
     0.3
    ],
    [
+    "S79+2",
+    "pop",
+    0.3
+   ],
+   [
     "S42",
     "fire",
     0.35,
     "onset",
-    "S44"
+    "S45"
    ],
    [
-    "S42+14",
+    "S43+6",
     "log",
     0.4
    ],
    [
     "S44",
-    "whoosh",
-    0.2
+    "gong",
+    0.25,
+    "peak"
    ],
    [
     "S46+14",
@@ -1277,8 +1530,8 @@
     0.2
    ],
    [
-    "S50+5",
-    "pop",
+    "S50",
+    "whoosh",
     0.25
    ],
    [
@@ -1307,9 +1560,9 @@
     0.3
    ],
    [
-    "S60",
+    "S76+3",
     "gong",
-    0.35,
+    0.3,
     "peak"
    ],
    [

@@ -280,18 +280,54 @@ export const HostClose: React.FC<{ x?: number; y?: number; sc?: number; pose?: P
   <Hero look={HOST} pose={{ ...basePose, x, y: y - HEAD.y * sc, scale: sc, armL: { a: 14, b: -6 }, armR: { a: 14, b: -6 }, ...pose }} shadow={0} />
 );
 
-/** The punch title: a slanted, heavy, outlined headline at the top (the references' "400 DE MORȚI"). */
-export const Punch: React.FC<{ t: number; lines: string[]; y?: number; size?: number; color?: string }> = ({ t, lines, y = 380, size = 96, color = '#FFFFFF' }) => {
+/** The punch title: a slanted, heavy, outlined headline at the top (the references' "400 DE MORȚI"), with an optional
+ *  small boxed kicker above it (the channel's "CEVA FOȘNEȘTE..." over "PRIN PORUMB!"). */
+export const Punch: React.FC<{ t: number; lines: string[]; y?: number; size?: number; color?: string; kicker?: string }> = ({ t, lines, y = 380, size = 96, color = '#FFFFFF', kicker }) => {
   if (React.useContext(CloseCtx)) return null;
   if (t < 0) return null;
   const s = t < 6 ? 1 + 2.7 * Math.pow(t / 6 - 1, 3) + 1.7 * Math.pow(t / 6 - 1, 2) : 1;
+  const ks = popIn(t - 2, 6);
+  const kw = kicker ? kicker.length * 26 + 60 : 0;
   return (
     // +90: keeps the headline clear of the app header (the top 14% of a Reel)
-    <g transform={`translate(${W / 2} ${y + 90}) scale(${s}) skewX(-9)`}>
-      {lines.map((l, i) => (
-        <text key={i} y={i * size * 1.02} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={size} fill={i === lines.length - 1 ? color : '#FFFFFF'}
-          stroke="#140A12" strokeWidth={size * 0.15} strokeLinejoin="round" paintOrder="stroke">{l}</text>
-      ))}
+    <g transform={`translate(${W / 2} ${y + 90})`}>
+      {kicker ? <g transform={`translate(0 ${-size * 0.95}) scale(${ks}) rotate(-4)`}>
+        <rect x={-kw / 2} y={-40} width={kw} height={58} rx={8} fill="#FFD23F" stroke="#140A12" strokeWidth={6} />
+        <text y={2} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={40} fill="#140A12">{kicker}</text>
+      </g> : null}
+      <g transform={`scale(${s}) skewX(-9)`}>
+        {lines.map((l, i) => (
+          <text key={i} y={i * size * 1.02} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={size} fill={i === lines.length - 1 ? color : '#FFFFFF'}
+            stroke="#140A12" strokeWidth={size * 0.15} strokeLinejoin="round" paintOrder="stroke">{l}</text>
+        ))}
+      </g>
+    </g>
+  );
+};
+
+/** A comic starburst with a shouted word (the channel's "MAMAAA!"), popping in and wobbling. */
+export const Burst: React.FC<{ t: number; text: string; x?: number; y?: number; size?: number; color?: string }> = ({ t, text, x = 540, y = 700, size = 110, color = '#FF8A1A' }) => {
+  if (React.useContext(CloseCtx) || t < 0 || t > 60) return null;
+  const k = popIn(t, 6), r = size * 2.4, n = 14;
+  const pts = Array.from({ length: n * 2 }, (_, i) => { const a = (i / (n * 2)) * Math.PI * 2, rr = i % 2 ? r * 0.62 : r; return `${Math.cos(a) * rr * 1.25},${Math.sin(a) * rr * 0.8}`; }).join(' ');
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${-6 + Math.sin(t * 0.5) * 3}) scale(${k})`}>
+      <polygon points={pts} fill={color} stroke="#140A12" strokeWidth={10} strokeLinejoin="round" />
+      <text y={size * 0.35} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={size} fill="#FFF8EA" stroke="#140A12" strokeWidth={size * 0.14} paintOrder="stroke" strokeLinejoin="round">{text}</text>
+    </g>
+  );
+};
+
+/** A counter that ticks up from `from` to `to` (the channel's 2.158 / 30.000), with a punch when it lands. */
+export const Counter: React.FC<{ t: number; from: number; to: number; dur?: number; sub?: string; y?: number; color?: string; sep?: string }> = ({ t, from, to, dur = 30, sub, y = 700, color = '#FFD23F', sep = ',' }) => {
+  if (React.useContext(CloseCtx) || t < 0) return null;
+  const k = easeOut(clamp(t / dur));
+  const n = Math.round(lerp(from, to, k)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+  const land = t > dur ? 1 + 0.12 * Math.exp(-(t - dur) / 3) : 1;
+  return (
+    <g transform={`translate(${W / 2} ${y}) scale(${popIn(t) * land})`}>
+      <text textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={210} fill={color} stroke="#140A12" strokeWidth={26} paintOrder="stroke" strokeLinejoin="round">{n}</text>
+      {sub ? <text y={104} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={62} fill="#FFFFFF" stroke="#140A12" strokeWidth={12} paintOrder="stroke">{sub}</text> : null}
     </g>
   );
 };

@@ -67,8 +67,9 @@ for k, e in enumerate(ep['edit']):
     last_clock[e['shot']] = t1
     line = ' '.join(w['w'] + w.get('p', '').strip() for w in words if a <= round(w['s'] * FPS) + LEAD < b)
     seg = {'shot': e['shot'], 'a': a, 'b': b, 't0': t0, 't1': t1, 'line': line}
-    if e.get('look'):
-        seg['look'] = e['look']
+    for key in ('look', 'cam', 'tr'):
+        if e.get(key):
+            seg[key] = e[key]
     segments.append(seg)
 
 ids = list(dict.fromkeys(s['shot'] for s in segments))

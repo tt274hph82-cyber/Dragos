@@ -1,7 +1,7 @@
 import React from 'react';
 import { random } from 'remotion';
 import { ShotProps, FONT } from '../../engine';
-import { W, Mood, MOODS, Sky, Figure, HostCut, HostPose, Punch, BigNumber, Calendar, Thermometer, Sfx, popIn, clamp, lerp, easeOut, Glow, INK, CloseCtx } from '../molasses/kit';
+import { W, Mood, MOODS, Sky, Figure, Punch, Burst, Counter, BigNumber, Calendar, Thermometer, Sfx, popIn, clamp, lerp, easeOut, Glow, INK, CloseCtx } from '../molasses/kit';
 
 // "The Dancing Plague" (Strasbourg, 1518): a native 9:16 story Reel in the reference style, with the user's host
 // (cut-outs from his model sheet). Key content sits between y = 280 and 1250. One colour mood per scene, layered
@@ -394,7 +394,7 @@ export const S1: S = ({ t }) => (
   <g>
     <Square id="d1" mood="danger" t={t} moon sunY={360} sunX={300} torches />
     {dancers('danger', t, 9, 80, 1000, 1500, 0.95, 1)}
-    <Punch t={t - 2} lines={['STRASBOURG,', '1518']} y={340} size={108} color="#FFD23F" />
+    <Punch t={t - 2} lines={['STRASBOURG,', '1518']} y={360} size={108} color="#FFD23F" kicker="IT ALL STARTED IN" />
   </g>
 );
 export const S2: S = ({ t }) => (
@@ -423,14 +423,6 @@ export const S6: S = ({ t }) => (
 );
 
 // ---------------------------------------------------------------- the host
-export const S7: S = ({ t }) => (
-  <g>
-    <Square id="d7" mood="warm" t={t} flags />
-    {dancers('warm', t, 4, 640, 1040, 1300, 0.55, 2)}
-    <HostCut pose="arms_crossed" x={360} bottom={1650} height={1000} t={t} />
-    <Punch t={t - 4} lines={['NOT A', 'BEDTIME STORY']} y={320} size={92} color="#FFD23F" />
-  </g>
-);
 export const S8: S = ({ t }) => (
   <g>
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#2A1A10" />
@@ -495,7 +487,7 @@ export const S15: S = ({ t }) => (
     <Square id="d15" mood="warm" t={t} sunY={420} />
     <Dancer x={540} feet={1500} s={0.85} mood="warm" t={t} dance={1} arms={1} red />
     {dust(t, 540, 1500, 8)}
-    <Sfx t={t - 6} text="HOP!" x={820} y={720} />
+    <Burst t={t - 5} text="HOP!" x={800} y={720} size={90} color="#E8B24A" />
   </g>
 );
 export const S16: S = ({ t }) => (
@@ -503,8 +495,8 @@ export const S16: S = ({ t }) => (
     <Square id="d16" mood="warm" t={t} />
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#140A12" opacity={0.45} />
     <Crossed t={t - 1} x={260} y={760} icon="music" />
-    <Crossed t={t - 18} x={540} y={760} icon="drum" />
-    <Crossed t={t - 36} x={820} y={760} icon="wine" />
+    <Crossed t={t - 28} x={540} y={760} icon="drum" />
+    <Crossed t={t - 72} x={820} y={760} icon="wine" />
     <Dancer x={540} feet={1450} s={0.5} mood="warm" t={t} red />
   </g>
 );
@@ -535,14 +527,6 @@ export const S18: S = ({ t }) => (
     <Sfx t={t - 6} text="HA HA!" x={540} y={830} rot={-6} />
   </g>
 );
-const react = (mood: Mood, pose: HostPose, words?: string[], color = '#FFD23F', height = 820): S => ({ t }) => (
-  <g>
-    <Square id={`r${mood}${pose}`} mood={mood} t={t} />
-    <HostCut pose={pose} x={540} bottom={pose === 'bust' ? 1700 : 1520} height={height} t={t} />
-    {words ? <Punch t={t - 4} lines={words} y={320} size={92} color={color} /> : null}
-  </g>
-);
-export const S19 = react('warm', 'laugh_point', ['HER HUSBAND', 'LEFT?'], '#FFD23F', 980);
 export const S20: S = ({ t, len }) => (
   <g>
     <Square id="d20" mood="noon" t={t} />
@@ -591,7 +575,7 @@ export const S27: S = ({ t }) => (
   <g>
     <Square id="d27" mood="night" t={t} moon sunX={800} sunY={360} />
     {dancers('night', t, 8, 80, 1000, 1480, 0.85, 4)}
-    <BigNumber t={t - 3} text="30+" sub="IN ONE WEEK" y={660} />
+    <Counter t={t - 2} from={1} to={30} dur={24} sub="IN ONE WEEK" y={660} />
   </g>
 );
 export const S28: S = ({ t }) => {
@@ -601,7 +585,7 @@ export const S28: S = ({ t }) => {
       <Square id="d28" mood="danger" t={t} torches />
       {dancers('danger', t, 10, 60, 1020, 1300, 0.62, 9)}
       {dancers('danger', t, 8, 20, 1060, 1560, 0.95, 13)}
-      <BigNumber t={t - 2} text={String(n)} sub="SOME ACCOUNTS SAY" y={640} />
+      <Counter t={t - 2} from={30} to={400} dur={40} sub="SOME SAY" y={660} />
     </g>
   );
 };
@@ -609,7 +593,7 @@ export const S30: S = ({ t }) => (
   <g>
     <Square id="d30" mood="danger" t={t} torches />
     {dancers('danger', t, 6, 100, 980, 1650, 1.25, 17)}
-    <Punch t={t - 3} lines={['NOBODY WAS', 'HAVING FUN']} y={300} size={96} color="#FF5A5A" />
+    <Punch t={t - 3} lines={['NOT FOR', 'FUN']} y={300} size={110} color="#FF5A5A" />
   </g>
 );
 export const S31: S = ({ t }) => (
@@ -650,10 +634,9 @@ export const S35: S = ({ t }) => (
   <g>
     <Hall id="d35" t={t} />
     <Doctor x={540} feet={1700} s={1.4} t={t} arm={clamp(t / 8)} />
-    <Punch t={t - 4} lines={['THE CURE?']} y={300} size={110} color="#FFD23F" />
+    <Punch t={t - 4} lines={['THE CURE?']} y={320} size={110} color="#FFD23F" kicker="THE DOCTORS' IDEA" />
   </g>
 );
-export const S36 = react('warm', 'yell', ['MORE', 'DANCING?!'], '#FF5A5A', 760);
 export const S37: S = ({ t }) => (
   <g>
     <Hall id="d37" t={t} />
@@ -687,7 +670,6 @@ export const S40: S = ({ t }) => (
     <Punch t={t - 3} lines={['DAY AND', 'NIGHT']} y={300} size={100} color="#FFD23F" />
   </g>
 );
-export const S41 = react('noon', 'confused', ['THINK ABOUT', 'THAT'], '#FFD23F', 860);
 export const S42: S = ({ t }) => (
   <g>
     <Sky id="d42" mood="danger" sunY={1100} />
@@ -705,7 +687,6 @@ export const S43: S = ({ t }) => (
     <Punch t={t - 3} lines={['BURNS OUT', 'FASTER?']} y={300} size={100} color="#FFD23F" />
   </g>
 );
-export const S44 = react('danger', 'angry', ['OF COURSE…'], '#FF5A5A', 760);
 export const S45: S = ({ t }) => (
   <g>
     <Square id="d45" mood="outback" t={t} sunY={360} sunX={540} />
@@ -746,13 +727,6 @@ export const S49: S = (p) => (
 );
 
 // ---------------------------------------------------------------- why?
-export const S50: S = ({ t }) => (
-  <g>
-    <Square id="d50" mood="night" t={t} moon sunX={300} sunY={360} />
-    <HostCut pose="confused" x={540} bottom={1520} height={860} t={t} />
-    <Sfx t={t - 4} text="WHY?" x={820} y={640} size={130} />
-  </g>
-);
 export const S51: S = ({ t }) => (
   <g>
     <Sky id="d51" mood="warm" sunY={900} sunX={540} />
@@ -765,7 +739,7 @@ export const S52: S = ({ t }) => (
   <g>
     <Sky id="d52" mood="night" sunY={900} sunX={540} />
     <Rye t={t} ergot={1} big />
-    <Punch t={t - 3} lines={['ERGOT']} y={300} size={124} color="#C9A2FF" />
+    <Punch t={t - 3} lines={['ERGOT']} y={320} size={124} color="#C9A2FF" kicker="THEORY ONE" />
   </g>
 );
 export const S53: S = ({ t }) => (
@@ -781,7 +755,6 @@ export const S54: S = ({ t }) => (
     <Punch t={t - 2} lines={['LSD']} y={300} size={150} color="#FFFFFF" />
   </g>
 );
-export const S55 = react('night', 'bust', ['BUT…'], '#FFD23F', 1150);
 export const S56: S = ({ t }) => (
   <g>
     <Square id="d56" mood="cold" t={t} moon sunX={800} sunY={360} />
@@ -795,7 +768,7 @@ export const S57: S = ({ t }) => (
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#120A1C" />
     <StainedGlass t={t} />
     {[160, 920].map((x) => <path key={x} d={`M ${x - 60} 1500 Q ${x} 1300 ${x + 60} 1500 Z`} fill={INK} />)}
-    <Punch t={t - 3} lines={['SAINT', 'VITUS']} y={280} size={110} color="#FFD23F" />
+    <Punch t={t - 3} lines={['SAINT', 'VITUS']} y={300} size={110} color="#FFD23F" kicker="THEY FEARED" />
   </g>
 );
 export const S58: S = ({ t }) => (
@@ -840,19 +813,11 @@ export const S63: S = ({ t }) => (
 );
 
 // ---------------------------------------------------------------- the end
-export const S64: S = ({ t }) => (
-  <g>
-    <Square id="d64" mood="warm" t={t} flags />
-    {dancers('warm', t, 5, 80, 1000, 1300, 0.55, 37)}
-    <HostCut pose="sitting" x={540} bottom={1600} height={760} t={t} />
-    <Punch t={t - 3} lines={['AFTER A', 'WEDDING?']} y={300} size={100} color="#FFD23F" />
-  </g>
-);
 export const S65: S = ({ t }) => (
   <g>
     <Square id="d65" mood="danger" t={t} sunY={900} sunX={560} torches />
     {dancers('danger', t, 7, 80, 1000, 1420, 0.7, 49, 0.6)}
-    <Punch t={t - 2} lines={['REMEMBER', 'STRASBOURG']} y={300} size={100} color="#FFD23F" />
+    <Punch t={t - 2} lines={['THINK OF', 'THEM']} y={300} size={110} color="#FFD23F" />
   </g>
 );
 export const S66: S = ({ t }) => (
@@ -862,13 +827,165 @@ export const S66: S = ({ t }) => (
     <BigNumber t={t - 2} text="2" sub="MONTHS OF DANCING" y={660} />
   </g>
 );
-export const S67 = react('warm', 'bust', ["THAT'S REAL."], '#FFD23F', 1150);
+
+
+// ---------------------------------------------------------------- no host: the reaction beats as pictures
+const Candle: React.FC<{ x: number; y: number; t: number; s?: number }> = ({ x, y, t, s = 1 }) => {
+  const fl = 1 + 0.15 * Math.sin(t * 0.9) + 0.08 * Math.sin(t * 2.1);
+  return <g transform={`translate(${x} ${y}) scale(${s})`}><rect x={-22} y={-180} width={44} height={180} fill="#F2EADC" stroke={INK} strokeWidth={5} /><ellipse cx={0} cy={-200 - 8 * fl} rx={14} ry={30 * fl} fill="#FFC24A" /><ellipse cx={0} cy={-196 - 4 * fl} rx={6} ry={14 * fl} fill="#FFF2B0" /><Glow x={0} y={-200} r={300} kind="warm" o={0.8} /></g>;
+};
+export const S7: S = ({ t }) => (
+  <g>
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#1A1020" />
+    {/* a child's bedtime storybook, slammed shut and crossed out */}
+    <g transform={`translate(540 860) scale(${popIn(t - 1) * 1.3}) rotate(-6)`}>
+      <rect x={-230} y={-300} width={460} height={600} rx={20} fill="#3A6AB8" stroke={INK} strokeWidth={10} />
+      <circle cx={0} cy={-60} r={90} fill="#FFE27A" stroke={INK} strokeWidth={8} /><circle cx={30} cy={-80} r={78} fill="#3A6AB8" />
+      {[[-140, -220], [150, -200], [120, 160], [-150, 120]].map(([sx, sy], i) => <path key={i} d={`M ${sx} ${sy - 20} l 6 14 l 16 2 l -12 10 l 4 16 l -14 -8 l -14 8 l 4 -16 l -12 -10 l 16 -2 Z`} fill="#FFE27A" />)}
+      <text y={170} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={58} fill="#FFF8EA">SLEEP TIGHT</text>
+    </g>
+    {t > 10 ? <path d="M 260 520 L 820 1200 M 820 520 L 260 1200" stroke="#E2262E" strokeWidth={50} strokeLinecap="round" transform={`translate(540 860) scale(${popIn(t - 10, 5)}) translate(-540 -860)`} /> : null}
+    <Candle x={900} y={1420} t={t} />
+    <Punch t={t - 4} lines={["AIN'T NO", 'BEDTIME STORY']} y={300} size={92} color="#FFD23F" />
+  </g>
+);
+export const S19: S = (p) => (
+  <g>
+    <S18 {...p} t={p.t + 40} />
+    <Punch t={p.t - 3} lines={['HER HUSBAND', 'RAN OFF?']} y={280} size={92} color="#FFD23F" />
+  </g>
+);
+export const S80: S = ({ t }) => (
+  <g>
+    <Square id="d80" mood="night" t={t} moon sunX={800} sunY={360} />
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#05030A" opacity={0.35 + 0.15 * Math.sin(t * 0.7)} />
+    {[0, 1, 2].map((i) => <ellipse key={i} cx={((t * (2 + i) + i * 400) % 1600) - 300} cy={1260 + i * 70} rx={420} ry={60} fill="#C9A2FF" opacity={0.12} />)}
+    <Dancer x={540} feet={1420} s={0.5} mood="night" t={t} red />
+    <Punch t={t - 3} lines={['THE CREEPY', 'PART']} y={320} size={110} color="#C9A2FF" kicker="AND NOW..." />
+  </g>
+);
+export const S71: S = ({ t }) => (
+  <g>
+    <Square id="d71" mood="danger" t={t} torches />
+    <g transform={`translate(${Math.sin(t * 1.7) * 6} ${Math.cos(t * 2.3) * 4})`}>
+      {dancers('danger', t * 1.5, 9, 40, 1040, 1350, 0.75, 51)}
+      {dancers('danger', t * 1.5, 7, 0, 1080, 1700, 1.2, 55)}
+    </g>
+    <Burst t={t - 3} text="MADHOUSE!" x={540} y={680} size={100} />
+  </g>
+);
+export const S72: S = ({ t }) => (
+  <g>
+    <Sky id="d72" mood="warm" sunY={600} />
+    <rect x={-200} y={1180} width={W + 400} height={900} fill="#2C1C14" />
+    <g transform={`translate(540 980) scale(${popIn(t - 1) * 1.5})`}>
+      <ellipse cx={0} cy={60} rx={260} ry={60} fill="#000" opacity={0.3} />
+      <path d="M -240 40 Q -250 -140 0 -150 Q 250 -140 240 40 Z" fill="#C88A42" stroke={INK} strokeWidth={10} />
+      {[-120, -40, 40, 120].map((x) => <path key={x} d={`M ${x - 30} -100 Q ${x} -120 ${x + 30} -70`} stroke="#8A5A22" strokeWidth={12} fill="none" strokeLinecap="round" />)}
+    </g>
+    <g transform={`translate(820 640) rotate(12) scale(${popIn(t - 8)})`}><rect x={-110} y={-60} width={220} height={120} rx={14} fill="#FFF8EA" stroke={INK} strokeWidth={8} /><text y={24} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={70} fill="#2A9A4A">SALE</text></g>
+    {t > 20 ? <path d="M 300 620 L 780 1220 M 780 620 L 300 1220" stroke="#E2262E" strokeWidth={44} strokeLinecap="round" transform={`translate(540 920) scale(${popIn(t - 20, 5)}) translate(-540 -920)`} /> : null}
+    <Punch t={t - 3} lines={['CHEAP', 'BREAD?']} y={280} size={110} color="#FFD23F" />
+  </g>
+);
+export const S73: S = ({ t }) => (
+  <g>
+    <Sky id="d73" mood="danger" sunY={1100} />
+    {/* a huge horned shadow rising behind the dancers */}
+    <g transform={`translate(540 ${lerp(1500, 1180, easeOut(clamp(t / 20)))})`} opacity={0.85}>
+      <path d="M -420 0 Q -440 -500 -160 -640 L -260 -900 L -60 -700 Q 0 -720 60 -700 L 260 -900 L 160 -640 Q 440 -500 420 0 Z" fill="#1A0408" />
+      <ellipse cx={-110} cy={-480} rx={44} ry={26} fill="#FF3A2A" /><ellipse cx={110} cy={-480} rx={44} ry={26} fill="#FF3A2A" />
+      <Glow x={0} y={-480} r={360} kind="red" o={0.8} />
+    </g>
+    {dancers('danger', t, 7, 60, 1020, 1560, 1.0, 59)}
+    <Punch t={t - 3} lines={['THE DEVIL', 'GOT IN']} y={280} size={110} color="#FF5A5A" />
+  </g>
+);
+export const S79: S = ({ t }) => (
+  <g>
+    <Hall id="d79" t={t} />
+    {[260, 540, 820].map((x, i) => <Doctor key={x} x={x} feet={1300} s={0.7} t={t + i * 7} arm={i === 1 ? 1 : 0} flip={x > 540} />)}
+    <Sfx t={t - 2} text="?!" x={540} y={760} size={260} rot={-4} />
+    <Punch t={t - 3} lines={['HOW DUMB', 'CAN YOU BE?']} y={300} size={96} color="#FFD23F" kicker="SERIOUSLY?" />
+  </g>
+);
+export const S44: S = ({ t }) => (
+  <g>
+    <Sky id="d44" mood="danger" sunY={1100} />
+    <rect x={-200} y={1180} width={W + 400} height={900} fill="#1C0A0C" />
+    <Barn t={t + 60} fire={1.8} />
+    <Punch t={t - 3} lines={['A DISASTER']} y={300} size={120} color="#FF5A5A" />
+  </g>
+);
+export const S50: S = ({ t }) => (
+  <g>
+    <Square id="d50" mood="night" t={t} moon sunX={300} sunY={360} />
+    {dancers('night', t, 5, 120, 960, 1480, 0.8, 63, 0.4)}
+    <BigNumber t={t - 2} text="WHY?" y={760} color="#FFD23F" />
+  </g>
+);
+export const S74: S = ({ t }) => (
+  <g>
+    <S8 t={t + 40} len={60} f={0} />
+    <BigNumber t={t - 2} text="2" sub="BIG THEORIES" y={760} />
+  </g>
+);
+export const S75: S = ({ t }) => (
+  <g>
+    <Swirl t={t + 30} />
+    {[[200, 600], [860, 520], [320, 1180], [780, 1100], [540, 360]].map(([x, y], i) => (
+      <g key={i} transform={`translate(${x + Math.sin(t * 0.2 + i) * 40} ${y + Math.cos(t * 0.15 + i) * 30}) scale(${popIn(t - i * 4) * 0.9})`}>
+        <path d="M -60 60 Q -70 -40 -30 -60 L -50 -120 L -10 -70 L 10 -70 L 50 -120 L 30 -60 Q 70 -40 60 60 Q 0 90 -60 60 Z" fill="#2A0A14" />
+        <circle cx={-20} cy={-20} r={9} fill="#FFE27A" /><circle cx={20} cy={-20} r={9} fill="#FFE27A" />
+        <path d="M 60 40 Q 110 60 100 0" stroke="#2A0A14" strokeWidth={10} fill="none" />
+      </g>
+    ))}
+    <Punch t={t - 3} lines={['DEVILS ON', 'THE WALLS']} y={280} size={100} color="#FF5A5A" />
+  </g>
+);
+export const S55: S = ({ t }) => (
+  <g>
+    <Square id="d55" mood="cold" t={t} moon sunX={800} sunY={360} />
+    <BigNumber t={t - 2} text="2" sub="MOST HISTORIANS" y={760} color="#9FE3FF" />
+  </g>
+);
+export const S76: S = ({ t }) => (
+  <g>
+    <Sky id="d76" mood="danger" sunY={1100} />
+    <g transform="translate(540 900) scale(1.6)" style={{ filter: 'drop-shadow(0 0 10px #FF8A3D)' }}>
+      <path d="M -150 260 Q -150 120 -60 100 L 60 100 Q 150 120 150 260 Z" fill={INK} />
+      <ellipse cx={0} cy={-20} rx={120} ry={140} fill={INK} />
+      <path d={`M -20 -160 L 10 -90 L -24 -40 L 20 30 L -6 90`} stroke="#FFE27A" strokeWidth={10 * clamp(t / 6)} fill="none" strokeLinejoin="round" />
+      <Glow x={0} y={-40} r={200} kind="red" o={clamp(t / 6)} />
+    </g>
+    <Burst t={t - 3} text="SNAP!" x={540} y={520} size={130} color="#E2262E" />
+  </g>
+);
+export const S77: S = ({ t }) => (
+  <g>
+    <Square id="d77" mood="warm" t={t} flags />
+    {dancers('warm', t, 6, 80, 1000, 1500, 0.9, 67, 0.5)}
+    <Punch t={t - 3} lines={['FEET HURT AFTER', 'A WEDDING?']} y={280} size={84} color="#FFD23F" />
+  </g>
+);
+export const S78: S = ({ t }) => (
+  <g>
+    <Square id="d78" mood="night" t={t} moon sunX={800} sunY={360} />
+    <Calendar t={t - 1} day={t < 14 ? '14' : t < 28 ? '1' : '6'} month={t < 14 ? 'JULY' : t < 28 ? 'AUG' : 'SEPT'} year="1518" x={540} y={760} />
+    {dancers('night', t, 5, 120, 960, 1520, 0.85, 71)}
+  </g>
+);
+export const S67: S = ({ t }) => (
+  <g>
+    <S8 t={t + 80} len={60} f={0} />
+    <Punch t={t - 2} lines={["THAT'S REAL."]} y={300} size={120} color="#FFD23F" />
+  </g>
+);
 export const S68: S = ({ t }) => (
   <g>
-    <Square id="d68" mood="night" t={t} moon sunX={800} sunY={360} />
-    {dancers('night', t, 4, 640, 1040, 1300, 0.55, 45)}
-    <HostCut pose="rock" x={420} bottom={1650} height={980} t={t} />
-    <Punch t={t - 3} lines={['FOLLOW FOR', 'STRANGE HISTORY']} y={300} size={76} color="#C9A2FF" />
+    <Square id="d68" mood="night" t={t} moon sunX={800} sunY={360} torches />
+    {dancers('night', t, 7, 60, 1020, 1480, 0.85, 45)}
+    <Punch t={t - 3} lines={['FOLLOW FOR', 'STRANGE HISTORY']} y={300} size={80} color="#C9A2FF" />
   </g>
 );
 
@@ -879,3 +996,7 @@ const close = (Shot: S, cx: number, cy: number, z: number, from: number): S => (
 export const S29 = close(S28, 540, 1300, 1.5, 50);    // "in the square": into the crowd
 export const S69 = close(S12, 300, 1250, 1.7, 30);    // "into the middle": on Troffea at the door
 export const S70 = close(S39, 540, 1100, 1.5, 30);    // "drums and pipes": the band
+export const S81 = close(S21, 540, 1150, 1.6, 40);   // "no sleep": on her
+export const S84 = close(S26, 540, 1250, 1.5, 60);   // "right next to her"
+export const S85 = close(S37, 540, 1000, 1.5, 40);   // "the sickness": the doctor with the scroll
+export const S86 = close(S68, 540, 1250, 1.4, 40);   // "strange history": the crowd
