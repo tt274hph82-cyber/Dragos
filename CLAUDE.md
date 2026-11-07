@@ -103,7 +103,7 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 
 ## HyperFrames (HTML-to-video)
 - Projects: `videos/every-second-motion/`. Pinned to **hyperframes@0.9.20** in `package.json` (`npm run check`, `npm run render`).
-- Skills (0.9 layout): `hyperframes` (read first), `hyperframes-cli`, `hyperframes-registry`, `media-use`, `remotion-to-hyperframes`. They install to `~/.claude/skills`, which a new cloud container doesn't keep: run `npx --yes hyperframes@0.9.20 skills update` at the start of a HyperFrames job.
+- Skills (0.9 layout): `hyperframes` (read first), `hyperframes-cli`, `hyperframes-registry`, `media-use`, `remotion-to-hyperframes`. They install to `~/.claude/skills`, which a new cloud container doesn't keep, so a SessionStart hook in `.claude/settings.json` runs `npx --yes hyperframes@0.9.20 skills update` at the start of every session. Run it by hand too at the start of any HyperFrames job if the skills are missing.
 - To upgrade later: bump the pin in each project's `package.json`, re-copy `CLAUDE.md`/`AGENTS.md` from a fresh `hyperframes init`, then `check` and a test `render`.
 
 ## Shadow Puppet Theatre explainers
