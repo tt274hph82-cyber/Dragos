@@ -45,7 +45,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
-          git add research/frames research/clips || true
+          mkdir -p research/clips
+          git add -A research || true
           git diff --cached --quiet || git commit -m "Reference Shorts: frame sheets"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin "HEAD:${GITHUB_REF_NAME}"
