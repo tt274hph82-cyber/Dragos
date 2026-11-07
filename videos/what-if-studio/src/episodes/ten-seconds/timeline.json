@@ -2,172 +2,172 @@
  "slug": "ten-seconds",
  "title": "10 SECONDS OF GAMES",
  "fps": 30,
- "total": 1045,
+ "total": 912,
  "segments": [
   {
    "shot": "S1",
    "a": 0,
-   "b": 13,
+   "b": 11,
    "t0": 0,
-   "t1": 13,
+   "t1": 11,
    "line": "What if your",
    "tr": "cut"
   },
   {
    "shot": "S2",
-   "a": 13,
-   "b": 57,
+   "a": 11,
+   "b": 50,
    "t0": 0,
-   "t1": 44,
+   "t1": 39,
    "line": "mom only gave you",
    "tr": "cut"
   },
   {
    "shot": "S3",
-   "a": 57,
-   "b": 77,
+   "a": 50,
+   "b": 66,
    "t0": 0,
-   "t1": 20,
-   "line": "ten seconds of",
+   "t1": 16,
+   "line": "ten seconds",
    "cam": "dive",
    "tr": "cut"
   },
   {
    "shot": "S4",
-   "a": 77,
-   "b": 92,
+   "a": 66,
+   "b": 80,
    "t0": 0,
-   "t1": 15,
-   "line": "games?",
+   "t1": 14,
+   "line": "of games?",
    "tr": "zoom"
   },
   {
    "shot": "S5",
-   "a": 92,
-   "b": 135,
+   "a": 80,
+   "b": 117,
    "t0": 0,
-   "t1": 43,
+   "t1": 37,
    "line": "Ten seconds.",
    "tr": "cut"
   },
   {
    "shot": "S6",
-   "a": 135,
-   "b": 165,
+   "a": 117,
+   "b": 143,
    "t0": 0,
-   "t1": 30,
+   "t1": 26,
    "line": "Then bed.",
    "cam": "dive",
    "tr": "cut"
   },
   {
    "shot": "S7",
-   "a": 165,
-   "b": 212,
+   "a": 143,
+   "b": 184,
    "t0": 0,
-   "t1": 47,
+   "t1": 41,
    "line": "Ten seconds? That's",
    "tr": "whip"
   },
   {
    "shot": "S8",
-   "a": 212,
-   "b": 241,
+   "a": 184,
+   "b": 209,
    "t0": 0,
-   "t1": 29,
+   "t1": 25,
    "line": "nothing.",
    "tr": "cut"
   },
   {
    "shot": "S9",
-   "a": 241,
-   "b": 258,
+   "a": 209,
+   "b": 225,
    "t0": 0,
-   "t1": 17,
+   "t1": 16,
    "line": "Unless you're",
    "cam": "dive",
    "tr": "cut"
   },
   {
    "shot": "S10",
-   "a": 258,
-   "b": 279,
+   "a": 225,
+   "b": 243,
    "t0": 0,
-   "t1": 21,
+   "t1": 18,
    "line": "a speedrunner.",
    "cam": "dive",
    "tr": "zoom"
   },
   {
    "shot": "S11",
-   "a": 279,
-   "b": 317,
+   "a": 243,
+   "b": 275,
    "t0": 0,
-   "t1": 38,
+   "t1": 32,
    "line": "Second ten.",
    "cam": "static",
    "tr": "flash"
   },
   {
    "shot": "S12",
-   "a": 317,
-   "b": 381,
+   "a": 275,
+   "b": 330,
    "t0": 0,
-   "t1": 64,
+   "t1": 55,
    "line": "You beat a hundred-level parkour,",
    "tr": "zoom"
   },
   {
    "shot": "S13",
-   "a": 381,
-   "b": 401,
+   "a": 330,
+   "b": 348,
    "t0": 0,
-   "t1": 20,
+   "t1": 18,
    "line": "in one",
    "cam": "static",
    "tr": "cut"
   },
   {
    "shot": "S14",
-   "a": 401,
-   "b": 416,
+   "a": 348,
+   "b": 360,
    "t0": 0,
-   "t1": 15,
+   "t1": 12,
    "line": "jump.",
    "tr": "cut"
   },
   {
    "shot": "S15",
-   "a": 416,
-   "b": 455,
+   "a": 360,
+   "b": 395,
    "t0": 0,
-   "t1": 39,
+   "t1": 35,
    "line": "Second nine.",
    "cam": "static",
    "tr": "flash"
   },
   {
    "shot": "S16",
-   "a": 455,
-   "b": 470,
+   "a": 395,
+   "b": 407,
    "t0": 0,
-   "t1": 15,
+   "t1": 12,
    "line": "The Block",
    "tr": "cut"
   },
   {
    "shot": "S17",
-   "a": 470,
-   "b": 509,
+   "a": 407,
+   "b": 441,
    "t0": 0,
-   "t1": 39,
+   "t1": 34,
    "line": "Boss spawns.",
    "tr": "cut"
   },
   {
    "shot": "S18",
-   "a": 509,
-   "b": 516,
+   "a": 441,
+   "b": 448,
    "t0": 0,
    "t1": 7,
    "line": "One",
@@ -176,166 +176,166 @@
   },
   {
    "shot": "S19",
-   "a": 516,
-   "b": 539,
+   "a": 448,
+   "b": 467,
    "t0": 0,
-   "t1": 23,
+   "t1": 19,
    "line": "punch.",
    "cam": "static",
    "tr": "cut"
   },
   {
    "shot": "S20",
-   "a": 539,
-   "b": 561,
+   "a": 467,
+   "b": 487,
    "t0": 0,
-   "t1": 22,
+   "t1": 20,
    "line": "K.O.",
    "tr": "zoom"
   },
   {
    "shot": "S21",
-   "a": 561,
-   "b": 597,
+   "a": 487,
+   "b": 519,
    "t0": 0,
-   "t1": 36,
+   "t1": 32,
    "line": "Second eight.",
    "cam": "static",
    "tr": "flash"
   },
   {
    "shot": "S22",
-   "a": 597,
-   "b": 619,
+   "a": 519,
+   "b": 537,
    "t0": 0,
-   "t1": 22,
+   "t1": 18,
    "line": "He drops a",
    "cam": "zoomOut",
    "tr": "cut"
   },
   {
    "shot": "S23",
-   "a": 619,
-   "b": 654,
+   "a": 537,
+   "b": 569,
    "t0": 0,
-   "t1": 35,
+   "t1": 32,
    "line": "billion gems.",
    "cam": "tiltDown",
    "tr": "cut"
   },
   {
    "shot": "S24",
-   "a": 654,
-   "b": 696,
+   "a": 569,
+   "b": 604,
    "t0": 0,
-   "t1": 42,
+   "t1": 35,
    "line": "Second seven.",
    "cam": "static",
    "tr": "flash"
   },
   {
    "shot": "S25",
-   "a": 696,
-   "b": 708,
+   "a": 604,
+   "b": 615,
    "t0": 0,
-   "t1": 12,
+   "t1": 11,
    "line": "You buy the",
    "cam": "panL",
    "tr": "whip"
   },
   {
    "shot": "S26",
-   "a": 708,
-   "b": 758,
+   "a": 615,
+   "b": 659,
    "t0": 0,
-   "t1": 50,
+   "t1": 44,
    "line": "whole shop. Even the",
    "cam": "zoomOut",
    "tr": "cut"
   },
   {
    "shot": "S27",
-   "a": 758,
-   "b": 785,
+   "a": 659,
+   "b": 682,
    "t0": 0,
-   "t1": 27,
+   "t1": 23,
    "line": "toaster skin.",
    "tr": "zoom"
   },
   {
    "shot": "S28",
-   "a": 785,
-   "b": 816,
+   "a": 682,
+   "b": 708,
    "t0": 0,
-   "t1": 31,
+   "t1": 26,
    "line": "Three.",
    "cam": "dive",
    "tr": "cut"
   },
   {
    "shot": "S29",
-   "a": 816,
-   "b": 841,
+   "a": 708,
+   "b": 730,
    "t0": 0,
-   "t1": 25,
-   "line": "Two. Then you",
+   "t1": 22,
+   "line": "Two. Then",
    "cam": "dive",
    "tr": "cut"
   },
   {
    "shot": "S30",
-   "a": 841,
-   "b": 851,
+   "a": 730,
+   "b": 739,
    "t0": 0,
-   "t1": 10,
-   "line": "find",
+   "t1": 9,
+   "line": "you find",
    "tr": "cut"
   },
   {
    "shot": "S31",
-   "a": 851,
-   "b": 879,
+   "a": 739,
+   "b": 763,
    "t0": 0,
-   "t1": 28,
+   "t1": 24,
    "line": "this.",
    "cam": "dive",
    "tr": "zoom"
   },
   {
    "shot": "S32",
-   "a": 879,
-   "b": 918,
+   "a": 763,
+   "b": 797,
    "t0": 0,
-   "t1": 39,
+   "t1": 34,
    "line": "Plus ten seconds.",
    "cam": "zoomOut",
    "tr": "flash"
   },
   {
    "shot": "S33",
-   "a": 918,
-   "b": 948,
+   "a": 797,
+   "b": 822,
    "t0": 0,
-   "t1": 30,
+   "t1": 25,
    "line": "Not again!",
    "cam": "dive",
    "tr": "whip"
   },
   {
    "shot": "S34",
-   "a": 948,
-   "b": 994,
+   "a": 822,
+   "b": 863,
    "t0": 0,
-   "t1": 46,
+   "t1": 41,
    "line": "Comment loop if you watched this",
    "tr": "cut"
   },
   {
    "shot": "S1",
-   "a": 994,
-   "b": 1045,
+   "a": 863,
+   "b": 912,
    "t0": 0,
-   "t1": 51,
+   "t1": 49,
    "line": "twice.",
    "tr": "cut"
   }
@@ -345,7 +345,7 @@
    "id": "S1",
    "size": "story",
    "key": 20,
-   "len": 51,
+   "len": 49,
    "first": 0,
    "line": "What if your",
    "note": "S1"
@@ -354,8 +354,8 @@
    "id": "S2",
    "size": "story",
    "key": 20,
-   "len": 44,
-   "first": 13,
+   "len": 39,
+   "first": 11,
    "line": "mom only gave you",
    "note": "S2"
   },
@@ -363,26 +363,26 @@
    "id": "S3",
    "size": "story",
    "key": 20,
-   "len": 20,
-   "first": 57,
-   "line": "ten seconds of",
+   "len": 16,
+   "first": 50,
+   "line": "ten seconds",
    "note": "S3"
   },
   {
    "id": "S4",
    "size": "story",
    "key": 20,
-   "len": 15,
-   "first": 77,
-   "line": "games?",
+   "len": 14,
+   "first": 66,
+   "line": "of games?",
    "note": "S4"
   },
   {
    "id": "S5",
    "size": "story",
    "key": 20,
-   "len": 43,
-   "first": 92,
+   "len": 37,
+   "first": 80,
    "line": "Ten seconds.",
    "note": "S5"
   },
@@ -390,8 +390,8 @@
    "id": "S6",
    "size": "story",
    "key": 20,
-   "len": 30,
-   "first": 135,
+   "len": 26,
+   "first": 117,
    "line": "Then bed.",
    "note": "S6"
   },
@@ -399,8 +399,8 @@
    "id": "S7",
    "size": "story",
    "key": 20,
-   "len": 47,
-   "first": 165,
+   "len": 41,
+   "first": 143,
    "line": "Ten seconds? That's",
    "note": "S7"
   },
@@ -408,8 +408,8 @@
    "id": "S8",
    "size": "story",
    "key": 20,
-   "len": 29,
-   "first": 212,
+   "len": 25,
+   "first": 184,
    "line": "nothing.",
    "note": "S8"
   },
@@ -417,8 +417,8 @@
    "id": "S9",
    "size": "story",
    "key": 20,
-   "len": 17,
-   "first": 241,
+   "len": 16,
+   "first": 209,
    "line": "Unless you're",
    "note": "S9"
   },
@@ -426,8 +426,8 @@
    "id": "S10",
    "size": "story",
    "key": 20,
-   "len": 21,
-   "first": 258,
+   "len": 18,
+   "first": 225,
    "line": "a speedrunner.",
    "note": "S10"
   },
@@ -435,8 +435,8 @@
    "id": "S11",
    "size": "story",
    "key": 20,
-   "len": 38,
-   "first": 279,
+   "len": 32,
+   "first": 243,
    "line": "Second ten.",
    "note": "S11"
   },
@@ -444,8 +444,8 @@
    "id": "S12",
    "size": "story",
    "key": 20,
-   "len": 64,
-   "first": 317,
+   "len": 55,
+   "first": 275,
    "line": "You beat a hundred-level parkour,",
    "note": "S12"
   },
@@ -453,8 +453,8 @@
    "id": "S13",
    "size": "story",
    "key": 20,
-   "len": 20,
-   "first": 381,
+   "len": 18,
+   "first": 330,
    "line": "in one",
    "note": "S13"
   },
@@ -462,8 +462,8 @@
    "id": "S14",
    "size": "story",
    "key": 20,
-   "len": 15,
-   "first": 401,
+   "len": 12,
+   "first": 348,
    "line": "jump.",
    "note": "S14"
   },
@@ -471,8 +471,8 @@
    "id": "S15",
    "size": "story",
    "key": 20,
-   "len": 39,
-   "first": 416,
+   "len": 35,
+   "first": 360,
    "line": "Second nine.",
    "note": "S15"
   },
@@ -480,8 +480,8 @@
    "id": "S16",
    "size": "story",
    "key": 20,
-   "len": 15,
-   "first": 455,
+   "len": 12,
+   "first": 395,
    "line": "The Block",
    "note": "S16"
   },
@@ -489,8 +489,8 @@
    "id": "S17",
    "size": "story",
    "key": 20,
-   "len": 39,
-   "first": 470,
+   "len": 34,
+   "first": 407,
    "line": "Boss spawns.",
    "note": "S17"
   },
@@ -499,7 +499,7 @@
    "size": "story",
    "key": 20,
    "len": 7,
-   "first": 509,
+   "first": 441,
    "line": "One",
    "note": "S18"
   },
@@ -507,8 +507,8 @@
    "id": "S19",
    "size": "story",
    "key": 20,
-   "len": 23,
-   "first": 516,
+   "len": 19,
+   "first": 448,
    "line": "punch.",
    "note": "S19"
   },
@@ -516,8 +516,8 @@
    "id": "S20",
    "size": "story",
    "key": 20,
-   "len": 22,
-   "first": 539,
+   "len": 20,
+   "first": 467,
    "line": "K.O.",
    "note": "S20"
   },
@@ -525,8 +525,8 @@
    "id": "S21",
    "size": "story",
    "key": 20,
-   "len": 36,
-   "first": 561,
+   "len": 32,
+   "first": 487,
    "line": "Second eight.",
    "note": "S21"
   },
@@ -534,8 +534,8 @@
    "id": "S22",
    "size": "story",
    "key": 20,
-   "len": 22,
-   "first": 597,
+   "len": 18,
+   "first": 519,
    "line": "He drops a",
    "note": "S22"
   },
@@ -543,8 +543,8 @@
    "id": "S23",
    "size": "story",
    "key": 20,
-   "len": 35,
-   "first": 619,
+   "len": 32,
+   "first": 537,
    "line": "billion gems.",
    "note": "S23"
   },
@@ -552,8 +552,8 @@
    "id": "S24",
    "size": "story",
    "key": 20,
-   "len": 42,
-   "first": 654,
+   "len": 35,
+   "first": 569,
    "line": "Second seven.",
    "note": "S24"
   },
@@ -561,8 +561,8 @@
    "id": "S25",
    "size": "story",
    "key": 20,
-   "len": 12,
-   "first": 696,
+   "len": 11,
+   "first": 604,
    "line": "You buy the",
    "note": "S25"
   },
@@ -570,8 +570,8 @@
    "id": "S26",
    "size": "story",
    "key": 20,
-   "len": 50,
-   "first": 708,
+   "len": 44,
+   "first": 615,
    "line": "whole shop. Even the",
    "note": "S26"
   },
@@ -579,8 +579,8 @@
    "id": "S27",
    "size": "story",
    "key": 20,
-   "len": 27,
-   "first": 758,
+   "len": 23,
+   "first": 659,
    "line": "toaster skin.",
    "note": "S27"
   },
@@ -588,8 +588,8 @@
    "id": "S28",
    "size": "story",
    "key": 20,
-   "len": 31,
-   "first": 785,
+   "len": 26,
+   "first": 682,
    "line": "Three.",
    "note": "S28"
   },
@@ -597,26 +597,26 @@
    "id": "S29",
    "size": "story",
    "key": 20,
-   "len": 25,
-   "first": 816,
-   "line": "Two. Then you",
+   "len": 22,
+   "first": 708,
+   "line": "Two. Then",
    "note": "S29"
   },
   {
    "id": "S30",
    "size": "story",
    "key": 20,
-   "len": 10,
-   "first": 841,
-   "line": "find",
+   "len": 9,
+   "first": 730,
+   "line": "you find",
    "note": "S30"
   },
   {
    "id": "S31",
    "size": "story",
    "key": 20,
-   "len": 28,
-   "first": 851,
+   "len": 24,
+   "first": 739,
    "line": "this.",
    "note": "S31"
   },
@@ -624,8 +624,8 @@
    "id": "S32",
    "size": "story",
    "key": 20,
-   "len": 39,
-   "first": 879,
+   "len": 34,
+   "first": 763,
    "line": "Plus ten seconds.",
    "note": "S32"
   },
@@ -633,8 +633,8 @@
    "id": "S33",
    "size": "story",
    "key": 20,
-   "len": 30,
-   "first": 918,
+   "len": 25,
+   "first": 797,
    "line": "Not again!",
    "note": "S33"
   },
@@ -642,8 +642,8 @@
    "id": "S34",
    "size": "story",
    "key": 20,
-   "len": 46,
-   "first": 948,
+   "len": 41,
+   "first": 822,
    "line": "Comment loop if you watched this",
    "note": "S34"
   }
@@ -652,90 +652,90 @@
   {
    "kind": "punch",
    "amp": 0.1,
-   "f": 281
+   "f": 245
   },
   {
    "kind": "punch",
    "amp": 0.1,
-   "f": 418
+   "f": 362
   },
   {
    "kind": "punch",
    "amp": 0.1,
-   "f": 563
+   "f": 489
   },
   {
    "kind": "punch",
    "amp": 0.1,
-   "f": 656
+   "f": 571
   },
   {
    "kind": "flash",
    "color": "#F0E8FF",
    "o": 0.8,
-   "f": 457
+   "f": 397
   },
   {
    "kind": "flash",
    "color": "#F0E8FF",
    "o": 0.5,
-   "f": 463
+   "f": 403
   },
   {
    "kind": "flash",
    "color": "#FFFFFF",
    "o": 0.9,
-   "f": 518
+   "f": 450
   },
   {
    "kind": "shake",
    "len": 12,
    "amp": 14,
-   "f": 518
+   "f": 450
   },
   {
    "kind": "punch",
    "amp": 0.12,
-   "f": 541
+   "f": 469
   },
   {
    "kind": "bloom",
    "color": "#FFC21A",
    "o": 0.8,
-   "f": 622
+   "f": 540
   },
   {
    "kind": "punch",
-   "f": 764
+   "f": 665
   },
   {
    "kind": "shake",
    "len": 8,
    "amp": 6,
-   "f": 786
+   "f": 683
   },
   {
    "kind": "bloom",
    "color": "#4ADE6A",
    "o": 0.8,
-   "f": 881
+   "f": 765
   },
   {
    "kind": "shake",
    "len": 10,
    "amp": 8,
-   "f": 920
+   "f": 799
   },
   {
    "kind": "rewind",
    "len": 40,
-   "f": 994
+   "f": 863
   }
  ],
  "audio": {
   "voiceVol": 0.8,
-  "sfxVol": 0.1283,
-  "musicVol": 0.0505,
+  "sfxVol": 0.1225,
+  "musicVol": 0.0493,
   "voice": "ten-seconds/voice.wav",
   "sfx": "ten-seconds/sfx.wav",
   "music": "ten-seconds/music.wav"

@@ -7,6 +7,7 @@ episode.json:
   "cast": {"mom": {"id": "<voice id>", "settings": {...}}},
   "script": [{"text": "...", "who": "mom"}, ...]      (no "who" = the narrator)
   "gap": 0.12                                          (seconds between lines)
+  "tempo": 1.15                                        (speed every line up, pitch kept; match a reference pace)
 
 Each line is generated on its own (eleven_v4, 128 kbps, cached by voice and text in public/<slug>/lines/), trimmed of
 silence, joined with `gap` into public/<slug>/voice.wav, then every word is timed from the joined audio with
@@ -23,6 +24,7 @@ NARR = {'model': 'eleven_v4', 'language': 'en', 'settings': {'stability': 0.45, 
 NARR.update(ep.get('voice', {}))
 CAST = {'narrator': NARR, **{k: {**NARR, **v} for k, v in ep.get('cast', {}).items()}}
 GAP = ep.get('gap', 0.12)
+TEMPO = ep.get('tempo', 1.0)   # speed every line up (pitch kept) after generation, e.g. 1.15
 SR = 44100
 lines_dir = pub_dir(slug) / 'lines'
 lines_dir.mkdir(parents=True, exist_ok=True)
@@ -40,7 +42,7 @@ def tts(text, v):
                                      data=json.dumps(body).encode(), headers={'xi-api-key': key, 'Content-Type': 'application/json'})
         mp3.write_bytes(urllib.request.urlopen(req, timeout=180).read())
     raw = subprocess.run(['ffmpeg', '-v', 'error', '-i', str(mp3), '-af',
-                          'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse',
+                          'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse' + (f',atempo={TEMPO}' if TEMPO != 1 else ''),
                           '-ac', '1', '-ar', str(SR), '-f', 's16le', '-'], capture_output=True, check=True).stdout
     return array.array('h', raw)
 

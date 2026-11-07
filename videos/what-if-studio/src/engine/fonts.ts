@@ -13,6 +13,8 @@ const local: [string, string, string][] = [
   ['Fragment Mono', 'FragmentMono-400.woff2', '400'],
   ['Kalam', 'Kalam-400.woff2', '400'],
   ['Kalam', 'Kalam-700.woff2', '700'],
+  ['Montserrat', 'Montserrat-800.woff2', '800'],
+  ['Montserrat', 'Montserrat-900.woff2', '900'],
 ];
 for (const [family, file, weight] of local) loadFont({ family, url: staticFile(`fonts/${file}`), weight });
 if (STUDIO.titleFont) loadFont({ family: STUDIO.titleFont.family, url: staticFile(STUDIO.titleFont.file), weight: STUDIO.titleFont.weight });
@@ -21,4 +23,6 @@ export const FONT = {
   title: STUDIO.titleFont ? STUDIO.titleFont.family : 'Bricolage Grotesque',
   ui: 'Fragment Mono',
   hand: 'Kalam',
+  /** the gaming Shorts' face (captions and game UI): heavy geometric sans, like the reference */
+  game: 'Montserrat',
 };

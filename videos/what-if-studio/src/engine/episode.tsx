@@ -323,7 +323,7 @@ export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ w
 
 /** Pop captions (the "What If" gaming Shorts): one word at a time (two when the first is tiny), big, bouncing in,
  *  white with a heavy outline, keywords in colour (`colors`: lower-case word -> colour). */
-export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: Record<string, string>; y?: number; size?: number }> = ({ words, fps, colors = {}, y = 1230, size = 104 }) => {
+export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: Record<string, string>; y?: number; size?: number; font?: string }> = ({ words, fps, colors = {}, y = 1230, size = 104, font = 'Bricolage Grotesque' }) => {
   const f = useCurrentFrame();
   const t = f / fps;
   const groups = React.useMemo(() => {
@@ -346,8 +346,8 @@ export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: R
   return (
     <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
       <g transform={`translate(${STORY.w / 2} ${y}) scale(${pop})`}>
-        <text textAnchor="middle" fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={z} letterSpacing={1}
-          fill={col} stroke="#0A0610" strokeWidth={z * 0.2} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 6px 0 rgba(0,0,0,0.45))' }}>
+        <text textAnchor="middle" fontFamily={font} fontWeight={900} fontSize={z} letterSpacing={0.5}
+          fill={col} stroke="#0A0610" strokeWidth={z * 0.17} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 7px 0 rgba(0,0,0,0.55))' }}>
           {key ? text.toUpperCase() : text}
         </text>
       </g>
@@ -387,7 +387,7 @@ const storyFxAt = (tl: Timeline, f: number) => {
   return { ...base, punch, blooms, rewind, iris };
 };
 
-export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false }) => {
+export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false, capFont }) => {
   const f = useCurrentFrame();
   const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
   const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
@@ -453,7 +453,7 @@ export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words:
       {/* a dark band at the bottom, like the references, so the captions always read */}
       {captions && capStyle === 'karaoke' ? <AbsoluteFill style={{ background: 'linear-gradient(to bottom, transparent 52%, rgba(8,6,16,0.55) 66%, rgba(8,6,16,0.85) 100%)' }} /> : null}
       {captions && capStyle === 'karaoke' ? <StoryCaptions words={words} fps={tl.fps} /> : null}
-      {captions && capStyle === 'pop' ? <PopCaptions words={words} fps={tl.fps} colors={capColors} /> : null}
+      {captions && capStyle === 'pop' ? <PopCaptions words={words} fps={tl.fps} colors={capColors} font={capFont} /> : null}
       {A.voice ? <Audio src={staticFile(A.voice)} volume={A.voiceVol ?? 1} /> : null}
       {A.sfx ? <Audio src={staticFile(A.sfx)} volume={A.sfxVol ?? 1} /> : null}
       {A.music ? <Audio src={staticFile(A.music)} volume={A.musicVol ?? 1} /> : null}
@@ -478,7 +478,7 @@ const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline
 };
 
 /** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
-export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean }) => ({
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string }) => ({
   id,
   total: p.timeline.total,
   shotCount: p.timeline.shots.length,

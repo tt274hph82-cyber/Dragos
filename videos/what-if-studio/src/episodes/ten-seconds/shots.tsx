@@ -30,7 +30,7 @@ const Timer: React.FC<{ f: number }> = ({ f }) => {
     <g transform={`translate(540 330) scale(${s})`}>
       <rect x={-118} y={-44} width={236} height={88} rx={44} fill={low ? '#E2262E' : '#1A1424'} opacity={0.92} stroke="#FFFFFF" strokeWidth={low ? 6 : 0} />
       <circle cx={-66} cy={0} r={22} fill="none" stroke="#FFFFFF" strokeWidth={7} /><path d="M -66 -12 L -66 0 L -56 8" stroke="#FFFFFF" strokeWidth={6} fill="none" strokeLinecap="round" />
-      <text x={26} y={18} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={54} fill="#FFFFFF">{`0:${String(v).padStart(2, '0')}`}</text>
+      <text x={26} y={18} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={54} fill="#FFFFFF">{`0:${String(v).padStart(2, '0')}`}</text>
     </g>
   );
 };
@@ -178,9 +178,9 @@ const SecondBadge: React.FC<{ t: number; n: number; len?: number }> = ({ t, n, l
     <g transform={`translate(540 ${860 - Math.max(0, t - len + 6) * 160}) scale(${(t < 5 ? lerp(3.2, 1, easeOut(t / 5)) : 1) * 1.25 * (1 + Math.max(0, t - len + 6) * 0.08)}) rotate(${(t < 5 ? lerp(-24, -4, easeOut(t / 5)) : -4 + Math.sin(t * 0.6) * 3)})`}>
       <rect x={-260} y={-170} width={520} height={340} rx={60} fill="#FFFFFF" stroke={OL} strokeWidth={14} />
       <rect x={-236} y={-146} width={472} height={292} rx={44} fill="none" stroke="#2EA84A" strokeWidth={14} />
-      <text y={-70} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={60} fill={OL}>SECOND</text>
+      <text y={-70} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={60} fill={OL}>SECOND</text>
       <circle cx={-120} cy={50} r={64} fill="#2EA84A" stroke={OL} strokeWidth={10} /><circle cx={-120} cy={50} r={36} fill="none" stroke="#FFFFFF" strokeWidth={10} /><path d="M -120 26 L -120 50 L -104 62" stroke="#FFFFFF" strokeWidth={9} fill="none" strokeLinecap="round" />
-      <text x={70} y={110} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={210} fill="#2EA84A" stroke={OL} strokeWidth={14} paintOrder="stroke">{n}</text>
+      <text x={90} y={100} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={n >= 10 ? 170 : 200} fill="#2EA84A" stroke={OL} strokeWidth={14} paintOrder="stroke">{n}</text>
     </g>
   </g>
 );
@@ -205,7 +205,7 @@ const Flag: React.FC<{ x: number; y: number }> = ({ x, y }) => (
 const Banner: React.FC<{ t: number; text: string; y?: number; c?: string }> = ({ t, text, y = 520, c = '#2E6AE8' }) => (
   <g transform={`translate(540 ${y}) scale(${popIn(t, 6)})`}>
     <rect x={-260} y={-54} width={520} height={108} rx={54} fill={c} stroke={OL} strokeWidth={10} />
-    <text y={22} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={62} fill="#FFFFFF">{text}</text>
+    <text y={22} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={62} fill="#FFFFFF">{text}</text>
   </g>
 );
 const Confetti: React.FC<{ t: number; seed?: string }> = ({ t, seed = 'c' }) => (
@@ -220,11 +220,11 @@ const Gem: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) =>
 const Card: React.FC<{ t: number; title: string; big: string; btn: string; ok?: boolean }> = ({ t, title, big, btn, ok }) => (
   <g transform={`translate(540 860) scale(${popIn(t, 6) * 1.2})`}>
     <rect x={-300} y={-330} width={600} height={660} rx={40} fill="#1E1A2E" stroke="#FFC21A" strokeWidth={12} />
-    <text y={-250} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={46} fill="#B8B0D8">{title}</text>
+    <text y={-250} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={46} fill="#B8B0D8">{title}</text>
     <circle cx={0} cy={-90} r={110} fill="#FFC21A" stroke={OL} strokeWidth={10} /><circle cx={0} cy={-90} r={66} fill="none" stroke="#FFFFFF" strokeWidth={14} /><path d="M 0 -130 L 0 -90 L 28 -70" stroke="#FFFFFF" strokeWidth={14} fill="none" strokeLinecap="round" />
-    <text y={90} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={90} fill="#FFFFFF">{big}</text>
+    <text y={90} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={90} fill="#FFFFFF">{big}</text>
     <rect x={-200} y={160} width={400} height={110} rx={30} fill={ok ? '#2EA84A' : '#2E6AE8'} stroke={OL} strokeWidth={8} />
-    <text y={234} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={60} fill="#FFFFFF">{btn}</text>
+    <text y={234} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={60} fill="#FFFFFF">{btn}</text>
   </g>
 );
 const hud = (f: number) => <Timer f={f} />;
@@ -256,7 +256,7 @@ export const S2: S = ({ t, f }) => (
   <g>
     <Bedroom t={t} />
     <Blocky x={560} y={1748} s={1.15} kind="mom" face="smirk" t={t} pose={{ armR: 95 }} />
-    <g transform={`translate(860 ${900 + Math.sin(t * 0.4) * 6}) scale(${popIn(t - 4)})`}><circle r={110} fill="#E2262E" stroke={OL} strokeWidth={10} /><circle r={80} fill="#FFF8EA" stroke={OL} strokeWidth={6} /><text y={22} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={64} fill={OL}>0:10</text></g>
+    <g transform={`translate(860 ${900 + Math.sin(t * 0.4) * 6}) scale(${popIn(t - 4)})`}><circle r={110} fill="#E2262E" stroke={OL} strokeWidth={10} /><circle r={80} fill="#FFF8EA" stroke={OL} strokeWidth={6} /><text y={22} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={64} fill={OL}>0:10</text></g>
     {hud(f)}
   </g>
 );
@@ -274,7 +274,7 @@ export const S4: S = ({ t, f }) => (
       <rect x={-300} y={-200} width={600} height={400} rx={40} fill="#2A2234" stroke={OL} strokeWidth={12} />
       <rect x={-260} y={-160} width={520} height={320} rx={20} fill="#4AC86A" />
       <Block x={-120} y={60} c="#FFC21A" /><Block x={100} y={0} c="#E2262E" w={120} />
-      <text y={-70} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={64} fill="#FFFFFF" stroke={OL} strokeWidth={10} paintOrder="stroke">BLOCK QUEST</text>
+      <text y={-70} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={64} fill="#FFFFFF" stroke={OL} strokeWidth={10} paintOrder="stroke">BLOCK QUEST</text>
     </g>
     {hud(f)}
   </g>
@@ -374,7 +374,7 @@ export const S16: S = ({ t, f }) => (
   </g>
 );
 const BossBar: React.FC<{ hp: number }> = ({ hp }) => (
-  <g transform="translate(540 470)"><text x={-300} y={-20} fontFamily={FONT.title} fontWeight={800} fontSize={44} fill="#FFFFFF">♛ BLOCK BOSS</text>
+  <g transform="translate(540 470)"><text x={-300} y={-20} fontFamily={FONT.game} fontWeight={900} fontSize={44} fill="#FFFFFF">♛ BLOCK BOSS</text>
     <rect x={-300} y={0} width={600} height={40} rx={20} fill="#1A1424" stroke="#FFFFFF" strokeWidth={4} /><rect x={-296} y={4} width={592 * hp} height={32} rx={16} fill="#E2262E" /></g>
 );
 export const S17: S = ({ t, f }) => (
@@ -410,7 +410,7 @@ export const S20: S = ({ t, f }) => (
   <g>
     <Sky c="#6AB8F2" />
     <circle cx={720} cy={540} r={20 + Math.sin(t) * 6} fill="#FFFFFF" />
-    <g transform={`translate(540 860) scale(${popIn(t, 5) * 1.4}) rotate(-6)`}><rect x={-220} y={-110} width={440} height={220} rx={50} fill="#E2262E" stroke={OL} strokeWidth={14} /><text y={60} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={170} fill="#FFFFFF" stroke={OL} strokeWidth={12} paintOrder="stroke">K.O.</text></g>
+    <g transform={`translate(540 860) scale(${popIn(t, 5) * 1.4}) rotate(-6)`}><rect x={-220} y={-110} width={440} height={220} rx={50} fill="#E2262E" stroke={OL} strokeWidth={14} /><text y={60} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={170} fill="#FFFFFF" stroke={OL} strokeWidth={12} paintOrder="stroke">K.O.</text></g>
     <Blocky x={540} y={1500} s={0.4} kind="kid" face="grin" t={t} pose={{ armL: 160, armR: 160 }} />
     {hud(f)}
   </g>
@@ -433,7 +433,7 @@ export const S23: S = ({ t, f }) => {
       <Burst t={t} c1="#D89A1A" c2="#F2B83A" />
       {Array.from({ length: 50 }, (_, i) => <Gem key={i} x={80 + (i * 97) % 940} y={1500 - Math.floor(i / 10) * 70 + (i % 2) * 20} s={1.1} />)}
       <g transform={`translate(540 560) scale(${popIn(t)})`}><rect x={-380} y={-70} width={760} height={140} rx={70} fill="#1A1424" stroke="#FFC21A" strokeWidth={10} /><Gem x={-300} y={0} s={0.9} />
-        <text x={40} y={28} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={84} fill="#FFC21A">{n.toLocaleString('en-US')}</text></g>
+        <text x={40} y={28} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={84} fill="#FFC21A">{n.toLocaleString('en-US')}</text></g>
       <Rain t={t} kind="gem" n={26} seed="g23" />
     {hud(f)}
     </g>
@@ -446,12 +446,12 @@ export const S25: S = ({ t, f }) => (
     <Sky c="#8AD0F8" />
     <g transform={`translate(540 860) scale(${popIn(t) * 1.15})`}>
       <rect x={-400} y={-400} width={800} height={800} rx={40} fill="#1E1A2E" stroke={OL} strokeWidth={12} />
-      <text y={-320} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={62} fill="#FFC21A">SHOP</text>
+      <text y={-320} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={62} fill="#FFC21A">SHOP</text>
       {ITEMS.map((it, i) => {
         const x = -250 + (i % 3) * 250, y = -170 + Math.floor(i / 3) * 300, owned = t > 3 + i * 3;
         return <g key={it}><rect x={x - 110} y={y - 110} width={220} height={260} rx={24} fill="#2E2A48" stroke={owned ? '#2EA84A' : '#4A4468'} strokeWidth={8} />
-          <text x={x} y={y + 110} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={30} fill="#FFFFFF">{it}</text>
-          {owned ? <g transform={`translate(${x} ${y}) scale(${popIn(t - 3 - i * 3, 4)}) rotate(-12)`}><rect x={-96} y={-32} width={192} height={64} rx={14} fill="#2EA84A" stroke={OL} strokeWidth={6} /><text y={16} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={40} fill="#FFFFFF">OWNED</text></g> : <Gem x={x} y={y - 10} s={0.8} />}</g>;
+          <text x={x} y={y + 110} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={30} fill="#FFFFFF">{it}</text>
+          {owned ? <g transform={`translate(${x} ${y}) scale(${popIn(t - 3 - i * 3, 4)}) rotate(-12)`}><rect x={-96} y={-32} width={192} height={64} rx={14} fill="#2EA84A" stroke={OL} strokeWidth={6} /><text y={16} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={40} fill="#FFFFFF">OWNED</text></g> : <Gem x={x} y={y - 10} s={0.8} />}</g>;
       })}
     </g>
     {hud(f)}
@@ -481,7 +481,7 @@ export const S27: S = ({ t, f }) => (
       <path d="M 160 -130 L 120 -60 L 150 -60 L 120 0 L 190 -90 L 160 -90 Z" fill="#E2262E" stroke={OL} strokeWidth={5} />
     </g>
     {t < 14 ? Array.from({ length: 9 }, (_, i) => <circle key={i} cx={540 + Math.cos(i) * (100 + t * 18)} cy={1050 + Math.sin(i) * (80 + t * 14)} r={110 - t * 4} fill="#FFFFFF" stroke="#E0E0EC" strokeWidth={6} opacity={1 - t / 14} />) : null}
-    <g transform={`translate(830 760) rotate(14) scale(${popIn(t - 10, 5)})`}><text textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={96} fill="#FFC21A" stroke={OL} strokeWidth={12} paintOrder="stroke">DING!</text></g>
+    <g transform={`translate(830 760) rotate(14) scale(${popIn(t - 10, 5)})`}><text textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={96} fill="#FFC21A" stroke={OL} strokeWidth={12} paintOrder="stroke">DING!</text></g>
     {hud(f)}
   </g>
 );
@@ -522,7 +522,7 @@ export const S32: S = ({ t, f }) => (
   <g>
     <Burst t={t} c1="#1E7A34" c2="#2EA84A" />
     <Card t={20} title="GAME PASS" big="+10 SECONDS" btn="BOUGHT ✓" ok />
-    <g transform={`translate(800 520) rotate(12) scale(${popIn(t - 4, 5)})`}><text textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={90} fill="#FFC21A" stroke={OL} strokeWidth={12} paintOrder="stroke">KA-CHING!</text></g>
+    <g transform={`translate(800 520) rotate(12) scale(${popIn(t - 4, 5)})`}><text textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={90} fill="#FFC21A" stroke={OL} strokeWidth={12} paintOrder="stroke">KA-CHING!</text></g>
     <Confetti t={t} seed="k" />
     <Rain t={t} kind="coin" n={20} seed="c32" />
     {hud(f)}
@@ -540,10 +540,10 @@ export const S34: S = ({ t, f }) => (
     <Bedroom t={t} dark={0.5} />
     <g transform={`translate(540 980) scale(${popIn(t, 6)})`}>
       <rect x={-460} y={-420} width={920} height={840} rx={36} fill="#1E1A28" stroke="#3A3448" strokeWidth={6} />
-      <text x={-400} y={-340} fontFamily={FONT.title} fontWeight={800} fontSize={44} fill="#FFFFFF">Comments</text>
-      {['speedrunner kid >>>', 'mom never wins lol', 'this is literally my mom'].map((c, i) => <g key={i}><circle cx={-380} cy={-240 + i * 120} r={36} fill={['#E2262E', '#2E6AE8', '#2EA84A'][i]} /><text x={-320} y={-228 + i * 120} fontFamily={FONT.title} fontWeight={700} fontSize={38} fill="#D8D0E8">{c}</text></g>)}
+      <text x={-400} y={-340} fontFamily={FONT.game} fontWeight={900} fontSize={44} fill="#FFFFFF">Comments</text>
+      {['speedrunner kid >>>', 'mom never wins lol', 'this is literally my mom'].map((c, i) => <g key={i}><circle cx={-380} cy={-240 + i * 120} r={36} fill={['#E2262E', '#2E6AE8', '#2EA84A'][i]} /><text x={-320} y={-228 + i * 120} fontFamily={FONT.game} fontWeight={700} fontSize={38} fill="#D8D0E8">{c}</text></g>)}
       <rect x={-400} y={180} width={800} height={110} rx={55} fill="#2E2A3E" stroke="#FFC21A" strokeWidth={6} />
-      <text x={-350} y={252} fontFamily={FONT.title} fontWeight={800} fontSize={60} fill="#FFFFFF">{'LOOP'.slice(0, Math.max(0, Math.floor((t - 6) / 3)))}{Math.floor(t / 8) % 2 ? '|' : ''}</text>
+      <text x={-350} y={252} fontFamily={FONT.game} fontWeight={900} fontSize={60} fill="#FFFFFF">{'LOOP'.slice(0, Math.max(0, Math.floor((t - 6) / 3)))}{Math.floor(t / 8) % 2 ? '|' : ''}</text>
     </g>
     {hud(f)}
   </g>
