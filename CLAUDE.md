@@ -111,6 +111,11 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 - Use them for any GSAP animation, including HyperFrames compositions (GSAP is HyperFrames' default animation engine); HyperFrames' own rules (seekable timelines, `window.__timelines`) still come first.
 - To update: re-clone the repo and copy `skills/gsap-*` over these folders.
 
+## motionmaxxing (motion-graphics direction skill)
+- `.claude/skills/motionmaxxing/` (github.com/Tejashmakwana/motionmaxxing @ 8c8ec0f, Apache-2.0; the repo's 20 MB `docs/` demo media left out). Use it to plan, build or critique launch films, promos, brand stings and kinetic type, in HyperFrames or plain HTML; it reviews renders with its own scripts (`look.py`, `lint.mjs`).
+- In this sandbox, set `CHROME_PATH=/opt/pw-browsers/chromium` before its scripts (`providers.sh` then reports ready). For voice and music, export `ELEVENLABS_API_KEY` from `videos/what-if-studio/.env` (never commit it), and keep our voice rules (Austin, eleven_v4, 128 kbps).
+- Its `imagegen.py` needs the Codex CLI, which isn't installed here; generated images are skipped.
+
 ## Shadow Puppet Theatre explainers
 - Built from `videos/shadow-puppet-emu/` (emu war) and `videos/shadow-puppet-pig/` (pig war): one canvas file per story, `score.js`, `vo.py` (Austin narration, always included), `render.js` for the MP4. 9:16, at least 30 s.
 - **Native 1080p:** start new stories from `videos/shadow-puppet-pig/` (its `pig.js` theatre code draws at any size: scenes use a 720x1280 logical stage, scaled by `K`). The player canvas and `render.js` draw at 1080x1920 directly, with no upscaling. Storyboards can stay at 720.
