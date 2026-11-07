@@ -14,9 +14,9 @@
   "settings": {
    "stability": 0.35,
    "similarity_boost": 0.8,
-   "style": 0.55,
+   "style": 0.7,
    "use_speaker_boost": true,
-   "speed": 1.1
+   "speed": 1.2
   }
  },
  "cast": {
@@ -27,11 +27,11 @@
     "similarity_boost": 0.8,
     "style": 0.6,
     "use_speaker_boost": true,
-    "speed": 1.05
+    "speed": 1.15
    }
   }
  },
- "gap": 0.1,
+ "gap": 0.04,
  "tail": 1.2,
  "lead": 2,
  "script": [
@@ -88,8 +88,7 @@
   {
    "shot": "S1",
    "at": "f:0",
-   "tr": "cut",
-   "cam": "push"
+   "tr": "cut"
   },
   {
    "shot": "S2",
@@ -160,8 +159,7 @@
   {
    "shot": "S14",
    "at": "jump",
-   "tr": "cut",
-   "cam": "pull"
+   "tr": "cut"
   },
   {
    "shot": "S15",
@@ -177,8 +175,7 @@
   {
    "shot": "S17",
    "at": "Boss",
-   "tr": "cut",
-   "cam": "push"
+   "tr": "cut"
   },
   {
    "shot": "S18",
@@ -206,13 +203,14 @@
   {
    "shot": "S22",
    "at": "drops",
-   "tr": "cut"
+   "tr": "cut",
+   "cam": "zoomOut"
   },
   {
    "shot": "S23",
    "at": "billion",
    "tr": "cut",
-   "cam": "dive"
+   "cam": "tiltDown"
   },
   {
    "shot": "S24",
@@ -223,12 +221,14 @@
   {
    "shot": "S25",
    "at": "buy",
-   "tr": "whip"
+   "tr": "whip",
+   "cam": "panL"
   },
   {
    "shot": "S26",
    "at": "whole",
-   "tr": "cut"
+   "tr": "cut",
+   "cam": "zoomOut"
   },
   {
    "shot": "S27",
@@ -261,7 +261,8 @@
   {
    "shot": "S32",
    "at": "Plus",
-   "tr": "flash"
+   "tr": "flash",
+   "cam": "zoomOut"
   },
   {
    "shot": "S33",
@@ -708,12 +709,38 @@
     "a fast mechanical counter ticking up, short",
     1.2
    ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
    "tr_thunder": [
     "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
     6.0
    ]
   },
   "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
    [
     "S3+4",
     "tr_riser",
@@ -726,6 +753,18 @@
     "peak"
    ],
    [
+    "S5",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
     "S6+4",
     "tr_riser",
     0.13
@@ -734,6 +773,18 @@
     "S7",
     "tr_whip",
     0.22,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_cut",
+    0.16,
     "peak"
    ],
    [
@@ -765,15 +816,56 @@
     "peak"
    ],
    [
+    "S13",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
     "S15",
     "tr_flash",
     0.3,
     "peak"
    ],
    [
+    "S16",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S18",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
     "S18+4",
     "tr_riser",
     0.13
+   ],
+   [
+    "S19",
+    "tr_cut",
+    0.16,
+    "peak"
    ],
    [
     "S20",
@@ -788,9 +880,16 @@
     "peak"
    ],
    [
-    "S23+4",
-    "tr_riser",
-    0.13
+    "S22",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_cut",
+    0.16,
+    "peak"
    ],
    [
     "S24",
@@ -805,9 +904,21 @@
     "peak"
    ],
    [
+    "S26",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
     "S27",
     "tr_zoom",
     0.26,
+    "peak"
+   ],
+   [
+    "S28",
+    "tr_cut",
+    0.16,
     "peak"
    ],
    [
@@ -816,9 +927,21 @@
     0.13
    ],
    [
+    "S29",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
     "S29+4",
     "tr_riser",
     0.13
+   ],
+   [
+    "S30",
+    "tr_cut",
+    0.16,
+    "peak"
    ],
    [
     "S31",
@@ -847,6 +970,12 @@
     "S33+4",
     "tr_riser",
     0.13
+   ],
+   [
+    "S34",
+    "tr_cut",
+    0.16,
+    "peak"
    ],
    [
     "S11+2",
@@ -900,6 +1029,131 @@
     "S1#2",
     "tr_tick",
     0.25
+   ],
+   [
+    "s:0.55",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.02",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.67",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:3.18",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:5.25",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:5.60",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:8.73",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:9.79",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:13.47",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:15.77",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:16.13",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:17.33",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:18.09",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:20.75",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:21.33",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:24.13",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:25.39",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:26.29",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:27.31",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:28.49",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:29.43",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:29.76",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.97",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:32.13",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:33.01",
+    "tr_hit",
+    0.2
    ],
    [
     "S1",
@@ -1013,6 +1267,31 @@
   "levels": {
    "sfx_lu": -13.0,
    "music_lu": -15.0
+  }
+ },
+ "captions": {
+  "style": "pop",
+  "colors": {
+   "mom": "#FFD23F",
+   "ten": "#FFD23F",
+   "games": "#4ADE6A",
+   "bed": "#FF5A5A",
+   "speedrunner": "#4ADE6A",
+   "jump": "#4ADE6A",
+   "boss": "#FF7AE0",
+   "spawns": "#FF7AE0",
+   "punch": "#FF4A4A",
+   "k.o": "#FF4A4A",
+   "billion": "#FFD23F",
+   "gems": "#5AE8F8",
+   "shop": "#FFD23F",
+   "toaster": "#FF4A4A",
+   "three": "#FF4A4A",
+   "two": "#FF4A4A",
+   "this": "#FFD23F",
+   "plus": "#4ADE6A",
+   "again": "#FF7AE0",
+   "loop": "#FFD23F"
   }
  }
 }

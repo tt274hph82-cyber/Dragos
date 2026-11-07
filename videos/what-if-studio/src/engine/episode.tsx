@@ -249,30 +249,39 @@ export type EpisodeDef = ReturnType<typeof defineEpisode>;
 // - karaoke captions, 2-3 words, uppercase, the spoken word in yellow, over a dark band at the bottom.
 export type StoryWord = { w: string; s: number; e: number; p?: string };
 export const STORY = { w: 1080, h: 1920, capY: 1200, capSize: 58, dissolve: 4 };
-export type StoryCam = 'push' | 'dive' | 'pull' | 'panL' | 'panR' | 'rise' | 'static';
+export type StoryCam = 'push' | 'dive' | 'pull' | 'panL' | 'panR' | 'rise' | 'static' | 'tiltDown' | 'zoomOut' | 'drift';
 export type StoryTr = 'cut' | 'dissolve' | 'ghost' | 'zoom' | 'flash' | 'whip';
 /** The automatic rotation when the edit doesn't name a move or a transition. */
 const AUTO_CAM: StoryCam[] = ['push', 'panL', 'dive', 'pull', 'panR', 'push', 'rise'];
+const SNAPPY_CAM: StoryCam[] = ['dive', 'panL', 'zoomOut', 'push', 'tiltDown', 'panR', 'dive', 'drift', 'rise'];
 const AUTO_TR: StoryTr[] = ['ghost', 'dissolve', 'zoom', 'dissolve', 'ghost', 'whip', 'dissolve'];
 const TR_LEN: Record<StoryTr, number> = { cut: 0, dissolve: 4, ghost: 7, zoom: 7, flash: 9, whip: 6 };
 
 /** The camera on one segment at frame f: offset and scale around the frame centre. */
-const camAt = (seg: Seg & { cam?: StoryCam }, idx: number, f: number) => {
-  const cam = seg.cam ?? AUTO_CAM[idx % AUTO_CAM.length];
+const camAt = (seg: Seg & { cam?: StoryCam }, idx: number, f: number, snappy = false) => {
+  const cam = seg.cam ?? (snappy ? SNAPPY_CAM : AUTO_CAM)[idx % (snappy ? SNAPPY_CAM.length : AUTO_CAM.length)];
   const len = Math.max(1, seg.b - seg.a);
   const u = clamp((f - seg.a) / len, 0, 1.4);
   const e = u <= 1 ? easeInOut(u) : 1 + (u - 1) * 0.6;
   const sec = len / 30;
-  const k = Math.min(1, sec / 2.2); // short shots move less, so nothing lurches
+  const k = Math.min(1, sec / 2.2) * (snappy ? 1.7 : 1); // short shots move less, so nothing lurches; snappy moves more
+  // snappy: every cut lands with a quick zoom settling in, and a slight tilt that alternates cut to cut
+  const snap = snappy ? 1 + 0.12 * (1 - easeOut(clamp((f - seg.a) / 6))) : 1;
+  const r = snappy && cam !== 'static' ? ((idx * 7) % 5 - 2) * 0.9 * (1 - 0.5 * e) : 0;
+  let c: { s: number; x: number; y: number };
   switch (cam) {
-    case 'dive': return { s: 1 + 0.32 * k * e * e, x: 0, y: -50 * k * e };
-    case 'pull': return { s: 1.2 - 0.16 * k * e, x: 0, y: 0 };
-    case 'panL': return { s: 1.14, x: 70 * k - 140 * k * e, y: 0 };
-    case 'panR': return { s: 1.14, x: -70 * k + 140 * k * e, y: 0 };
-    case 'rise': return { s: 1.1 + 0.05 * k * e, x: 0, y: 60 * k - 120 * k * e };
-    case 'static': return { s: 1.03, x: 0, y: 0 };
-    default: return { s: 1 + 0.13 * k * e, x: 0, y: -12 * k * e };
+    case 'dive': c = { s: 1 + 0.32 * k * e * e, x: 0, y: -50 * k * e }; break;
+    case 'pull': c = { s: 1.2 - 0.16 * k * e, x: 0, y: 0 }; break;
+    case 'zoomOut': c = { s: 1 + 0.3 * k * (1 - easeOut(u)), x: 0, y: 0 }; break;
+    case 'panL': c = { s: 1.14 + 0.04 * k, x: 70 * k - 140 * k * e, y: 0 }; break;
+    case 'panR': c = { s: 1.14 + 0.04 * k, x: -70 * k + 140 * k * e, y: 0 }; break;
+    case 'rise': c = { s: 1.1 + 0.05 * k * e, x: 0, y: 60 * k - 120 * k * e }; break;
+    case 'tiltDown': c = { s: 1.2 + 0.05 * k, x: 0, y: -110 * k + 220 * k * e }; break;
+    case 'drift': c = { s: 1.1 + 0.06 * k * e, x: Math.sin(f * 0.07) * 30 * k, y: Math.cos(f * 0.05) * 20 * k }; break;
+    case 'static': c = { s: 1.03, x: 0, y: 0 }; break;
+    default: c = { s: 1 + 0.13 * k * e, x: 0, y: -12 * k * e };
   }
+  return { s: c.s * snap, x: c.x, y: c.y, r };
 };
 
 const chunkWords = (words: StoryWord[]) => {
@@ -347,16 +356,16 @@ export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: R
 };
 
 /** One shot of a story Reel at frame f: its clock, with its camera move (and any transition offset) applied. */
-const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; idx: number; f: number; xs?: number; blur?: number; dx?: number }> = ({ tl, shots, seg, idx, f, xs = 1, blur = 0, dx = 0 }) => {
+const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; idx: number; f: number; xs?: number; blur?: number; dx?: number; snappy?: boolean }> = ({ tl, shots, seg, idx, f, xs = 1, blur = 0, dx = 0, snappy = false }) => {
   const Shot = shots[seg.shot];
   const info = tl.shots.find((s) => s.id === seg.shot);
   const t = clockAt(seg, f);
-  const c = camAt(seg as any, idx, f);
+  const c = camAt(seg as any, idx, f, snappy);
   return (
     <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, filter: blur > 0.3 ? `blur(${blur}px)` : undefined }}>
       <KitDefs />
       <SetDefs />
-      <g transform={`translate(${540 + c.x + dx} ${960 + c.y}) scale(${c.s * xs}) translate(-540 -960)`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
+      <g transform={`translate(${540 + c.x + dx} ${960 + c.y}) rotate(${c.r}) scale(${c.s * xs}) translate(-540 -960)`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
     </svg>
   );
 };
@@ -378,7 +387,7 @@ const storyFxAt = (tl: Timeline, f: number) => {
   return { ...base, punch, blooms, rewind, iris };
 };
 
-export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string> }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors }) => {
+export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false }) => {
   const f = useCurrentFrame();
   const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
   const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
@@ -386,13 +395,21 @@ export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words:
   const tr: StoryTr = prev ? ((seg as any).tr ?? AUTO_TR[idx % AUTO_TR.length]) : 'cut';
   const L = Math.min(TR_LEN[tr], Math.max(1, Math.floor((seg.b - seg.a) / 2)));
   const k = L ? clamp((f - seg.a) / L) : 1;
-  const { flash, x, y, punch, blooms, rewind, iris } = storyFxAt(tl, f);
+  const fx = storyFxAt(tl, f);
+  const { flash, x, y, blooms, rewind, iris } = fx;
+  // snappy: every coloured caption keyword lands with its own small punch zoom
+  let punch = fx.punch;
+  if (snappy && capColors) for (const w of words) {
+    if (!capColors[w.w.toLowerCase()]) continue;
+    const d = f - Math.round(w.s * tl.fps);
+    if (d >= 0 && d < 9) punch *= 1 + 0.06 * Math.exp(-d / 3) * Math.min(1, (d + 1) / 2);
+  }
   const A = tl.audio;
   // the transition: how the outgoing (prev) and incoming (seg) shots are drawn while k runs 0 -> 1
   let out: React.ReactNode = null, inn: React.ReactNode;
   let white = 0;
-  const P = (o: number, props: { xs?: number; blur?: number; dx?: number }) => prev ? <AbsoluteFill style={{ opacity: o }}><StoryShot tl={tl} shots={shots} seg={prev} idx={idx - 1} f={f} {...props} /></AbsoluteFill> : null;
-  const N = (o: number, props: { xs?: number; blur?: number; dx?: number }) => <AbsoluteFill style={{ opacity: o }}><StoryShot tl={tl} shots={shots} seg={seg} idx={idx} f={f} {...props} /></AbsoluteFill>;
+  const P = (o: number, props: { xs?: number; blur?: number; dx?: number }) => prev ? <AbsoluteFill style={{ opacity: o }}><StoryShot tl={tl} shots={shots} seg={prev} idx={idx - 1} f={f} snappy={snappy} {...props} /></AbsoluteFill> : null;
+  const N = (o: number, props: { xs?: number; blur?: number; dx?: number }) => <AbsoluteFill style={{ opacity: o }}><StoryShot tl={tl} shots={shots} seg={seg} idx={idx} f={f} snappy={snappy} {...props} /></AbsoluteFill>;
   if (k >= 1 || !prev) inn = N(1, {});
   else if (tr === 'ghost') { out = P(1, {}); inn = N(easeInOut(k), { xs: lerp(1.1, 1, easeOut(k)), blur: (1 - k) * 6 }); }
   else if (tr === 'zoom') { out = P(1 - easeIn(k), { xs: lerp(1, 1.6, easeIn(k)), blur: k * 12 }); inn = N(easeOut(k), { xs: lerp(1.3, 1, easeOut(k)), blur: (1 - k) * 9 }); }
@@ -461,7 +478,7 @@ const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline
 };
 
 /** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
-export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string> }) => ({
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean }) => ({
   id,
   total: p.timeline.total,
   shotCount: p.timeline.shots.length,

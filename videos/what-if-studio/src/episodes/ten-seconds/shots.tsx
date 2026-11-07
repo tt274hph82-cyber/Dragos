@@ -99,11 +99,13 @@ const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'bos
 };
 type Pose = { armL?: number; armR?: number; legL?: number; legR?: number; lean?: number };
 /** A blocky body under a cube head. kind: kid (red bolt shirt), mom (purple robe), boss (giant). */
-const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 'boss'; face: Face; t: number; pose?: Pose; flip?: boolean; extra?: React.ReactNode }> = ({ x, y, s, kind, face, t, pose = {}, flip, extra }) => {
+const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 'boss'; face: Face; t: number; pose?: Pose; flip?: boolean; extra?: React.ReactNode; energy?: number }> = ({ x, y, s, kind, face, t, pose = {}, flip, extra, energy = 1 }) => {
   const shirt = kind === 'kid' ? '#D8323A' : kind === 'mom' ? '#9A7AD8' : '#6A4AC8';
   const pants = kind === 'kid' ? '#3A5AB8' : kind === 'mom' ? '#9A7AD8' : '#5A5A6A';
   const skin = kind === 'boss' ? '#FF9A3A' : '#F4E2CC';
-  const breathe = Math.sin(t * 0.12) * 4;
+  const breathe = Math.sin(t * 0.12) * 4 - Math.abs(Math.sin(t * 0.35)) * 16 * energy;
+  const swing = Math.sin(t * 0.35) * 10 * energy;
+  const squash = 1 + Math.sin(t * 0.7) * 0.015 * energy;
   const arm = (sx: number, a: number) => (
     <g transform={`translate(${sx} -560) rotate(${a})`}>
       <rect x={-48} y={-10} width={96} height={250} rx={22} fill={shirt} stroke={OL} strokeWidth={SW} />
@@ -111,19 +113,19 @@ const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 
     </g>
   );
   return (
-    <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s} ${s}) rotate(${pose.lean ?? 0})`}>
+    <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s * squash} ${s / squash}) rotate(${(pose.lean ?? 0) + Math.sin(t * 0.18) * 2 * energy})`}>
       <ellipse cx={0} cy={6} rx={200} ry={26} fill="#000" opacity={0.22} />
       {[[-62, pose.legL ?? 0], [62, pose.legR ?? 0]].map(([lx, a], i) => (
         <g key={i} transform={`translate(${lx} -300) rotate(${a})`}><rect x={-56} y={0} width={112} height={300} rx={18} fill={pants} stroke={OL} strokeWidth={SW} /><rect x={-60} y={262} width={120} height={44} rx={16} fill="#2A2234" stroke={OL} strokeWidth={6} /></g>
       ))}
-      {arm(-170, pose.armL ?? 8)}
+      {arm(-170, (pose.armL ?? 8) + swing)}
       <g transform={`translate(0 ${breathe})`}>
         <rect x={-130} y={-600} width={260} height={320} rx={30} fill={shirt} stroke={OL} strokeWidth={SW} />
         {kind === 'kid' ? <path d="M 20 -560 L -40 -440 L 6 -440 L -20 -330 L 50 -470 L 6 -470 L 30 -560 Z" fill="#F4E2CC" stroke={OL} strokeWidth={6} strokeLinejoin="round" /> : null}
         {kind === 'mom' ? <g><path d="M -10 -600 L -40 -280 M 10 -600 L 40 -280" stroke="#7A5AB8" strokeWidth={10} /><circle cx={0} cy={-420} r={16} fill="#F28AB8" stroke={OL} strokeWidth={5} /></g> : null}
         <g transform="translate(0 -790)"><CubeHead face={face} hair={kind} skin={skin} t={t} /></g>
       </g>
-      {arm(170, -(pose.armR ?? 8))}
+      {arm(170, -((pose.armR ?? 8) - swing))}
       {extra}
     </g>
   );
@@ -168,10 +170,12 @@ const Sparkles: React.FC<{ t: number; n?: number; seed?: string }> = ({ t, n = 1
     return <path key={i} d={`M ${x} ${y - 30 * k} L ${x + 8 * k} ${y} L ${x} ${y + 30 * k} L ${x - 8 * k} ${y} Z`} fill="#FFF6C0" />;
   })}</g>
 );
-const SecondBadge: React.FC<{ t: number; n: number }> = ({ t, n }) => (
+const SecondBadge: React.FC<{ t: number; n: number; len?: number }> = ({ t, n, len = 30 }) => (
   <g>
     <Burst t={t} c1="#1E7A34" c2="#2EA84A" />
-    <g transform={`translate(540 860) scale(${popIn(t, 6) * 1.25}) rotate(${-4 + Math.sin(t * 0.3) * 2})`}>
+    <circle cx={540} cy={860} r={200 + t * 60} fill="none" stroke="#FFFFFF" strokeWidth={Math.max(0, 40 - t * 3)} opacity={Math.max(0, 1 - t / 12)} />
+    <Sparkles t={t * 2} n={14} seed={`b${n}`} />
+    <g transform={`translate(540 ${860 - Math.max(0, t - len + 6) * 160}) scale(${(t < 5 ? lerp(3.2, 1, easeOut(t / 5)) : 1) * 1.25 * (1 + Math.max(0, t - len + 6) * 0.08)}) rotate(${(t < 5 ? lerp(-24, -4, easeOut(t / 5)) : -4 + Math.sin(t * 0.6) * 3)})`}>
       <rect x={-260} y={-170} width={520} height={340} rx={60} fill="#FFFFFF" stroke={OL} strokeWidth={14} />
       <rect x={-236} y={-146} width={472} height={292} rx={44} fill="none" stroke="#2EA84A" strokeWidth={14} />
       <text y={-70} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={60} fill={OL}>SECOND</text>
@@ -224,6 +228,20 @@ const Card: React.FC<{ t: number; title: string; big: string; btn: string; ok?: 
   </g>
 );
 const hud = (f: number) => <Timer f={f} />;
+/** Anime speed lines rushing to the frame edges. */
+const SpeedLines: React.FC<{ t: number; c?: string; o?: number }> = ({ t, c = '#FFFFFF', o = 0.55 }) => (
+  <g opacity={o}>{Array.from({ length: 36 }, (_, i) => {
+    const a = i * 0.1745 + random(`sl${i}`) * 0.1, r0 = 380 + ((t * 40 + random(`sr${i}`) * 300) % 300);
+    return <path key={i} d={`M ${540 + Math.cos(a) * r0} ${900 + Math.sin(a) * r0} L ${540 + Math.cos(a - 0.01) * 1500} ${900 + Math.sin(a - 0.01) * 1500} L ${540 + Math.cos(a + 0.01) * 1500} ${900 + Math.sin(a + 0.01) * 1500} Z`} fill={c} />;
+  })}</g>
+);
+/** Things raining down through the frame (gems, coins, confetti). */
+const Rain: React.FC<{ t: number; kind: 'gem' | 'coin'; n?: number; seed?: string }> = ({ t, kind, n = 18, seed = 'r' }) => (
+  <g>{Array.from({ length: n }, (_, i) => {
+    const x = random(`${seed}${i}`) * W, y = -150 + ((t * (14 + random(`${seed}v${i}`) * 10) + random(`${seed}y${i}`) * 2000) % 2100);
+    return kind === 'gem' ? <Gem key={i} x={x} y={y} s={0.7} /> : <g key={i} transform={`translate(${x} ${y}) rotate(${t * 8 + i * 30})`}><ellipse rx={34} ry={34 * Math.abs(Math.cos(t * 0.3 + i))} fill="#FFC21A" stroke={OL} strokeWidth={5} /></g>;
+  })}</g>
+);
 
 // ---------------------------------------------------------------- shots
 export const S1: S = ({ t, f }) => (
@@ -279,6 +297,7 @@ export const S7: S = ({ t, f }) => (
   <g>
     <Bedroom t={t} />
     <Blocky x={540} y={1870} s={1.5} kind="kid" face="shock" t={t} pose={{ armL: 150, armR: 150 }} />
+    <SpeedLines t={t} o={0.2} />
     {hud(f)}
   </g>
 );
@@ -301,10 +320,11 @@ export const S10: S = ({ t, f }) => (
     <Burst t={t} c1="#0E3A3A" c2="#145A50" />
     {Array.from({ length: 20 }, (_, i) => <path key={i} d={`M 540 900 L ${540 + Math.cos(i) * 1500} ${900 + Math.sin(i) * 1500}`} stroke="#7AFFE0" strokeWidth={3} opacity={0.25} />)}
     <Blocky x={540} y={2138} s={2.1} kind="kid" face="tongue" t={t} />
+    <SpeedLines t={t} c="#7AFFE0" o={0.35} />
     {hud(f)}
   </g>
 );
-const badge = (n: number): S => ({ t, f }) => <g><SecondBadge t={t} n={n} />{hud(f)}</g>;
+const badge = (n: number): S => ({ t, f, len }) => <g><SecondBadge t={t} n={n} len={len} />{hud(f)}</g>;
 export const S11 = badge(10);
 const path = [[160, 1250], [330, 1150], [500, 1060], [680, 980], [860, 900], [980, 820]];
 const blocks = (t: number) => path.map(([x, y], i) => <Block key={i} x={x} y={y} w={130} c={['#FFC21A', '#E2262E', '#2E6AE8', '#2EA84A', '#F28AB8', '#9A7AD8'][i]} />);
@@ -324,7 +344,8 @@ export const S13: S = ({ t, f, len }) => {
       <Sky /><Lava t={t} />{blocks(t)}<Flag x={1000} y={820} />
       {Array.from({ length: 8 }, (_, i) => <circle key={i} cx={lerp(160, 980, Math.max(0, k - i * 0.04))} cy={lerp(1250, 820, Math.max(0, k - i * 0.04)) - Math.sin(Math.max(0, k - i * 0.04) * Math.PI) * 500 - 120} r={30 - i * 3} fill="#FFFFFF" opacity={0.5 - i * 0.05} />)}
       <Blocky x={x} y={y} s={0.3} kind="kid" face="tongue" t={t} pose={{ armL: 150, armR: 150, legL: 30, legR: -30, lean: 20 }} />
-      {hud(f)}
+      <SpeedLines t={t} o={0.4} />
+    {hud(f)}
     </g>
   );
 };
@@ -370,6 +391,7 @@ export const S18: S = ({ t, f }) => (
   <g>
     <Burst t={t} c1="#5A1A24" c2="#7A2A30" />
     <Blocky x={540} y={1948} s={1.6} kind="kid" face="determined" t={t} pose={{ armR: lerp(20, 120, clamp(t / 10)) }} />
+    <SpeedLines t={t} c="#FF8A8A" o={0.35} />
     {hud(f)}
   </g>
 );
@@ -380,6 +402,7 @@ export const S19: S = ({ t, f }) => (
     <Blocky x={340} y={1300} s={0.5} kind="kid" face="angry" t={t} pose={{ armR: 95, lean: 8 }} />
     <g transform={`translate(560 1000) scale(${popIn(t, 4)})`}>{Array.from({ length: 12 }, (_, i) => <path key={i} d="M 0 0 L -30 -260 L 30 -260 Z" fill="#FFF6C0" transform={`rotate(${i * 30})`} />)}<circle r={90} fill="#FFFFFF" /></g>
     <BossBar hp={Math.max(0, 1 - t / 8)} />
+    <SpeedLines t={t} c="#FFF6C0" o={0.5} />
     {hud(f)}
   </g>
 );
@@ -399,6 +422,7 @@ export const S22: S = ({ t, f }) => (
     <rect x={-300} y={1300} width={W + 600} height={900} fill="#5AC86A" />
     {Array.from({ length: 16 }, (_, i) => <Gem key={i} x={200 + (i % 8) * 90} y={lerp(-100, 1200 - Math.floor(i / 8) * 60, easeOut(clamp((t - i) / 10)))} s={0.9} />)}
     <Blocky x={540} y={1400} s={0.45} kind="kid" face="starry" t={t} pose={{ armL: 150, armR: 150 }} />
+    <Rain t={t} kind="gem" n={22} seed="g22" />
     {hud(f)}
   </g>
 );
@@ -410,7 +434,8 @@ export const S23: S = ({ t, f }) => {
       {Array.from({ length: 50 }, (_, i) => <Gem key={i} x={80 + (i * 97) % 940} y={1500 - Math.floor(i / 10) * 70 + (i % 2) * 20} s={1.1} />)}
       <g transform={`translate(540 560) scale(${popIn(t)})`}><rect x={-380} y={-70} width={760} height={140} rx={70} fill="#1A1424" stroke="#FFC21A" strokeWidth={10} /><Gem x={-300} y={0} s={0.9} />
         <text x={40} y={28} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={84} fill="#FFC21A">{n.toLocaleString('en-US')}</text></g>
-      {hud(f)}
+      <Rain t={t} kind="gem" n={26} seed="g23" />
+    {hud(f)}
     </g>
   );
 };
@@ -440,6 +465,7 @@ export const S26: S = ({ t, f }) => (
     <path d="M 360 900 Q 160 700 200 520 Q 330 700 470 820 Z M 720 900 Q 920 700 880 520 Q 750 700 610 820 Z" fill="#FFFFFF" stroke={OL} strokeWidth={8} />
     <Blocky x={540} y={1360} s={0.55} kind="kid" face="grin" t={t} pose={{ armL: 120, armR: 120 }} />
     <Sparkles t={t} />
+    <Rain t={t} kind="coin" n={14} seed="c26" />
     {hud(f)}
   </g>
 );
@@ -488,6 +514,7 @@ export const S31: S = ({ t, f }) => (
     <Burst t={t} c1="#3A2468" c2="#5A3A98" />
     <Card t={t} title="GAME PASS" big="+10 SECONDS" btn="BUY" />
     <Sparkles t={t} seed="g" />
+    <SpeedLines t={t} c="#FFC21A" o={0.3} />
     {hud(f)}
   </g>
 );
@@ -497,6 +524,7 @@ export const S32: S = ({ t, f }) => (
     <Card t={20} title="GAME PASS" big="+10 SECONDS" btn="BOUGHT ✓" ok />
     <g transform={`translate(800 520) rotate(12) scale(${popIn(t - 4, 5)})`}><text textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={90} fill="#FFC21A" stroke={OL} strokeWidth={12} paintOrder="stroke">KA-CHING!</text></g>
     <Confetti t={t} seed="k" />
+    <Rain t={t} kind="coin" n={20} seed="c32" />
     {hud(f)}
   </g>
 );
