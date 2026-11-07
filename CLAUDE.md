@@ -101,6 +101,11 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
   - Sound hits land just after the word they illustrate, never on it.
 - Never commit API keys. ElevenLabs uses the env var / GitHub secret `ELEVENLABS_API_KEY`.
 
+## HyperFrames (HTML-to-video)
+- Projects: `videos/every-second-motion/`. Pinned to **hyperframes@0.9.20** in `package.json` (`npm run check`, `npm run render`).
+- Skills (0.9 layout): `hyperframes` (read first), `hyperframes-cli`, `hyperframes-registry`, `media-use`, `remotion-to-hyperframes`. They install to `~/.claude/skills`, which a new cloud container doesn't keep: run `npx --yes hyperframes@0.9.20 skills update` at the start of a HyperFrames job.
+- To upgrade later: bump the pin in each project's `package.json`, re-copy `CLAUDE.md`/`AGENTS.md` from a fresh `hyperframes init`, then `check` and a test `render`.
+
 ## Shadow Puppet Theatre explainers
 - Built from `videos/shadow-puppet-emu/` (emu war) and `videos/shadow-puppet-pig/` (pig war): one canvas file per story, `score.js`, `vo.py` (Austin narration, always included), `render.js` for the MP4. 9:16, at least 30 s.
 - **Native 1080p:** start new stories from `videos/shadow-puppet-pig/` (its `pig.js` theatre code draws at any size: scenes use a 720x1280 logical stage, scaled by `K`). The player canvas and `render.js` draw at 1080x1920 directly, with no upscaling. Storyboards can stay at 720.
