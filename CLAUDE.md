@@ -121,6 +121,10 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 - In this sandbox, set `CHROME_PATH=/opt/pw-browsers/chromium` before its scripts (`providers.sh` then reports ready). For voice and music, export `ELEVENLABS_API_KEY` from `videos/what-if-studio/.env` (never commit it), and keep our voice rules (Austin, eleven_v4, 128 kbps).
 - Its `imagegen.py` needs the Codex CLI, which isn't installed here; generated images are skipped.
 
+## GSAP library and Chrome DevTools MCP
+- **GSAP 3.15.1** (all plugins, free) is vendored in `vendor/gsap/3.15.1/*.min.js` for HTML compositions; see `vendor/gsap/README.md`. Bundled projects use `npm i gsap@3.15.1`.
+- **Chrome DevTools MCP** (`chrome-devtools-mcp@1.12.0`) is set up in `.mcp.json` through `.claude/mcp/chrome-devtools.sh` (isolated profile, no usage statistics; headless with `/opt/pw-browsers/chromium` in the cloud sandbox). It gives 32 browser tools: navigate, click, type, screenshots, console and network logs, performance traces, Lighthouse, screencasts. Use it to check HTML players, HyperFrames previews and artifacts in a real browser. A new session asks once to enable the project MCP server.
+
 ## Shadow Puppet Theatre explainers
 - Built from `videos/shadow-puppet-emu/` (emu war) and `videos/shadow-puppet-pig/` (pig war): one canvas file per story, `score.js`, `vo.py` (Austin narration, always included), `render.js` for the MP4. 9:16, at least 30 s.
 - **Native 1080p:** start new stories from `videos/shadow-puppet-pig/` (its `pig.js` theatre code draws at any size: scenes use a 720x1280 logical stage, scaled by `K`). The player canvas and `render.js` draw at 1080x1920 directly, with no upscaling. Storyboards can stay at 720.
