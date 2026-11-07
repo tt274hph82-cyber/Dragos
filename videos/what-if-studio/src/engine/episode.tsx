@@ -312,6 +312,40 @@ export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ w
   );
 };
 
+/** Pop captions (the "What If" gaming Shorts): one word at a time (two when the first is tiny), big, bouncing in,
+ *  white with a heavy outline, keywords in colour (`colors`: lower-case word -> colour). */
+export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: Record<string, string>; y?: number; size?: number }> = ({ words, fps, colors = {}, y = 1230, size = 104 }) => {
+  const f = useCurrentFrame();
+  const t = f / fps;
+  const groups = React.useMemo(() => {
+    const out: StoryWord[][] = [];
+    for (let i = 0; i < words.length; i++) {
+      const w = words[i], nx = words[i + 1];
+      if (nx && w.w.length <= 2 && !/[.,!?:;]/.test(w.p ?? '') && (w.w + nx.w).length <= 9) { out.push([w, nx]); i++; } else out.push([w]);
+    }
+    return out;
+  }, [words]);
+  const i = groups.findIndex((g, k) => t >= g[0].s - 0.03 && (k === groups.length - 1 ? t <= g[g.length - 1].e + 0.5 : t < groups[k + 1][0].s - 0.03));
+  if (i < 0) return null;
+  const g = groups[i];
+  const d = (t - (g[0].s - 0.03)) * fps;
+  const pop = d < 0 ? 0 : d > 6 ? 1 : 1 + 2.7 * Math.pow(d / 6 - 1, 3) + 1.7 * Math.pow(d / 6 - 1, 2);
+  const text = g.map((w) => w.w.toUpperCase() === w.w && w.w.length > 1 ? w.w : w.w).join(' ') + (g[g.length - 1].p ?? '').replace(/\s/g, '');
+  const key = g.map((w) => w.w.toLowerCase()).find((w) => colors[w]);
+  const col = key ? colors[key] : '#FFFFFF';
+  const z = key ? size * 1.12 : size;
+  return (
+    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <g transform={`translate(${STORY.w / 2} ${y}) scale(${pop})`}>
+        <text textAnchor="middle" fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={z} letterSpacing={1}
+          fill={col} stroke="#0A0610" strokeWidth={z * 0.2} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 6px 0 rgba(0,0,0,0.45))' }}>
+          {key ? text.toUpperCase() : text}
+        </text>
+      </g>
+    </svg>
+  );
+};
+
 /** One shot of a story Reel at frame f: its clock, with its camera move (and any transition offset) applied. */
 const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; idx: number; f: number; xs?: number; blur?: number; dx?: number }> = ({ tl, shots, seg, idx, f, xs = 1, blur = 0, dx = 0 }) => {
   const Shot = shots[seg.shot];
@@ -344,7 +378,7 @@ const storyFxAt = (tl: Timeline, f: number) => {
   return { ...base, punch, blooms, rewind, iris };
 };
 
-export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true }) => {
+export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string> }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors }) => {
   const f = useCurrentFrame();
   const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
   const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
@@ -400,8 +434,9 @@ export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words:
       {white > 0 ? <AbsoluteFill style={{ backgroundColor: '#FFFFFF', opacity: white }} /> : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
       {/* a dark band at the bottom, like the references, so the captions always read */}
-      {captions ? <AbsoluteFill style={{ background: 'linear-gradient(to bottom, transparent 52%, rgba(8,6,16,0.55) 66%, rgba(8,6,16,0.85) 100%)' }} /> : null}
-      {captions ? <StoryCaptions words={words} fps={tl.fps} /> : null}
+      {captions && capStyle === 'karaoke' ? <AbsoluteFill style={{ background: 'linear-gradient(to bottom, transparent 52%, rgba(8,6,16,0.55) 66%, rgba(8,6,16,0.85) 100%)' }} /> : null}
+      {captions && capStyle === 'karaoke' ? <StoryCaptions words={words} fps={tl.fps} /> : null}
+      {captions && capStyle === 'pop' ? <PopCaptions words={words} fps={tl.fps} colors={capColors} /> : null}
       {A.voice ? <Audio src={staticFile(A.voice)} volume={A.voiceVol ?? 1} /> : null}
       {A.sfx ? <Audio src={staticFile(A.sfx)} volume={A.sfxVol ?? 1} /> : null}
       {A.music ? <Audio src={staticFile(A.music)} volume={A.musicVol ?? 1} /> : null}
@@ -426,7 +461,7 @@ const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline
 };
 
 /** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
-export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean }) => ({
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string> }) => ({
   id,
   total: p.timeline.total,
   shotCount: p.timeline.shots.length,

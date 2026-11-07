@@ -1,0 +1,1018 @@
+{
+ "id": "TenSeconds",
+ "slug": "ten-seconds",
+ "topic": "What if your mom gave you 10 seconds of games? (blocky-game What If Short, style test)",
+ "title": [
+  "10 SECONDS",
+  "OF GAMES"
+ ],
+ "accent": "10",
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.35,
+   "similarity_boost": 0.8,
+   "style": 0.55,
+   "use_speaker_boost": true,
+   "speed": 1.1
+  }
+ },
+ "cast": {
+  "mom": {
+   "id": "21m00Tcm4TlvDq8ikWAM",
+   "settings": {
+    "stability": 0.35,
+    "similarity_boost": 0.8,
+    "style": 0.6,
+    "use_speaker_boost": true,
+    "speed": 1.05
+   }
+  }
+ },
+ "gap": 0.1,
+ "tail": 1.2,
+ "lead": 2,
+ "script": [
+  {
+   "beat": "s",
+   "text": "What if your mom only gave you ten seconds of games?"
+  },
+  {
+   "beat": "s",
+   "text": "Ten seconds. Then bed.",
+   "who": "mom"
+  },
+  {
+   "beat": "s",
+   "text": "Ten seconds? That's nothing. Unless you're a speedrunner."
+  },
+  {
+   "beat": "s",
+   "text": "Second ten. You beat a hundred-level parkour, in one jump."
+  },
+  {
+   "beat": "s",
+   "text": "Second nine. The Block Boss spawns. One punch. K.O."
+  },
+  {
+   "beat": "s",
+   "text": "Second eight. He drops a billion gems."
+  },
+  {
+   "beat": "s",
+   "text": "Second seven. You buy the whole shop. Even the toaster skin."
+  },
+  {
+   "beat": "s",
+   "text": "Three. Two.",
+   "who": "mom"
+  },
+  {
+   "beat": "s",
+   "text": "Then you find this. Plus ten seconds."
+  },
+  {
+   "beat": "s",
+   "text": "Not again!",
+   "who": "mom"
+  },
+  {
+   "beat": "s",
+   "text": "Comment loop if you watched this twice."
+  }
+ ],
+ "science": [],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "at": "mom",
+   "tr": "cut"
+  },
+  {
+   "shot": "S3",
+   "at": "ten",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S4",
+   "at": "games",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "at": "Ten",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "at": "Then",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S7",
+   "at": "Ten",
+   "tr": "whip"
+  },
+  {
+   "shot": "S8",
+   "at": "nothing",
+   "tr": "cut"
+  },
+  {
+   "shot": "S9",
+   "at": "Unless",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S10",
+   "at": "speedrunner",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S11",
+   "at": "Second",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S12",
+   "at": "You",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "at": "in",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S14",
+   "at": "jump",
+   "tr": "cut",
+   "cam": "pull"
+  },
+  {
+   "shot": "S15",
+   "at": "Second",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S16",
+   "at": "The",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "at": "Boss",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S18",
+   "at": "One",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S19",
+   "at": "punch",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S20",
+   "at": "K.O",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "at": "Second",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S22",
+   "at": "drops",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "at": "billion",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S24",
+   "at": "Second",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S25",
+   "at": "buy",
+   "tr": "whip"
+  },
+  {
+   "shot": "S26",
+   "at": "whole",
+   "tr": "cut"
+  },
+  {
+   "shot": "S27",
+   "at": "toaster",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S28",
+   "at": "Three",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S29",
+   "at": "Two",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S30",
+   "at": "find",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "at": "this",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S32",
+   "at": "Plus",
+   "tr": "flash"
+  },
+  {
+   "shot": "S33",
+   "at": "Not",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S34",
+   "at": "Comment",
+   "tr": "cut"
+  },
+  {
+   "shot": "S1",
+   "at": "twice",
+   "tr": "cut",
+   "from": 0
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S34"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S11+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S15+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S21+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S24+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S16+2",
+   "kind": "flash",
+   "color": "#F0E8FF",
+   "o": 0.8
+  },
+  {
+   "at": "S16+8",
+   "kind": "flash",
+   "color": "#F0E8FF",
+   "o": 0.5
+  },
+  {
+   "at": "S19+2",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.9
+  },
+  {
+   "at": "S19+2",
+   "kind": "shake",
+   "len": 12,
+   "amp": 14
+  },
+  {
+   "at": "S20+2",
+   "kind": "punch",
+   "amp": 0.12
+  },
+  {
+   "at": "S23+3",
+   "kind": "bloom",
+   "color": "#FFC21A",
+   "o": 0.8
+  },
+  {
+   "at": "S27+6",
+   "kind": "punch"
+  },
+  {
+   "at": "S28+1",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  },
+  {
+   "at": "S32+2",
+   "kind": "bloom",
+   "color": "#4ADE6A",
+   "o": 0.8
+  },
+  {
+   "at": "S33+2",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  },
+  {
+   "at": "S1#2",
+   "kind": "rewind",
+   "len": 40
+  }
+ ],
+ "sound": {
+  "clips": {
+   "music": [
+    "upbeat energetic video game music for a fast funny short, bouncy chiptune synths, punchy drums and bass, 150 bpm, exciting and playful, no vocals",
+    36,
+    "music"
+   ],
+   "alarm": [
+    "a cartoon alarm clock ringing, short",
+    1.2
+   ],
+   "boing": [
+    "a cartoon boing jump sound, short",
+    0.6
+   ],
+   "jingle": [
+    "a short bright video game level complete jingle with chimes",
+    1.6
+   ],
+   "thunder": [
+    "a sharp cartoon thunder crack and lightning zap",
+    1.5
+   ],
+   "punch": [
+    "a huge cartoon punch impact with a whoosh, comic, short",
+    0.8
+   ],
+   "ko": [
+    "a video game knockout bell ding and crowd cheer, short",
+    1.5
+   ],
+   "coins": [
+    "a shower of shiny gems and coins pouring and tinkling, video game reward",
+    2.0
+   ],
+   "buy": [
+    "a video game shop purchase blip, short",
+    0.6
+   ],
+   "poof": [
+    "a cartoon smoke poof transformation sound",
+    0.8
+   ],
+   "ding": [
+    "a toaster ding bell, short",
+    0.6
+   ],
+   "heartbeat": [
+    "a fast tense heartbeat with a ticking clock, short",
+    2.0
+   ],
+   "shine": [
+    "a magical shimmering reveal sparkle, rising",
+    1.4
+   ],
+   "kaching": [
+    "a cash register ka-ching, bright",
+    0.9
+   ],
+   "gasp": [
+    "a woman gasping in dramatic despair, cartoon, no words",
+    1.0
+   ],
+   "typing": [
+    "quick phone keyboard typing taps, short",
+    1.2
+   ],
+   "rewind": [
+    "a VHS tape rewind whir, fast, short",
+    1.5
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S3+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S4",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S6+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S7",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S9+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S10",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S10+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S11",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S18+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S20",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S23+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S24",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S28+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S29+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S31",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S31+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S32",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S33",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S33+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S11+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S15+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S21+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S24+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S20+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S23+3",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S27+6",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S32+2",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S1#2",
+    "tr_tick",
+    0.25
+   ],
+   [
+    "S1",
+    "alarm",
+    0.3
+   ],
+   [
+    "S11+2",
+    "boing",
+    0.3
+   ],
+   [
+    "S13",
+    "boing",
+    0.35
+   ],
+   [
+    "S14",
+    "jingle",
+    0.4
+   ],
+   [
+    "S16+2",
+    "thunder",
+    0.45
+   ],
+   [
+    "S19+2",
+    "punch",
+    0.55
+   ],
+   [
+    "S20",
+    "ko",
+    0.4
+   ],
+   [
+    "S22",
+    "coins",
+    0.4
+   ],
+   [
+    "S23",
+    "coins",
+    0.3
+   ],
+   [
+    "S25+3",
+    "buy",
+    0.3
+   ],
+   [
+    "S25+9",
+    "buy",
+    0.3
+   ],
+   [
+    "S25+15",
+    "buy",
+    0.3
+   ],
+   [
+    "S27+4",
+    "poof",
+    0.4
+   ],
+   [
+    "S27+10",
+    "ding",
+    0.4
+   ],
+   [
+    "S28",
+    "heartbeat",
+    0.35
+   ],
+   [
+    "S30",
+    "shine",
+    0.4
+   ],
+   [
+    "S32+2",
+    "kaching",
+    0.45
+   ],
+   [
+    "S33+4",
+    "gasp",
+    0.3
+   ],
+   [
+    "S34+4",
+    "typing",
+    0.3
+   ],
+   [
+    "S1#2",
+    "rewind",
+    0.45
+   ]
+  ],
+  "music": [
+   {
+    "clip": "music",
+    "from": "f:0",
+    "fade_in": 0.2,
+    "fade_out": 0.8
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -15.0
+  }
+ }
+}

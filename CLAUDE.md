@@ -76,6 +76,11 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 - **Detail in every scene:** lit windows, chimney smoke, torches, bunting, cobbles, crowds, a blurred foreground.
 - **Look:** one colour mood per scene; layered flat silhouettes; figures as dark silhouettes with a glowing outline in the scene's light colour; colour only on the key object.
 
+## Blocky-game "What If" Shorts (style of the user's "10 Seconds of Roblox" reference)
+- Model episode: `videos/what-if-studio/src/episodes/ten-seconds/`. Story engine with `capStyle: 'pop'` (one word at a time, keywords coloured via `capColors`), a countdown `Timer` HUD on every shot, `SECOND N` badges on a green burst, about 57-72 cuts a minute (mostly hard cuts, punch zooms), a loop ending (comment "LOOP", rewind to the first shot).
+- Characters: `Blocky` / `CubeHead` in its `shots.tsx` (cube heads with a shaded side, thick outlines, expressive faces). Original characters and an invented game only: never a real game's name, logo, currency or avatars.
+- Two voices: `python <skill>/scripts/cast_voice.py <slug>` (script lines with `"who": "mom"`, voices in `"cast"`); narrator Austin by default. Keep close-up faces above y = 1100 so the captions (y = 1230) sit on the chest.
+
 ## Shorts / Reels: 9:16 only
 - Shorts are delivered **only in 9:16** (1080x1920). Don't render 16:9 versions of Shorts. In the studio, run `bash videos/what-if-studio/shorts.sh <slug>`. It calls `master.py <slug> --vertical` and writes `youtube/<slug>-9x16.mp4`.
 - **Keep everything inside the Reels/Shorts safe zone.** Facebook Reels and YouTube Shorts cover about the top 14% and the bottom 35% of the frame, and the Facebook feed can crop the video to 4:5.
