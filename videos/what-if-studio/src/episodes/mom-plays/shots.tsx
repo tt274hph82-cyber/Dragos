@@ -41,7 +41,7 @@ const LevelBadge: React.FC<{ t: number; n: number; len?: number }> = ({ t, n, le
 );
 const badge = (n: number): S => ({ t, len }) => <LevelBadge t={t} n={n} len={len} />;
 /** The living room at night: a sofa, a TV lighting the room, Mom with a controller. */
-const LivingRoom: React.FC<{ t: number; tv?: string }> = ({ t, tv = '#4AC8FF' }) => (
+export const LivingRoom: React.FC<{ t: number; tv?: string }> = ({ t, tv = '#4AC8FF' }) => (
   <g>
     <rect x={-300} y={-300} width={W + 600} height={2600} fill="#2A2458" />
     <rect x={-300} y={1360} width={W + 600} height={900} fill="#4A3A5A" />
@@ -53,7 +53,7 @@ const LivingRoom: React.FC<{ t: number; tv?: string }> = ({ t, tv = '#4AC8FF' })
     <rect x={60} y={1180} width={960} height={140} rx={50} fill="#8A5A9A" stroke={OL} strokeWidth={10} />
   </g>
 );
-const Controller: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
+export const Controller: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
   <g transform={`translate(${x} ${y + Math.sin(t * 2.2) * 4}) scale(${s}) rotate(${Math.sin(t * 1.3) * 6})`}>
     <path d="M -110 -40 Q -150 -40 -160 20 Q -170 80 -120 80 Q -90 80 -70 40 L 70 40 Q 90 80 120 80 Q 170 80 160 20 Q 150 -40 110 -40 Z" fill="#2A2234" stroke={OL} strokeWidth={8} />
     <circle cx={-90} cy={0} r={18} fill="#4A4458" /><circle cx={80} cy={-8} r={11} fill="#E2262E" /><circle cx={105} cy={12} r={11} fill="#4ADE6A" />
