@@ -387,7 +387,7 @@ const storyFxAt = (tl: Timeline, f: number) => {
   return { ...base, punch, blooms, rewind, iris };
 };
 
-export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false, capFont }) => {
+export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string; overlay?: React.FC<{ f: number }> }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false, capFont, overlay: Overlay }) => {
   const f = useCurrentFrame();
   const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
   const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
@@ -447,6 +447,8 @@ export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words:
         <rect width={STORY.w} height={STORY.h} fill="#05030A" opacity={0.6 * Math.min(1, iris.k * 4) * (1 - clamp((iris.k - 0.85) / 0.15))} mask="url(#irisM)" />
         <circle cx={iris.x} cy={iris.y} r={lerp(iris.r * 3, iris.r, easeOut(clamp(iris.k * 3)))} fill="none" stroke="#FFD23F" strokeWidth={10} opacity={1 - clamp((iris.k - 0.85) / 0.15)} />
       </svg> : null}
+      {/* a fixed HUD (timers, status pills) that the camera doesn't move */}
+      {Overlay ? <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><Overlay f={f} /></svg> : null}
       <Grade f={f} grain vignette w={STORY.w} h={STORY.h} />
       {white > 0 ? <AbsoluteFill style={{ backgroundColor: '#FFFFFF', opacity: white }} /> : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
@@ -478,7 +480,7 @@ const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline
 };
 
 /** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
-export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string }) => ({
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string; overlay?: React.FC<{ f: number }> }) => ({
   id,
   total: p.timeline.total,
   shotCount: p.timeline.shots.length,

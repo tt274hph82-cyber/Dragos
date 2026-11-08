@@ -10,8 +10,8 @@ import words from './words.json';
 // Original characters and an invented game ("Block Quest"); no real game's brand, logo or avatars.
 
 type S = React.FC<ShotProps>;
-const OL = '#1A1424';
-const SW = 9;
+export const OL = '#1A1424';
+export const SW = 9;
 
 // ---------------------------------------------------------------- the countdown, from the voice's own words
 const at = (word: string, n = 1) => { let k = 0; for (const w of words as any[]) if (w.w.toLowerCase() === word.toLowerCase() && ++k === n) return w.s; return 0; };
@@ -36,9 +36,9 @@ const Timer: React.FC<{ f: number }> = ({ f }) => {
 };
 
 // ---------------------------------------------------------------- characters
-type Face = 'smirk' | 'tongue' | 'shock' | 'worried' | 'grin' | 'happy' | 'sleepy' | 'angry' | 'yell' | 'despair' | 'determined' | 'starry';
+export type Face = 'smirk' | 'tongue' | 'shock' | 'worried' | 'grin' | 'happy' | 'sleepy' | 'angry' | 'yell' | 'despair' | 'determined' | 'starry';
 /** A cube head with a 3D side, a face and hair (kid: brown cap; mom: curlers and a bun). */
-const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'boss'; t: number }> = ({ face, skin = '#F4E2CC', hair, t }) => {
+export const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'boss' | 'friend'; t: number }> = ({ face, skin = '#F4E2CC', hair, t }) => {
   const blink = Math.sin(t * 0.11) > 0.985 && face !== 'shock' && face !== 'yell';
   const eye = (cx: number, sd: number) => {
     if (face === 'sleepy' || blink) return <path d={`M ${cx - 30} -10 Q ${cx} 6 ${cx + 30} -10`} stroke={OL} strokeWidth={8} fill="none" strokeLinecap="round" />;
@@ -88,6 +88,12 @@ const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'bos
         <path d="M -172 -40 Q -182 -190 -10 -196 Q 170 -196 190 -60 L 150 -96 Q 130 -60 90 -110 Q 40 -60 -10 -112 Q -60 -60 -100 -110 Q -130 -60 -172 -40 Z" fill="#9A5A2E" stroke={OL} strokeWidth={SW} strokeLinejoin="round" />
         {[-110, -40, 30, 100].map((x) => <path key={x} d={`M ${x - 20} -170 q 20 -12 40 0`} stroke="#C88A52" strokeWidth={6} fill="none" strokeLinecap="round" />)}
       </g> : null}
+      {hair === 'friend' ? <g>
+        <path d="M -172 -50 Q -176 -200 -6 -206 Q 168 -204 190 -70 L 190 -40 L -172 -30 Z" fill="#E8A030" stroke={OL} strokeWidth={SW} strokeLinejoin="round" />
+        <path d="M -172 -60 L -250 -40 Q -262 -20 -236 -12 L -170 -24 Z" fill="#E8A030" stroke={OL} strokeWidth={SW} strokeLinejoin="round" />
+        <rect x={-120} y={-170} width={110} height={44} rx={14} fill="#FFFFFF" stroke={OL} strokeWidth={6} />
+        <path d="M -150 -40 Q -160 0 -150 20 M 160 -40 Q 172 0 162 20" stroke="#3A2214" strokeWidth={22} strokeLinecap="round" />
+      </g> : null}
       {hair === 'mom' ? <path d="M -168 -60 Q -170 -170 0 -172 Q 170 -170 186 -60 L 150 -100 Q 0 -150 -130 -100 Z" fill="#8A4A2A" stroke={OL} strokeWidth={SW} strokeLinejoin="round" /> : null}
       {brow(-62, -1)}{brow(62, 1)}
       {eye(-62, 1)}{eye(62, 1)}
@@ -97,11 +103,11 @@ const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'bos
     </g>
   );
 };
-type Pose = { armL?: number; armR?: number; legL?: number; legR?: number; lean?: number };
+export type Pose = { armL?: number; armR?: number; legL?: number; legR?: number; lean?: number };
 /** A blocky body under a cube head. kind: kid (red bolt shirt), mom (purple robe), boss (giant). */
-const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 'boss'; face: Face; t: number; pose?: Pose; flip?: boolean; extra?: React.ReactNode; energy?: number }> = ({ x, y, s, kind, face, t, pose = {}, flip, extra, energy = 1 }) => {
-  const shirt = kind === 'kid' ? '#D8323A' : kind === 'mom' ? '#9A7AD8' : '#6A4AC8';
-  const pants = kind === 'kid' ? '#3A5AB8' : kind === 'mom' ? '#9A7AD8' : '#5A5A6A';
+export const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 'boss' | 'friend'; face: Face; t: number; pose?: Pose; flip?: boolean; extra?: React.ReactNode; energy?: number }> = ({ x, y, s, kind, face, t, pose = {}, flip, extra, energy = 1 }) => {
+  const shirt = kind === 'kid' ? '#D8323A' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#2A8AE0' : '#6A4AC8';
+  const pants = kind === 'kid' ? '#3A5AB8' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#3A3448' : '#5A5A6A';
   const skin = kind === 'boss' ? '#FF9A3A' : '#F4E2CC';
   const breathe = Math.sin(t * 0.12) * 4 - Math.abs(Math.sin(t * 0.35)) * 16 * energy;
   const swing = Math.sin(t * 0.35) * 10 * energy;
@@ -122,6 +128,7 @@ const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 
       <g transform={`translate(0 ${breathe})`}>
         <rect x={-130} y={-600} width={260} height={320} rx={30} fill={shirt} stroke={OL} strokeWidth={SW} />
         {kind === 'kid' ? <path d="M 20 -560 L -40 -440 L 6 -440 L -20 -330 L 50 -470 L 6 -470 L 30 -560 Z" fill="#F4E2CC" stroke={OL} strokeWidth={6} strokeLinejoin="round" /> : null}
+        {kind === 'friend' ? <path d="M 0 -540 l 22 46 l 50 6 l -38 34 l 10 50 l -44 -26 l -44 26 l 10 -50 l -38 -34 l 50 -6 Z" fill="#FFD23F" stroke={OL} strokeWidth={6} strokeLinejoin="round" /> : null}
         {kind === 'mom' ? <g><path d="M -10 -600 L -40 -280 M 10 -600 L 40 -280" stroke="#7A5AB8" strokeWidth={10} /><circle cx={0} cy={-420} r={16} fill="#F28AB8" stroke={OL} strokeWidth={5} /></g> : null}
         <g transform="translate(0 -790)"><CubeHead face={face} hair={kind} skin={skin} t={t} /></g>
       </g>
@@ -132,7 +139,7 @@ const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 
 };
 
 // ---------------------------------------------------------------- sets and props
-const Bedroom: React.FC<{ t: number; dark?: number }> = ({ t, dark = 0 }) => (
+export const Bedroom: React.FC<{ t: number; dark?: number }> = ({ t, dark = 0 }) => (
   <g>
     <rect x={-300} y={-300} width={W + 600} height={2600} fill="#2A2458" />
     <rect x={-300} y={1380} width={W + 600} height={900} fill="#5A3A2A" />
@@ -157,14 +164,14 @@ const Bedroom: React.FC<{ t: number; dark?: number }> = ({ t, dark = 0 }) => (
     {dark ? <rect x={-300} y={-300} width={W + 600} height={2600} fill="#0A0620" opacity={dark} /> : null}
   </g>
 );
-const Burst: React.FC<{ t: number; c1: string; c2: string; cx?: number; cy?: number }> = ({ t, c1, c2, cx = 540, cy = 860 }) => (
+export const Burst: React.FC<{ t: number; c1: string; c2: string; cx?: number; cy?: number }> = ({ t, c1, c2, cx = 540, cy = 860 }) => (
   <g>
     <rect x={-300} y={-300} width={W + 600} height={2600} fill={c1} />
     <g transform={`translate(${cx} ${cy}) rotate(${t * 0.8})`}>{Array.from({ length: 18 }, (_, i) => <path key={i} d="M 0 0 L -90 -1600 L 90 -1600 Z" fill={c2} transform={`rotate(${i * 20})`} />)}</g>
     <Glow x={cx} y={cy} r={700} kind="warm" o={0.6} />
   </g>
 );
-const Sparkles: React.FC<{ t: number; n?: number; seed?: string }> = ({ t, n = 10, seed = 's' }) => (
+export const Sparkles: React.FC<{ t: number; n?: number; seed?: string }> = ({ t, n = 10, seed = 's' }) => (
   <g>{Array.from({ length: n }, (_, i) => {
     const x = random(`${seed}x${i}`) * W, y = 500 + random(`${seed}y${i}`) * 1100, k = Math.abs(Math.sin(t * 0.15 + i));
     return <path key={i} d={`M ${x} ${y - 30 * k} L ${x + 8 * k} ${y} L ${x} ${y + 30 * k} L ${x - 8 * k} ${y} Z`} fill="#FFF6C0" />;
@@ -184,40 +191,40 @@ const SecondBadge: React.FC<{ t: number; n: number; len?: number }> = ({ t, n, l
     </g>
   </g>
 );
-const Sky: React.FC<{ c?: string }> = ({ c = '#7ACCF2' }) => (
+export const Sky: React.FC<{ c?: string }> = ({ c = '#7ACCF2' }) => (
   <g><rect x={-300} y={-300} width={W + 600} height={2600} fill={c} />
     {[[180, 520], [820, 420], [600, 700]].map(([x, y], i) => <g key={i} fill="#FFFFFF"><rect x={x - 80} y={y} width={160} height={50} rx={10} /><rect x={x - 40} y={y - 40} width={90} height={50} rx={10} /></g>)}
   </g>
 );
-const Lava: React.FC<{ t: number }> = ({ t }) => (
+export const Lava: React.FC<{ t: number }> = ({ t }) => (
   <g><rect x={-300} y={1300} width={W + 600} height={1000} fill="#FF5A1A" />
     {Array.from({ length: 9 }, (_, i) => <ellipse key={i} cx={(i * 150 + t * 3) % 1400 - 150} cy={1340 + (i % 3) * 120} rx={60} ry={14} fill="#FFC21A" opacity={0.7} />)}
     <rect x={-300} y={1300} width={W + 600} height={12} fill="#FFD24A" /></g>
 );
-const Block: React.FC<{ x: number; y: number; w?: number; c: string }> = ({ x, y, w = 150, c }) => (
+export const Block: React.FC<{ x: number; y: number; w?: number; c: string }> = ({ x, y, w = 150, c }) => (
   <g><path d={`M ${x - w / 2} ${y} L ${x - w / 2 + 20} ${y - 30} L ${x + w / 2 + 20} ${y - 30} L ${x + w / 2} ${y} Z`} fill={c} stroke={OL} strokeWidth={6} />
     <rect x={x - w / 2} y={y} width={w} height={60} fill={c} stroke={OL} strokeWidth={6} /><rect x={x - w / 2} y={y} width={w} height={60} fill="#000" opacity={0.15} /></g>
 );
-const Flag: React.FC<{ x: number; y: number }> = ({ x, y }) => (
+export const Flag: React.FC<{ x: number; y: number }> = ({ x, y }) => (
   <g><rect x={x - 6} y={y - 260} width={12} height={260} fill="#E8E8F0" stroke={OL} strokeWidth={5} />
     {Array.from({ length: 12 }, (_, i) => <rect key={i} x={x + 6 + (i % 4) * 34} y={y - 256 + Math.floor(i / 4) * 34} width={34} height={34} fill={(i + Math.floor(i / 4)) % 2 ? '#FFFFFF' : OL} />)}</g>
 );
-const Banner: React.FC<{ t: number; text: string; y?: number; c?: string }> = ({ t, text, y = 520, c = '#2E6AE8' }) => (
+export const Banner: React.FC<{ t: number; text: string; y?: number; c?: string }> = ({ t, text, y = 520, c = '#2E6AE8' }) => (
   <g transform={`translate(540 ${y}) scale(${popIn(t, 6)})`}>
     <rect x={-260} y={-54} width={520} height={108} rx={54} fill={c} stroke={OL} strokeWidth={10} />
     <text y={22} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={62} fill="#FFFFFF">{text}</text>
   </g>
 );
-const Confetti: React.FC<{ t: number; seed?: string }> = ({ t, seed = 'c' }) => (
+export const Confetti: React.FC<{ t: number; seed?: string }> = ({ t, seed = 'c' }) => (
   <g>{Array.from({ length: 40 }, (_, i) => {
     const x = random(`${seed}${i}`) * W, y = -100 + ((t * (8 + random(`${seed}v${i}`) * 8) + random(`${seed}y${i}`) * 1600) % 1900);
     return <rect key={i} x={x} y={y} width={18} height={30} fill={['#FFC21A', '#2EA84A', '#E2262E', '#2E6AE8', '#F28AB8'][i % 5]} transform={`rotate(${t * 6 + i * 40} ${x} ${y})`} />;
   })}</g>
 );
-const Gem: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
+export const Gem: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}><path d="M -40 -20 L -20 -44 L 20 -44 L 40 -20 L 0 40 Z" fill="#3AD8E8" stroke={OL} strokeWidth={6} strokeLinejoin="round" /><path d="M -40 -20 L 40 -20 M -20 -44 L 0 -20 L 20 -44 M 0 -20 L 0 40" stroke="#1A8AA8" strokeWidth={4} fill="none" /></g>
 );
-const Card: React.FC<{ t: number; title: string; big: string; btn: string; ok?: boolean }> = ({ t, title, big, btn, ok }) => (
+export const Card: React.FC<{ t: number; title: string; big: string; btn: string; ok?: boolean }> = ({ t, title, big, btn, ok }) => (
   <g transform={`translate(540 860) scale(${popIn(t, 6) * 1.2})`}>
     <rect x={-300} y={-330} width={600} height={660} rx={40} fill="#1E1A2E" stroke="#FFC21A" strokeWidth={12} />
     <text y={-250} textAnchor="middle" fontFamily={FONT.game} fontWeight={900} fontSize={46} fill="#B8B0D8">{title}</text>
@@ -229,14 +236,14 @@ const Card: React.FC<{ t: number; title: string; big: string; btn: string; ok?: 
 );
 const hud = (f: number) => <Timer f={f} />;
 /** Anime speed lines rushing to the frame edges. */
-const SpeedLines: React.FC<{ t: number; c?: string; o?: number }> = ({ t, c = '#FFFFFF', o = 0.55 }) => (
+export const SpeedLines: React.FC<{ t: number; c?: string; o?: number }> = ({ t, c = '#FFFFFF', o = 0.55 }) => (
   <g opacity={o}>{Array.from({ length: 36 }, (_, i) => {
     const a = i * 0.1745 + random(`sl${i}`) * 0.1, r0 = 380 + ((t * 40 + random(`sr${i}`) * 300) % 300);
     return <path key={i} d={`M ${540 + Math.cos(a) * r0} ${900 + Math.sin(a) * r0} L ${540 + Math.cos(a - 0.01) * 1500} ${900 + Math.sin(a - 0.01) * 1500} L ${540 + Math.cos(a + 0.01) * 1500} ${900 + Math.sin(a + 0.01) * 1500} Z`} fill={c} />;
   })}</g>
 );
 /** Things raining down through the frame (gems, coins, confetti). */
-const Rain: React.FC<{ t: number; kind: 'gem' | 'coin'; n?: number; seed?: string }> = ({ t, kind, n = 18, seed = 'r' }) => (
+export const Rain: React.FC<{ t: number; kind: 'gem' | 'coin'; n?: number; seed?: string }> = ({ t, kind, n = 18, seed = 'r' }) => (
   <g>{Array.from({ length: n }, (_, i) => {
     const x = random(`${seed}${i}`) * W, y = -150 + ((t * (14 + random(`${seed}v${i}`) * 10) + random(`${seed}y${i}`) * 2000) % 2100);
     return kind === 'gem' ? <Gem key={i} x={x} y={y} s={0.7} /> : <g key={i} transform={`translate(${x} ${y}) rotate(${t * 8 + i * 30})`}><ellipse rx={34} ry={34 * Math.abs(Math.cos(t * 0.3 + i))} fill="#FFC21A" stroke={OL} strokeWidth={5} /></g>;
@@ -360,7 +367,7 @@ export const S14: S = ({ t, f }) => (
   </g>
 );
 export const S15 = badge(9);
-const Storm: React.FC<{ t: number }> = ({ t }) => (
+export const Storm: React.FC<{ t: number }> = ({ t }) => (
   <g><rect x={-300} y={-300} width={W + 600} height={2600} fill="#3A2468" />
     {[[200, 500], [700, 420], [450, 640]].map(([x, y], i) => <g key={i} fill="#4A3488" stroke={OL} strokeWidth={6}><ellipse cx={x} cy={y} rx={220} ry={70} /><ellipse cx={x + 80} cy={y - 40} rx={120} ry={60} /></g>)}
     <rect x={-300} y={1300} width={W + 600} height={900} fill="#2A1A48" /><rect x={-300} y={1300} width={W + 600} height={14} fill="#9A7AFF" /></g>

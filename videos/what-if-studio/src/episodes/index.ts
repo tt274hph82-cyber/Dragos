@@ -13,5 +13,6 @@ import { molasses } from './molasses';
 import { emuWar } from './emu-war';
 import { dancingPlague } from './dancing-plague';
 import { tenSeconds } from './ten-seconds';
+import { bestFriend } from './best-friend';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend];
