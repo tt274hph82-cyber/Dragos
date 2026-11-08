@@ -7,6 +7,7 @@ import { CastSheet } from './CastSheet';
 import { HeroOptions } from './HeroOptions';
 import { SetCheck } from './SetCheck';
 import { PauseThumb } from './PauseThumb';
+import { PetThumb } from './PetThumb';
 
 // Every episode gets two compositions: <Id> (the film) and <Id>Board (one frame per shot, at its key frame, for the
 // storyboard). Cast renders the cast sheet.
@@ -27,6 +28,7 @@ export const Root: React.FC = () => {
       <Composition id="HeroOptions" component={HeroOptions} durationInFrames={1} {...common} />
       <Composition id="PauseThumbA" component={PauseThumb} durationInFrames={1} {...common} defaultProps={{ variant: 'A' as const }} />
       <Composition id="PauseThumbB" component={PauseThumb} durationInFrames={1} {...common} defaultProps={{ variant: 'B' as const }} />
+      <Composition id="PetThumb" component={PetThumb} durationInFrames={1} {...common} />
       <Composition id="SetCheck" component={SetCheck} durationInFrames={1} {...common} defaultProps={{ kind: 'street' as const }} />
     </>
   );

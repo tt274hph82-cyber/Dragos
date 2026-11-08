@@ -67,7 +67,7 @@ const Living: React.FC<{ t: number; night?: boolean; mess?: boolean }> = ({ t, n
   </g>
 );
 /** Biscuit: a big blocky golden dog facing right. mouth 0..1 opens the jaw; face: happy, chew, hungry, sneaky. */
-const Dog: React.FC<{ x: number; y: number; s: number; t: number; mouth?: number; face?: 'happy' | 'chew' | 'hungry' | 'sneaky' | 'sneeze'; flip?: boolean; inMouth?: React.ReactNode; belly?: number }> = ({ x, y, s, t, mouth = 0, face = 'happy', flip, inMouth, belly = 0 }) => {
+export const Dog: React.FC<{ x: number; y: number; s: number; t: number; mouth?: number; face?: 'happy' | 'chew' | 'hungry' | 'sneaky' | 'sneeze'; flip?: boolean; inMouth?: React.ReactNode; belly?: number }> = ({ x, y, s, t, mouth = 0, face = 'happy', flip, inMouth, belly = 0 }) => {
   const wag = Math.sin(t * 0.9) * 20;
   const chew = face === 'chew' ? Math.abs(Math.sin(t * 0.8)) * 0.25 : 0;
   const m = Math.max(mouth, chew);
