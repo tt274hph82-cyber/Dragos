@@ -1,0 +1,636 @@
+{
+ "slug": "blink-gems",
+ "title": "1 GEM PER BLINK",
+ "fps": 30,
+ "total": 920,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 30,
+   "t0": 0,
+   "t1": 30,
+   "line": "What if you got one",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 30,
+   "b": 70,
+   "t0": 0,
+   "t1": 40,
+   "line": "gem every time you",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 70,
+   "b": 87,
+   "t0": 0,
+   "t1": 17,
+   "line": "blinked?",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S4",
+   "a": 87,
+   "b": 113,
+   "t0": 0,
+   "t1": 26,
+   "line": "Blink.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S5",
+   "a": 113,
+   "b": 135,
+   "t0": 0,
+   "t1": 22,
+   "line": "One gem.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "a": 135,
+   "b": 150,
+   "t0": 0,
+   "t1": 15,
+   "line": "Blink,",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S7",
+   "a": 150,
+   "b": 165,
+   "t0": 0,
+   "t1": 15,
+   "line": "blink,",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S8",
+   "a": 165,
+   "b": 180,
+   "t0": 0,
+   "t1": 15,
+   "line": "blink.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S9",
+   "a": 180,
+   "b": 234,
+   "t0": 0,
+   "t1": 54,
+   "line": "Ten gems. You blink so",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 234,
+   "b": 264,
+   "t0": 0,
+   "t1": 30,
+   "line": "fast, the counter",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S11",
+   "a": 264,
+   "b": 293,
+   "t0": 0,
+   "t1": 29,
+   "line": "breaks. You buy",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S12",
+   "a": 293,
+   "b": 304,
+   "t0": 0,
+   "t1": 11,
+   "line": "a golden",
+   "tr": "whip"
+  },
+  {
+   "shot": "S27",
+   "a": 304,
+   "b": 328,
+   "t0": 0,
+   "t1": 24,
+   "line": "mansion,",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 328,
+   "b": 360,
+   "t0": 0,
+   "t1": 32,
+   "line": "a rocket, and",
+   "cam": "tiltDown",
+   "tr": "whip"
+  },
+  {
+   "shot": "S14",
+   "a": 360,
+   "b": 387,
+   "t0": 0,
+   "t1": 27,
+   "line": "a robot butler.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "a": 387,
+   "b": 432,
+   "t0": 0,
+   "t1": 45,
+   "line": "I can't stop blinking!",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "a": 432,
+   "b": 474,
+   "t0": 0,
+   "t1": 42,
+   "line": "Gems are raining from the",
+   "cam": "tiltDown",
+   "tr": "flash"
+  },
+  {
+   "shot": "S28",
+   "a": 474,
+   "b": 508,
+   "t0": 0,
+   "t1": 34,
+   "line": "sky. The whole",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S17",
+   "a": 508,
+   "b": 525,
+   "t0": 0,
+   "t1": 17,
+   "line": "server is",
+   "cam": "rise",
+   "tr": "cut"
+  },
+  {
+   "shot": "S29",
+   "a": 525,
+   "b": 540,
+   "t0": 0,
+   "t1": 15,
+   "line": "flooding.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 540,
+   "b": 564,
+   "t0": 0,
+   "t1": 24,
+   "line": "Then, the",
+   "tr": "flash"
+  },
+  {
+   "shot": "S19",
+   "a": 564,
+   "b": 593,
+   "t0": 0,
+   "t1": 29,
+   "line": "admin shows up.",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S20",
+   "a": 593,
+   "b": 613,
+   "t0": 0,
+   "t1": 20,
+   "line": "Who broke my",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "a": 613,
+   "b": 633,
+   "t0": 0,
+   "t1": 20,
+   "line": "economy?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 633,
+   "b": 686,
+   "t0": 0,
+   "t1": 53,
+   "line": "You try not to blink. Your",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "a": 686,
+   "b": 732,
+   "t0": 0,
+   "t1": 46,
+   "line": "eyes are burning.",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S23",
+   "a": 732,
+   "b": 756,
+   "t0": 0,
+   "t1": 24,
+   "line": "Then, you",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S24",
+   "a": 756,
+   "b": 773,
+   "t0": 0,
+   "t1": 17,
+   "line": "sneeze.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S25",
+   "a": 773,
+   "b": 806,
+   "t0": 0,
+   "t1": 33,
+   "line": "Infinity gems.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "a": 806,
+   "b": 920,
+   "t0": 0,
+   "t1": 114,
+   "line": "Comment blink if you blinked while watching this.",
+   "tr": "flash"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 0,
+   "line": "What if you got one",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 40,
+   "first": 30,
+   "line": "gem every time you",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 17,
+   "first": 70,
+   "line": "blinked?",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 87,
+   "line": "Blink.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 22,
+   "first": 113,
+   "line": "One gem.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 135,
+   "line": "Blink,",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 150,
+   "line": "blink,",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 165,
+   "line": "blink.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 180,
+   "line": "Ten gems. You blink so",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 234,
+   "line": "fast, the counter",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 264,
+   "line": "breaks. You buy",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 11,
+   "first": 293,
+   "line": "a golden",
+   "note": "S12"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 304,
+   "line": "mansion,",
+   "note": "S27"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 328,
+   "line": "a rocket, and",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 360,
+   "line": "a robot butler.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 45,
+   "first": 387,
+   "line": "I can't stop blinking!",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 432,
+   "line": "Gems are raining from the",
+   "note": "S16"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 474,
+   "line": "sky. The whole",
+   "note": "S28"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 17,
+   "first": 508,
+   "line": "server is",
+   "note": "S17"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 525,
+   "line": "flooding.",
+   "note": "S29"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 540,
+   "line": "Then, the",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 564,
+   "line": "admin shows up.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 20,
+   "first": 593,
+   "line": "Who broke my",
+   "note": "S20"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 20,
+   "first": 613,
+   "line": "economy?",
+   "note": "S30"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 633,
+   "line": "You try not to blink. Your",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 46,
+   "first": 686,
+   "line": "eyes are burning.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 732,
+   "line": "Then, you",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 17,
+   "first": 756,
+   "line": "sneeze.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 773,
+   "line": "Infinity gems.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 114,
+   "first": 806,
+   "line": "Comment blink if you blinked while watching this.",
+   "note": "S26"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 14,
+   "amp": 12,
+   "f": 266
+  },
+  {
+   "kind": "flash",
+   "color": "#FF4A4A",
+   "o": 0.5,
+   "f": 266
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 6,
+   "f": 338
+  },
+  {
+   "kind": "flash",
+   "color": "#F0E8FF",
+   "o": 0.8,
+   "f": 542
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 567
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 595
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.9,
+   "f": 757
+  },
+  {
+   "kind": "shake",
+   "len": 14,
+   "amp": 14,
+   "f": 757
+  },
+  {
+   "kind": "bloom",
+   "color": "#5AE8F8",
+   "o": 0.9,
+   "f": 758
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.8,
+   "f": 775
+  }
+ ],
+ "audio": {
+  "voice": "blink-gems/voice.wav",
+  "sfx": "blink-gems/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1941,
+  "music": "blink-gems/music.wav",
+  "musicVol": 0.0681
+ }
+}
