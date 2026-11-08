@@ -1,0 +1,666 @@
+{
+ "slug": "mom-plays",
+ "title": "MOM PLAYS BLOCK QUEST",
+ "fps": 30,
+ "total": 999,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 34,
+   "t0": 0,
+   "t1": 34,
+   "line": "What if your mom started",
+   "tr": "cut"
+  },
+  {
+   "shot": "S26",
+   "a": 34,
+   "b": 66,
+   "t0": 0,
+   "t1": 32,
+   "line": "playing Block Quest?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S2",
+   "a": 66,
+   "b": 81,
+   "t0": 0,
+   "t1": 15,
+   "line": "Which button",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S27",
+   "a": 81,
+   "b": 137,
+   "t0": 0,
+   "t1": 56,
+   "line": "is jump? Is it this one?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S20",
+   "a": 137,
+   "b": 175,
+   "t0": 0,
+   "t1": 38,
+   "line": "Level one.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S3",
+   "a": 175,
+   "b": 207,
+   "t0": 0,
+   "t1": 32,
+   "line": "She walks straight into",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "a": 207,
+   "b": 230,
+   "t0": 0,
+   "t1": 23,
+   "line": "the lava.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S4",
+   "a": 230,
+   "b": 251,
+   "t0": 0,
+   "t1": 21,
+   "line": "Twice.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S21",
+   "a": 251,
+   "b": 296,
+   "t0": 0,
+   "t1": 45,
+   "line": "Level fifty. She",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S5",
+   "a": 296,
+   "b": 315,
+   "t0": 0,
+   "t1": 19,
+   "line": "stops cooking",
+   "tr": "cut"
+  },
+  {
+   "shot": "S28",
+   "a": 315,
+   "b": 349,
+   "t0": 0,
+   "t1": 34,
+   "line": "dinner. You eat",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "a": 349,
+   "b": 375,
+   "t0": 0,
+   "t1": 26,
+   "line": "cereal.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S7",
+   "a": 375,
+   "b": 392,
+   "t0": 0,
+   "t1": 17,
+   "line": "Again.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S22",
+   "a": 392,
+   "b": 446,
+   "t0": 0,
+   "t1": 54,
+   "line": "Level five hundred. She",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "a": 446,
+   "b": 471,
+   "t0": 0,
+   "t1": 25,
+   "line": "spends all your",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S29",
+   "a": 471,
+   "b": 489,
+   "t0": 0,
+   "t1": 18,
+   "line": "gems on",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S9",
+   "a": 489,
+   "b": 516,
+   "t0": 0,
+   "t1": 27,
+   "line": "a pink dragon.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 516,
+   "b": 538,
+   "t0": 0,
+   "t1": 22,
+   "line": "Mom!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S30",
+   "a": 538,
+   "b": 573,
+   "t0": 0,
+   "t1": 35,
+   "line": "Those were mine!",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "a": 573,
+   "b": 606,
+   "t0": 0,
+   "t1": 33,
+   "line": "Shh. Mommy's in",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 606,
+   "b": 617,
+   "t0": 0,
+   "t1": 11,
+   "line": "a boss",
+   "tr": "whip"
+  },
+  {
+   "shot": "S25",
+   "a": 617,
+   "b": 629,
+   "t0": 0,
+   "t1": 12,
+   "line": "fight.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 629,
+   "b": 694,
+   "t0": 0,
+   "t1": 65,
+   "line": "Level nine hundred ninety-nine.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S14",
+   "a": 694,
+   "b": 717,
+   "t0": 0,
+   "t1": 23,
+   "line": "She's number",
+   "tr": "cut"
+  },
+  {
+   "shot": "S24",
+   "a": 717,
+   "b": 746,
+   "t0": 0,
+   "t1": 29,
+   "line": "one in the whole",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S15",
+   "a": 746,
+   "b": 759,
+   "t0": 0,
+   "t1": 13,
+   "line": "world.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 759,
+   "b": 797,
+   "t0": 0,
+   "t1": 38,
+   "line": "And now, you have",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S31",
+   "a": 797,
+   "b": 822,
+   "t0": 0,
+   "t1": 25,
+   "line": "to send her to bed.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "a": 822,
+   "b": 846,
+   "t0": 0,
+   "t1": 24,
+   "line": "Mom.",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S32",
+   "a": 846,
+   "b": 865,
+   "t0": 0,
+   "t1": 19,
+   "line": "Bedtime.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 865,
+   "b": 904,
+   "t0": 0,
+   "t1": 39,
+   "line": "Ten more seconds!",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S19",
+   "a": 904,
+   "b": 999,
+   "t0": 0,
+   "t1": 95,
+   "line": "Comment mom if this is your house.",
+   "tr": "flash"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 0,
+   "line": "What if your mom started",
+   "note": "S1"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 34,
+   "line": "playing Block Quest?",
+   "note": "S26"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 66,
+   "line": "Which button",
+   "note": "S2"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 56,
+   "first": 81,
+   "line": "is jump? Is it this one?",
+   "note": "S27"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 137,
+   "line": "Level one.",
+   "note": "S20"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 175,
+   "line": "She walks straight into",
+   "note": "S3"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 207,
+   "line": "the lava.",
+   "note": "S23"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 21,
+   "first": 230,
+   "line": "Twice.",
+   "note": "S4"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 45,
+   "first": 251,
+   "line": "Level fifty. She",
+   "note": "S21"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 19,
+   "first": 296,
+   "line": "stops cooking",
+   "note": "S5"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 315,
+   "line": "dinner. You eat",
+   "note": "S28"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 349,
+   "line": "cereal.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 17,
+   "first": 375,
+   "line": "Again.",
+   "note": "S7"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 392,
+   "line": "Level five hundred. She",
+   "note": "S22"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 25,
+   "first": 446,
+   "line": "spends all your",
+   "note": "S8"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 20,
+   "len": 18,
+   "first": 471,
+   "line": "gems on",
+   "note": "S29"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 489,
+   "line": "a pink dragon.",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 22,
+   "first": 516,
+   "line": "Mom!",
+   "note": "S10"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 35,
+   "first": 538,
+   "line": "Those were mine!",
+   "note": "S30"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 573,
+   "line": "Shh. Mommy's in",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 11,
+   "first": 606,
+   "line": "a boss",
+   "note": "S12"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 12,
+   "first": 617,
+   "line": "fight.",
+   "note": "S25"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 65,
+   "first": 629,
+   "line": "Level nine hundred ninety-nine.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 694,
+   "line": "She's number",
+   "note": "S14"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 717,
+   "line": "one in the whole",
+   "note": "S24"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 13,
+   "first": 746,
+   "line": "world.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 759,
+   "line": "And now, you have",
+   "note": "S16"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 25,
+   "first": 797,
+   "line": "to send her to bed.",
+   "note": "S31"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 822,
+   "line": "Mom.",
+   "note": "S17"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 19,
+   "first": 846,
+   "line": "Bedtime.",
+   "note": "S32"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 865,
+   "line": "Ten more seconds!",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 95,
+   "first": 904,
+   "line": "Comment mom if this is your house.",
+   "note": "S19"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 139
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 253
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 394
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 631
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 209
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.8,
+   "f": 491
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.8,
+   "f": 609
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 609
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.8,
+   "f": 697
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 7,
+   "f": 518
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 867
+  }
+ ],
+ "audio": {
+  "voice": "mom-plays/voice.wav",
+  "sfx": "mom-plays/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1374,
+  "music": "mom-plays/music.wav",
+  "musicVol": 0.058
+ }
+}

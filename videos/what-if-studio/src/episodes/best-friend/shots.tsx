@@ -32,7 +32,7 @@ const Gloom: React.FC<{ k?: number }> = ({ k = 1 }) => (
     <rect x={-300} y={-300} width={W + 600} height={2600} fill="#2A3A6A" opacity={0.25 * k} />
   </g>
 );
-const Ground: React.FC<{ c?: string }> = ({ c = '#5AC86A' }) => <rect x={-300} y={1300} width={W + 600} height={900} fill={c} />;
+export const Ground: React.FC<{ c?: string }> = ({ c = '#5AC86A' }) => <rect x={-300} y={1300} width={W + 600} height={900} fill={c} />;
 const DayBadge: React.FC<{ t: number; n: number; len?: number }> = ({ t, n, len = 30 }) => (
   <g>
     <Burst t={t} c1="#1E3A6A" c2="#2A4A88" />
@@ -49,7 +49,7 @@ const DayBadge: React.FC<{ t: number; n: number; len?: number }> = ({ t, n, len 
 );
 const badge = (n: number): S => ({ t, len }) => <g><DayBadge t={t} n={n} len={len} /></g>;
 /** Chat toast: "[name] left/joined the game", or a message. */
-const Toast: React.FC<{ t: number; text: string; c?: string; y?: number }> = ({ t, text, c = '#FFD23F', y = 520 }) => React.useContext(CloseCtx) ? null : (
+export const Toast: React.FC<{ t: number; text: string; c?: string; y?: number }> = ({ t, text, c = '#FFD23F', y = 520 }) => React.useContext(CloseCtx) ? null : (
   <g transform={`translate(540 ${y}) scale(${popIn(t, 6)})`}>
     <rect x={-420} y={-60} width={840} height={120} rx={30} fill="#1A1424" stroke={c} strokeWidth={8} />
     <circle cx={-350} cy={0} r={30} fill={c} />
@@ -67,16 +67,16 @@ const Base: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) =
   </g>
 );
 /** The pet dragon: a little blocky green dragon with big eyes, sitting and waiting. */
-const Dragon: React.FC<{ x: number; y: number; s: number; t: number; sad?: boolean; happy?: boolean }> = ({ x, y, s, t, sad, happy }) => {
+export const Dragon: React.FC<{ x: number; y: number; s: number; t: number; sad?: boolean; happy?: boolean; pink?: boolean }> = ({ x, y, s, t, sad, happy, pink }) => {
   const bob = happy ? Math.abs(Math.sin(t * 0.5)) * 30 : Math.sin(t * 0.15) * 4;
   return (
     <g transform={`translate(${x} ${y - bob}) scale(${s})`}>
-      <path d="M -120 -60 Q -230 -40 -250 -140 Q -200 -90 -130 -110 Z" fill="#3AB86A" stroke={OL} strokeWidth={8} />
-      <rect x={-150} y={-260} width={300} height={260} rx={60} fill="#4AD87A" stroke={OL} strokeWidth={9} />
-      <rect x={-90} y={-160} width={180} height={150} rx={40} fill="#BDF2C8" />
-      <path d={`M -150 -220 Q ${-260} ${-330 + Math.sin(t * 0.3) * 20} -170 -300 Z M 150 -220 Q 260 ${-330 + Math.sin(t * 0.3 + 1) * 20} 170 -300 Z`} fill="#3AB86A" stroke={OL} strokeWidth={8} />
+      <path d="M -120 -60 Q -230 -40 -250 -140 Q -200 -90 -130 -110 Z" fill={pink ? '#E85AB8' : '#3AB86A'} stroke={OL} strokeWidth={8} />
+      <rect x={-150} y={-260} width={300} height={260} rx={60} fill={pink ? '#FF7AD0' : '#4AD87A'} stroke={OL} strokeWidth={9} />
+      <rect x={-90} y={-160} width={180} height={150} rx={40} fill={pink ? '#FFD0EE' : '#BDF2C8'} />
+      <path d={`M -150 -220 Q ${-260} ${-330 + Math.sin(t * 0.3) * 20} -170 -300 Z M 150 -220 Q 260 ${-330 + Math.sin(t * 0.3 + 1) * 20} 170 -300 Z`} fill={pink ? '#E85AB8' : '#3AB86A'} stroke={OL} strokeWidth={8} />
       <g transform="translate(0 -360)">
-        <rect x={-130} y={-120} width={260} height={220} rx={60} fill="#4AD87A" stroke={OL} strokeWidth={9} />
+        <rect x={-130} y={-120} width={260} height={220} rx={60} fill={pink ? '#FF7AD0' : '#4AD87A'} stroke={OL} strokeWidth={9} />
         <path d="M -90 -120 L -70 -180 L -40 -120 M 40 -120 L 70 -180 L 90 -120" fill="#FFD23F" stroke={OL} strokeWidth={7} strokeLinejoin="round" />
         {[-55, 55].map((ex) => <g key={ex}><ellipse cx={ex} cy={-20} rx={34} ry={40} fill="#FFFFFF" stroke={OL} strokeWidth={6} /><circle cx={ex + 4} cy={-12} r={22} fill={OL} /><circle cx={ex + 12} cy={-22} r={8} fill="#FFFFFF" /></g>)}
         {sad ? <g><path d="M -95 -75 L -20 -60 M 95 -75 L 20 -60" stroke={OL} strokeWidth={8} strokeLinecap="round" /><path d="M -30 60 Q 0 40 30 60" stroke={OL} strokeWidth={8} fill="none" strokeLinecap="round" /><path d={`M 60 ${20 + (t * 3) % 60} q 10 20 0 30 q -10 -10 0 -30 Z`} fill="#7FD0FF" stroke={OL} strokeWidth={3} /></g>
@@ -89,7 +89,7 @@ const Tumbleweed: React.FC<{ t: number; y: number }> = ({ t, y }) => {
   const x = ((t * 14) % 1500) - 200;
   return <g transform={`translate(${x} ${y - Math.abs(Math.sin(t * 0.4)) * 40}) rotate(${t * 9})`}>{Array.from({ length: 6 }, (_, i) => <circle key={i} r={50 - i * 6} fill="none" stroke="#B8945A" strokeWidth={6} transform={`rotate(${i * 30}) scale(1 ${0.6 + i * 0.07})`} />)}</g>;
 };
-const Lobby: React.FC<{ t: number }> = ({ t }) => (
+export const Lobby: React.FC<{ t: number }> = ({ t }) => (
   <g>
     <Sky c="#9ACDE8" /><Ground c="#7AC87A" />
     {[160, 400, 680, 920].map((x, i) => <g key={i}><rect x={x - 50} y={1060} width={100} height={240} fill="#C8C0D8" stroke={OL} strokeWidth={8} /><rect x={x - 80} y={1020} width={160} height={50} fill="#D8D0E8" stroke={OL} strokeWidth={8} /></g>)}
