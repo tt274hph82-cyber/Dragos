@@ -18,5 +18,6 @@ import { momPlays } from './mom-plays';
 import { blinkGems } from './blink-gems';
 import { petSwallowed } from './pet-swallowed';
 import { dadBoss } from './dad-boss';
+import { hacked } from './hacked';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked];

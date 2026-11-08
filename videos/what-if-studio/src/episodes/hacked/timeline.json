@@ -1,0 +1,741 @@
+{
+ "slug": "hacked",
+ "title": "YOU HACKED BLOCK QUEST",
+ "fps": 30,
+ "total": 1156,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 18,
+   "t0": 0,
+   "t1": 18,
+   "line": "What if you",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "a": 18,
+   "b": 29,
+   "t0": 0,
+   "t1": 11,
+   "line": "hacked",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S2",
+   "a": 29,
+   "b": 51,
+   "t0": 0,
+   "t1": 22,
+   "line": "Block Quest?",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "a": 51,
+   "b": 85,
+   "t0": 0,
+   "t1": 34,
+   "line": "Hack one.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S3",
+   "a": 85,
+   "b": 105,
+   "t0": 0,
+   "t1": 20,
+   "line": "Fly mode.",
+   "cam": "panR",
+   "tr": "cut"
+  },
+  {
+   "shot": "S4",
+   "a": 105,
+   "b": 153,
+   "t0": 0,
+   "t1": 48,
+   "line": "I can fly! I can",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S31",
+   "a": 153,
+   "b": 185,
+   "t0": 0,
+   "t1": 32,
+   "line": "actually fly!",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S24",
+   "a": 185,
+   "b": 218,
+   "t0": 0,
+   "t1": 33,
+   "line": "Hack two.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S5",
+   "a": 218,
+   "b": 266,
+   "t0": 0,
+   "t1": 48,
+   "line": "Infinite gems. The",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "a": 266,
+   "b": 314,
+   "t0": 0,
+   "t1": 48,
+   "line": "counter can't even count that high.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S25",
+   "a": 314,
+   "b": 347,
+   "t0": 0,
+   "t1": 33,
+   "line": "Hack three.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "a": 347,
+   "b": 387,
+   "t0": 0,
+   "t1": 40,
+   "line": "Giant mode. You",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S8",
+   "a": 387,
+   "b": 414,
+   "t0": 0,
+   "t1": 27,
+   "line": "step on the whole",
+   "tr": "whip"
+  },
+  {
+   "shot": "S37",
+   "a": 414,
+   "b": 428,
+   "t0": 0,
+   "t1": 14,
+   "line": "lobby.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "a": 428,
+   "b": 466,
+   "t0": 0,
+   "t1": 38,
+   "line": "Hack four.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S9",
+   "a": 466,
+   "b": 492,
+   "t0": 0,
+   "t1": 26,
+   "line": "You delete the final",
+   "tr": "cut"
+  },
+  {
+   "shot": "S32",
+   "a": 492,
+   "b": 509,
+   "t0": 0,
+   "t1": 17,
+   "line": "boss.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 509,
+   "b": 533,
+   "t0": 0,
+   "t1": 24,
+   "line": "Warning.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S11",
+   "a": 533,
+   "b": 563,
+   "t0": 0,
+   "t1": 30,
+   "line": "Cheater detected.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 563,
+   "b": 598,
+   "t0": 0,
+   "t1": 35,
+   "line": "And now, the game",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S13",
+   "a": 598,
+   "b": 632,
+   "t0": 0,
+   "t1": 34,
+   "line": "hacks you back. Your",
+   "tr": "cut"
+  },
+  {
+   "shot": "S14",
+   "a": 632,
+   "b": 659,
+   "t0": 0,
+   "t1": 27,
+   "line": "gems turn into",
+   "tr": "cut"
+  },
+  {
+   "shot": "S35",
+   "a": 659,
+   "b": 689,
+   "t0": 0,
+   "t1": 30,
+   "line": "socks. Your",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S15",
+   "a": 689,
+   "b": 719,
+   "t0": 0,
+   "t1": 30,
+   "line": "sword turns into",
+   "tr": "whip"
+  },
+  {
+   "shot": "S36",
+   "a": 719,
+   "b": 746,
+   "t0": 0,
+   "t1": 27,
+   "line": "a noodle. Your",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "a": 746,
+   "b": 782,
+   "t0": 0,
+   "t1": 36,
+   "line": "hoodie turns pink.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "a": 782,
+   "b": 824,
+   "t0": 0,
+   "t1": 42,
+   "line": "Okay, okay! I'm",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S33",
+   "a": 824,
+   "b": 849,
+   "t0": 0,
+   "t1": 25,
+   "line": "sorry!",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 849,
+   "b": 894,
+   "t0": 0,
+   "t1": 45,
+   "line": "Undo! Undo!",
+   "tr": "cut"
+  },
+  {
+   "shot": "S19",
+   "a": 894,
+   "b": 965,
+   "t0": 0,
+   "t1": 71,
+   "line": "Error. Undo not found. And",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "a": 965,
+   "b": 1020,
+   "t0": 0,
+   "t1": 55,
+   "line": "that's how you became a chicken.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "a": 1020,
+   "b": 1036,
+   "t0": 0,
+   "t1": 16,
+   "line": "Forever.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 1036,
+   "b": 1052,
+   "t0": 0,
+   "t1": 16,
+   "line": "Bawk?",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S22",
+   "a": 1052,
+   "b": 1156,
+   "t0": 0,
+   "t1": 104,
+   "line": "Comment hack if you'd still press the button.",
+   "cam": "static",
+   "tr": "zoom"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 18,
+   "first": 0,
+   "line": "What if you",
+   "note": "S1"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 11,
+   "first": 18,
+   "line": "hacked",
+   "note": "S30"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 22,
+   "first": 29,
+   "line": "Block Quest?",
+   "note": "S2"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 51,
+   "line": "Hack one.",
+   "note": "S23"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 20,
+   "first": 85,
+   "line": "Fly mode.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 48,
+   "first": 105,
+   "line": "I can fly! I can",
+   "note": "S4"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 153,
+   "line": "actually fly!",
+   "note": "S31"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 185,
+   "line": "Hack two.",
+   "note": "S24"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 48,
+   "first": 218,
+   "line": "Infinite gems. The",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 48,
+   "first": 266,
+   "line": "counter can't even count that high.",
+   "note": "S6"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 314,
+   "line": "Hack three.",
+   "note": "S25"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 40,
+   "first": 347,
+   "line": "Giant mode. You",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 387,
+   "line": "step on the whole",
+   "note": "S8"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 20,
+   "len": 14,
+   "first": 414,
+   "line": "lobby.",
+   "note": "S37"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 428,
+   "line": "Hack four.",
+   "note": "S26"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 466,
+   "line": "You delete the final",
+   "note": "S9"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 17,
+   "first": 492,
+   "line": "boss.",
+   "note": "S32"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 509,
+   "line": "Warning.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 533,
+   "line": "Cheater detected.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 35,
+   "first": 563,
+   "line": "And now, the game",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 598,
+   "line": "hacks you back. Your",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 632,
+   "line": "gems turn into",
+   "note": "S14"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 659,
+   "line": "socks. Your",
+   "note": "S35"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 689,
+   "line": "sword turns into",
+   "note": "S15"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 719,
+   "line": "a noodle. Your",
+   "note": "S36"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 746,
+   "line": "hoodie turns pink.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 782,
+   "line": "Okay, okay! I'm",
+   "note": "S17"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 25,
+   "first": 824,
+   "line": "sorry!",
+   "note": "S33"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 45,
+   "first": 849,
+   "line": "Undo! Undo!",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 894,
+   "line": "Error. Undo not found. And",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 965,
+   "line": "that's how you became a chicken.",
+   "note": "S20"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 16,
+   "first": 1020,
+   "line": "Forever.",
+   "note": "S34"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 16,
+   "first": 1036,
+   "line": "Bawk?",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 104,
+   "first": 1052,
+   "line": "Comment hack if you'd still press the button.",
+   "note": "S22"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 53
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 187
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 316
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 430
+  },
+  {
+   "kind": "bloom",
+   "color": "#7ACCF2",
+   "o": 0.6,
+   "f": 107
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 278
+  },
+  {
+   "kind": "shake",
+   "len": 14,
+   "amp": 14,
+   "f": 397
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.5,
+   "f": 397
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF4A4A",
+   "o": 0.7,
+   "f": 476
+  },
+  {
+   "kind": "flash",
+   "color": "#FF3A3A",
+   "o": 0.8,
+   "f": 510
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 511
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 9,
+   "f": 565
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.7,
+   "f": 752
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 896
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFFFFF",
+   "o": 0.9,
+   "f": 969
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 1038
+  }
+ ],
+ "audio": {
+  "voice": "hacked/voice.wav",
+  "sfx": "hacked/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1875,
+  "music": "hacked/music.wav",
+  "musicVol": 0.0951
+ }
+}

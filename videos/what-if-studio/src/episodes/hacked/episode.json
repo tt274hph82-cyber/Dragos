@@ -1,0 +1,1371 @@
+{
+ "id": "Hacked",
+ "slug": "hacked",
+ "topic": "What if you hacked the game? (blocky-game What If Short, YOU twist: the game hacks you back)",
+ "title": [
+  "YOU HACKED",
+  "BLOCK QUEST"
+ ],
+ "accent": "HACK",
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.35,
+   "similarity_boost": 0.8,
+   "style": 0.6,
+   "use_speaker_boost": true,
+   "speed": 1.15
+  }
+ },
+ "cast": {
+  "kid": {
+   "id": "TxGEqnHWrfWFTfGW9XjX",
+   "settings": {
+    "stability": 0.35,
+    "similarity_boost": 0.8,
+    "style": 0.6,
+    "use_speaker_boost": true,
+    "speed": 1.1
+   }
+  },
+  "sys": {
+   "id": "VR6AewLTigWG4xSOukaG",
+   "settings": {
+    "stability": 0.6,
+    "similarity_boost": 0.8,
+    "style": 0.2,
+    "use_speaker_boost": true,
+    "speed": 0.95
+   }
+  }
+ },
+ "gap": 0.04,
+ "tempo": 1.12,
+ "tail": 1.4,
+ "lead": 2,
+ "script": [
+  {
+   "beat": "s",
+   "text": "What if you hacked Block Quest?"
+  },
+  {
+   "beat": "s",
+   "text": "Hack one. Fly mode."
+  },
+  {
+   "beat": "s",
+   "text": "I can fly! I can actually fly!",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Hack two. Infinite gems. The counter can't even count that high."
+  },
+  {
+   "beat": "s",
+   "text": "Hack three. Giant mode. You step on the whole lobby."
+  },
+  {
+   "beat": "s",
+   "text": "Hack four. You delete the final boss."
+  },
+  {
+   "beat": "s",
+   "text": "Warning. Cheater detected.",
+   "who": "sys"
+  },
+  {
+   "beat": "s",
+   "text": "And now, the game hacks you back."
+  },
+  {
+   "beat": "s",
+   "text": "Your gems turn into socks. Your sword turns into a noodle. Your hoodie turns pink."
+  },
+  {
+   "beat": "s",
+   "text": "Okay, okay! I'm sorry! Undo! Undo!",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Error. Undo not found.",
+   "who": "sys"
+  },
+  {
+   "beat": "s",
+   "text": "And that's how you became a chicken. Forever."
+  },
+  {
+   "beat": "s",
+   "text": "Bawk?",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Comment hack if you'd still press the button."
+  }
+ ],
+ "captions": {
+  "style": "pop",
+  "colors": {
+   "hack": "#4ADE6A",
+   "hacked": "#4ADE6A",
+   "hacks": "#4ADE6A",
+   "fly": "#7ACCF2",
+   "infinite": "#5AE8F8",
+   "gems": "#5AE8F8",
+   "giant": "#FFD23F",
+   "lobby": "#FFD23F",
+   "delete": "#FF4A4A",
+   "boss": "#FF4A4A",
+   "warning": "#FF4A4A",
+   "cheater": "#FF4A4A",
+   "socks": "#FFD23F",
+   "noodle": "#FFD23F",
+   "pink": "#FF7AE0",
+   "undo": "#4ADE6A",
+   "error": "#FF4A4A",
+   "chicken": "#FFD23F",
+   "forever": "#FF4A4A",
+   "bawk": "#FFD23F",
+   "one": "#4ADE6A",
+   "two": "#4ADE6A",
+   "three": "#4ADE6A",
+   "four": "#4ADE6A"
+  }
+ },
+ "science": [],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "at": "hacked",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "at": "Block",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S23",
+   "at": "Hack",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S3",
+   "at": "Fly",
+   "tr": "cut",
+   "cam": "panR"
+  },
+  {
+   "shot": "S4",
+   "at": "I",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S31",
+   "at": "actually",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S24",
+   "at": "Hack",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S5",
+   "at": "Infinite",
+   "tr": "cut",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S6",
+   "at": "counter",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S25",
+   "at": "Hack",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S7",
+   "at": "Giant",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S8",
+   "at": "step",
+   "tr": "whip"
+  },
+  {
+   "shot": "S37",
+   "at": "lobby",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "at": "Hack",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S9",
+   "at": "delete",
+   "tr": "cut"
+  },
+  {
+   "shot": "S32",
+   "at": "boss",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "at": "Warning",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S11",
+   "at": "Cheater",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S12",
+   "at": "And",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S13",
+   "at": "hacks",
+   "tr": "cut"
+  },
+  {
+   "shot": "S14",
+   "at": "gems",
+   "tr": "cut"
+  },
+  {
+   "shot": "S35",
+   "at": "socks",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S15",
+   "at": "sword",
+   "tr": "whip"
+  },
+  {
+   "shot": "S36",
+   "at": "noodle",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "at": "hoodie",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S17",
+   "at": "Okay",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S33",
+   "at": "sorry",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "at": "Undo",
+   "tr": "cut"
+  },
+  {
+   "shot": "S19",
+   "at": "Error",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S20",
+   "at": "that's",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "at": "Forever",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "at": "Bawk",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S22",
+   "at": "Comment",
+   "tr": "zoom",
+   "cam": "static"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S37"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S35"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S36"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S20"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S34"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S22"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S23+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S24+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S25+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S26+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S4+2",
+   "kind": "bloom",
+   "color": "#7ACCF2",
+   "o": 0.6
+  },
+  {
+   "at": "S6+12",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "S8+10",
+   "kind": "shake",
+   "len": 14,
+   "amp": 14
+  },
+  {
+   "at": "S8+10",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.5
+  },
+  {
+   "at": "S9+10",
+   "kind": "bloom",
+   "color": "#FF4A4A",
+   "o": 0.7
+  },
+  {
+   "at": "S10+1",
+   "kind": "flash",
+   "color": "#FF3A3A",
+   "o": 0.8
+  },
+  {
+   "at": "S10+2",
+   "kind": "shake",
+   "len": 10,
+   "amp": 10
+  },
+  {
+   "at": "S12+2",
+   "kind": "shake",
+   "len": 10,
+   "amp": 9
+  },
+  {
+   "at": "S16+6",
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.7
+  },
+  {
+   "at": "S19+2",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "S20+4",
+   "kind": "bloom",
+   "color": "#FFFFFF",
+   "o": 0.9
+  },
+  {
+   "at": "S21+2",
+   "kind": "punch",
+   "amp": 0.12
+  }
+ ],
+ "sound": {
+  "clips": {
+   "music": [
+    "sneaky hacker chiptune music that turns glitchy and chaotic, bouncy synth bass, video game, playful comedy, 150 bpm, no vocals",
+    39,
+    "music"
+   ],
+   "typing": [
+    "fast typing on a keyboard with computer beeps, hacker",
+    1.4
+   ],
+   "toggle": [
+    "four quick digital toggle switch clicks with beeps",
+    1.2
+   ],
+   "flywhoosh": [
+    "a superhero flying whoosh with wind",
+    1.4
+   ],
+   "gems": [
+    "a cascade of video game gems and coins collecting rapidly",
+    1.5
+   ],
+   "glitch": [
+    "a digital glitch stutter noise, computer error, short",
+    0.8
+   ],
+   "grow": [
+    "a cartoon growing sound rising in pitch",
+    1.2
+   ],
+   "stomp": [
+    "a giant stomp boom crushing buildings, cartoon",
+    1.4
+   ],
+   "delete": [
+    "a computer delete sound with pixel dissolving crackle",
+    1.2
+   ],
+   "alarm": [
+    "a loud video game alarm siren warning blaring, short",
+    1.6
+   ],
+   "eye": [
+    "a deep ominous digital hum swelling, a giant eye opening",
+    1.4
+   ],
+   "socks": [
+    "a magic poof transformation with a silly boing",
+    1.0
+   ],
+   "noodle": [
+    "a wet floppy noodle wobble sound, cartoon",
+    1.0
+   ],
+   "sparkle": [
+    "a magical sparkle shimmer transformation",
+    1.0
+   ],
+   "buttonmash": [
+    "frantically smashing a big arcade button, rapid clicks",
+    1.4
+   ],
+   "error": [
+    "a computer error beep buzz, windows style",
+    0.8
+   ],
+   "poof": [
+    "a big cartoon poof cloud transformation",
+    1.0
+   ],
+   "bawk": [
+    "a single confused chicken bawk cluck",
+    0.8
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.6
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S30+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S2",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S4+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S31",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S6+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S25",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S37",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S32+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S10",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S12+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S13",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S35",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S15+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S36",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S17+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S33",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S19",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S20+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S34",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S21+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S22",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S23+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S24+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S25+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S26+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S4+2",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S9+10",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S16+6",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S20+4",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S21+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "s:0.71",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:1.83",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.17",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.95",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:3.99",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:5.73",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:6.27",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:6.59",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:7.37",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:7.91",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:10.57",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:10.89",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:11.69",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:13.93",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:14.39",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:14.71",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:15.65",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:16.53",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:17.07",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:17.87",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:20.05",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:21.17",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:22.07",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:24.07",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:25.75",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:28.41",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:29.23",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:29.93",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.71",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:33.27",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:34.11",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:34.65",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:35.55",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "S1",
+    "typing",
+    0.3
+   ],
+   [
+    "S2+6",
+    "toggle",
+    0.35
+   ],
+   [
+    "S3",
+    "flywhoosh",
+    0.4
+   ],
+   [
+    "S5",
+    "gems",
+    0.35
+   ],
+   [
+    "S6+6",
+    "glitch",
+    0.4
+   ],
+   [
+    "S7+10",
+    "grow",
+    0.2
+   ],
+   [
+    "S8+9",
+    "stomp",
+    0.5
+   ],
+   [
+    "S9+9",
+    "delete",
+    0.4
+   ],
+   [
+    "S10",
+    "alarm",
+    0.22
+   ],
+   [
+    "S11",
+    "eye",
+    0.4
+   ],
+   [
+    "S12",
+    "glitch",
+    0.4
+   ],
+   [
+    "S13",
+    "glitch",
+    0.35
+   ],
+   [
+    "S14+2",
+    "socks",
+    0.4
+   ],
+   [
+    "S15+4",
+    "noodle",
+    0.4
+   ],
+   [
+    "S16+4",
+    "sparkle",
+    0.35
+   ],
+   [
+    "S18",
+    "buttonmash",
+    0.4
+   ],
+   [
+    "S19",
+    "error",
+    0.45
+   ],
+   [
+    "S20+2",
+    "poof",
+    0.45
+   ],
+   [
+    "S21+3",
+    "bawk",
+    0.5
+   ],
+   [
+    "S22+3",
+    "pop",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "music",
+    "from": "f:0",
+    "fade_in": 0.2,
+    "fade_out": 0.8
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -15.0
+  }
+ }
+}
