@@ -38,7 +38,7 @@ const Timer: React.FC<{ f: number }> = ({ f }) => {
 // ---------------------------------------------------------------- characters
 export type Face = 'smirk' | 'tongue' | 'shock' | 'worried' | 'grin' | 'happy' | 'sleepy' | 'angry' | 'yell' | 'despair' | 'determined' | 'starry';
 /** A cube head with a 3D side, a face and hair (kid: brown cap; mom: curlers and a bun). */
-export const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'boss' | 'friend'; t: number }> = ({ face, skin = '#F4E2CC', hair, t }) => {
+export const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom' | 'boss' | 'friend' | 'dad'; t: number }> = ({ face, skin = '#F4E2CC', hair, t }) => {
   const blink = Math.sin(t * 0.11) > 0.985 && face !== 'shock' && face !== 'yell';
   const eye = (cx: number, sd: number) => {
     if (face === 'sleepy' || blink) return <path d={`M ${cx - 30} -10 Q ${cx} 6 ${cx + 30} -10`} stroke={OL} strokeWidth={8} fill="none" strokeLinecap="round" />;
@@ -94,6 +94,10 @@ export const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom'
         <rect x={-120} y={-170} width={110} height={44} rx={14} fill="#FFFFFF" stroke={OL} strokeWidth={6} />
         <path d="M -150 -40 Q -160 0 -150 20 M 160 -40 Q 172 0 162 20" stroke="#3A2214" strokeWidth={22} strokeLinecap="round" />
       </g> : null}
+      {hair === 'dad' ? <g>
+        <path d="M -168 -70 Q -170 -186 -6 -190 Q 166 -188 186 -80 L 150 -110 Q 0 -140 -140 -110 Z" fill="#4A2E1A" stroke={OL} strokeWidth={SW} strokeLinejoin="round" />
+        <path d="M -60 40 Q 0 20 60 40 Q 40 60 0 52 Q -40 60 -60 40 Z" fill="#4A2E1A" stroke={OL} strokeWidth={5} />
+      </g> : null}
       {hair === 'mom' ? <path d="M -168 -60 Q -170 -170 0 -172 Q 170 -170 186 -60 L 150 -100 Q 0 -150 -130 -100 Z" fill="#8A4A2A" stroke={OL} strokeWidth={SW} strokeLinejoin="round" /> : null}
       {brow(-62, -1)}{brow(62, 1)}
       {eye(-62, 1)}{eye(62, 1)}
@@ -105,9 +109,9 @@ export const CubeHead: React.FC<{ face: Face; skin?: string; hair: 'kid' | 'mom'
 };
 export type Pose = { armL?: number; armR?: number; legL?: number; legR?: number; lean?: number };
 /** A blocky body under a cube head. kind: kid (red bolt shirt), mom (purple robe), boss (giant). */
-export const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 'boss' | 'friend'; face: Face; t: number; pose?: Pose; flip?: boolean; extra?: React.ReactNode; energy?: number }> = ({ x, y, s, kind, face, t, pose = {}, flip, extra, energy = 1 }) => {
-  const shirt = kind === 'kid' ? '#D8323A' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#2A8AE0' : '#6A4AC8';
-  const pants = kind === 'kid' ? '#3A5AB8' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#3A3448' : '#5A5A6A';
+export const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | 'mom' | 'boss' | 'friend' | 'dad'; face: Face; t: number; pose?: Pose; flip?: boolean; extra?: React.ReactNode; energy?: number }> = ({ x, y, s, kind, face, t, pose = {}, flip, extra, energy = 1 }) => {
+  const shirt = kind === 'kid' ? '#D8323A' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#2A8AE0' : kind === 'dad' ? '#3A9A5A' : '#6A4AC8';
+  const pants = kind === 'kid' ? '#3A5AB8' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#3A3448' : kind === 'dad' ? '#4A4458' : '#5A5A6A';
   const skin = kind === 'boss' ? '#FF9A3A' : '#F4E2CC';
   // the user asked for no wobble: no bounce, squash, sway or idle arm swing, only a slight breathe.
   // `energy` > 1 brings a little idle motion back if a shot ever needs it.

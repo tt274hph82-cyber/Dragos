@@ -1,0 +1,3408 @@
+{
+ "slug": "pet-swallowed",
+ "title": "PET SWALLOWED MOM",
+ "fps": 30,
+ "total": 10900,
+ "segments": [
+  {
+   "shot": "A1",
+   "a": 0,
+   "b": 32,
+   "t0": 0,
+   "t1": 32,
+   "line": "What if your pet",
+   "tr": "cut"
+  },
+  {
+   "shot": "A1z",
+   "a": 32,
+   "b": 75,
+   "t0": 32,
+   "t1": 75,
+   "line": "swallowed your mom?",
+   "tr": "cut"
+  },
+  {
+   "shot": "A2",
+   "a": 75,
+   "b": 144,
+   "t0": 0,
+   "t1": 69,
+   "line": "Not a little nibble. The whole",
+   "tr": "cut"
+  },
+  {
+   "shot": "K1",
+   "a": 144,
+   "b": 217,
+   "t0": 0,
+   "t1": 73,
+   "line": "mom. In one gulp.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "A3",
+   "a": 217,
+   "b": 274,
+   "t0": 0,
+   "t1": 57,
+   "line": "And the only way to get her back,",
+   "tr": "cut"
+  },
+  {
+   "shot": "A3z",
+   "a": 274,
+   "b": 318,
+   "t0": 58,
+   "t1": 102,
+   "line": "is to go inside.",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4",
+   "a": 318,
+   "b": 350,
+   "t0": 0,
+   "t1": 32,
+   "line": "Okay.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "A4z",
+   "a": 350,
+   "b": 394,
+   "t0": 32,
+   "t1": 76,
+   "line": "This is the worst day",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4",
+   "a": 394,
+   "b": 432,
+   "t0": 76,
+   "t1": 114,
+   "line": "of my life.",
+   "tr": "cut"
+  },
+  {
+   "shot": "A5",
+   "a": 432,
+   "b": 478,
+   "t0": 0,
+   "t1": 46,
+   "line": "This is Biscuit. He's",
+   "tr": "cut"
+  },
+  {
+   "shot": "K2",
+   "a": 478,
+   "b": 516,
+   "t0": 0,
+   "t1": 38,
+   "line": "a good boy. He's",
+   "tr": "zoom"
+  },
+  {
+   "shot": "A6",
+   "a": 516,
+   "b": 554,
+   "t0": 0,
+   "t1": 38,
+   "line": "also always",
+   "tr": "whip"
+  },
+  {
+   "shot": "A6z",
+   "a": 554,
+   "b": 608,
+   "t0": 38,
+   "t1": 92,
+   "line": "hungry. And today,",
+   "tr": "cut"
+  },
+  {
+   "shot": "A6",
+   "a": 608,
+   "b": 649,
+   "t0": 92,
+   "t1": 133,
+   "line": "Biscuit is extra",
+   "tr": "cut"
+  },
+  {
+   "shot": "A6z",
+   "a": 649,
+   "b": 703,
+   "t0": 133,
+   "t1": 187,
+   "line": "hungry.",
+   "tr": "cut"
+  },
+  {
+   "shot": "C1",
+   "a": 703,
+   "b": 774,
+   "t0": 0,
+   "t1": 71,
+   "line": "Chapter one. The snack.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "B1",
+   "a": 774,
+   "b": 818,
+   "t0": 0,
+   "t1": 44,
+   "line": "It starts like any normal",
+   "tr": "zoom"
+  },
+  {
+   "shot": "K3",
+   "a": 818,
+   "b": 904,
+   "t0": 0,
+   "t1": 86,
+   "line": "Saturday. Mom is cleaning the living room.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "B2",
+   "a": 904,
+   "b": 943,
+   "t0": 0,
+   "t1": 39,
+   "line": "Biscuit, do not",
+   "tr": "cut"
+  },
+  {
+   "shot": "B2z",
+   "a": 943,
+   "b": 986,
+   "t0": 39,
+   "t1": 82,
+   "line": "touch my slippers.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B3",
+   "a": 986,
+   "b": 1011,
+   "t0": 0,
+   "t1": 25,
+   "line": "Biscuit eats",
+   "tr": "whip"
+  },
+  {
+   "shot": "K4",
+   "a": 1011,
+   "b": 1051,
+   "t0": 0,
+   "t1": 40,
+   "line": "the slippers.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "B2",
+   "a": 1051,
+   "b": 1080,
+   "t0": 0,
+   "t1": 29,
+   "line": "Biscuit!",
+   "tr": "ghost"
+  },
+  {
+   "shot": "B4",
+   "a": 1080,
+   "b": 1147,
+   "t0": 0,
+   "t1": 67,
+   "line": "Then the pizza from last night.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B5",
+   "a": 1147,
+   "b": 1188,
+   "t0": 0,
+   "t1": 41,
+   "line": "Then the remote.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B6",
+   "a": 1188,
+   "b": 1224,
+   "t0": 0,
+   "t1": 36,
+   "line": "Then, the whole",
+   "tr": "whip"
+  },
+  {
+   "shot": "B6z",
+   "a": 1224,
+   "b": 1263,
+   "t0": 37,
+   "t1": 76,
+   "line": "vacuum cleaner.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B3",
+   "a": 1263,
+   "b": 1302,
+   "t0": 0,
+   "t1": 39,
+   "line": "You've never seen a dog",
+   "tr": "cut"
+  },
+  {
+   "shot": "B3z",
+   "a": 1302,
+   "b": 1341,
+   "t0": 38,
+   "t1": 77,
+   "line": "chew that fast.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B7",
+   "a": 1341,
+   "b": 1382,
+   "t0": 0,
+   "t1": 41,
+   "line": "Biscuit! Spit that",
+   "tr": "ghost"
+  },
+  {
+   "shot": "B7z",
+   "a": 1382,
+   "b": 1420,
+   "t0": 40,
+   "t1": 78,
+   "line": "out right now!",
+   "tr": "cut"
+  },
+  {
+   "shot": "B8",
+   "a": 1420,
+   "b": 1448,
+   "t0": 0,
+   "t1": 28,
+   "line": "Mom walks over",
+   "tr": "cut"
+  },
+  {
+   "shot": "K5",
+   "a": 1448,
+   "b": 1485,
+   "t0": 0,
+   "t1": 37,
+   "line": "to grab the vacuum.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "B9",
+   "a": 1485,
+   "b": 1514,
+   "t0": 0,
+   "t1": 29,
+   "line": "Biscuit opens his",
+   "tr": "whip"
+  },
+  {
+   "shot": "B9z",
+   "a": 1514,
+   "b": 1579,
+   "t0": 29,
+   "t1": 94,
+   "line": "mouth. Wider.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B9",
+   "a": 1579,
+   "b": 1615,
+   "t0": 94,
+   "t1": 130,
+   "line": "Wider.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B9z",
+   "a": 1615,
+   "b": 1666,
+   "t0": 130,
+   "t1": 181,
+   "line": "Way too wide.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B10",
+   "a": 1666,
+   "b": 1690,
+   "t0": 0,
+   "t1": 24,
+   "line": "Gulp.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B11",
+   "a": 1690,
+   "b": 1737,
+   "t0": 0,
+   "t1": 47,
+   "line": "And just like that,",
+   "tr": "ghost"
+  },
+  {
+   "shot": "K6",
+   "a": 1737,
+   "b": 1772,
+   "t0": 0,
+   "t1": 35,
+   "line": "Mom is gone.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "B12",
+   "a": 1772,
+   "b": 1824,
+   "t0": 0,
+   "t1": 52,
+   "line": "Mom? Mom!",
+   "tr": "cut"
+  },
+  {
+   "shot": "B14",
+   "a": 1824,
+   "b": 1890,
+   "t0": 0,
+   "t1": 66,
+   "line": "Biscuit, what did you do?",
+   "tr": "whip"
+  },
+  {
+   "shot": "B13",
+   "a": 1890,
+   "b": 1947,
+   "t0": 0,
+   "t1": 57,
+   "line": "Biscuit burps. A slipper",
+   "tr": "cut"
+  },
+  {
+   "shot": "K7",
+   "a": 1947,
+   "b": 2022,
+   "t0": 0,
+   "t1": 75,
+   "line": "flies out. Mom does not.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "B14",
+   "a": 2022,
+   "b": 2072,
+   "t0": 0,
+   "t1": 50,
+   "line": "You can hear her though.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B14z",
+   "a": 2072,
+   "b": 2117,
+   "t0": 50,
+   "t1": 95,
+   "line": "Very faintly.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B14",
+   "a": 2117,
+   "b": 2160,
+   "t0": 95,
+   "t1": 138,
+   "line": "Very angry.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B14z",
+   "a": 2160,
+   "b": 2207,
+   "t0": 138,
+   "t1": 185,
+   "line": "Get me out of here!",
+   "tr": "cut"
+  },
+  {
+   "shot": "B15",
+   "a": 2207,
+   "b": 2252,
+   "t0": 0,
+   "t1": 45,
+   "line": "You need a plan.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B15z",
+   "a": 2252,
+   "b": 2289,
+   "t0": 44,
+   "t1": 81,
+   "line": "And you know exactly",
+   "tr": "cut"
+  },
+  {
+   "shot": "B15",
+   "a": 2289,
+   "b": 2325,
+   "t0": 82,
+   "t1": 118,
+   "line": "where to find one.",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4",
+   "a": 2325,
+   "b": 2364,
+   "t0": 0,
+   "t1": 39,
+   "line": "Mom always said video",
+   "tr": "whip"
+  },
+  {
+   "shot": "A4z",
+   "a": 2364,
+   "b": 2415,
+   "t0": 39,
+   "t1": 90,
+   "line": "games would never help you in real",
+   "tr": "cut"
+  },
+  {
+   "shot": "B15",
+   "a": 2415,
+   "b": 2446,
+   "t0": 0,
+   "t1": 31,
+   "line": "life.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B15z",
+   "a": 2446,
+   "b": 2485,
+   "t0": 32,
+   "t1": 71,
+   "line": "Mom was about to be",
+   "tr": "cut"
+  },
+  {
+   "shot": "B15",
+   "a": 2485,
+   "b": 2521,
+   "t0": 70,
+   "t1": 106,
+   "line": "very wrong.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B16",
+   "a": 2521,
+   "b": 2565,
+   "t0": 0,
+   "t1": 44,
+   "line": "You open Block Quest,",
+   "tr": "ghost"
+  },
+  {
+   "shot": "B16z",
+   "a": 2565,
+   "b": 2614,
+   "t0": 44,
+   "t1": 93,
+   "line": "and go straight to the shop.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B17",
+   "a": 2614,
+   "b": 2644,
+   "t0": 0,
+   "t1": 30,
+   "line": "Shrink potion.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B17z",
+   "a": 2644,
+   "b": 2702,
+   "t0": 29,
+   "t1": 87,
+   "line": "Ninety-nine gems.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B17",
+   "a": 2702,
+   "b": 2743,
+   "t0": 88,
+   "t1": 129,
+   "line": "Warning: do not",
+   "tr": "cut"
+  },
+  {
+   "shot": "B17z",
+   "a": 2743,
+   "b": 2785,
+   "t0": 128,
+   "t1": 170,
+   "line": "drink near pets.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B18",
+   "a": 2785,
+   "b": 2850,
+   "t0": 0,
+   "t1": 65,
+   "line": "You drink it. Near the pet.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B19",
+   "a": 2850,
+   "b": 2877,
+   "t0": 0,
+   "t1": 27,
+   "line": "Everything gets",
+   "tr": "whip"
+  },
+  {
+   "shot": "B19z",
+   "a": 2877,
+   "b": 2922,
+   "t0": 27,
+   "t1": 72,
+   "line": "huge. The couch",
+   "tr": "cut"
+  },
+  {
+   "shot": "K8",
+   "a": 2922,
+   "b": 2985,
+   "t0": 0,
+   "t1": 63,
+   "line": "is a mountain. The carpet is a",
+   "tr": "zoom"
+  },
+  {
+   "shot": "B20",
+   "a": 2985,
+   "b": 3031,
+   "t0": 0,
+   "t1": 46,
+   "line": "jungle. And Biscuit's",
+   "tr": "ghost"
+  },
+  {
+   "shot": "B20z",
+   "a": 3031,
+   "b": 3075,
+   "t0": 46,
+   "t1": 90,
+   "line": "mouth is a cave.",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4",
+   "a": 3075,
+   "b": 3117,
+   "t0": 0,
+   "t1": 42,
+   "line": "Okay, Biscuit.",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4z",
+   "a": 3117,
+   "b": 3162,
+   "t0": 41,
+   "t1": 86,
+   "line": "Say ahh.",
+   "tr": "cut"
+  },
+  {
+   "shot": "B20",
+   "a": 3162,
+   "b": 3212,
+   "t0": 0,
+   "t1": 50,
+   "line": "Biscuit yawns.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K9",
+   "a": 3212,
+   "b": 3296,
+   "t0": 0,
+   "t1": 84,
+   "line": "And you run straight in.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "C2",
+   "a": 3296,
+   "b": 3367,
+   "t0": 0,
+   "t1": 71,
+   "line": "Chapter two. The mouth.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "D1",
+   "a": 3367,
+   "b": 3432,
+   "t0": 0,
+   "t1": 65,
+   "line": "Inside, it's dark, it's",
+   "tr": "zoom"
+  },
+  {
+   "shot": "K10",
+   "a": 3432,
+   "b": 3508,
+   "t0": 0,
+   "t1": 76,
+   "line": "wet, and it smells like old pizza.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "D2",
+   "a": 3508,
+   "b": 3551,
+   "t0": 0,
+   "t1": 43,
+   "line": "The teeth are like giant",
+   "tr": "cut"
+  },
+  {
+   "shot": "D2z",
+   "a": 3551,
+   "b": 3597,
+   "t0": 43,
+   "t1": 89,
+   "line": "white blocks.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D2",
+   "a": 3597,
+   "b": 3638,
+   "t0": 89,
+   "t1": 130,
+   "line": "And they're moving.",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4",
+   "a": 3638,
+   "b": 3686,
+   "t0": 0,
+   "t1": 48,
+   "line": "One wrong step, and you're",
+   "tr": "whip"
+  },
+  {
+   "shot": "D2",
+   "a": 3686,
+   "b": 3756,
+   "t0": 0,
+   "t1": 70,
+   "line": "dog food. Literally.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K11",
+   "a": 3756,
+   "b": 3850,
+   "t0": 0,
+   "t1": 94,
+   "line": "Chomp. Chomp. Chomp. You time your",
+   "tr": "zoom"
+  },
+  {
+   "shot": "D2",
+   "a": 3850,
+   "b": 3898,
+   "t0": 0,
+   "t1": 48,
+   "line": "jumps perfectly.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D2z",
+   "a": 3898,
+   "b": 3918,
+   "t0": 48,
+   "t1": 68,
+   "line": "One,",
+   "tr": "cut"
+  },
+  {
+   "shot": "D2",
+   "a": 3918,
+   "b": 3960,
+   "t0": 68,
+   "t1": 110,
+   "line": "two, three.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D3",
+   "a": 3960,
+   "b": 4009,
+   "t0": 0,
+   "t1": 49,
+   "line": "Then the tongue moves.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D3z",
+   "a": 4009,
+   "b": 4038,
+   "t0": 49,
+   "t1": 78,
+   "line": "It's a giant",
+   "tr": "cut"
+  },
+  {
+   "shot": "D3",
+   "a": 4038,
+   "b": 4080,
+   "t0": 79,
+   "t1": 121,
+   "line": "pink slide.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D3z",
+   "a": 4080,
+   "b": 4124,
+   "t0": 120,
+   "t1": 164,
+   "line": "And you're on it.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D3",
+   "a": 4124,
+   "b": 4168,
+   "t0": 164,
+   "t1": 208,
+   "line": "Whoaaa!",
+   "tr": "cut"
+  },
+  {
+   "shot": "D4",
+   "a": 4168,
+   "b": 4210,
+   "t0": 0,
+   "t1": 42,
+   "line": "You slide down at full",
+   "tr": "whip"
+  },
+  {
+   "shot": "D4z",
+   "a": 4210,
+   "b": 4268,
+   "t0": 42,
+   "t1": 100,
+   "line": "speed, past a dog treat,",
+   "tr": "cut"
+  },
+  {
+   "shot": "K12",
+   "a": 4268,
+   "b": 4369,
+   "t0": 0,
+   "t1": 101,
+   "line": "a sock, and somehow, a whole crayon.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "D5",
+   "a": 4369,
+   "b": 4403,
+   "t0": 0,
+   "t1": 34,
+   "line": "But then, a",
+   "tr": "ghost"
+  },
+  {
+   "shot": "D5z",
+   "a": 4403,
+   "b": 4442,
+   "t0": 34,
+   "t1": 73,
+   "line": "wave of slobber",
+   "tr": "cut"
+  },
+  {
+   "shot": "D5",
+   "a": 4442,
+   "b": 4484,
+   "t0": 73,
+   "t1": 115,
+   "line": "comes rolling in.",
+   "tr": "cut"
+  },
+  {
+   "shot": "D6",
+   "a": 4484,
+   "b": 4526,
+   "t0": 0,
+   "t1": 42,
+   "line": "You grab the crayon and",
+   "tr": "cut"
+  },
+  {
+   "shot": "D6z",
+   "a": 4526,
+   "b": 4575,
+   "t0": 43,
+   "t1": 92,
+   "line": "use it as a surfboard.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K13",
+   "a": 4575,
+   "b": 4624,
+   "t0": 0,
+   "t1": 49,
+   "line": "You surf the slobber wave",
+   "tr": "zoom"
+  },
+  {
+   "shot": "D7",
+   "a": 4624,
+   "b": 4680,
+   "t0": 0,
+   "t1": 56,
+   "line": "all the way down the throat.",
+   "tr": "whip"
+  },
+  {
+   "shot": "D8",
+   "a": 4680,
+   "b": 4720,
+   "t0": 0,
+   "t1": 40,
+   "line": "Okay, this is",
+   "tr": "cut"
+  },
+  {
+   "shot": "D8z",
+   "a": 4720,
+   "b": 4778,
+   "t0": 40,
+   "t1": 98,
+   "line": "actually kind of awesome!",
+   "tr": "cut"
+  },
+  {
+   "shot": "D8",
+   "a": 4778,
+   "b": 4812,
+   "t0": 97,
+   "t1": 131,
+   "line": "Speedrunner?",
+   "tr": "cut"
+  },
+  {
+   "shot": "D8z",
+   "a": 4812,
+   "b": 4857,
+   "t0": 132,
+   "t1": 177,
+   "line": "No. Slobber",
+   "tr": "cut"
+  },
+  {
+   "shot": "D8",
+   "a": 4857,
+   "b": 4906,
+   "t0": 176,
+   "t1": 225,
+   "line": "runner.",
+   "tr": "cut"
+  },
+  {
+   "shot": "C3",
+   "a": 4906,
+   "b": 4980,
+   "t0": 0,
+   "t1": 74,
+   "line": "Chapter three. The stomach.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "E1",
+   "a": 4980,
+   "b": 5051,
+   "t0": 0,
+   "t1": 71,
+   "line": "You land in a giant green room,",
+   "tr": "zoom"
+  },
+  {
+   "shot": "K14",
+   "a": 5051,
+   "b": 5133,
+   "t0": 0,
+   "t1": 82,
+   "line": "with a lake of bubbling stomach juice.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E2",
+   "a": 5133,
+   "b": 5169,
+   "t0": 0,
+   "t1": 36,
+   "line": "Don't touch it.",
+   "tr": "whip"
+  },
+  {
+   "shot": "E2z",
+   "a": 5169,
+   "b": 5221,
+   "t0": 37,
+   "t1": 89,
+   "line": "It's basically lava,",
+   "tr": "cut"
+  },
+  {
+   "shot": "E2",
+   "a": 5221,
+   "b": 5258,
+   "t0": 88,
+   "t1": 125,
+   "line": "but grosser.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E3",
+   "a": 5258,
+   "b": 5295,
+   "t0": 0,
+   "t1": 37,
+   "line": "Floating everywhere",
+   "tr": "cut"
+  },
+  {
+   "shot": "E3z",
+   "a": 5295,
+   "b": 5340,
+   "t0": 37,
+   "t1": 82,
+   "line": "is everything Biscuit",
+   "tr": "cut"
+  },
+  {
+   "shot": "E3",
+   "a": 5340,
+   "b": 5373,
+   "t0": 82,
+   "t1": 115,
+   "line": "ever ate.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K15",
+   "a": 5373,
+   "b": 5517,
+   "t0": 0,
+   "t1": 144,
+   "line": "Slippers, pizza, the remote, and a tennis ball from twenty nineteen.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E4",
+   "a": 5517,
+   "b": 5580,
+   "t0": 0,
+   "t1": 63,
+   "line": "And there, floating on the vacuum",
+   "tr": "cut"
+  },
+  {
+   "shot": "K16",
+   "a": 5580,
+   "b": 5655,
+   "t0": 0,
+   "t1": 75,
+   "line": "cleaner like a boat, is Mom.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E5",
+   "a": 5655,
+   "b": 5698,
+   "t0": 0,
+   "t1": 43,
+   "line": "Finally! Do you know",
+   "tr": "whip"
+  },
+  {
+   "shot": "E5z",
+   "a": 5698,
+   "b": 5752,
+   "t0": 43,
+   "t1": 97,
+   "line": "how long I've been in here?",
+   "tr": "cut"
+  },
+  {
+   "shot": "K17",
+   "a": 5752,
+   "b": 5814,
+   "t0": 0,
+   "t1": 62,
+   "line": "Like, five minutes?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E5",
+   "a": 5814,
+   "b": 5876,
+   "t0": 0,
+   "t1": 62,
+   "line": "Five minutes too long!",
+   "tr": "ghost"
+  },
+  {
+   "shot": "E6",
+   "a": 5876,
+   "b": 5920,
+   "t0": 0,
+   "t1": 44,
+   "line": "You jump from slipper, to",
+   "tr": "cut"
+  },
+  {
+   "shot": "E6z",
+   "a": 5920,
+   "b": 5969,
+   "t0": 44,
+   "t1": 93,
+   "line": "pizza, to remote,",
+   "tr": "cut"
+  },
+  {
+   "shot": "E6",
+   "a": 5969,
+   "b": 6025,
+   "t0": 93,
+   "t1": 149,
+   "line": "and you make it to the vacuum.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E7",
+   "a": 6025,
+   "b": 6067,
+   "t0": 0,
+   "t1": 42,
+   "line": "But something in the juice",
+   "tr": "cut"
+  },
+  {
+   "shot": "E7z",
+   "a": 6067,
+   "b": 6112,
+   "t0": 42,
+   "t1": 87,
+   "line": "starts to bubble.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E7",
+   "a": 6112,
+   "b": 6152,
+   "t0": 88,
+   "t1": 128,
+   "line": "Something big.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E8",
+   "a": 6152,
+   "b": 6188,
+   "t0": 0,
+   "t1": 36,
+   "line": "A giant ball of",
+   "tr": "whip"
+  },
+  {
+   "shot": "E8z",
+   "a": 6188,
+   "b": 6231,
+   "t0": 36,
+   "t1": 79,
+   "line": "fur rises out of",
+   "tr": "cut"
+  },
+  {
+   "shot": "K18",
+   "a": 6231,
+   "b": 6340,
+   "t0": 0,
+   "t1": 109,
+   "line": "the lake. It has eyes. It has a crown.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E9",
+   "a": 6340,
+   "b": 6384,
+   "t0": 0,
+   "t1": 44,
+   "line": "Is that a crown?",
+   "tr": "ghost"
+  },
+  {
+   "shot": "E5",
+   "a": 6384,
+   "b": 6435,
+   "t0": 0,
+   "t1": 51,
+   "line": "Don't make eye contact.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E9",
+   "a": 6435,
+   "b": 6463,
+   "t0": 0,
+   "t1": 28,
+   "line": "It's the Hairball",
+   "tr": "cut"
+  },
+  {
+   "shot": "E9z",
+   "a": 6463,
+   "b": 6512,
+   "t0": 28,
+   "t1": 77,
+   "line": "King. Made from every",
+   "tr": "cut"
+  },
+  {
+   "shot": "E9",
+   "a": 6512,
+   "b": 6554,
+   "t0": 77,
+   "t1": 119,
+   "line": "hair Biscuit ever licked",
+   "tr": "cut"
+  },
+  {
+   "shot": "E9z",
+   "a": 6554,
+   "b": 6595,
+   "t0": 119,
+   "t1": 160,
+   "line": "off the couch.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E10",
+   "a": 6595,
+   "b": 6634,
+   "t0": 0,
+   "t1": 39,
+   "line": "Boss fight. Its",
+   "tr": "whip"
+  },
+  {
+   "shot": "E10z",
+   "a": 6634,
+   "b": 6666,
+   "t0": 40,
+   "t1": 72,
+   "line": "health bar is",
+   "tr": "cut"
+  },
+  {
+   "shot": "E10",
+   "a": 6666,
+   "b": 6715,
+   "t0": 71,
+   "t1": 120,
+   "line": "huge. Your only",
+   "tr": "cut"
+  },
+  {
+   "shot": "E10z",
+   "a": 6715,
+   "b": 6767,
+   "t0": 120,
+   "t1": 172,
+   "line": "weapon is a slipper.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E11",
+   "a": 6767,
+   "b": 6816,
+   "t0": 0,
+   "t1": 49,
+   "line": "The Hairball King throws",
+   "tr": "cut"
+  },
+  {
+   "shot": "E11z",
+   "a": 6816,
+   "b": 6852,
+   "t0": 49,
+   "t1": 85,
+   "line": "furballs. You dodge",
+   "tr": "cut"
+  },
+  {
+   "shot": "K19",
+   "a": 6852,
+   "b": 6952,
+   "t0": 0,
+   "t1": 100,
+   "line": "one. Two. The third one hits Mom.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E12",
+   "a": 6952,
+   "b": 7006,
+   "t0": 0,
+   "t1": 54,
+   "line": "That's it. Give me that.",
+   "tr": "cut"
+  },
+  {
+   "shot": "E13",
+   "a": 7006,
+   "b": 7070,
+   "t0": 0,
+   "t1": 64,
+   "line": "Mom turns on the vacuum cleaner.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K20",
+   "a": 7070,
+   "b": 7143,
+   "t0": 0,
+   "t1": 73,
+   "line": "The Hairball King gets sucked in.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E14",
+   "a": 7143,
+   "b": 7197,
+   "t0": 0,
+   "t1": 54,
+   "line": "Hair by hair.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K21",
+   "a": 7197,
+   "b": 7276,
+   "t0": 0,
+   "t1": 79,
+   "line": "Until there's nothing left but the crown.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "E15",
+   "a": 7276,
+   "b": 7314,
+   "t0": 0,
+   "t1": 38,
+   "line": "Never mess with a mom",
+   "tr": "cut"
+  },
+  {
+   "shot": "E15z",
+   "a": 7314,
+   "b": 7335,
+   "t0": 38,
+   "t1": 59,
+   "line": "who's holding",
+   "tr": "cut"
+  },
+  {
+   "shot": "E15",
+   "a": 7335,
+   "b": 7391,
+   "t0": 59,
+   "t1": 115,
+   "line": "a vacuum.",
+   "tr": "cut"
+  },
+  {
+   "shot": "C4",
+   "a": 7391,
+   "b": 7468,
+   "t0": 0,
+   "t1": 77,
+   "line": "Chapter four. The escape.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "F1",
+   "a": 7468,
+   "b": 7503,
+   "t0": 0,
+   "t1": 35,
+   "line": "Now you just have to get",
+   "tr": "zoom"
+  },
+  {
+   "shot": "K22",
+   "a": 7503,
+   "b": 7558,
+   "t0": 0,
+   "t1": 55,
+   "line": "out. Simple, right?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "F2",
+   "a": 7558,
+   "b": 7602,
+   "t0": 0,
+   "t1": 44,
+   "line": "Wrong. The shrink",
+   "tr": "ghost"
+  },
+  {
+   "shot": "F2z",
+   "a": 7602,
+   "b": 7629,
+   "t0": 44,
+   "t1": 71,
+   "line": "potion is wearing",
+   "tr": "cut"
+  },
+  {
+   "shot": "F2",
+   "a": 7629,
+   "b": 7672,
+   "t0": 71,
+   "t1": 114,
+   "line": "off. You're starting to",
+   "tr": "cut"
+  },
+  {
+   "shot": "F2z",
+   "a": 7672,
+   "b": 7729,
+   "t0": 113,
+   "t1": 170,
+   "line": "grow. And if you grow inside",
+   "tr": "cut"
+  },
+  {
+   "shot": "F2",
+   "a": 7729,
+   "b": 7767,
+   "t0": 171,
+   "t1": 209,
+   "line": "Biscuit, things",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4",
+   "a": 7767,
+   "b": 7819,
+   "t0": 0,
+   "t1": 52,
+   "line": "are going to get very,",
+   "tr": "cut"
+  },
+  {
+   "shot": "A4z",
+   "a": 7819,
+   "b": 7857,
+   "t0": 52,
+   "t1": 90,
+   "line": "very weird.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F3",
+   "a": 7857,
+   "b": 7904,
+   "t0": 0,
+   "t1": 47,
+   "line": "And Biscuit is waking up",
+   "tr": "cut"
+  },
+  {
+   "shot": "F3z",
+   "a": 7904,
+   "b": 7958,
+   "t0": 47,
+   "t1": 101,
+   "line": "from his nap. Every step",
+   "tr": "cut"
+  },
+  {
+   "shot": "K23",
+   "a": 7958,
+   "b": 8064,
+   "t0": 0,
+   "t1": 106,
+   "line": "he takes shakes the whole stomach like a rollercoaster.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "F2",
+   "a": 8064,
+   "b": 8116,
+   "t0": 0,
+   "t1": 52,
+   "line": "You have thirty seconds.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F4",
+   "a": 8116,
+   "b": 8164,
+   "t0": 0,
+   "t1": 48,
+   "line": "Mom has an idea.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "F4z",
+   "a": 8164,
+   "b": 8220,
+   "t0": 48,
+   "t1": 104,
+   "line": "Dogs sneeze when something tickles",
+   "tr": "cut"
+  },
+  {
+   "shot": "F4",
+   "a": 8220,
+   "b": 8267,
+   "t0": 103,
+   "t1": 150,
+   "line": "their nose. We need to",
+   "tr": "cut"
+  },
+  {
+   "shot": "F4z",
+   "a": 8267,
+   "b": 8320,
+   "t0": 151,
+   "t1": 204,
+   "line": "tickle him from the inside.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F5",
+   "a": 8320,
+   "b": 8352,
+   "t0": 0,
+   "t1": 32,
+   "line": "You use the Hairball",
+   "tr": "cut"
+  },
+  {
+   "shot": "F5z",
+   "a": 8352,
+   "b": 8395,
+   "t0": 32,
+   "t1": 75,
+   "line": "King's crown to tickle",
+   "tr": "cut"
+  },
+  {
+   "shot": "F5",
+   "a": 8395,
+   "b": 8433,
+   "t0": 75,
+   "t1": 113,
+   "line": "the stomach wall.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K24",
+   "a": 8433,
+   "b": 8500,
+   "t0": 0,
+   "t1": 67,
+   "line": "Nothing. You tickle harder.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "F3",
+   "a": 8500,
+   "b": 8543,
+   "t0": 0,
+   "t1": 43,
+   "line": "The whole stomach starts",
+   "tr": "whip"
+  },
+  {
+   "shot": "F3z",
+   "a": 8543,
+   "b": 8590,
+   "t0": 43,
+   "t1": 90,
+   "line": "to shake. Biscuit",
+   "tr": "cut"
+  },
+  {
+   "shot": "F3",
+   "a": 8590,
+   "b": 8634,
+   "t0": 90,
+   "t1": 134,
+   "line": "is going to hiccup.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F6",
+   "a": 8634,
+   "b": 8683,
+   "t0": 0,
+   "t1": 49,
+   "line": "Hic! You get launched",
+   "tr": "cut"
+  },
+  {
+   "shot": "F6z",
+   "a": 8683,
+   "b": 8732,
+   "t0": 49,
+   "t1": 98,
+   "line": "halfway up the throat.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F6",
+   "a": 8732,
+   "b": 8767,
+   "t0": 98,
+   "t1": 133,
+   "line": "Hic! You get",
+   "tr": "cut"
+  },
+  {
+   "shot": "F6z",
+   "a": 8767,
+   "b": 8818,
+   "t0": 133,
+   "t1": 184,
+   "line": "launched up to the mouth.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F7",
+   "a": 8818,
+   "b": 8880,
+   "t0": 0,
+   "t1": 62,
+   "line": "Ten seconds left. You're both",
+   "tr": "ghost"
+  },
+  {
+   "shot": "K25",
+   "a": 8880,
+   "b": 8966,
+   "t0": 0,
+   "t1": 86,
+   "line": "growing. The teeth are getting smaller.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "F8",
+   "a": 8966,
+   "b": 8997,
+   "t0": 0,
+   "t1": 31,
+   "line": "Then Biscuit does",
+   "tr": "cut"
+  },
+  {
+   "shot": "F8z",
+   "a": 8997,
+   "b": 9040,
+   "t0": 31,
+   "t1": 74,
+   "line": "the biggest sneeze in",
+   "tr": "cut"
+  },
+  {
+   "shot": "F8",
+   "a": 9040,
+   "b": 9081,
+   "t0": 74,
+   "t1": 115,
+   "line": "dog history.",
+   "tr": "cut"
+  },
+  {
+   "shot": "F9",
+   "a": 9081,
+   "b": 9143,
+   "t0": 0,
+   "t1": 62,
+   "line": "Achoo!",
+   "tr": "whip"
+  },
+  {
+   "shot": "C5",
+   "a": 9143,
+   "b": 9211,
+   "t0": 0,
+   "t1": 68,
+   "line": "Chapter five. Home.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "G1",
+   "a": 9211,
+   "b": 9274,
+   "t0": 0,
+   "t1": 63,
+   "line": "You fly out of Biscuit's nose and land",
+   "tr": "zoom"
+  },
+  {
+   "shot": "K26",
+   "a": 9274,
+   "b": 9352,
+   "t0": 0,
+   "t1": 78,
+   "line": "on the couch, with Mom right next to you.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "G2",
+   "a": 9352,
+   "b": 9384,
+   "t0": 0,
+   "t1": 32,
+   "line": "You grow back to normal",
+   "tr": "cut"
+  },
+  {
+   "shot": "G2z",
+   "a": 9384,
+   "b": 9440,
+   "t0": 32,
+   "t1": 88,
+   "line": "size. Mom grows back",
+   "tr": "cut"
+  },
+  {
+   "shot": "G2",
+   "a": 9440,
+   "b": 9480,
+   "t0": 87,
+   "t1": 127,
+   "line": "to normal size.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G2z",
+   "a": 9480,
+   "b": 9528,
+   "t0": 127,
+   "t1": 175,
+   "line": "The vacuum grows back too.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G3",
+   "a": 9528,
+   "b": 9562,
+   "t0": 0,
+   "t1": 34,
+   "line": "The living room is a",
+   "tr": "whip"
+  },
+  {
+   "shot": "G3z",
+   "a": 9562,
+   "b": 9605,
+   "t0": 34,
+   "t1": 77,
+   "line": "total mess.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G3",
+   "a": 9605,
+   "b": 9660,
+   "t0": 77,
+   "t1": 132,
+   "line": "Slobber everywhere.",
+   "tr": "cut"
+  },
+  {
+   "shot": "K27",
+   "a": 9660,
+   "b": 9782,
+   "t0": 0,
+   "t1": 122,
+   "line": "Pizza on the ceiling. And Biscuit somehow gets a treat.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "G4",
+   "a": 9782,
+   "b": 9837,
+   "t0": 0,
+   "t1": 55,
+   "line": "Biscuit just sits there.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "G4z",
+   "a": 9837,
+   "b": 9874,
+   "t0": 55,
+   "t1": 92,
+   "line": "Wagging his tail.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G4",
+   "a": 9874,
+   "b": 9923,
+   "t0": 92,
+   "t1": 141,
+   "line": "Like nothing happened.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G5",
+   "a": 9923,
+   "b": 9968,
+   "t0": 0,
+   "t1": 45,
+   "line": "You, young man,",
+   "tr": "cut"
+  },
+  {
+   "shot": "K28",
+   "a": 9968,
+   "b": 10004,
+   "t0": 0,
+   "t1": 36,
+   "line": "are grounded.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "G5",
+   "a": 10004,
+   "b": 10067,
+   "t0": 0,
+   "t1": 63,
+   "line": "For saving you? For buying a shrink",
+   "tr": "whip"
+  },
+  {
+   "shot": "G6",
+   "a": 10067,
+   "b": 10119,
+   "t0": 0,
+   "t1": 52,
+   "line": "potion with my credit card.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G4",
+   "a": 10119,
+   "b": 10142,
+   "t0": 0,
+   "t1": 23,
+   "line": "Fair.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "G7",
+   "a": 10142,
+   "b": 10184,
+   "t0": 0,
+   "t1": 42,
+   "line": "That night, Dad comes",
+   "tr": "cut"
+  },
+  {
+   "shot": "G7z",
+   "a": 10184,
+   "b": 10228,
+   "t0": 42,
+   "t1": 86,
+   "line": "home from work. He walks",
+   "tr": "cut"
+  },
+  {
+   "shot": "G7",
+   "a": 10228,
+   "b": 10271,
+   "t0": 86,
+   "t1": 129,
+   "line": "into the living room, holding",
+   "tr": "cut"
+  },
+  {
+   "shot": "K29",
+   "a": 10271,
+   "b": 10342,
+   "t0": 0,
+   "t1": 71,
+   "line": "a big, juicy sandwich.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "G8",
+   "a": 10342,
+   "b": 10371,
+   "t0": 0,
+   "t1": 29,
+   "line": "Biscuit looks at",
+   "tr": "whip"
+  },
+  {
+   "shot": "G8z",
+   "a": 10371,
+   "b": 10425,
+   "t0": 29,
+   "t1": 83,
+   "line": "the sandwich. Then he looks",
+   "tr": "cut"
+  },
+  {
+   "shot": "G8",
+   "a": 10425,
+   "b": 10472,
+   "t0": 83,
+   "t1": 130,
+   "line": "at Dad. Then",
+   "tr": "cut"
+  },
+  {
+   "shot": "G8z",
+   "a": 10472,
+   "b": 10520,
+   "t0": 129,
+   "t1": 177,
+   "line": "he licks his lips.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G9",
+   "a": 10520,
+   "b": 10581,
+   "t0": 0,
+   "t1": 61,
+   "line": "Dad. Run.",
+   "tr": "cut"
+  },
+  {
+   "shot": "G10",
+   "a": 10581,
+   "b": 10615,
+   "t0": 0,
+   "t1": 34,
+   "line": "So, would you go",
+   "tr": "ghost"
+  },
+  {
+   "shot": "G10z",
+   "a": 10615,
+   "b": 10658,
+   "t0": 34,
+   "t1": 77,
+   "line": "inside your pet to save",
+   "tr": "cut"
+  },
+  {
+   "shot": "K30",
+   "a": 10658,
+   "b": 10741,
+   "t0": 0,
+   "t1": 83,
+   "line": "your mom? Comment Biscuit if you would.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "G11",
+   "a": 10741,
+   "b": 10783,
+   "t0": 0,
+   "t1": 42,
+   "line": "And subscribe, so",
+   "tr": "cut"
+  },
+  {
+   "shot": "G11z",
+   "a": 10783,
+   "b": 10816,
+   "t0": 42,
+   "t1": 75,
+   "line": "Biscuit doesn't eat",
+   "tr": "cut"
+  },
+  {
+   "shot": "G11",
+   "a": 10816,
+   "b": 10900,
+   "t0": 76,
+   "t1": 160,
+   "line": "you next.",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "A1",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 0,
+   "line": "What if your pet",
+   "note": "A1"
+  },
+  {
+   "id": "A1z",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 32,
+   "line": "swallowed your mom?",
+   "note": "A1z"
+  },
+  {
+   "id": "A2",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 75,
+   "line": "Not a little nibble. The whole",
+   "note": "A2"
+  },
+  {
+   "id": "K1",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 144,
+   "line": "mom. In one gulp.",
+   "note": "K1"
+  },
+  {
+   "id": "A3",
+   "size": "story",
+   "key": 20,
+   "len": 57,
+   "first": 217,
+   "line": "And the only way to get her back,",
+   "note": "A3"
+  },
+  {
+   "id": "A3z",
+   "size": "story",
+   "key": 20,
+   "len": 102,
+   "first": 274,
+   "line": "is to go inside.",
+   "note": "A3z"
+  },
+  {
+   "id": "A4",
+   "size": "story",
+   "key": 20,
+   "len": 114,
+   "first": 318,
+   "line": "Okay.",
+   "note": "A4"
+  },
+  {
+   "id": "A4z",
+   "size": "story",
+   "key": 20,
+   "len": 90,
+   "first": 350,
+   "line": "This is the worst day",
+   "note": "A4z"
+  },
+  {
+   "id": "A5",
+   "size": "story",
+   "key": 20,
+   "len": 46,
+   "first": 432,
+   "line": "This is Biscuit. He's",
+   "note": "A5"
+  },
+  {
+   "id": "K2",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 478,
+   "line": "a good boy. He's",
+   "note": "K2"
+  },
+  {
+   "id": "A6",
+   "size": "story",
+   "key": 20,
+   "len": 133,
+   "first": 516,
+   "line": "also always",
+   "note": "A6"
+  },
+  {
+   "id": "A6z",
+   "size": "story",
+   "key": 20,
+   "len": 187,
+   "first": 554,
+   "line": "hungry. And today,",
+   "note": "A6z"
+  },
+  {
+   "id": "C1",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 703,
+   "line": "Chapter one. The snack.",
+   "note": "C1"
+  },
+  {
+   "id": "B1",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 774,
+   "line": "It starts like any normal",
+   "note": "B1"
+  },
+  {
+   "id": "K3",
+   "size": "story",
+   "key": 20,
+   "len": 86,
+   "first": 818,
+   "line": "Saturday. Mom is cleaning the living room.",
+   "note": "K3"
+  },
+  {
+   "id": "B2",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 904,
+   "line": "Biscuit, do not",
+   "note": "B2"
+  },
+  {
+   "id": "B2z",
+   "size": "story",
+   "key": 20,
+   "len": 82,
+   "first": 943,
+   "line": "touch my slippers.",
+   "note": "B2z"
+  },
+  {
+   "id": "B3",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 986,
+   "line": "Biscuit eats",
+   "note": "B3"
+  },
+  {
+   "id": "K4",
+   "size": "story",
+   "key": 20,
+   "len": 40,
+   "first": 1011,
+   "line": "the slippers.",
+   "note": "K4"
+  },
+  {
+   "id": "B4",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 1080,
+   "line": "Then the pizza from last night.",
+   "note": "B4"
+  },
+  {
+   "id": "B5",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 1147,
+   "line": "Then the remote.",
+   "note": "B5"
+  },
+  {
+   "id": "B6",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 1188,
+   "line": "Then, the whole",
+   "note": "B6"
+  },
+  {
+   "id": "B6z",
+   "size": "story",
+   "key": 20,
+   "len": 76,
+   "first": 1224,
+   "line": "vacuum cleaner.",
+   "note": "B6z"
+  },
+  {
+   "id": "B3z",
+   "size": "story",
+   "key": 20,
+   "len": 77,
+   "first": 1302,
+   "line": "chew that fast.",
+   "note": "B3z"
+  },
+  {
+   "id": "B7",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 1341,
+   "line": "Biscuit! Spit that",
+   "note": "B7"
+  },
+  {
+   "id": "B7z",
+   "size": "story",
+   "key": 20,
+   "len": 78,
+   "first": 1382,
+   "line": "out right now!",
+   "note": "B7z"
+  },
+  {
+   "id": "B8",
+   "size": "story",
+   "key": 20,
+   "len": 28,
+   "first": 1420,
+   "line": "Mom walks over",
+   "note": "B8"
+  },
+  {
+   "id": "K5",
+   "size": "story",
+   "key": 20,
+   "len": 37,
+   "first": 1448,
+   "line": "to grab the vacuum.",
+   "note": "K5"
+  },
+  {
+   "id": "B9",
+   "size": "story",
+   "key": 20,
+   "len": 130,
+   "first": 1485,
+   "line": "Biscuit opens his",
+   "note": "B9"
+  },
+  {
+   "id": "B9z",
+   "size": "story",
+   "key": 20,
+   "len": 181,
+   "first": 1514,
+   "line": "mouth. Wider.",
+   "note": "B9z"
+  },
+  {
+   "id": "B10",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 1666,
+   "line": "Gulp.",
+   "note": "B10"
+  },
+  {
+   "id": "B11",
+   "size": "story",
+   "key": 20,
+   "len": 47,
+   "first": 1690,
+   "line": "And just like that,",
+   "note": "B11"
+  },
+  {
+   "id": "K6",
+   "size": "story",
+   "key": 20,
+   "len": 35,
+   "first": 1737,
+   "line": "Mom is gone.",
+   "note": "K6"
+  },
+  {
+   "id": "B12",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 1772,
+   "line": "Mom? Mom!",
+   "note": "B12"
+  },
+  {
+   "id": "B14",
+   "size": "story",
+   "key": 20,
+   "len": 138,
+   "first": 1824,
+   "line": "Biscuit, what did you do?",
+   "note": "B14"
+  },
+  {
+   "id": "B13",
+   "size": "story",
+   "key": 20,
+   "len": 57,
+   "first": 1890,
+   "line": "Biscuit burps. A slipper",
+   "note": "B13"
+  },
+  {
+   "id": "K7",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 1947,
+   "line": "flies out. Mom does not.",
+   "note": "K7"
+  },
+  {
+   "id": "B14z",
+   "size": "story",
+   "key": 20,
+   "len": 185,
+   "first": 2072,
+   "line": "Very faintly.",
+   "note": "B14z"
+  },
+  {
+   "id": "B15",
+   "size": "story",
+   "key": 20,
+   "len": 118,
+   "first": 2207,
+   "line": "You need a plan.",
+   "note": "B15"
+  },
+  {
+   "id": "B15z",
+   "size": "story",
+   "key": 20,
+   "len": 81,
+   "first": 2252,
+   "line": "And you know exactly",
+   "note": "B15z"
+  },
+  {
+   "id": "B16",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 2521,
+   "line": "You open Block Quest,",
+   "note": "B16"
+  },
+  {
+   "id": "B16z",
+   "size": "story",
+   "key": 20,
+   "len": 93,
+   "first": 2565,
+   "line": "and go straight to the shop.",
+   "note": "B16z"
+  },
+  {
+   "id": "B17",
+   "size": "story",
+   "key": 20,
+   "len": 129,
+   "first": 2614,
+   "line": "Shrink potion.",
+   "note": "B17"
+  },
+  {
+   "id": "B17z",
+   "size": "story",
+   "key": 20,
+   "len": 170,
+   "first": 2644,
+   "line": "Ninety-nine gems.",
+   "note": "B17z"
+  },
+  {
+   "id": "B18",
+   "size": "story",
+   "key": 20,
+   "len": 65,
+   "first": 2785,
+   "line": "You drink it. Near the pet.",
+   "note": "B18"
+  },
+  {
+   "id": "B19",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 2850,
+   "line": "Everything gets",
+   "note": "B19"
+  },
+  {
+   "id": "B19z",
+   "size": "story",
+   "key": 20,
+   "len": 72,
+   "first": 2877,
+   "line": "huge. The couch",
+   "note": "B19z"
+  },
+  {
+   "id": "K8",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 2922,
+   "line": "is a mountain. The carpet is a",
+   "note": "K8"
+  },
+  {
+   "id": "B20",
+   "size": "story",
+   "key": 20,
+   "len": 50,
+   "first": 2985,
+   "line": "jungle. And Biscuit's",
+   "note": "B20"
+  },
+  {
+   "id": "B20z",
+   "size": "story",
+   "key": 20,
+   "len": 90,
+   "first": 3031,
+   "line": "mouth is a cave.",
+   "note": "B20z"
+  },
+  {
+   "id": "K9",
+   "size": "story",
+   "key": 20,
+   "len": 84,
+   "first": 3212,
+   "line": "And you run straight in.",
+   "note": "K9"
+  },
+  {
+   "id": "C2",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 3296,
+   "line": "Chapter two. The mouth.",
+   "note": "C2"
+  },
+  {
+   "id": "D1",
+   "size": "story",
+   "key": 20,
+   "len": 65,
+   "first": 3367,
+   "line": "Inside, it's dark, it's",
+   "note": "D1"
+  },
+  {
+   "id": "K10",
+   "size": "story",
+   "key": 20,
+   "len": 76,
+   "first": 3432,
+   "line": "wet, and it smells like old pizza.",
+   "note": "K10"
+  },
+  {
+   "id": "D2",
+   "size": "story",
+   "key": 20,
+   "len": 130,
+   "first": 3508,
+   "line": "The teeth are like giant",
+   "note": "D2"
+  },
+  {
+   "id": "D2z",
+   "size": "story",
+   "key": 20,
+   "len": 89,
+   "first": 3551,
+   "line": "white blocks.",
+   "note": "D2z"
+  },
+  {
+   "id": "K11",
+   "size": "story",
+   "key": 20,
+   "len": 94,
+   "first": 3756,
+   "line": "Chomp. Chomp. Chomp. You time your",
+   "note": "K11"
+  },
+  {
+   "id": "D3",
+   "size": "story",
+   "key": 20,
+   "len": 208,
+   "first": 3960,
+   "line": "Then the tongue moves.",
+   "note": "D3"
+  },
+  {
+   "id": "D3z",
+   "size": "story",
+   "key": 20,
+   "len": 164,
+   "first": 4009,
+   "line": "It's a giant",
+   "note": "D3z"
+  },
+  {
+   "id": "D4",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 4168,
+   "line": "You slide down at full",
+   "note": "D4"
+  },
+  {
+   "id": "D4z",
+   "size": "story",
+   "key": 20,
+   "len": 100,
+   "first": 4210,
+   "line": "speed, past a dog treat,",
+   "note": "D4z"
+  },
+  {
+   "id": "K12",
+   "size": "story",
+   "key": 20,
+   "len": 101,
+   "first": 4268,
+   "line": "a sock, and somehow, a whole crayon.",
+   "note": "K12"
+  },
+  {
+   "id": "D5",
+   "size": "story",
+   "key": 20,
+   "len": 115,
+   "first": 4369,
+   "line": "But then, a",
+   "note": "D5"
+  },
+  {
+   "id": "D5z",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 4403,
+   "line": "wave of slobber",
+   "note": "D5z"
+  },
+  {
+   "id": "D6",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 4484,
+   "line": "You grab the crayon and",
+   "note": "D6"
+  },
+  {
+   "id": "D6z",
+   "size": "story",
+   "key": 20,
+   "len": 92,
+   "first": 4526,
+   "line": "use it as a surfboard.",
+   "note": "D6z"
+  },
+  {
+   "id": "K13",
+   "size": "story",
+   "key": 20,
+   "len": 49,
+   "first": 4575,
+   "line": "You surf the slobber wave",
+   "note": "K13"
+  },
+  {
+   "id": "D7",
+   "size": "story",
+   "key": 20,
+   "len": 56,
+   "first": 4624,
+   "line": "all the way down the throat.",
+   "note": "D7"
+  },
+  {
+   "id": "D8",
+   "size": "story",
+   "key": 20,
+   "len": 225,
+   "first": 4680,
+   "line": "Okay, this is",
+   "note": "D8"
+  },
+  {
+   "id": "D8z",
+   "size": "story",
+   "key": 20,
+   "len": 177,
+   "first": 4720,
+   "line": "actually kind of awesome!",
+   "note": "D8z"
+  },
+  {
+   "id": "C3",
+   "size": "story",
+   "key": 20,
+   "len": 74,
+   "first": 4906,
+   "line": "Chapter three. The stomach.",
+   "note": "C3"
+  },
+  {
+   "id": "E1",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 4980,
+   "line": "You land in a giant green room,",
+   "note": "E1"
+  },
+  {
+   "id": "K14",
+   "size": "story",
+   "key": 20,
+   "len": 82,
+   "first": 5051,
+   "line": "with a lake of bubbling stomach juice.",
+   "note": "K14"
+  },
+  {
+   "id": "E2",
+   "size": "story",
+   "key": 20,
+   "len": 125,
+   "first": 5133,
+   "line": "Don't touch it.",
+   "note": "E2"
+  },
+  {
+   "id": "E2z",
+   "size": "story",
+   "key": 20,
+   "len": 89,
+   "first": 5169,
+   "line": "It's basically lava,",
+   "note": "E2z"
+  },
+  {
+   "id": "E3",
+   "size": "story",
+   "key": 20,
+   "len": 115,
+   "first": 5258,
+   "line": "Floating everywhere",
+   "note": "E3"
+  },
+  {
+   "id": "E3z",
+   "size": "story",
+   "key": 20,
+   "len": 82,
+   "first": 5295,
+   "line": "is everything Biscuit",
+   "note": "E3z"
+  },
+  {
+   "id": "K15",
+   "size": "story",
+   "key": 20,
+   "len": 144,
+   "first": 5373,
+   "line": "Slippers, pizza, the remote, and a tennis ball from twenty nineteen.",
+   "note": "K15"
+  },
+  {
+   "id": "E4",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 5517,
+   "line": "And there, floating on the vacuum",
+   "note": "E4"
+  },
+  {
+   "id": "K16",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 5580,
+   "line": "cleaner like a boat, is Mom.",
+   "note": "K16"
+  },
+  {
+   "id": "E5",
+   "size": "story",
+   "key": 20,
+   "len": 62,
+   "first": 5655,
+   "line": "Finally! Do you know",
+   "note": "E5"
+  },
+  {
+   "id": "E5z",
+   "size": "story",
+   "key": 20,
+   "len": 97,
+   "first": 5698,
+   "line": "how long I've been in here?",
+   "note": "E5z"
+  },
+  {
+   "id": "K17",
+   "size": "story",
+   "key": 20,
+   "len": 62,
+   "first": 5752,
+   "line": "Like, five minutes?",
+   "note": "K17"
+  },
+  {
+   "id": "E6",
+   "size": "story",
+   "key": 20,
+   "len": 149,
+   "first": 5876,
+   "line": "You jump from slipper, to",
+   "note": "E6"
+  },
+  {
+   "id": "E6z",
+   "size": "story",
+   "key": 20,
+   "len": 93,
+   "first": 5920,
+   "line": "pizza, to remote,",
+   "note": "E6z"
+  },
+  {
+   "id": "E7",
+   "size": "story",
+   "key": 20,
+   "len": 128,
+   "first": 6025,
+   "line": "But something in the juice",
+   "note": "E7"
+  },
+  {
+   "id": "E7z",
+   "size": "story",
+   "key": 20,
+   "len": 87,
+   "first": 6067,
+   "line": "starts to bubble.",
+   "note": "E7z"
+  },
+  {
+   "id": "E8",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 6152,
+   "line": "A giant ball of",
+   "note": "E8"
+  },
+  {
+   "id": "E8z",
+   "size": "story",
+   "key": 20,
+   "len": 79,
+   "first": 6188,
+   "line": "fur rises out of",
+   "note": "E8z"
+  },
+  {
+   "id": "K18",
+   "size": "story",
+   "key": 20,
+   "len": 109,
+   "first": 6231,
+   "line": "the lake. It has eyes. It has a crown.",
+   "note": "K18"
+  },
+  {
+   "id": "E9",
+   "size": "story",
+   "key": 20,
+   "len": 119,
+   "first": 6340,
+   "line": "Is that a crown?",
+   "note": "E9"
+  },
+  {
+   "id": "E9z",
+   "size": "story",
+   "key": 20,
+   "len": 160,
+   "first": 6463,
+   "line": "King. Made from every",
+   "note": "E9z"
+  },
+  {
+   "id": "E10",
+   "size": "story",
+   "key": 20,
+   "len": 120,
+   "first": 6595,
+   "line": "Boss fight. Its",
+   "note": "E10"
+  },
+  {
+   "id": "E10z",
+   "size": "story",
+   "key": 20,
+   "len": 172,
+   "first": 6634,
+   "line": "health bar is",
+   "note": "E10z"
+  },
+  {
+   "id": "E11",
+   "size": "story",
+   "key": 20,
+   "len": 49,
+   "first": 6767,
+   "line": "The Hairball King throws",
+   "note": "E11"
+  },
+  {
+   "id": "E11z",
+   "size": "story",
+   "key": 20,
+   "len": 85,
+   "first": 6816,
+   "line": "furballs. You dodge",
+   "note": "E11z"
+  },
+  {
+   "id": "K19",
+   "size": "story",
+   "key": 20,
+   "len": 100,
+   "first": 6852,
+   "line": "one. Two. The third one hits Mom.",
+   "note": "K19"
+  },
+  {
+   "id": "E12",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 6952,
+   "line": "That's it. Give me that.",
+   "note": "E12"
+  },
+  {
+   "id": "E13",
+   "size": "story",
+   "key": 20,
+   "len": 64,
+   "first": 7006,
+   "line": "Mom turns on the vacuum cleaner.",
+   "note": "E13"
+  },
+  {
+   "id": "K20",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 7070,
+   "line": "The Hairball King gets sucked in.",
+   "note": "K20"
+  },
+  {
+   "id": "E14",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 7143,
+   "line": "Hair by hair.",
+   "note": "E14"
+  },
+  {
+   "id": "K21",
+   "size": "story",
+   "key": 20,
+   "len": 79,
+   "first": 7197,
+   "line": "Until there's nothing left but the crown.",
+   "note": "K21"
+  },
+  {
+   "id": "E15",
+   "size": "story",
+   "key": 20,
+   "len": 115,
+   "first": 7276,
+   "line": "Never mess with a mom",
+   "note": "E15"
+  },
+  {
+   "id": "E15z",
+   "size": "story",
+   "key": 20,
+   "len": 59,
+   "first": 7314,
+   "line": "who's holding",
+   "note": "E15z"
+  },
+  {
+   "id": "C4",
+   "size": "story",
+   "key": 20,
+   "len": 77,
+   "first": 7391,
+   "line": "Chapter four. The escape.",
+   "note": "C4"
+  },
+  {
+   "id": "F1",
+   "size": "story",
+   "key": 20,
+   "len": 35,
+   "first": 7468,
+   "line": "Now you just have to get",
+   "note": "F1"
+  },
+  {
+   "id": "K22",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 7503,
+   "line": "out. Simple, right?",
+   "note": "K22"
+  },
+  {
+   "id": "F2",
+   "size": "story",
+   "key": 20,
+   "len": 209,
+   "first": 7558,
+   "line": "Wrong. The shrink",
+   "note": "F2"
+  },
+  {
+   "id": "F2z",
+   "size": "story",
+   "key": 20,
+   "len": 170,
+   "first": 7602,
+   "line": "potion is wearing",
+   "note": "F2z"
+  },
+  {
+   "id": "F3",
+   "size": "story",
+   "key": 20,
+   "len": 134,
+   "first": 7857,
+   "line": "And Biscuit is waking up",
+   "note": "F3"
+  },
+  {
+   "id": "F3z",
+   "size": "story",
+   "key": 20,
+   "len": 101,
+   "first": 7904,
+   "line": "from his nap. Every step",
+   "note": "F3z"
+  },
+  {
+   "id": "K23",
+   "size": "story",
+   "key": 20,
+   "len": 106,
+   "first": 7958,
+   "line": "he takes shakes the whole stomach like a rollercoaster.",
+   "note": "K23"
+  },
+  {
+   "id": "F4",
+   "size": "story",
+   "key": 20,
+   "len": 150,
+   "first": 8116,
+   "line": "Mom has an idea.",
+   "note": "F4"
+  },
+  {
+   "id": "F4z",
+   "size": "story",
+   "key": 20,
+   "len": 204,
+   "first": 8164,
+   "line": "Dogs sneeze when something tickles",
+   "note": "F4z"
+  },
+  {
+   "id": "F5",
+   "size": "story",
+   "key": 20,
+   "len": 113,
+   "first": 8320,
+   "line": "You use the Hairball",
+   "note": "F5"
+  },
+  {
+   "id": "F5z",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 8352,
+   "line": "King's crown to tickle",
+   "note": "F5z"
+  },
+  {
+   "id": "K24",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 8433,
+   "line": "Nothing. You tickle harder.",
+   "note": "K24"
+  },
+  {
+   "id": "F6",
+   "size": "story",
+   "key": 20,
+   "len": 133,
+   "first": 8634,
+   "line": "Hic! You get launched",
+   "note": "F6"
+  },
+  {
+   "id": "F6z",
+   "size": "story",
+   "key": 20,
+   "len": 184,
+   "first": 8683,
+   "line": "halfway up the throat.",
+   "note": "F6z"
+  },
+  {
+   "id": "F7",
+   "size": "story",
+   "key": 20,
+   "len": 62,
+   "first": 8818,
+   "line": "Ten seconds left. You're both",
+   "note": "F7"
+  },
+  {
+   "id": "K25",
+   "size": "story",
+   "key": 20,
+   "len": 86,
+   "first": 8880,
+   "line": "growing. The teeth are getting smaller.",
+   "note": "K25"
+  },
+  {
+   "id": "F8",
+   "size": "story",
+   "key": 20,
+   "len": 115,
+   "first": 8966,
+   "line": "Then Biscuit does",
+   "note": "F8"
+  },
+  {
+   "id": "F8z",
+   "size": "story",
+   "key": 20,
+   "len": 74,
+   "first": 8997,
+   "line": "the biggest sneeze in",
+   "note": "F8z"
+  },
+  {
+   "id": "F9",
+   "size": "story",
+   "key": 20,
+   "len": 62,
+   "first": 9081,
+   "line": "Achoo!",
+   "note": "F9"
+  },
+  {
+   "id": "C5",
+   "size": "story",
+   "key": 20,
+   "len": 68,
+   "first": 9143,
+   "line": "Chapter five. Home.",
+   "note": "C5"
+  },
+  {
+   "id": "G1",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 9211,
+   "line": "You fly out of Biscuit's nose and land",
+   "note": "G1"
+  },
+  {
+   "id": "K26",
+   "size": "story",
+   "key": 20,
+   "len": 78,
+   "first": 9274,
+   "line": "on the couch, with Mom right next to you.",
+   "note": "K26"
+  },
+  {
+   "id": "G2",
+   "size": "story",
+   "key": 20,
+   "len": 127,
+   "first": 9352,
+   "line": "You grow back to normal",
+   "note": "G2"
+  },
+  {
+   "id": "G2z",
+   "size": "story",
+   "key": 20,
+   "len": 175,
+   "first": 9384,
+   "line": "size. Mom grows back",
+   "note": "G2z"
+  },
+  {
+   "id": "G3",
+   "size": "story",
+   "key": 20,
+   "len": 132,
+   "first": 9528,
+   "line": "The living room is a",
+   "note": "G3"
+  },
+  {
+   "id": "G3z",
+   "size": "story",
+   "key": 20,
+   "len": 77,
+   "first": 9562,
+   "line": "total mess.",
+   "note": "G3z"
+  },
+  {
+   "id": "K27",
+   "size": "story",
+   "key": 20,
+   "len": 122,
+   "first": 9660,
+   "line": "Pizza on the ceiling. And Biscuit somehow gets a treat.",
+   "note": "K27"
+  },
+  {
+   "id": "G4",
+   "size": "story",
+   "key": 20,
+   "len": 141,
+   "first": 9782,
+   "line": "Biscuit just sits there.",
+   "note": "G4"
+  },
+  {
+   "id": "G4z",
+   "size": "story",
+   "key": 20,
+   "len": 92,
+   "first": 9837,
+   "line": "Wagging his tail.",
+   "note": "G4z"
+  },
+  {
+   "id": "G5",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 9923,
+   "line": "You, young man,",
+   "note": "G5"
+  },
+  {
+   "id": "K28",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 9968,
+   "line": "are grounded.",
+   "note": "K28"
+  },
+  {
+   "id": "G6",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 10067,
+   "line": "potion with my credit card.",
+   "note": "G6"
+  },
+  {
+   "id": "G7",
+   "size": "story",
+   "key": 20,
+   "len": 129,
+   "first": 10142,
+   "line": "That night, Dad comes",
+   "note": "G7"
+  },
+  {
+   "id": "G7z",
+   "size": "story",
+   "key": 20,
+   "len": 86,
+   "first": 10184,
+   "line": "home from work. He walks",
+   "note": "G7z"
+  },
+  {
+   "id": "K29",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 10271,
+   "line": "a big, juicy sandwich.",
+   "note": "K29"
+  },
+  {
+   "id": "G8",
+   "size": "story",
+   "key": 20,
+   "len": 130,
+   "first": 10342,
+   "line": "Biscuit looks at",
+   "note": "G8"
+  },
+  {
+   "id": "G8z",
+   "size": "story",
+   "key": 20,
+   "len": 177,
+   "first": 10371,
+   "line": "the sandwich. Then he looks",
+   "note": "G8z"
+  },
+  {
+   "id": "G9",
+   "size": "story",
+   "key": 20,
+   "len": 61,
+   "first": 10520,
+   "line": "Dad. Run.",
+   "note": "G9"
+  },
+  {
+   "id": "G10",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 10581,
+   "line": "So, would you go",
+   "note": "G10"
+  },
+  {
+   "id": "G10z",
+   "size": "story",
+   "key": 20,
+   "len": 77,
+   "first": 10615,
+   "line": "inside your pet to save",
+   "note": "G10z"
+  },
+  {
+   "id": "K30",
+   "size": "story",
+   "key": 20,
+   "len": 83,
+   "first": 10658,
+   "line": "your mom? Comment Biscuit if you would.",
+   "note": "K30"
+  },
+  {
+   "id": "G11",
+   "size": "story",
+   "key": 20,
+   "len": 160,
+   "first": 10741,
+   "line": "And subscribe, so",
+   "note": "G11"
+  },
+  {
+   "id": "G11z",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 10783,
+   "line": "Biscuit doesn't eat",
+   "note": "G11z"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 78
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.7,
+   "f": 1667
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 12,
+   "f": 1667
+  },
+  {
+   "kind": "punch",
+   "f": 2785
+  },
+  {
+   "kind": "bloom",
+   "color": "#4ADE6A",
+   "o": 0.7,
+   "f": 2852
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 4373
+  },
+  {
+   "kind": "shake",
+   "len": 14,
+   "amp": 8,
+   "f": 6162
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 6342
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 6597
+  },
+  {
+   "kind": "shake",
+   "len": 16,
+   "amp": 6,
+   "f": 7010
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.8,
+   "f": 7145
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 8635
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.9,
+   "f": 9082
+  },
+  {
+   "kind": "shake",
+   "len": 16,
+   "amp": 16,
+   "f": 9082
+  }
+ ],
+ "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.1919,
+  "musicVol": 0.0665,
+  "voice": "pet-swallowed/voice.wav",
+  "sfx": "pet-swallowed/sfx.wav",
+  "music": "pet-swallowed/music.wav"
+ }
+}

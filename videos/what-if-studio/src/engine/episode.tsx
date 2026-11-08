@@ -249,6 +249,8 @@ export type EpisodeDef = ReturnType<typeof defineEpisode>;
 // - karaoke captions, 2-3 words, uppercase, the spoken word in yellow, over a dark band at the bottom.
 export type StoryWord = { w: string; s: number; e: number; p?: string };
 export const STORY = { w: 1080, h: 1920, capY: 1200, capSize: 58, dissolve: 4 };
+/** The frame a story is drawn in: 1080 x 1920 for Reels, 1920 x 1080 for long-form (defineStory `landscape`). */
+export const DimCtx = React.createContext({ w: 1080, h: 1920 });
 export type StoryCam = 'push' | 'dive' | 'pull' | 'panL' | 'panR' | 'rise' | 'static' | 'tiltDown' | 'zoomOut' | 'drift';
 export type StoryTr = 'cut' | 'dissolve' | 'ghost' | 'zoom' | 'flash' | 'whip';
 /** The automatic rotation when the edit doesn't name a move or a transition. */
@@ -298,6 +300,7 @@ const chunkWords = (words: StoryWord[]) => {
 
 /** Karaoke captions: the chunk being spoken, uppercase, the current word in yellow and a touch bigger. */
 export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ words, fps }) => {
+  const D = React.useContext(DimCtx);
   const f = useCurrentFrame();
   const t = f / fps;
   const chunks = React.useMemo(() => chunkWords(words), [words]);
@@ -307,8 +310,8 @@ export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ w
   const pop = clamp((t - (c[0].s - 0.05)) * fps / 3);
   const z = STORY.capSize;
   return (
-    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-      <g transform={`translate(${STORY.w / 2} ${STORY.capY}) scale(${0.9 + 0.1 * pop})`} opacity={0.4 + 0.6 * pop}>
+    <svg width={D.w} height={D.h} viewBox={`0 0 ${D.w} ${D.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <g transform={`translate(${D.w / 2} ${D.h > D.w ? STORY.capY : 930}) scale(${0.9 + 0.1 * pop})`} opacity={0.4 + 0.6 * pop}>
         <text textAnchor="middle" fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={z} letterSpacing={1.5}
           stroke="#120B18" strokeWidth={z * 0.2} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.7))' }}>
           {c.map((w, k) => {
@@ -323,7 +326,9 @@ export const StoryCaptions: React.FC<{ words: StoryWord[]; fps: number }> = ({ w
 
 /** Pop captions (the "What If" gaming Shorts): one word at a time (two when the first is tiny), big, bouncing in,
  *  white with a heavy outline, keywords in colour (`colors`: lower-case word -> colour). */
-export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: Record<string, string>; y?: number; size?: number; font?: string }> = ({ words, fps, colors = {}, y = 1230, size = 104, font = 'Bricolage Grotesque' }) => {
+export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: Record<string, string>; y?: number; size?: number; font?: string }> = ({ words, fps, colors = {}, y: yIn, size: sizeIn, font = 'Bricolage Grotesque' }) => {
+  const D = React.useContext(DimCtx);
+  const land = D.w > D.h, y = yIn ?? (land ? 900 : 1230), size = sizeIn ?? (land ? 88 : 104);
   const f = useCurrentFrame();
   const t = f / fps;
   const groups = React.useMemo(() => {
@@ -344,8 +349,8 @@ export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: R
   const col = key ? colors[key] : '#FFFFFF';
   const z = key ? size * 1.12 : size;
   return (
-    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-      <g transform={`translate(${STORY.w / 2} ${y}) scale(${pop})`}>
+    <svg width={D.w} height={D.h} viewBox={`0 0 ${D.w} ${D.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <g transform={`translate(${D.w / 2} ${y}) scale(${pop})`}>
         <text textAnchor="middle" fontFamily={font} fontWeight={900} fontSize={z} letterSpacing={0.5}
           fill={col} stroke="#0A0610" strokeWidth={z * 0.17} strokeLinejoin="round" paintOrder="stroke" style={{ filter: 'drop-shadow(0 7px 0 rgba(0,0,0,0.55))' }}>
           {key ? text.toUpperCase() : text}
@@ -357,15 +362,16 @@ export const PopCaptions: React.FC<{ words: StoryWord[]; fps: number; colors?: R
 
 /** One shot of a story Reel at frame f: its clock, with its camera move (and any transition offset) applied. */
 const StoryShot: React.FC<{ tl: Timeline; shots: ShotMap; seg: Seg; idx: number; f: number; xs?: number; blur?: number; dx?: number; snappy?: boolean }> = ({ tl, shots, seg, idx, f, xs = 1, blur = 0, dx = 0, snappy = false }) => {
+  const D = React.useContext(DimCtx);
   const Shot = shots[seg.shot];
   const info = tl.shots.find((s) => s.id === seg.shot);
   const t = clockAt(seg, f);
   const c = camAt(seg as any, idx, f, snappy);
   return (
-    <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, filter: blur > 0.3 ? `blur(${blur}px)` : undefined }}>
+    <svg width={D.w} height={D.h} viewBox={`0 0 ${D.w} ${D.h}`} style={{ position: 'absolute', inset: 0, filter: blur > 0.3 ? `blur(${blur}px)` : undefined }}>
       <KitDefs />
       <SetDefs />
-      <g transform={`translate(${540 + c.x + dx} ${960 + c.y}) rotate(${c.r}) scale(${c.s * xs}) translate(-540 -960)`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
+      <g transform={`translate(${D.w / 2 + c.x + dx} ${D.h / 2 + c.y}) rotate(${c.r}) scale(${c.s * xs}) translate(${-D.w / 2} ${-D.h / 2})`}>{Shot ? <Shot t={t} len={info?.len ?? seg.b - seg.a} f={f} /> : null}</g>
     </svg>
   );
 };
@@ -387,7 +393,11 @@ const storyFxAt = (tl: Timeline, f: number) => {
   return { ...base, punch, blooms, rewind, iris };
 };
 
-export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string; overlay?: React.FC<{ f: number }> }> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false, capFont, overlay: Overlay }) => {
+export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string; overlay?: React.FC<{ f: number }>; dims?: { w: number; h: number } }> = (props) => (
+  <DimCtx.Provider value={props.dims ?? { w: STORY.w, h: STORY.h }}><StoryEpisodeIn {...props} /></DimCtx.Provider>
+);
+const StoryEpisodeIn: React.FC<React.ComponentProps<typeof StoryEpisode>> = ({ timeline: tl, shots, words, bg = '#0E0C1E', captions = true, capStyle = 'karaoke', capColors, snappy = false, capFont, overlay: Overlay }) => {
+  const D = React.useContext(DimCtx);
   const f = useCurrentFrame();
   const idx = Math.max(0, tl.segments.findIndex((s) => f >= s.a && f < s.b));
   const seg = tl.segments[idx] ?? tl.segments[tl.segments.length - 1];
@@ -429,27 +439,27 @@ export const StoryEpisode: React.FC<{ timeline: Timeline; shots: ShotMap; words:
       {blooms.map((b, i) => (
         <AbsoluteFill key={i} style={{ mixBlendMode: 'screen', pointerEvents: 'none' }}>
           <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 45%, ${b.color} 0%, transparent ${30 + 50 * b.k}%)`, opacity: b.o * (1 - b.k) }} />
-          <svg width={STORY.w} height={STORY.h} style={{ position: 'absolute', inset: 0 }}><circle cx={540} cy={860} r={120 + 900 * easeOut(b.k)} fill="none" stroke={b.color} strokeWidth={30 * (1 - b.k)} opacity={0.7 * (1 - b.k)} /></svg>
+          <svg width={D.w} height={D.h} style={{ position: 'absolute', inset: 0 }}><circle cx={D.w / 2} cy={D.h * 0.45} r={120 + 900 * easeOut(b.k)} fill="none" stroke={b.color} strokeWidth={30 * (1 - b.k)} opacity={0.7 * (1 - b.k)} /></svg>
         </AbsoluteFill>
       ))}
       {/* VHS rewind: scanlines, a colour split and the ◀◀ badge (the channel's REWIND jump back in time) */}
       {rewind >= 0 ? <AbsoluteFill style={{ pointerEvents: 'none' }}>
         <AbsoluteFill style={{ background: 'repeating-linear-gradient(to bottom, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 3px, transparent 3px, transparent 9px)', mixBlendMode: 'screen' }} />
         <AbsoluteFill style={{ background: 'rgba(60,120,255,0.18)', mixBlendMode: 'screen', transform: `translateX(${Math.sin(f * 1.7) * 10}px)` }} />
-        <svg width={STORY.w} height={STORY.h} style={{ position: 'absolute', inset: 0 }}>
-          <rect x={0} y={(f * 47) % STORY.h} width={STORY.w} height={26} fill="#FFFFFF" opacity={0.25} />
+        <svg width={D.w} height={D.h} style={{ position: 'absolute', inset: 0 }}>
+          <rect x={0} y={(f * 47) % D.h} width={D.w} height={26} fill="#FFFFFF" opacity={0.25} />
           <text x={90} y={330} fontFamily="Bricolage Grotesque" fontWeight={800} fontSize={74} fill="#FFFFFF" stroke="#120B18" strokeWidth={10} paintOrder="stroke" opacity={Math.floor(f / 6) % 2 ? 1 : 0.6}>◀◀ REWIND</text>
         </svg>
       </AbsoluteFill> : null}
       {/* iris: a spotlight ring closing around the key thing, the rest dimmed */}
-      {iris ? <svg width={STORY.w} height={STORY.h} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <defs><mask id="irisM"><rect width={STORY.w} height={STORY.h} fill="white" /><circle cx={iris.x} cy={iris.y} r={lerp(iris.r * 3, iris.r, easeOut(clamp(iris.k * 3)))} fill="black" /></mask></defs>
-        <rect width={STORY.w} height={STORY.h} fill="#05030A" opacity={0.6 * Math.min(1, iris.k * 4) * (1 - clamp((iris.k - 0.85) / 0.15))} mask="url(#irisM)" />
+      {iris ? <svg width={D.w} height={D.h} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+        <defs><mask id="irisM"><rect width={D.w} height={D.h} fill="white" /><circle cx={iris.x} cy={iris.y} r={lerp(iris.r * 3, iris.r, easeOut(clamp(iris.k * 3)))} fill="black" /></mask></defs>
+        <rect width={D.w} height={D.h} fill="#05030A" opacity={0.6 * Math.min(1, iris.k * 4) * (1 - clamp((iris.k - 0.85) / 0.15))} mask="url(#irisM)" />
         <circle cx={iris.x} cy={iris.y} r={lerp(iris.r * 3, iris.r, easeOut(clamp(iris.k * 3)))} fill="none" stroke="#FFD23F" strokeWidth={10} opacity={1 - clamp((iris.k - 0.85) / 0.15)} />
       </svg> : null}
       {/* a fixed HUD (timers, status pills) that the camera doesn't move */}
-      {Overlay ? <svg width={STORY.w} height={STORY.h} viewBox={`0 0 ${STORY.w} ${STORY.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><Overlay f={f} /></svg> : null}
-      <Grade f={f} grain vignette w={STORY.w} h={STORY.h} />
+      {Overlay ? <svg width={D.w} height={D.h} viewBox={`0 0 ${D.w} ${D.h}`} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}><Overlay f={f} /></svg> : null}
+      <Grade f={f} grain vignette w={D.w} h={D.h} />
       {white > 0 ? <AbsoluteFill style={{ backgroundColor: '#FFFFFF', opacity: white }} /> : null}
       {flash ? <AbsoluteFill style={{ backgroundColor: flash.color, opacity: flash.o }} /> : null}
       {/* a dark band at the bottom, like the references, so the captions always read */}
@@ -479,13 +489,26 @@ const StoryBoard: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline
   );
 };
 
-/** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). */
-export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string; overlay?: React.FC<{ f: number }> }) => ({
+/** The storyboard of a landscape story: each 16:9 shot at its key frame, full frame. */
+const StoryBoardLand: React.FC<{ timeline: Timeline; shots: ShotMap }> = ({ timeline: tl, shots }) => {
+  const f = useCurrentFrame();
+  const info = tl.shots[Math.min(f, tl.shots.length - 1)];
+  const Shot = shots[info.id];
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#111' }}>
+      <svg width={1920} height={1080} viewBox="0 0 1920 1080"><KitDefs /><SetDefs />{Shot ? <Shot t={info.key} len={info.len} f={info.first + info.key} /> : null}</svg>
+    </AbsoluteFill>
+  );
+};
+
+/** Bundle a story Reel: its 9:16 film is registered as <Id>Vertical (what shorts.sh renders). With `landscape`, the
+ *  story is drawn in 1920 x 1080 and <Id> is the film itself (what master.py renders without --vertical). */
+export const defineStory = (id: string, p: { timeline: Timeline; shots: ShotMap; words: StoryWord[]; bg?: string; captions?: boolean; capStyle?: 'karaoke' | 'pop'; capColors?: Record<string, string>; snappy?: boolean; capFont?: string; overlay?: React.FC<{ f: number }>; landscape?: boolean }) => ({
   id,
   total: p.timeline.total,
   shotCount: p.timeline.shots.length,
-  Main: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
-  Board: () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
+  Main: p.landscape ? () => <StoryEpisode {...p} captions={p.captions ?? true} dims={{ w: 1920, h: 1080 }} /> : () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
+  Board: p.landscape ? () => <StoryBoardLand timeline={p.timeline} shots={p.shots} /> : () => <StoryBoard timeline={p.timeline} shots={p.shots} />,
   // karaoke captions are on (the user asked for them back); pass captions: false to hide them
-  Vertical: () => <StoryEpisode {...p} captions={p.captions ?? true} />,
+  Vertical: p.landscape ? null : () => <StoryEpisode {...p} captions={p.captions ?? true} />,
 });

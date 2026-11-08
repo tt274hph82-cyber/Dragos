@@ -8,6 +8,7 @@ episode.json:
   "script": [{"text": "...", "who": "mom"}, ...]      (no "who" = the narrator)
   "gap": 0.12                                          (seconds between lines)
   "tempo": 1.15                                        (speed every line up, pitch kept; match a reference pace)
+  line "pause": 1.2                                    (extra silence before that line, e.g. a chapter card)
 
 Each line is generated on its own (eleven_v4, 128 kbps, cached by voice and text in public/<slug>/lines/), trimmed of
 silence, joined with `gap` into public/<slug>/voice.wav, then every word is timed from the joined audio with
@@ -52,7 +53,7 @@ for i, b in enumerate(ep['script']):
     who = b.get('who', 'narrator')
     pcm = tts(b['text'].strip(), CAST[who])
     if i:
-        out.extend([0] * int(GAP * SR))
+        out.extend([0] * int((GAP + b.get('pause', 0)) * SR))   # "pause": extra seconds before this line
     a = len(out) / SR
     out.extend(pcm)
     spans.append((a, len(out) / SR, who, b['text'].strip()))
