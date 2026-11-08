@@ -109,9 +109,12 @@ export const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | '
   const shirt = kind === 'kid' ? '#D8323A' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#2A8AE0' : '#6A4AC8';
   const pants = kind === 'kid' ? '#3A5AB8' : kind === 'mom' ? '#9A7AD8' : kind === 'friend' ? '#3A3448' : '#5A5A6A';
   const skin = kind === 'boss' ? '#FF9A3A' : '#F4E2CC';
-  const breathe = Math.sin(t * 0.12) * 4 - Math.abs(Math.sin(t * 0.35)) * 16 * energy;
-  const swing = Math.sin(t * 0.35) * 10 * energy;
-  const squash = 1 + Math.sin(t * 0.7) * 0.015 * energy;
+  // the user asked for no wobble: no bounce, squash, sway or idle arm swing, only a slight breathe.
+  // `energy` > 1 brings a little idle motion back if a shot ever needs it.
+  const idle = Math.max(0, energy - 1);
+  const breathe = Math.sin(t * 0.12) * 3 - Math.abs(Math.sin(t * 0.35)) * 16 * idle;
+  const swing = Math.sin(t * 0.35) * 10 * idle;
+  const squash = 1 + Math.sin(t * 0.7) * 0.015 * idle;
   const arm = (sx: number, a: number) => (
     <g transform={`translate(${sx} -560) rotate(${a})`}>
       <rect x={-48} y={-10} width={96} height={250} rx={22} fill={shirt} stroke={OL} strokeWidth={SW} />
@@ -119,7 +122,7 @@ export const Blocky: React.FC<{ x: number; y: number; s: number; kind: 'kid' | '
     </g>
   );
   return (
-    <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s * squash} ${s / squash}) rotate(${(pose.lean ?? 0) + Math.sin(t * 0.18) * 2 * energy})`}>
+    <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s * squash} ${s / squash}) rotate(${(pose.lean ?? 0) + Math.sin(t * 0.18) * 2 * idle})`}>
       <ellipse cx={0} cy={6} rx={200} ry={26} fill="#000" opacity={0.22} />
       {[[-62, pose.legL ?? 0], [62, pose.legR ?? 0]].map(([lx, a], i) => (
         <g key={i} transform={`translate(${lx} -300) rotate(${a})`}><rect x={-56} y={0} width={112} height={300} rx={18} fill={pants} stroke={OL} strokeWidth={SW} /><rect x={-60} y={262} width={120} height={44} rx={16} fill="#2A2234" stroke={OL} strokeWidth={6} /></g>
