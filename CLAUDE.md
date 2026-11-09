@@ -22,6 +22,12 @@ Rules:
 - **Check before rendering the full video.** Render 2–3 stills (`npx remotion still <Comp> out/x.jpg --frame=N`) and look at them first.
 - **Render on GitHub** with Actions → **Render 3D video** (`.github/workflows/render-3d.yml`).
 
+## 3D voxel night-story Shorts (style of the user's "house was robbed" reference)
+- Model: `videos/voxel-wall/` (copied from `3d-template`, 1080x1920, 23 s, composition `VoxelWall`). First-person "true scary story" told by Austin, about 60 words, no captions, a twist in bright morning light.
+- `src/Scene.tsx`: everything is boxes with small seeded pixel textures (`pixelTex`, nearest filter); `Head` (face from flat boxes: neutral, scared, asleep, happy), `Person`, `Cat`; a `SHOTS` table (start second, camera from/to, look-at, fov) with slow pushes and a shake on impacts; night = blue hemisphere light + a moon spotlight with shadows through a real window hole + a red clock glow + fog; day = warm sun; an additive light shaft and dust motes; a vignette in `Video.tsx`.
+- `scripts/audio.py` makes the effects and music (dark drone that turns warm) and mixes `public/audio/mix.mp3`; the final encode normalizes to -14 LUFS into `youtube/<slug>-9x16.mp4`.
+- Frame each shot with stills first (9:16 is narrow: keep the camera back, and outside the room for wide shots). The full render takes about 10-15 minutes in the sandbox.
+
 ## Cartoon explainer style
 For the flat cartoon look (bold outlines, round-headed stick-limb characters, one-word captions), copy `videos/cartoon-doctor/`. It is the same stack, with a reusable style kit (`src/toon.tsx`) and character (`src/Character.tsx`).
 
