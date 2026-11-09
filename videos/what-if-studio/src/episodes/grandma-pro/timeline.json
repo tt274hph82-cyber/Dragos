@@ -1,0 +1,663 @@
+{
+ "slug": "grandma-pro",
+ "title": "GRANDMA IS A PRO GAMER",
+ "fps": 30,
+ "total": 1314,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 38,
+   "t0": 0,
+   "t1": 38,
+   "line": "What if your grandma was",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 38,
+   "b": 67,
+   "t0": 0,
+   "t1": 29,
+   "line": "secretly a pro",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S30",
+   "a": 67,
+   "b": 81,
+   "t0": 0,
+   "t1": 14,
+   "line": "gamer?",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 81,
+   "b": 117,
+   "t0": 0,
+   "t1": 36,
+   "line": "Round one.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S3",
+   "a": 117,
+   "b": 195,
+   "t0": 0,
+   "t1": 78,
+   "line": "You teach her Block Quest. She's holding the controller",
+   "tr": "cut"
+  },
+  {
+   "shot": "S4",
+   "a": 195,
+   "b": 221,
+   "t0": 0,
+   "t1": 26,
+   "line": "upside down.",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 221,
+   "b": 284,
+   "t0": 0,
+   "t1": 63,
+   "line": "Grandma, that's the wrong way.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "a": 284,
+   "b": 339,
+   "t0": 0,
+   "t1": 55,
+   "line": "Oh, is it, sweetie? Then she",
+   "tr": "cut"
+  },
+  {
+   "shot": "S7",
+   "a": 339,
+   "b": 383,
+   "t0": 0,
+   "t1": 44,
+   "line": "wins. In four",
+   "tr": "flash"
+  },
+  {
+   "shot": "S31",
+   "a": 383,
+   "b": 401,
+   "t0": 0,
+   "t1": 18,
+   "line": "seconds.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S22",
+   "a": 401,
+   "b": 441,
+   "t0": 0,
+   "t1": 40,
+   "line": "Round two. She",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "a": 441,
+   "b": 494,
+   "t0": 0,
+   "t1": 53,
+   "line": "builds a castle faster than you can",
+   "cam": "rise",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "a": 494,
+   "b": 521,
+   "t0": 0,
+   "t1": 27,
+   "line": "blink. With",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S9",
+   "a": 521,
+   "b": 554,
+   "t0": 0,
+   "t1": 33,
+   "line": "a cookie shop inside.",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "a": 554,
+   "b": 593,
+   "t0": 0,
+   "t1": 39,
+   "line": "Round three. She",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S10",
+   "a": 593,
+   "b": 616,
+   "t0": 0,
+   "t1": 23,
+   "line": "beats the final",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "a": 616,
+   "b": 642,
+   "t0": 0,
+   "t1": 26,
+   "line": "boss.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S32",
+   "a": 642,
+   "b": 663,
+   "t0": 0,
+   "t1": 21,
+   "line": "While knitting.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S11",
+   "a": 663,
+   "b": 759,
+   "t0": 0,
+   "t1": 96,
+   "line": "Back in my day, bosses had three health bars.",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S24",
+   "a": 759,
+   "b": 798,
+   "t0": 0,
+   "t1": 39,
+   "line": "Round four.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S12",
+   "a": 798,
+   "b": 840,
+   "t0": 0,
+   "t1": 42,
+   "line": "The number one player in the world",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S35",
+   "a": 840,
+   "b": 863,
+   "t0": 0,
+   "t1": 23,
+   "line": "challenges her.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 863,
+   "b": 931,
+   "t0": 0,
+   "t1": 68,
+   "line": "Grandma, nobody beats him! He",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S14",
+   "a": 931,
+   "b": 957,
+   "t0": 0,
+   "t1": 26,
+   "line": "loses in one",
+   "tr": "cut"
+  },
+  {
+   "shot": "S36",
+   "a": 957,
+   "b": 981,
+   "t0": 0,
+   "t1": 24,
+   "line": "hit.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S15",
+   "a": 981,
+   "b": 1038,
+   "t0": 0,
+   "t1": 57,
+   "line": "Then he asks for her cookie recipe.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 1038,
+   "b": 1138,
+   "t0": 0,
+   "t1": 100,
+   "line": "Turns out, Grandma was the world champion. In",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S17",
+   "a": 1138,
+   "b": 1167,
+   "t0": 0,
+   "t1": 29,
+   "line": "nineteen eighty-two.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S18",
+   "a": 1167,
+   "b": 1196,
+   "t0": 0,
+   "t1": 29,
+   "line": "Now, who wants",
+   "tr": "cut"
+  },
+  {
+   "shot": "S37",
+   "a": 1196,
+   "b": 1214,
+   "t0": 0,
+   "t1": 18,
+   "line": "cookies?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S19",
+   "a": 1214,
+   "b": 1314,
+   "t0": 0,
+   "t1": 100,
+   "line": "Comment grandma if yours could beat you.",
+   "cam": "static",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 0,
+   "line": "What if your grandma was",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 38,
+   "line": "secretly a pro",
+   "note": "S2"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 14,
+   "first": 67,
+   "line": "gamer?",
+   "note": "S30"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 81,
+   "line": "Round one.",
+   "note": "S21"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 78,
+   "first": 117,
+   "line": "You teach her Block Quest. She's holding the controller",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 195,
+   "line": "upside down.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 221,
+   "line": "Grandma, that's the wrong way.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 284,
+   "line": "Oh, is it, sweetie? Then she",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 339,
+   "line": "wins. In four",
+   "note": "S7"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 18,
+   "first": 383,
+   "line": "seconds.",
+   "note": "S31"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 40,
+   "first": 401,
+   "line": "Round two. She",
+   "note": "S22"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 441,
+   "line": "builds a castle faster than you can",
+   "note": "S8"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 494,
+   "line": "blink. With",
+   "note": "S33"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 521,
+   "line": "a cookie shop inside.",
+   "note": "S9"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 554,
+   "line": "Round three. She",
+   "note": "S23"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 593,
+   "line": "beats the final",
+   "note": "S10"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 616,
+   "line": "boss.",
+   "note": "S34"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 21,
+   "first": 642,
+   "line": "While knitting.",
+   "note": "S32"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 96,
+   "first": 663,
+   "line": "Back in my day, bosses had three health bars.",
+   "note": "S11"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 759,
+   "line": "Round four.",
+   "note": "S24"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 798,
+   "line": "The number one player in the world",
+   "note": "S12"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 840,
+   "line": "challenges her.",
+   "note": "S35"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 68,
+   "first": 863,
+   "line": "Grandma, nobody beats him! He",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 931,
+   "line": "loses in one",
+   "note": "S14"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 957,
+   "line": "hit.",
+   "note": "S36"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 57,
+   "first": 981,
+   "line": "Then he asks for her cookie recipe.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 100,
+   "first": 1038,
+   "line": "Turns out, Grandma was the world champion. In",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 1138,
+   "line": "nineteen eighty-two.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 1167,
+   "line": "Now, who wants",
+   "note": "S18"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 20,
+   "len": 18,
+   "first": 1196,
+   "line": "cookies?",
+   "note": "S37"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 100,
+   "first": 1214,
+   "line": "Comment grandma if yours could beat you.",
+   "note": "S19"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 83
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 403
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 556
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 761
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 197
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.7,
+   "f": 341
+  },
+  {
+   "kind": "bloom",
+   "color": "#E8A03A",
+   "o": 0.6,
+   "f": 524
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 601
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.8,
+   "f": 935
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 12,
+   "f": 935
+  },
+  {
+   "kind": "iris",
+   "x": 540,
+   "y": 860,
+   "r": 420,
+   "f": 1040
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.8,
+   "f": 1141
+  }
+ ],
+ "audio": {
+  "voice": "grandma-pro/voice.wav",
+  "sfx": "grandma-pro/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1578,
+  "music": "grandma-pro/music.wav",
+  "musicVol": 0.0681
+ }
+}
