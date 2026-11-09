@@ -1,0 +1,16 @@
+[
+ {"text": "Three.js", "startMs": 600, "endMs": 1300, "timestampMs": 950, "confidence": 1},
+ {"text": " renders", "startMs": 1300, "endMs": 1800, "timestampMs": 1550, "confidence": 1},
+ {"text": " the", "startMs": 1800, "endMs": 2000, "timestampMs": 1900, "confidence": 1},
+ {"text": " 3D", "startMs": 2000, "endMs": 2600, "timestampMs": 2300, "confidence": 1},
+ {"text": " scene.", "startMs": 2600, "endMs": 3300, "timestampMs": 2950, "confidence": 1},
+ {"text": " Remotion", "startMs": 4200, "endMs": 4900, "timestampMs": 4550, "confidence": 1},
+ {"text": " adds", "startMs": 4900, "endMs": 5300, "timestampMs": 5100, "confidence": 1},
+ {"text": " captions", "startMs": 5300, "endMs": 6000, "timestampMs": 5650, "confidence": 1},
+ {"text": " and", "startMs": 6000, "endMs": 6250, "timestampMs": 6125, "confidence": 1},
+ {"text": " audio.", "startMs": 6250, "endMs": 7000, "timestampMs": 6625, "confidence": 1},
+ {"text": " Every", "startMs": 8000, "endMs": 8400, "timestampMs": 8200, "confidence": 1},
+ {"text": " frame", "startMs": 8400, "endMs": 8800, "timestampMs": 8600, "confidence": 1},
+ {"text": " is", "startMs": 8800, "endMs": 9000, "timestampMs": 8900, "confidence": 1},
+ {"text": " deterministic.", "startMs": 9000, "endMs": 10200, "timestampMs": 9600, "confidence": 1}
+]
