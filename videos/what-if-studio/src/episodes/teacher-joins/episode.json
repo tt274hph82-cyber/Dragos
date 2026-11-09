@@ -1,0 +1,1217 @@
+{
+ "id": "TeacherJoins",
+ "slug": "teacher-joins",
+ "topic": "What if your teacher joined the game? (blocky-game What If Short, school twist)",
+ "title": [
+  "TEACHER",
+  "JOINED"
+ ],
+ "accent": "TEACHER",
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.35,
+   "similarity_boost": 0.8,
+   "style": 0.6,
+   "use_speaker_boost": true,
+   "speed": 1.15
+  }
+ },
+ "cast": {
+  "kid": {
+   "id": "TxGEqnHWrfWFTfGW9XjX",
+   "settings": {
+    "stability": 0.35,
+    "similarity_boost": 0.8,
+    "style": 0.6,
+    "use_speaker_boost": true,
+    "speed": 1.1
+   }
+  },
+  "teach": {
+   "id": "pqHfZKP75CvOlQylNhV4",
+   "settings": {
+    "stability": 0.4,
+    "similarity_boost": 0.8,
+    "style": 0.55,
+    "use_speaker_boost": true,
+    "speed": 1.05
+   }
+  }
+ },
+ "gap": 0.04,
+ "tempo": 1.12,
+ "tail": 1.4,
+ "lead": 2,
+ "script": [
+  {
+   "beat": "s",
+   "text": "What if your teacher joined Block Quest?"
+  },
+  {
+   "beat": "s",
+   "text": "Period one. He gives the final boss homework."
+  },
+  {
+   "beat": "s",
+   "text": "Boss! Where is your essay?",
+   "who": "teach"
+  },
+  {
+   "beat": "s",
+   "text": "The boss cries and runs away."
+  },
+  {
+   "beat": "s",
+   "text": "Period two. He puts the whole server in detention. Three hundred players. One tiny classroom."
+  },
+  {
+   "beat": "s",
+   "text": "Sir, it's summer break!",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Not in this game.",
+   "who": "teach"
+  },
+  {
+   "beat": "s",
+   "text": "Period three. Pop quiz. Get it wrong, and you fall in the lava."
+  },
+  {
+   "beat": "s",
+   "text": "What is seven times eight?",
+   "who": "teach"
+  },
+  {
+   "beat": "s",
+   "text": "Uh... fifty-four?",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Splash."
+  },
+  {
+   "beat": "s",
+   "text": "Period four. He gives every player an F. Even the dragon."
+  },
+  {
+   "beat": "s",
+   "text": "But then, he sees your score. You're number one in the whole game."
+  },
+  {
+   "beat": "s",
+   "text": "Hmm. A plus. Extra credit.",
+   "who": "teach"
+  },
+  {
+   "beat": "s",
+   "text": "Comment teacher if yours would do this."
+  }
+ ],
+ "captions": {
+  "style": "pop",
+  "colors": {
+   "teacher": "#FFD23F",
+   "homework": "#FFD23F",
+   "boss": "#FF4A4A",
+   "essay": "#FFD23F",
+   "cries": "#7ACCF2",
+   "detention": "#FF4A4A",
+   "hundred": "#FFD23F",
+   "summer": "#4ADE6A",
+   "pop": "#FF7AE0",
+   "quiz": "#FF7AE0",
+   "lava": "#FF4A4A",
+   "seven": "#FFD23F",
+   "eight": "#FFD23F",
+   "fifty-four": "#FF4A4A",
+   "splash": "#FF4A4A",
+   "f": "#FF4A4A",
+   "dragon": "#FF7AE0",
+   "score": "#5AE8F8",
+   "one": "#FFD23F",
+   "plus": "#4ADE6A",
+   "credit": "#4ADE6A",
+   "two": "#FFD23F",
+   "three": "#FFD23F",
+   "four": "#FFD23F"
+  }
+ },
+ "science": [],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "at": "teacher",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "at": "Block",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S21",
+   "at": "Period",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S3",
+   "at": "gives",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "at": "homework",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S4",
+   "at": "Boss",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S5",
+   "at": "cries",
+   "tr": "cut",
+   "cam": "panR"
+  },
+  {
+   "shot": "S22",
+   "at": "Period",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S6",
+   "at": "puts",
+   "tr": "cut",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S7",
+   "at": "Three",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S32",
+   "at": "One",
+   "tr": "cut"
+  },
+  {
+   "shot": "S8",
+   "at": "Sir",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S9",
+   "at": "Not",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S23",
+   "at": "Period",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S10",
+   "at": "Pop",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "at": "Get",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "at": "fall",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S12",
+   "at": "What",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S13",
+   "at": "Uh",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S14",
+   "at": "s:25.25",
+   "tr": "cut"
+  },
+  {
+   "shot": "S24",
+   "at": "Period",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S15",
+   "at": "gives",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "at": "F",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "at": "dragon",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S17",
+   "at": "But",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S35",
+   "at": "number",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "at": "Hmm",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S19",
+   "at": "A",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S20",
+   "at": "Comment",
+   "tr": "cut",
+   "cam": "static"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S34"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S35"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S20"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S21+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S22+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S23+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S24+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S4+2",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "S8+2",
+   "kind": "shake",
+   "len": 8,
+   "amp": 7
+  },
+  {
+   "at": "S10+2",
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.7
+  },
+  {
+   "at": "S14+11",
+   "kind": "shake",
+   "len": 12,
+   "amp": 12
+  },
+  {
+   "at": "S14+11",
+   "kind": "flash",
+   "color": "#FFC21A",
+   "o": 0.6
+  },
+  {
+   "at": "S16+3",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S35+2",
+   "kind": "iris",
+   "x": 540,
+   "y": 690,
+   "r": 360
+  },
+  {
+   "at": "S19+15",
+   "kind": "bloom",
+   "color": "#4ADE6A",
+   "o": 0.8
+  }
+ ],
+ "sound": {
+  "clips": {
+   "music": [
+    "funny school themed chiptune video game music, bouncy xylophone and synth, a school bell motif, mischievous comedy, 145 bpm, no vocals",
+    40,
+    "music"
+   ],
+   "bell": [
+    "a loud old school bell ringing, short",
+    1.4
+   ],
+   "join": [
+    "a video game player joined notification chime",
+    0.8
+   ],
+   "paper": [
+    "a sheet of paper slapped down, whoosh",
+    0.8
+   ],
+   "cry": [
+    "a cartoon monster crying wail running away, no words",
+    1.4
+   ],
+   "crowd": [
+    "a crowd of kids groaning together, no words",
+    1.4
+   ],
+   "tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "chalk": [
+    "chalk scratching on a chalkboard writing quickly",
+    1.2
+   ],
+   "drum": [
+    "a short suspense drum roll",
+    1.2
+   ],
+   "buzzer": [
+    "a game show wrong answer buzzer",
+    0.8
+   ],
+   "splash": [
+    "a cartoon splash into hot lava, sizzle and plop",
+    1.2
+   ],
+   "stamp": [
+    "a heavy rubber stamp slam",
+    0.8
+   ],
+   "dragoncry": [
+    "a small sad baby dragon whimper, cartoon",
+    1.0
+   ],
+   "gasp": [
+    "a surprised old man gasp, hmm, no words",
+    0.8
+   ],
+   "ding": [
+    "a correct answer ding with sparkle",
+    1.0
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.6
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S30+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S2",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S4+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S5",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S22",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S8+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S9",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S10",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S11+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S33",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S13+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S14",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S34",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S34+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S16",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S35",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S18+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S19",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S21+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S22+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S23+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S24+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S10+2",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S16+3",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S19+15",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "s:0.63",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.55",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:4.21",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:4.55",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:5.11",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:6.35",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:6.97",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:7.33",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:9.19",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:11.31",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:12.60",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:13.03",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:13.91",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:16.17",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:18.45",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:19.21",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:19.45",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:21.77",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:22.63",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:23.47",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:24.63",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:25.67",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:26.71",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:29.05",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.11",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:32.13",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:33.51",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:36.09",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:36.85",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:37.61",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "S1",
+    "bell",
+    0.3
+   ],
+   [
+    "S2",
+    "join",
+    0.4
+   ],
+   [
+    "S3+8",
+    "paper",
+    0.4
+   ],
+   [
+    "S5",
+    "cry",
+    0.35
+   ],
+   [
+    "S6",
+    "crowd",
+    0.3
+   ],
+   [
+    "S7",
+    "tick",
+    0.3
+   ],
+   [
+    "S11",
+    "chalk",
+    0.3
+   ],
+   [
+    "S12+4",
+    "drum",
+    0.25
+   ],
+   [
+    "S13+10",
+    "buzzer",
+    0.3
+   ],
+   [
+    "S14+11",
+    "splash",
+    0.45
+   ],
+   [
+    "S15+3",
+    "stamp",
+    0.4
+   ],
+   [
+    "S15+9",
+    "stamp",
+    0.35
+   ],
+   [
+    "S16+3",
+    "dragoncry",
+    0.35
+   ],
+   [
+    "S18",
+    "gasp",
+    0.3
+   ],
+   [
+    "S19+15",
+    "stamp",
+    0.45
+   ],
+   [
+    "S19+18",
+    "ding",
+    0.35
+   ],
+   [
+    "S20+3",
+    "pop",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "music",
+    "from": "f:0",
+    "fade_in": 0.2,
+    "fade_out": 0.8
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -15.0
+  }
+ }
+}

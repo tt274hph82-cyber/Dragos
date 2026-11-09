@@ -1,0 +1,646 @@
+{
+ "slug": "teacher-joins",
+ "title": "TEACHER JOINED",
+ "fps": 30,
+ "total": 1216,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 15,
+   "t0": 0,
+   "t1": 15,
+   "line": "What if your",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "a": 15,
+   "b": 38,
+   "t0": 0,
+   "t1": 23,
+   "line": "teacher joined",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S2",
+   "a": 38,
+   "b": 59,
+   "t0": 0,
+   "t1": 21,
+   "line": "Block Quest?",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S21",
+   "a": 59,
+   "b": 101,
+   "t0": 0,
+   "t1": 42,
+   "line": "Period one.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S3",
+   "a": 101,
+   "b": 133,
+   "t0": 0,
+   "t1": 32,
+   "line": "He gives the final boss",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "a": 133,
+   "b": 150,
+   "t0": 0,
+   "t1": 17,
+   "line": "homework.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S4",
+   "a": 150,
+   "b": 216,
+   "t0": 0,
+   "t1": 66,
+   "line": "Boss! Where is your essay? The boss",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 216,
+   "b": 260,
+   "t0": 0,
+   "t1": 44,
+   "line": "cries and runs away.",
+   "cam": "panR",
+   "tr": "cut"
+  },
+  {
+   "shot": "S22",
+   "a": 260,
+   "b": 298,
+   "t0": 0,
+   "t1": 38,
+   "line": "Period two.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 298,
+   "b": 375,
+   "t0": 0,
+   "t1": 77,
+   "line": "He puts the whole server in detention.",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S7",
+   "a": 375,
+   "b": 414,
+   "t0": 0,
+   "t1": 39,
+   "line": "Three hundred players.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S32",
+   "a": 414,
+   "b": 457,
+   "t0": 0,
+   "t1": 43,
+   "line": "One tiny classroom.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S8",
+   "a": 457,
+   "b": 509,
+   "t0": 0,
+   "t1": 52,
+   "line": "Sir, it's summer break!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S9",
+   "a": 509,
+   "b": 539,
+   "t0": 0,
+   "t1": 30,
+   "line": "Not in this game.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "a": 539,
+   "b": 573,
+   "t0": 0,
+   "t1": 34,
+   "line": "Period three.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S10",
+   "a": 573,
+   "b": 603,
+   "t0": 0,
+   "t1": 30,
+   "line": "Pop quiz.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "a": 603,
+   "b": 636,
+   "t0": 0,
+   "t1": 33,
+   "line": "Get it wrong, and you",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "a": 636,
+   "b": 663,
+   "t0": 0,
+   "t1": 27,
+   "line": "fall in the lava.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S12",
+   "a": 663,
+   "b": 714,
+   "t0": 0,
+   "t1": 51,
+   "line": "What is seven times eight?",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S13",
+   "a": 714,
+   "b": 758,
+   "t0": 0,
+   "t1": 44,
+   "line": "Uh... fifty-four?",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S14",
+   "a": 758,
+   "b": 784,
+   "t0": 0,
+   "t1": 26,
+   "line": "Splash.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S24",
+   "a": 784,
+   "b": 825,
+   "t0": 0,
+   "t1": 41,
+   "line": "Period four.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S15",
+   "a": 825,
+   "b": 868,
+   "t0": 0,
+   "t1": 43,
+   "line": "He gives every player an",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "a": 868,
+   "b": 900,
+   "t0": 0,
+   "t1": 32,
+   "line": "F. Even",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "a": 900,
+   "b": 916,
+   "t0": 0,
+   "t1": 16,
+   "line": "the dragon.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "a": 916,
+   "b": 989,
+   "t0": 0,
+   "t1": 73,
+   "line": "But then, he sees your score. You're",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S35",
+   "a": 989,
+   "b": 1040,
+   "t0": 0,
+   "t1": 51,
+   "line": "number one in the whole game.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 1040,
+   "b": 1062,
+   "t0": 0,
+   "t1": 22,
+   "line": "Hmm.",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S19",
+   "a": 1062,
+   "b": 1115,
+   "t0": 0,
+   "t1": 53,
+   "line": "A plus. Extra credit.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "a": 1115,
+   "b": 1216,
+   "t0": 0,
+   "t1": 101,
+   "line": "Comment teacher if yours would do this.",
+   "cam": "static",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 0,
+   "line": "What if your",
+   "note": "S1"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 15,
+   "line": "teacher joined",
+   "note": "S30"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 21,
+   "first": 38,
+   "line": "Block Quest?",
+   "note": "S2"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 59,
+   "line": "Period one.",
+   "note": "S21"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 101,
+   "line": "He gives the final boss",
+   "note": "S3"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 17,
+   "first": 133,
+   "line": "homework.",
+   "note": "S31"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 66,
+   "first": 150,
+   "line": "Boss! Where is your essay? The boss",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 216,
+   "line": "cries and runs away.",
+   "note": "S5"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 260,
+   "line": "Period two.",
+   "note": "S22"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 77,
+   "first": 298,
+   "line": "He puts the whole server in detention.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 375,
+   "line": "Three hundred players.",
+   "note": "S7"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 43,
+   "first": 414,
+   "line": "One tiny classroom.",
+   "note": "S32"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 457,
+   "line": "Sir, it's summer break!",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 509,
+   "line": "Not in this game.",
+   "note": "S9"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 539,
+   "line": "Period three.",
+   "note": "S23"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 573,
+   "line": "Pop quiz.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 603,
+   "line": "Get it wrong, and you",
+   "note": "S11"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 636,
+   "line": "fall in the lava.",
+   "note": "S33"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 51,
+   "first": 663,
+   "line": "What is seven times eight?",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 714,
+   "line": "Uh... fifty-four?",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 758,
+   "line": "Splash.",
+   "note": "S14"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 784,
+   "line": "Period four.",
+   "note": "S24"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 43,
+   "first": 825,
+   "line": "He gives every player an",
+   "note": "S15"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 868,
+   "line": "F. Even",
+   "note": "S34"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 16,
+   "first": 900,
+   "line": "the dragon.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 916,
+   "line": "But then, he sees your score. You're",
+   "note": "S17"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 51,
+   "first": 989,
+   "line": "number one in the whole game.",
+   "note": "S35"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 22,
+   "first": 1040,
+   "line": "Hmm.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 1062,
+   "line": "A plus. Extra credit.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 101,
+   "first": 1115,
+   "line": "Comment teacher if yours would do this.",
+   "note": "S20"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 61
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 262
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 541
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 786
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 152
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 7,
+   "f": 459
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF7AE0",
+   "o": 0.7,
+   "f": 575
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 12,
+   "f": 769
+  },
+  {
+   "kind": "flash",
+   "color": "#FFC21A",
+   "o": 0.6,
+   "f": 769
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 903
+  },
+  {
+   "kind": "iris",
+   "x": 540,
+   "y": 610,
+   "r": 360,
+   "f": 991
+  },
+  {
+   "kind": "bloom",
+   "color": "#4ADE6A",
+   "o": 0.8,
+   "f": 1077
+  }
+ ],
+ "audio": {
+  "voice": "teacher-joins/voice.wav",
+  "sfx": "teacher-joins/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1524,
+  "music": "teacher-joins/music.wav",
+  "musicVol": 0.094
+ }
+}
