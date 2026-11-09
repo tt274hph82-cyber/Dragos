@@ -1,0 +1,1225 @@
+{
+ "id": "DigDown",
+ "slug": "dig-down",
+ "topic": "What if you dug straight down and never stopped? (blocky-game What If Short, pixel-block voxel look)",
+ "title": [
+  "DIG STRAIGHT",
+  "DOWN"
+ ],
+ "accent": "DOWN",
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.35,
+   "similarity_boost": 0.8,
+   "style": 0.6,
+   "use_speaker_boost": true,
+   "speed": 1.15
+  }
+ },
+ "cast": {
+  "kid": {
+   "id": "TxGEqnHWrfWFTfGW9XjX",
+   "settings": {
+    "stability": 0.35,
+    "similarity_boost": 0.8,
+    "style": 0.6,
+    "use_speaker_boost": true,
+    "speed": 1.1
+   }
+  },
+  "mom": {
+   "id": "21m00Tcm4TlvDq8ikWAM",
+   "settings": {
+    "stability": 0.35,
+    "similarity_boost": 0.8,
+    "style": 0.65,
+    "use_speaker_boost": true,
+    "speed": 1.1
+   }
+  }
+ },
+ "gap": 0.04,
+ "tempo": 1.12,
+ "tail": 1.4,
+ "lead": 2,
+ "script": [
+  {
+   "beat": "s",
+   "text": "What if you dug straight down in Block Quest, and never stopped?"
+  },
+  {
+   "beat": "s",
+   "text": "Layer one. Dirt. Easy."
+  },
+  {
+   "beat": "s",
+   "text": "This is gonna be so quick!",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Layer two. Stone. Your pickaxe breaks. You dig with a spoon."
+  },
+  {
+   "beat": "s",
+   "text": "Layer three. Gems! Everywhere! But you can't stop to grab them."
+  },
+  {
+   "beat": "s",
+   "text": "No, no, no! My gems!",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Layer four. Lava. You surf across it on a door."
+  },
+  {
+   "beat": "s",
+   "text": "Layer five. Bedrock. Nobody has ever broken it. You break it. With the spoon."
+  },
+  {
+   "beat": "s",
+   "text": "And then, you fall out the bottom of the world."
+  },
+  {
+   "beat": "s",
+   "text": "Aaaah!",
+   "who": "kid"
+  },
+  {
+   "beat": "s",
+   "text": "Straight into the sky. And you land, right back in your own house."
+  },
+  {
+   "beat": "s",
+   "text": "Who put a hole in my roof?!",
+   "who": "mom"
+  },
+  {
+   "beat": "s",
+   "text": "Comment dig if you'd keep going."
+  }
+ ],
+ "captions": {
+  "style": "pop",
+  "colors": {
+   "dug": "#FFD23F",
+   "dig": "#FFD23F",
+   "down": "#FFD23F",
+   "never": "#FF4A4A",
+   "dirt": "#C88A5A",
+   "easy": "#4ADE6A",
+   "quick": "#4ADE6A",
+   "stone": "#B8B8C8",
+   "breaks": "#FF4A4A",
+   "spoon": "#E8E8F0",
+   "gems": "#5AE8F8",
+   "everywhere": "#5AE8F8",
+   "lava": "#FF6A1A",
+   "surf": "#7ACCF2",
+   "door": "#E8A03A",
+   "bedrock": "#8A8A9A",
+   "nobody": "#FF4A4A",
+   "break": "#FFD23F",
+   "bottom": "#C8A8FF",
+   "world": "#C8A8FF",
+   "sky": "#7ACCF2",
+   "house": "#FFD23F",
+   "hole": "#FF4A4A",
+   "roof": "#FF4A4A",
+   "one": "#FFD23F",
+   "two": "#FFD23F",
+   "three": "#FFD23F",
+   "four": "#FFD23F",
+   "five": "#FFD23F"
+  }
+ },
+ "science": [],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "at": "dug",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "at": "never",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S21",
+   "at": "Layer",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S3",
+   "at": "Dirt",
+   "tr": "cut",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S36",
+   "at": "Easy",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S4",
+   "at": "This",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S22",
+   "at": "Layer",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S27",
+   "at": "Stone",
+   "tr": "cut",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S5",
+   "at": "Your",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S26",
+   "at": "You",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "at": "spoon",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S23",
+   "at": "Layer",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S7",
+   "at": "Gems",
+   "tr": "cut",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S31",
+   "at": "can't",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S8",
+   "at": "No",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S24",
+   "at": "Layer",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S9",
+   "at": "Lava",
+   "tr": "cut",
+   "cam": "panR"
+  },
+  {
+   "shot": "S32",
+   "at": "door",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S25",
+   "at": "Layer",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S10",
+   "at": "Bedrock",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "at": "Nobody",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "at": "break",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S34",
+   "at": "With",
+   "tr": "cut",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S12",
+   "at": "And",
+   "tr": "ghost",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S13",
+   "at": "Aaaah",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S14",
+   "at": "Straight",
+   "tr": "flash",
+   "cam": "tiltDown"
+  },
+  {
+   "shot": "S35",
+   "at": "land",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S15",
+   "at": "right",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S16",
+   "at": "Who",
+   "tr": "whip",
+   "cam": "dive"
+  },
+  {
+   "shot": "S17",
+   "at": "Comment",
+   "tr": "cut",
+   "cam": "static"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S36"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S27"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S34"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S35"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S17"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S21+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S22+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S23+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S24+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S25+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S5+18",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "S6+3",
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.6
+  },
+  {
+   "at": "S7+2",
+   "kind": "bloom",
+   "color": "#5AE8F8",
+   "o": 0.6
+  },
+  {
+   "at": "S9+10",
+   "kind": "flash",
+   "color": "#FF6A1A",
+   "o": 0.4
+  },
+  {
+   "at": "S11+1",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.8
+  },
+  {
+   "at": "S11+1",
+   "kind": "shake",
+   "len": 14,
+   "amp": 14
+  },
+  {
+   "at": "S15+6",
+   "kind": "shake",
+   "len": 12,
+   "amp": 14
+  },
+  {
+   "at": "S16+2",
+   "kind": "shake",
+   "len": 8,
+   "amp": 7
+  }
+ ],
+ "sound": {
+  "clips": {
+   "music": [
+    "adventurous 8-bit chiptune cave digging music, bouncy square-wave melody, mysterious then triumphant, retro video game, 150 bpm, no vocals",
+    41,
+    "music"
+   ],
+   "dig": [
+    "a shovel digging into dirt, crunchy, three quick digs",
+    1.2
+   ],
+   "stonehit": [
+    "a pickaxe hitting stone, three sharp clinks",
+    1.2
+   ],
+   "snap": [
+    "a wooden tool snapping in half with a metal clang",
+    0.8
+   ],
+   "spoon": [
+    "a tiny metal spoon ting, comedic",
+    0.6
+   ],
+   "item": [
+    "a retro video game item get jingle, short",
+    1.0
+   ],
+   "gems": [
+    "sparkling gem chimes shimmering, magical",
+    1.4
+   ],
+   "lava": [
+    "bubbling lava with a hiss, close",
+    1.6
+   ],
+   "sizzle": [
+    "a sizzling burn, comic, short",
+    0.8
+   ],
+   "tap": [
+    "a spoon tapping on hard rock, three taps",
+    1.0
+   ],
+   "crack": [
+    "a huge rock cracking and shattering apart",
+    1.4
+   ],
+   "fall": [
+    "a long cartoon falling whistle with wind rushing",
+    2.0
+   ],
+   "wind": [
+    "fast wind rushing past, falling through the sky",
+    1.6
+   ],
+   "crash": [
+    "a crash through a wooden roof with debris, thud",
+    1.2
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.6
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S30+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S21",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S36",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S4+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S22",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S8+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S24",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S10",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S33",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S34",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S13+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S14",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S35",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S16+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S17",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S21+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S22+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S23+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S24+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S25+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S6+3",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S7+2",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "s:0.51",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:1.25",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.81",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:4.03",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:4.73",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:5.47",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:7.05",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:7.89",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:8.75",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:10.17",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:11.07",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:11.59",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:12.39",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:13.23",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:14.09",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:18.21",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:19.21",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:20.07",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:21.11",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:22.13",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:22.91",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:23.75",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:24.79",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:27.03",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:28.25",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.37",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.91",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:33.17",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:35.99",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:36.95",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:37.57",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:38.61",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "S2",
+    "dig",
+    0.35
+   ],
+   [
+    "S3",
+    "dig",
+    0.3
+   ],
+   [
+    "S27",
+    "stonehit",
+    0.35
+   ],
+   [
+    "S5+18",
+    "snap",
+    0.45
+   ],
+   [
+    "S26",
+    "spoon",
+    0.35
+   ],
+   [
+    "S6+2",
+    "item",
+    0.35
+   ],
+   [
+    "S7",
+    "gems",
+    0.35
+   ],
+   [
+    "S9",
+    "lava",
+    0.3
+   ],
+   [
+    "S9+12",
+    "sizzle",
+    0.35
+   ],
+   [
+    "S10",
+    "tap",
+    0.35
+   ],
+   [
+    "S11",
+    "crack",
+    0.5
+   ],
+   [
+    "S12",
+    "fall",
+    0.35
+   ],
+   [
+    "S14",
+    "wind",
+    0.3
+   ],
+   [
+    "S15+5",
+    "crash",
+    0.5
+   ],
+   [
+    "S17+3",
+    "pop",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "music",
+    "from": "f:0",
+    "fade_in": 0.2,
+    "fade_out": 0.8
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -15.0
+  }
+ }
+}

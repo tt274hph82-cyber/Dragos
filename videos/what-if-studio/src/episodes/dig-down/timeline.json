@@ -1,0 +1,673 @@
+{
+ "slug": "dig-down",
+ "title": "DIG STRAIGHT DOWN",
+ "fps": 30,
+ "total": 1231,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 12,
+   "t0": 0,
+   "t1": 12,
+   "line": "What if you",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 12,
+   "b": 81,
+   "t0": 0,
+   "t1": 69,
+   "line": "dug straight down in Block Quest, and",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "a": 81,
+   "b": 105,
+   "t0": 0,
+   "t1": 24,
+   "line": "never stopped?",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S21",
+   "a": 105,
+   "b": 138,
+   "t0": 0,
+   "t1": 33,
+   "line": "Layer one.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S3",
+   "a": 138,
+   "b": 161,
+   "t0": 0,
+   "t1": 23,
+   "line": "Dirt.",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S36",
+   "a": 161,
+   "b": 173,
+   "t0": 0,
+   "t1": 12,
+   "line": "Easy.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S4",
+   "a": 173,
+   "b": 223,
+   "t0": 0,
+   "t1": 50,
+   "line": "This is gonna be so quick!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "a": 223,
+   "b": 259,
+   "t0": 0,
+   "t1": 36,
+   "line": "Layer two.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S27",
+   "a": 259,
+   "b": 282,
+   "t0": 0,
+   "t1": 23,
+   "line": "Stone.",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S5",
+   "a": 282,
+   "b": 324,
+   "t0": 0,
+   "t1": 42,
+   "line": "Your pickaxe breaks.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S26",
+   "a": 324,
+   "b": 344,
+   "t0": 0,
+   "t1": 20,
+   "line": "You dig with a",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "a": 344,
+   "b": 357,
+   "t0": 0,
+   "t1": 13,
+   "line": "spoon.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S23",
+   "a": 357,
+   "b": 393,
+   "t0": 0,
+   "t1": 36,
+   "line": "Layer three.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "a": 393,
+   "b": 457,
+   "t0": 0,
+   "t1": 64,
+   "line": "Gems! Everywhere! But",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "a": 457,
+   "b": 494,
+   "t0": 0,
+   "t1": 37,
+   "line": "you can't stop to grab them.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S8",
+   "a": 494,
+   "b": 561,
+   "t0": 0,
+   "t1": 67,
+   "line": "No, no, no! My gems!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S24",
+   "a": 561,
+   "b": 599,
+   "t0": 0,
+   "t1": 38,
+   "line": "Layer four.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S9",
+   "a": 599,
+   "b": 660,
+   "t0": 0,
+   "t1": 61,
+   "line": "Lava. You surf across it on",
+   "cam": "panR",
+   "tr": "cut"
+  },
+  {
+   "shot": "S32",
+   "a": 660,
+   "b": 673,
+   "t0": 0,
+   "t1": 13,
+   "line": "a door.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S25",
+   "a": 673,
+   "b": 709,
+   "t0": 0,
+   "t1": 36,
+   "line": "Layer five.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S10",
+   "a": 709,
+   "b": 740,
+   "t0": 0,
+   "t1": 31,
+   "line": "Bedrock.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "a": 740,
+   "b": 807,
+   "t0": 0,
+   "t1": 67,
+   "line": "Nobody has ever broken it.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "a": 807,
+   "b": 833,
+   "t0": 0,
+   "t1": 26,
+   "line": "You break it.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S34",
+   "a": 833,
+   "b": 857,
+   "t0": 0,
+   "t1": 24,
+   "line": "With the spoon.",
+   "cam": "tiltDown",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 857,
+   "b": 936,
+   "t0": 0,
+   "t1": 79,
+   "line": "And then, you fall out the bottom of the world.",
+   "cam": "tiltDown",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S13",
+   "a": 936,
+   "b": 969,
+   "t0": 0,
+   "t1": 33,
+   "line": "Aaaah!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S14",
+   "a": 969,
+   "b": 1025,
+   "t0": 0,
+   "t1": 56,
+   "line": "Straight into the sky. And",
+   "cam": "tiltDown",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "a": 1025,
+   "b": 1049,
+   "t0": 0,
+   "t1": 24,
+   "line": "you land,",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S15",
+   "a": 1049,
+   "b": 1090,
+   "t0": 0,
+   "t1": 41,
+   "line": "right back in your own house.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 1090,
+   "b": 1143,
+   "t0": 0,
+   "t1": 53,
+   "line": "Who put a hole in my roof?!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S17",
+   "a": 1143,
+   "b": 1231,
+   "t0": 0,
+   "t1": 88,
+   "line": "Comment dig if you'd keep going.",
+   "cam": "static",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 12,
+   "first": 0,
+   "line": "What if you",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 12,
+   "line": "dug straight down in Block Quest, and",
+   "note": "S2"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 81,
+   "line": "never stopped?",
+   "note": "S30"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 105,
+   "line": "Layer one.",
+   "note": "S21"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 138,
+   "line": "Dirt.",
+   "note": "S3"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 20,
+   "len": 12,
+   "first": 161,
+   "line": "Easy.",
+   "note": "S36"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 50,
+   "first": 173,
+   "line": "This is gonna be so quick!",
+   "note": "S4"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 223,
+   "line": "Layer two.",
+   "note": "S22"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 259,
+   "line": "Stone.",
+   "note": "S27"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 282,
+   "line": "Your pickaxe breaks.",
+   "note": "S5"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 20,
+   "first": 324,
+   "line": "You dig with a",
+   "note": "S26"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 13,
+   "first": 344,
+   "line": "spoon.",
+   "note": "S6"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 357,
+   "line": "Layer three.",
+   "note": "S23"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 64,
+   "first": 393,
+   "line": "Gems! Everywhere! But",
+   "note": "S7"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 37,
+   "first": 457,
+   "line": "you can't stop to grab them.",
+   "note": "S31"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 494,
+   "line": "No, no, no! My gems!",
+   "note": "S8"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 561,
+   "line": "Layer four.",
+   "note": "S24"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 61,
+   "first": 599,
+   "line": "Lava. You surf across it on",
+   "note": "S9"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 13,
+   "first": 660,
+   "line": "a door.",
+   "note": "S32"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 673,
+   "line": "Layer five.",
+   "note": "S25"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 31,
+   "first": 709,
+   "line": "Bedrock.",
+   "note": "S10"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 740,
+   "line": "Nobody has ever broken it.",
+   "note": "S33"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 807,
+   "line": "You break it.",
+   "note": "S11"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 833,
+   "line": "With the spoon.",
+   "note": "S34"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 79,
+   "first": 857,
+   "line": "And then, you fall out the bottom of the world.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 936,
+   "line": "Aaaah!",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 56,
+   "first": 969,
+   "line": "Straight into the sky. And",
+   "note": "S14"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 1025,
+   "line": "you land,",
+   "note": "S35"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 1049,
+   "line": "right back in your own house.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 1090,
+   "line": "Who put a hole in my roof?!",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 88,
+   "first": 1143,
+   "line": "Comment dig if you'd keep going.",
+   "note": "S17"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 107
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 225
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 359
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 563
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 675
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 300
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.6,
+   "f": 347
+  },
+  {
+   "kind": "bloom",
+   "color": "#5AE8F8",
+   "o": 0.6,
+   "f": 395
+  },
+  {
+   "kind": "flash",
+   "color": "#FF6A1A",
+   "o": 0.4,
+   "f": 609
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.8,
+   "f": 808
+  },
+  {
+   "kind": "shake",
+   "len": 14,
+   "amp": 14,
+   "f": 808
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 14,
+   "f": 1055
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 7,
+   "f": 1092
+  }
+ ],
+ "audio": {
+  "voice": "dig-down/voice.wav",
+  "sfx": "dig-down/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1473,
+  "music": "dig-down/music.wav",
+  "musicVol": 0.0809
+ }
+}
