@@ -26,6 +26,7 @@ Rules:
 - Model: `videos/voxel-wall/` (copied from `3d-template`, 1080x1920, 23 s, composition `VoxelWall`). First-person "true scary story" told by Austin, about 60 words, no captions, a twist in bright morning light.
 - `src/Scene.tsx`: everything is boxes with small seeded pixel textures (`pixelTex`, nearest filter); `Head` (face from flat boxes: neutral, scared, asleep, happy), `Person`, `Cat`; a `SHOTS` table (start second, camera from/to, look-at, fov) with slow pushes and a shake on impacts; night = blue hemisphere light + a moon spotlight with shadows through a real window hole + a red clock glow + fog; day = warm sun; an additive light shaft and dust motes; a vignette in `Video.tsx`.
 - `scripts/audio.py` makes the effects and music (dark drone that turns warm) and mixes `public/audio/mix.mp3`; the final encode normalizes to -14 LUFS into `youtube/<slug>-9x16.mp4`.
+- Second episode: `videos/voxel-closet/` (closet door that opens by itself, glowing eyes, the dog Pepper asleep on socks; door hinged on the far side so the gap faces the bed; dark-coloured dog at night so only the eyes show). New stories can share packages with `ln -s ../voxel-wall/node_modules node_modules` (git ignores the link) to save disk.
 - Frame each shot with stills first (9:16 is narrow: keep the camera back, and outside the room for wide shots). The full render takes about 10-15 minutes in the sandbox.
 
 ## Cartoon explainer style
