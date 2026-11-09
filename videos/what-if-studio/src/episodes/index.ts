@@ -20,5 +20,6 @@ import { petSwallowed } from './pet-swallowed';
 import { dadBoss } from './dad-boss';
 import { hacked } from './hacked';
 import { neverStop } from './never-stop';
+import { sisterAdmin } from './sister-admin';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin];
