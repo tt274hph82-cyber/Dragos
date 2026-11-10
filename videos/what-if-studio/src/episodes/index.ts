@@ -27,5 +27,6 @@ import { digDown } from './dig-down';
 import { babyController } from './baby-controller';
 import { cigarette } from './cigarette';
 import { pencil } from './pencil';
+import { microwave } from './microwave';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin, grandmaPro, teacherJoins, digDown, babyController, cigarette, pencil];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin, grandmaPro, teacherJoins, digDown, babyController, cigarette, pencil, microwave];

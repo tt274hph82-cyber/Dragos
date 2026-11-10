@@ -1,0 +1,1121 @@
+{
+ "id": "Microwave",
+ "slug": "microwave",
+ "topic": "The microwave oven tells its own story (first-person narration; drawn as a green radar/vector CRT screen)",
+ "title": [
+  "I WAS",
+  "AN ACCIDENT"
+ ],
+ "accent": "ACCIDENT",
+ "voice": {
+  "id": "pFZP5JQG7iQjIQuC4Bku",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.5,
+   "similarity_boost": 0.8,
+   "style": 0.3,
+   "use_speaker_boost": true
+  }
+ },
+ "tail": 2.0,
+ "lead": 2,
+ "gap": 0.2,
+ "tempo": 1.0,
+ "script": [
+  {
+   "beat": "s",
+   "text": "I was not invented. I was an accident. And it started with a melted candy bar."
+  },
+  {
+   "beat": "s",
+   "text": "Let me rewind."
+  },
+  {
+   "beat": "s",
+   "text": "Nineteen forty-five. My mother was a radar tube. A magnetron. Her job was hunting enemy planes."
+  },
+  {
+   "beat": "s",
+   "text": "One day, an engineer named Percy Spencer walked past her. A man who never finished grade school."
+  },
+  {
+   "beat": "s",
+   "text": "And the candy bar in his pocket turned to soup."
+  },
+  {
+   "beat": "s",
+   "text": "Most men would have changed their trousers. Percy fetched popcorn."
+  },
+  {
+   "beat": "s",
+   "text": "It popped. All over the lab."
+  },
+  {
+   "beat": "s",
+   "text": "Next, he tried an egg. It exploded. In a colleague's face."
+  },
+  {
+   "beat": "s",
+   "text": "And that, my friends, was my first meal."
+  },
+  {
+   "beat": "s",
+   "text": "Two years later, I went on sale. I was six feet tall. I weighed seven hundred and fifty pounds. And I cost about five thousand dollars."
+  },
+  {
+   "beat": "s",
+   "text": "Nobody wanted me."
+  },
+  {
+   "beat": "s",
+   "text": "So I went on a diet. Twenty years of it. Until, in nineteen sixty-seven, I finally fit on a kitchen counter."
+  },
+  {
+   "beat": "s",
+   "text": "Today, I live in nine out of ten American homes. That's real."
+  },
+  {
+   "beat": "s",
+   "text": "And what do you do with a machine born from war radar? You reheat yesterday's pizza."
+  },
+  {
+   "beat": "s",
+   "text": "You're welcome. Ding."
+  }
+ ],
+ "science": [
+  {
+   "claim": "Percy Spencer (Raytheon), 1945: a candy bar melted in his pocket near an active magnetron; he then popped popcorn and exploded an egg",
+   "note": "well-documented account"
+  },
+  {
+   "claim": "First commercial Radarange, 1947: about 6 ft tall, 750 lb, about $5,000",
+   "note": "price is commonly cited; hedged with \"about\""
+  },
+  {
+   "claim": "First popular countertop model: Amana Radarange, 1967",
+   "note": ""
+  },
+  {
+   "claim": "About nine in ten US homes have a microwave oven",
+   "note": "commonly cited share"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "at": "s:2.0",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S3",
+   "at": "s:3.54",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S4",
+   "at": "s:6.26",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S5",
+   "at": "s:7.45",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S6",
+   "at": "s:9.56",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S7",
+   "at": "s:11.88",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S8",
+   "at": "s:13.28",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S9",
+   "at": "s:15.88",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S10",
+   "at": "s:20.34",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S11",
+   "at": "s:22.68",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S12",
+   "at": "s:24.48",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S13",
+   "at": "s:25.66",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S14",
+   "at": "s:28.3",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S15",
+   "at": "s:29.9",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S16",
+   "at": "s:31.14",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S17",
+   "at": "s:32.8",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S18",
+   "at": "s:35.04",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S19",
+   "at": "s:36.6",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S20",
+   "at": "s:38.22",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S21",
+   "at": "s:41.16",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S22",
+   "at": "s:43.92",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S23",
+   "at": "s:45.92",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S24",
+   "at": "s:48.62",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S25",
+   "at": "s:51.58",
+   "tr": "cut",
+   "cam": "pull"
+  },
+  {
+   "shot": "S26",
+   "at": "s:53.1",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S27",
+   "at": "s:55.32",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S28",
+   "at": "s:57.16",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S29",
+   "at": "s:59.48",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S30",
+   "at": "s:62.0",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S31",
+   "at": "s:65.92",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S32",
+   "at": "s:66.84",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S33",
+   "at": "s:70.48",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S34",
+   "at": "s:72.52",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S35",
+   "at": "s:73.62",
+   "tr": "cut",
+   "cam": "static"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "crt",
+   "key": 20,
+   "note": "S35"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S2+1",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  },
+  {
+   "at": "S4+2",
+   "kind": "rewind",
+   "len": 26
+  },
+  {
+   "at": "S15+4",
+   "kind": "shake",
+   "len": 8,
+   "amp": 5
+  },
+  {
+   "at": "S18+1",
+   "kind": "flash",
+   "color": "#FFE2C0",
+   "o": 0.8
+  },
+  {
+   "at": "S18+1",
+   "kind": "shake",
+   "len": 14,
+   "amp": 14
+  },
+  {
+   "at": "S23+24",
+   "kind": "shake",
+   "len": 10,
+   "amp": 10
+  },
+  {
+   "at": "S31+1",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S35+1",
+   "kind": "punch",
+   "amp": 0.12
+  },
+  {
+   "at": "S35+1",
+   "kind": "flash",
+   "color": "#FFB02E",
+   "o": 0.4
+  }
+ ],
+ "sound": {
+  "clips": {
+   "score": [
+    "a sly retro 1950s sci-fi lounge score: a wavering theremin melody over vibraphone, upright bass and soft brushed drums, noir and tongue-in-cheek, mid tempo, turning into a light bossa nova groove in the last third, no vocals",
+    78,
+    "music"
+   ],
+   "crt": [
+    "an old CRT television switching on with a static crackle and electric hum",
+    1.4
+   ],
+   "alarm": [
+    "a short retro warning buzzer, two beeps",
+    0.9
+   ],
+   "melt": [
+    "a wet gooey drip and squelch, something melting",
+    1.2
+   ],
+   "ping": [
+    "a single sonar radar ping with a long echo",
+    2.0
+   ],
+   "hum": [
+    "a deep electrical transformer hum pulsing, vacuum tube",
+    2.2
+   ],
+   "planes": [
+    "propeller warplanes flying overhead in the distance",
+    2.4
+   ],
+   "steps": [
+    "a man walking in leather shoes on a lab floor, four steps",
+    1.6
+   ],
+   "buzz": [
+    "a quick negative game-show buzzer",
+    0.7
+   ],
+   "pop1": [
+    "a single popcorn kernel popping, then two more",
+    1.0
+   ],
+   "popmany": [
+    "a whole bag of popcorn popping rapidly",
+    2.0
+   ],
+   "tremble": [
+    "an object rattling and trembling faster and faster, rising tension",
+    1.6
+   ],
+   "splat": [
+    "a wet explosion splat, an egg bursting",
+    1.0
+   ],
+   "groan": [
+    "a man groaning in disgust, ugh, no words",
+    1.0
+   ],
+   "cash": [
+    "an old cash register ka-ching",
+    1.0
+   ],
+   "thud": [
+    "a very heavy metal object dropped on a floor, deep thud and crack",
+    1.2
+   ],
+   "crickets": [
+    "crickets chirping in an empty silent room",
+    2.0
+   ],
+   "ticks": [
+    "a fast mechanical counter ticking up, short",
+    1.6
+   ],
+   "mwhum": [
+    "a microwave oven running, steady hum",
+    2.2
+   ],
+   "door": [
+    "a microwave oven door popping open",
+    0.7
+   ],
+   "ding": [
+    "a classic microwave oven ding bell, single bright ding",
+    1.4
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S10",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S19",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S22",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S28",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S29",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S33",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S34",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S35",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S4+2",
+    "tr_tick",
+    0.25
+   ],
+   [
+    "S31+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S35+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S1",
+    "crt",
+    0.4
+   ],
+   [
+    "S2+1",
+    "alarm",
+    0.4
+   ],
+   [
+    "S3+10",
+    "melt",
+    0.35
+   ],
+   [
+    "S5",
+    "ping",
+    0.4
+   ],
+   [
+    "S6",
+    "hum",
+    0.3
+   ],
+   [
+    "S8",
+    "ping",
+    0.35
+   ],
+   [
+    "S8+20",
+    "planes",
+    0.25
+   ],
+   [
+    "S9",
+    "steps",
+    0.3
+   ],
+   [
+    "S10+10",
+    "buzz",
+    0.35
+   ],
+   [
+    "S12+2",
+    "melt",
+    0.4
+   ],
+   [
+    "S15+3",
+    "pop1",
+    0.4
+   ],
+   [
+    "S16",
+    "popmany",
+    0.4
+   ],
+   [
+    "S17+20",
+    "tremble",
+    0.35
+   ],
+   [
+    "S18+1",
+    "splat",
+    0.5
+   ],
+   [
+    "S19+6",
+    "groan",
+    0.35
+   ],
+   [
+    "S21+10",
+    "cash",
+    0.35
+   ],
+   [
+    "S23+24",
+    "thud",
+    0.45
+   ],
+   [
+    "S24",
+    "ticks",
+    0.3
+   ],
+   [
+    "S25+6",
+    "crickets",
+    0.35
+   ],
+   [
+    "S27",
+    "ticks",
+    0.3
+   ],
+   [
+    "S28",
+    "ping",
+    0.35
+   ],
+   [
+    "S30",
+    "ticks",
+    0.25
+   ],
+   [
+    "S32",
+    "ping",
+    0.3
+   ],
+   [
+    "S33",
+    "mwhum",
+    0.35
+   ],
+   [
+    "S34",
+    "door",
+    0.4
+   ],
+   [
+    "S35+1",
+    "ding",
+    0.6
+   ]
+  ],
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 1.5
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -16.0
+  }
+ }
+}

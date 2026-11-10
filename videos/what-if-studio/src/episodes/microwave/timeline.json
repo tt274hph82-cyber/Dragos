@@ -1,0 +1,736 @@
+{
+ "slug": "microwave",
+ "title": "I WAS AN ACCIDENT",
+ "fps": 30,
+ "total": 2275,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 60,
+   "t0": 0,
+   "t1": 60,
+   "line": "I was not invented.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 60,
+   "b": 106,
+   "t0": 0,
+   "t1": 46,
+   "line": "I was an accident.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S3",
+   "a": 106,
+   "b": 188,
+   "t0": 0,
+   "t1": 82,
+   "line": "And it started with a melted candy bar.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S4",
+   "a": 188,
+   "b": 224,
+   "t0": 0,
+   "t1": 36,
+   "line": "Let me rewind.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S5",
+   "a": 224,
+   "b": 287,
+   "t0": 0,
+   "t1": 63,
+   "line": "Nineteen forty-five.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S6",
+   "a": 287,
+   "b": 356,
+   "t0": 0,
+   "t1": 69,
+   "line": "My mother was a radar tube.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S7",
+   "a": 356,
+   "b": 398,
+   "t0": 0,
+   "t1": 42,
+   "line": "A magnetron.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S8",
+   "a": 398,
+   "b": 476,
+   "t0": 0,
+   "t1": 78,
+   "line": "Her job was hunting enemy planes.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S9",
+   "a": 476,
+   "b": 610,
+   "t0": 0,
+   "t1": 134,
+   "line": "One day, an engineer named Percy Spencer walked past her.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S10",
+   "a": 610,
+   "b": 680,
+   "t0": 0,
+   "t1": 70,
+   "line": "A man who never finished grade school.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S11",
+   "a": 680,
+   "b": 734,
+   "t0": 0,
+   "t1": 54,
+   "line": "And the candy bar in his pocket",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 734,
+   "b": 770,
+   "t0": 0,
+   "t1": 36,
+   "line": "turned to soup.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S13",
+   "a": 770,
+   "b": 849,
+   "t0": 0,
+   "t1": 79,
+   "line": "Most men would have changed their trousers.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S14",
+   "a": 849,
+   "b": 897,
+   "t0": 0,
+   "t1": 48,
+   "line": "Percy fetched popcorn.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S15",
+   "a": 897,
+   "b": 934,
+   "t0": 0,
+   "t1": 37,
+   "line": "It popped.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 934,
+   "b": 984,
+   "t0": 0,
+   "t1": 50,
+   "line": "All over the lab.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "a": 984,
+   "b": 1051,
+   "t0": 0,
+   "t1": 67,
+   "line": "Next, he tried an egg.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S18",
+   "a": 1051,
+   "b": 1098,
+   "t0": 0,
+   "t1": 47,
+   "line": "It exploded.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S19",
+   "a": 1098,
+   "b": 1147,
+   "t0": 0,
+   "t1": 49,
+   "line": "In a colleague's face.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S20",
+   "a": 1147,
+   "b": 1235,
+   "t0": 0,
+   "t1": 88,
+   "line": "And that, my friends, was my first meal.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S21",
+   "a": 1235,
+   "b": 1318,
+   "t0": 0,
+   "t1": 83,
+   "line": "Two years later, I went on sale.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S22",
+   "a": 1318,
+   "b": 1378,
+   "t0": 0,
+   "t1": 60,
+   "line": "I was six feet tall.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "a": 1378,
+   "b": 1459,
+   "t0": 0,
+   "t1": 81,
+   "line": "I weighed seven hundred and fifty pounds.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S24",
+   "a": 1459,
+   "b": 1547,
+   "t0": 0,
+   "t1": 88,
+   "line": "And I cost about five thousand dollars.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S25",
+   "a": 1547,
+   "b": 1593,
+   "t0": 0,
+   "t1": 46,
+   "line": "Nobody wanted me.",
+   "cam": "pull",
+   "tr": "cut"
+  },
+  {
+   "shot": "S26",
+   "a": 1593,
+   "b": 1660,
+   "t0": 0,
+   "t1": 67,
+   "line": "So I went on a diet.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S27",
+   "a": 1660,
+   "b": 1715,
+   "t0": 0,
+   "t1": 55,
+   "line": "Twenty years of it.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S28",
+   "a": 1715,
+   "b": 1784,
+   "t0": 0,
+   "t1": 69,
+   "line": "Until, in nineteen sixty-seven,",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S29",
+   "a": 1784,
+   "b": 1860,
+   "t0": 0,
+   "t1": 76,
+   "line": "I finally fit on a kitchen counter.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "a": 1860,
+   "b": 1978,
+   "t0": 0,
+   "t1": 118,
+   "line": "Today, I live in nine out of ten American homes.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "a": 1978,
+   "b": 2005,
+   "t0": 0,
+   "t1": 27,
+   "line": "That's real.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S32",
+   "a": 2005,
+   "b": 2114,
+   "t0": 0,
+   "t1": 109,
+   "line": "And what do you do with a machine born from war radar?",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "a": 2114,
+   "b": 2176,
+   "t0": 0,
+   "t1": 62,
+   "line": "You reheat yesterday's pizza.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "a": 2176,
+   "b": 2209,
+   "t0": 0,
+   "t1": 33,
+   "line": "You're welcome.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S35",
+   "a": 2209,
+   "b": 2275,
+   "t0": 0,
+   "t1": 66,
+   "line": "Ding.",
+   "cam": "static",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 0,
+   "line": "I was not invented.",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 46,
+   "first": 60,
+   "line": "I was an accident.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 82,
+   "first": 106,
+   "line": "And it started with a melted candy bar.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 188,
+   "line": "Let me rewind.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 224,
+   "line": "Nineteen forty-five.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 287,
+   "line": "My mother was a radar tube.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 356,
+   "line": "A magnetron.",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 78,
+   "first": 398,
+   "line": "Her job was hunting enemy planes.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 134,
+   "first": 476,
+   "line": "One day, an engineer named Percy Spencer walked past her.",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 70,
+   "first": 610,
+   "line": "A man who never finished grade school.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 680,
+   "line": "And the candy bar in his pocket",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 734,
+   "line": "turned to soup.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 79,
+   "first": 770,
+   "line": "Most men would have changed their trousers.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 48,
+   "first": 849,
+   "line": "Percy fetched popcorn.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 37,
+   "first": 897,
+   "line": "It popped.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 50,
+   "first": 934,
+   "line": "All over the lab.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 984,
+   "line": "Next, he tried an egg.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 47,
+   "first": 1051,
+   "line": "It exploded.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 49,
+   "first": 1098,
+   "line": "In a colleague's face.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 88,
+   "first": 1147,
+   "line": "And that, my friends, was my first meal.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 83,
+   "first": 1235,
+   "line": "Two years later, I went on sale.",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 1318,
+   "line": "I was six feet tall.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 81,
+   "first": 1378,
+   "line": "I weighed seven hundred and fifty pounds.",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 88,
+   "first": 1459,
+   "line": "And I cost about five thousand dollars.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 46,
+   "first": 1547,
+   "line": "Nobody wanted me.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 1593,
+   "line": "So I went on a diet.",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 1660,
+   "line": "Twenty years of it.",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 1715,
+   "line": "Until, in nineteen sixty-seven,",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 20,
+   "len": 76,
+   "first": 1784,
+   "line": "I finally fit on a kitchen counter.",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 118,
+   "first": 1860,
+   "line": "Today, I live in nine out of ten American homes.",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 1978,
+   "line": "That's real.",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 109,
+   "first": 2005,
+   "line": "And what do you do with a machine born from war radar?",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 62,
+   "first": 2114,
+   "line": "You reheat yesterday's pizza.",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 33,
+   "first": 2176,
+   "line": "You're welcome.",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 66,
+   "first": 2209,
+   "line": "Ding.",
+   "note": "S35"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 61
+  },
+  {
+   "kind": "rewind",
+   "len": 26,
+   "f": 190
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 5,
+   "f": 901
+  },
+  {
+   "kind": "flash",
+   "color": "#FFE2C0",
+   "o": 0.8,
+   "f": 1052
+  },
+  {
+   "kind": "shake",
+   "len": 14,
+   "amp": 14,
+   "f": 1052
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 1402
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1979
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 2210
+  },
+  {
+   "kind": "flash",
+   "color": "#FFB02E",
+   "o": 0.4,
+   "f": 2210
+  }
+ ],
+ "audio": {
+  "voice": "microwave/voice.wav",
+  "sfx": "microwave/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.173,
+  "music": "microwave/music.wav",
+  "musicVol": 0.0643
+ }
+}
