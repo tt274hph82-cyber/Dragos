@@ -1,0 +1,1343 @@
+{
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true
+  }
+ },
+ "tail": 2.0,
+ "lead": 2,
+ "gap": 0.14,
+ "tempo": 1.06,
+ "id": "Pencil",
+ "slug": "pencil",
+ "topic": "How the pencil was invented (story Reel drawn in code as pencil sketches on notebook paper)",
+ "title": [
+  "WHO INVENTED",
+  "THE PENCIL"
+ ],
+ "accent": "PENCIL",
+ "script": [
+  {
+   "beat": "s",
+   "text": "The pencil was invented by a storm. And a flock of sheep."
+  },
+  {
+   "beat": "s",
+   "text": "This ain't some bedtime story, buddy. Let me sketch it out for ya."
+  },
+  {
+   "beat": "s",
+   "text": "England. Fifteen sixty-four, or thereabouts. A storm rips a big old tree clean out of the ground."
+  },
+  {
+   "beat": "s",
+   "text": "And under the roots, shepherds find a strange black rock. Soft. Shiny. And it writes."
+  },
+  {
+   "beat": "s",
+   "text": "So they use it to mark their sheep."
+  },
+  {
+   "beat": "s",
+   "text": "Folks figure it's some kind of lead. It ain't. Never was. There has never been lead in a pencil."
+  },
+  {
+   "beat": "s",
+   "text": "That black rock got so valuable, they guarded the mine with guns. And smugglers snuck it out in their pockets."
+  },
+  {
+   "beat": "s",
+   "text": "But it was messy. So they wrapped it in string. Then somebody in Italy slid it inside a stick of wood."
+  },
+  {
+   "beat": "s",
+   "text": "Then, seventeen ninety-five. France is at war, and can't get the English rock."
+  },
+  {
+   "beat": "s",
+   "text": "So a fella named Cont\u00e9 grinds up the scraps, mixes them with clay, and bakes them like biscuits. That's the pencil you got today."
+  },
+  {
+   "beat": "s",
+   "text": "You get it, buddy? I said, you get it?"
+  },
+  {
+   "beat": "s",
+   "text": "And in eighteen fifty-eight, a man named Lipman sticks an eraser on the end. Because everybody makes mistakes."
+  },
+  {
+   "beat": "s",
+   "text": "They say one pencil can draw a line thirty-five miles long. That's real."
+  },
+  {
+   "beat": "s",
+   "text": "So next time you chew on one, remember. You're chewing on a storm."
+  },
+  {
+   "beat": "s",
+   "text": "That's about it, folks. Follow for more strange history. See ya!"
+  }
+ ],
+ "science": [
+  {
+   "claim": "Graphite found at Borrowdale, Cumbria, around 1564 after a storm felled trees; used to mark sheep",
+   "note": "traditional account; date hedged"
+  },
+  {
+   "claim": "Pencils never contained lead (graphite was mistaken for a lead ore, \"plumbago\")",
+   "note": ""
+  },
+  {
+   "claim": "The mine was guarded and graphite smuggled; theft made a felony in 1752",
+   "note": ""
+  },
+  {
+   "claim": "Conte, 1795: powdered graphite mixed with clay and kiln-fired",
+   "note": "patent 1795"
+  },
+  {
+   "claim": "Hymen Lipman patented the pencil with an attached eraser in 1858",
+   "note": "patent later invalidated"
+  },
+  {
+   "claim": "One pencil can draw a line about 35 miles long",
+   "note": "commonly cited figure; hedged with \"they say\""
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "at": "And",
+   "tr": "zoom",
+   "cam": "panR"
+  },
+  {
+   "shot": "S3",
+   "at": "This",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S4",
+   "at": "Let",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S5",
+   "at": "England",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S6",
+   "at": "or",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S7",
+   "at": "storm",
+   "tr": "ghost",
+   "cam": "push"
+  },
+  {
+   "shot": "S8",
+   "at": "clean",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S9",
+   "at": "And",
+   "tr": "dissolve",
+   "cam": "dive"
+  },
+  {
+   "shot": "S10",
+   "at": "shepherds",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S11",
+   "at": "Soft",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S12",
+   "at": "Shiny",
+   "tr": "zoom",
+   "cam": "push"
+  },
+  {
+   "shot": "S13",
+   "at": "And",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S14",
+   "at": "So",
+   "tr": "whip",
+   "cam": "panR"
+  },
+  {
+   "shot": "S15",
+   "at": "Folks",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S16",
+   "at": "It",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S17",
+   "at": "There",
+   "tr": "zoom",
+   "cam": "push"
+  },
+  {
+   "shot": "S18",
+   "at": "That",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S19",
+   "at": "guarded",
+   "tr": "ghost",
+   "cam": "pull"
+  },
+  {
+   "shot": "S20",
+   "at": "And",
+   "tr": "dissolve",
+   "cam": "panR"
+  },
+  {
+   "shot": "S21",
+   "at": "But",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S22",
+   "at": "So",
+   "tr": "cut",
+   "cam": "panR"
+  },
+  {
+   "shot": "S23",
+   "at": "Then",
+   "tr": "whip",
+   "cam": "push"
+  },
+  {
+   "shot": "S24",
+   "at": "slid",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S25",
+   "at": "Then",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S26",
+   "at": "France",
+   "tr": "cut",
+   "cam": "pull"
+  },
+  {
+   "shot": "S27",
+   "at": "can't",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S28",
+   "at": "So",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S29",
+   "at": "grinds",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S30",
+   "at": "mixes",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S31",
+   "at": "bakes",
+   "tr": "dissolve",
+   "cam": "push"
+  },
+  {
+   "shot": "S32",
+   "at": "That's",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S33",
+   "at": "s:55.44",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S34",
+   "at": "And",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S35",
+   "at": "sticks",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S36",
+   "at": "Because",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S37",
+   "at": "They",
+   "tr": "ghost",
+   "cam": "panR"
+  },
+  {
+   "shot": "S38",
+   "at": "line",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S39",
+   "at": "That's",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S40",
+   "at": "So",
+   "tr": "ghost",
+   "cam": "push"
+  },
+  {
+   "shot": "S41",
+   "at": "You're",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S42",
+   "at": "about",
+   "tr": "ghost",
+   "cam": "static"
+  },
+  {
+   "shot": "S43",
+   "at": "Follow",
+   "tr": "flash",
+   "cam": "static"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S42"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S43"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S1+3",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S1+8",
+   "kind": "flash",
+   "color": "#FFF6C0",
+   "o": 0.6
+  },
+  {
+   "at": "S7+4",
+   "kind": "flash",
+   "color": "#FFF6C0",
+   "o": 0.7
+  },
+  {
+   "at": "S8+14",
+   "kind": "shake",
+   "len": 12,
+   "amp": 12
+  },
+  {
+   "at": "S13+18",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S25+1",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S26+2",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  },
+  {
+   "at": "S32+2",
+   "kind": "bloom",
+   "color": "#F6C12B",
+   "o": 0.6
+  },
+  {
+   "at": "S35+14",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S38+22",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S39+1",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.7
+  },
+  {
+   "at": "S39+1",
+   "kind": "punch",
+   "amp": 0.12
+  },
+  {
+   "at": "S41+9",
+   "kind": "flash",
+   "color": "#FFF6C0",
+   "o": 0.5
+  }
+ ],
+ "sound": {
+  "clips": {
+   "score": [
+    "a warm folky score for a wry true story: a plucked acoustic guitar and a light fiddle over soft brushed percussion, curious and playful like a schoolroom daydream, a brief stormy rumble at the start, a marching snare in the middle third, bright and gentle at the end, no vocals",
+    80,
+    "music"
+   ],
+   "thunder": [
+    "a close thunder crack with rolling rumble and heavy rain",
+    3.0
+   ],
+   "sheep": [
+    "a flock of sheep bleating in a field",
+    2.0
+   ],
+   "scribble": [
+    "a pencil scribbling quickly on paper, close",
+    1.4
+   ],
+   "treefall": [
+    "a large tree cracking and crashing to the ground in a storm",
+    2.4
+   ],
+   "shimmer": [
+    "a soft magical shimmer sparkle",
+    1.0
+   ],
+   "hmm": [
+    "two men saying hmm, puzzled, no words",
+    1.0
+   ],
+   "rub": [
+    "an eraser rubbing hard on paper, quick strokes",
+    1.4
+   ],
+   "coins": [
+    "a small bag of coins jingling",
+    1.0
+   ],
+   "musket": [
+    "two muskets being cocked, metal clicks",
+    1.0
+   ],
+   "sneak": [
+    "tiptoe footsteps sneaking on gravel at night",
+    1.6
+   ],
+   "string": [
+    "string being wound tightly around a stick",
+    1.2
+   ],
+   "saw": [
+    "a small hand saw and wood shavings, carpentry",
+    1.4
+   ],
+   "click": [
+    "two pieces of wood clicking shut together",
+    0.6
+   ],
+   "cannon": [
+    "two old cannons firing in the distance, booms",
+    2.0
+   ],
+   "grind": [
+    "a stone mortar and pestle grinding grit",
+    1.6
+   ],
+   "pour": [
+    "dry powder poured into a bowl and stirred",
+    1.2
+   ],
+   "fire": [
+    "a kiln fire roaring softly with crackles",
+    1.8
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.6
+   ],
+   "chew": [
+    "someone chewing on a wooden pencil, crunchy nibbles",
+    1.2
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S9+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S10",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S19",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S22",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S28",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S29",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S33",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S34",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S35",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S36",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S37",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S38",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S39",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S40",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S41",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S41+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S42",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S43",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S1+3",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S13+18",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S25+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S32+2",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S35+14",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S38+22",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S39+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S1",
+    "thunder",
+    0.4
+   ],
+   [
+    "S2",
+    "sheep",
+    0.35
+   ],
+   [
+    "S3+6",
+    "scribble",
+    0.35
+   ],
+   [
+    "S4",
+    "scribble",
+    0.3
+   ],
+   [
+    "S7+3",
+    "thunder",
+    0.35
+   ],
+   [
+    "S8+10",
+    "treefall",
+    0.45
+   ],
+   [
+    "S12",
+    "shimmer",
+    0.35
+   ],
+   [
+    "S13",
+    "scribble",
+    0.35
+   ],
+   [
+    "S14+6",
+    "sheep",
+    0.3
+   ],
+   [
+    "S15+4",
+    "hmm",
+    0.3
+   ],
+   [
+    "S16+4",
+    "rub",
+    0.4
+   ],
+   [
+    "S18+6",
+    "coins",
+    0.35
+   ],
+   [
+    "S19",
+    "musket",
+    0.35
+   ],
+   [
+    "S20",
+    "sneak",
+    0.3
+   ],
+   [
+    "S22",
+    "string",
+    0.35
+   ],
+   [
+    "S23",
+    "saw",
+    0.3
+   ],
+   [
+    "S24+18",
+    "click",
+    0.4
+   ],
+   [
+    "S26+2",
+    "cannon",
+    0.35
+   ],
+   [
+    "S29",
+    "grind",
+    0.35
+   ],
+   [
+    "S30",
+    "pour",
+    0.35
+   ],
+   [
+    "S31",
+    "fire",
+    0.3
+   ],
+   [
+    "S32+2",
+    "shimmer",
+    0.35
+   ],
+   [
+    "S35+12",
+    "pop",
+    0.45
+   ],
+   [
+    "S36+12",
+    "rub",
+    0.35
+   ],
+   [
+    "S37",
+    "scribble",
+    0.3
+   ],
+   [
+    "S40",
+    "chew",
+    0.35
+   ],
+   [
+    "S41+9",
+    "thunder",
+    0.25
+   ],
+   [
+    "S43+30",
+    "scribble",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -15.0
+  }
+ }
+}

@@ -1,0 +1,909 @@
+{
+ "slug": "pencil",
+ "title": "WHO INVENTED THE PENCIL",
+ "fps": 30,
+ "total": 2392,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 73,
+   "t0": 0,
+   "t1": 73,
+   "line": "The pencil was invented by a storm.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 73,
+   "b": 111,
+   "t0": 0,
+   "t1": 38,
+   "line": "And a flock of sheep.",
+   "cam": "panR",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 111,
+   "b": 184,
+   "t0": 0,
+   "t1": 73,
+   "line": "This ain't some bedtime story, buddy.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S4",
+   "a": 184,
+   "b": 225,
+   "t0": 0,
+   "t1": 41,
+   "line": "Let me sketch it out for ya.",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 225,
+   "b": 294,
+   "t0": 0,
+   "t1": 69,
+   "line": "England. Fifteen sixty-four,",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 294,
+   "b": 341,
+   "t0": 0,
+   "t1": 47,
+   "line": "or thereabouts. A",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S7",
+   "a": 341,
+   "b": 393,
+   "t0": 0,
+   "t1": 52,
+   "line": "storm rips a big old tree",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S8",
+   "a": 393,
+   "b": 431,
+   "t0": 0,
+   "t1": 38,
+   "line": "clean out of the ground.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S9",
+   "a": 431,
+   "b": 470,
+   "t0": 0,
+   "t1": 39,
+   "line": "And under the roots,",
+   "cam": "dive",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S10",
+   "a": 470,
+   "b": 555,
+   "t0": 0,
+   "t1": 85,
+   "line": "shepherds find a strange black rock.",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S11",
+   "a": 555,
+   "b": 583,
+   "t0": 0,
+   "t1": 28,
+   "line": "Soft.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 583,
+   "b": 613,
+   "t0": 0,
+   "t1": 30,
+   "line": "Shiny.",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 613,
+   "b": 645,
+   "t0": 0,
+   "t1": 32,
+   "line": "And it writes.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S14",
+   "a": 645,
+   "b": 705,
+   "t0": 0,
+   "t1": 60,
+   "line": "So they use it to mark their sheep.",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "a": 705,
+   "b": 768,
+   "t0": 0,
+   "t1": 63,
+   "line": "Folks figure it's some kind of lead.",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S16",
+   "a": 768,
+   "b": 820,
+   "t0": 0,
+   "t1": 52,
+   "line": "It ain't. Never was.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "a": 820,
+   "b": 884,
+   "t0": 0,
+   "t1": 64,
+   "line": "There has never been lead in a pencil.",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 884,
+   "b": 951,
+   "t0": 0,
+   "t1": 67,
+   "line": "That black rock got so valuable, they",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S19",
+   "a": 951,
+   "b": 1005,
+   "t0": 0,
+   "t1": 54,
+   "line": "guarded the mine with guns.",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S20",
+   "a": 1005,
+   "b": 1075,
+   "t0": 0,
+   "t1": 70,
+   "line": "And smugglers snuck it out in their pockets.",
+   "cam": "panR",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S21",
+   "a": 1075,
+   "b": 1128,
+   "t0": 0,
+   "t1": 53,
+   "line": "But it was messy.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S22",
+   "a": 1128,
+   "b": 1188,
+   "t0": 0,
+   "t1": 60,
+   "line": "So they wrapped it in string.",
+   "cam": "panR",
+   "tr": "cut"
+  },
+  {
+   "shot": "S23",
+   "a": 1188,
+   "b": 1229,
+   "t0": 0,
+   "t1": 41,
+   "line": "Then somebody in Italy",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S24",
+   "a": 1229,
+   "b": 1283,
+   "t0": 0,
+   "t1": 54,
+   "line": "slid it inside a stick of wood.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S25",
+   "a": 1283,
+   "b": 1357,
+   "t0": 0,
+   "t1": 74,
+   "line": "Then, seventeen ninety-five.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S26",
+   "a": 1357,
+   "b": 1396,
+   "t0": 0,
+   "t1": 39,
+   "line": "France is at war, and",
+   "cam": "pull",
+   "tr": "cut"
+  },
+  {
+   "shot": "S27",
+   "a": 1396,
+   "b": 1441,
+   "t0": 0,
+   "t1": 45,
+   "line": "can't get the English rock.",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S28",
+   "a": 1441,
+   "b": 1483,
+   "t0": 0,
+   "t1": 42,
+   "line": "So a fella named Conté",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S29",
+   "a": 1483,
+   "b": 1524,
+   "t0": 0,
+   "t1": 41,
+   "line": "grinds up the scraps,",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "a": 1524,
+   "b": 1566,
+   "t0": 0,
+   "t1": 42,
+   "line": "mixes them with clay, and",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S31",
+   "a": 1566,
+   "b": 1613,
+   "t0": 0,
+   "t1": 47,
+   "line": "bakes them like biscuits.",
+   "cam": "push",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S32",
+   "a": 1613,
+   "b": 1663,
+   "t0": 0,
+   "t1": 50,
+   "line": "That's the pencil you got today.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S33",
+   "a": 1663,
+   "b": 1742,
+   "t0": 0,
+   "t1": 79,
+   "line": "You get it, buddy? I said, you get it?",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S34",
+   "a": 1742,
+   "b": 1823,
+   "t0": 0,
+   "t1": 81,
+   "line": "And in eighteen fifty-eight, a man named Lipman",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "a": 1823,
+   "b": 1878,
+   "t0": 0,
+   "t1": 55,
+   "line": "sticks an eraser on the end.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S36",
+   "a": 1878,
+   "b": 1941,
+   "t0": 0,
+   "t1": 63,
+   "line": "Because everybody makes mistakes.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S37",
+   "a": 1941,
+   "b": 1994,
+   "t0": 0,
+   "t1": 53,
+   "line": "They say one pencil can draw",
+   "cam": "panR",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S38",
+   "a": 1994,
+   "b": 2068,
+   "t0": 0,
+   "t1": 74,
+   "line": "a line thirty-five miles long.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "a": 2068,
+   "b": 2091,
+   "t0": 0,
+   "t1": 23,
+   "line": "That's real.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S40",
+   "a": 2091,
+   "b": 2174,
+   "t0": 0,
+   "t1": 83,
+   "line": "So next time you chew on one, remember.",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S41",
+   "a": 2174,
+   "b": 2231,
+   "t0": 0,
+   "t1": 57,
+   "line": "You're chewing on a storm. That's",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S42",
+   "a": 2231,
+   "b": 2265,
+   "t0": 0,
+   "t1": 34,
+   "line": "about it, folks.",
+   "cam": "static",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S43",
+   "a": 2265,
+   "b": 2392,
+   "t0": 0,
+   "t1": 127,
+   "line": "Follow for more strange history. See ya!",
+   "cam": "static",
+   "tr": "flash"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 0,
+   "line": "The pencil was invented by a storm.",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 73,
+   "line": "And a flock of sheep.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 111,
+   "line": "This ain't some bedtime story, buddy.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 184,
+   "line": "Let me sketch it out for ya.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 225,
+   "line": "England. Fifteen sixty-four,",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 47,
+   "first": 294,
+   "line": "or thereabouts. A",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 341,
+   "line": "storm rips a big old tree",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 38,
+   "first": 393,
+   "line": "clean out of the ground.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 431,
+   "line": "And under the roots,",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 85,
+   "first": 470,
+   "line": "shepherds find a strange black rock.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 28,
+   "first": 555,
+   "line": "Soft.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 583,
+   "line": "Shiny.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 613,
+   "line": "And it writes.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 645,
+   "line": "So they use it to mark their sheep.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 705,
+   "line": "Folks figure it's some kind of lead.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 768,
+   "line": "It ain't. Never was.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 64,
+   "first": 820,
+   "line": "There has never been lead in a pencil.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 884,
+   "line": "That black rock got so valuable, they",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 951,
+   "line": "guarded the mine with guns.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 70,
+   "first": 1005,
+   "line": "And smugglers snuck it out in their pockets.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 1075,
+   "line": "But it was messy.",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 1128,
+   "line": "So they wrapped it in string.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 1188,
+   "line": "Then somebody in Italy",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 1229,
+   "line": "slid it inside a stick of wood.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 74,
+   "first": 1283,
+   "line": "Then, seventeen ninety-five.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 1357,
+   "line": "France is at war, and",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 45,
+   "first": 1396,
+   "line": "can't get the English rock.",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 1441,
+   "line": "So a fella named Conté",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 1483,
+   "line": "grinds up the scraps,",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 1524,
+   "line": "mixes them with clay, and",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 47,
+   "first": 1566,
+   "line": "bakes them like biscuits.",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 50,
+   "first": 1613,
+   "line": "That's the pencil you got today.",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 79,
+   "first": 1663,
+   "line": "You get it, buddy? I said, you get it?",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 81,
+   "first": 1742,
+   "line": "And in eighteen fifty-eight, a man named Lipman",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 1823,
+   "line": "sticks an eraser on the end.",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 20,
+   "len": 63,
+   "first": 1878,
+   "line": "Because everybody makes mistakes.",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 1941,
+   "line": "They say one pencil can draw",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 20,
+   "len": 74,
+   "first": 1994,
+   "line": "a line thirty-five miles long.",
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 2068,
+   "line": "That's real.",
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 20,
+   "len": 83,
+   "first": 2091,
+   "line": "So next time you chew on one, remember.",
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "key": 20,
+   "len": 57,
+   "first": 2174,
+   "line": "You're chewing on a storm. That's",
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 2231,
+   "line": "about it, folks.",
+   "note": "S42"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "key": 20,
+   "len": 127,
+   "first": 2265,
+   "line": "Follow for more strange history. See ya!",
+   "note": "S43"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 3
+  },
+  {
+   "kind": "flash",
+   "color": "#FFF6C0",
+   "o": 0.6,
+   "f": 8
+  },
+  {
+   "kind": "flash",
+   "color": "#FFF6C0",
+   "o": 0.7,
+   "f": 345
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 12,
+   "f": 407
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 631
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 1284
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 1359
+  },
+  {
+   "kind": "bloom",
+   "color": "#F6C12B",
+   "o": 0.6,
+   "f": 1615
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1837
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 2016
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.7,
+   "f": 2069
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 2069
+  },
+  {
+   "kind": "flash",
+   "color": "#FFF6C0",
+   "o": 0.5,
+   "f": 2183
+  }
+ ],
+ "audio": {
+  "voice": "pencil/voice.wav",
+  "sfx": "pencil/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1615,
+  "music": "pencil/music.wav",
+  "musicVol": 0.0791
+ }
+}
