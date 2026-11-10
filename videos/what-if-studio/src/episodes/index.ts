@@ -24,5 +24,6 @@ import { sisterAdmin } from './sister-admin';
 import { grandmaPro } from './grandma-pro';
 import { teacherJoins } from './teacher-joins';
 import { digDown } from './dig-down';
+import { babyController } from './baby-controller';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin, grandmaPro, teacherJoins, digDown];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin, grandmaPro, teacherJoins, digDown, babyController];

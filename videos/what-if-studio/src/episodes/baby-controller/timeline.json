@@ -1,0 +1,651 @@
+{
+ "slug": "baby-controller",
+ "title": "BABY GOT THE CONTROLLER",
+ "fps": 30,
+ "total": 984,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 24,
+   "t0": 0,
+   "t1": 24,
+   "line": "What if your baby",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 24,
+   "b": 47,
+   "t0": 0,
+   "t1": 23,
+   "line": "brother grabbed",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "a": 47,
+   "b": 90,
+   "t0": 0,
+   "t1": 43,
+   "line": "your controller in Block Quest?",
+   "tr": "cut"
+  },
+  {
+   "shot": "S20",
+   "a": 90,
+   "b": 129,
+   "t0": 0,
+   "t1": 39,
+   "line": "Minute one. He",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S3",
+   "a": 129,
+   "b": 164,
+   "t0": 0,
+   "t1": 35,
+   "line": "drools on it.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "a": 164,
+   "b": 188,
+   "t0": 0,
+   "t1": 24,
+   "line": "Somehow, that",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S4",
+   "a": 188,
+   "b": 216,
+   "t0": 0,
+   "t1": 28,
+   "line": "unlocks a secret",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S32",
+   "a": 216,
+   "b": 230,
+   "t0": 0,
+   "t1": 14,
+   "line": "level.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "a": 230,
+   "b": 283,
+   "t0": 0,
+   "t1": 53,
+   "line": "That level doesn't even exist!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S21",
+   "a": 283,
+   "b": 323,
+   "t0": 0,
+   "t1": 40,
+   "line": "Minute two. He",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 323,
+   "b": 338,
+   "t0": 0,
+   "t1": 15,
+   "line": "chews the",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "a": 338,
+   "b": 367,
+   "t0": 0,
+   "t1": 29,
+   "line": "joystick.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S7",
+   "a": 367,
+   "b": 403,
+   "t0": 0,
+   "t1": 36,
+   "line": "Your character does a triple",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S34",
+   "a": 403,
+   "b": 425,
+   "t0": 0,
+   "t1": 22,
+   "line": "backflip, and",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S8",
+   "a": 425,
+   "b": 468,
+   "t0": 0,
+   "t1": 43,
+   "line": "lands on the final boss.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S22",
+   "a": 468,
+   "b": 509,
+   "t0": 0,
+   "t1": 41,
+   "line": "Minute three. He",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S9",
+   "a": 509,
+   "b": 540,
+   "t0": 0,
+   "t1": 31,
+   "line": "falls asleep on the",
+   "tr": "cut"
+  },
+  {
+   "shot": "S35",
+   "a": 540,
+   "b": 567,
+   "t0": 0,
+   "t1": 27,
+   "line": "buttons.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 567,
+   "b": 599,
+   "t0": 0,
+   "t1": 32,
+   "line": "And sets a world",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S36",
+   "a": 599,
+   "b": 615,
+   "t0": 0,
+   "t1": 16,
+   "line": "record.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "a": 615,
+   "b": 675,
+   "t0": 0,
+   "t1": 60,
+   "line": "I've been trying that for two years!",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S23",
+   "a": 675,
+   "b": 716,
+   "t0": 0,
+   "t1": 41,
+   "line": "Minute four.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S37",
+   "a": 716,
+   "b": 741,
+   "t0": 0,
+   "t1": 25,
+   "line": "He wakes up, and",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 741,
+   "b": 770,
+   "t0": 0,
+   "t1": 29,
+   "line": "throws the controller",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S13",
+   "a": 770,
+   "b": 791,
+   "t0": 0,
+   "t1": 21,
+   "line": "in the toilet.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S14",
+   "a": 791,
+   "b": 830,
+   "t0": 0,
+   "t1": 39,
+   "line": "Who wants to explain this?",
+   "cam": "dive",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "a": 830,
+   "b": 855,
+   "t0": 0,
+   "t1": 25,
+   "line": "And the baby just",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 855,
+   "b": 873,
+   "t0": 0,
+   "t1": 18,
+   "line": "points at",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S38",
+   "a": 873,
+   "b": 879,
+   "t0": 0,
+   "t1": 6,
+   "line": "you.",
+   "tr": "cut"
+  },
+  {
+   "shot": "S17",
+   "a": 879,
+   "b": 984,
+   "t0": 0,
+   "t1": 105,
+   "line": "Comment baby if yours is a menace.",
+   "cam": "static",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 0,
+   "line": "What if your baby",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 24,
+   "line": "brother grabbed",
+   "note": "S2"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 43,
+   "first": 47,
+   "line": "your controller in Block Quest?",
+   "note": "S30"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 90,
+   "line": "Minute one. He",
+   "note": "S20"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 35,
+   "first": 129,
+   "line": "drools on it.",
+   "note": "S3"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 24,
+   "first": 164,
+   "line": "Somehow, that",
+   "note": "S31"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 28,
+   "first": 188,
+   "line": "unlocks a secret",
+   "note": "S4"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 14,
+   "first": 216,
+   "line": "level.",
+   "note": "S32"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 230,
+   "line": "That level doesn't even exist!",
+   "note": "S5"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 40,
+   "first": 283,
+   "line": "Minute two. He",
+   "note": "S21"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 15,
+   "first": 323,
+   "line": "chews the",
+   "note": "S6"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 338,
+   "line": "joystick.",
+   "note": "S33"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 36,
+   "first": 367,
+   "line": "Your character does a triple",
+   "note": "S7"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 22,
+   "first": 403,
+   "line": "backflip, and",
+   "note": "S34"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 43,
+   "first": 425,
+   "line": "lands on the final boss.",
+   "note": "S8"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 468,
+   "line": "Minute three. He",
+   "note": "S22"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 31,
+   "first": 509,
+   "line": "falls asleep on the",
+   "note": "S9"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 540,
+   "line": "buttons.",
+   "note": "S35"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 32,
+   "first": 567,
+   "line": "And sets a world",
+   "note": "S10"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 20,
+   "len": 16,
+   "first": 599,
+   "line": "record.",
+   "note": "S36"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 615,
+   "line": "I've been trying that for two years!",
+   "note": "S11"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 675,
+   "line": "Minute four.",
+   "note": "S23"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 20,
+   "len": 25,
+   "first": 716,
+   "line": "He wakes up, and",
+   "note": "S37"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 741,
+   "line": "throws the controller",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 21,
+   "first": 770,
+   "line": "in the toilet.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 791,
+   "line": "Who wants to explain this?",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 25,
+   "first": 830,
+   "line": "And the baby just",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 18,
+   "first": 855,
+   "line": "points at",
+   "note": "S16"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 20,
+   "len": 6,
+   "first": 873,
+   "line": "you.",
+   "note": "S38"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 105,
+   "first": 879,
+   "line": "Comment baby if yours is a menace.",
+   "note": "S17"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 92
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 285
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 470
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 677
+  },
+  {
+   "kind": "bloom",
+   "color": "#C8A8FF",
+   "o": 0.7,
+   "f": 196
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 232
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.8,
+   "f": 430
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 13,
+   "f": 430
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.8,
+   "f": 570
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 7,
+   "f": 749
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 778
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 793
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 858
+  }
+ ],
+ "audio": {
+  "voice": "baby-controller/voice.wav",
+  "sfx": "baby-controller/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1439,
+  "music": "baby-controller/music.wav",
+  "musicVol": 0.0643
+ }
+}
