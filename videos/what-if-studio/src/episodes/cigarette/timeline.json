@@ -1,0 +1,887 @@
+{
+ "slug": "cigarette",
+ "title": "WHO INVENTED THE CIGARETTE",
+ "fps": 30,
+ "total": 2349,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 83,
+   "t0": 0,
+   "t1": 83,
+   "line": "The cigarette was invented by beggars.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 83,
+   "b": 124,
+   "t0": 0,
+   "t1": 41,
+   "line": "Digging through the trash.",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 124,
+   "b": 194,
+   "t0": 0,
+   "t1": 70,
+   "line": "This ain't some bedtime story, buddy.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S4",
+   "a": 194,
+   "b": 237,
+   "t0": 0,
+   "t1": 43,
+   "line": "Let me roll it out for ya.",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 237,
+   "b": 281,
+   "t0": 0,
+   "t1": 44,
+   "line": "A thousand years ago, the",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 281,
+   "b": 354,
+   "t0": 0,
+   "t1": 73,
+   "line": "Maya were already smoking tobacco,",
+   "cam": "push",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S7",
+   "a": 354,
+   "b": 398,
+   "t0": 0,
+   "t1": 44,
+   "line": "rolled up in leaves.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S8",
+   "a": 398,
+   "b": 427,
+   "t0": 0,
+   "t1": 29,
+   "line": "For their gods.",
+   "cam": "rise",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S9",
+   "a": 427,
+   "b": 476,
+   "t0": 0,
+   "t1": 49,
+   "line": "Fourteen ninety-two.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S10",
+   "a": 476,
+   "b": 533,
+   "t0": 0,
+   "t1": 57,
+   "line": "Columbus's crew sees it.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S11",
+   "a": 533,
+   "b": 575,
+   "t0": 0,
+   "t1": 42,
+   "line": "And one sailor carries",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S12",
+   "a": 575,
+   "b": 614,
+   "t0": 0,
+   "t1": 39,
+   "line": "the habit home to Spain.",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 614,
+   "b": 681,
+   "t0": 0,
+   "t1": 67,
+   "line": "Folks see smoke pouring out of his mouth, and",
+   "cam": "pull",
+   "tr": "flash"
+  },
+  {
+   "shot": "S14",
+   "a": 681,
+   "b": 738,
+   "t0": 0,
+   "t1": 57,
+   "line": "figure he's got the devil in him.",
+   "cam": "dive",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S15",
+   "a": 738,
+   "b": 793,
+   "t0": 0,
+   "t1": 55,
+   "line": "Story goes, they locked him up.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 793,
+   "b": 852,
+   "t0": 0,
+   "t1": 59,
+   "line": "But the rich fellas loved it.",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S17",
+   "a": 852,
+   "b": 904,
+   "t0": 0,
+   "t1": 52,
+   "line": "Big fat cigars.",
+   "cam": "panR",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 904,
+   "b": 957,
+   "t0": 0,
+   "t1": 53,
+   "line": "And they tossed the butts in the street.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S19",
+   "a": 957,
+   "b": 1005,
+   "t0": 0,
+   "t1": 48,
+   "line": "And in Seville, the beggars",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "a": 1005,
+   "b": 1044,
+   "t0": 0,
+   "t1": 39,
+   "line": "picked up those butts,",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 1044,
+   "b": 1074,
+   "t0": 0,
+   "t1": 30,
+   "line": "shredded them, and",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S22",
+   "a": 1074,
+   "b": 1123,
+   "t0": 0,
+   "t1": 49,
+   "line": "rolled them in scraps of paper.",
+   "cam": "push",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S23",
+   "a": 1123,
+   "b": 1173,
+   "t0": 0,
+   "t1": 50,
+   "line": "A poor man's cigar.",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S24",
+   "a": 1173,
+   "b": 1233,
+   "t0": 0,
+   "t1": 60,
+   "line": "The French called it a cigarette.",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S25",
+   "a": 1233,
+   "b": 1260,
+   "t0": 0,
+   "t1": 27,
+   "line": "A little cigar.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "a": 1260,
+   "b": 1335,
+   "t0": 0,
+   "t1": 75,
+   "line": "Soldiers carried it around the world. But",
+   "cam": "panR",
+   "tr": "flash"
+  },
+  {
+   "shot": "S27",
+   "a": 1335,
+   "b": 1410,
+   "t0": 0,
+   "t1": 75,
+   "line": "every one was still rolled by hand.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S28",
+   "a": 1410,
+   "b": 1457,
+   "t0": 0,
+   "t1": 47,
+   "line": "Four a minute, if you were quick.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S29",
+   "a": 1457,
+   "b": 1521,
+   "t0": 0,
+   "t1": 64,
+   "line": "Then, eighteen eighty.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S30",
+   "a": 1521,
+   "b": 1589,
+   "t0": 0,
+   "t1": 68,
+   "line": "A fella named Bonsack builds a machine. A",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S31",
+   "a": 1589,
+   "b": 1626,
+   "t0": 0,
+   "t1": 37,
+   "line": "hundred and twenty",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S32",
+   "a": 1626,
+   "b": 1668,
+   "t0": 0,
+   "t1": 42,
+   "line": "thousand a day.",
+   "cam": "dive",
+   "tr": "cut"
+  },
+  {
+   "shot": "S33",
+   "a": 1668,
+   "b": 1749,
+   "t0": 0,
+   "t1": 81,
+   "line": "You get it, buddy? I said, you get it?",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S34",
+   "a": 1749,
+   "b": 1804,
+   "t0": 0,
+   "t1": 55,
+   "line": "Like opening a fire hydrant.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S35",
+   "a": 1804,
+   "b": 1881,
+   "t0": 0,
+   "t1": 77,
+   "line": "And here's the part nobody rolled into the paper.",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S36",
+   "a": 1881,
+   "b": 1928,
+   "t0": 0,
+   "t1": 47,
+   "line": "Today, tobacco kills",
+   "cam": "static",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S37",
+   "a": 1928,
+   "b": 2003,
+   "t0": 0,
+   "t1": 75,
+   "line": "more than eight million people a year.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S38",
+   "a": 2003,
+   "b": 2026,
+   "t0": 0,
+   "t1": 23,
+   "line": "That's real.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S39",
+   "a": 2026,
+   "b": 2099,
+   "t0": 0,
+   "t1": 73,
+   "line": "So next time you see a butt on the sidewalk,",
+   "cam": "static",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S40",
+   "a": 2099,
+   "b": 2183,
+   "t0": 0,
+   "t1": 84,
+   "line": "remember. That's where it all started. That's",
+   "cam": "rise",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S41",
+   "a": 2183,
+   "b": 2217,
+   "t0": 0,
+   "t1": 34,
+   "line": "about it, folks.",
+   "cam": "static",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S42",
+   "a": 2217,
+   "b": 2349,
+   "t0": 0,
+   "t1": 132,
+   "line": "Follow for more strange history. See ya!",
+   "cam": "static",
+   "tr": "flash"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 83,
+   "first": 0,
+   "line": "The cigarette was invented by beggars.",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 41,
+   "first": 83,
+   "line": "Digging through the trash.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 70,
+   "first": 124,
+   "line": "This ain't some bedtime story, buddy.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 43,
+   "first": 194,
+   "line": "Let me roll it out for ya.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 237,
+   "line": "A thousand years ago, the",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 281,
+   "line": "Maya were already smoking tobacco,",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 44,
+   "first": 354,
+   "line": "rolled up in leaves.",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 29,
+   "first": 398,
+   "line": "For their gods.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 49,
+   "first": 427,
+   "line": "Fourteen ninety-two.",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 57,
+   "first": 476,
+   "line": "Columbus's crew sees it.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 533,
+   "line": "And one sailor carries",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 575,
+   "line": "the habit home to Spain.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 614,
+   "line": "Folks see smoke pouring out of his mouth, and",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 57,
+   "first": 681,
+   "line": "figure he's got the devil in him.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 738,
+   "line": "Story goes, they locked him up.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 59,
+   "first": 793,
+   "line": "But the rich fellas loved it.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 852,
+   "line": "Big fat cigars.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 53,
+   "first": 904,
+   "line": "And they tossed the butts in the street.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 48,
+   "first": 957,
+   "line": "And in Seville, the beggars",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 1005,
+   "line": "picked up those butts,",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 30,
+   "first": 1044,
+   "line": "shredded them, and",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 49,
+   "first": 1074,
+   "line": "rolled them in scraps of paper.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 50,
+   "first": 1123,
+   "line": "A poor man's cigar.",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 1173,
+   "line": "The French called it a cigarette.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 1233,
+   "line": "A little cigar.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 1260,
+   "line": "Soldiers carried it around the world. But",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 1335,
+   "line": "every one was still rolled by hand.",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 20,
+   "len": 47,
+   "first": 1410,
+   "line": "Four a minute, if you were quick.",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 20,
+   "len": 64,
+   "first": 1457,
+   "line": "Then, eighteen eighty.",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 68,
+   "first": 1521,
+   "line": "A fella named Bonsack builds a machine. A",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 37,
+   "first": 1589,
+   "line": "hundred and twenty",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 1626,
+   "line": "thousand a day.",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 81,
+   "first": 1668,
+   "line": "You get it, buddy? I said, you get it?",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 20,
+   "len": 55,
+   "first": 1749,
+   "line": "Like opening a fire hydrant.",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 20,
+   "len": 77,
+   "first": 1804,
+   "line": "And here's the part nobody rolled into the paper.",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 20,
+   "len": 47,
+   "first": 1881,
+   "line": "Today, tobacco kills",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 20,
+   "len": 75,
+   "first": 1928,
+   "line": "more than eight million people a year.",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 20,
+   "len": 23,
+   "first": 2003,
+   "line": "That's real.",
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 2026,
+   "line": "So next time you see a butt on the sidewalk,",
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 20,
+   "len": 84,
+   "first": 2099,
+   "line": "remember. That's where it all started. That's",
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "key": 20,
+   "len": 34,
+   "first": 2183,
+   "line": "about it, folks.",
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "key": 20,
+   "len": 132,
+   "first": 2217,
+   "line": "Follow for more strange history. See ya!",
+   "note": "S42"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 3
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 428
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF6A1A",
+   "o": 0.5,
+   "f": 699
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 705
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 12,
+   "f": 771
+  },
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 4,
+   "f": 924
+  },
+  {
+   "kind": "iris",
+   "x": 540,
+   "y": 1000,
+   "r": 240,
+   "len": 30,
+   "f": 1017
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF6A1A",
+   "o": 0.6,
+   "f": 1107
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 1458
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1640
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.7,
+   "f": 2004
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 2004
+  }
+ ],
+ "audio": {
+  "voice": "cigarette/voice.wav",
+  "sfx": "cigarette/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1456,
+  "music": "cigarette/music.wav",
+  "musicVol": 0.0628
+ }
+}

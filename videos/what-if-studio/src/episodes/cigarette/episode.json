@@ -1,0 +1,1311 @@
+{
+ "id": "Cigarette",
+ "slug": "cigarette",
+ "topic": "How the cigarette was invented (story Reel drawn on cigarette paper: ink silhouettes, ember orange, living smoke)",
+ "title": [
+  "WHO INVENTED",
+  "THE CIGARETTE"
+ ],
+ "accent": "CIGARETTE",
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true
+  }
+ },
+ "tail": 2.0,
+ "lead": 2,
+ "gap": 0.14,
+ "tempo": 1.06,
+ "script": [
+  {
+   "beat": "s",
+   "text": "The cigarette was invented by beggars. Digging through the trash."
+  },
+  {
+   "beat": "s",
+   "text": "This ain't some bedtime story, buddy. Let me roll it out for ya."
+  },
+  {
+   "beat": "s",
+   "text": "A thousand years ago, the Maya were already smoking tobacco, rolled up in leaves. For their gods."
+  },
+  {
+   "beat": "s",
+   "text": "Fourteen ninety-two. Columbus's crew sees it. And one sailor carries the habit home to Spain."
+  },
+  {
+   "beat": "s",
+   "text": "Folks see smoke pouring out of his mouth, and figure he's got the devil in him. Story goes, they locked him up."
+  },
+  {
+   "beat": "s",
+   "text": "But the rich fellas loved it. Big fat cigars. And they tossed the butts in the street."
+  },
+  {
+   "beat": "s",
+   "text": "And in Seville, the beggars picked up those butts, shredded them, and rolled them in scraps of paper."
+  },
+  {
+   "beat": "s",
+   "text": "A poor man's cigar. The French called it a cigarette. A little cigar."
+  },
+  {
+   "beat": "s",
+   "text": "Soldiers carried it around the world. But every one was still rolled by hand. Four a minute, if you were quick."
+  },
+  {
+   "beat": "s",
+   "text": "Then, eighteen eighty. A fella named Bonsack builds a machine. A hundred and twenty thousand a day."
+  },
+  {
+   "beat": "s",
+   "text": "You get it, buddy? I said, you get it? Like opening a fire hydrant."
+  },
+  {
+   "beat": "s",
+   "text": "And here's the part nobody rolled into the paper. Today, tobacco kills more than eight million people a year. That's real."
+  },
+  {
+   "beat": "s",
+   "text": "So next time you see a butt on the sidewalk, remember. That's where it all started."
+  },
+  {
+   "beat": "s",
+   "text": "That's about it, folks. Follow for more strange history. See ya!"
+  }
+ ],
+ "science": [
+  {
+   "claim": "Seville beggars rolled discarded cigar scraps in paper (papeletes), 17th century",
+   "note": "widely told origin; hedge as the common account"
+  },
+  {
+   "claim": "Bonsack machine (patent 1880-81): about 120,000 cigarettes a day",
+   "note": "vs about 4 a minute by a skilled hand roller"
+  },
+  {
+   "claim": "Tobacco kills more than 8 million people a year",
+   "note": "WHO"
+  },
+  {
+   "claim": "Rodrigo de Jerez jailed by the Inquisition for smoking",
+   "note": "traditional story, hedged with \"story goes\""
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "at": "Digging",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S3",
+   "at": "This",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S4",
+   "at": "Let",
+   "tr": "whip",
+   "cam": "panR"
+  },
+  {
+   "shot": "S5",
+   "at": "thousand",
+   "tr": "flash",
+   "cam": "rise"
+  },
+  {
+   "shot": "S6",
+   "at": "Maya",
+   "tr": "dissolve",
+   "cam": "push"
+  },
+  {
+   "shot": "S7",
+   "at": "rolled",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S8",
+   "at": "For",
+   "tr": "ghost",
+   "cam": "rise"
+  },
+  {
+   "shot": "S9",
+   "at": "Fourteen",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S10",
+   "at": "Columbus's",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S11",
+   "at": "And",
+   "tr": "whip",
+   "cam": "panR"
+  },
+  {
+   "shot": "S12",
+   "at": "habit",
+   "tr": "zoom",
+   "cam": "push"
+  },
+  {
+   "shot": "S13",
+   "at": "Folks",
+   "tr": "flash",
+   "cam": "pull"
+  },
+  {
+   "shot": "S14",
+   "at": "figure",
+   "tr": "ghost",
+   "cam": "dive"
+  },
+  {
+   "shot": "S15",
+   "at": "Story",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S16",
+   "at": "But",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S17",
+   "at": "Big",
+   "tr": "zoom",
+   "cam": "panR"
+  },
+  {
+   "shot": "S18",
+   "at": "And",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S19",
+   "at": "And",
+   "tr": "flash",
+   "cam": "rise"
+  },
+  {
+   "shot": "S20",
+   "at": "picked",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S21",
+   "at": "shredded",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S22",
+   "at": "rolled",
+   "tr": "dissolve",
+   "cam": "push"
+  },
+  {
+   "shot": "S23",
+   "at": "poor",
+   "tr": "ghost",
+   "cam": "push"
+  },
+  {
+   "shot": "S24",
+   "at": "French",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S25",
+   "at": "little",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S26",
+   "at": "Soldiers",
+   "tr": "flash",
+   "cam": "panR"
+  },
+  {
+   "shot": "S27",
+   "at": "every",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S28",
+   "at": "Four",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S29",
+   "at": "Then",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S30",
+   "at": "fella",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S31",
+   "at": "hundred",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S32",
+   "at": "thousand",
+   "tr": "cut",
+   "cam": "dive"
+  },
+  {
+   "shot": "S33",
+   "at": "You",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S34",
+   "at": "Like",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S35",
+   "at": "here's",
+   "tr": "flash",
+   "cam": "push"
+  },
+  {
+   "shot": "S36",
+   "at": "Today",
+   "tr": "ghost",
+   "cam": "static"
+  },
+  {
+   "shot": "S37",
+   "at": "more",
+   "tr": "dissolve",
+   "cam": "static"
+  },
+  {
+   "shot": "S38",
+   "at": "That's",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S39",
+   "at": "So",
+   "tr": "ghost",
+   "cam": "static"
+  },
+  {
+   "shot": "S40",
+   "at": "remember",
+   "tr": "dissolve",
+   "cam": "rise"
+  },
+  {
+   "shot": "S41",
+   "at": "about",
+   "tr": "ghost",
+   "cam": "static"
+  },
+  {
+   "shot": "S42",
+   "at": "Follow",
+   "tr": "flash",
+   "cam": "static"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "set": "paper",
+   "key": 20,
+   "note": "S42"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S1+3",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S9+1",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S14+18",
+   "kind": "bloom",
+   "color": "#FF6A1A",
+   "o": 0.5
+  },
+  {
+   "at": "S14+24",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  },
+  {
+   "at": "S15+33",
+   "kind": "shake",
+   "len": 12,
+   "amp": 12
+  },
+  {
+   "at": "S18+20",
+   "kind": "shake",
+   "len": 6,
+   "amp": 4
+  },
+  {
+   "at": "S20+12",
+   "kind": "iris",
+   "x": 540,
+   "y": 1000,
+   "r": 240,
+   "len": 30
+  },
+  {
+   "at": "S22+33",
+   "kind": "bloom",
+   "color": "#FF6A1A",
+   "o": 0.6
+  },
+  {
+   "at": "S29+1",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S32+14",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S38+1",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 0.7
+  },
+  {
+   "at": "S38+1",
+   "kind": "punch",
+   "amp": 0.12
+  }
+ ],
+ "sound": {
+  "clips": {
+   "score": [
+    "a smoky old-world score for a wry true story: a slow Spanish guitar and a low clarinet over a soft brushed drum, mysterious and a little mischievous, it grows into a clanking mechanical factory rhythm in the last third, then drops to a quiet, sombre single guitar at the end, no vocals",
+    80,
+    "music"
+   ],
+   "match": [
+    "a wooden match struck and flaring up, close",
+    1.2
+   ],
+   "rummage": [
+    "rummaging through rubbish, tin cans and paper, short",
+    1.4
+   ],
+   "unroll": [
+    "a sheet of paper unrolling quickly",
+    1.0
+   ],
+   "jungle": [
+    "jungle birds and a distant ritual drum, short",
+    2.0
+   ],
+   "waves": [
+    "ocean waves against a wooden ship with creaking ropes",
+    2.5
+   ],
+   "gasp": [
+    "a small crowd gasping in shock, no words",
+    1.0
+   ],
+   "sting": [
+    "a dark dramatic orchestral sting with a low growl, short",
+    1.6
+   ],
+   "bars": [
+    "heavy iron jail bars slamming shut with an echo",
+    1.4
+   ],
+   "tink": [
+    "a small object bouncing on cobblestones, two taps",
+    0.8
+   ],
+   "bells": [
+    "distant old church bells over a quiet town, short",
+    2.0
+   ],
+   "shred": [
+    "dry leaves being torn and crumbled between fingers",
+    1.0
+   ],
+   "paper": [
+    "thin paper being rolled tightly between fingers, crisp",
+    1.0
+   ],
+   "quill": [
+    "a quill pen scratching quickly on paper",
+    1.2
+   ],
+   "march": [
+    "soldiers marching on a dirt road, steady boots",
+    2.0
+   ],
+   "tick": [
+    "a stopwatch ticking fast",
+    1.4
+   ],
+   "steam": [
+    "a factory steam whistle with a hiss",
+    1.6
+   ],
+   "machine": [
+    "a clanking Victorian machine with gears turning fast and rattling",
+    3.0
+   ],
+   "spray": [
+    "a fire hydrant bursting open with a powerful spray of water",
+    1.6
+   ],
+   "drone": [
+    "a low ominous drone swelling, dark and quiet",
+    2.5
+   ],
+   "ashes": [
+    "dry ash crumbling and blowing away in a light wind",
+    2.0
+   ],
+   "step": [
+    "a single footstep on a pavement passing by",
+    0.8
+   ],
+   "hiss": [
+    "a cigarette stubbed out with a soft hiss",
+    1.0
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S2+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S3",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S10",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S14+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S15",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S19",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S22",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S28",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S29",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S32+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S33",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S34",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S35",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S36",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S37",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S38",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S39",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S40",
+    "tr_whoosh",
+    0.22,
+    "peak"
+   ],
+   [
+    "S41",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S42",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S1+3",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S9+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S14+18",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S22+33",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S29+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S32+14",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S38+1",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S1",
+    "match",
+    0.4
+   ],
+   [
+    "S2",
+    "rummage",
+    0.35
+   ],
+   [
+    "S4",
+    "unroll",
+    0.35
+   ],
+   [
+    "S5",
+    "jungle",
+    0.3
+   ],
+   [
+    "S9",
+    "waves",
+    0.3
+   ],
+   [
+    "S11",
+    "waves",
+    0.2
+   ],
+   [
+    "S13+6",
+    "gasp",
+    0.35
+   ],
+   [
+    "S14+16",
+    "sting",
+    0.4
+   ],
+   [
+    "S15+31",
+    "bars",
+    0.5
+   ],
+   [
+    "S18+20",
+    "tink",
+    0.35
+   ],
+   [
+    "S19",
+    "bells",
+    0.3
+   ],
+   [
+    "S21",
+    "shred",
+    0.4
+   ],
+   [
+    "S22+8",
+    "paper",
+    0.4
+   ],
+   [
+    "S22+32",
+    "match",
+    0.35
+   ],
+   [
+    "S24",
+    "quill",
+    0.35
+   ],
+   [
+    "S26",
+    "march",
+    0.3
+   ],
+   [
+    "S28",
+    "tick",
+    0.3
+   ],
+   [
+    "S29",
+    "steam",
+    0.3
+   ],
+   [
+    "S30",
+    "machine",
+    0.3
+   ],
+   [
+    "S31",
+    "machine",
+    0.35
+   ],
+   [
+    "S34",
+    "spray",
+    0.4
+   ],
+   [
+    "S35",
+    "drone",
+    0.4
+   ],
+   [
+    "S37+6",
+    "ashes",
+    0.4
+   ],
+   [
+    "S39+20",
+    "step",
+    0.35
+   ],
+   [
+    "S41+13",
+    "hiss",
+    0.45
+   ]
+  ],
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -15.0
+  }
+ }
+}
