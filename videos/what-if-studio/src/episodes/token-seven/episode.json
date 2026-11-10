@@ -1,0 +1,1467 @@
+{
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.35,
+   "similarity_boost": 0.8,
+   "style": 0.6,
+   "use_speaker_boost": true,
+   "speed": 1.15
+  }
+ },
+ "tail": 1.4,
+ "lead": 2,
+ "id": "TokenSeven",
+ "slug": "token-seven",
+ "topic": "How did these 7 players find the Golden Token? (16:9 countdown, blocky style, invented game)",
+ "title": [
+  "HOW 7 PLAYERS FOUND",
+  "THE GOLDEN TOKEN"
+ ],
+ "accent": "TOKEN",
+ "gap": 0.1,
+ "tempo": 1.1,
+ "script": [
+  {
+   "beat": "s",
+   "text": "Only seven players in the whole world have found the Golden Token in Block Quest."
+  },
+  {
+   "beat": "s",
+   "text": "And how they did it? Nobody tells you. Until now."
+  },
+  {
+   "beat": "s",
+   "text": "Number seven. Mia. She didn't find it. Her cat did. It walked across the keyboard, and jumped straight into a hidden cave."
+  },
+  {
+   "beat": "s",
+   "text": "Number six. Leo. He fell asleep on the jump button. Four hours later, his character had bounced all the way up to the token."
+  },
+  {
+   "beat": "s",
+   "text": "Number five. Grandpa Joe. He thought the game was a crossword. So he typed gold in the chat. That was the secret code."
+  },
+  {
+   "beat": "s",
+   "text": "Number four. The twins. One of them played with the screen upside down. Turns out, the map only makes sense that way."
+  },
+  {
+   "beat": "s",
+   "text": "Number three. Max. He lost a thousand times in a row. The game felt so sorry for him, it just gave him the token."
+  },
+  {
+   "beat": "s",
+   "text": "Number two. A baby. Nobody knows how. Nobody."
+  },
+  {
+   "beat": "s",
+   "text": "And number one. You. Because here's the truth no one tells you."
+  },
+  {
+   "beat": "s",
+   "text": "The token was never hidden. It's been sitting behind the start button the whole time."
+  },
+  {
+   "beat": "s",
+   "text": "Go check. And comment token if you found it."
+  }
+ ],
+ "captions": {
+  "style": "pop",
+  "colors": {
+   "seven": "#FFD23F",
+   "golden": "#FFD23F",
+   "token": "#FFD23F",
+   "nobody": "#FF4A4A",
+   "now": "#4ADE6A",
+   "mia": "#FF7AE0",
+   "cat": "#FF9A3A",
+   "keyboard": "#5AE8F8",
+   "cave": "#C8A8FF",
+   "six": "#FFD23F",
+   "leo": "#4A9AFF",
+   "asleep": "#8A9AFF",
+   "jump": "#4ADE6A",
+   "hours": "#FFD23F",
+   "five": "#FFD23F",
+   "grandpa": "#C8A8FF",
+   "crossword": "#5AE8F8",
+   "gold": "#FFD23F",
+   "secret": "#C8A8FF",
+   "code": "#C8A8FF",
+   "four": "#FFD23F",
+   "twins": "#FF7AE0",
+   "upside": "#FF4A4A",
+   "down": "#FF4A4A",
+   "map": "#4ADE6A",
+   "three": "#FFD23F",
+   "max": "#4A9AFF",
+   "thousand": "#FF4A4A",
+   "sorry": "#7ACCF2",
+   "two": "#FFD23F",
+   "baby": "#7ACCF2",
+   "one": "#FFD23F",
+   "you": "#FF4A4A",
+   "truth": "#FFD23F",
+   "never": "#FF4A4A",
+   "hidden": "#FF4A4A",
+   "start": "#4ADE6A",
+   "button": "#4ADE6A",
+   "check": "#4ADE6A"
+  }
+ },
+ "science": [],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "at": "s:2.3",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S3",
+   "at": "s:4.44",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S4",
+   "at": "s:5.74",
+   "tr": "whip",
+   "cam": "drift"
+  },
+  {
+   "shot": "S5",
+   "at": "s:7.12",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S6",
+   "at": "s:8.04",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S7",
+   "at": "s:10.16",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S8",
+   "at": "s:12.42",
+   "tr": "whip",
+   "cam": "drift"
+  },
+  {
+   "shot": "S9",
+   "at": "s:13.72",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S10",
+   "at": "s:15.78",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S11",
+   "at": "s:17.76",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S12",
+   "at": "s:19.82",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S13",
+   "at": "s:21.54",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S14",
+   "at": "s:23.34",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S15",
+   "at": "s:25.72",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S16",
+   "at": "s:27.54",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S17",
+   "at": "s:29.56",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S18",
+   "at": "s:30.96",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S19",
+   "at": "s:33.34",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S20",
+   "at": "s:35.94",
+   "tr": "whip",
+   "cam": "drift"
+  },
+  {
+   "shot": "S21",
+   "at": "s:38.3",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S22",
+   "at": "s:40.22",
+   "tr": "zoom",
+   "cam": "dive"
+  },
+  {
+   "shot": "S23",
+   "at": "s:42.86",
+   "tr": "cut",
+   "cam": "zoomOut"
+  },
+  {
+   "shot": "S24",
+   "at": "s:45.96",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S25",
+   "at": "s:48.2",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S26",
+   "at": "s:49.72",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S27",
+   "at": "s:50.38",
+   "tr": "flash",
+   "cam": "static"
+  },
+  {
+   "shot": "S28",
+   "at": "s:51.9",
+   "tr": "whip",
+   "cam": "drift"
+  },
+  {
+   "shot": "S29",
+   "at": "s:52.6",
+   "tr": "cut",
+   "cam": "push"
+  },
+  {
+   "shot": "S30",
+   "at": "s:54.9",
+   "tr": "zoom",
+   "cam": "static"
+  },
+  {
+   "shot": "S31",
+   "at": "s:56.64",
+   "tr": "cut",
+   "cam": "static"
+  },
+  {
+   "shot": "S32",
+   "at": "s:59.08",
+   "tr": "whip",
+   "cam": "static"
+  },
+  {
+   "shot": "S33",
+   "at": "s:59.92",
+   "tr": "cut",
+   "cam": "push"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "blockworld",
+   "key": 20,
+   "note": "S33"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S6+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S10+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S14+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S18+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S21+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S24+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S27+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S2+2",
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.7
+  },
+  {
+   "at": "S4+3",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "S9+22",
+   "kind": "bloom",
+   "color": "#C8A8FF",
+   "o": 0.6
+  },
+  {
+   "at": "S17+4",
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.8
+  },
+  {
+   "at": "S22+2",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  },
+  {
+   "at": "S26+1",
+   "kind": "shake",
+   "len": 10,
+   "amp": 10
+  },
+  {
+   "at": "S26+1",
+   "kind": "flash",
+   "color": "#FF4A4A",
+   "o": 0.5
+  },
+  {
+   "at": "S28+5",
+   "kind": "punch",
+   "amp": 0.12
+  },
+  {
+   "at": "S31+24",
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.9
+  },
+  {
+   "at": "S31+24",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  }
+ ],
+ "sound": {
+  "clips": {
+   "music": [
+    "hype upbeat gaming compilation music, punchy trap drums with bright synth plucks and a catchy melody, energetic and fun, 140 bpm, no vocals",
+    64,
+    "music"
+   ],
+   "shine": [
+    "a magical golden coin shine with a bright chime",
+    1.2
+   ],
+   "gasp": [
+    "a group of people gasping in surprise, no words",
+    1.0
+   ],
+   "stamp": [
+    "a heavy rubber stamp slam",
+    0.8
+   ],
+   "drum": [
+    "a short dramatic drum hit with a cymbal",
+    1.0
+   ],
+   "meow": [
+    "a cat meowing once, cute",
+    0.8
+   ],
+   "keys": [
+    "a cat walking on a computer keyboard, random key clicks",
+    1.4
+   ],
+   "jump": [
+    "a cartoon video game jump boing then a magic chime",
+    1.0
+   ],
+   "snore": [
+    "a kid snoring softly",
+    1.4
+   ],
+   "boing": [
+    "rapid repeated cartoon boing boing boing bounces rising in pitch",
+    1.6
+   ],
+   "paper": [
+    "a newspaper page rustling",
+    0.8
+   ],
+   "type": [
+    "four slow keyboard key presses",
+    1.0
+   ],
+   "unlock": [
+    "a secret unlocked video game jingle with sparkles",
+    1.4
+   ],
+   "flip": [
+    "a quick whoosh flip rotation",
+    0.6
+   ],
+   "aha": [
+    "two girls saying ohh in realisation, no words",
+    1.0
+   ],
+   "lose": [
+    "a sad video game losing buzzer repeated quickly",
+    1.4
+   ],
+   "sadwin": [
+    "a soft sympathetic aww then a small win chime",
+    1.4
+   ],
+   "babygiggle": [
+    "a happy baby giggle, short, no words",
+    1.2
+   ],
+   "boom": [
+    "a deep punchy cinematic boom impact hit, short",
+    1.2
+   ],
+   "slide": [
+    "a heavy button sliding aside with a click",
+    0.8
+   ],
+   "fanfare": [
+    "a short triumphant video game victory fanfare with chimes",
+    1.8
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.6
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "events": [
+   [
+    "S1",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S2+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S3",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S10",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S19",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S22",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S22+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S23",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S28",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S29",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S33",
+    "tr_cut",
+    0.16,
+    "peak"
+   ],
+   [
+    "S6+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S10+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S14+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S18+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S21+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S24+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S27+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S2+2",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S9+22",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S17+4",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S28+5",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S31+24",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "s:0.47",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:2.87",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:3.25",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:5.79",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:6.57",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:7.63",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:8.41",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:9.27",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:11.49",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:13.31",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:14.89",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:15.19",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:16.17",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:16.97",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:18.15",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:18.87",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:19.13",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:19.87",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:20.11",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:22.89",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:23.69",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:24.49",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:26.69",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:28.27",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.19",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:30.51",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:31.35",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:32.31",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:33.39",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:34.73",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:35.15",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:36.83",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:38.63",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:39.43",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:40.73",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:43.89",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:45.51",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:46.33",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:47.21",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:48.25",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:49.77",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:50.99",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:51.95",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:53.39",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:54.05",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:54.57",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:55.07",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:55.65",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:55.95",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:57.67",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:57.97",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:59.33",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:60.65",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "s:61.11",
+    "tr_hit",
+    0.2
+   ],
+   [
+    "S1",
+    "shine",
+    0.4
+   ],
+   [
+    "S2+2",
+    "shine",
+    0.35
+   ],
+   [
+    "S3+3",
+    "gasp",
+    0.35
+   ],
+   [
+    "S4+2",
+    "stamp",
+    0.45
+   ],
+   [
+    "S5",
+    "drum",
+    0.4
+   ],
+   [
+    "S7+2",
+    "meow",
+    0.4
+   ],
+   [
+    "S8",
+    "keys",
+    0.35
+   ],
+   [
+    "S9+2",
+    "jump",
+    0.4
+   ],
+   [
+    "S11",
+    "snore",
+    0.3
+   ],
+   [
+    "S13",
+    "boing",
+    0.35
+   ],
+   [
+    "S15",
+    "paper",
+    0.3
+   ],
+   [
+    "S16+6",
+    "type",
+    0.4
+   ],
+   [
+    "S17+3",
+    "unlock",
+    0.25
+   ],
+   [
+    "S19+6",
+    "flip",
+    0.4
+   ],
+   [
+    "S20+18",
+    "aha",
+    0.3
+   ],
+   [
+    "S22",
+    "lose",
+    0.35
+   ],
+   [
+    "S23+16",
+    "sadwin",
+    0.35
+   ],
+   [
+    "S25",
+    "babygiggle",
+    0.4
+   ],
+   [
+    "S25+6",
+    "gasp",
+    0.3
+   ],
+   [
+    "S26+1",
+    "boom",
+    0.5
+   ],
+   [
+    "S28+5",
+    "boom",
+    0.4
+   ],
+   [
+    "S31+9",
+    "slide",
+    0.45
+   ],
+   [
+    "S31+24",
+    "fanfare",
+    0.4
+   ],
+   [
+    "S33+2",
+    "pop",
+    0.3
+   ]
+  ],
+  "music": [
+   {
+    "clip": "music",
+    "from": "f:0",
+    "fade_in": 0.2,
+    "fade_out": 1.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -16.0
+  }
+ }
+}

@@ -1,0 +1,741 @@
+{
+ "slug": "token-seven",
+ "title": "HOW 7 PLAYERS FOUND THE GOLDEN TOKEN",
+ "fps": 30,
+ "total": 1886,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 69,
+   "t0": 0,
+   "t1": 69,
+   "line": "Only seven players in the whole world",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 69,
+   "b": 133,
+   "t0": 0,
+   "t1": 64,
+   "line": "have found the Golden Token in Block Quest.",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 133,
+   "b": 172,
+   "t0": 0,
+   "t1": 39,
+   "line": "And how they did it?",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S4",
+   "a": 172,
+   "b": 214,
+   "t0": 0,
+   "t1": 42,
+   "line": "Nobody tells you.",
+   "cam": "drift",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 214,
+   "b": 241,
+   "t0": 0,
+   "t1": 27,
+   "line": "Until now.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 241,
+   "b": 305,
+   "t0": 0,
+   "t1": 64,
+   "line": "Number seven. Mia.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "a": 305,
+   "b": 373,
+   "t0": 0,
+   "t1": 68,
+   "line": "She didn't find it. Her cat did.",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S8",
+   "a": 373,
+   "b": 412,
+   "t0": 0,
+   "t1": 39,
+   "line": "It walked across the keyboard,",
+   "cam": "drift",
+   "tr": "whip"
+  },
+  {
+   "shot": "S9",
+   "a": 412,
+   "b": 473,
+   "t0": 0,
+   "t1": 61,
+   "line": "and jumped straight into a hidden cave.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S10",
+   "a": 473,
+   "b": 533,
+   "t0": 0,
+   "t1": 60,
+   "line": "Number six. Leo.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S11",
+   "a": 533,
+   "b": 595,
+   "t0": 0,
+   "t1": 62,
+   "line": "He fell asleep on the jump button.",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S12",
+   "a": 595,
+   "b": 646,
+   "t0": 0,
+   "t1": 51,
+   "line": "Four hours later, his character had",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S13",
+   "a": 646,
+   "b": 700,
+   "t0": 0,
+   "t1": 54,
+   "line": "bounced all the way up to the token.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S14",
+   "a": 700,
+   "b": 772,
+   "t0": 0,
+   "t1": 72,
+   "line": "Number five. Grandpa Joe.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S15",
+   "a": 772,
+   "b": 826,
+   "t0": 0,
+   "t1": 54,
+   "line": "He thought the game was a crossword.",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S16",
+   "a": 826,
+   "b": 887,
+   "t0": 0,
+   "t1": 61,
+   "line": "So he typed gold in the chat.",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S17",
+   "a": 887,
+   "b": 929,
+   "t0": 0,
+   "t1": 42,
+   "line": "That was the secret code.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S18",
+   "a": 929,
+   "b": 1000,
+   "t0": 0,
+   "t1": 71,
+   "line": "Number four. The twins.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S19",
+   "a": 1000,
+   "b": 1078,
+   "t0": 0,
+   "t1": 78,
+   "line": "One of them played with the screen upside down.",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S20",
+   "a": 1078,
+   "b": 1149,
+   "t0": 0,
+   "t1": 71,
+   "line": "Turns out, the map only makes sense that way.",
+   "cam": "drift",
+   "tr": "whip"
+  },
+  {
+   "shot": "S21",
+   "a": 1149,
+   "b": 1207,
+   "t0": 0,
+   "t1": 58,
+   "line": "Number three. Max.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S22",
+   "a": 1207,
+   "b": 1286,
+   "t0": 0,
+   "t1": 79,
+   "line": "He lost a thousand times in a row.",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S23",
+   "a": 1286,
+   "b": 1379,
+   "t0": 0,
+   "t1": 93,
+   "line": "The game felt so sorry for him, it just gave him the token.",
+   "cam": "zoomOut",
+   "tr": "cut"
+  },
+  {
+   "shot": "S24",
+   "a": 1379,
+   "b": 1446,
+   "t0": 0,
+   "t1": 67,
+   "line": "Number two. A baby.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S25",
+   "a": 1446,
+   "b": 1492,
+   "t0": 0,
+   "t1": 46,
+   "line": "Nobody knows how.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S26",
+   "a": 1492,
+   "b": 1511,
+   "t0": 0,
+   "t1": 19,
+   "line": "Nobody.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S27",
+   "a": 1511,
+   "b": 1557,
+   "t0": 0,
+   "t1": 46,
+   "line": "And number one.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S28",
+   "a": 1557,
+   "b": 1578,
+   "t0": 0,
+   "t1": 21,
+   "line": "You.",
+   "cam": "drift",
+   "tr": "whip"
+  },
+  {
+   "shot": "S29",
+   "a": 1578,
+   "b": 1647,
+   "t0": 0,
+   "t1": 69,
+   "line": "Because here's the truth no one tells you.",
+   "cam": "push",
+   "tr": "cut"
+  },
+  {
+   "shot": "S30",
+   "a": 1647,
+   "b": 1699,
+   "t0": 0,
+   "t1": 52,
+   "line": "The token was never hidden.",
+   "cam": "static",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S31",
+   "a": 1699,
+   "b": 1772,
+   "t0": 0,
+   "t1": 73,
+   "line": "It's been sitting behind the start button the whole time.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S32",
+   "a": 1772,
+   "b": 1798,
+   "t0": 0,
+   "t1": 26,
+   "line": "Go check.",
+   "cam": "static",
+   "tr": "whip"
+  },
+  {
+   "shot": "S33",
+   "a": 1798,
+   "b": 1886,
+   "t0": 0,
+   "t1": 88,
+   "line": "And comment token if you found it.",
+   "cam": "push",
+   "tr": "cut"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 0,
+   "line": "Only seven players in the whole world",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 20,
+   "len": 64,
+   "first": 69,
+   "line": "have found the Golden Token in Block Quest.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 133,
+   "line": "And how they did it?",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 172,
+   "line": "Nobody tells you.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 20,
+   "len": 27,
+   "first": 214,
+   "line": "Until now.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 20,
+   "len": 64,
+   "first": 241,
+   "line": "Number seven. Mia.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 20,
+   "len": 68,
+   "first": 305,
+   "line": "She didn't find it. Her cat did.",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 20,
+   "len": 39,
+   "first": 373,
+   "line": "It walked across the keyboard,",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 20,
+   "len": 61,
+   "first": 412,
+   "line": "and jumped straight into a hidden cave.",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 20,
+   "len": 60,
+   "first": 473,
+   "line": "Number six. Leo.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 20,
+   "len": 62,
+   "first": 533,
+   "line": "He fell asleep on the jump button.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 20,
+   "len": 51,
+   "first": 595,
+   "line": "Four hours later, his character had",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 646,
+   "line": "bounced all the way up to the token.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 20,
+   "len": 72,
+   "first": 700,
+   "line": "Number five. Grandpa Joe.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 20,
+   "len": 54,
+   "first": 772,
+   "line": "He thought the game was a crossword.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 20,
+   "len": 61,
+   "first": 826,
+   "line": "So he typed gold in the chat.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 20,
+   "len": 42,
+   "first": 887,
+   "line": "That was the secret code.",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 929,
+   "line": "Number four. The twins.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 20,
+   "len": 78,
+   "first": 1000,
+   "line": "One of them played with the screen upside down.",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 20,
+   "len": 71,
+   "first": 1078,
+   "line": "Turns out, the map only makes sense that way.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 20,
+   "len": 58,
+   "first": 1149,
+   "line": "Number three. Max.",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 20,
+   "len": 79,
+   "first": 1207,
+   "line": "He lost a thousand times in a row.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 20,
+   "len": 93,
+   "first": 1286,
+   "line": "The game felt so sorry for him, it just gave him the token.",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 20,
+   "len": 67,
+   "first": 1379,
+   "line": "Number two. A baby.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 20,
+   "len": 46,
+   "first": 1446,
+   "line": "Nobody knows how.",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 20,
+   "len": 19,
+   "first": 1492,
+   "line": "Nobody.",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 20,
+   "len": 46,
+   "first": 1511,
+   "line": "And number one.",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 20,
+   "len": 21,
+   "first": 1557,
+   "line": "You.",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 20,
+   "len": 69,
+   "first": 1578,
+   "line": "Because here's the truth no one tells you.",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 20,
+   "len": 52,
+   "first": 1647,
+   "line": "The token was never hidden.",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 20,
+   "len": 73,
+   "first": 1699,
+   "line": "It's been sitting behind the start button the whole time.",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 20,
+   "len": 26,
+   "first": 1772,
+   "line": "Go check.",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 20,
+   "len": 88,
+   "first": 1798,
+   "line": "And comment token if you found it.",
+   "note": "S33"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 243
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 475
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 702
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 931
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1151
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1381
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1513
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.7,
+   "f": 71
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 175
+  },
+  {
+   "kind": "bloom",
+   "color": "#C8A8FF",
+   "o": 0.6,
+   "f": 434
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.8,
+   "f": 891
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 1209
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 10,
+   "f": 1493
+  },
+  {
+   "kind": "flash",
+   "color": "#FF4A4A",
+   "o": 0.5,
+   "f": 1493
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 1562
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.9,
+   "f": 1723
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 1723
+  }
+ ],
+ "audio": {
+  "voice": "token-seven/voice.wav",
+  "sfx": "token-seven/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.156,
+  "music": "token-seven/music.wav",
+  "musicVol": 0.0665
+ }
+}
