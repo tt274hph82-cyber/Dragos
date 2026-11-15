@@ -1,0 +1,13 @@
+{
+  "name": "Page Growth Tips",
+  "domain": "facebook.com/pagegrowthtips",
+  "handle": "@pagegrowthtips",
+  "tagline": "Simple steps to grow your page.",
+  "headline": "Grow your page",
+  "colors": { "ground": "#07090f", "ink": "#FFFFFF", "accent": "#2D88FF", "accent2": "#FFC93C", "surface": "#111725", "muted": "#8A93A6", "paper": "#F2F4F8" },
+  "fonts": { "display": "Montserrat", "body": "Inter" },
+  "logo": "mark.svg",
+  "mark": "mark.png",
+  "screens": [],
+  "people": []
+}

@@ -1,0 +1,525 @@
+{
+ "total": 30.11,
+ "lines": [
+  {
+   "id": "hook",
+   "text": "Stuck under a thousand followers? Do these four things. The last one matters most.",
+   "start": 0.35,
+   "end": 5.714
+  },
+  {
+   "id": "niche",
+   "text": "One. Pick one niche, and stand out in it.",
+   "start": 6.164,
+   "end": 9.441
+  },
+  {
+   "id": "hook2",
+   "text": "Two. Hook them in the first second, or they scroll.",
+   "start": 9.841,
+   "end": 13.075
+  },
+  {
+   "id": "daily",
+   "text": "Three. Post every single day for thirty days.",
+   "start": 13.475,
+   "end": 17.118
+  },
+  {
+   "id": "reply",
+   "text": "Four. Reply to every comment in the first hour. That's what the algorithm notices.",
+   "start": 17.518,
+   "end": 23.106
+  },
+  {
+   "id": "result",
+   "text": "Do all four, and that first thousand comes fast.",
+   "start": 23.556,
+   "end": 26.849
+  },
+  {
+   "id": "follow",
+   "text": "Follow for more tips.",
+   "start": 27.199,
+   "end": 28.515
+  }
+ ],
+ "words": [
+  {
+   "w": "Stuck",
+   "line": "hook",
+   "s": 0.46,
+   "e": 0.66,
+   "ok": true
+  },
+  {
+   "w": "under",
+   "line": "hook",
+   "s": 0.72,
+   "e": 0.92,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "hook",
+   "s": 0.98,
+   "e": 1.06,
+   "ok": true
+  },
+  {
+   "w": "thousand",
+   "line": "hook",
+   "s": 1.12,
+   "e": 1.48,
+   "ok": true
+  },
+  {
+   "w": "followers?",
+   "line": "hook",
+   "s": 1.62,
+   "e": 2.12,
+   "ok": true
+  },
+  {
+   "w": "Do",
+   "line": "hook",
+   "s": 2.58,
+   "e": 2.7,
+   "ok": true
+  },
+  {
+   "w": "these",
+   "line": "hook",
+   "s": 2.76,
+   "e": 3.02,
+   "ok": true
+  },
+  {
+   "w": "four",
+   "line": "hook",
+   "s": 3.06,
+   "e": 3.26,
+   "ok": true
+  },
+  {
+   "w": "things.",
+   "line": "hook",
+   "s": 3.36,
+   "e": 3.76,
+   "ok": true
+  },
+  {
+   "w": "The",
+   "line": "hook",
+   "s": 4.18,
+   "e": 4.28,
+   "ok": true
+  },
+  {
+   "w": "last",
+   "line": "hook",
+   "s": 4.34,
+   "e": 4.64,
+   "ok": true
+  },
+  {
+   "w": "one",
+   "line": "hook",
+   "s": 4.7,
+   "e": 4.82,
+   "ok": true
+  },
+  {
+   "w": "matters",
+   "line": "hook",
+   "s": 4.92,
+   "e": 5.2,
+   "ok": true
+  },
+  {
+   "w": "most.",
+   "line": "hook",
+   "s": 5.34,
+   "e": 5.7,
+   "ok": true
+  },
+  {
+   "w": "One.",
+   "line": "niche",
+   "s": 6.26,
+   "e": 6.52,
+   "ok": true
+  },
+  {
+   "w": "Pick",
+   "line": "niche",
+   "s": 7.14,
+   "e": 7.32,
+   "ok": true
+  },
+  {
+   "w": "one",
+   "line": "niche",
+   "s": 7.54,
+   "e": 7.68,
+   "ok": true
+  },
+  {
+   "w": "niche,",
+   "line": "niche",
+   "s": 7.78,
+   "e": 8.08,
+   "ok": true
+  },
+  {
+   "w": "and",
+   "line": "niche",
+   "s": 8.34,
+   "e": 8.44,
+   "ok": true
+  },
+  {
+   "w": "stand",
+   "line": "niche",
+   "s": 8.66,
+   "e": 8.96,
+   "ok": true
+  },
+  {
+   "w": "out",
+   "line": "niche",
+   "s": 9.06,
+   "e": 9.22,
+   "ok": true
+  },
+  {
+   "w": "in",
+   "line": "niche",
+   "s": 9.28,
+   "e": 9.38,
+   "ok": true
+  },
+  {
+   "w": "it.",
+   "line": "niche",
+   "s": 9.4,
+   "e": 9.52,
+   "ok": true
+  },
+  {
+   "w": "Two.",
+   "line": "hook2",
+   "s": 9.88,
+   "e": 10.12,
+   "ok": true
+  },
+  {
+   "w": "Hook",
+   "line": "hook2",
+   "s": 10.68,
+   "e": 10.84,
+   "ok": true
+  },
+  {
+   "w": "them",
+   "line": "hook2",
+   "s": 10.88,
+   "e": 11.0,
+   "ok": true
+  },
+  {
+   "w": "in",
+   "line": "hook2",
+   "s": 11.04,
+   "e": 11.1,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "hook2",
+   "s": 11.14,
+   "e": 11.28,
+   "ok": true
+  },
+  {
+   "w": "first",
+   "line": "hook2",
+   "s": 11.34,
+   "e": 11.56,
+   "ok": true
+  },
+  {
+   "w": "second,",
+   "line": "hook2",
+   "s": 11.66,
+   "e": 12.04,
+   "ok": true
+  },
+  {
+   "w": "or",
+   "line": "hook2",
+   "s": 12.26,
+   "e": 12.36,
+   "ok": true
+  },
+  {
+   "w": "they",
+   "line": "hook2",
+   "s": 12.4,
+   "e": 12.54,
+   "ok": true
+  },
+  {
+   "w": "scroll.",
+   "line": "hook2",
+   "s": 12.6,
+   "e": 13.06,
+   "ok": true
+  },
+  {
+   "w": "Three.",
+   "line": "daily",
+   "s": 13.5,
+   "e": 13.8,
+   "ok": true
+  },
+  {
+   "w": "Post",
+   "line": "daily",
+   "s": 14.48,
+   "e": 14.74,
+   "ok": true
+  },
+  {
+   "w": "every",
+   "line": "daily",
+   "s": 14.94,
+   "e": 15.18,
+   "ok": true
+  },
+  {
+   "w": "single",
+   "line": "daily",
+   "s": 15.3,
+   "e": 15.56,
+   "ok": true
+  },
+  {
+   "w": "day",
+   "line": "daily",
+   "s": 15.7,
+   "e": 15.96,
+   "ok": true
+  },
+  {
+   "w": "for",
+   "line": "daily",
+   "s": 16.059,
+   "e": 16.16,
+   "ok": true
+  },
+  {
+   "w": "thirty",
+   "line": "daily",
+   "s": 16.32,
+   "e": 16.58,
+   "ok": true
+  },
+  {
+   "w": "days.",
+   "line": "daily",
+   "s": 16.68,
+   "e": 17.08,
+   "ok": true
+  },
+  {
+   "w": "Four.",
+   "line": "reply",
+   "s": 17.62,
+   "e": 17.9,
+   "ok": true
+  },
+  {
+   "w": "Reply",
+   "line": "reply",
+   "s": 18.44,
+   "e": 18.86,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "reply",
+   "s": 18.92,
+   "e": 19.08,
+   "ok": true
+  },
+  {
+   "w": "every",
+   "line": "reply",
+   "s": 19.16,
+   "e": 19.44,
+   "ok": true
+  },
+  {
+   "w": "comment",
+   "line": "reply",
+   "s": 19.5,
+   "e": 19.96,
+   "ok": true
+  },
+  {
+   "w": "in",
+   "line": "reply",
+   "s": 20.0,
+   "e": 20.08,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "reply",
+   "s": 20.12,
+   "e": 20.22,
+   "ok": true
+  },
+  {
+   "w": "first",
+   "line": "reply",
+   "s": 20.26,
+   "e": 20.52,
+   "ok": true
+  },
+  {
+   "w": "hour.",
+   "line": "reply",
+   "s": 20.62,
+   "e": 20.96,
+   "ok": true
+  },
+  {
+   "w": "That's",
+   "line": "reply",
+   "s": 21.46,
+   "e": 21.7,
+   "ok": true
+  },
+  {
+   "w": "what",
+   "line": "reply",
+   "s": 21.72,
+   "e": 21.82,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "reply",
+   "s": 21.86,
+   "e": 21.94,
+   "ok": true
+  },
+  {
+   "w": "algorithm",
+   "line": "reply",
+   "s": 22.02,
+   "e": 22.48,
+   "ok": true
+  },
+  {
+   "w": "notices.",
+   "line": "reply",
+   "s": 22.56,
+   "e": 23.08,
+   "ok": true
+  },
+  {
+   "w": "Do",
+   "line": "result",
+   "s": 23.62,
+   "e": 23.76,
+   "ok": true
+  },
+  {
+   "w": "all",
+   "line": "result",
+   "s": 23.84,
+   "e": 24.04,
+   "ok": true
+  },
+  {
+   "w": "four,",
+   "line": "result",
+   "s": 24.08,
+   "e": 24.4,
+   "ok": true
+  },
+  {
+   "w": "and",
+   "line": "result",
+   "s": 24.74,
+   "e": 24.84,
+   "ok": true
+  },
+  {
+   "w": "that",
+   "line": "result",
+   "s": 24.9,
+   "e": 25.1,
+   "ok": true
+  },
+  {
+   "w": "first",
+   "line": "result",
+   "s": 25.16,
+   "e": 25.38,
+   "ok": true
+  },
+  {
+   "w": "thousand",
+   "line": "result",
+   "s": 25.44,
+   "e": 25.8,
+   "ok": true
+  },
+  {
+   "w": "comes",
+   "line": "result",
+   "s": 25.92,
+   "e": 26.18,
+   "ok": true
+  },
+  {
+   "w": "fast.",
+   "line": "result",
+   "s": 26.36,
+   "e": 26.84,
+   "ok": true
+  },
+  {
+   "w": "Follow",
+   "line": "follow",
+   "s": 27.26,
+   "e": 27.56,
+   "ok": true
+  },
+  {
+   "w": "for",
+   "line": "follow",
+   "s": 27.6,
+   "e": 27.7,
+   "ok": true
+  },
+  {
+   "w": "more",
+   "line": "follow",
+   "s": 27.72,
+   "e": 27.92,
+   "ok": true
+  },
+  {
+   "w": "tips.",
+   "line": "follow",
+   "s": 27.96,
+   "e": 28.32,
+   "ok": true
+  }
+ ]
+}

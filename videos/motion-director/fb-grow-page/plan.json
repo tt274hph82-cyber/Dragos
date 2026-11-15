@@ -1,0 +1,91 @@
+[
+ {
+  "id": "hook",
+  "move": "locked-list-reveal",
+  "from": 0.0,
+  "to": 5.94,
+  "vars": {
+   "items": "Pick one niche,Hook in 1 second,Post daily for 30 days,Reply to every comment",
+   "locked": 4,
+   "duration": 5.94
+  }
+ },
+ {
+  "id": "niche",
+  "move": "odd-one-out-highlight",
+  "from": 5.94,
+  "to": 9.64,
+  "vars": {
+   "label": "Random posts",
+   "oddLabel": "One niche",
+   "tone": "accent",
+   "duration": 3.7
+  }
+ },
+ {
+  "id": "hook2",
+  "move": "post-card",
+  "from": 9.64,
+  "to": 13.27,
+  "vars": {
+   "name": "Page Growth Tips",
+   "text": "Stop scrolling. This one change doubled my reach.",
+   "likes": 2400,
+   "likesFrom": 120,
+   "duration": 3.63
+  }
+ },
+ {
+  "id": "daily",
+  "move": "day-counter",
+  "from": 13.27,
+  "to": 17.32,
+  "vars": {
+   "day": 30,
+   "caption": "of posting daily",
+   "from": 1,
+   "duration": 4.05
+  }
+ },
+ {
+  "id": "reply",
+  "move": "comment-card",
+  "from": 17.32,
+  "to": 23.33,
+  "vars": {
+   "name": "Maria",
+   "text": "This actually worked for my page!",
+   "time": "12 min ago",
+   "likes": 86,
+   "likesFrom": 3,
+   "replies": 1,
+   "duration": 6.01
+  }
+ },
+ {
+  "id": "result",
+  "move": "follower-ticker-chip",
+  "from": 23.33,
+  "to": 27.02,
+  "vars": {
+   "from": 180,
+   "to": 1000,
+   "unit": "followers",
+   "start": "Day 1",
+   "end": "Day 30",
+   "duration": 3.69
+  }
+ },
+ {
+  "id": "follow",
+  "move": "follow-card",
+  "from": 27.02,
+  "to": 30.11,
+  "vars": {
+   "followersFrom": 980,
+   "followers": 1000,
+   "bio": "Simple steps to grow your page.",
+   "duration": 3.09
+  }
+ }
+]
