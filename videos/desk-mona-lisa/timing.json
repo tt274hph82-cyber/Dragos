@@ -1,0 +1,1256 @@
+{
+ "total": 69.37,
+ "lines": [
+  {
+   "id": "paris",
+   "text": "Paris. August, nineteen eleven. A Monday. The Louvre is closed.",
+   "start": 1.6,
+   "end": 6.805
+  },
+  {
+   "id": "smock",
+   "text": "A handyman in a white smock walks up to one small painting.",
+   "start": 7.355,
+   "end": 11.088
+  },
+  {
+   "id": "lift",
+   "text": "He lifts it off the wall, and walks right out the door.",
+   "start": 11.438,
+   "end": 14.354
+  },
+  {
+   "id": "day",
+   "text": "Nobody notices for more than a day.",
+   "start": 15.054,
+   "end": 17.128
+  },
+  {
+   "id": "news",
+   "text": "Then it's front-page news, all over the world.",
+   "start": 17.728,
+   "end": 20.895
+  },
+  {
+   "id": "borders",
+   "text": "Police seal the borders.",
+   "start": 21.395,
+   "end": 22.885
+  },
+  {
+   "id": "picasso",
+   "text": "They even question a young painter named Pablo Picasso.",
+   "start": 23.335,
+   "end": 26.597
+  },
+  {
+   "id": "crowds",
+   "text": "Crowds line up just to stare at the empty wall.",
+   "start": 27.197,
+   "end": 30.09
+  },
+  {
+   "id": "miles",
+   "text": "And the painting? About two miles away.",
+   "start": 30.79,
+   "end": 33.177
+  },
+  {
+   "id": "trunk",
+   "text": "In a trunk, in a handyman's rented room.",
+   "start": 33.527,
+   "end": 36.357
+  },
+  {
+   "id": "years",
+   "text": "It sits there for over two years.",
+   "start": 36.857,
+   "end": 39.161
+  },
+  {
+   "id": "name",
+   "text": "His name is Vincenzo Peruggia. He'd helped build her glass case.",
+   "start": 39.861,
+   "end": 44.343
+  },
+  {
+   "id": "italy",
+   "text": "Then he carries her home to Italy, and tries to sell her in Florence.",
+   "start": 44.943,
+   "end": 48.872
+  },
+  {
+   "id": "dealer",
+   "text": "The dealer calls the police.",
+   "start": 49.372,
+   "end": 50.959
+  },
+  {
+   "id": "months",
+   "text": "He serves about seven months.",
+   "start": 51.559,
+   "end": 53.274
+  },
+  {
+   "id": "twist",
+   "text": "Now here's the twist. Before all this, most folks couldn't have picked her out of a lineup.",
+   "start": 54.174,
+   "end": 59.56
+  },
+  {
+   "id": "famous",
+   "text": "The man who stole the Mona Lisa made her the most famous painting on Earth.",
+   "start": 60.16,
+   "end": 64.752
+  },
+  {
+   "id": "real",
+   "text": "That's real.",
+   "start": 65.552,
+   "end": 66.368
+  }
+ ],
+ "words": [
+  {
+   "w": "Paris.",
+   "line": "paris",
+   "s": 1.6,
+   "e": 2.06,
+   "ok": true
+  },
+  {
+   "w": "August,",
+   "line": "paris",
+   "s": 2.5,
+   "e": 2.98,
+   "ok": true
+  },
+  {
+   "w": "nineteen",
+   "line": "paris",
+   "s": 2.641,
+   "e": 3.162,
+   "ok": false
+  },
+  {
+   "w": "eleven.",
+   "line": "paris",
+   "s": 3.162,
+   "e": 3.682,
+   "ok": false
+  },
+  {
+   "w": "A",
+   "line": "paris",
+   "s": 4.5,
+   "e": 4.58,
+   "ok": true
+  },
+  {
+   "w": "Monday.",
+   "line": "paris",
+   "s": 4.62,
+   "e": 5.04,
+   "ok": true
+  },
+  {
+   "w": "The",
+   "line": "paris",
+   "s": 5.56,
+   "e": 5.66,
+   "ok": true
+  },
+  {
+   "w": "Louvre",
+   "line": "paris",
+   "s": 5.7,
+   "e": 6.04,
+   "ok": true
+  },
+  {
+   "w": "is",
+   "line": "paris",
+   "s": 6.12,
+   "e": 6.3,
+   "ok": true
+  },
+  {
+   "w": "closed.",
+   "line": "paris",
+   "s": 6.34,
+   "e": 6.8,
+   "ok": true
+  },
+  {
+   "w": "A",
+   "line": "smock",
+   "s": 7.4,
+   "e": 7.44,
+   "ok": true
+  },
+  {
+   "w": "handyman",
+   "line": "smock",
+   "s": 7.5,
+   "e": 8.1,
+   "ok": true
+  },
+  {
+   "w": "in",
+   "line": "smock",
+   "s": 8.16,
+   "e": 8.22,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "smock",
+   "s": 8.28,
+   "e": 8.36,
+   "ok": true
+  },
+  {
+   "w": "white",
+   "line": "smock",
+   "s": 8.4,
+   "e": 8.6,
+   "ok": true
+  },
+  {
+   "w": "smock",
+   "line": "smock",
+   "s": 8.74,
+   "e": 9.14,
+   "ok": true
+  },
+  {
+   "w": "walks",
+   "line": "smock",
+   "s": 9.28,
+   "e": 9.52,
+   "ok": true
+  },
+  {
+   "w": "up",
+   "line": "smock",
+   "s": 9.58,
+   "e": 9.7,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "smock",
+   "s": 9.74,
+   "e": 9.9,
+   "ok": true
+  },
+  {
+   "w": "one",
+   "line": "smock",
+   "s": 10.0,
+   "e": 10.12,
+   "ok": true
+  },
+  {
+   "w": "small",
+   "line": "smock",
+   "s": 10.26,
+   "e": 10.54,
+   "ok": true
+  },
+  {
+   "w": "painting.",
+   "line": "smock",
+   "s": 10.68,
+   "e": 11.06,
+   "ok": true
+  },
+  {
+   "w": "He",
+   "line": "lift",
+   "s": 11.46,
+   "e": 11.56,
+   "ok": true
+  },
+  {
+   "w": "lifts",
+   "line": "lift",
+   "s": 11.62,
+   "e": 11.82,
+   "ok": true
+  },
+  {
+   "w": "it",
+   "line": "lift",
+   "s": 11.88,
+   "e": 11.96,
+   "ok": true
+  },
+  {
+   "w": "off",
+   "line": "lift",
+   "s": 12.02,
+   "e": 12.16,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "lift",
+   "s": 12.2,
+   "e": 12.3,
+   "ok": true
+  },
+  {
+   "w": "wall,",
+   "line": "lift",
+   "s": 12.36,
+   "e": 12.62,
+   "ok": true
+  },
+  {
+   "w": "and",
+   "line": "lift",
+   "s": 12.9,
+   "e": 13.02,
+   "ok": true
+  },
+  {
+   "w": "walks",
+   "line": "lift",
+   "s": 13.1,
+   "e": 13.34,
+   "ok": true
+  },
+  {
+   "w": "right",
+   "line": "lift",
+   "s": 13.58,
+   "e": 13.74,
+   "ok": true
+  },
+  {
+   "w": "out",
+   "line": "lift",
+   "s": 13.8,
+   "e": 13.92,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "lift",
+   "s": 13.96,
+   "e": 14.04,
+   "ok": true
+  },
+  {
+   "w": "door.",
+   "line": "lift",
+   "s": 14.08,
+   "e": 14.34,
+   "ok": true
+  },
+  {
+   "w": "Nobody",
+   "line": "day",
+   "s": 15.12,
+   "e": 15.44,
+   "ok": true
+  },
+  {
+   "w": "notices",
+   "line": "day",
+   "s": 15.54,
+   "e": 16.1,
+   "ok": true
+  },
+  {
+   "w": "for",
+   "line": "day",
+   "s": 16.14,
+   "e": 16.239,
+   "ok": true
+  },
+  {
+   "w": "more",
+   "line": "day",
+   "s": 16.3,
+   "e": 16.48,
+   "ok": true
+  },
+  {
+   "w": "than",
+   "line": "day",
+   "s": 16.5,
+   "e": 16.62,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "day",
+   "s": 16.68,
+   "e": 16.78,
+   "ok": true
+  },
+  {
+   "w": "day.",
+   "line": "day",
+   "s": 16.82,
+   "e": 17.1,
+   "ok": true
+  },
+  {
+   "w": "Then",
+   "line": "news",
+   "s": 17.82,
+   "e": 17.96,
+   "ok": true
+  },
+  {
+   "w": "it's",
+   "line": "news",
+   "s": 18.0,
+   "e": 18.2,
+   "ok": true
+  },
+  {
+   "w": "front-page",
+   "line": "news",
+   "s": 18.52,
+   "e": 18.916,
+   "ok": false
+  },
+  {
+   "w": "news,",
+   "line": "news",
+   "s": 18.92,
+   "e": 19.32,
+   "ok": true
+  },
+  {
+   "w": "all",
+   "line": "news",
+   "s": 19.68,
+   "e": 19.82,
+   "ok": true
+  },
+  {
+   "w": "over",
+   "line": "news",
+   "s": 19.9,
+   "e": 20.06,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "news",
+   "s": 20.1,
+   "e": 20.22,
+   "ok": true
+  },
+  {
+   "w": "world.",
+   "line": "news",
+   "s": 20.3,
+   "e": 20.72,
+   "ok": true
+  },
+  {
+   "w": "Police",
+   "line": "borders",
+   "s": 21.42,
+   "e": 21.8,
+   "ok": true
+  },
+  {
+   "w": "seal",
+   "line": "borders",
+   "s": 21.9,
+   "e": 22.18,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "borders",
+   "s": 22.2,
+   "e": 22.32,
+   "ok": true
+  },
+  {
+   "w": "borders.",
+   "line": "borders",
+   "s": 22.36,
+   "e": 22.84,
+   "ok": true
+  },
+  {
+   "w": "They",
+   "line": "picasso",
+   "s": 23.4,
+   "e": 23.52,
+   "ok": true
+  },
+  {
+   "w": "even",
+   "line": "picasso",
+   "s": 23.6,
+   "e": 23.82,
+   "ok": true
+  },
+  {
+   "w": "question",
+   "line": "picasso",
+   "s": 23.88,
+   "e": 24.24,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "picasso",
+   "s": 24.3,
+   "e": 24.36,
+   "ok": true
+  },
+  {
+   "w": "young",
+   "line": "picasso",
+   "s": 24.4,
+   "e": 24.56,
+   "ok": true
+  },
+  {
+   "w": "painter",
+   "line": "picasso",
+   "s": 24.7,
+   "e": 25.06,
+   "ok": true
+  },
+  {
+   "w": "named",
+   "line": "picasso",
+   "s": 25.18,
+   "e": 25.4,
+   "ok": true
+  },
+  {
+   "w": "Pablo",
+   "line": "picasso",
+   "s": 25.54,
+   "e": 25.86,
+   "ok": true
+  },
+  {
+   "w": "Picasso.",
+   "line": "picasso",
+   "s": 25.94,
+   "e": 26.58,
+   "ok": true
+  },
+  {
+   "w": "Crowds",
+   "line": "crowds",
+   "s": 27.24,
+   "e": 27.64,
+   "ok": true
+  },
+  {
+   "w": "line",
+   "line": "crowds",
+   "s": 27.7,
+   "e": 27.92,
+   "ok": true
+  },
+  {
+   "w": "up",
+   "line": "crowds",
+   "s": 28.0,
+   "e": 28.18,
+   "ok": true
+  },
+  {
+   "w": "just",
+   "line": "crowds",
+   "s": 28.24,
+   "e": 28.42,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "crowds",
+   "s": 28.46,
+   "e": 28.6,
+   "ok": true
+  },
+  {
+   "w": "stare",
+   "line": "crowds",
+   "s": 28.78,
+   "e": 29.08,
+   "ok": true
+  },
+  {
+   "w": "at",
+   "line": "crowds",
+   "s": 29.12,
+   "e": 29.22,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "crowds",
+   "s": 29.26,
+   "e": 29.34,
+   "ok": true
+  },
+  {
+   "w": "empty",
+   "line": "crowds",
+   "s": 29.4,
+   "e": 29.64,
+   "ok": true
+  },
+  {
+   "w": "wall.",
+   "line": "crowds",
+   "s": 29.78,
+   "e": 30.08,
+   "ok": true
+  },
+  {
+   "w": "And",
+   "line": "miles",
+   "s": 30.82,
+   "e": 30.9,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "miles",
+   "s": 30.94,
+   "e": 31.02,
+   "ok": true
+  },
+  {
+   "w": "painting?",
+   "line": "miles",
+   "s": 31.06,
+   "e": 31.42,
+   "ok": true
+  },
+  {
+   "w": "About",
+   "line": "miles",
+   "s": 32.0,
+   "e": 32.28,
+   "ok": true
+  },
+  {
+   "w": "two",
+   "line": "miles",
+   "s": 32.34,
+   "e": 32.479,
+   "ok": true
+  },
+  {
+   "w": "miles",
+   "line": "miles",
+   "s": 32.52,
+   "e": 32.82,
+   "ok": true
+  },
+  {
+   "w": "away.",
+   "line": "miles",
+   "s": 32.88,
+   "e": 33.16,
+   "ok": true
+  },
+  {
+   "w": "In",
+   "line": "trunk",
+   "s": 33.56,
+   "e": 33.64,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "trunk",
+   "s": 33.68,
+   "e": 33.78,
+   "ok": true
+  },
+  {
+   "w": "trunk,",
+   "line": "trunk",
+   "s": 33.84,
+   "e": 34.24,
+   "ok": true
+  },
+  {
+   "w": "in",
+   "line": "trunk",
+   "s": 34.7,
+   "e": 34.76,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "trunk",
+   "s": 34.82,
+   "e": 34.86,
+   "ok": true
+  },
+  {
+   "w": "handyman's",
+   "line": "trunk",
+   "s": 34.92,
+   "e": 35.62,
+   "ok": true
+  },
+  {
+   "w": "rented",
+   "line": "trunk",
+   "s": 35.66,
+   "e": 36.0,
+   "ok": true
+  },
+  {
+   "w": "room.",
+   "line": "trunk",
+   "s": 36.06,
+   "e": 36.34,
+   "ok": true
+  },
+  {
+   "w": "It",
+   "line": "years",
+   "s": 36.88,
+   "e": 37.0,
+   "ok": true
+  },
+  {
+   "w": "sits",
+   "line": "years",
+   "s": 37.08,
+   "e": 37.34,
+   "ok": true
+  },
+  {
+   "w": "there",
+   "line": "years",
+   "s": 37.4,
+   "e": 37.6,
+   "ok": true
+  },
+  {
+   "w": "for",
+   "line": "years",
+   "s": 37.64,
+   "e": 37.8,
+   "ok": true
+  },
+  {
+   "w": "over",
+   "line": "years",
+   "s": 37.86,
+   "e": 38.16,
+   "ok": true
+  },
+  {
+   "w": "two",
+   "line": "years",
+   "s": 38.24,
+   "e": 38.46,
+   "ok": true
+  },
+  {
+   "w": "years.",
+   "line": "years",
+   "s": 38.68,
+   "e": 39.12,
+   "ok": true
+  },
+  {
+   "w": "His",
+   "line": "name",
+   "s": 39.88,
+   "e": 40.02,
+   "ok": true
+  },
+  {
+   "w": "name",
+   "line": "name",
+   "s": 40.08,
+   "e": 40.4,
+   "ok": true
+  },
+  {
+   "w": "is",
+   "line": "name",
+   "s": 40.44,
+   "e": 40.58,
+   "ok": true
+  },
+  {
+   "w": "Vincenzo",
+   "line": "name",
+   "s": 40.62,
+   "e": 41.22,
+   "ok": true
+  },
+  {
+   "w": "Peruggia.",
+   "line": "name",
+   "s": 41.32,
+   "e": 41.98,
+   "ok": true
+  },
+  {
+   "w": "He'd",
+   "line": "name",
+   "s": 42.54,
+   "e": 42.68,
+   "ok": true
+  },
+  {
+   "w": "helped",
+   "line": "name",
+   "s": 42.72,
+   "e": 42.94,
+   "ok": true
+  },
+  {
+   "w": "build",
+   "line": "name",
+   "s": 43.04,
+   "e": 43.28,
+   "ok": true
+  },
+  {
+   "w": "her",
+   "line": "name",
+   "s": 43.32,
+   "e": 43.46,
+   "ok": true
+  },
+  {
+   "w": "glass",
+   "line": "name",
+   "s": 43.48,
+   "e": 43.76,
+   "ok": true
+  },
+  {
+   "w": "case.",
+   "line": "name",
+   "s": 43.88,
+   "e": 44.26,
+   "ok": true
+  },
+  {
+   "w": "Then",
+   "line": "italy",
+   "s": 45.02,
+   "e": 45.2,
+   "ok": true
+  },
+  {
+   "w": "he",
+   "line": "italy",
+   "s": 45.24,
+   "e": 45.36,
+   "ok": true
+  },
+  {
+   "w": "carries",
+   "line": "italy",
+   "s": 45.42,
+   "e": 45.74,
+   "ok": true
+  },
+  {
+   "w": "her",
+   "line": "italy",
+   "s": 45.76,
+   "e": 45.88,
+   "ok": true
+  },
+  {
+   "w": "home",
+   "line": "italy",
+   "s": 45.92,
+   "e": 46.14,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "italy",
+   "s": 46.18,
+   "e": 46.32,
+   "ok": true
+  },
+  {
+   "w": "Italy,",
+   "line": "italy",
+   "s": 46.4,
+   "e": 46.76,
+   "ok": true
+  },
+  {
+   "w": "and",
+   "line": "italy",
+   "s": 46.98,
+   "e": 47.1,
+   "ok": true
+  },
+  {
+   "w": "tries",
+   "line": "italy",
+   "s": 47.14,
+   "e": 47.4,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "italy",
+   "s": 47.44,
+   "e": 47.62,
+   "ok": true
+  },
+  {
+   "w": "sell",
+   "line": "italy",
+   "s": 47.68,
+   "e": 47.88,
+   "ok": true
+  },
+  {
+   "w": "her",
+   "line": "italy",
+   "s": 47.92,
+   "e": 48.04,
+   "ok": true
+  },
+  {
+   "w": "in",
+   "line": "italy",
+   "s": 48.1,
+   "e": 48.24,
+   "ok": true
+  },
+  {
+   "w": "Florence.",
+   "line": "italy",
+   "s": 48.3,
+   "e": 48.82,
+   "ok": true
+  },
+  {
+   "w": "The",
+   "line": "dealer",
+   "s": 49.42,
+   "e": 49.52,
+   "ok": true
+  },
+  {
+   "w": "dealer",
+   "line": "dealer",
+   "s": 49.56,
+   "e": 49.84,
+   "ok": true
+  },
+  {
+   "w": "calls",
+   "line": "dealer",
+   "s": 49.96,
+   "e": 50.24,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "dealer",
+   "s": 50.28,
+   "e": 50.38,
+   "ok": true
+  },
+  {
+   "w": "police.",
+   "line": "dealer",
+   "s": 50.4,
+   "e": 50.88,
+   "ok": true
+  },
+  {
+   "w": "He",
+   "line": "months",
+   "s": 51.56,
+   "e": 51.68,
+   "ok": true
+  },
+  {
+   "w": "serves",
+   "line": "months",
+   "s": 51.74,
+   "e": 52.02,
+   "ok": true
+  },
+  {
+   "w": "about",
+   "line": "months",
+   "s": 52.08,
+   "e": 52.42,
+   "ok": true
+  },
+  {
+   "w": "seven",
+   "line": "months",
+   "s": 52.5,
+   "e": 52.76,
+   "ok": true
+  },
+  {
+   "w": "months.",
+   "line": "months",
+   "s": 52.84,
+   "e": 53.2,
+   "ok": true
+  },
+  {
+   "w": "Now",
+   "line": "twist",
+   "s": 54.2,
+   "e": 54.36,
+   "ok": true
+  },
+  {
+   "w": "here's",
+   "line": "twist",
+   "s": 54.42,
+   "e": 54.66,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "twist",
+   "s": 54.7,
+   "e": 54.82,
+   "ok": true
+  },
+  {
+   "w": "twist.",
+   "line": "twist",
+   "s": 54.9,
+   "e": 55.34,
+   "ok": true
+  },
+  {
+   "w": "Before",
+   "line": "twist",
+   "s": 55.9,
+   "e": 56.3,
+   "ok": true
+  },
+  {
+   "w": "all",
+   "line": "twist",
+   "s": 56.36,
+   "e": 56.5,
+   "ok": true
+  },
+  {
+   "w": "this,",
+   "line": "twist",
+   "s": 56.56,
+   "e": 56.78,
+   "ok": true
+  },
+  {
+   "w": "most",
+   "line": "twist",
+   "s": 57.2,
+   "e": 57.44,
+   "ok": true
+  },
+  {
+   "w": "folks",
+   "line": "twist",
+   "s": 57.48,
+   "e": 57.76,
+   "ok": true
+  },
+  {
+   "w": "couldn't",
+   "line": "twist",
+   "s": 57.8,
+   "e": 57.98,
+   "ok": true
+  },
+  {
+   "w": "have",
+   "line": "twist",
+   "s": 58.0,
+   "e": 58.14,
+   "ok": true
+  },
+  {
+   "w": "picked",
+   "line": "twist",
+   "s": 58.18,
+   "e": 58.36,
+   "ok": true
+  },
+  {
+   "w": "her",
+   "line": "twist",
+   "s": 58.38,
+   "e": 58.56,
+   "ok": true
+  },
+  {
+   "w": "out",
+   "line": "twist",
+   "s": 58.6,
+   "e": 58.7,
+   "ok": true
+  },
+  {
+   "w": "of",
+   "line": "twist",
+   "s": 58.74,
+   "e": 58.8,
+   "ok": true
+  },
+  {
+   "w": "a",
+   "line": "twist",
+   "s": 58.84,
+   "e": 58.86,
+   "ok": true
+  },
+  {
+   "w": "lineup.",
+   "line": "twist",
+   "s": 58.98,
+   "e": 59.44,
+   "ok": true
+  },
+  {
+   "w": "The",
+   "line": "famous",
+   "s": 60.22,
+   "e": 60.3,
+   "ok": true
+  },
+  {
+   "w": "man",
+   "line": "famous",
+   "s": 60.34,
+   "e": 60.56,
+   "ok": true
+  },
+  {
+   "w": "who",
+   "line": "famous",
+   "s": 60.6,
+   "e": 60.74,
+   "ok": true
+  },
+  {
+   "w": "stole",
+   "line": "famous",
+   "s": 60.82,
+   "e": 61.06,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "famous",
+   "s": 61.08,
+   "e": 61.16,
+   "ok": true
+  },
+  {
+   "w": "Mona",
+   "line": "famous",
+   "s": 61.2,
+   "e": 61.44,
+   "ok": true
+  },
+  {
+   "w": "Lisa",
+   "line": "famous",
+   "s": 61.52,
+   "e": 61.96,
+   "ok": true
+  },
+  {
+   "w": "made",
+   "line": "famous",
+   "s": 62.18,
+   "e": 62.36,
+   "ok": true
+  },
+  {
+   "w": "her",
+   "line": "famous",
+   "s": 62.4,
+   "e": 62.54,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "famous",
+   "s": 62.58,
+   "e": 62.66,
+   "ok": true
+  },
+  {
+   "w": "most",
+   "line": "famous",
+   "s": 62.7,
+   "e": 62.92,
+   "ok": true
+  },
+  {
+   "w": "famous",
+   "line": "famous",
+   "s": 63.12,
+   "e": 63.44,
+   "ok": true
+  },
+  {
+   "w": "painting",
+   "line": "famous",
+   "s": 63.58,
+   "e": 64.0,
+   "ok": true
+  },
+  {
+   "w": "on",
+   "line": "famous",
+   "s": 64.08,
+   "e": 64.34,
+   "ok": true
+  },
+  {
+   "w": "Earth.",
+   "line": "famous",
+   "s": 64.42,
+   "e": 64.739,
+   "ok": true
+  },
+  {
+   "w": "That's",
+   "line": "real",
+   "s": 65.64,
+   "e": 65.92,
+   "ok": true
+  },
+  {
+   "w": "real.",
+   "line": "real",
+   "s": 65.98,
+   "e": 66.32,
+   "ok": true
+  }
+ ]
+}

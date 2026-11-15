@@ -1,0 +1,255 @@
+{
+ "total": 69.37,
+ "cues": [
+  {
+   "name": "whoosh",
+   "t": 1.85,
+   "gain": 0
+  },
+  {
+   "name": "type",
+   "t": 2.5,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 4.813,
+   "gain": 0
+  },
+  {
+   "name": "pin",
+   "t": 5.95,
+   "gain": 0
+  },
+  {
+   "name": "stamp",
+   "t": 6.46,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 6.905,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 7.305,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 11.169,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 12.02,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 14.504,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 15.054,
+   "gain": 0
+  },
+  {
+   "name": "page",
+   "t": 16.35,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 17.516,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 18.42,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 20.335,
+   "gain": 3
+  },
+  {
+   "name": "scratch",
+   "t": 21.545,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 23.035,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 23.385,
+   "gain": 0
+  },
+  {
+   "name": "stamp",
+   "t": 23.98,
+   "gain": 0
+  },
+  {
+   "name": "type",
+   "t": 25.54,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 26.847,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 27.197,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 30.04,
+   "gain": 3
+  },
+  {
+   "name": "scratch",
+   "t": 32,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 32.703,
+   "gain": 0
+  },
+  {
+   "name": "pin",
+   "t": 33.13,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 33.79,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 36.205,
+   "gain": 0
+  },
+  {
+   "name": "tick",
+   "t": 36.907,
+   "gain": 0
+  },
+  {
+   "name": "tick",
+   "t": 37.86,
+   "gain": 0
+  },
+  {
+   "name": "tick",
+   "t": 38.34,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 39.283,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 39.861,
+   "gain": 0
+  },
+  {
+   "name": "type",
+   "t": 40.62,
+   "gain": 0
+  },
+  {
+   "name": "stamp",
+   "t": 42.82,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 44.343,
+   "gain": 3
+  },
+  {
+   "name": "train",
+   "t": 45.643,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 46.193,
+   "gain": 0
+  },
+  {
+   "name": "pin",
+   "t": 48.55,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 49.372,
+   "gain": 0
+  },
+  {
+   "name": "stamp",
+   "t": 50.52,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 51.109,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 51.559,
+   "gain": 0
+  },
+  {
+   "name": "type",
+   "t": 52.5,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 53.716,
+   "gain": 0
+  },
+  {
+   "name": "paper",
+   "t": 54.9,
+   "gain": 0
+  },
+  {
+   "name": "shimmer",
+   "t": 54.9,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 60.11,
+   "gain": 3
+  },
+  {
+   "name": "boom",
+   "t": 62.18,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 69.02,
+   "gain": 0
+  }
+ ]
+}

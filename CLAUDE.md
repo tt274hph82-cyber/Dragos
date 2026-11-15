@@ -148,3 +148,11 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 - Built from `videos/shadow-puppet-emu/` (emu war) and `videos/shadow-puppet-pig/` (pig war): one canvas file per story, `score.js`, `vo.py` (Austin narration, always included), `render.js` for the MP4. 9:16, at least 30 s.
 - **Native 1080p:** start new stories from `videos/shadow-puppet-pig/` (its `pig.js` theatre code draws at any size: scenes use a 720x1280 logical stage, scaled by `K`). The player canvas and `render.js` draw at 1080x1920 directly, with no upscaling. Storyboards can stay at 720.
 - **Storyboard approval is standing:** the user approves every storyboard. Still publish the storyboard artifact, then go straight on to the full animation, narration and MP4 without waiting.
+
+## One-take "desk" films (cinematic, one continuous camera move, all code)
+- Model: `videos/desk-mona-lisa/` ("The man who stole her", 69 s, 21:9 3840x1646, 30 fps). Plain canvas 2D, no Remotion: `film.js` draws one big desk world (maps, sepia prints, cards, newspaper, all drawn in code and cached as bitmaps) and one camera path; `index.html?s=0.5` previews at half size.
+- **Camera:** a `POSES` table (arrive time on the spoken word, point, zoom, roll, optional `via` pull-back zoom and `till` hold). Poses are joined with a monotone cubic curve, each hold creeps toward the next pose, and the path is averaged over a short window so no start or landing is abrupt; handheld sway, motion blur from sub-frame samples, glow, vignette and grain are added in `seek`.
+- **Rules from the user's brief:** one hero per narration line (`hero(id, from, to)` lights it, everything else dims); every phrase appears once, on a document or typed, never both; body copy is grey lines; big type; each drop, stamp, pin or typed word is cued on its word time.
+- **Workflow:** `python3 voice.py` (Austin, per-line clips, word times from scribe into `timing.js`) → edit `film.js` → `node stills.js beats` (hero moments) and `node stills.js seq <from> <to> <step>` (camera moves) → `node motion.js` (speed per frame: dead stops and jerks) → `node cues.js` + `python3 audio.py` (SFX v3, Music v2.5, mix at -14 LUFS) → `node render.js ../../youtube/<slug>-21x9.mp4` (about 25 min; capped at 10 Mbit/s to stay under GitHub's 100 MB).
+- Map outlines come from Natural Earth (`node build-map.js`, needs `npm i`).
+
