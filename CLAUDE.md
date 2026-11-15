@@ -156,3 +156,9 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 - **Workflow:** `python3 voice.py` (Austin, per-line clips, word times from scribe into `timing.js`) → edit `film.js` → `node stills.js beats` (hero moments) and `node stills.js seq <from> <to> <step>` (camera moves) → `node motion.js` (speed per frame: dead stops and jerks) → `node cues.js` + `python3 audio.py` (SFX v3, Music v2.5, mix at -14 LUFS) → `node render.js ../../youtube/<slug>-21x9.mp4` (about 25 min; capped at 10 Mbit/s to stay under GitHub's 100 MB).
 - Map outlines come from Natural Earth (`node build-map.js`, needs `npm i`).
 
+## Dark tech-cutaway Shorts (style of the user's "Dropped your iPhone in water?" references)
+- Model: `videos/cutaway-battery/` ("Why your phone crawls after 80%", 24 s, 1080x1920, 60 fps). Same canvas pipeline as the desk films (`voice.py`, `film.js`, `stills.js`, `cues.js`, `audio.py`, `render.js`; `node_modules` is a link to `../desk-mona-lisa/node_modules`).
+- **Look (from the references):** near-black background, no cuts, one camera diving from the phone into a magnified cutaway (a nested world: the cell is drawn 14x smaller inside the battery and fades in with zoom); gold glowing parts and particles, orange for danger, a lavender phone; tiny white mono labels with leader lines (`tag`), a small "MAGNIFIED ILLUSTRATION" note, a small line graph for the payoff; bloom, grain, vignette and a dark falloff behind the captions.
+- **Captions:** top of frame (y about 318), Figtree 46 px; the phrase builds word by word in chunks of up to 4 words, the spoken word white and bold, earlier words grey, key words (`KEY`) in a blue selection box with two corner handles.
+- Narration is Austin at speed 1.15 (the references run about 3.5 words a second; Austin lands near 2.6). Original topics and drawings only; a generic phone, no brand names or logos.
+

@@ -1,0 +1,50 @@
+{
+ "total": 24.41,
+ "cues": [
+  {
+   "name": "plug",
+   "t": 0.35,
+   "gain": 0
+  },
+  {
+   "name": "tick",
+   "t": 2.65,
+   "gain": 0
+  },
+  {
+   "name": "dive",
+   "t": 4.58,
+   "gain": 0
+  },
+  {
+   "name": "hum",
+   "t": 7.28,
+   "gain": 0
+  },
+  {
+   "name": "sizzle",
+   "t": 18.12,
+   "gain": 0
+  },
+  {
+   "name": "zap",
+   "t": 18.98,
+   "gain": 0
+  },
+  {
+   "name": "down",
+   "t": 21.26,
+   "gain": 0
+  },
+  {
+   "name": "whoosh",
+   "t": 22.25,
+   "gain": 0
+  },
+  {
+   "name": "tick",
+   "t": 23.66,
+   "gain": 0
+  }
+ ]
+}

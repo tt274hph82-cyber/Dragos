@@ -1,0 +1,463 @@
+{
+ "total": 24.41,
+ "lines": [
+  {
+   "id": "hook",
+   "text": "Ever notice your phone races to eighty percent, then crawls?",
+   "start": 0.5,
+   "end": 4.33
+  },
+  {
+   "id": "inside",
+   "text": "Inside the battery, charging pushes lithium ions from one side to the other.",
+   "start": 4.63,
+   "end": 9.463
+  },
+  {
+   "id": "room",
+   "text": "At first, there's plenty of empty room.",
+   "start": 9.713,
+   "end": 12.153
+  },
+  {
+   "id": "full",
+   "text": "But near full, the last free spots are hard to find.",
+   "start": 12.403,
+   "end": 15.79
+  },
+  {
+   "id": "push",
+   "text": "Push too hard, and the ions pile up and damage the cell.",
+   "start": 16.09,
+   "end": 19.814
+  },
+  {
+   "id": "slow",
+   "text": "So your phone slows down on purpose.",
+   "start": 20.164,
+   "end": 22.81
+  }
+ ],
+ "words": [
+  {
+   "w": "Ever",
+   "line": "hook",
+   "s": 0.54,
+   "e": 0.66,
+   "ok": true
+  },
+  {
+   "w": "notice",
+   "line": "hook",
+   "s": 0.72,
+   "e": 1.0,
+   "ok": true
+  },
+  {
+   "w": "your",
+   "line": "hook",
+   "s": 1.04,
+   "e": 1.22,
+   "ok": true
+  },
+  {
+   "w": "phone",
+   "line": "hook",
+   "s": 1.24,
+   "e": 1.52,
+   "ok": true
+  },
+  {
+   "w": "races",
+   "line": "hook",
+   "s": 1.72,
+   "e": 2.18,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "hook",
+   "s": 2.22,
+   "e": 2.34,
+   "ok": true
+  },
+  {
+   "w": "eighty",
+   "line": "hook",
+   "s": 2.4,
+   "e": 2.56,
+   "ok": true
+  },
+  {
+   "w": "percent,",
+   "line": "hook",
+   "s": 2.66,
+   "e": 3.06,
+   "ok": true
+  },
+  {
+   "w": "then",
+   "line": "hook",
+   "s": 3.42,
+   "e": 3.64,
+   "ok": true
+  },
+  {
+   "w": "crawls?",
+   "line": "hook",
+   "s": 3.72,
+   "e": 4.28,
+   "ok": true
+  },
+  {
+   "w": "Inside",
+   "line": "inside",
+   "s": 4.7,
+   "e": 5.1,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "inside",
+   "s": 5.12,
+   "e": 5.22,
+   "ok": true
+  },
+  {
+   "w": "battery,",
+   "line": "inside",
+   "s": 5.26,
+   "e": 5.7,
+   "ok": true
+  },
+  {
+   "w": "charging",
+   "line": "inside",
+   "s": 6.12,
+   "e": 6.48,
+   "ok": true
+  },
+  {
+   "w": "pushes",
+   "line": "inside",
+   "s": 6.6,
+   "e": 6.96,
+   "ok": true
+  },
+  {
+   "w": "lithium",
+   "line": "inside",
+   "s": 7.02,
+   "e": 7.38,
+   "ok": true
+  },
+  {
+   "w": "ions",
+   "line": "inside",
+   "s": 7.58,
+   "e": 8.02,
+   "ok": true
+  },
+  {
+   "w": "from",
+   "line": "inside",
+   "s": 8.039,
+   "e": 8.24,
+   "ok": true
+  },
+  {
+   "w": "one",
+   "line": "inside",
+   "s": 8.3,
+   "e": 8.44,
+   "ok": true
+  },
+  {
+   "w": "side",
+   "line": "inside",
+   "s": 8.56,
+   "e": 8.86,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "inside",
+   "s": 8.92,
+   "e": 9.0,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "inside",
+   "s": 9.06,
+   "e": 9.14,
+   "ok": true
+  },
+  {
+   "w": "other.",
+   "line": "inside",
+   "s": 9.22,
+   "e": 9.44,
+   "ok": true
+  },
+  {
+   "w": "At",
+   "line": "room",
+   "s": 9.74,
+   "e": 9.92,
+   "ok": true
+  },
+  {
+   "w": "first,",
+   "line": "room",
+   "s": 9.98,
+   "e": 10.38,
+   "ok": true
+  },
+  {
+   "w": "there's",
+   "line": "room",
+   "s": 10.62,
+   "e": 10.92,
+   "ok": true
+  },
+  {
+   "w": "plenty",
+   "line": "room",
+   "s": 10.98,
+   "e": 11.3,
+   "ok": true
+  },
+  {
+   "w": "of",
+   "line": "room",
+   "s": 11.36,
+   "e": 11.44,
+   "ok": true
+  },
+  {
+   "w": "empty",
+   "line": "room",
+   "s": 11.48,
+   "e": 11.7,
+   "ok": true
+  },
+  {
+   "w": "room.",
+   "line": "room",
+   "s": 11.82,
+   "e": 12.12,
+   "ok": true
+  },
+  {
+   "w": "But",
+   "line": "full",
+   "s": 12.44,
+   "e": 12.58,
+   "ok": true
+  },
+  {
+   "w": "near",
+   "line": "full",
+   "s": 12.64,
+   "e": 12.8,
+   "ok": true
+  },
+  {
+   "w": "full,",
+   "line": "full",
+   "s": 13.0,
+   "e": 13.32,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "full",
+   "s": 13.64,
+   "e": 13.74,
+   "ok": true
+  },
+  {
+   "w": "last",
+   "line": "full",
+   "s": 13.78,
+   "e": 14.1,
+   "ok": true
+  },
+  {
+   "w": "free",
+   "line": "full",
+   "s": 14.14,
+   "e": 14.3,
+   "ok": true
+  },
+  {
+   "w": "spots",
+   "line": "full",
+   "s": 14.46,
+   "e": 14.78,
+   "ok": true
+  },
+  {
+   "w": "are",
+   "line": "full",
+   "s": 14.82,
+   "e": 14.94,
+   "ok": true
+  },
+  {
+   "w": "hard",
+   "line": "full",
+   "s": 15.0,
+   "e": 15.2,
+   "ok": true
+  },
+  {
+   "w": "to",
+   "line": "full",
+   "s": 15.22,
+   "e": 15.34,
+   "ok": true
+  },
+  {
+   "w": "find.",
+   "line": "full",
+   "s": 15.4,
+   "e": 15.78,
+   "ok": true
+  },
+  {
+   "w": "Push",
+   "line": "push",
+   "s": 16.12,
+   "e": 16.34,
+   "ok": true
+  },
+  {
+   "w": "too",
+   "line": "push",
+   "s": 16.379,
+   "e": 16.54,
+   "ok": true
+  },
+  {
+   "w": "hard,",
+   "line": "push",
+   "s": 16.6,
+   "e": 16.92,
+   "ok": true
+  },
+  {
+   "w": "and",
+   "line": "push",
+   "s": 17.2,
+   "e": 17.28,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "push",
+   "s": 17.3,
+   "e": 17.44,
+   "ok": true
+  },
+  {
+   "w": "ions",
+   "line": "push",
+   "s": 17.54,
+   "e": 17.88,
+   "ok": true
+  },
+  {
+   "w": "pile",
+   "line": "push",
+   "s": 18.02,
+   "e": 18.34,
+   "ok": true
+  },
+  {
+   "w": "up",
+   "line": "push",
+   "s": 18.46,
+   "e": 18.62,
+   "ok": true
+  },
+  {
+   "w": "and",
+   "line": "push",
+   "s": 18.66,
+   "e": 18.76,
+   "ok": true
+  },
+  {
+   "w": "damage",
+   "line": "push",
+   "s": 18.88,
+   "e": 19.28,
+   "ok": true
+  },
+  {
+   "w": "the",
+   "line": "push",
+   "s": 19.28,
+   "e": 19.42,
+   "ok": true
+  },
+  {
+   "w": "cell.",
+   "line": "push",
+   "s": 19.48,
+   "e": 19.8,
+   "ok": true
+  },
+  {
+   "w": "So",
+   "line": "slow",
+   "s": 20.26,
+   "e": 20.56,
+   "ok": true
+  },
+  {
+   "w": "your",
+   "line": "slow",
+   "s": 20.6,
+   "e": 20.76,
+   "ok": true
+  },
+  {
+   "w": "phone",
+   "line": "slow",
+   "s": 20.78,
+   "e": 21.02,
+   "ok": true
+  },
+  {
+   "w": "slows",
+   "line": "slow",
+   "s": 21.16,
+   "e": 21.52,
+   "ok": true
+  },
+  {
+   "w": "down",
+   "line": "slow",
+   "s": 21.56,
+   "e": 21.86,
+   "ok": true
+  },
+  {
+   "w": "on",
+   "line": "slow",
+   "s": 21.92,
+   "e": 22.14,
+   "ok": true
+  },
+  {
+   "w": "purpose.",
+   "line": "slow",
+   "s": 22.2,
+   "e": 22.74,
+   "ok": true
+  }
+ ]
+}
