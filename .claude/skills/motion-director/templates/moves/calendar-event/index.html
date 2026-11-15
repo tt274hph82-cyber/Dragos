@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The event","default":"Strategy call"},
+  {"id":"hour","type":"number","label":"Start hour, 24h (14 = 2 PM)","default":14},
+  {"id":"length","type":"number","label":"Length in minutes","default":60},
+  {"id":"weekday","type":"string","label":"Day name in the header","default":"Thursday"},
+  {"id":"date","type":"string","label":"Date in the header","default":"October 24"},
+  {"id":"status","type":"string","label":"The stamp","default":"Booked"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 66%, #000); --ok: #33C27A; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 85% 100%, color-mix(in srgb, var(--accent2) 26%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1800); }
+  #card { position: relative; box-sizing: border-box; padding: calc(var(--u) * 34) calc(var(--u) * 34) calc(var(--u) * 30); border-radius: calc(var(--u) * 44);
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 82%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  .hd { display: flex; align-items: center; gap: calc(var(--u) * 22); padding-bottom: calc(var(--u) * 24); border-bottom: calc(var(--u) * 1.5) solid rgba(255,255,255,.1); }
+  #dt { flex: none; width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: calc(var(--u) * 26); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.82)); box-shadow: inset 0 calc(var(--u) * -3) 0 rgba(0,0,0,.08), 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -10) rgba(0,0,0,.5); }
+  #dt .m { width: 100%; text-align: center; font-size: calc(var(--u) * 17); font-weight: 800; letter-spacing: .14em; color: #fff; background: var(--accent); padding: calc(var(--u) * 5) 0 calc(var(--u) * 4); text-transform: uppercase; }
+  #dt .d { font-family: var(--font-display); font-size: calc(var(--u) * 42); line-height: 1.05; color: #18161C; margin-top: calc(var(--u) * 2); }
+  .ht { flex: 1; min-width: 0; }
+  #wd { width: max-content; font-size: calc(var(--u) * 40); font-weight: 800; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
+  #da { width: max-content; margin-top: calc(var(--u) * 2); font-size: calc(var(--u) * 28); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  .nav { flex: none; display: flex; gap: calc(var(--u) * 10); }
+  .nav i { width: calc(var(--u) * 56); height: calc(var(--u) * 56); border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  .nav svg { width: 44%; height: 44%; }
+
+  #grid { position: relative; margin-top: calc(var(--u) * 18); }
+  .row { position: absolute; left: 0; right: 0; height: 0; }
+  .row .hr { position: absolute; left: 0; top: calc(var(--u) * -16); width: calc(var(--u) * 92); font-size: calc(var(--u) * 23); font-weight: 600; color: color-mix(in srgb, var(--ink) 45%, transparent); white-space: nowrap; }
+  .row .ln { position: absolute; left: calc(var(--u) * 104); right: 0; top: 0; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.1); transform-origin: 0 50%; }
+  .ghost { position: absolute; border-radius: calc(var(--u) * 16); background: rgba(255,255,255,.06); box-shadow: inset calc(var(--u) * 5) 0 0 rgba(255,255,255,.14); padding: calc(var(--u) * 18) calc(var(--u) * 22); box-sizing: border-box; }
+  .ghost b { display: block; height: calc(var(--u) * 14); border-radius: calc(var(--u) * 7); background: rgba(255,255,255,.12); }
+  .ghost b + b { margin-top: calc(var(--u) * 12); background: rgba(255,255,255,.07); }
+  #now { position: absolute; height: calc(var(--u) * 3); background: var(--al); border-radius: calc(var(--u) * 2); box-shadow: 0 0 calc(var(--u) * 10) color-mix(in srgb, var(--accent) 70%, transparent); transform-origin: 0 50%; }
+  #now::before { content: ""; position: absolute; left: calc(var(--u) * -8); top: calc(var(--u) * -6.5); width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: var(--al); }
+  #slot { position: absolute; border-radius: calc(var(--u) * 20); border: calc(var(--u) * 3) dashed color-mix(in srgb, var(--al) 80%, transparent); box-sizing: border-box;
+    background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
+  #evsh { position: absolute; border-radius: calc(var(--u) * 20); background: rgba(0,0,0,.55); filter: blur(calc(var(--u) * 18)); }
+  .is-key #evsh { display: none; }
+  #ev { position: absolute; border-radius: calc(var(--u) * 20); box-sizing: border-box; display: flex; align-items: center; gap: calc(var(--u) * 16); padding: 0 calc(var(--u) * 22) 0 calc(var(--u) * 32);
+    background: linear-gradient(160deg, var(--al), var(--accent) 50%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -10) rgba(0,0,0,.55); }
+  #ev .bar { position: absolute; left: calc(var(--u) * 10); top: calc(var(--u) * 12); bottom: calc(var(--u) * 12); width: calc(var(--u) * 7); border-radius: calc(var(--u) * 4); background: rgba(255,255,255,.85); }
+  #ev .sh { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.4) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .et { flex: 1; min-width: 0; }
+  #ttl { width: max-content; font-size: calc(var(--u) * 36); font-weight: 800; color: #fff; letter-spacing: -0.01em; white-space: nowrap; text-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 6) rgba(0,0,0,.18); }
+  #tim { width: max-content; display: flex; align-items: center; gap: calc(var(--u) * 8); margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 25); font-weight: 600; color: rgba(255,255,255,.86); white-space: nowrap; }
+  #tim svg { width: calc(var(--u) * 24); height: calc(var(--u) * 24); flex: none; }
+  #avs { flex: none; display: flex; }
+  #avs i { width: calc(var(--u) * 58); height: calc(var(--u) * 58); border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 80%, #000);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 170% auto; background-position: 50% 6%; }
+  #avs i + i { margin-left: calc(var(--u) * -18); }
+  #bk { position: absolute; right: calc(var(--u) * -16); top: calc(var(--u) * -48); display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 9) calc(var(--u) * 20) calc(var(--u) * 9) calc(var(--u) * 10);
+    border-radius: 999px; background: linear-gradient(180deg, #fff, #EDEDED); box-shadow: 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -6) rgba(0,0,0,.5), inset 0 calc(var(--u) * -2) 0 rgba(0,0,0,.08);
+    font-size: calc(var(--u) * 26); font-weight: 800; color: #17151B; white-space: nowrap; transform-origin: 70% 50%; }
+  #bk .ck { width: calc(var(--u) * 40); height: calc(var(--u) * 40); border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #5BE29A, var(--ok) 60%, #1E9A5A); }
+  #bk .ck svg { width: 62%; height: 62%; }
+  #bring { position: absolute; left: calc(var(--u) * 30); top: 50%; width: calc(var(--u) * 150); height: calc(var(--u) * 150); margin: calc(var(--u) * -75); border-radius: 50%; border: calc(var(--u) * 6) solid #5BE29A; box-sizing: border-box; opacity: 0; }
+  .is-key #bring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div class="hd">
+      <div id="dt"><div class="m" id="dtm"></div><div class="d" id="dtd"></div></div>
+      <div class="ht"><div id="wd"></div><div id="da"></div></div>
+      <div class="nav"><i><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i><i><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></i></div>
+    </div>
+    <div id="grid">
+      <div id="slot"></div>
+      <div id="now"></div>
+      <div id="evsh"></div>
+      <div id="ev"><i class="bar"></i><div class="et"><div id="ttl"></div><div id="tim"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span id="timt"></span></div></div>
+        <div id="avs"></div><div class="sh"></div>
+        <div id="bk"><i id="bring"></i><div class="ck"><svg viewBox="0 0 24 24"><path id="ckp" d="M5.5 12.5l4 4 9-9" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span id="bkt"></span></div>
+      </div>
+    </div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 1 : 1.28);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+
+  // ---- content
+  const hr = Math.max(1, Math.min(22, Math.round(+v.hour || 14))), len = Math.max(15, Math.round(+v.length || 60));
+  const h12 = (h) => `${((h + 11) % 12) + 1} ${h % 24 < 12 ? "AM" : "PM"}`;
+  const hm = (m) => { const h = Math.floor(m / 60) % 24, mm = m % 60; return `${((h + 11) % 12) + 1}:${String(mm).padStart(2, "0")}`; };
+  const endM = hr * 60 + len, ap = (m) => (Math.floor(m / 60) % 24 < 12 ? "AM" : "PM");
+  $("#timt").textContent = `${hm(hr * 60)} to ${hm(endM)} ${ap(endM)}`;
+  $("#ttl").textContent = v.title || "";
+  const wd = String(v.weekday || ""); $("#wd").textContent = wd; $("#da").textContent = v.date || "";
+  $("#dtm").textContent = wd.slice(0, 3); $("#dtd").textContent = (String(v.date || "").match(/\d+/) || [""])[0];
+  $("#bkt").textContent = v.status || "";
+  (v.people || []).slice(0, 3).forEach((p) => { const i = document.createElement("i"); i.style.backgroundImage = `url("${p}")`; $("#avs").appendChild(i); });
+
+  // ---- size: three hour rows, the event in the middle one
+  const CW = MV.portrait ? W - safe.left - safe.right : Math.min(760 * u, W - safe.left - safe.right);
+  const card = $("#card"); card.style.width = CW + "px";
+  const GW = CW - 68 * u, RH = 128 * u, ROWS = 3, LBL = 104 * u;
+  const grid = $("#grid"); grid.style.height = ROWS * RH + 14 * u + "px";
+  for (let i = 0; i < ROWS; i++) { const r = document.createElement("div"); r.className = "row"; r.style.top = 14 * u + i * RH + "px";
+    r.innerHTML = `<span class="hr">${h12(hr - 1 + i)}</span><i class="ln"></i>`; grid.insertBefore(r, grid.firstChild); }
+  const rowY = (f) => 14 * u + f * RH;
+  const gh = (f0, f1, x0, w) => { const g = document.createElement("div"); g.className = "ghost"; Object.assign(g.style, { left: LBL + x0 + "px", top: rowY(f0) + 4 * u + "px", width: w + "px", height: (f1 - f0) * RH - 8 * u + "px" });
+    g.innerHTML = "<b style='width:56%'></b><b style='width:34%'></b>"; grid.insertBefore(g, $("#slot")); return g; };
+  const EW = GW - LBL - 6 * u;
+  const G1 = gh(0.05, 0.62, 0, EW * 0.62), G2 = gh(2.25, 3.0, EW * 0.18, EW * 0.82);
+  const EH = Math.max(0.82, Math.min(1.6, len / 60)) * RH - 8 * u, EY = rowY(1) + 4 * u;
+  for (const s of ["#slot", "#ev", "#evsh"]) gsap.set(s, { left: LBL, top: EY, width: EW, height: EH });
+  gsap.set("#now", { left: LBL, top: rowY(2.12), width: EW });
+  MV.fit("#wd", CW - (68 + 92 + 22 + 22 + 122) * u, 18); MV.fit("#da", CW - (68 + 92 + 22 + 22 + 122) * u, 14);
+  const avW = $("#avs").children.length ? (58 + 40 * ($("#avs").children.length - 1)) * u : 0;
+  MV.fit("#ttl", EW - (32 + 22 + 16) * u - avW, 16); MV.fit("#tim", EW - (32 + 22 + 16) * u - avW, 12);
+  const CH = card.getBoundingClientRect().height;
+
+  // ---- place: an overlay sits where a talking head leaves room; B-roll is centred
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) {
+    if (MV.portrait) { x = safe.left; y = safe.top + 40 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = safe.top + 30 * u; }
+    else { x = W - safe.right - CW; y = safe.top + 40 * u; }
+  } else if (MV.portrait) y = (H - CH) / 2 - 110 * u;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  // ---- 0.05: the card comes in out of depth, tilted, landing on a spring, then turns through the hold
+  tl.fromTo("#card", { z: -700 * u, rotationX: 30, rotationY: -26, rotationZ: -5, scale: 0.74 },
+    { z: 0, rotationX: 10, rotationY: -12, rotationZ: -1.5, scale: 1, duration: 0.95, ease: "back.out(1.3)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.to("#card", { rotationX: 3, rotationY: 9, rotationZ: 0.5, duration: D - 1.45, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#dt", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, 0.28);
+  tl.fromTo([".ht", ".nav"], { opacity: 0, x: -18 * u }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.07, ease: "expo.out" }, 0.36);
+  tl.fromTo(".row .ln", { scaleX: 0 }, { scaleX: 1, duration: 0.7, stagger: 0.06, ease: "expo.out" }, 0.42);
+  tl.fromTo(".row .hr", { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.06, ease: "expo.out" }, 0.46);
+  tl.fromTo([G1, G2], { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.55, stagger: 0.1, ease: "expo.out" }, 0.56);
+  tl.fromTo("#now", { scaleX: 0, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.62);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.8);
+  // the free slot shows where it will land
+  tl.fromTo("#slot", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.4, ease: "expo.out" }, 0.78);
+  tl.to("#slot", { scale: 1.025, duration: 0.25, yoyo: true, repeat: 1, ease: "sine.inOut" }, 1.12);
+  // the event is held above the grid, lifted and tilted, then drops in and SNAPS into its slot
+  const LIFT = { y: -118 * u, x: 30 * u, rotation: 4, scale: 1.07 };
+  tl.fromTo("#ev", { ...LIFT, y: LIFT.y + 30 * u, scale: 1.3, opacity: 0 }, { ...LIFT, opacity: 1, duration: 0.5, ease: "expo.out" }, 0.82);
+  tl.fromTo("#evsh", { y: 60 * u, x: 40 * u, scale: 1.05, opacity: 0 }, { y: 70 * u, x: 46 * u, scale: 1.08, opacity: 0.7, duration: 0.5, ease: "expo.out" }, 0.82);
+  tl.to("#ev", { y: LIFT.y + 14 * u, rotation: 3, duration: 0.5, ease: "sine.inOut" }, 1.32);
+  const SNAP = 1.82;
+  tl.to("#ev", { y: 0, x: 0, rotation: 0, scale: 1, duration: 0.62, ease: "back.out(1.9)" }, SNAP - 0.12);
+  tl.to("#evsh", { y: 10 * u, x: 0, scale: 0.96, opacity: 0.55, duration: 0.5, ease: "expo.out" }, SNAP - 0.12);
+  tl.to("#slot", { opacity: 0, scale: 1.06, duration: 0.3, ease: "power2.out" }, SNAP);
+  // the snap jolts the card and nudges the neighbours
+  tl.to("#card", { scale: 1.018, duration: 0.07, ease: "power2.out" }, SNAP); tl.to("#card", { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, SNAP + 0.07);
+  tl.fromTo(G2, { y: 0 }, { y: 8 * u, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, SNAP + 0.02);
+  tl.fromTo(G1, { y: 0 }, { y: -6 * u, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, SNAP + 0.03);
+  // the invitees pop in on it
+  tl.fromTo("#avs i", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, stagger: 0.08, ease: "back.out(2.6)" }, SNAP + 0.18);
+  // the moment: Booked stamps onto the corner, the check draws, a ring runs out
+  const BK = SNAP + 0.62;
+  const ck = $("#ckp"), L = ck.getTotalLength(); gsap.set(ck, { strokeDasharray: L, strokeDashoffset: L });
+  tl.fromTo("#bk", { scale: 2, rotation: -14, opacity: 0 }, { scale: 1, rotation: -4, duration: 0.5, ease: "back.out(2.4)" }, BK);
+  tl.to("#bk", { opacity: 1, duration: 0.12, ease: "power2.out" }, BK);
+  tl.to(ck, { strokeDashoffset: 0, duration: 0.32, ease: "power2.out" }, BK + 0.12);
+  tl.fromTo("#bring", { scale: 0.3, opacity: 1 }, { scale: 1.2, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, BK + 0.1);
+  tl.set("#bring", { opacity: 0 }, 0);
+  tl.to("#ev", { scale: 1.03, duration: 0.07, ease: "power2.out" }, BK + 0.04); tl.to("#ev", { scale: 1, duration: 0.4, ease: "back.out(2.5)" }, BK + 0.11);
+  tl.fromTo("#ev .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, BK + 0.15);
+  // exit: the card tips back and flies up into blur, accelerating
+  tl.to("#card", { y: -140 * u, z: -300 * u, rotationX: -18, opacity: 0, filter: "blur(16px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "paper-tear", "name": "Paper tear wipe", "oneLiner": "two sheets of real scanned paper with fibrous torn edges slap across on twos, cover the frame, and rip away to the next shot",
+  "category": "paper", "kind": "transition", "uses": ["transition", "overlay"], "looks": ["paper"], "from": "new",
+  "tags": ["transition", "wipe", "paper", "torn", "collage", "on twos", "handmade", "cut"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 1.2, "alpha": true,
+  "say": "between two ideas or two shots: cut the outgoing clip on the frame the paper fully covers (0.4s in), start the next clip under it" }

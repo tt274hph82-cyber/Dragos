@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Card title","default":"Knowledge base"},
+  {"id":"files","type":"string","label":"Three file names, comma separated","default":"playbook.pdf,notes.md,faq.docx"},
+  {"id":"total","type":"number","label":"Chunks indexed (the counter lands here)","default":128},
+  {"id":"unit","type":"string","label":"Word after the counter","default":"chunks"},
+  {"id":"busy","type":"string","label":"Status while indexing","default":"Indexing"},
+  {"id":"ready","type":"string","label":"Status when done","default":"Ready"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; --mono: ui-monospace, "SF Mono", Menlo, monospace; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 46%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.42)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #rig { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+
+  /* paper documents */
+  .doc { position: absolute; top: 0; box-sizing: border-box; border-radius: calc(var(--u) * 14); background: linear-gradient(170deg, #FBF9F4, #EDE8DD);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 #fff, 0 calc(var(--u) * 30) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.6), 0 0 0 calc(var(--u) * 1) rgba(0,0,0,.08); overflow: hidden; }
+  .doc::before { content: ""; position: absolute; right: 0; top: 0; width: calc(var(--u) * 56); height: calc(var(--u) * 56); background: linear-gradient(225deg, var(--ground) 50%, #DAD3C4 50%); border-bottom-left-radius: calc(var(--u) * 10); box-shadow: calc(var(--u) * -3) calc(var(--u) * 3) calc(var(--u) * 6) rgba(0,0,0,.15); }
+  .is-alpha .doc::before { background: linear-gradient(225deg, transparent 50%, #DAD3C4 50%); }
+  .doc .ty { position: absolute; left: calc(var(--u) * 24); top: calc(var(--u) * 26); padding: calc(var(--u) * 5) calc(var(--u) * 14); border-radius: calc(var(--u) * 8); font-size: calc(var(--u) * 28); font-weight: 800; letter-spacing: .06em; color: #fff; text-transform: uppercase; white-space: nowrap; }
+  .doc .ln { position: absolute; left: calc(var(--u) * 24); height: calc(var(--u) * 11); border-radius: 99px; background: rgba(40,30,20,.16); }
+  .doc .nm { position: absolute; left: calc(var(--u) * 24); bottom: calc(var(--u) * 22); font-size: calc(var(--u) * 36); font-weight: 700; color: #1E1A16; white-space: nowrap; }
+
+  /* the knowledge base */
+  #card { position: absolute; left: 0; box-sizing: border-box; border-radius: calc(var(--u) * 40);
+    background: linear-gradient(165deg, rgba(255,255,255,.15), rgba(255,255,255,.05) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  #card .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  #hd { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 20); }
+  .ic { flex: none; width: calc(var(--u) * 72); height: calc(var(--u) * 72); border-radius: calc(var(--u) * 20); display: grid; place-items: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.14)), color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,.2)));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), 0 0 calc(var(--u) * 26) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .ic svg { width: 56%; height: 56%; } .ic svg * { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #hd .tt { flex: 1; min-width: 0; font-size: calc(var(--u) * 40); font-weight: 800; color: var(--ink); white-space: nowrap; }
+  #st { position: relative; flex: none; height: calc(var(--u) * 64); border-radius: 99px; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22) 0 calc(var(--u) * 14); box-sizing: border-box;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); white-space: nowrap; }
+  .is-key #st { background: color-mix(in srgb, var(--surface) 82%, #fff); }
+  #st .w { position: relative; width: calc(var(--u) * 38); height: calc(var(--u) * 38); flex: none; }
+  #st .lbl { position: relative; height: calc(var(--u) * 44); overflow: hidden; }
+  #st .lbl span { position: absolute; left: 0; top: 0; line-height: calc(var(--u) * 44); font-size: calc(var(--u) * 32); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  #st .r { color: color-mix(in srgb, var(--ink) 80%, transparent); } #st .d { color: var(--ok); }
+  #sring { position: absolute; inset: 0; border-radius: 99px; border: calc(var(--u) * 3) solid var(--ok); opacity: 0; pointer-events: none; }
+  .is-key #sring { display: none; }
+  .spin { position: absolute; inset: 0; } .spin svg { width: 100%; height: 100%; } .spin circle { fill: none; stroke-width: 3; }
+  .spin .bg { stroke: rgba(255,255,255,.14); } .spin .fg { stroke: color-mix(in srgb, var(--accent) 60%, #fff); stroke-dasharray: 22 100; stroke-linecap: round; }
+  .okc { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; transform: scale(0);
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--ok) 60%, #fff), var(--ok) 60%, color-mix(in srgb, var(--ok) 70%, #000)); }
+  .okc svg { width: 64%; height: 64%; overflow: visible; } .okc path { fill: none; stroke: #04210F; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 20; }
+
+  #cnt { position: absolute; display: flex; align-items: baseline; gap: calc(var(--u) * 14); white-space: nowrap; }
+  #num { font-family: var(--font-display); font-size: calc(var(--u) * 96); line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  #unit { font-size: calc(var(--u) * 36); font-weight: 700; color: color-mix(in srgb, var(--ink) 55%, transparent); }
+  #bar { position: absolute; height: calc(var(--u) * 10); border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; }
+  #bar i { position: absolute; transform: scaleX(0); inset: 0; border-radius: 99px; transform-origin: 0 50%; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, #fff 0%), color-mix(in srgb, var(--accent) 50%, #fff)); }
+  #bar i.g { transform: none; opacity: 0; background: #2BD67B; }
+
+  #grid { position: absolute; }
+  .slot { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 14); border: calc(var(--u) * 2) dashed rgba(255,255,255,.1); }
+  .chunk { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 14); background: rgba(255,255,255,.08);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.18), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.08); }
+  .is-key .chunk { background: color-mix(in srgb, var(--surface) 82%, #fff); }
+  .chunk .b { position: absolute; left: calc(var(--u) * 16); height: calc(var(--u) * 8); border-radius: 99px; background: rgba(255,255,255,.3); }
+  .chunk .lit { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 50%, transparent), color-mix(in srgb, var(--accent) 16%, transparent));
+    box-shadow: inset 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 70%, #fff 10%), 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--accent) 50%, transparent); }
+  .is-key .chunk .lit { box-shadow: inset 0 0 0 calc(var(--u) * 2) var(--accent); }
+  .chunk .dt { position: absolute; right: calc(var(--u) * 14); top: calc(var(--u) * 14); width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: rgba(255,255,255,.22); }
+  #beam { position: absolute; width: calc(var(--u) * 120); opacity: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 30%, rgba(255,255,255,.35)), transparent); }
+  .is-key #beam { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="docs"></div>
+    <div id="card">
+      <div id="hd"><div class="ic"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v6.5c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V5.5M4.5 12v6.5c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8V12"/></svg></div>
+        <div class="tt"></div>
+        <div id="st"><div class="w"><div class="spin"><svg viewBox="0 0 24 24"><circle class="bg" cx="12" cy="12" r="9"/><circle class="fg" cx="12" cy="12" r="9"/></svg></div><div class="okc"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-8.6"/></svg></div></div>
+          <div class="lbl"><span class="r"></span><span class="d"></span></div><i id="sring"></i></div></div>
+      <div id="cnt"><span id="num">0</span><span id="unit"></span></div>
+      <div id="bar"><i></i><i class="g"></i></div>
+      <div id="grid"><div id="beam"></div></div>
+      <div class="sh"></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, u = MV.u, rnd = MV.rand(41);
+  const files = String(v.files || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 3);
+  while (files.length < 3) files.push("file-" + (files.length + 1) + ".txt");
+  const total = Math.max(1, Math.round(+v.total || 0));
+
+  // ---- metrics (unscaled rig px)
+  const CW = 960 * u, DW = 272 * u, DH = 330 * u, DG = (CW - 3 * DW) / 2 - 20 * u, DOFF = (CW - (3 * DW + 2 * DG)) / 2;
+  const PAD = 36 * u, HDH = 80 * u, CNTH = 104 * u, COLS = 6, ROWS = 4, TG = 14 * u;
+  const TW = (CW - 2 * PAD - (COLS - 1) * TG) / COLS, TH = 92 * u;
+  const GRIDY = PAD + HDH + 24 * u + CNTH + 34 * u, GRIDH = ROWS * TH + (ROWS - 1) * TG;
+  const CARDH = GRIDY + GRIDH + PAD, CARDY = DH + 56 * u;
+  const natH = CARDY + CARDH;
+  const rig = $("#rig"), card = $("#card");
+  Object.assign(rig.style, { width: CW + "px", height: natH + "px" });
+  Object.assign(card.style, { width: CW + "px", height: CARDH + "px", top: CARDY + "px" });
+  Object.assign($("#hd").style, { left: PAD + "px", top: PAD + "px", width: CW - 2 * PAD + "px", height: HDH + "px" });
+  $("#hd .tt").textContent = v.title || "";
+  $("#st .r").textContent = v.busy || ""; $("#st .d").textContent = v.ready || "";
+  const lr = $("#st .r").getBoundingClientRect().width, ld = $("#st .d").getBoundingClientRect().width;
+  $("#st .lbl").style.width = lr + 2 + "px";
+  MV.fitText($("#hd .tt"), CW - 2 * PAD - 92 * u - lr - 120 * u, 16);
+  Object.assign($("#cnt").style, { left: PAD + 4 * u + "px", top: PAD + HDH + 24 * u + "px", height: CNTH + "px" });
+  $("#unit").textContent = v.unit || "";
+  Object.assign($("#bar").style, { left: CW * 0.5 + "px", width: CW * 0.5 - PAD - 6 * u + "px", top: PAD + HDH + 24 * u + CNTH * 0.62 + "px" });
+  const grid = $("#grid"); Object.assign(grid.style, { left: PAD + "px", top: GRIDY + "px", width: CW - 2 * PAD + "px", height: GRIDH + "px" });
+  Object.assign($("#beam").style, { top: -10 * u + "px", height: GRIDH + 20 * u + "px" });
+
+  // slots and chunks: doc d owns columns 2d and 2d+1
+  const C = [];
+  for (let d = 0; d < 3; d++) for (let r = 0; r < ROWS; r++) for (let k = 0; k < 2; k++) {
+    const col = d * 2 + k, x = col * (TW + TG), y = r * (TH + TG);
+    const s = document.createElement("div"); s.className = "slot"; Object.assign(s.style, { left: x + "px", top: y + "px", width: TW + "px", height: TH + "px" }); grid.appendChild(s);
+    const c = document.createElement("div"); c.className = "chunk"; Object.assign(c.style, { left: x + "px", top: y + "px", width: TW + "px", height: TH + "px" });
+    c.innerHTML = `<i class="lit"></i><i class="dt"></i>` + [0, 1, 2].map((j) => `<i class="b" style="top:${(22 + j * 20) * u}px;width:${(TW / u - 32 - (j === 2 ? 30 + rnd() * 30 : rnd() * 22) - (j === 0 ? 18 : 0)) * u}px"></i>`).join("");
+    grid.appendChild(c); C.push({ el: c, d, col, x, y });
+  }
+
+  // documents
+  const TYC = ["var(--accent)", "color-mix(in srgb, var(--accent2) 80%, #000 10%)", "#4A6FD8"];
+  const docs = files.map((f, i) => {
+    const el = document.createElement("div"); el.className = "doc";
+    const ext = (f.split(".").pop() || "txt").slice(0, 4);
+    el.innerHTML = `<span class="ty"></span>` + [0, 1, 2, 3, 4, 5].map((j) => `<i class="ln" style="top:${(98 + j * 28) * u}px;width:${(j === 5 ? 120 : 200 - rnd() * 50) * u}px"></i>`).join("") + `<span class="nm"></span>`;
+    $(".ty", el).textContent = ext; $(".ty", el).style.background = TYC[i % 3]; $(".nm", el).textContent = f;
+    Object.assign(el.style, { left: DOFF + i * (DW + DG) + "px", width: DW + "px", height: DH + "px" });
+    $("#docs").appendChild(el); MV.fitText($(".nm", el), DW - 48 * u, 14);
+    return el;
+  });
+
+  // ---- place the rig and scale it to fit
+  let bx, by, bw, bh;
+  if (P && MV.alpha) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H * 0.62 - safe.top; }
+  else if (P) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H - safe.top - safe.bottom; }
+  else if (W > H && MV.alpha) { bw = W * 0.46; bx = W - safe.right - bw; by = safe.top; bh = H - safe.top - safe.bottom; }
+  else { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H - safe.top - safe.bottom; }
+  const S = Math.min(W > H && !MV.alpha ? 1.1 : 1, bw / CW, bh / natH);
+  const X = bx + (bw - CW * S) / 2, Y = by + (bh - natH * S) / 2;
+  const X0 = X - CW * (1 - S) / 2, Y0 = Y - natH * (1 - S) / 2;
+  gsap.set(rig, { x: X0, y: Y0, scale: S, transformOrigin: `${CW / 2}px ${natH / 2}px` });
+  const cx = X + CW * S / 2, cy = Y + natH * S / 2;
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+
+  // ---- camera drift
+  tl.fromTo(rig, { rotationY: P ? -8 : -11, rotationX: 9, z: -40 * u }, { rotationY: P ? 5 : 7, rotationX: 3, z: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the base arrives empty, slots waiting
+  tl.fromTo(card, { y: 90 * u, scale: 0.95 }, { y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, 0.03);
+  tl.fromTo(card, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.03);
+  tl.fromTo("#hd .ic", { scale: 0.4, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)", transformOrigin: "50% 50%" }, 0.12);
+  tl.fromTo(["#hd .tt", "#st", "#cnt", "#bar"], { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: "expo.out" }, 0.18);
+  tl.fromTo(".slot", { opacity: 0 }, { opacity: 1, duration: 0.4, stagger: 0.01, ease: "power2.out" }, 0.25);
+  tl.fromTo("#st .spin", { rotation: 0 }, { rotation: 360 * 4, duration: D, ease: "none", transformOrigin: "50% 50%" }, 0);
+  tl.fromTo(card, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, 0.25);
+  gsap.set(C.map((c) => c.el), { opacity: 0 });
+
+  // ---- the documents drop in on paper
+  docs.forEach((el, i) => {
+    const t = 0.22 + i * 0.12;
+    tl.fromTo(el, { y: -260 * u, rotation: (i - 1) * 9 - 4, scale: 1.05 }, { y: 0, rotation: (i - 1) * 3, scale: 1, duration: 0.6, ease: "back.out(1.5)", transformOrigin: "50% 50%" }, t);
+    tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, t);
+  });
+
+  // ---- each document dives into the base and breaks into chunks that land in its columns
+  const T0 = 0.98, SD = 0.5;
+  const cnum = $("#num"), cv = { n: 0 };
+  docs.forEach((el, d) => {
+    const t = T0 + d * SD;
+    tl.to(el, { y: -26 * u, scale: 1.04, rotation: 0, duration: 0.16, ease: "power2.out" }, t);
+    tl.to(el, { y: 230 * u, scale: 0.55, opacity: 0, duration: 0.3, ease: "power3.in" }, t + 0.16);
+    const dcx = DOFF + d * (DW + DG) + DW / 2, dcy = CARDY + 40 * u;   // where the doc goes under the rim
+    C.filter((c) => c.d === d).forEach((c, k) => {
+      const tcx = PAD + c.x + TW / 2, tcy = CARDY + GRIDY + c.y + TH / 2;
+      const tk = t + 0.36 + k * 0.035;
+      tl.fromTo(c.el, { x: dcx - tcx, y: dcy - tcy, scale: 0.35, rotation: (rnd() - 0.5) * 50, opacity: 0 },
+        { x: 0, y: 0, scale: 1, rotation: 0, opacity: 1, duration: 0.55, ease: "expo.out" }, tk);
+    });
+    // the counter moves as chunks land (a third of the run per document, held back for the light pass)
+    tl.to(cv, { n: Math.round(total * 0.4 * (d + 1) / 3), duration: 0.5, ease: "power2.out", onUpdate: () => (cnum.textContent = Math.round(cv.n)) }, t + 0.4);
+  });
+
+  // ---- the index pass: a beam sweeps the grid, each chunk lights, the counter and bar finish
+  const TL = T0 + 2 * SD + 0.36 + 8 * 0.035 + 0.4, SW = 1.0;
+  const GW = CW - 2 * PAD;
+  tl.fromTo("#beam", { x: -140 * u, opacity: 0 }, { x: GW + 20 * u, duration: SW, ease: "power1.inOut" }, TL);
+  tl.to("#beam", { opacity: 1, duration: 0.15 }, TL); tl.to("#beam", { opacity: 0, duration: 0.2 }, TL + SW - 0.2);
+  C.forEach((c) => {
+    const tc = TL + ((c.x + TW / 2 + 140 * u) / (GW + 160 * u)) * SW;
+    tl.fromTo($(".lit", c.el), { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, tc);
+    tl.to($(".lit", c.el), { opacity: 0.42, duration: 0.6, ease: "power2.out" }, tc + 0.14);
+    tl.fromTo($(".dt", c.el), { backgroundColor: "rgba(255,255,255,.22)", scale: 1 }, { backgroundColor: "#ffffff", scale: 1.4, duration: 0.2, ease: "back.out(3)", transformOrigin: "50% 50%" }, tc);
+    tl.to(c.el, { scale: 1.06, duration: 0.08, ease: "power2.out", transformOrigin: "50% 50%" }, tc);
+    tl.to(c.el, { scale: 1, duration: 0.4, ease: "back.out(3)" }, tc + 0.08);
+  });
+  tl.to(cv, { n: total, duration: SW + 0.1, ease: "power1.inOut", onUpdate: () => (cnum.textContent = Math.round(cv.n)) }, TL);
+  tl.fromTo("#bar i:not(.g)", { scaleX: 0 }, { scaleX: 0.4, duration: 1.4, ease: "power2.out" }, T0 + 0.4);
+  tl.to("#bar i:not(.g)", { scaleX: 1, duration: SW + 0.1, ease: "power1.inOut" }, TL);
+  tl.set(cnum, { textContent: "0" }, 0);
+
+  // ---- ready: the status rolls to green with a ring, the bar goes green, light runs over the base
+  const TD = TL + SW + 0.12;
+  tl.to("#st .spin", { opacity: 0, duration: 0.12 }, TD);
+  tl.fromTo("#st .okc", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)", transformOrigin: "50% 50%" }, TD);
+  tl.fromTo("#st .okc path", { strokeDashoffset: 20 }, { strokeDashoffset: 0, duration: 0.2, ease: "power2.out" }, TD + 0.08);
+  gsap.set("#st .okc path", { strokeDashoffset: 0 });
+  tl.to("#st .r", { yPercent: -110, opacity: 0, duration: 0.15, ease: "power2.in" }, TD);
+  tl.fromTo("#st .d", { yPercent: 70 }, { yPercent: 0, duration: 0.45, ease: "expo.out" }, TD + 0.1);
+  tl.fromTo("#st .d", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, TD + 0.16);
+  gsap.set("#st .d", { opacity: 0 });
+  tl.to("#st .lbl", { width: ld + 2, duration: 0.4, ease: "expo.out" }, TD + 0.16);
+  tl.to("#st", { scale: 1.12, duration: 0.1, ease: "power2.out", transformOrigin: "100% 50%" }, TD + 0.05);
+  tl.to("#st", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TD + 0.15);
+  if (!KEY) tl.fromTo("#sring", { scale: 1, opacity: 0.9 }, { scale: 1.5, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TD + 0.08);
+  tl.to("#bar i.g", { opacity: 1, duration: 0.3, ease: "power2.out" }, TD);
+  tl.to("#cnt", { scale: 1.1, duration: 0.1, ease: "power2.out", transformOrigin: "0% 70%" }, TD); tl.to("#cnt", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TD + 0.1);
+  tl.fromTo(card, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TD + 0.1);
+
+  // ---- the camera settles on the base once the paper is gone
+  const S2 = Math.max(S, Math.min(W > H && !MV.alpha ? 1.3 : 1, bw / CW, (bh * 0.96) / CARDH));
+  const ty2 = (by + bh / 2) - natH / 2 - (CARDY + CARDH / 2 - natH / 2) * S2;
+  tl.to(rig, { y: ty2, x: X0 - CW * (S2 - S) / 2 + (CW * (S2 - S)) / 2, scale: S2, duration: 1.2, ease: "expo.inOut" }, T0 + 2 * SD + 0.2);
+
+  // ---- out
+  if (MV.alpha) tl.to(rig, { y: "-=" + 80 * u, opacity: 0, filter: "blur(14px)", duration: 0.36, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"Stage names, comma separated, 3 or 4, top first","default":"Visitors,Sign-ups,Trials,Customers"},
+  {"id":"values","type":"string","label":"Stage numbers, comma separated, same order, each smaller than the last","default":"48000,9600,3100,1240"},
+  {"id":"prefix","type":"string","label":"Before each number","default":""},
+  {"id":"suffix","type":"string","label":"After each number","default":""},
+  {"id":"result","type":"string","label":"Text on the stamp (empty = bottom / top as a percent)","default":""},
+  {"id":"resultLabel","type":"string","label":"Small word under the stamp value","default":"convert"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 32%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 38%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,.045), transparent 60%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #fun { position: absolute; left: 0; top: 0; }
+  #svg { position: absolute; left: 0; top: 0; overflow: visible; }
+  #fun > div:not([id]) { position: relative; z-index: 2; }
+  .lab { position: absolute; text-align: center; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: color-mix(in srgb, var(--ink) 66%, transparent); line-height: 1; }
+  .num { position: absolute; text-align: center; font-family: var(--font-display); white-space: nowrap; line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums;
+    text-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 18) rgba(0,0,0,.45); }
+  .num .fx { font-size: .62em; color: color-mix(in srgb, var(--ink) 62%, transparent); margin: 0 .04em; }
+  .last .num { color: #fff; text-shadow: 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--accent) 85%, transparent); }
+  .last .lab { color: color-mix(in srgb, var(--accent) 30%, white 70%); }
+
+  #pulse { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, #fff 0%, color-mix(in srgb, var(--accent) 60%, white) 22%, color-mix(in srgb, var(--accent) 70%, transparent) 45%, transparent 70%); opacity: 0; }
+  #trail { position: absolute; border-radius: 99px; transform-origin: 50% 100%; opacity: 0; background: linear-gradient(0deg, color-mix(in srgb, var(--accent) 50%, white), color-mix(in srgb, var(--accent) 60%, transparent) 40%, transparent); filter: blur(calc(var(--u) * 4)); }
+  #wire { position: absolute; border-radius: 99px; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 50%, white)); box-shadow: 0 0 calc(var(--u) * 16) var(--accent); transform-origin: 0 0; }
+
+  #stamp { position: absolute; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0;
+    border: calc(var(--u) * 4) solid rgba(255,255,255,.95);
+    box-shadow: inset 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 60%, black 40%), inset 0 0 0 calc(var(--u) * 8) rgba(255,255,255,.6), 0 calc(var(--u) * 20) calc(var(--u) * 40) rgba(0,0,0,.45), 0 0 calc(var(--u) * 90) calc(var(--u) * -10) var(--accent);
+    background: radial-gradient(60% 60% at 40% 35%, color-mix(in srgb, var(--accent) 70%, white 30%), color-mix(in srgb, var(--accent) 85%, black 15%)); }
+  #stamp b { font-family: var(--font-display); font-weight: 400; color: #fff; line-height: 1; letter-spacing: -0.02em; text-shadow: 0 calc(var(--u) * 2) 0 rgba(0,0,0,.25); white-space: nowrap; }
+  #stamp small { font-weight: 800; color: rgba(255,255,255,.9); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; line-height: 1; }
+  /* an empty slot, shimmering, until the pulse brings the number */
+  .slot { position: absolute; border-radius: 99px; background: linear-gradient(100deg, rgba(255,255,255,.08) calc(var(--sh, 0%) - 30%), rgba(255,255,255,.3) var(--sh, 0%), rgba(255,255,255,.08) calc(var(--sh, 0%) + 30%)); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  #fref { position: absolute; left: 0; top: 0; pointer-events: none; }
+  #fref .ghost { position: absolute; border-radius: 50%; background: radial-gradient(60% 60% at 40% 35%, color-mix(in srgb, var(--accent) 70%, white 30%), color-mix(in srgb, var(--accent) 85%, black 15%)); opacity: 0; }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 50%, white 50%); opacity: 0; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="floor"></div>
+    <div id="base"></div>
+    <div id="fun">
+      <svg id="svg"><defs>
+        <linearGradient id="gGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".2"/><stop offset=".7" stop-color="#fff" stop-opacity=".06"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
+        <linearGradient id="gLit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="a0"/><stop offset="1" class="a1"/></linearGradient>
+        <linearGradient id="gEdge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity=".3"/></linearGradient>
+        <filter id="fGlow" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="22"/></filter>
+      </defs></svg>
+      <div id="wire"></div>
+      <div id="trail"></div>
+      <div id="pulse"></div>
+      <div id="ring"></div>
+      <div id="stamp" data-block><b></b><small></small></div>
+    </div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const D = +document.getElementById("root").dataset.duration;
+  const P = MV.portrait, SQ = W === H, LAND = !P && !SQ;
+  const cs = getComputedStyle(document.getElementById("root")), ACC = cs.getPropertyValue("--accent").trim();
+  document.querySelectorAll(".a0").forEach((s) => { s.style.stopColor = `color-mix(in srgb, ${ACC} 70%, white)`; s.style.stopOpacity = 0.75; });
+  document.querySelectorAll(".a1").forEach((s) => { s.style.stopColor = ACC; s.style.stopOpacity = 0.55; });
+  const list = (x) => String(x || "").split(",").map((s) => s.trim()).filter((s) => s.length);
+  let labels = list(v.labels), values = list(v.values).map(Number).filter((n) => isFinite(n));
+  const N = Math.max(3, Math.min(4, Math.min(labels.length, values.length)));
+  while (labels.length < N) labels.push(""); while (values.length < N) values.push(0);
+  labels = labels.slice(0, N); values = values.slice(0, N);
+  const fmt = (x) => Math.round(x).toLocaleString("en-US");
+  const rate = values[0] ? (values[N - 1] / values[0]) * 100 : 0;
+  const resultText = v.result || (rate >= 10 ? rate.toFixed(0) : rate >= 1 ? rate.toFixed(1) : rate.toFixed(2)) + "%";
+
+  // ---- layout: the funnel, its spout, the stamp under it (or beside it on 16:9)
+  let fl, fr, ft, fb, sd, sx, sy;
+  if (P) { fl = safe.left; fr = W - safe.right; ft = safe.top + 20 * u; sd = Math.round(230 * u); sy = H - safe.bottom - sd / 2 - 10 * u; fb = sy - sd / 2 - 90 * u; }
+  else if (SQ) { fl = 150 * u; fr = W - 150 * u; ft = 60 * u; sd = Math.round(190 * u); sy = H - 60 * u - sd / 2; fb = sy - sd / 2 - 70 * u; }
+  else { fl = W * 0.12; fr = W * 0.56; ft = H * 0.09; fb = H * 0.82; sd = Math.round(250 * u); sy = 0; }
+  const fw = fr - fl, cx = (fl + fr) / 2, gap = Math.round(16 * u), slab = Math.round(14 * u);
+  const sh = (fb - ft - gap * (N - 1)) / N;
+  const wAt = (y) => fw * (1 - 0.6 * (y - ft) / (fb - ft));
+  const fun = document.getElementById("fun"), svg = document.getElementById("svg");
+  Object.assign(fun.style, { width: W + "px", height: H + "px" }); svg.setAttribute("width", W); svg.setAttribute("height", H);
+  const NS = "http://www.w3.org/2000/svg";
+  const mk = (tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  // a trapezoid with rounded corners
+  const trap = (y0, y1, dy = 0) => { const w0 = wAt(y0) / 2, w1 = wAt(y1) / 2, r = 22 * u; const p = [[cx - w0, y0 + dy], [cx + w0, y0 + dy], [cx + w1, y1 + dy], [cx - w1, y1 + dy]];
+    let d = ""; for (let i = 0; i < 4; i++) { const a = p[(i + 3) % 4], b = p[i], c = p[(i + 1) % 4];
+      const l1 = Math.hypot(b[0] - a[0], b[1] - a[1]), l2 = Math.hypot(c[0] - b[0], c[1] - b[1]), rr = Math.min(r, l1 / 2, l2 / 2);
+      const s = [b[0] + ((a[0] - b[0]) / l1) * rr, b[1] + ((a[1] - b[1]) / l1) * rr], e = [b[0] + ((c[0] - b[0]) / l2) * rr, b[1] + ((c[1] - b[1]) / l2) * rr];
+      d += (i ? " L" : "M") + s[0] + "," + s[1] + " Q" + b[0] + "," + b[1] + " " + e[0] + "," + e[1]; } return d + " Z"; };
+  const ST = [];
+  for (let i = 0; i < N; i++) {
+    const y0 = ft + i * (sh + gap), y1 = y0 + sh, g = mk("g", {});
+    g.append(mk("path", { d: trap(y0, y1, slab), fill: "url(#gEdge)", stroke: "rgba(255,255,255,.12)", "stroke-width": 1.5 * u }));
+    const glow = mk("path", { d: trap(y0, y1), fill: ACC, filter: "url(#fGlow)", opacity: 0 });
+    const face = mk("path", { d: trap(y0, y1), fill: "url(#gGlass)", stroke: "rgba(255,255,255,.34)", "stroke-width": 2 * u });
+    const lit = mk("path", { d: trap(y0, y1), fill: "url(#gLit)", opacity: 0 });
+    const hi = mk("line", { x1: cx - wAt(y0) / 2 + 30 * u, x2: cx + wAt(y0) / 2 - 30 * u, y1: y0 + 2.5 * u, y2: y0 + 2.5 * u, stroke: "rgba(255,255,255,.7)", "stroke-width": 2 * u, "stroke-linecap": "round" });
+    g.append(glow, face, lit, hi); svg.append(g);
+    const box = document.createElement("div"); box.className = i === N - 1 ? "last" : ""; fun.insertBefore(box, document.getElementById("wire"));
+    const lab = document.createElement("div"); lab.className = "lab"; lab.textContent = labels[i];
+    const num = document.createElement("div"); num.className = "num";
+    num.innerHTML = (v.prefix ? `<span class="fx">${v.prefix}</span>` : "") + `<span class="n">${fmt(Math.max(values[i], i ? values[i - 1] : values[i]))}</span>` + (v.suffix ? `<span class="fx">${v.suffix}</span>` : "");
+    const slot = document.createElement("div"); slot.className = "slot"; box.append(lab, num, slot);
+    const wMid = wAt(y1) - 60 * u, lfs = Math.round(Math.min(30 * u, sh * 0.19)), nfs = Math.round(Math.min((P ? 92 : 84) * u, sh * 0.5));
+    lab.style.fontSize = lfs + "px"; num.style.fontSize = nfs + "px";
+    MV.fit(lab, wMid, 12); MV.fit(num, wMid, 18);
+    const lh = lab.offsetHeight, nh = num.offsetHeight, blockH = lh + 12 * u + nh, by = y0 + (sh - blockH) / 2;
+    Object.assign(lab.style, { left: cx - 400 * u + "px", width: 800 * u + "px", top: by + "px" });
+    Object.assign(num.style, { left: cx - 400 * u + "px", width: 800 * u + "px", top: by + lh + 12 * u + "px" });
+    { const sw = Math.min(wMid * 0.62, 300 * u), shh = Math.round(nfs * 0.5); Object.assign(slot.style, { left: cx - sw / 2 + "px", width: sw + "px", height: shh + "px", top: by + lh + 12 * u + (nh - shh) / 2 + "px" }); }
+    if (i === 0) slot.style.display = "none";
+    ST.push({ g, glow, face, lit, lab, num, slot, n: num.querySelector(".n"), yc: (y0 + y1) / 2, y0, y1 });
+  }
+  // the spout and the wire to the stamp
+  const spB = fb + slab, wire = document.getElementById("wire");
+  const spW = wAt(fb) * 0.34;
+  if (LAND) { sx = Math.round(fr + (W - fr) * 0.48); sy = Math.round(ST[N - 1].yc); }
+  else { sx = cx; }
+  const stamp = document.getElementById("stamp"), ring = document.getElementById("ring");
+  for (const e of [stamp, ring]) Object.assign(e.style, { width: sd + "px", height: sd + "px", left: sx - sd / 2 + "px", top: sy - sd / 2 + "px" });
+  const sb = stamp.querySelector("b"), ss = stamp.querySelector("small");
+  sb.textContent = resultText; sb.style.fontSize = Math.round(sd * 0.3) + "px"; MV.fit(sb, sd * 0.74, 14);
+  ss.textContent = v.resultLabel || ""; ss.style.fontSize = Math.round(sd * 0.085) + "px"; ss.style.marginTop = Math.round(sd * 0.04) + "px"; MV.fit(ss, sd * 0.62, 10);
+  if (!v.resultLabel) ss.style.display = "none";
+  // the pulse's path: down the middle, out of the spout, to the stamp
+  const path = LAND ? [[cx, ft - 60 * u], [cx, ST[N - 1].yc], [sx - sd / 2, sy]] : [[cx, ft - 60 * u], [cx, sy - sd / 2]];
+  if (LAND) Object.assign(wire.style, { left: cx + wAt(ST[N - 1].y1) / 2 + 10 * u + "px", top: sy - 2 * u + "px", height: 4 * u + "px", width: sx - sd / 2 - (cx + wAt(ST[N - 1].y1) / 2 + 10 * u) + "px" });
+  else Object.assign(wire.style, { left: cx - 2 * u + "px", top: spB + 8 * u + "px", width: 4 * u + "px", height: sy - sd / 2 - spB - 8 * u + "px" });
+  const pulse = document.getElementById("pulse"), trail = document.getElementById("trail");
+  const ps = Math.round(150 * u); Object.assign(pulse.style, { width: ps + "px", height: ps + "px" });
+  Object.assign(trail.style, { width: 12 * u + "px", height: 220 * u + "px" });
+  // the floor under it all, mirrored
+  const floorY = Math.max(sy + sd / 2, fb + slab) + 36 * u;
+  document.getElementById("floor").style.top = floorY + "px";
+  Object.assign(document.getElementById("base").style, { left: fl - 40 * u + "px", width: (LAND ? sx + sd / 2 : fr) - fl + 80 * u + "px", top: floorY - 1.5 * u + "px" });
+  fun.style.height = floorY - 18 * u + "px"; fun.style.overflow = "visible";
+  // the floor mirrors the shapes only (no text), soft, fading out fast
+  const fref = document.createElement("div"); fref.id = "fref"; document.getElementById("cam").insertBefore(fref, fun);
+  const rsvg = svg.cloneNode(true); rsvg.removeAttribute("id"); rsvg.style.position = "absolute"; rsvg.style.left = rsvg.style.top = 0; fref.append(rsvg);
+  const rg = [...rsvg.children].filter((e) => e.tagName === "g");
+  ST.forEach((st, i) => { st.rg = rg[i]; const ps = rg[i].querySelectorAll("path"); st.rglow = ps[1]; st.rlit = ps[3]; });
+  const ghost = document.createElement("div"); ghost.className = "ghost"; fref.append(ghost);
+  Object.assign(ghost.style, { width: sd + "px", height: sd + "px", left: sx - sd / 2 + "px", top: sy - sd / 2 + "px" });
+  const objH = floorY - ft, mY = floorY - 18 * u;
+  Object.assign(fref.style, { width: W + "px", height: H + "px", transformOrigin: `0 ${mY}px`, transform: "scaleY(-1)", opacity: 0.32, filter: `blur(${Math.round(9 * u)}px)` });
+  fref.style.webkitMask = fref.style.mask = `linear-gradient(180deg, transparent ${mY - objH * 0.3}px, #000 ${mY}px)`;
+
+  // ---- time: the stages build, then the pulse falls stage by stage
+  const BUILD = 0.12, PS = 1.05, STEP = P || SQ ? 0.6 : 0.62;
+  const arrive = ST.map((s, i) => PS + i * STEP);           // the pulse reaches each stage's middle
+  const OUT = arrive[N - 1] + 0.45;                          // and the stamp
+  // pulse position: a function of time along the path
+  const seg = gsap.parseEase("power2.inOut");
+  const keys = [[PS - 0.35, path[0]], ...ST.map((s, i) => [arrive[i], [cx, s.yc]])];
+  keys.push([OUT, LAND ? [sx - sd / 2, sy] : [sx, sy - sd / 2]]);
+  const pAt = (t) => { if (t <= keys[0][0]) return keys[0][1]; for (let i = 1; i < keys.length; i++) if (t <= keys[i][0]) { const [ta, a] = keys[i - 1], [tb, b] = keys[i];
+      const k = seg((t - ta) / (tb - ta)); if (LAND && i === keys.length - 1) { const c = [cx, sy]; const m = k < 0.35 ? k / 0.35 : 1, n = k < 0.35 ? 0 : (k - 0.35) / 0.65; return [a[0] + (b[0] - a[0]) * n, a[1] + (c[1] - a[1]) * m]; }
+      return [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]; } return keys[keys.length - 1][1]; };
+  const clock = { t: 0, z: 0 };
+  const render = () => {
+    const t = clock.t, [px, py] = pAt(t), [qx, qy] = pAt(t - 0.06);
+    pulse.style.left = px - ps / 2 + "px"; pulse.style.top = py - ps / 2 + "px";
+    const sp = Math.hypot(px - qx, py - qy), ang = Math.atan2(-(px - qx), py - qy) * 180 / Math.PI;
+    trail.style.left = px - 6 * u + "px"; trail.style.top = py - 220 * u + "px"; trail.style.transform = `rotate(${sp > 0.5 ? ang : 0}deg) scaleY(${Math.min(1, sp / (40 * u))})`;
+    // numbers: the top counts up as it builds; each stage counts down from the one above as the pulse lands in it
+    ST.forEach((s, i) => { let val;
+      if (i === 0) val = values[0] * gsap.parseEase("expo.out")(Math.max(0, Math.min(1, (t - 0.25) / 1.0)));
+      else { const k = gsap.parseEase("expo.out")(Math.max(0, Math.min(1, (t - arrive[i] + 0.08) / 0.7))); val = values[i - 1] + (values[i] - values[i - 1]) * k; }
+      s.n.textContent = fmt(val); });
+    // the camera follows the pulse down, then settles on the whole funnel and the stamp
+    const fy = Math.max(ft, Math.min(py, sy)), ty = (H * 0.5 - fy) * 0.22 * (1 - clock.z);
+    gsap.set("#cam", { y: ty, scale: 1 + 0.06 * (1 - clock.z), transformOrigin: `${cx}px ${fy}px` });
+  };
+  render();
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: render }, 0);
+  tl.fromTo(clock, { z: 0 }, { z: 1, duration: 0.9, ease: "power2.inOut", immediateRender: false, onUpdate: render }, OUT - 0.35);
+
+  // ---- the camera drift
+  gsap.set("#rig", { transformOrigin: `${cx}px ${(ft + floorY) / 2}px` });
+  tl.fromTo("#rig", { rotationX: 10, rotationY: P ? 8 : 12, scale: 0.95 }, { rotationX: 4, rotationY: P ? -5 : -7, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the build: each stage drops in from above, top first
+  ST.forEach((s, i) => {
+    const at = BUILD + i * 0.13;
+    gsap.set([s.g, s.rg], { transformOrigin: `${cx}px ${s.yc}px` });
+    tl.fromTo([s.g, s.rg], { y: -70 * u, scaleX: 0.82, opacity: 0 }, { y: 0, scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, at);
+    tl.fromTo(i ? [s.lab, s.slot] : [s.lab, s.num], { y: -40 * u, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, at + 0.08);
+    if (i) { gsap.set(s.num, { opacity: 0 }); tl.fromTo(s.slot, { "--sh": "-40%" }, { "--sh": "140%", duration: 1.1, ease: "none", repeat: 3 }, at + 0.1); }
+  });
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.3);
+  tl.fromTo(wire, LAND ? { scaleX: 0 } : { scaleY: 0 }, LAND ? { scaleX: 1, duration: 0.6, ease: "expo.out" } : { scaleY: 1, duration: 0.6, ease: "expo.out" }, BUILD + N * 0.13);
+  tl.fromTo(wire, { opacity: 0 }, { opacity: 0.55, duration: 0.3, ease: "power2.out" }, BUILD + N * 0.13);
+  // ---- the pulse: in, through each stage (each one lights as it lands), out to the stamp
+  tl.fromTo(pulse, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, PS - 0.35);
+  tl.fromTo(trail, { opacity: 0 }, { opacity: 0.8, duration: 0.25, ease: "power2.out" }, PS - 0.35);
+  ST.forEach((s, i) => {
+    const a = arrive[i], last = i === N - 1;
+    if (i) { tl.to(s.slot, { opacity: 0, scaleX: 0.6, duration: 0.18, ease: "power2.in" }, a - 0.1); tl.fromTo(s.num, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power2.out", immediateRender: false }, a - 0.06); }
+    tl.fromTo([s.lit, s.rlit], { opacity: 0 }, { opacity: 0.85, duration: 0.12, ease: "power2.out" }, a - 0.08);
+    tl.to([s.lit, s.rlit], { opacity: last ? 0.7 : 0.16 + 0.1 * i, duration: 0.6, ease: "power2.out" }, a + 0.06);
+    tl.fromTo([s.glow, s.rglow], { opacity: 0 }, { opacity: 0.55, duration: 0.12, ease: "power2.out" }, a - 0.08);
+    tl.to([s.glow, s.rglow], { opacity: last ? 0.3 : 0, duration: 0.7, ease: "power2.out" }, a + 0.06);
+    tl.fromTo(s.num, { scale: 1 }, { scale: 1.14, duration: 0.08, ease: "power2.out", immediateRender: false }, a - 0.04);
+    tl.to(s.num, { scale: 1, duration: 0.45, ease: "back.out(3)" }, a + 0.04);
+  });
+  tl.to(wire, { opacity: 1, duration: 0.2, ease: "power2.out" }, arrive[N - 1] + 0.1);
+  tl.to([pulse, trail], { opacity: 0, duration: 0.12, ease: "power2.in" }, OUT - 0.04);
+
+  // ---- the moment: the rate is stamped where the pulse lands
+  tl.fromTo(ghost, { scale: 2.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.28, ease: "power4.in" }, OUT - 0.2);
+  tl.fromTo(stamp, { scale: 2.4, rotation: -38, opacity: 0, filter: "blur(10px)" }, { scale: 1, rotation: -10, opacity: 1, filter: "blur(0px)", duration: 0.28, ease: "power4.in" }, OUT - 0.2);
+  tl.to(stamp, { scale: 1.08, duration: 0.06, ease: "power1.out" }, OUT + 0.08); tl.to(stamp, { scale: 1, duration: 0.42, ease: "back.out(3)" }, OUT + 0.14);
+  tl.fromTo(ring, { scale: 1, opacity: 0.9 }, { scale: 2.4, opacity: 0, duration: 0.75, ease: "expo.out", immediateRender: false }, OUT + 0.08);
+  tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out" }, OUT + 0.08); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, OUT + 0.15);
+  MV.done();
+</script>
+</body>
+</html>

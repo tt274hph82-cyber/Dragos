@@ -1,0 +1,5 @@
+{ "id": "tabs-multiply", "name": "Tabs multiply", "oneLiner": "a glass browser window drifts in 3D while tabs multiply across its top faster and faster, squeezing until only their icons show and the counter climbs, a cursor clicks the brand's tab, every other tab snaps shut in a wave, the count falls to 1 and the brand's tab widens over its real page",
+  "category": "system", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["tabs", "browser", "too many tools", "overwhelm", "chaos", "research", "one tool", "replace", "consolidate", "focus", "simplify", "website", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker says 'I had twenty tabs open' or 'stop juggling ten tools': the tabs pile up through the problem, the click and the collapse land on 'now I just use this one'" }

@@ -1,0 +1,5 @@
+{ "id": "dashboard-assembly", "name": "Dashboard assembly", "oneLiner": "an empty glass dashboard with dashed slots rises in, then its widgets fly in from their own sides in 3D and snap into the slots one after another (KPI tiles with counting numbers and green change chips, weekly bars, a list of the brand's real screens), the hero revenue chart lands last with a kick, its accent line draws with a riding dot and the status pill lights green",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["dashboard", "analytics", "metrics", "kpi", "chart", "saas", "product", "results", "growth", "numbers", "assembly", "widgets", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker shows that everything is tracked in one place or the system is now running ('and now I see it all in one dashboard', 'here is what it looks like a month later'): cut in on the setup, the chart lands and the board goes live on the payoff word. Put the real numbers in labels, values, deltas and chart" }

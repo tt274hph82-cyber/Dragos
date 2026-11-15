@@ -1,0 +1,4 @@
+{ "sources": [
+  { "file": "assets/sprocket-band.png, assets/sprocket-band-v.png", "from": "Ektachrome100ReversalFilmP3.jpg by Wiley.andrew.r (Wikimedia Commons): a strip of 35mm slide film held to the light; two perforations cut from the top edge as a seamless tile, darkened, the light turned into transparency, and a rotated copy for the vertical strip", "license": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Ektachrome100ReversalFilmP3.jpg" },
+  { "file": "assets/grain.jpg", "from": "KodakUltramax400GrainScan02.jpg (Wikimedia Commons), a scan of film grain; cropped, high-passed to neutral grey and resized; the film base texture", "license": "CC0", "page": "https://commons.wikimedia.org/wiki/File:KodakUltramax400GrainScan02.jpg" }
+] }

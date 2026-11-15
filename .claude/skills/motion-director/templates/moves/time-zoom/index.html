@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"start","type":"number","label":"First year of the long view","default":2016},
+  {"id":"years","type":"number","label":"How many years the long view spans","default":10},
+  {"id":"date","type":"string","label":"The day it zooms into, as YYYY-MM-DD","default":"2024-03-14"},
+  {"id":"time","type":"string","label":"The moment on that day, 24 hour HH:MM","default":"21:40"},
+  {"id":"label","type":"string","label":"What happened at that moment, a few words","default":"The moment it changed"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; left: 20%; top: 30%; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 62%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 70%; height: 40%; left: 45%; top: -10%; background: rgba(255,255,255,.07); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the rail: a long pane of glass the timeline lies on, wider than the frame */
+  #rail { position: absolute; left: -20%; right: -20%; border-radius: calc(var(--u) * 30);
+    background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.025) 70%);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.3), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.08), 0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -40) rgba(0,0,0,.8); }
+  #cv { position: absolute; left: 0; top: 0; }
+  #read { position: absolute; left: 0; right: 0; text-align: center; }
+  .rk { position: absolute; left: 0; right: 0; white-space: nowrap; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; line-height: 1; color: color-mix(in srgb, var(--accent) 45%, white 55%); }
+  .rb { position: absolute; left: 0; right: 0; white-space: nowrap; font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); text-shadow: 0 calc(var(--u) * 6) calc(var(--u) * 30) rgba(0,0,0,.5); }
+  #needle { position: absolute; width: calc(var(--u) * 4); border-radius: 4px; transform-origin: 50% 100%;
+    background: linear-gradient(0deg, color-mix(in srgb, var(--accent) 30%, transparent), var(--accent) 40%, color-mix(in srgb, var(--accent) 40%, white));
+    box-shadow: 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent) 80%, transparent); }
+  #ring { position: absolute; border-radius: 50%; opacity: 0; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 50%, white 50%); }
+  #pill { position: absolute; white-space: nowrap; opacity: 0; padding: calc(var(--u) * 22) calc(var(--u) * 34) calc(var(--u) * 24); border-radius: calc(var(--u) * 30); overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.24), rgba(255,255,255,.07) 60%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16),
+      0 calc(var(--u) * 30) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.7), 0 0 calc(var(--u) * 80) calc(var(--u) * -14) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #pill::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.34) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); }
+  #pt { font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); text-shadow: 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--accent) 55%, transparent); }
+  #ps { margin-top: calc(var(--u) * 12); font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--accent) 45%, white 55%); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l3"></i><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="rail"></div>
+    <canvas id="cv" width="{{W}}" height="{{H}}"></canvas>
+    <div id="needle"></div>
+    <div id="ring"></div>
+    <div id="pill"><div id="pt"></div><div id="ps"></div></div>
+    <div id="read"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const cs = getComputedStyle(root), ACC = cs.getPropertyValue("--accent").trim() || "#FF6A3D", INK = cs.getPropertyValue("--ink").trim() || "#fff";
+  const FB = cs.getPropertyValue("--font-body").trim() || "Inter, sans-serif";
+  // canvas colours: the accent as rgb, mixed by hand
+  const rgbOf = (c) => { const m = /^#([0-9a-f]{6})$/i.exec(c); if (!m) return [255, 106, 61]; const n = parseInt(m[1], 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+  const AR = rgbOf(ACC), rgba = (a) => `rgba(${AR[0]},${AR[1]},${AR[2]},${a})`;
+  const HOT = `rgb(${AR.map((x) => Math.round(x * 0.55 + 255 * 0.45)).join(",")})`;
+
+  // ---- calendar maths, no Date: days since 1970-01-01
+  const dfc = (y, m, d) => { y -= m <= 2; const era = Math.floor(y / 400), yoe = y - era * 400, doy = Math.floor((153 * (m + (m > 2 ? -3 : 9)) + 2) / 5) + d - 1, doe = yoe * 365 + Math.floor(yoe / 4) - Math.floor(yoe / 100) + doy; return era * 146097 + doe - 719468; };
+  const cfd = (z) => { z += 719468; const era = Math.floor(z / 146097), doe = z - era * 146097, yoe = Math.floor((doe - Math.floor(doe / 1460) + Math.floor(doe / 36524) - Math.floor(doe / 146096)) / 365), y = yoe + era * 400, doy = doe - (365 * yoe + Math.floor(yoe / 4) - Math.floor(yoe / 100)), mp = Math.floor((5 * doy + 2) / 153), d = doy - Math.floor((153 * mp + 2) / 5) + 1, m = mp + (mp < 10 ? 3 : -9); return [y + (m <= 2), m, d]; };
+  const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const MONL = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const WK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], WKL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const wd = (z) => (((z + 3) % 7) + 7) % 7;          // 0 = Monday
+  const hr12 = (h, m) => `${((h + 11) % 12) + 1}${m ? ":" + String(m).padStart(2, "0") : ""} ${h < 12 ? "AM" : "PM"}`;
+
+  const Y0 = Math.round(+v.start) || 2016, NY = Math.max(2, Math.min(40, Math.round(+v.years) || 10));
+  let [ty, tm, td] = String(v.date || "").split("-").map(Number);
+  if (!(ty && tm && td)) [ty, tm, td] = [Y0 + Math.floor(NY * 0.8), 3, 14];
+  let [hh, mm] = String(v.time || "").split(":").map(Number); if (!isFinite(hh)) hh = 21; if (!isFinite(mm)) mm = 40;
+  hh = Math.max(0, Math.min(23, hh)); mm = Math.max(0, Math.min(59, mm));
+  const dayZ = dfc(ty, tm, td), MOM = dayZ + (hh + mm / 60) / 24;
+  const wk0 = dayZ - wd(dayZ);
+  const yA = dfc(Y0, 1, 1), yB = dfc(Y0 + NY, 1, 1), tyA = dfc(ty, 1, 1), tyB = dfc(ty + 1, 1, 1);
+
+  // ---- layout: the readout up top, the dots band, the rail with ticks and labels
+  const inner = W - (P ? 120 : SQ ? 140 : 260) * u;
+  const RY = Math.round(P ? H / 2 + 280 * u : H / 2 + 170 * u);
+  const bandTop = RY - (P ? 420 : 270) * u, bandBot = RY - 40 * u, momY = Math.round((bandTop + bandBot) / 2);
+  const rowA = RY + 78 * u, rowB = RY + 140 * u;
+  Object.assign($("#rail").style, { top: bandTop - 50 * u + "px", height: rowB - bandTop + 100 * u + "px" });
+
+  // ---- the views the camera passes through: decade, year, week, day, the moment
+  const view = (a, b, pad) => ({ c: (a + b) / 2, s: inner / ((b - a) * pad) });
+  const V = [view(yA, yB, 1.03), view(tyA, tyB, 1.03), view(wk0, wk0 + 7, 1.04), view(dayZ, dayZ + 1, 1.06), { c: MOM, s: inner / (0.36 * 1.0) }];
+  V[4].c = MOM; V[3].c = dayZ + 0.5;
+  // segments: [start, end] of each zoom; holds in between drift in a few percent
+  const Z = [[0.95, 1.95], [2.35, 3.25], [3.6, 4.45], [4.45, 5.05]];
+  const ease = gsap.parseEase("power3.inOut"), easeL = gsap.parseEase("power2.out");
+  const cam = (t) => {
+    // before the first zoom: the decade view with a slow push
+    let i = Z.findIndex(([a, b]) => t < b);
+    if (i === -1) { const s = V[4].s * (1 + 0.05 * Math.min(1, (t - Z[3][1]) / (D - Z[3][1]))); return { c: V[4].c, s }; }
+    const [a, b] = Z[i];
+    const A = { ...V[i] }, B = V[i + 1];
+    const prevEnd = i ? Z[i - 1][1] : 0;
+    // drift during the hold before this zoom
+    const drift = 1 + 0.04 * Math.min(1, Math.max(0, (t - prevEnd) / Math.max(0.01, a - prevEnd)));
+    const sA = A.s * (a - prevEnd > 0.05 ? 1.04 : 1), cA = A.c;
+    if (t < a) return { c: cA, s: A.s * drift };
+    const p = (i === 3 ? easeL : ease)((t - a) / (b - a));
+    const ls = Math.log(sA) + (Math.log(B.s) - Math.log(sA)) * p, s = Math.exp(ls);
+    const f = (B.c * B.s - cA * sA) / (B.s - sA);           // the world point that holds still on screen
+    return { c: f - (f - cA) * sA / s, s };
+  };
+  // which level the camera is at, as a float, from the scale
+  const LS = V.slice(0, 4).map((x) => Math.log(x.s));
+  const levelOf = (s) => { const l = Math.log(s); if (l <= LS[0]) return 0; for (let i = 0; i < 3; i++) if (l <= LS[i + 1]) return i + (l - LS[i]) / (LS[i + 1] - LS[i]); return 3; };
+
+  // ---- the readout: a kicker and a big line per level, crossfading with the zoom
+  const read = $("#read");
+  read.style.top = (P ? RY - 800 * u : RY - 520 * u) + "px";
+  const [wy1, wm1, wdd1] = cfd(wk0), [wy7, wm7, wdd7] = cfd(wk0 + 6);
+  const texts = [
+    [NY === 10 ? "A decade" : `${NY} years`, `${Y0} to ${Y0 + NY - 1}`],
+    ["One year", `${ty}`],
+    ["One week", wm1 === wm7 ? `${MON[wm1 - 1]} ${wdd1} to ${wdd7}` : `${MON[wm1 - 1]} ${wdd1} to ${MON[wm7 - 1]} ${wdd7}`],
+    ["One day", `${WKL[wd(dayZ)]} ${td} ${MONL[tm - 1]}`],
+  ];
+  const RD = texts.map(([k, b]) => {
+    const kk = document.createElement("div"); kk.className = "rk"; kk.textContent = k; kk.style.fontSize = (P ? 36 : 34) * u + "px";
+    const bb = document.createElement("div"); bb.className = "rb"; bb.textContent = b; bb.style.fontSize = (P ? 128 : 108) * u + "px"; bb.style.top = 56 * u + "px";
+    read.append(kk, bb); MV.fitText(bb, W - (P ? 140 : 200) * u, 50);
+    return [kk, bb];
+  });
+
+  // ---- the activity: a few seeded dots per day, a texture at the decade, single events up close
+  const hsh = (x) => { x = Math.imul(x ^ 0x5bd1e995, 0x27d4eb2d); x ^= x >>> 15; x = Math.imul(x, 0x165667b1); x ^= x >>> 13; return (x >>> 0) / 4294967296; };
+  const cv = $("#cv"), ctx = cv.getContext("2d");
+  const sm = (x, a, b) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  // label widths are measured every frame, so they match the face once it has loaded
+  let lwYear, lwMon, lwDay, lwDayL, lwHr;
+  const measure = () => { ctx.font = `700 ${36 * u}px ${FB}`; lwYear = ctx.measureText("2088").width; lwMon = ctx.measureText("May").width; lwDay = ctx.measureText("28").width; lwDayL = ctx.measureText("Wed 28").width; lwHr = ctx.measureText("12 PM").width; };
+  const S = { t: 0, pin: 0, intro: 0 };
+  const X0 = W / 2;
+
+  const draw = () => {
+    const { c, s } = cam(S.t), X = (d) => X0 + (d - c) * s;
+    const dl = c - X0 / s - 1 / s * 200, dr = c + (W - X0) / s + 1 / s * 200;
+    ctx.clearRect(0, 0, W, H); measure();
+    const io = S.intro;
+    // the target of the next zoom, as an accent band
+    const bands = [[tyA, tyB], [wk0, wk0 + 7], [dayZ, dayZ + 1]];
+    bands.forEach(([a, b], i) => {
+      const xa = X(a), xb = X(b), w = xb - xa;
+      const al = sm(w, 6 * u, 40 * u) * (1 - sm(w, inner * 0.5, inner * 0.85)) * io;
+      if (al <= 0.001) return;
+      const g = ctx.createLinearGradient(0, bandTop - 30 * u, 0, RY);
+      g.addColorStop(0, rgba(0)); g.addColorStop(1, rgba(0.38));
+      ctx.globalAlpha = al; ctx.fillStyle = g; ctx.fillRect(xa, bandTop - 30 * u, w, RY - bandTop + 30 * u);
+      ctx.fillStyle = ACC; ctx.fillRect(xa, RY - 3 * u, w, 6 * u);
+    });
+    ctx.globalAlpha = 1;
+    // dots
+    const dr0 = Math.max(Math.floor(dl), yA - 400), dr1 = Math.min(Math.ceil(dr), yB + 400);
+    const rad = (2.6 + 4 * sm(s, 40 * u, 2000 * u)) * u;
+    ctx.fillStyle = INK;
+    for (let d = dr0; d <= dr1; d++) {
+      const k = Math.floor(hsh(d) * 4), keep = 0.3 + 0.7 * sm(s, 1.5 * u, 30 * u);
+      for (let e = 0; e < k; e++) {
+        if (hsh(d * 5 + e * 977 + 3) > keep) continue;
+        const tt = d + hsh(d * 7 + e * 131 + 1), x = X(tt); if (x < -10 || x > W + 10) continue;
+        const y = bandTop + 20 * u + hsh(d * 13 + e * 71 + 5) * (bandBot - bandTop - 40 * u);
+        if (Math.abs(tt - MOM) < 0.04 && Math.abs(y - momY) < 40 * u) continue;
+        ctx.globalAlpha = (0.22 + 0.4 * hsh(d * 3 + e)) * io * (d < yA || d >= yB ? 0.5 : 1);
+        ctx.beginPath(); ctx.arc(x, y, rad, 0, 6.2832); ctx.fill();
+      }
+    }
+    // the moment: one accent dot, there from the start
+    const mx = X(MOM);
+    ctx.globalAlpha = io; ctx.fillStyle = ACC; ctx.shadowColor = ACC; ctx.shadowBlur = 24 * u;
+    ctx.beginPath(); ctx.arc(mx, momY, rad * 1.5 + 2 * u, 0, 6.2832); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(mx, momY, rad * 0.6, 0, 6.2832); ctx.fill();
+    // the rail line
+    ctx.globalAlpha = 0.5 * io; ctx.fillStyle = INK; ctx.fillRect(-10, RY - 1.5 * u, (W + 20) * io, 3 * u);
+    // ticks and labels for each unit; a unit fades in when its spacing allows, drops to the lower row once its children are labelled
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    const units = [];
+    // years
+    units.push({ sp: 365.25 * s, lw: lwYear, strides: [1, 2, 10], list: () => { const out = []; const [y0] = cfd(Math.floor(dl)), [y1] = cfd(Math.ceil(dr)); for (let y = y0; y <= y1 + 1; y++) out.push({ a: dfc(y, 1, 1), b: dfc(y + 1, 1, 1), i: y, txt: String(y), hot: y === ty }); return out; } });
+    units.push({ sp: 30.44 * s, lw: lwMon, strides: [1, 3], list: () => { const out = []; let [y, m] = cfd(Math.floor(dl)); for (let k = 0; k < 400; k++) { const a = dfc(y, m, 1); if (a > dr) break; const nm = m === 12 ? [y + 1, 1] : [y, m + 1]; out.push({ a, b: dfc(nm[0], nm[1], 1), i: y * 12 + m - 1, txt: MON[m - 1], hot: y === ty && m === tm }); [y, m] = nm; } return out; } });
+    units.push({ sp: s, lw: lwDay, lwL: lwDayL, strides: [1, 7], list: () => { const out = []; for (let d = Math.floor(dl); d <= Math.ceil(dr) && out.length < 800; d++) { const [, , dd] = cfd(d); out.push({ a: d, b: d + 1, i: d - wk0 + 700, txt: String(dd), txtL: `${WK[wd(d)]} ${dd}`, hot: d === dayZ }); } return out; } });
+    units.push({ sp: s / 24, lw: lwHr, strides: [1, 3, 6], tick: true, list: () => { const out = []; for (let h = Math.floor(dl * 24); h <= Math.ceil(dr * 24) && out.length < 600; h++) { const hd = ((h % 24) + 24) % 24; out.push({ a: h / 24, b: (h + 1) / 24, i: h, txt: hr12(hd, 0), hot: false, atTick: true }); } return out; } });
+    units.forEach((U, ui) => {
+      const tickA = sm(U.sp, 5 * u, 22 * u);
+      if (tickA <= 0.001) return;
+      const items = U.list();
+      // grandparents fade out once they are wider than the frame a few times over
+      const gone = 1 - sm(U.sp, W * 2.5, W * 5);
+      // a parent's label moves to the lower row once its children are labelled
+      const ch = units[ui + 1];
+      const low = ch ? Math.max(...ch.strides.map((st) => sm(ch.sp * st, ch.lw * 1.4, ch.lw * 1.9))) : 0;
+      const th = (14 + 40 * sm(U.sp, 30 * u, 700 * u)) * u;
+      ctx.fillStyle = INK;
+      items.forEach((it) => {
+        const xa = X(it.a);
+        if (xa > -5 && xa < W + 5) { ctx.globalAlpha = tickA * 0.55 * gone * io; ctx.fillRect(xa - 1 * u, RY + 4 * u, 2 * u, th); }
+      });
+      if (gone <= 0.001) return;
+      items.forEach((it) => {
+        let la = 0;
+        for (const st of U.strides) if (((it.i % st) + st) % st === 0) la = Math.max(la, sm(U.sp * st, U.lw * 1.4, U.lw * 1.9));
+        la *= gone * io; if (la <= 0.01) return;
+        const wide = U.lwL ? low : 0;
+        const fs = (36 + 8 * low) * u;
+        // a label sits mid interval (hours on their tick) and sticks inside the frame while its interval is on screen
+        let x = it.atTick ? X(it.a) : (X(it.a) + X(it.b)) / 2;
+        const half = (wide > 0.5 ? U.lwL : U.lw) * (fs / (36 * u)) / 2 + 10 * u;
+        if (!it.atTick) { const lo = Math.max(X(it.a), 40 * u) + half, hi = Math.min(X(it.b), W - 40 * u) - half; if (lo <= hi) x = Math.max(lo, Math.min(hi, x)); }
+        if (x < half + 30 * u || x > W - half - 30 * u) return;
+        const y = rowA + (rowB - rowA) * low;
+        ctx.font = `${low > 0.5 ? 800 : 700} ${fs}px ${FB}`;
+        const col = it.hot ? HOT : INK;
+        ctx.fillStyle = col;
+        if (U.lwL) {
+          // the short label fades out before the long one fades in, so they never sit on top of each other
+          const aN = Math.max(0, 1 - 2 * wide), aL = Math.max(0, 2 * wide - 1);
+          if (aN > 0) { ctx.globalAlpha = la * aN * (it.hot ? 1 : 0.8); ctx.fillText(it.txt, x, y); }
+          if (aL > 0) { ctx.globalAlpha = la * aL * (it.hot ? 1 : 0.8); ctx.fillText(it.txtL, x, y); }
+        } else { ctx.globalAlpha = la * (it.hot ? 1 : 0.8); ctx.fillText(it.txt, x, y); }
+      });
+    });
+    ctx.globalAlpha = 1;
+    // the readout follows the level
+    const lev = levelOf(s);
+    RD.forEach(([kk, bb], i) => { const a = Math.max(0, 1 - Math.abs(lev - i) * 2.4) * S.ro; kk.style.opacity = a.toFixed(3); bb.style.opacity = a.toFixed(3); const dy = (lev - i) * 30 * u; kk.style.transform = bb.style.transform = `translateY(${dy.toFixed(1)}px)`; });
+    // the pin rides the moment
+    const nd = $("#needle"), nh = (RY - momY);
+    Object.assign(nd.style, { left: mx - 2 * u + "px", top: momY + "px", height: nh + "px" });
+    $("#ring").style.left = mx - 40 * u + "px";
+    $("#pill").style.left = (P ? mx - $("#pill").offsetWidth / 2 : Math.min(W - 40 * u - $("#pill").offsetWidth, mx + 46 * u)) + "px";
+  };
+  S.ro = 0;
+
+  // ---- the pin: needle up from the rail, a ring, the pill with what happened and when
+  const pill = $("#pill"), pt = $("#pt"), ps = $("#ps");
+  pt.textContent = v.label || ""; if (!v.label) pt.style.display = "none";
+  ps.textContent = `${hr12(hh, mm)}, ${MON[tm - 1]} ${td} ${ty}`;
+  pt.style.fontSize = (P ? 62 : 56) * u + "px"; ps.style.fontSize = (P ? 44 : 40) * u + "px";
+  const pmax = P ? W - 220 * u : W / 2 - 110 * u; MV.fitText(pt, pmax, 34); MV.fitText(ps, pmax, 30);
+  pill.style.top = (P ? momY - pill.offsetHeight - 56 * u : momY - pill.offsetHeight / 2) + "px";
+  if (P) $("#pt").parentElement.style.textAlign = "center";
+  Object.assign($("#ring").style, { width: 80 * u + "px", height: 80 * u + "px", top: momY - 40 * u + "px" });
+  draw();
+
+  // ---- the rig: a slow 3D drift under the camera
+  gsap.set("#rig", { transformOrigin: `${W / 2}px ${RY}px` });
+  tl.fromTo("#rig", { rotationX: 16, rotationY: -6 }, { rotationX: 9, rotationY: 5, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: -W * 0.1 }, { x: W * 0.08, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l3", { x: 0 }, { x: -W * 0.15, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#rail", { opacity: 0, y: 40 * u }, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" }, 0);
+
+  // ---- one clock drives the camera; the build and the readout ride on it
+  tl.to(S, { t: D, duration: D, ease: "none", onUpdate: draw }, 0);
+  tl.to(S, { intro: 1, duration: 0.8, ease: "power2.out", onUpdate: draw }, 0.05);
+  tl.to(S, { ro: 1, duration: 0.6, ease: "power2.out", onUpdate: draw }, 0.25);
+
+  // ---- the moment: the needle rises, a ring goes out, the pill lands
+  const M = Z[2][1] + 0.12;
+  tl.fromTo("#needle", { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 0.45, ease: "expo.out" }, M);
+  tl.fromTo("#ring", { scale: 0.3, opacity: 0.95 }, { scale: 2.6, opacity: 0, duration: 0.85, ease: "expo.out", immediateRender: false }, M + 0.2);
+  tl.fromTo(pill, { scale: 0.6, x: P ? 0 : -20 * u, y: P ? 20 * u : 0, transformOrigin: P ? "50% 100%" : "0% 50%" }, { scale: 1, x: 0, y: 0, duration: 0.55, ease: "back.out(1.6)" }, M + 0.3);
+  tl.fromTo(pill, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, M + 0.3);
+  tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut" }, M + 0.75);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M + 0.2); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.27);
+  MV.done();
+</script>
+</body>
+</html>

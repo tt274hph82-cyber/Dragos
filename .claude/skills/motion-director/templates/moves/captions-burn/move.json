@@ -1,0 +1,5 @@
+{ "id": "captions-burn", "name": "Captions burn", "oneLiner": "a glass caption track: the waveform plays under a sweeping playhead while word-by-word captions pop in sync with a pill sliding under each spoken word, then one word slams in huge with a ring and the wave spikes",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["captions", "subtitles", "words", "editing", "short form", "reels", "tiktok", "waveform", "audio", "watch time", "creator tools", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker talks about captions, subtitles or one word that matters ('add captions and people watch twice as long', 'every word on screen'): the captions run in sync with them, the big word lands as they stress it" }

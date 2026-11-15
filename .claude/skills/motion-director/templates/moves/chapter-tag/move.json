@@ -1,0 +1,5 @@
+{ "id": "chapter-tag", "name": "Chapter tag", "oneLiner": "agenda: a glass panel (a soft side scrim as B-roll) where 3 to 5 chapters type in one per beat down a lit track, then a highlight slides onto the current one; tag mode: the small persistent corner pill with the chapter number, its name and a progress strip",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass", "editorial"], "from": "new",
+  "tags": ["chapter", "agenda", "outline", "contents", "section", "progress", "steps", "list", "tag", "pill", "corner", "overlay"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": true,
+  "say": "agenda when the speaker lays out what the video covers ('I'll show you the tools, the setup, my style and the exact cost'): one item per spoken chapter; re-render at each chapter start with current set to it. mode tag: drop it top-right for the length of a section (set duration to the section length)" }

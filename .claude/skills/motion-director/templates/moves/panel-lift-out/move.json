@@ -1,0 +1,5 @@
+{ "id": "panel-lift-out", "name": "Panel lift-out", "oneLiner": "a screenshot floats in a window; the page dims and one real panel lifts out of it toward the lens, leaving a dark socket behind, grows to a readable size with a glowing edge and a deep shadow, and a label chip hangs from it on a short stem and types itself",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["panel", "lift", "pull out", "zoom", "section", "ui", "screenshot", "this part", "input", "form", "focus", "label", "explain", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker singles out one part of an app or page and names its role ('this box is where you give it your input'): the page dims on 'this', the panel arrives big as they name it, the chip types the role. Set rect to the real panel in % of the screenshot (x,y,w,h)" }

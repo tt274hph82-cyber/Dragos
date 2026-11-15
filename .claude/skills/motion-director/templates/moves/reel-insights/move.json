@@ -1,0 +1,5 @@
+{ "id": "reel-insights", "name": "Reel insights sheet", "oneLiner": "a metal-and-glass phone plays a short video (the brand screen, its side rail and progress bar); a frosted insights sheet slides up as the reel sinks back, the plays number rolls up big, four stat tiles (likes, comments, shares, saves) count in on long tails, then one stat lifts off the sheet toward camera, ringed in the brand colour, with a green gain chip",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["reel", "short", "insights", "analytics", "plays", "views", "likes", "shares", "saves", "stats", "results", "social", "phone", "creator", "viral", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker reveals how a short video did ('that reel did 284K plays', 'and look at the shares'): cut in on the reveal, the plays roll up as they say the number and the lifted stat lands on 'but this is the one that matters'. Set plays, likes, comments, shares, saves and lift to the real numbers" }

@@ -1,0 +1,5 @@
+{ "id": "icon-grid-stamp", "name": "Icon grid stamp", "oneLiner": "a glass grid of app tiles (glyph squircle and label) builds in, each with a price chip popping onto its corner; then a big inked rubber stamp (FREE by default) slams down across the grid, the tiles jolt and every price chip is knocked off and falls away",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["free", "apps", "tools", "subscriptions", "stamp", "price", "cost", "save money", "alternatives", "open source", "icons", "grid", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says a whole stack of paid tools can be had for nothing (\"all of these, every one of them, free\"): cut in on the tools; the stamp lands on \"free\". Set stamp to another word (OPEN SOURCE, INCLUDED, DONE) and tone to accent or red to change its meaning" }

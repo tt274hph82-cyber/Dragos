@@ -1,0 +1,5 @@
+{ "id": "version-history", "name": "Version history", "oneLiner": "a sheet of real paper sits beside a glass version list; the highlight scrubs down the list back in time and the page changes with each step (the title, the paragraphs, the brand screenshot dropping out), lands on an older version, a cursor clicks Restore and the page snaps back with a green Restored badge while the top of the list takes the old version",
+  "category": "productivity", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "glass"], "from": "new",
+  "tags": ["version", "history", "restore", "rollback", "undo", "go back", "backup", "draft", "doc", "document", "time travel", "changes", "paper", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says they went back to an older version ('I rolled it back to yesterday', 'every change is saved, you can always go back'): the scrub runs under 'went back', the Restore click lands on 'restored' or 'yesterday'" }

@@ -1,0 +1,4 @@
+{ "sources": [
+  { "file": "assets/earth-day.jpg", "from": "NASA Visible Earth, Blue Marble land surface, shallow water and shaded topography (land_shallow_topo_8192), resized to 4096x2048", "license": "Public domain (NASA)", "page": "https://visibleearth.nasa.gov/images/57752" },
+  { "file": "assets/earth-night.jpg", "from": "NASA Earth Observatory, Black Marble 2016 (city lights, 3 km), resized to 4096x2048", "license": "Public domain (NASA)", "page": "https://earthobservatory.nasa.gov/features/NightLights" }
+] }

@@ -1,0 +1,5 @@
+{ "id": "device-callouts", "name": "Phone feature callouts", "oneLiner": "a metal-and-glass phone showing the brand's app rises out of depth and turns into a three-quarter pose, then three numbered glass labels pop out one per beat, each on a leader line drawn from a glowing pin on the part of the screen it names",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["phone", "app", "features", "callouts", "labels", "product", "walkthrough", "mobile", "launch", "explainer", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker lists what the app does, three features in a row: each label lands on its feature, about half a second apart" }

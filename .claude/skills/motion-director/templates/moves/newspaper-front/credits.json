@@ -1,0 +1,7 @@
+{ "sources": [
+  { "file": "assets/newsprint.jpg", "from": "ambientCG Paper002 (scanned recycled paper), warmed and resized; the newsprint (reused from headline-highlight)", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper002" },
+  { "file": "assets/newscol.jpg", "from": "Neutral newsprint filler written for headline-highlight and typeset in Old Standard TT (SIL OFL 1.1), letterpress-treated; the body columns and the mirrored show-through", "license": "Original text, free to use; font under SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Old+Standard+TT" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; the table", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the print", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/fonts/PlayfairDisplay-wght.ttf, assets/fonts/PlayfairDisplay-Italic-wght.ttf", "from": "Playfair Display by Claus Eggers Sorensen, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Playfair+Display" }
+] }

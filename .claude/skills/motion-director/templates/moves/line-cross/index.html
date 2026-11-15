@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"nameA","type":"string","label":"The line that starts ahead ({brand} = the brand name)","default":"Everyone else"},
+  {"id":"nameB","type":"string","label":"The line that catches up and crosses ({brand} = the brand name)","default":"{brand}"},
+  {"id":"dataA","type":"string","label":"Values of the first line over time, comma separated","default":"48,52,55,57,59,61,62,63,64,65"},
+  {"id":"dataB","type":"string","label":"Values of the second line, same number of points","default":"6,10,15,22,31,42,55,68,82,96"},
+  {"id":"unit","type":"string","label":"What one step is called, for the crossing label (Month gives Month 8)","default":"Month"},
+  {"id":"crossLabel","type":"string","label":"The crossing label (empty = unit and step, like Month 8)","default":""},
+  {"id":"crossSub","type":"string","label":"The small line under it","default":"The crossover"},
+  {"id":"prefix","type":"string","label":"Before each value","default":""},
+  {"id":"suffix","type":"string","label":"After each value","default":""},
+  {"id":"decimals","type":"number","label":"Decimals","default":0}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 50%; left: 45%; top: 4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 70%; height: 55%; left: -25%; top: 50%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #refl { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #tilt { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the camera is #rig: one translate + scale, derived from the heads every frame */
+  #rig { position: absolute; left: 0; top: 0; width: {{W}}px; height: {{H}}px; transform-origin: 0 0; }
+  #chart { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  .chip { position: absolute; box-sizing: border-box; white-space: nowrap; opacity: 0; border-radius: calc(var(--u) * 26);
+    background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.06) 60%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  .is-alpha .chip { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, white 20%), color-mix(in srgb, var(--surface) 92%, white 8%)); }
+  .chip .nm { display: flex; align-items: center; gap: .4em; font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 72%, transparent); }
+  .chip .nm i { width: .5em; height: .5em; border-radius: 50%; flex: none; }
+  .chip .vl { font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .chip .vl .fx { font-size: .62em; color: color-mix(in srgb, var(--ink) 62%, transparent); }
+  .chip.b { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 60%, transparent), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.7), 0 0 calc(var(--u) * 50) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .chip.b .vl { text-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .chip.b .vl .fx { color: color-mix(in srgb, var(--accent) 55%, white 45%); }
+  .chip.b .nm { color: var(--ink); }
+
+  /* the crossing: a frosted pill near the point */
+  #pill { position: absolute; padding: calc(var(--u) * 22) calc(var(--u) * 36) calc(var(--u) * 24); border-radius: calc(var(--u) * 34); overflow: hidden; white-space: nowrap; opacity: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,.24), rgba(255,255,255,.07) 60%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16),
+      0 calc(var(--u) * 30) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.6), 0 0 calc(var(--u) * 80) calc(var(--u) * -14) color-mix(in srgb, var(--accent) 50%, transparent); }
+  .is-alpha #pill { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 76%, white 24%), color-mix(in srgb, var(--surface) 90%, white 10%)); }
+  #pill::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.34) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); mix-blend-mode: screen; }
+  #pt { font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); text-shadow: 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--accent) 55%, transparent); }
+  #ps { margin-top: calc(var(--u) * 10); font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--accent) 45%, white 55%); letter-spacing: .02em; }
+
+  .is-key .chip, .is-key #pill { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--surface) 82%, white 18%); }
+  .is-key .chip .nm { color: color-mix(in srgb, var(--ink) 75%, var(--surface)); }
+  .is-key #pt, .is-key .chip.b .vl { text-shadow: none; }
+  /* the keyer eats soft fills and wide glows: the key version keeps only the lines and the dots */
+  .is-key #area, .is-key #glowB, .is-key #haloB, .is-key #xhalo { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="tilt"><div id="rig">
+    <svg id="chart" width="{{W}}" height="{{H}}" viewBox="0 0 {{W}} {{H}}">
+      <defs>
+        <linearGradient id="gB" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="b0" /><stop offset=".6" class="b1" /><stop offset="1" class="b2" /></linearGradient>
+        <linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="a0" /><stop offset="1" class="a1" /></linearGradient>
+        <filter id="fGlow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="14" /></filter>
+        <radialGradient id="gHalo"><stop offset="0" class="h0" /><stop offset="1" class="h1" /></radialGradient>
+        <linearGradient id="gClip" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" /><stop offset="1" stop-color="#000" /></linearGradient>
+        <mask id="mClip" maskUnits="userSpaceOnUse"><rect x="0" y="0" width="{{W}}" height="{{H}}" fill="url(#gClip)" /></mask>
+        <linearGradient id="gFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".34" /><stop offset=".5" stop-color="#fff" stop-opacity="0" /></linearGradient>
+        <mask id="mRefl" maskUnits="userSpaceOnUse"><rect id="mRect" x="0" y="0" width="{{W}}" height="{{H}}" fill="url(#gFade)" /></mask>
+        <filter id="fSoft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" /></filter>
+      </defs>
+      <g id="refl" mask="url(#mRefl)" filter="url(#fSoft)"><g id="reflFlip"><use href="#lines" /></g></g>
+      <g id="axes"></g>
+      <g id="lines" mask="url(#mClip)">
+        <path id="area" fill="url(#gArea)" />
+        <path id="lineA" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <path id="glowB" fill="none" stroke="url(#gB)" filter="url(#fGlow)" stroke-linecap="round" stroke-linejoin="round" />
+        <path id="lineB" fill="none" stroke="url(#gB)" stroke-linecap="round" stroke-linejoin="round" />
+        <path id="coreB" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" opacity=".5" />
+      </g>
+      <line id="drop" stroke-linecap="round" />
+      <circle id="xhalo" r="1" fill="url(#gHalo)" />
+      <circle id="xring" r="1" fill="none" />
+      <circle id="xdot" r="1" />
+      <circle id="headA" r="1" />
+      <circle id="haloB" r="1" fill="url(#gHalo)" />
+      <circle id="headB" r="1" fill="#fff" />
+    </svg>
+    <div id="pill"><div id="pt"></div><div id="ps"></div></div>
+    <div class="chip a" id="chipA"><div class="nm"><i></i><span></span></div><div class="vl"></div></div>
+    <div class="chip b" id="chipB"><div class="nm"><i></i><span></span></div><div class="vl"></div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.getElementById(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const cs = getComputedStyle(root), C = (n) => cs.getPropertyValue(n).trim();
+  const ACC = C("--accent"), ACC2 = C("--accent2"), INK = C("--ink") || "#fff";
+  const stop = (sel, color, op = 1) => document.querySelectorAll(sel).forEach((s) => { s.style.stopColor = color; s.style.stopOpacity = op; });
+  stop(".b0", `color-mix(in srgb, ${ACC} 70%, ${ACC2})`); stop(".b1", ACC); stop(".b2", `color-mix(in srgb, ${ACC} 45%, white)`);
+  stop(".a0", ACC, 0.4); stop(".a1", ACC, 0); stop(".h0", ACC, 0.9); stop(".h1", ACC, 0);
+  const brand = v.brandName || "";
+  const nums = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim()).filter((s) => s.length).map(Number).filter(isFinite);
+  let A = nums(v.dataA), Bd = nums(v.dataB);
+  if (A.length < 3 || Bd.length < 3) { A = [48, 52, 55, 57, 59, 61, 62, 63, 64, 65]; Bd = [6, 10, 15, 22, 31, 42, 55, 68, 82, 96]; }
+  const n = Math.min(A.length, Bd.length); A = A.slice(0, n); Bd = Bd.slice(0, n);
+  const dec = +v.decimals || 0, fmt = (x) => (dec ? x.toFixed(dec) : Math.round(x).toLocaleString("en-US"));
+  const nameA = String(v.nameA || "").split("{brand}").join(brand), nameB = String(v.nameB || "").split("{brand}").join(brand);
+
+  // ---- the chips first: their width sets the room the line ends need on the right
+  const chipFS = Math.round((P ? 36 : 34) * u), valFS = Math.round((P ? 64 : 60) * u);
+  const CH = [["chipA", nameA, `color-mix(in srgb, ${INK} 60%, transparent)`], ["chipB", nameB, ACC]].map(([id, nm, col]) => {
+    const el = $(id), sp = el.querySelector(".nm span"), vl = el.querySelector(".vl");
+    el.querySelector(".nm i").style.background = col; if (id === "chipB") el.querySelector(".nm i").style.boxShadow = `0 0 ${12 * u}px ${ACC}`;
+    sp.textContent = nm; el.querySelector(".nm").style.fontSize = chipFS + "px"; vl.style.fontSize = valFS + "px";
+    vl.style.marginTop = 12 * u + "px"; el.style.padding = `${18 * u}px ${26 * u}px ${20 * u}px`;
+    MV.fitText(sp, (P ? 300 : 340) * u, 22);
+    if (!nm) el.querySelector(".nm").style.display = "none";
+    return { el, sp, vl };
+  });
+  const maxV = Math.max(...A, ...Bd);
+  CH.forEach((c) => { c.vl.innerHTML = (v.prefix ? `<span class="fx">${v.prefix}</span>` : "") + `<span class="n">${fmt(maxV)}</span>` + (v.suffix ? `<span class="fx">${v.suffix}</span>` : ""); });
+  const chipW = Math.max(...CH.map((c) => c.el.getBoundingClientRect().width)), chipH = Math.max(...CH.map((c) => c.el.getBoundingClientRect().height));
+  CH.forEach((c) => { c.el.style.width = chipW + "px"; c.n = c.vl.querySelector(".n"); });
+
+  // ---- the plot, in frame pixels at the final (pulled back) view
+  const sideL = P ? safe.left + 10 * u : SQ ? 90 * u : 200 * u, sideR = P ? W - safe.right + 30 * u : SQ ? W - 70 * u : W - 200 * u;
+  const Lx = sideL, Rx = sideR - chipW - 40 * u;
+  const Ty = P ? safe.top + 160 * u : SQ ? 190 * u : 170 * u, By = P ? H - safe.bottom - 150 * u : SQ ? H - 170 * u : H - 160 * u;
+  const lo = Math.min(0, ...A, ...Bd), hi = Math.max(...A, ...Bd);
+  const toPts = (d) => d.map((y, i) => [Lx + (i / (n - 1)) * (Rx - Lx), By - ((y - lo) / (hi - lo || 1)) * (By - Ty)]);
+  const mono = (pts) => { // monotone cubic: no overshoot past a peak or below a dip
+    const k = pts.length, dx = [], m = [], t = [];
+    for (let i = 0; i < k - 1; i++) { dx[i] = pts[i + 1][0] - pts[i][0]; m[i] = (pts[i + 1][1] - pts[i][1]) / dx[i]; }
+    t[0] = m[0]; t[k - 1] = m[k - 2];
+    for (let i = 1; i < k - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : (3 * (dx[i - 1] + dx[i])) / ((2 * dx[i] + dx[i - 1]) / m[i - 1] + (dx[i] + 2 * dx[i - 1]) / m[i]);
+    let d = `M${pts[0][0]},${pts[0][1]}`;
+    for (let i = 0; i < k - 1; i++) { const h = dx[i] / 3; d += ` C${pts[i][0] + h},${pts[i][1] + t[i] * h} ${pts[i + 1][0] - h},${pts[i + 1][1] - t[i + 1] * h} ${pts[i + 1][0]},${pts[i + 1][1]}`; }
+    return d;
+  };
+  const dA = mono(toPts(A)), dB = mono(toPts(Bd));
+  const swB = (P ? 11 : 9) * u, swA = swB * 0.7;
+  $("lineA").setAttribute("d", dA); $("lineA").setAttribute("stroke-width", swA); $("lineA").style.stroke = `color-mix(in srgb, ${INK} 55%, transparent)`;
+  for (const id of ["lineB", "glowB", "coreB"]) $(id).setAttribute("d", dB);
+  $("lineB").setAttribute("stroke-width", swB); $("glowB").setAttribute("stroke-width", swB * 3.2); $("coreB").setAttribute("stroke-width", swB * 0.28);
+  $("area").setAttribute("d", dB + ` L${Rx},${By} L${Lx},${By} Z`);
+  $("reflFlip").setAttribute("transform", `translate(0 ${2 * By + 6 * u}) scale(1 -1)`);
+  $("mRect").setAttribute("y", By); $("mRect").setAttribute("height", (By - Ty) * 0.9);
+  // y at any x, from the drawn curves
+  const sampler = (p) => { const L = p.getTotalLength(), s = []; for (let i = 0; i <= 400; i++) { const q = p.getPointAtLength((i / 400) * L); s.push([q.x, q.y]); } s.sort((a, b) => a[0] - b[0]);
+    return (x) => { if (x <= s[0][0]) return s[0][1]; for (let i = 1; i < s.length; i++) if (s[i][0] >= x) { const [x0, y0] = s[i - 1], [x1, y1] = s[i]; return y0 + ((x - x0) / (x1 - x0 || 1)) * (y1 - y0); } return s[s.length - 1][1]; }; };
+  const yA = sampler($("lineA")), yB = sampler($("lineB"));
+  // values along x (linear between the points), for the counters
+  const valAt = (d, x) => { const f = Math.max(0, Math.min(n - 1, ((x - Lx) / (Rx - Lx)) * (n - 1))), i = Math.min(n - 2, Math.floor(f)); return d[i] + (d[i + 1] - d[i]) * (f - i); };
+
+  // the crossing: the last x where B goes from under A to over it
+  let xc = null;
+  for (let i = 1; i <= 600; i++) { const x0 = Lx + ((i - 1) / 600) * (Rx - Lx), x1 = Lx + (i / 600) * (Rx - Lx);
+    const s0 = yB(x0) - yA(x0), s1 = yB(x1) - yA(x1); if (s0 > 0 && s1 <= 0) xc = x0 + (s0 / (s0 - s1)) * (x1 - x0); }
+  if (xc === null) xc = Lx + (Rx - Lx) * 0.6;
+  const yc = (yA(xc) + yB(xc)) / 2, fc = (xc - Lx) / (Rx - Lx);
+  const stepAt = Math.round(fc * (n - 1)) + 1;
+
+  // ---- hairline axes: a baseline, three faint guides, a tick per point
+  const NS = "http://www.w3.org/2000/svg", ax = $("axes");
+  const mk = (tag, a, parent = ax) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); parent.append(e); return e; };
+  const guides = [1, 2, 3].map((g) => mk("line", { x1: Lx - 30 * u, x2: Rx + 30 * u, y1: By - (g / 3) * (By - Ty), y2: By - (g / 3) * (By - Ty), stroke: INK, "stroke-opacity": 0.1, "stroke-width": 1.5 * u, "stroke-dasharray": `${2 * u} ${10 * u}` }));
+  const baseL = mk("line", { x1: Lx - 30 * u, x2: Rx + 30 * u, y1: By, y2: By, stroke: INK, "stroke-opacity": 0.45, "stroke-width": 2 * u });
+  const ticks = toPts(A).map(([x]) => mk("line", { x1: x, x2: x, y1: By + 8 * u, y2: By + 22 * u, stroke: INK, "stroke-opacity": 0.35, "stroke-width": 2 * u }));
+  const headA = $("headA"), headB = $("headB"), haloB = $("haloB");
+  headA.setAttribute("r", swA * 1.5); headA.style.fill = `color-mix(in srgb, ${INK} 80%, transparent)`;
+  headB.setAttribute("r", swB * 1.2); haloB.setAttribute("r", swB * 6);
+  const xdot = $("xdot"), xring = $("xring"), xhalo = $("xhalo"), drop = $("drop");
+  for (const e of [xdot, xring, xhalo]) { e.setAttribute("cx", xc); e.setAttribute("cy", yc); }
+  xdot.setAttribute("r", swB * 1.5); xdot.style.fill = "#fff"; xdot.style.stroke = ACC; xdot.setAttribute("stroke-width", 4 * u); xdot.style.opacity = 0;
+  xring.style.stroke = `color-mix(in srgb, ${ACC} 50%, white)`; xring.setAttribute("stroke-width", 3 * u); xring.style.opacity = 0;
+  xhalo.setAttribute("r", swB * 10); xhalo.style.opacity = 0;
+  Object.entries({ x1: xc, x2: xc, y1: yc, y2: yc, stroke: INK, "stroke-opacity": 0.5, "stroke-width": 2 * u, "stroke-dasharray": `${2 * u} ${8 * u}` }).forEach(([k, val]) => drop.setAttribute(k, val));
+
+  // ---- the crossing pill: in the first spot near the point that clears both curves
+  const pill = $("pill"), pt = $("pt"), ps = $("ps");
+  pt.textContent = v.crossLabel || (v.unit ? `${v.unit} ${stepAt}` : "");
+  ps.textContent = v.crossSub || "";
+  pt.style.fontSize = (P ? 84 : 76) * u + "px"; ps.style.fontSize = (P ? 36 : 34) * u + "px";
+  MV.fitText(pt, (P ? 520 : 560) * u, 36); MV.fitText(ps, (P ? 520 : 560) * u, 22);
+  if (!pt.textContent) pt.style.display = "none"; if (!ps.textContent) ps.style.display = "none";
+  const pw = pill.offsetWidth, ph = pill.offsetHeight, g = 34 * u;
+  const clears = (x0, y0) => { for (let x = x0 - 24 * u; x <= x0 + pw + 24 * u; x += 6 * u) { if (x < Lx || x > Rx) continue; for (const f of [yA, yB]) { const y = f(x); if (y > y0 - 24 * u && y < y0 + ph + 24 * u) return false; } } return true; };
+  const fx0 = P ? safe.left - 40 * u : 40 * u, fx1 = P ? W - safe.right + 40 * u : W - 40 * u, fy0 = P ? safe.top - 60 * u : 40 * u;
+  const cands = [[xc - pw - g * 0.4, yc - ph - g], [xc - pw / 2, yc - ph - g * 1.6], [xc - pw - g * 0.4, yc + g], [xc - pw / 2, yc + g * 1.6], [xc + g * 0.4, yc + g]];
+  let pick = cands.find(([x, y]) => x >= fx0 && x + pw <= fx1 && y >= fy0 && y + ph <= By - 10 * u && clears(x, y)) || cands[0];
+  const [px, py] = [Math.round(Math.max(fx0, pick[0])), Math.round(Math.max(fy0, pick[1]))];
+  Object.assign(pill.style, { left: px + "px", top: py + "px", transformOrigin: `${xc - px}px ${yc - py}px` });
+
+  // ---- one state rendered every frame: the heads, the chips riding them, the camera
+  const S = { x: Lx, h: 0, k: 0, z: 1, ca: 0 };
+  const Z = P ? 1.4 : 1.45, aimX = P ? 0.34 : 0.42, aimY = 0.5;
+  const minSep = chipH + 18 * u;
+  const render = () => {
+    const x = S.x, ya = yA(x), yb = yB(x);
+    // a soft edge just ahead of the heads (a hard clip would cut the glow into a straight edge); past the end it opens fully
+    const open = Math.max(0, (x - (Rx - 30 * u)) / (30 * u)) * 260 * u, gc = $("gClip");
+    gc.setAttribute("x1", x - 6 * u + open); gc.setAttribute("x2", x + 8 * u + open * 1.2);
+    headA.setAttribute("cx", x); headA.setAttribute("cy", ya); headB.setAttribute("cx", x); headB.setAttribute("cy", yb); haloB.setAttribute("cx", x); haloB.setAttribute("cy", yb);
+    // chips ride to the right of their heads; they bow out while the heads meet and come back on the other side
+    const gap = Math.abs(ya - yb), aAbove = ya < yb;
+    let ta = ya - chipH / 2, tb = yb - chipH / 2;
+    const mid = (ya + yb) / 2;
+    if (gap < minSep) { if (aAbove) { ta = mid - minSep / 2 - chipH / 2; tb = mid + minSep / 2 - chipH / 2; } else { tb = mid - minSep / 2 - chipH / 2; ta = mid + minSep / 2 - chipH / 2; } }
+    const kk = Math.max(0, Math.min(1, (S.k - 0.55) / 0.4));
+    const vis = Math.max(0, Math.min(1, (gap - chipH * 0.45) / (chipH * 0.5))) * S.ca * (x < xc - 1 ? 1 - S.h : kk);
+    [[CH[0], ta, A], [CH[1], tb, Bd]].forEach(([c, t, d]) => { c.el.style.left = x + 30 * u + "px"; c.el.style.top = t + "px"; c.el.style.opacity = vis.toFixed(3); c.n.textContent = fmt(valAt(d, x)); });
+    // the camera: rides the heads (zoomed) with room ahead for the values, slides them right as they meet so the crossing has room behind, then pulls back
+    // past the crossing the camera stops tracking and lets the lines run out of the shot while it pulls back
+    const cxm = Math.min(x, xc), fy = (yA(cxm) + yB(cxm)) / 2, ax = aimX + ((P ? 0.66 : 0.6) - aimX) * S.h;
+    const s = (Z + (1 - Z) * S.k) * S.z, tx = (W * ax - cxm * Z) * (1 - S.k), ty = (H * aimY - fy * Z) * (1 - S.k);
+    $("rig").style.transform = `translate(${tx + (1 - S.z) * W / 2}px, ${ty + (1 - S.z) * H / 2}px) scale(${s})`;
+  };
+  const R = { onUpdate: render };
+  render();
+
+  // ---- a slow tilt under the camera, the light drifts
+  gsap.set("#tilt", { transformOrigin: `${W / 2}px ${H / 2}px` });
+  tl.fromTo("#tilt", { rotationY: 7, rotationX: 5 }, { rotationY: -4, rotationX: 2, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the build: axes, then both lines draw toward each other; the heads meet and hold a beat
+  tl.fromTo(baseL, { attr: { x2: Lx - 30 * u } }, { attr: { x2: Rx + 30 * u }, duration: 1.0, ease: "expo.out" }, 0);
+  guides.forEach((e, i) => tl.fromTo(e, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.1 + i * 0.08));
+  ticks.forEach((e, i) => tl.fromTo(e, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.1 + i * 0.03));
+  tl.fromTo("#area", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power2.in" }, 0.4);
+  tl.fromTo([headA, headB, haloB], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.1);
+  tl.to(S, { ca: 1, duration: 0.4, ease: "power2.out", ...R }, 0.3);
+  const T1 = 0.15, TC = 1.7, M = T1 + TC, T2 = M + 0.32, TE = 1.2;
+  tl.to(S, { x: xc, duration: TC, ease: "sine.inOut", ...R }, T1);
+  tl.to(S, { x: Rx, duration: TE, ease: "power2.out", ...R }, T2);
+  // the camera: eases off the heads onto the crossing, then pulls back once the lines run on
+  tl.to(S, { h: 1, duration: 0.75, ease: "power2.inOut", ...R }, M - 0.6);
+  tl.to(S, { k: 1, duration: 1.25, ease: "power3.inOut", ...R }, M + 0.2);
+  tl.to(S, { z: 1.03, duration: D - (T2 + 1.5), ease: "sine.inOut", ...R }, T2 + 1.5);
+
+  // ---- the moment: the point pops, a ring goes out, the drop line falls, the pill lands
+  tl.to(xdot, { opacity: 1, duration: 0.05, ease: "none" }, M);
+  tl.fromTo(xdot, { attr: { r: swB * 0.5 } }, { attr: { r: swB * 2.3 }, duration: 0.12, ease: "power2.out", immediateRender: false }, M);
+  tl.to(xdot, { attr: { r: swB * 1.5 }, duration: 0.5, ease: "back.out(3)" }, M + 0.12);
+  tl.fromTo(xring, { attr: { r: swB * 1.5 }, opacity: 0.95 }, { attr: { r: swB * 10 }, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, M + 0.04);
+  tl.fromTo(xhalo, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, M);
+  tl.to(xhalo, { opacity: 0.45, duration: 0.8, ease: "power2.out" }, M + 0.4);
+  tl.to(drop, { attr: { y2: By }, duration: 0.55, ease: "expo.out" }, M + 0.06);
+  tl.fromTo(pill, { scale: 0.55 }, { scale: 1, duration: 0.55, ease: "back.out(1.6)" }, M + 0.08);
+  tl.fromTo(pill, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, M + 0.08);
+  tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut" }, M + 0.45);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.07);
+  // the line that was ahead steps back once it is passed
+  tl.to(["#lineA", headA], { opacity: 0.7, duration: 0.6, ease: "power2.inOut" }, T2 + 0.2);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

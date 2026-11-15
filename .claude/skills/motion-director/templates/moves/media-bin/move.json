@@ -1,0 +1,5 @@
+{ "id": "media-bin", "name": "Media bin drag", "oneLiner": "a glass media bin of clip thumbnails cut from the brand's own screens and photos pops in, a cursor grabs one, it lifts and tilts, rides an arc down while it stretches into a clip, squashes into the empty slot on the timeline with the edges snapping and the audio growing under it, then the playhead plays across the new cut",
+  "category": "creator", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["media", "bin", "clips", "footage", "drag and drop", "timeline", "editing", "b-roll", "library", "creator tools", "workflow", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says they pull a clip from their footage or library into the edit ('I grab the B-roll and drop it in', 'all my clips sit in one folder'): the bin fills while they set it up, the clip drops into the timeline on 'drop' or 'in'" }

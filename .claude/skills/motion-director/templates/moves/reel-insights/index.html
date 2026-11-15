@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Sheet title","default":"Reel insights"},
+  {"id":"playsLabel","type":"string","label":"Label over the big number","default":"Plays"},
+  {"id":"plays","type":"number","label":"Plays (the big number)","default":284000},
+  {"id":"likes","type":"number","label":"Likes","default":21400},
+  {"id":"comments","type":"number","label":"Comments","default":1260},
+  {"id":"shares","type":"number","label":"Shares","default":3900},
+  {"id":"saves","type":"number","label":"Saves","default":8700},
+  {"id":"labels","type":"string","label":"The four stat labels, comma separated","default":"Likes,Comments,Shares,Saves"},
+  {"id":"lift","type":"number","label":"Which stat lifts (1 to 4, 0 for none)","default":3},
+  {"id":"gain","type":"string","label":"Chip on the lifted stat (empty: no chip)","default":"+48%"},
+  {"id":"screen","type":"number","label":"Which brand screen is the reel (1 = the first)","default":1}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --ok: #2BD67B; --okd: #17a95c; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 34% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  #shadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.7), transparent 70%); }
+  .is-key #shadow { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #phone { position: absolute; transform-style: preserve-3d; }
+  .slab { position: absolute; inset: 0; border-radius: var(--R); }
+  #frame { position: absolute; inset: 0; border-radius: var(--R); transform: translateZ(0.5px);
+    background: linear-gradient(135deg, #b9bcc2, #3a3c41 18%, #8c8f95 38%, #24262a 62%, #9da0a6 85%, #4a4c51);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.35), inset 0 0 calc(var(--u) * 6) rgba(0,0,0,.6); }
+  #bezel { position: absolute; transform: translateZ(1.5px); border-radius: var(--R2); background: #050506; box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.08); }
+  #screen { position: absolute; border-radius: var(--R3); overflow: hidden; background: #000; }
+  #ui { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #fff; }
+  #glare { position: absolute; inset: 0; border-radius: var(--R3); pointer-events: none; mix-blend-mode: screen; z-index: 20;
+    background: linear-gradient(118deg, transparent calc(var(--gl, 30%) - 22%), rgba(255,255,255,.12) var(--gl, 30%), transparent calc(var(--gl, 30%) + 2%), transparent calc(var(--gl, 30%) + 16%), rgba(255,255,255,.05) calc(var(--gl, 30%) + 24%), transparent calc(var(--gl, 30%) + 34%)); }
+  .btn { position: absolute; border-radius: 3px; background: linear-gradient(90deg, #2a2c30, #9a9da3 50%, #2a2c30); }
+
+  /* the reel behind (laid out at 300 px wide) */
+  #reel { position: absolute; left: 0; top: 0; width: 300px; overflow: hidden; border-radius: 0; transform-origin: 50% 0; background: #111; }
+  #reel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  #reel .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35), transparent 20%, transparent 55%, rgba(0,0,0,.7)); }
+  #rail { position: absolute; right: 10px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  #rail svg { width: 30px; height: 30px; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+  #rbar { position: absolute; left: 0; right: 0; height: 3px; background: rgba(255,255,255,.25); }
+  #rbar i { display: block; height: 100%; width: 100%; background: #fff; transform-origin: 0 50%; }
+  #rsk { position: absolute; left: 14px; display: flex; flex-direction: column; gap: 8px; }
+  #rsk div { height: 9px; border-radius: 5px; background: rgba(255,255,255,.7); }
+  #rsk div + div { background: rgba(255,255,255,.4); }
+  #dim { position: absolute; inset: 0; background: #000; opacity: 0; }
+
+  /* the sheet: frosted dark glass */
+  #sheet { position: absolute; left: 0; width: 300px; box-sizing: border-box; padding: 9px 14px 0; border-radius: 22px 22px 0 0;
+    background: linear-gradient(180deg, rgba(40,37,46,.86), rgba(22,20,27,.94) 40%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%);
+    box-shadow: inset 0 1.2px 0 rgba(255,255,255,.22), 0 -10px 30px rgba(0,0,0,.45); }
+  .is-key #sheet { background: #1b1920; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  #grab { width: 40px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.3); margin: 0 auto 12px; }
+  #hd { display: flex; align-items: center; gap: 10px; height: 44px; }
+  #th { width: 34px; height: 44px; flex: none; border-radius: 7px; overflow: hidden; background: var(--accent); box-shadow: inset 0 0 0 1px rgba(255,255,255,.2); }
+  #th img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #tt { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
+  #big { margin: 14px 0 12px; padding: 12px 14px 13px; border-radius: 16px; background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+  #bl { font-size: 19px; font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+  #bl svg { width: 20px; height: 20px; fill: rgba(255,255,255,.62); }
+  #bn { font-family: var(--font-display); font-size: 52px; line-height: 1.05; letter-spacing: -0.02em; margin-top: 4px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile { position: relative; height: 104px; box-sizing: border-box; padding: 12px 13px; border-radius: 16px; background: #2a2730;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), inset 0 0 0 1px rgba(255,255,255,.05); transform-origin: 50% 70%; }
+  .tile .gw { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.1); display: grid; place-items: center; }
+  .tile .gw svg { width: 18px; height: 18px; fill: none; stroke: #fff; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+  .tile .n { position: absolute; left: 13px; bottom: 34px; font-size: 29px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tile .l { position: absolute; left: 13px; bottom: 11px; font-size: 19px; font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  .tile .ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 2px var(--accent), 0 0 24px color-mix(in srgb, var(--accent) 60%, transparent); opacity: 0; }
+  .is-key .tile .ring { box-shadow: inset 0 0 0 2px var(--accent); }
+  .tile .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; overflow: hidden;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .tile.hot { background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 30%, #2a2730), #2a2730 70%); }
+  .tile.hot .gw { background: var(--accent); }
+  #chip { position: absolute; right: 9px; top: 12px; display: flex; align-items: center; gap: 3px; padding: 4px 9px 4px 6px; border-radius: 99px;
+    background: linear-gradient(180deg, #3fe08c, var(--ok) 55%, var(--okd)); color: #fff; font-size: 17px; font-weight: 800; white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 4px 12px -2px rgba(43,214,123,.6); }
+  .is-key #chip { box-shadow: inset 0 1px 0 rgba(255,255,255,.45); }
+  #chip svg { width: 14px; height: 14px; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="shadow"></div>
+  <div id="persp"><div id="phone">
+    <div id="frame"></div>
+    <div id="bezel"><div id="screen"><div id="ui">
+      <div id="reel"><div class="shade"></div><div id="rsk"><div style="width:120px"></div><div style="width:180px"></div></div>
+        <div id="rail"></div><div id="rbar"><i></i></div><div id="dim"></div></div>
+      <div id="sheet"><div id="grab"></div>
+        <div id="hd"><div id="th"></div><div id="tt"></div></div>
+        <div id="big"><div id="bl"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z"/></svg><span id="blt"></span></div><div id="bn"></div></div>
+        <div id="grid"></div>
+      </div>
+    </div><div id="glare"></div></div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const P = MV.portrait, SQ = W === H;
+
+  // ---- the phone
+  const PH = P ? 1260 * u : H * 0.93, PW = PH * 0.485;
+  const pcx = P ? (MV.alpha ? safe.left + (W - safe.left - safe.right) / 2 : W / 2) : MV.alpha && !SQ ? W - safe.right - PW / 2 - 60 * u : W / 2;
+  const pcy = P ? (MV.alpha ? safe.top + (H - safe.top - safe.bottom) / 2 + 20 * u : H / 2) : H / 2;
+  const phone = $("#phone"); gsap.set(phone, { left: pcx - PW / 2, top: pcy - PH / 2, width: PW, height: PH });
+  const Rr = PW * 0.155, fr = PW * 0.018, bz = PW * 0.03;
+  root.style.setProperty("--R", Rr + "px"); root.style.setProperty("--R2", (Rr - fr) + "px"); root.style.setProperty("--R3", (Rr - fr - bz) + "px");
+  gsap.set("#bezel", { left: fr, top: fr, width: PW - 2 * fr, height: PH - 2 * fr });
+  const SW = PW - 2 * fr - 2 * bz, SH = PH - 2 * fr - 2 * bz;
+  gsap.set("#screen", { left: bz, top: bz, width: SW, height: SH });
+  const k = SW / 300, LH = SH / k;
+  gsap.set("#ui", { width: 300, height: LH, scale: k });
+  for (let i = 14; i >= 1; i--) { const s = document.createElement("div"); s.className = "slab"; s.style.transform = `translateZ(${-i * PW * 0.0045}px)`;
+    s.style.background = `linear-gradient(90deg, #1d1e21, ${i % 3 ? "#5d6066" : "#8a8d93"} 50%, #1d1e21)`; phone.insertBefore(s, phone.firstChild); }
+  [[-1, 0.2, 0.06], [-1, 0.29, 0.1], [1, 0.25, 0.13]].forEach(([side, y0, h]) => { const b = document.createElement("div"); b.className = "btn";
+    gsap.set(b, { left: side < 0 ? -PW * 0.008 : PW - PW * 0.002, top: PH * y0, width: PW * 0.01, height: PH * h, z: -PW * 0.03 }); phone.insertBefore(b, phone.firstChild); });
+  gsap.set("#shadow", { left: pcx - PW * 0.7, top: pcy + PH * 0.44, width: PW * 1.4, height: PH * 0.12 });
+  root.style.setProperty("--gx", (pcx / W * 100) + "%"); root.style.setProperty("--gy", (pcy / H * 100) + "%");
+
+  // ---- the reel: a brand screen full bleed, its rail and caption lines
+  const scr = (v.screens || [])[Math.max(0, (Math.round(+v.screen) || 1) - 1)] || (v.screens || [])[0];
+  const reel = $("#reel"); gsap.set(reel, { height: LH });
+  if (scr) { const im = MV.img(scr); im.style.objectPosition = "28% 50%"; reel.insertBefore(im, reel.firstChild); $("#th").appendChild(MV.img(scr)); $("#th img").style.objectPosition = "28% 50%"; }
+  else reel.style.background = "linear-gradient(160deg, var(--al), var(--accent) 50%, var(--ad))";
+  const G = { heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+    bubble: '<path d="M4.5 12a7.5 7 0 1 1 3.4 5.9L4.5 19.5l1-3.3A7 7 0 0 1 4.5 12z"/>',
+    send: '<path d="M21 3.5 10 14M21 3.5l-6.5 17-4.5-6.5-6.5-4.5z"/>',
+    save: '<path d="M7 3.5h10v17l-5-4-5 4z"/>' };
+  $("#rail").innerHTML = ["heart", "bubble", "send", "save"].map((g) => `<svg viewBox="0 0 24 24">${G[g]}</svg>`).join("");
+  gsap.set("#rail", { top: LH * 0.5 }); gsap.set("#rsk", { top: LH - 72 }); gsap.set("#rbar", { top: LH - 18 });
+
+  // ---- the sheet
+  $("#tt").textContent = v.title || ""; MV.fitText($("#tt"), 300 - 28 - 44, 12);
+  $("#blt").textContent = v.playsLabel || "";
+  const L = String(v.labels || "").split(",").map((s) => s.trim());
+  const vals = [v.likes, v.comments, v.shares, v.saves].map((x) => Math.max(0, Math.round(+x || 0)));
+  const glyphs = ["heart", "bubble", "send", "save"], lift = Math.round(+v.lift || 0);
+  $("#grid").innerHTML = vals.map((n, i) => `<div class="tile${i + 1 === lift ? " hot" : ""}"><div class="gw"><svg viewBox="0 0 24 24">${G[glyphs[i]]}</svg></div><div class="n"></div><div class="l"></div><div class="ring"></div><div class="sh"></div></div>`).join("");
+  const tiles = [...document.querySelectorAll(".tile")];
+  tiles.forEach((t, i) => { t.querySelector(".l").textContent = L[i] || ""; MV.fitText(t.querySelector(".l"), (131 - 26) * k, 10); });
+  const compact = (n) => n >= 1e6 ? (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M" : n >= 1e4 ? (n / 1e3).toFixed(n >= 1e5 ? 0 : 1).replace(/\.0$/, "") + "K" : Math.round(n).toLocaleString("en-US");
+  const plays = Math.max(0, Math.round(+v.plays || 0));
+  // the big number is fitted at its final width
+  $("#bn").textContent = compact(plays); MV.fitText($("#bn"), (300 - 28 - 28) * k, 14);
+  tiles.forEach((t, i) => { const n = t.querySelector(".n"); n.textContent = compact(vals[i]); MV.fitText(n, (131 - 26) * k, 12); });
+  let chip = null;
+  if (lift >= 1 && lift <= 4 && v.gain) { chip = document.createElement("div"); chip.id = "chip"; chip.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5L12 5.5l6 6"/></svg><span></span>`;
+    chip.querySelector("span").textContent = v.gain; tiles[lift - 1].appendChild(chip); MV.fitText(chip.querySelector("span"), (131 - 30 - 18 - 40) * k, 10); }
+  const sheet = $("#sheet"), shH = sheet.getBoundingClientRect().height / k;
+  const sTop = Math.max(LH * 0.3, LH - shH - 26);
+  gsap.set(sheet, { top: sTop, height: LH - sTop + 2 });
+
+  // ---- timeline
+  tl.fromTo(phone, { y: PH * 0.45, rotationX: 26, rotationY: -26, rotationZ: 5, opacity: 0 }, { y: 0, rotationX: 7, rotationY: -12, rotationZ: 0, opacity: 1, duration: 0.95, ease: "expo.out" }, 0.03);
+  tl.fromTo("#shadow", { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 0.9, ease: "expo.out" }, 0.03);
+  tl.to(phone, { rotationX: 3, rotationY: 10, scale: 1.04, duration: D - 0.98, ease: "sine.inOut" }, 0.98);
+  tl.fromTo("#glare", { "--gl": "-10%" }, { "--gl": "90%", duration: D, ease: "sine.inOut" }, 0);
+  // the reel plays: its bar runs, the image breathes
+  tl.fromTo("#rbar i", { scaleX: 0.18 }, { scaleX: 0.7, duration: D, ease: "none" }, 0);
+  tl.fromTo("#reel img", { scale: 1.04 }, { scale: 1.12, duration: D, ease: "none" }, 0);
+
+  // the sheet slides up, the reel sinks back under it
+  const S = 0.5;
+  tl.fromTo(sheet, { y: LH - sTop + 20 }, { y: 0, duration: 0.85, ease: "expo.out" }, S);
+  tl.to("#dim", { opacity: 0.45, duration: 0.6, ease: "power2.out" }, S);
+  tl.to(reel, { scale: 0.94, y: 10, borderRadius: 18, duration: 0.85, ease: "expo.out" }, S);
+  // the part of the reel still showing above the sheet keeps the subject in view
+  tl.to("#reel img", { y: -LH * 0.2, duration: 0.85, ease: "expo.out" }, S);
+
+  // the counts: plays first, then the four tiles, each rolling up on a long tail
+  const cnt = (el, to, at, dur) => { const c = { n: 0 }; const draw = () => { el.textContent = compact(c.n); }; tl.fromTo(c, { n: 0 }, { n: to, duration: dur, ease: "expo.out", onUpdate: draw, immediateRender: true }, at); };
+  cnt($("#bn"), plays, S + 0.3, 1.6);
+  tl.fromTo("#big", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, S + 0.2);
+  tl.fromTo(["#hd"], { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, S + 0.12);
+  tiles.forEach((t, i) => {
+    const at = S + 0.45 + i * 0.09;
+    tl.fromTo(t, { opacity: 0, y: 22, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" }, at);
+    cnt(t.querySelector(".n"), vals[i], at + 0.05, 1.4);
+  });
+
+  // the lift (the moment that lands): the stat comes up off the sheet toward the camera, ringed, the green chip pops
+  if (lift >= 1 && lift <= 4) {
+    const t = tiles[lift - 1], LF = 2.55;
+    tl.to(t, { scale: 1.13, y: -10, duration: 0.5, ease: "back.out(2.2)", boxShadow: "inset 0 1px 0 rgba(255,255,255,.18), 0 18px 34px -6px rgba(0,0,0,.75)" }, LF);
+    tl.to(t.querySelector(".ring"), { opacity: 1, duration: 0.3, ease: "power2.out" }, LF);
+    tl.to(tiles.filter((x) => x !== t), { opacity: 0.45, duration: 0.5, ease: "power2.out" }, LF);
+    tl.to("#big", { opacity: 0.6, duration: 0.5, ease: "power2.out" }, LF);
+    gsap.set(t, { zIndex: 3 });
+    if (chip) tl.fromTo(chip, { scale: 0, rotation: -12, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.5, ease: "back.out(2.6)", transformOrigin: "100% 50%" }, LF + 0.12);
+    tl.fromTo(t.querySelector(".sh"), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.75, ease: "power2.inOut" }, LF + 0.1);
+  }
+
+  if (MV.alpha) { const X = D - 0.42;
+    tl.to(phone, { y: PH * 0.35, rotationX: 20, opacity: 0, duration: 0.4, ease: "power3.in" }, X);
+    tl.to("#shadow", { opacity: 0, duration: 0.3, ease: "power2.in" }, X); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

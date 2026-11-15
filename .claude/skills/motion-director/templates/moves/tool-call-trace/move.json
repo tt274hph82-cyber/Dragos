@@ -1,0 +1,5 @@
+{ "id": "tool-call-trace", "name": "Tool call trace", "oneLiner": "an agent run log on a glass card: under the task, each tool call opens with a spinner and expands to show what went in and what came out, ticks green with its time and folds away, then the answer writes in word by word and the run status rolls from Running to a green Done",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "agent", "tools", "tool use", "function calling", "trace", "log", "steps", "run", "automation", "mcp", "answer", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": true,
+  "say": "when the speaker says what the agent actually did behind the scenes ('it searched, read the comments, then wrote it', 'it called three tools on its own'): one call opens per step they name, Done lands as they give the result" }

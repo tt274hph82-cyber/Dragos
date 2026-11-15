@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"question","type":"string","label":"The poll question on the sticker","default":"Would you try this?"},
+  {"id":"optionA","type":"string","label":"First poll option (the one that is tapped)","default":"Yes, today"},
+  {"id":"optionB","type":"string","label":"Second poll option","default":"Not yet"},
+  {"id":"split","type":"number","label":"Percent of votes for the first option","default":78},
+  {"id":"name","type":"string","label":"Account name at the top of the story (empty: the brand handle)","default":""},
+  {"id":"ago","type":"string","label":"Time stamp next to the name","default":"2h"},
+  {"id":"screen","type":"number","label":"Which brand screen fills the story (1 = the first)","default":1},
+  {"id":"next","type":"number","label":"Which brand screen is the next story (0: the brand photo on its colour)","default":0}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 34% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  #shadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.7), transparent 70%); }
+  .is-key #shadow { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #phone { position: absolute; transform-style: preserve-3d; }
+  .slab { position: absolute; inset: 0; border-radius: var(--R); }
+  #frame { position: absolute; inset: 0; border-radius: var(--R); transform: translateZ(0.5px);
+    background: linear-gradient(135deg, #b9bcc2, #3a3c41 18%, #8c8f95 38%, #24262a 62%, #9da0a6 85%, #4a4c51);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.35), inset 0 0 calc(var(--u) * 6) rgba(0,0,0,.6); }
+  #bezel { position: absolute; transform: translateZ(1.5px); border-radius: var(--R2); background: #050506; box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.08); }
+  #screen { position: absolute; border-radius: var(--R3); overflow: hidden; background: #000; }
+  #ui { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #fff; }
+  #glare { position: absolute; inset: 0; border-radius: var(--R3); pointer-events: none; mix-blend-mode: screen; z-index: 20;
+    background: linear-gradient(118deg, transparent calc(var(--gl, 30%) - 22%), rgba(255,255,255,.12) var(--gl, 30%), transparent calc(var(--gl, 30%) + 2%), transparent calc(var(--gl, 30%) + 16%), rgba(255,255,255,.05) calc(var(--gl, 30%) + 24%), transparent calc(var(--gl, 30%) + 34%)); }
+  .btn { position: absolute; border-radius: 3px; background: linear-gradient(90deg, #2a2c30, #9a9da3 50%, #2a2c30); }
+
+  /* the story faces (laid out at 300 px wide, scaled to the screen): a cube turn takes A off and brings B on */
+  #cube { position: absolute; inset: 0; perspective: 900px; }
+  .face { position: absolute; left: 0; top: 0; width: 300px; overflow: hidden; background: #111; backface-visibility: hidden; }
+  .face .bgw { position: absolute; inset: 0; overflow: hidden; }
+  .face .bgw img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .face .bgw .blur { filter: blur(14px) brightness(.7) saturate(1.2); transform: scale(1.2); }
+  .face .bgw .main { object-fit: contain; }
+  .face .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.55), transparent 22%, transparent 70%, rgba(0,0,0,.45)); }
+  .face .dark { position: absolute; inset: 0; background: #000; opacity: 0; }
+
+  /* the top bar: segmented progress, avatar, name, time */
+  #top { position: absolute; left: 0; top: 0; width: 300px; z-index: 6; }
+  #segs { position: absolute; left: 10px; right: 10px; top: 12px; display: flex; gap: 4px; }
+  .seg { flex: 1; height: 3.5px; border-radius: 2px; background: rgba(255,255,255,.35); overflow: hidden; }
+  .seg i { display: block; height: 100%; width: 100%; background: #fff; transform-origin: 0 50%; transform: scaleX(0); }
+  #who { position: absolute; left: 12px; top: 26px; right: 12px; display: flex; align-items: center; gap: 9px; height: 38px; }
+  #av { width: 34px; height: 34px; flex: none; border-radius: 50%; background: var(--accent) center / cover no-repeat;
+    box-shadow: 0 0 0 1.6px rgba(255,255,255,.9); }
+  #nm { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+  #ago { font-size: 18px; font-weight: 500; color: rgba(255,255,255,.72); white-space: nowrap; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+
+  /* the poll sticker: a thick white card with a contact shadow */
+  #stk { position: absolute; left: 30px; width: 240px; z-index: 5; box-sizing: border-box; padding: 16px 14px 14px; border-radius: 20px;
+    background: linear-gradient(180deg, #ffffff, #f2f1f4); color: #16141b;
+    box-shadow: inset 0 1.5px 0 #fff, inset 0 -3px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.2), 0 14px 30px -6px rgba(0,0,0,.6); }
+  #stk .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; overflow: hidden;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.8) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); mix-blend-mode: soft-light; }
+  #q { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.12; text-align: center; margin: 0 2px 13px; }
+  .opt { position: relative; height: 44px; border-radius: 12px; background: #ebe9ee; overflow: hidden; display: flex; align-items: center; padding: 0 13px;
+    box-shadow: inset 0 0 0 1.2px rgba(20,16,30,.06); }
+  .opt + .opt { margin-top: 8px; }
+  .opt .row { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 13px; }
+  .opt .lb { flex: 1; min-width: 0; font-size: 21px; font-weight: 700; white-space: nowrap; letter-spacing: -0.01em; }
+  .opt .pc { flex: none; font-size: 21px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .opt .rd { flex: none; width: 19px; height: 19px; margin-right: 8px; border-radius: 50%; box-sizing: border-box; border: 2px solid rgba(20,16,30,.28); display: grid; place-items: center; }
+  .opt .rd { position: relative; }
+  .opt .rd b { position: absolute; inset: -2px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; opacity: 0; }
+  .opt .rd svg { width: 72%; height: 72%; fill: none; stroke: #fff; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+  /* the vote fill: a tinted bar revealed by a clip, a lit edge where it ends */
+  .opt .hi { position: absolute; inset: 0; clip-path: inset(0 var(--cut, 100%) 0 0); }
+  #oa .hi { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, #fff), color-mix(in srgb, var(--accent) 36%, #fff)); }
+  #oa .pc { color: color-mix(in srgb, var(--accent) 80%, #000); }
+  #ob .hi { background: #d9d6de; }
+  #stkS { position: absolute; z-index: 4; left: 40px; width: 220px; height: 30px; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.55), transparent 70%); }
+
+  #touch { position: absolute; left: 0; top: 0; z-index: 8; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.75), rgba(255,255,255,.4) 60%, rgba(255,255,255,.2));
+    box-shadow: 0 0 0 1.6px rgba(255,255,255,.8), 0 5px 12px rgba(0,0,0,.4); opacity: 0; }
+  #rip { position: absolute; left: 0; top: 0; z-index: 8; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; border: 3px solid #fff; box-sizing: border-box; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="shadow"></div>
+  <div id="persp"><div id="phone">
+    <div id="frame"></div>
+    <div id="bezel"><div id="screen"><div id="ui">
+      <div id="cube">
+        <div class="face" id="fb"><div class="bgw"></div><div class="shade"></div><div class="dark"></div></div>
+        <div class="face" id="fa"><div class="bgw"></div><div class="shade"></div>
+          <div id="stkS"></div>
+          <div id="stk"><div id="q"></div>
+            <div class="opt" id="oa"></div>
+            <div class="opt" id="ob"></div>
+            <div class="sh"></div></div>
+          <div id="touch"></div><div id="rip"></div>
+          <div class="dark"></div></div>
+      </div>
+      <div id="top"><div id="segs"><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div><div class="seg"><i></i></div></div>
+        <div id="who"><div id="av"></div><div id="nm"></div><div id="ago"></div></div></div>
+    </div><div id="glare"></div></div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  await document.fonts.ready;                          // fit text in the real face, not the fallback
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const P = MV.portrait, SQ = W === H;
+
+  // ---- the phone: as tall as the frame allows (the body may pass the safe box on 9:16, the text never does)
+  const PH = P ? 1260 * u : H * 0.93, PW = PH * 0.485;
+  const pcx = P ? (MV.alpha ? safe.left + (W - safe.left - safe.right) / 2 : W / 2) : MV.alpha && !SQ ? W - safe.right - PW / 2 - 60 * u : W / 2;
+  const pcy = P ? (MV.alpha ? safe.top + (H - safe.top - safe.bottom) / 2 + 20 * u : H / 2) : H / 2;
+  const phone = $("#phone"); gsap.set(phone, { left: pcx - PW / 2, top: pcy - PH / 2, width: PW, height: PH });
+  const Rr = PW * 0.155, fr = PW * 0.018, bz = PW * 0.03;
+  root.style.setProperty("--R", Rr + "px"); root.style.setProperty("--R2", (Rr - fr) + "px"); root.style.setProperty("--R3", (Rr - fr - bz) + "px");
+  gsap.set("#bezel", { left: fr, top: fr, width: PW - 2 * fr, height: PH - 2 * fr });
+  const SW = PW - 2 * fr - 2 * bz, SH = PH - 2 * fr - 2 * bz;
+  gsap.set("#screen", { left: bz, top: bz, width: SW, height: SH });
+  const k = SW / 300, LH = SH / k;
+  gsap.set("#ui", { width: 300, height: LH, scale: k });
+  gsap.set(".face", { height: LH });
+  for (let i = 14; i >= 1; i--) { const s = document.createElement("div"); s.className = "slab"; s.style.transform = `translateZ(${-i * PW * 0.0045}px)`;
+    s.style.background = `linear-gradient(90deg, #1d1e21, ${i % 3 ? "#5d6066" : "#8a8d93"} 50%, #1d1e21)`; phone.insertBefore(s, phone.firstChild); }
+  [[-1, 0.2, 0.06], [-1, 0.29, 0.1], [1, 0.25, 0.13]].forEach(([side, y0, h]) => { const b = document.createElement("div"); b.className = "btn";
+    gsap.set(b, { left: side < 0 ? -PW * 0.008 : PW - PW * 0.002, top: PH * y0, width: PW * 0.01, height: PH * h, z: -PW * 0.03 }); phone.insertBefore(b, phone.firstChild); });
+  gsap.set("#shadow", { left: pcx - PW * 0.7, top: pcy + PH * 0.44, width: PW * 1.4, height: PH * 0.12 });
+  root.style.setProperty("--gx", (pcx / W * 100) + "%"); root.style.setProperty("--gy", (pcy / H * 100) + "%");
+
+  // ---- the two stories: a brand screen, letterboxed over its own blurred copy (a real story upload)
+  const scr = v.screens || [];
+  const pick = (n) => scr[Math.max(0, (Math.round(+n) || 1) - 1)] || scr[0];
+  const fill = (face, src) => { const w = face.querySelector(".bgw");
+    if (!src) { w.style.background = "linear-gradient(160deg, var(--al), var(--accent) 50%, var(--ad))"; return; }
+    const b = MV.img(src, "blur"), m = MV.img(src, "main"); w.appendChild(b); w.appendChild(m); };
+  fill($("#fa"), pick(v.screen));
+  // the next story: the brand photo on its colour when there is one, else the next screen
+  const person = (v.people || [])[0];
+  if (+v.next === 0 && person) { const w = $("#fb .bgw"); w.style.background = "radial-gradient(70% 45% at 50% 40%, var(--al), transparent 70%), linear-gradient(170deg, var(--accent), var(--ad) 70%, #120808)";
+    const im = MV.img(person, "pp"); Object.assign(im.style, { position: "absolute", left: "-32%", width: "164%", top: "auto", bottom: "0", height: "auto", objectFit: "fill" }); w.appendChild(im); }
+  else fill($("#fb"), pick(v.next || 2));
+  // the image sits in the upper middle of the story, slightly enlarged so it reads
+  gsap.set(".face .main", { scale: 1.32, transformOrigin: "50% 50%", y: -LH * 0.17 });
+
+  // ---- the header
+  const brand = v.brandName || "";
+  $("#nm").textContent = v.name || (v.handle ? String(v.handle).replace(/^@/, "") : brand.toLowerCase().replace(/[^a-z0-9_.]/g, ""));
+  $("#ago").textContent = v.ago || "";
+  if (v.mark) $("#av").style.backgroundImage = `url("${v.mark}")`;
+  MV.fitText($("#nm"), (300 - 24 - 34 - 9 - 9 - $("#ago").getBoundingClientRect().width / k - 8) * k, 12);
+
+  // ---- the sticker: question (up to two lines), two options
+  const q = $("#q"); q.textContent = v.question || "";
+  let qs = 24; while (q.getBoundingClientRect().height / k > 24 * 1.12 * 2 + 1 && qs > 14) { qs -= 1; q.style.fontSize = qs + "px"; }
+  const A = $("#oa"), B = $("#ob");
+  const pa = Math.max(0, Math.min(100, Math.round(+v.split || 0))), pb = 100 - pa;
+  const ROW = `<div class="rd"><b><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-8.5"/></svg></b></div><div class="lb"></div><div class="pc"></div>`;
+  [[A, v.optionA, pa], [B, v.optionB, pb]].forEach(([o, t]) => { o.innerHTML = `<div class="hi"></div><div class="row">${ROW}</div>`;
+    o.querySelectorAll(".lb").forEach((e) => { e.textContent = t || ""; }); o.querySelectorAll(".pc").forEach((e) => { e.textContent = "100%"; }); });
+  // the percent owns a fixed column (as wide as "100%"); the label is fitted to what is left, with a gap
+  const pcw = Math.ceil(A.querySelector(".pc").getBoundingClientRect().width / k) + 2;
+  [A, B].forEach((o) => o.querySelectorAll(".pc").forEach((e) => { e.style.width = pcw + "px"; e.style.textAlign = "right"; }));
+  const lbw = A.getBoundingClientRect().width / k - 26 - 27 - pcw - 10;   // the option row, inside the sticker padding
+  [A, B].forEach((o) => o.querySelectorAll(".lb").forEach((e) => { MV.fitText(e, lbw * k, 10); e.style.flex = "none"; e.style.width = lbw + "px"; e.style.marginRight = "10px"; e.style.overflow = "hidden"; }));
+  // percents stay hidden until the vote
+  [A, B].forEach((o) => o.querySelectorAll(".pc").forEach((e) => { e.textContent = ""; }));
+  const stk = $("#stk"), sh = stk.getBoundingClientRect().height / k;
+  const sy = LH * 0.6 - sh / 2;
+  gsap.set(stk, { top: sy, transformOrigin: "50% 60%" });
+  gsap.set("#stkS", { top: sy + sh - 8 });
+
+  // ---- timeline
+  // 1. the phone swings in from the side, turning toward camera
+  tl.fromTo(phone, { y: PH * 0.4, x: PW * 0.3, rotationX: 22, rotationY: 34, rotationZ: 5, opacity: 0 },
+    { y: 0, x: 0, rotationX: 7, rotationY: -12, rotationZ: 0, opacity: 1, duration: 1.0, ease: "expo.out" }, 0.03);
+  tl.fromTo("#shadow", { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 0.9, ease: "expo.out" }, 0.03);
+  tl.to(phone, { rotationX: 3, rotationY: 9, scale: 1.04, duration: D - 1.0, ease: "sine.inOut" }, 1.03);
+  tl.fromTo("#glare", { "--gl": "-10%" }, { "--gl": "90%", duration: D, ease: "sine.inOut" }, 0);
+  // the stories breathe: a slow push on the image
+  tl.fromTo("#fa .main", { scale: 1.32 }, { scale: 1.42, duration: D, ease: "none" }, 0);
+  if ($("#fb .main")) tl.fromTo("#fb .main", { scale: 1.32 }, { scale: 1.38, duration: D, ease: "none" }, 0);
+  if ($("#fb .pp")) tl.fromTo("#fb .pp", { scale: 1.08, transformOrigin: "50% 100%" }, { scale: 1, duration: 1.5, ease: "expo.out" }, 3.6);
+
+  // 2. progress: the first story is done, the second (this one) runs, then the third starts after the turn
+  const segs = [...document.querySelectorAll(".seg i")];
+  gsap.set(segs[0], { scaleX: 1 });
+  const ADV = 3.6, TURN = 0.62;
+  tl.fromTo(segs[1], { scaleX: 0 }, { scaleX: 1, duration: ADV - 0.1, ease: "none" }, 0.1);
+  tl.fromTo(segs[2], { scaleX: 0 }, { scaleX: 0.22, duration: D - ADV - TURN, ease: "none" }, ADV + TURN);
+
+  // 3. the sticker lands: dropped from above the glass, a tilt, a spring, its shadow tightening under it
+  const L0 = 0.62;
+  tl.fromTo(stk, { scale: 1.9, rotation: -16, y: -40, opacity: 0 }, { scale: 1, rotation: -3, y: 0, duration: 0.6, ease: "back.out(1.7)" }, L0);
+  tl.fromTo(stk, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out", immediateRender: false }, L0);
+  tl.fromTo("#stkS", { opacity: 0, scaleX: 1.6 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out" }, L0 + 0.05);
+
+  // 4. the tap on the first option: press, ripple, then the votes split
+  // option A in face space (unrotated layout): measured before the sticker turns, at its resting rotation
+  const tx = 30 + 120 + 48, ty = sy + 16 + q.getBoundingClientRect().height / k + 13 + 22;
+  gsap.set("#touch", { x: tx + 40, y: ty + 120 }); gsap.set("#rip", { x: tx, y: ty });
+  const T = 1.72;
+  tl.fromTo("#touch", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }, T - 0.45);
+  tl.to("#touch", { x: tx, y: ty, duration: 0.42, ease: "power3.inOut" }, T - 0.45);
+  tl.to("#touch", { scale: 0.75, duration: 0.08, ease: "power2.out" }, T);
+  tl.to(A, { scale: 0.95, duration: 0.08, ease: "power2.out" }, T);
+  tl.to(A, { scale: 1, duration: 0.5, ease: "back.out(3)" }, T + 0.09);
+  tl.to("#touch", { scale: 1.2, opacity: 0, duration: 0.35, ease: "power2.out" }, T + 0.12);
+  tl.fromTo("#rip", { scale: 0.6, opacity: 0.9 }, { scale: 2.6, opacity: 0, duration: 0.6, ease: "expo.out" }, T + 0.04);
+  const S0 = T + 0.12, SD = 0.95;
+  [[A, pa], [B, pb]].forEach(([o, p], i) => { const pcs = [...o.querySelectorAll(".pc")], hi = o.querySelector(".hi"), c = { n: 0 };
+    const draw = () => { hi.style.setProperty("--cut", (100 - c.n) + "%"); pcs.forEach((e) => { e.textContent = c.n > 0.5 ? Math.round(c.n) + "%" : ""; }); };
+    draw();
+    tl.fromTo(c, { n: 0 }, { n: p, duration: SD, ease: "expo.out", onUpdate: draw }, S0 + i * 0.05); });
+  tl.fromTo(A.querySelector(".rd b"), { scale: 0.3 }, { scale: 1, duration: 0.45, ease: "back.out(3)" }, S0);
+  tl.fromTo(A.querySelector(".rd b"), { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, S0);
+  tl.fromTo(stk, { scale: 1 }, { scale: 1.035, duration: 0.12, ease: "power2.out", immediateRender: false }, S0 + 0.05);
+  tl.to(stk, { scale: 1, duration: 0.5, ease: "back.out(3)" }, S0 + 0.17);
+  tl.fromTo(stk, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, S0 + 0.35);
+  tl.to(stk, { rotation: -1.5, duration: ADV - S0, ease: "sine.inOut" }, S0);
+
+  // 5. the story is over: the cube turns, the next story comes in from the right
+  gsap.set("#fa", { transformOrigin: "100% 50%" }); gsap.set("#fb", { transformOrigin: "0% 50%", x: 300, rotationY: 90 });
+  tl.to("#fa", { x: -300, rotationY: -90, duration: TURN, ease: "power3.inOut" }, ADV);
+  tl.to("#fb", { x: 0, rotationY: 0, duration: TURN, ease: "power3.inOut" }, ADV);
+  tl.fromTo("#fa .dark", { opacity: 0 }, { opacity: 0.6, duration: TURN, ease: "power2.in" }, ADV);
+  tl.fromTo("#fb .dark", { opacity: 0.6 }, { opacity: 0, duration: TURN, ease: "power2.out" }, ADV);
+  tl.to(["#stk", "#stkS"], { opacity: 0, duration: TURN * 0.5, ease: "power2.in" }, ADV);
+
+  // exit (overlay): the phone drops away, accelerating
+  if (MV.alpha) { const X = D - 0.42;
+    tl.to(phone, { y: PH * 0.35, rotationX: 20, opacity: 0, duration: 0.4, ease: "power3.in" }, X);
+    tl.to("#shadow", { opacity: 0, duration: 0.3, ease: "power2.in" }, X); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "bubble-pack", "name": "Bubble pack", "oneLiner": "glass bubbles sized by value float in from their own sides and gather round an empty centre, each naming its part as its number counts; then the biggest swells up in the centre in the accent, shoulders the rest outward in a ripple, names itself and counts its value up",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["bubbles", "circle pack", "share", "breakdown", "biggest", "sources", "where it comes from", "proportion", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says where most of something comes from ('most of our traffic is search, the rest is a long tail'): cut in on the breakdown, the biggest bubble swells into the centre on the word that names it" }

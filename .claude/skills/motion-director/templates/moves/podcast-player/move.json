@@ -1,0 +1,5 @@
+{ "id": "podcast-player", "name": "Glass podcast player", "oneLiner": "a glass now-playing card rises with the show's cover art (the author's cut-out on the brand light) lifted off it; play is pressed, the waveform plays a beat, then the playhead is grabbed and scrubbed along the waveform and snaps onto a chapter tick, which lights while the chapter chip pops up over it",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["podcast", "audio", "episode", "interview", "chapter", "listen", "player", "skip to", "timestamp", "show", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.0, "alpha": true,
+  "say": "when the speaker points to a podcast or a part of an episode ('I went deep on this on the podcast', 'skip to the part where...'): cut in on 'podcast', the snap and chip land on the chapter they name" }

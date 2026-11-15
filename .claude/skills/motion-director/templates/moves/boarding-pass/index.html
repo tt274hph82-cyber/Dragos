@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"from","type":"string","label":"Where it starts (a short word, printed big)","default":"IDEA"},
+  {"id":"to","type":"string","label":"Where it goes (a short word, printed big)","default":"LAUNCH"},
+  {"id":"passenger","type":"string","label":"Passenger (empty uses the brand handle or name)","default":""},
+  {"id":"gate","type":"string","label":"Gate","default":"A1"},
+  {"id":"seat","type":"string","label":"Seat","default":"1A"},
+  {"id":"boards","type":"string","label":"Boarding time","default":"NOW"},
+  {"id":"stamp","type":"string","label":"The word on the rubber stamp","default":"Boarded"},
+  {"id":"side","type":"string","label":"Overlay position on 9:16: top or bottom of the safe zone","default":"top"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Mono"; src: url("assets/fonts/ShareTechMono-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Stamp"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #141416; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground (look mode): a real dark stone counter under a check-in desk light */
+  #ground { position: absolute; inset: -6%; background: #18181a url(assets/stone.jpg) center / calc(var(--u) * 900); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 40%, rgba(255,236,210,.15), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.65)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #pass { position: absolute; }
+  #pass-b { position: absolute; inset: 0; }
+  .pc { position: absolute; --lift: 0; filter: drop-shadow(0 calc(var(--u) * (2 + var(--lift) * 8)) calc(var(--u) * (3 + var(--lift) * 6)) rgba(0,0,0,.35)) drop-shadow(calc(var(--u) * (6 + var(--lift) * 16)) calc(var(--u) * (16 + var(--lift) * 36)) calc(var(--u) * (22 + var(--lift) * 20)) rgba(0,0,0,.45)); }
+  .is-key .pc { filter: drop-shadow(calc(var(--u) * 3) calc(var(--u) * 5) 0 #222); }
+  /* card stock: a real paper scan, warmed; the punched perforation is cut by a mask, so the holes are real holes */
+  .stock { position: absolute; inset: 0; background-color: #f5efe2; background-image: url(assets/paper-white.jpg); background-size: calc(var(--u) * 640); background-blend-mode: multiply; -webkit-mask-composite: source-in; mask-composite: intersect; }
+  .stock::after { content: ""; position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255,255,255,.18), transparent 40%, rgba(0,0,0,.05)); pointer-events: none; }
+  /* print: everything on the pass is ink on paper (multiply, a scanned grit) */
+  .ink { position: absolute; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 150); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 150); }
+  .band { position: absolute; left: 0; right: 0; top: 0; background: var(--accent); mix-blend-mode: multiply; }
+  .lab { position: absolute; font-family: "MV Mono", monospace; color: #55534f; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; line-height: 1; }
+  .val { position: absolute; font-family: "MV Mono", monospace; color: #1f1e1c; text-transform: uppercase; white-space: nowrap; line-height: 1; }
+  .code { position: absolute; font-family: "MV Stamp", sans-serif; color: #1c1b1a; text-transform: uppercase; white-space: nowrap; line-height: 1; letter-spacing: .01em; }
+  .bandt { position: absolute; font-family: var(--font-display); color: #fff; white-space: nowrap; line-height: 1; }
+  .bandl { position: absolute; font-family: "MV Mono", monospace; color: rgba(255,255,255,.92); letter-spacing: .18em; white-space: nowrap; line-height: 1; text-transform: uppercase; }
+  #route { position: absolute; overflow: visible; }
+  #route path { fill: none; stroke: #1c1b1a; stroke-linecap: round; }
+  #route circle { fill: #1c1b1a; }
+  .bars { position: absolute; display: flex; align-items: stretch; }
+  .bars i { display: block; background: #1f1e1c; }
+  #stamp { position: absolute; font-family: "MV Stamp"; color: var(--accent); border: solid var(--accent); text-align: center; line-height: 1; mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 200); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 200); white-space: nowrap; text-transform: uppercase; letter-spacing: .06em; }
+  .is-key #stamp { mix-blend-mode: normal; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="pass" style="visibility:hidden"><div class="boil" id="pass-b">
+      <div class="pc" id="main"><div class="stock" id="mstock"><div class="ink" id="mink" style="inset:0"></div></div></div>
+      <div class="pc" id="stub"><div class="stock" id="sstock"><div class="ink" id="sink" style="inset:0"></div></div></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('40px "MV Mono"'), document.fonts.load('80px "MV Stamp"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const el = (par, cls, txt) => { const d = document.createElement("div"); d.className = cls; if (txt != null) d.textContent = txt; par.appendChild(d); return d; };
+  const put = (e, x, y, fs) => { e.style.left = x + "px"; e.style.top = y + "px"; if (fs) e.style.fontSize = fs + "px"; return e; };
+
+  // ---- shape: a tall pass for a 9:16 cutaway, a wide pass everywhere else (overlays too)
+  const vert = MV.portrait && !MV.alpha;
+  const availW = W - safe.left - safe.right, availH = H - safe.top - safe.bottom;
+  let PW, PH;
+  if (vert) { PW = Math.min(availW * 0.92, 760 * u); PH = PW * 1.62; }
+  else if (MV.portrait) { PW = availW * 0.88; PH = PW / 2.45; }
+  else if (MV.alpha) { PW = W > H ? 980 * u : 900 * u; PH = PW / 2.45; }
+  else { PW = W > H ? Math.min(availW * 0.84, 1500 * u) : availW * 0.86; PH = PW / 2.45; }
+  const SR = vert ? 0.2 : 0.24;                       // the stub's share
+  let cx, cy;
+  if (vert) { cx = safe.left + availW / 2; cy = safe.top + 10 * u + PH / 2; }
+  else if (MV.portrait) { cx = safe.left + PW / 2; cy = v.side === "bottom" ? H - safe.bottom - PH / 2 - 30 * u : safe.top + PH / 2 + 40 * u; }
+  else if (MV.alpha) { cx = W / 2; cy = H - safe.bottom - PH / 2 - 20 * u; }
+  else { cx = safe.left + availW / 2 - PH * 0.06; cy = H * 0.5; }
+  const pass = document.getElementById("pass");
+  Object.assign(pass.style, { width: PW + "px", height: PH + "px", left: (cx - PW / 2) + "px", top: (cy - PH / 2) + "px" });
+  const main = document.getElementById("main"), stub = document.getElementById("stub");
+  // pieces: main + stub, butted along the perforation
+  const MW = vert ? PW : PW * (1 - SR), MH = vert ? PH * (1 - SR) : PH;
+  Object.assign(main.style, { left: "0px", top: "0px", width: MW + "px", height: MH + "px" });
+  if (vert) Object.assign(stub.style, { left: "0px", top: MH + "px", width: PW + "px", height: (PH - MH) + "px" });
+  else Object.assign(stub.style, { left: MW + "px", top: "0px", width: (PW - MW) + "px", height: PH + "px" });
+  // the perforation: a row of punched holes on the shared edge (each piece carries its half), and a big notch at each end
+  const hr = 5 * u, sp = 15 * u, nr = 18 * u;
+  const holes = (edge) => vert
+    ? `radial-gradient(circle at 50% ${edge === "end" ? "100%" : "0"}, transparent ${hr}px, #000 ${hr + 0.8}px) 0 0 / ${sp}px 100% repeat-x`
+    : `radial-gradient(circle at ${edge === "end" ? "100%" : "0"} 50%, transparent ${hr}px, #000 ${hr + 0.8}px) 0 0 / 100% ${sp}px repeat-y`;
+  const notch = (edge) => vert
+    ? `radial-gradient(circle at 0 ${edge === "end" ? "100%" : "0"}, transparent ${nr}px, #000 ${nr + 0.8}px), radial-gradient(circle at 100% ${edge === "end" ? "100%" : "0"}, transparent ${nr}px, #000 ${nr + 0.8}px)`
+    : `radial-gradient(circle at ${edge === "end" ? "100%" : "0"} 0, transparent ${nr}px, #000 ${nr + 0.8}px), radial-gradient(circle at ${edge === "end" ? "100%" : "0"} 100%, transparent ${nr}px, #000 ${nr + 0.8}px)`;
+  const ms = document.getElementById("mstock"), ss = document.getElementById("sstock");
+  for (const [e, edge] of [[ms, "end"], [ss, "start"]]) { const m = `${holes(edge)}, ${notch(edge)}`; e.style.webkitMask = m; e.style.mask = m;
+    e.style.borderRadius = (10 * u) + "px"; e.style.webkitMaskComposite = "source-in, source-in"; e.style.maskComposite = "intersect, intersect"; }
+
+  // ---- print: the band, the route, the fields
+  const mi = document.getElementById("mink"), si = document.getElementById("sink");
+  const S = vert ? PW : PH;              // the print scales with the pass's short side
+  const bandH = S * (vert ? 0.17 : 0.22);
+  const b1 = el(document.getElementById("mstock"), "band"); b1.style.zIndex = 0; mi.style.zIndex = 1; b1.style.height = bandH + "px";
+  const b2 = el(document.getElementById("sstock"), "band"); si.style.zIndex = 1; b2.style.height = bandH + "px";
+  const pad = S * 0.07;
+  const brand = el(mi, "bandt", (v.brandName || "").toUpperCase()); put(brand, pad, bandH * 0.3, bandH * 0.42);
+  const bp = el(mi, "bandl", "Boarding pass"); bp.style.fontSize = (bandH * 0.25) + "px";
+  MV.fitText(brand, MW * 0.55 - pad, 10 * u);
+  const bpw = (() => { const r = document.createRange(); r.selectNodeContents(bp); return r.getBoundingClientRect().width; })();
+  put(bp, MW - pad - bpw, bandH * 0.42);
+  const pas = (v.passenger || v.handle || v.brandName || "").toUpperCase();
+  // the route: FROM -> TO in big condensed type, a dashed line between with a dot at each end
+  const route = document.createElementNS("http://www.w3.org/2000/svg", "svg"); route.id = "route"; mi.appendChild(route);
+  const fromL = el(mi, "lab", "From"), toL = el(mi, "lab", "To");
+  const fromC = el(mi, "code", v.from || ""), toC = el(mi, "code", v.to || "");
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  let fields;
+  const mkField = (lab, val) => { const a = el(mi, "lab", lab), b = el(mi, "val", val); return [a, b]; };
+  fields = [mkField("Passenger", pas), mkField("Gate", v.gate || ""), mkField("Seat", v.seat || ""), mkField("Boards", v.boards || "")];
+  let rx0, rx1, ry0, ry1;
+  if (!vert) {
+    const top0 = bandH + S * 0.09, labF = S * 0.065, codeF = S * 0.3;
+    put(fromL, pad, top0, labF); put(toL, MW * 0.56, top0, labF);
+    put(fromC, pad, top0 + labF * 1.5, codeF); put(toC, MW * 0.56, top0 + labF * 1.5, codeF);
+    MV.fitText(fromC, MW * 0.34, 12 * u); MV.fitText(toC, MW * 0.4 - pad, 12 * u);
+    rx0 = pad + tw(fromC) + S * 0.06; rx1 = MW * 0.56 - S * 0.06; ry0 = ry1 = top0 + labF * 1.5 + parseFloat(fromC.style.fontSize) * 0.55;
+    const fy = PH - S * 0.25, cols = [pad, MW * 0.42, MW * 0.62, MW * 0.8];
+    fields.forEach(([a, b], i) => { put(a, cols[i], fy, labF); put(b, cols[i], fy + labF * 1.6, S * 0.085); MV.fitText(b, (cols[i + 1] || MW - pad) - cols[i] - S * 0.04, 8 * u); });
+  } else {
+    const labF = S * 0.04, codeF = S * 0.2;
+    const top0 = bandH + S * 0.09;
+    put(fromL, pad, top0, labF); put(fromC, pad, top0 + labF * 1.5, codeF); MV.fitText(fromC, MW - pad * 2, 12 * u);
+    const fh = parseFloat(fromC.style.fontSize);
+    const gapY = S * 0.2, toTop = top0 + labF * 1.5 + fh + gapY;
+    put(toL, pad, toTop, labF); put(toC, pad, toTop + labF * 1.5, codeF); MV.fitText(toC, MW - pad * 2, 12 * u);
+    rx0 = rx1 = pad + S * 0.05; ry0 = top0 + labF * 1.5 + fh * 1.08; ry1 = toTop - labF * 0.6;
+    const fy = toTop + labF * 1.5 + parseFloat(toC.style.fontSize) + S * 0.035;
+    fields.forEach(([a, b], i) => { const x = pad + (i % 2) * (MW - pad * 2) * 0.55, y = fy + Math.floor(i / 2) * S * 0.15;
+      put(a, x, y, labF); put(b, x, y + labF * 1.5, S * 0.055); MV.fitText(b, (MW - pad * 2) * (i % 2 ? 0.45 : 0.52), 8 * u); });
+  }
+  route.setAttribute("width", MW); route.setAttribute("height", MH); Object.assign(route.style, { left: "0px", top: "0px" });
+  const rp = document.createElementNS("http://www.w3.org/2000/svg", "path"); rp.setAttribute("d", `M ${rx0} ${ry0} L ${rx1} ${ry1}`);
+  rp.setAttribute("stroke-width", Math.max(2, S * 0.012)); rp.setAttribute("stroke-dasharray", `${S * 0.03} ${S * 0.025}`); route.appendChild(rp);
+  const dots = [[rx0, ry0], [rx1, ry1]].map(([x, y]) => { const c = document.createElementNS("http://www.w3.org/2000/svg", "circle"); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", S * 0.018); route.appendChild(c); return c; });
+  // the stub: seat big, and a printed barcode
+  const SW = PW - (vert ? 0 : MW), SH = PH - (vert ? MH : 0);
+  const sl = el(si, "bandl", "Seat"); const sv = el(si, "code", v.seat || "");
+  const bars = el(si, "bars");
+  const rb = MV.rand(42);
+  if (!vert) {
+    put(sl, SW * 0.14, bandH * 0.4, bandH * 0.2);
+    put(sv, SW * 0.14, bandH + S * 0.07, S * 0.2); MV.fitText(sv, SW * 0.72, 10 * u);
+    Object.assign(bars.style, { left: (SW * 0.14) + "px", top: (PH - S * 0.19) + "px", width: (SW * 0.72) + "px", height: (S * 0.12) + "px", overflow: "hidden" });
+  } else {
+    put(sl, pad, bandH * 0.4, bandH * 0.2);
+    put(sv, SW - pad - S * 0.2, bandH + S * 0.02, S * 0.1);
+    Object.assign(bars.style, { left: pad + "px", top: (bandH + S * 0.04) + "px", width: (SW * 0.58) + "px", height: (SH - bandH - S * 0.08) + "px", overflow: "hidden" });
+  }
+  { let bw = 0; const maxW = parseFloat(bars.style.width), unit = S * 0.006; while (bw < maxW) { const w = (1 + Math.floor(rb() * 3)) * unit, g = (1 + Math.floor(rb() * 2)) * unit; const b = document.createElement("i"); b.style.width = w + "px"; b.style.marginRight = g + "px"; bars.appendChild(b); bw += w + g; } }
+  if (vert) { const svw = tw(sv); sv.style.left = (SW - pad * 1.4 - svw) + "px"; }
+
+  // ---- the stamp, on the main piece over the route
+  const stamp = el(vert ? mi : si, "", null); stamp.id = "stamp"; stamp.textContent = v.stamp || "";
+  const ss2 = S * (vert ? 0.1 : 0.15); stamp.style.fontSize = ss2 + "px"; stamp.style.borderWidth = Math.max(3, ss2 * 0.08) + "px"; stamp.style.borderRadius = (ss2 * 0.12) + "px";
+  stamp.style.padding = `${ss2 * 0.12}px ${ss2 * 0.3}px ${ss2 * 0.06}px`;
+  MV.fitText(stamp, vert ? MW * 0.6 : SW * 0.78, 10 * u);
+  const stb = stamp.getBoundingClientRect();
+  // wide pass: the stub is what gets stamped (over its barcode), then torn off with the stamp on it
+  if (!vert) put(stamp, SW / 2 - stb.width / 2, PH - S * 0.335 - stb.height / 2);
+  else put(stamp, MW - pad - stb.width, (ry0 + ry1) / 2 - stb.height / 2 + S * 0.01);
+  const SROT = vert ? -6 : -14; stamp.style.transform = `rotate(${SROT}deg)`; stamp.style.visibility = "hidden";
+
+  // ---- timeline
+  // 0.08 the pass is slid across the counter (on twos); 0.55 the route line draws; 1.25 the stamp thumps; 1.95 the stub is torn off along the perforation
+  tl.set(pass, { visibility: "visible" }, 0.08);
+  const inY = H * 0.55;
+  if (MV.alpha) tl.fromTo(pass, { x: MV.portrait ? -W : -W * 0.6, rotation: -9, opacity: 1 }, { x: 0, rotation: -2, duration: 0.42, ease: twos("expo.out", 0.42), immediateRender: true }, 0.08);
+  else tl.fromTo(pass, { y: inY, rotation: 10, scale: 1.04 }, { y: 0, rotation: -2, scale: 1, duration: 0.5, ease: twos("expo.out", 0.5), immediateRender: true }, 0.08);
+  tl.fromTo(".pc", { "--lift": 1 }, { "--lift": 0, duration: 0.42, ease: twos("power2.out", 0.42), immediateRender: true }, 0.08);
+  const RL = Math.hypot(rx1 - rx0, ry1 - ry0);
+  tl.fromTo(rp, { attr: { d: `M ${rx0} ${ry0} L ${rx0} ${ry0}` } }, { attr: { d: `M ${rx0} ${ry0} L ${rx1} ${ry1}` }, duration: 0.5, ease: twos("power2.inOut", 0.5), immediateRender: true }, 0.55);
+  tl.fromTo(dots[1], { attr: { r: 0 } }, { attr: { r: S * 0.018 }, duration: STEP, ease: "steps(1)", immediateRender: true }, 1.05);
+  // the stamp: down from above the lens, thump, the pass jolts
+  const TS = 1.25;
+  tl.set(stamp, { visibility: "visible" }, TS);
+  tl.fromTo(stamp, { scale: 1.9, opacity: 0, rotation: SROT - 6 }, { scale: 1, opacity: 1, rotation: SROT, duration: 0.13, ease: twos("power4.in", 0.13), immediateRender: true }, TS);
+  tl.to("#pass-b", { y: 5 * u, duration: STEP, ease: "steps(1)" }, TS + 0.13); tl.to("#pass-b", { y: 0, duration: STEP, ease: "steps(1)" }, TS + 0.13 + STEP);
+  // the tear: the stub lifts at its far end and peels away along the holes, then drops back on the counter, apart
+  const TT = 1.95;
+  if (!vert) { gsap.set(stub, { transformOrigin: "0% 100%" });
+    tl.to(stub, { rotation: -7, x: S * 0.02, duration: 0.17, ease: twos("power2.out", 0.17) }, TT);
+    tl.to(stub, { rotation: 6, x: S * 0.12, y: S * 0.05, duration: 0.42, ease: twos("back.out(1.6)", 0.42) }, TT + 0.17);
+    tl.to(main, { rotation: -1.5, x: -S * 0.04, duration: 0.42, ease: twos("back.out(1.6)", 0.42) }, TT + 0.17); }
+  else { gsap.set(stub, { transformOrigin: "100% 0%" });
+    tl.to(stub, { rotation: -3, y: S * 0.04, duration: 0.17, ease: twos("power2.out", 0.17) }, TT);
+    tl.to(stub, { rotation: -4, y: S * 0.09, x: S * 0.03, duration: 0.42, ease: twos("back.out(1.6)", 0.42) }, TT + 0.17);
+    tl.to(main, { rotation: 1.2, y: -S * 0.03, duration: 0.42, ease: twos("back.out(1.6)", 0.42) }, TT + 0.17); }
+  tl.fromTo(stub, { "--lift": 0 }, { "--lift": 0.6, duration: 0.17, ease: twos("power2.out", 0.17), immediateRender: false }, TT);
+  tl.to(stub, { "--lift": 0, duration: 0.33, ease: twos("power2.in", 0.33) }, TT + 0.25);
+  // boil (on twos)
+  const rbo = MV.rand(9); for (let tt = 0.5; tt < D; tt += STEP * 2) tl.set("#pass-b", { "--bx": `${((rbo() - .5) * 1.8 * u).toFixed(2)}px`, "--by": `${((rbo() - .5) * 1.8 * u).toFixed(2)}px`, "--br": `${((rbo() - .5) * 0.25).toFixed(2)}deg` }, tt);
+  if (!MV.alpha) tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  // exit (overlay): slid off the far side, accelerating
+  if (MV.alpha) { const X = D - 0.42; tl.to(pass, { x: W, rotation: 6, duration: 0.38, ease: twos("power2.in", 0.38) }, X); tl.set(pass, { opacity: 0 }, D - 0.04); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "lead-magnet-cover", "name": "Lead magnet cover", "oneLiner": "a real-looking printed book (laminated cover in the brand colours, page block, spine) swings in on its spine beside the speaker and settles turned toward them, a big caption and a glass 'link in bio' pill set under it, then a round sticker slaps onto the cover corner",
+  "category": "creator", "kind": "effect", "uses": ["overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["lead magnet", "ebook", "guide", "pdf", "free", "download", "link in bio", "book", "cover", "offer", "cta", "newsletter", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker offers the free thing ('I put all of this in a free guide, link in bio'): cut it in on 'free guide', the sticker lands on 'free'; cover takes a real cover image if there is one" }

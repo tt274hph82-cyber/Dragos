@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"feature","type":"string","label":"The feature being rolled out","default":"New editor"},
+  {"id":"flag","type":"string","label":"Flag key under the name (empty: made from the feature)","default":""},
+  {"id":"steps","type":"string","label":"Rollout steps in percent, comma separated (2 to 4, the last one 100)","default":"1,10,100"},
+  {"id":"total","type":"number","label":"Total people at 100 percent","default":48000},
+  {"id":"unit","type":"string","label":"Who the count is","default":"users"},
+  {"id":"env","type":"string","label":"Environment chip","default":"Production"},
+  {"id":"rolling","type":"string","label":"Status while it rolls","default":"Rolling out"},
+  {"id":"done","type":"string","label":"Status at 100 percent","default":"Fully rolled out"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --mono: "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace; --ok: #2BD67B; --okl: #8BF0B4; --amb: #FFC857; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .l3 { width: 60%; height: 32%; left: 20%; top: 40%; background: rgba(43,214,123,.34); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45) 12%, rgba(255,255,255,.45) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, rgba(36,33,42,.66), rgba(12,11,16,.78));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--s) * 44) calc(var(--s) * 100) calc(var(--s) * -26) rgba(0,0,0,.72); }
+  .is-alpha #win { background: linear-gradient(170deg, rgba(30,28,36,.96), rgba(13,12,17,.96)); }
+  .is-key #win { background: #15141A; -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.16) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--s) * 1.5); pointer-events: none; z-index: 31;
+    background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.05) 38%, transparent 55%, color-mix(in srgb, var(--accent) 60%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #okglow { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 29; opacity: 0;
+    box-shadow: inset 0 0 calc(var(--s) * 90) calc(var(--s) * -14) rgba(43,214,123,.5), inset 0 0 0 calc(var(--s) * 2) rgba(43,214,123,.6); }
+  .is-key #okglow { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--ok); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.08); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.015)); }
+  .dots { position: absolute; display: flex; gap: calc(var(--s) * 12); }
+  .dots i { width: calc(var(--s) * 19); height: calc(var(--s) * 19); border-radius: 50%; box-shadow: inset 0 calc(var(--s) * 1) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1) rgba(0,0,0,.2); }
+  .dots i:nth-child(1) { background: #FF5F57; } .dots i:nth-child(2) { background: #FEBC2E; } .dots i:nth-child(3) { background: #28C840; }
+  #ttl { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); font-weight: 700; color: rgba(255,255,255,.72); white-space: nowrap; }
+  #ttl svg { flex: none; }
+  #envc { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 18); border-radius: 99px; white-space: nowrap; font-weight: 700;
+    background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); color: rgba(255,255,255,.75); }
+  #envc i { width: calc(var(--s) * 12); height: calc(var(--s) * 12); border-radius: 50%; background: var(--al); box-shadow: 0 0 calc(var(--s) * 10) var(--al); }
+
+  #fname { font-family: var(--font-display); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #fkey { font-family: var(--mono); color: rgba(255,255,255,.42); white-space: pre; }
+  #st { display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 20) 0 calc(var(--s) * 14); border-radius: 99px; white-space: nowrap; font-weight: 800; }
+  #st .dt { flex: none; position: relative; width: calc(var(--s) * 30); height: calc(var(--s) * 30); }
+  #st .dt i { position: absolute; inset: 22%; border-radius: 50%; }
+  #st .dt svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+  #st .tx { display: none; }
+  #st.off { background: rgba(255,255,255,.07); color: rgba(255,255,255,.55); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  #st.off .dt i { background: rgba(255,255,255,.35); }
+  #ring { position: absolute; border-radius: 99px; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; box-sizing: border-box; }
+  .is-key #ring { display: none; }
+
+  #pct { font-family: var(--font-display); color: var(--ink); line-height: 1; white-space: nowrap; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  #pct small { font-size: .5em; letter-spacing: 0; color: color-mix(in srgb, var(--ink) 55%, transparent); margin-left: .04em; }
+  #cnt { text-align: right; }
+  #cnt b { display: block; font-family: var(--font-display); color: var(--ink); line-height: 1.1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #cnt span { display: block; color: rgba(255,255,255,.5); font-weight: 600; white-space: nowrap; margin-top: calc(var(--s) * 6); }
+
+  #track { border-radius: 99px; background: rgba(255,255,255,.08); box-shadow: inset 0 calc(var(--s) * 3) calc(var(--s) * 6) rgba(0,0,0,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  #fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, #000), var(--accent) 70%, var(--al));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35), 0 0 calc(var(--s) * 24) color-mix(in srgb, var(--accent) 60%, transparent); }
+  #fillok { position: absolute; inset: 0; border-radius: 99px; background: linear-gradient(90deg, #1FA45C, var(--ok) 70%, var(--okl)); opacity: 0; box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.4), 0 0 calc(var(--s) * 26) rgba(43,214,123,.6); }
+  .is-key #fill, .is-key #fillok { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35); }
+  .stop { position: absolute; width: calc(var(--s) * 4); border-radius: 2px; background: rgba(255,255,255,.25); }
+  .sl { position: absolute; display: flex; justify-content: center; font-family: var(--mono); font-weight: 600; color: rgba(255,255,255,.38); white-space: pre; transform: translateX(-50%); }
+  #knob { border-radius: 50%; background: radial-gradient(circle at 38% 30%, #fff, #E9E7EE 55%, #BDBAC6);
+    box-shadow: inset 0 calc(var(--s) * -3) calc(var(--s) * 6) rgba(0,0,0,.18), 0 calc(var(--s) * 10) calc(var(--s) * 22) rgba(0,0,0,.55), 0 0 0 calc(var(--s) * 6) color-mix(in srgb, var(--accent) 35%, transparent); }
+  .is-key #knob { box-shadow: inset 0 calc(var(--s) * -3) calc(var(--s) * 6) rgba(0,0,0,.18); }
+  #grab { position: absolute; inset: calc(var(--s) * -14); border-radius: 50%; background: color-mix(in srgb, var(--accent) 30%, transparent); opacity: 0; }
+  .is-key #grab { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="bar" class="ab"><div class="dots"><i></i><i></i><i></i></div>
+        <div id="ttl"><svg viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5" fill="none" stroke="var(--al)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Feature flags</span></div>
+        <div id="envc"><i></i><span></span></div></div>
+      <div id="fname" class="ab"></div>
+      <div id="fkey" class="ab"></div>
+      <div id="st" class="ab off"><span class="dt"><i></i><svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#2BD67B"/><path d="M9 15.5l4 4 8-8.5" fill="none" stroke="#06210F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="tx t0">Off</span><span class="tx t1"></span><span class="tx t2"></span></div>
+      <div id="ring"></div>
+      <div id="pct" class="ab"><span id="pn">0</span><small>%</small></div>
+      <div id="cnt" class="ab"><b id="cn">0</b><span id="cl"></span></div>
+      <div id="track" class="ab"><div id="fill"><div id="fillok"></div></div></div>
+      <div id="stops"></div>
+      <div id="knob" class="ab"><div id="grab"></div></div>
+      <div id="okglow"></div><div id="rim"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  let steps = String(v.steps || "").split(",").map((t) => Math.max(0, Math.min(100, parseFloat(t)))).filter((x) => isFinite(x) && x > 0).slice(0, 4);
+  if (steps.length < 2) steps = [1, 10, 100];
+  const TOTAL = Math.max(1, Math.round(+v.total || 0)), FULL = steps[steps.length - 1] >= 100;
+  const nf = (n) => Math.round(n).toLocaleString("en-US");
+  const fmtP = (p) => (p < 10 && Math.round(p * 10) % 10 ? p.toFixed(1) : String(Math.round(p)));
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.1; zB = H * 0.9; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.22; cR = W * 0.78; zT = H * 0.1; zB = H * 0.9; }
+  const DW = 900, pad = 28, barH = 82, DH = 660;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const cw = DW * s, ch = DH * s;
+  const left0 = cL + ((cR - cL) - cw) / 2, top0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: left0 + "px", top: top0 + "px", width: cw + "px", height: ch + "px" });
+
+  // ---- chrome
+  box($("#bar"), 0, 0, DW, barH);
+  Object.assign($(".dots").style, { left: S(pad + 4), top: S((barH - 19) / 2) });
+  const ttl = $("#ttl"); ttl.style.fontSize = S(30); box(ttl, pad + 4 + 81 + 30, 0, 420, barH); ttl.querySelector("svg").style.width = ttl.querySelector("svg").style.height = S(30);
+  const envc = $("#envc"); envc.querySelector("span").textContent = v.env || ""; envc.style.fontSize = S(28); envc.style.height = S(50);
+  Object.assign(envc.style, { right: S(pad), top: S((barH - 50) / 2) }); if (!v.env) envc.style.display = "none";
+
+  // ---- header: the feature, its key, the status pill (sized for its widest word)
+  const st = $("#st"); st.style.height = S(60); st.style.fontSize = S(32);
+  st.querySelector(".t1").textContent = v.rolling || "Rolling out"; st.querySelector(".t2").textContent = v.done || "Fully rolled out";
+  const pillW = Math.max(...["t0", "t1", "t2"].map((c) => { st.querySelectorAll(".tx").forEach((x) => (x.style.display = "none")); st.querySelector("." + c).style.display = "inline"; return st.getBoundingClientRect().width / s; }));
+  st.querySelectorAll(".tx").forEach((x) => (x.style.display = ""));
+  const hy = barH + 34;
+  Object.assign(st.style, { right: S(pad), top: S(hy + 4) });
+  const fname = $("#fname"); fname.textContent = v.feature || ""; fname.style.fontSize = S(54); Object.assign(fname.style, { left: S(pad + 4), top: S(hy) });
+  MV.fitText(fname, (DW - pad * 2 - pillW - 30) * s, 20);
+  const fkey = $("#fkey"); fkey.textContent = String(v.flag || v.feature || "feature").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); fkey.style.fontSize = S(30);
+  Object.assign(fkey.style, { left: S(pad + 4), top: S(hy + 76) }); MV.fitText(fkey, (DW - pad * 2 - pillW - 30) * s, 14);
+  box($("#ring"), DW - pad - pillW, hy + 4, pillW, 60);
+
+  // ---- the big readout: percent on the left, people on the right
+  const pct = $("#pct"); pct.style.fontSize = S(190); Object.assign(pct.style, { left: S(pad), top: S(250) });
+  const cnt = $("#cnt"); Object.assign(cnt.style, { right: S(pad + 4), top: S(286) });
+  $("#cn").style.fontSize = S(66); $("#cl").style.fontSize = S(32);
+  $("#cl").textContent = `of ${nf(TOTAL)} ${v.unit || ""}`.trim();
+  // fit: the widest states must not meet
+  $("#pn").textContent = "100"; $("#cn").textContent = nf(TOTAL);
+  const room = () => DW * s - pad * 2 * s - pct.getBoundingClientRect().width - cnt.getBoundingClientRect().width;
+  let pf = 190; while (room() < 30 * s && pf > 90) { pf -= 6; pct.style.fontSize = S(pf); }
+  let cf = 66; while (room() < 30 * s && cf > 36) { cf -= 2; $("#cn").style.fontSize = S(cf); $("#cl").style.fontSize = S(Math.min(32, cf * 0.5)); }
+  pct.style.top = S(250 + (190 - pf) * 0.5);
+  $("#pn").textContent = "0"; $("#cn").textContent = "0";
+
+  // ---- the slider: Off, then each step, evenly spaced
+  const tx0 = pad + 46, tx1 = DW - pad - 46, ty = 500, th = 24, KN = 70;
+  box($("#track"), tx0, ty, tx1 - tx0, th);
+  const stops = [0, ...steps], X = (i) => tx0 + (i / (stops.length - 1)) * (tx1 - tx0);
+  const labels = stops.map((p, i) => {
+    if (i > 0 && i < stops.length - 1) { const k = document.createElement("i"); k.className = "stop"; box(k, X(i) - 2, ty - 10, 4, th + 20); $("#stops").appendChild(k); }
+    const l = document.createElement("div"); l.className = "sl"; l.textContent = i === 0 ? "Off" : fmtP(p) + "%"; l.style.fontSize = S(32);
+    Object.assign(l.style, { left: S(X(i)), top: S(ty + th + 26) }); $("#stops").appendChild(l); return l;
+  });
+  // the end labels stay inside the window
+  labels[0].style.transform = "translateX(-30%)"; labels[labels.length - 1].style.transform = "translateX(-70%)";
+  const knob = $("#knob"); box(knob, tx0 - KN / 2, ty + th / 2 - KN / 2, KN, KN);
+  $("#fill").style.width = "0px";
+
+  Object.assign($("#base").style, { left: left0 - 40 * u + "px", width: cw + 80 * u + "px", top: top0 + ch + 34 * u + "px" });
+
+  // ---- timing
+  gsap.set("#rig", { transformOrigin: `${left0 + cw / 2}px ${top0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 8, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 24, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#fname", "#fkey", "#st"], { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.25);
+  tl.fromTo(["#pct", "#cnt"], { opacity: 0, y: 26 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out", stagger: 0.08 }, 0.35);
+  tl.fromTo(["#track", "#knob", ...labels], { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.out", stagger: 0.03 }, 0.45);
+
+  // each step: the knob is grabbed, dragged on a long-tail ease, released on a spring; the numbers roll with it
+  const n = steps.length, T0 = 0.95, GAP = Math.min(0.95, (D - 2.6 - T0) / Math.max(1, n - 1) + 0.05);
+  const o = { p: 0 };
+  const upd = () => { $("#pn").textContent = fmtP(o.p); $("#cn").textContent = nf(TOTAL * o.p / 100); };
+  let TEND = T0;
+  steps.forEach((p, i) => {
+    const t = T0 + i * GAP, d = i === n - 1 ? 0.7 : 0.5;
+    tl.to(knob, { scale: 1.14, duration: 0.1, ease: "power2.out" }, t);
+    tl.fromTo("#grab", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.18, ease: "power2.out", immediateRender: false }, t);
+    tl.to(knob, { left: (X(i + 1) - KN / 2) * s, duration: d, ease: "expo.inOut" }, t + 0.08);
+    tl.to("#fill", { width: (X(i + 1) - tx0) * s, duration: d, ease: "expo.inOut" }, t + 0.08);
+    tl.to(o, { p, duration: d, ease: "expo.inOut", onUpdate: upd }, t + 0.08);
+    tl.to(knob, { scale: 1, duration: 0.45, ease: "back.out(3)" }, t + 0.08 + d);
+    tl.to("#grab", { opacity: 0, duration: 0.25, ease: "power2.out" }, t + 0.08 + d);
+    tl.to(labels[i + 1], { color: "rgba(255,255,255,.95)", duration: 0.2, ease: "power2.out" }, t + 0.08 + d * 0.8);
+    tl.fromTo("#pct", { scale: 1 }, { scale: 1.05, duration: 0.07, ease: "power2.out", transformOrigin: "0% 80%", immediateRender: false }, t + 0.08 + d);
+    tl.to("#pct", { scale: 1, duration: 0.4, ease: "back.out(3)" }, t + 0.15 + d);
+    TEND = t + 0.08 + d;
+  });
+  // the status: Off, then rolling (amber) with the first drag
+  const swap = (c, t) => { tl.set(st.querySelectorAll(".tx"), { display: "none" }, t); tl.set(st.querySelector("." + c), { display: "inline" }, t); };
+  gsap.set(st.querySelectorAll(".tx"), { display: "none" }); gsap.set(st.querySelector(".t0"), { display: "inline" });
+  swap("t0", 0.001);
+  swap("t1", T0 + 0.1);
+  tl.to(st, { background: "rgba(255,200,87,.14)", color: "#FFD98A", boxShadow: `inset 0 0 0 ${1.5 * s}px rgba(255,200,87,.45)`, duration: 0.2, ease: "power2.out" }, T0 + 0.1);
+  tl.to("#st .dt i", { background: "#FFC857", duration: 0.2 }, T0 + 0.1);
+  for (let t = T0 + 0.4, j = 0; t < TEND; t += 0.3, j++) tl.to("#st .dt i", { opacity: j % 2 ? 1 : 0.35, duration: 0.3, ease: "sine.inOut" }, t);
+
+  // the moment: at full, the track and the number go green, the pill flips and stamps, a ring goes out
+  const TM = TEND + 0.05;
+  if (FULL) {
+    swap("t2", TM);
+    tl.to(st, { background: "rgba(43,214,123,.16)", color: "#8BF0B4", boxShadow: `inset 0 0 0 ${1.5 * s}px rgba(43,214,123,.6)`, duration: 0.2, ease: "power2.out" }, TM);
+    tl.set("#st .dt i", { opacity: 0 }, TM);
+    tl.fromTo("#st .dt svg", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(3)", transformOrigin: "50% 50%" }, TM);
+    tl.fromTo(st, { scale: 1 }, { scale: 1.12, duration: 0.07, ease: "power2.out", transformOrigin: "100% 50%", immediateRender: false }, TM); tl.to(st, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TM + 0.08);
+    tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.4, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TM + 0.05);
+    tl.to("#fillok", { opacity: 1, duration: 0.3, ease: "power2.out" }, TM);
+    tl.to(knob, { boxShadow: `inset 0 ${-3 * s}px ${6 * s}px rgba(0,0,0,.18), 0 ${10 * s}px ${22 * s}px rgba(0,0,0,.55), 0 0 0 ${6 * s}px rgba(43,214,123,.45)`, duration: 0.3 }, TM);
+    tl.to(["#pn", "#cn"], { color: "#5BE89A", duration: 0.3, ease: "power2.out" }, TM);
+    tl.fromTo("#okglow", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, TM);
+    tl.to("#okglow", { opacity: 0.25, duration: 0.9, ease: "power2.out" }, TM + 0.1);
+    if (!A) { tl.to("#ground .l3", { opacity: 1, duration: 0.15 }, TM); tl.to("#ground .l3", { opacity: 0.45, duration: 1.0, ease: "power2.out" }, TM + 0.15); }
+    tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, TM); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TM + 0.07);
+    tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TM + 0.05);
+  }
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

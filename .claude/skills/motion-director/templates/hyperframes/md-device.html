@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<!--
+  motion-director DEVICE scene: a real 3D MacBook and/or iPhone (the GLTF
+  models from HyperFrames' vfx-iphone-device block, fetched by device-init.mjs
+  into models/) with the brand's own UI on their screens, lit in the brand's
+  colours, on a TRANSPARENT ground so the film's world shows through.
+
+  Screens are live HTML (#lap-html 1440x900, #phone-html 390x844) drawn into
+  canvases every frame with drawElementImage, then mapped onto the display
+  meshes. MD_SCREEN(p, t, S) animates that HTML: p is 0..1 over the screen's
+  active span, t is scene seconds. Everything is a function of timeline time.
+
+  Written by scripts/device-init.mjs. Edit the brand HTML in the project's
+  device/ folder and re-run, not this file.
+-->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/DRACOLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: transparent; overflow: hidden; }
+  #{{ID}} { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; background: transparent; }
+  #theater { position: absolute; inset: 0; width: {{W}}px; height: {{H}}px; }
+  .cap { position: absolute; top: 0; left: 0; z-index: -1; pointer-events: none; }
+  {{SCREEN_CSS}}
+</style>
+</head>
+<body>
+<div id="{{ID}}" data-composition-id="{{ID}}" data-width="{{W}}" data-height="{{H}}" data-start="0" data-duration="{{DUR}}">
+  <canvas id="cap-laptop" class="cap" layoutsubtree width="1440" height="900" style="width:1440px;height:900px">
+    <div id="lap-html" style="width:1440px;height:900px;overflow:hidden;position:relative">{{LAPTOP_HTML}}</div>
+  </canvas>
+  <canvas id="cap-phone" class="cap" layoutsubtree width="390" height="844" style="width:390px;height:844px">
+    <div id="phone-html" style="width:390px;height:844px;overflow:hidden;position:relative">{{PHONE_HTML}}</div>
+  </canvas>
+  <canvas id="theater" width="{{W}}" height="{{H}}"></canvas>
+  <div id="{{ID}}-clock" class="clip" data-start="0" data-duration="{{DUR}}" style="position:absolute;width:1px;height:1px;opacity:0"></div>
+</div>
+<script>
+(function () {
+  var CFG = {{CONFIG}};
+  var W = {{W}}, H = {{H}}, D = {{DUR}}, PI = Math.PI;
+
+  // ---------------------------------------------------------------- renderer
+  var renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("theater"), antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H, false);
+  renderer.setPixelRatio(1);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.15;
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.setClearColor(0x000000, 0);
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(34, W / H, 0.1, 100);
+
+  // a studio environment for reflections, tinted toward the brand
+  var eC = document.createElement("canvas"); eC.width = 1024; eC.height = 512;
+  var ec = eC.getContext("2d"); var eg = ec.createLinearGradient(0, 0, 1024, 512);
+  eg.addColorStop(0, "#030307"); eg.addColorStop(0.18, CFG.env || "#1a1a2e"); eg.addColorStop(0.32, "#ffffff");
+  eg.addColorStop(0.46, "#0a0a1e"); eg.addColorStop(0.6, "#ffffff"); eg.addColorStop(0.76, CFG.env || "#1e1e2e"); eg.addColorStop(1, "#020307");
+  ec.fillStyle = eg; ec.fillRect(0, 0, 1024, 512);
+  var eT = new THREE.CanvasTexture(eC); eT.mapping = THREE.EquirectangularReflectionMapping;
+  var pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromEquirectangular(eT).texture; eT.dispose(); pm.dispose();
+
+  scene.add(new THREE.AmbientLight(0x404050, 0.6));
+  var key = new THREE.DirectionalLight(0xffffff, 2.2); key.position.set(-3, 4, 5); scene.add(key);
+  var rim = new THREE.PointLight(new THREE.Color(CFG.rim || "#6366f1"), 4, 16); rim.position.set(4, 2, -1); scene.add(rim);
+  var warm = new THREE.PointLight(new THREE.Color(CFG.fill || "#ffc8a8"), 1.4, 12); warm.position.set(-3, -1, 4); scene.add(warm);
+
+  // a soft contact shadow so the device sits ON something
+  var shC = document.createElement("canvas"); shC.width = shC.height = 256;
+  var sc = shC.getContext("2d"); var sg = sc.createRadialGradient(128, 128, 0, 128, 128, 128);
+  sg.addColorStop(0, "rgba(0,0,0," + (CFG.shadow ?? 0.4) + ")"); sg.addColorStop(0.55, "rgba(0,0,0," + (CFG.shadow ?? 0.4) * 0.35 + ")"); sg.addColorStop(1, "rgba(0,0,0,0)"); sc.fillStyle = sg; sc.fillRect(0, 0, 256, 256);
+  var shadow = new THREE.Mesh(new THREE.PlaneGeometry(5.6, 1.9), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shC), transparent: true, depthWrite: false }));
+  shadow.rotation.x = -PI / 2; shadow.position.y = -1.75; scene.add(shadow);
+
+  // ---------------------------------------------------- live HTML -> texture
+  var capL = document.getElementById("cap-laptop"), ctxL = capL.getContext("2d"), lapHtml = document.getElementById("lap-html");
+  var capP = document.getElementById("cap-phone"), ctxP = capP.getContext("2d"), phoneHtml = document.getElementById("phone-html");
+  var apiOk = (function () { var c = document.createElement("canvas"); if (!("layoutSubtree" in c)) return false; c.setAttribute("layoutsubtree", ""); var x = c.getContext("2d"); return x && typeof x.drawElementImage === "function"; })();
+  var paintReady = false;
+  var texL = new THREE.CanvasTexture(capL), texP = new THREE.CanvasTexture(capP);
+  [texL, texP].forEach(function (t) { t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; t.encoding = THREE.sRGBEncoding; });
+  function capture() {
+    if (!apiOk || !paintReady) return;
+    try {
+      if (CFG.laptop) { ctxL.clearRect(0, 0, 1440, 900); ctxL.drawElementImage(lapHtml, 0, 0, 1440, 900); texL.needsUpdate = true; }
+      if (CFG.phone) { ctxP.clearRect(0, 0, 390, 844); ctxP.drawElementImage(phoneHtml, 0, 0, 390, 844); texP.needsUpdate = true; }
+    } catch (e) {}
+  }
+
+  // ------------------------------------------------------------- the models
+  function planarUv(mesh) {
+    var g = mesh.geometry; g.computeBoundingBox(); var bb = g.boundingBox, pos = g.attributes.position;
+    var w = bb.max.x - bb.min.x || 1, h = bb.max.y - bb.min.y || 1, uv = new Float32Array(pos.count * 2);
+    for (var i = 0; i < pos.count; i++) { uv[i * 2] = (pos.getX(i) - bb.min.x) / w; uv[i * 2 + 1] = (pos.getY(i) - bb.min.y) / h; }
+    g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  }
+  function faceMinusZ(root, front, back) {
+    var f = root.getObjectByName(front), b = root.getObjectByName(back); if (!f || !b) return;
+    root.updateWorldMatrix(true, true); var fp = new THREE.Vector3(), bp = new THREE.Vector3();
+    f.getWorldPosition(fp); b.getWorldPosition(bp); if (fp.z > bp.z) root.rotation.y += PI;
+  }
+  var lapG = new THREE.Group(), phoneG = new THREE.Group();
+  scene.add(lapG); scene.add(phoneG);
+  var need = (CFG.laptop ? 1 : 0) + (CFG.phone ? 1 : 0), ready = 0;
+  var draco = new THREE.DRACOLoader(); draco.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+  var loader = new THREE.GLTFLoader(); loader.setDRACOLoader(draco);
+  if (CFG.laptop) loader.load("models/macbook.glb", function (g) {
+    var m = g.scene, box = new THREE.Box3().setFromObject(m), sz = box.getSize(new THREE.Vector3());
+    m.scale.setScalar(4.5 / Math.max(sz.x, sz.z)); box.setFromObject(m); m.position.sub(box.getCenter(new THREE.Vector3()));
+    m.traverse(function (c) { if (c.isMesh && c.name.replace(/\.\d+$/, "") === "display") { planarUv(c); c.material = new THREE.MeshBasicMaterial({ map: texL, toneMapped: false }); } });
+    lapG.add(m); if (++ready === need) onReady();
+  });
+  if (CFG.phone) loader.load("models/iphone.glb", function (g) {
+    var m = g.scene, box = new THREE.Box3().setFromObject(m), sz = box.getSize(new THREE.Vector3());
+    m.scale.setScalar(3.2 / sz.y); box.setFromObject(m); m.position.sub(box.getCenter(new THREE.Vector3()));
+    m.traverse(function (c) { if (c.isMesh && c.name.indexOf("front-glass") === 0) { planarUv(c); c.material = new THREE.MeshBasicMaterial({ map: texP, toneMapped: false }); } });
+    faceMinusZ(m, "front-glass", "rear-window"); phoneG.add(m); if (++ready === need) onReady();
+  });
+
+  // ------------------------------------------------------------- the motion
+  function bz(a, b, c, d) { var ax = 3 * a - 3 * c + 1, bx = 3 * c - 6 * a, cx = 3 * a, ay = 3 * b - 3 * d + 1, by = 3 * d - 6 * b, cy = 3 * b;
+    return function (t) { var s = t; for (var i = 0; i < 12; i++) { var x = ((ax * s + bx) * s + cx) * s - t, dx = (3 * ax * s + 2 * bx) * s + cx; if (Math.abs(dx) < 1e-10) break; s -= x / dx; } s = Math.max(0, Math.min(1, s)); return ((ay * s + by) * s + cy) * s; }; }
+  var enter = bz(0.16, 1, 0.3, 1), drift = bz(0.45, 0, 0.15, 1), spin = bz(0.76, 0, 0.18, 1);
+
+  // framing from the aspect: distance at which an object `w` units wide fills `f` of the frame
+  var tanH = Math.tan((34 * PI) / 360), AR = W / H;
+  function distW(w, f) { return w / f / (2 * tanH * AR); }
+  function distH(h, f) { return h / f / (2 * tanH); }
+
+  var P = CFG.preset || "macbook";
+  var S = { lx: 0, ly: -0.2, lz: 0, lrx: 0, lry: 0, px: 0, py: 0, pz: 0, prx: 0, pry: PI, cx: 0, cy: 0.6, cz: 8, tx: 0, ty: 0, tz: 0, screen: 0, d: 0 };
+  var tl = gsap.timeline({ paused: true });
+  tl.to(S, { d: D, duration: D, ease: "none", onUpdate: render }, 0);
+  var A = Math.min(1.0, D * 0.22), B = D * 0.62;            // arrive, then the dolly lands at B
+  if (P === "macbook") {
+    var near = distW(4.2, 0.9), far = distW(4.5, 0.62);
+    Object.assign(S, { ly: -3.2, lry: -0.95, lrx: 0.45, cz: far * 1.25, cy: 1.4, ty: -0.1 });
+    tl.to(S, { ly: -0.25, lrx: 0, lry: -0.38, cz: far, duration: A, ease: enter }, 0);
+    tl.to(S, { lry: 0.02, cz: near, cy: 0.55, ty: 0.28, duration: B - A, ease: drift }, A);
+    tl.to(S, { lry: 0.1, cz: near * 1.12, cx: 0.25, duration: D - B, ease: drift }, B);
+  } else if (P === "duo") {
+    // the pair spans x -3.35..2.95: frame BOTH, centred on the pair; a phone nearer the
+    // camera than the laptop grows fast in perspective and leaves the frame
+    var nearD = distW(6.8, 0.84), farD = distW(7.2, 0.8);
+    Object.assign(S, { lx: 0.7, ly: -3.2, lry: -0.8, lrx: 0.4, px: -2.6, py: -4, pz: 0.35, pry: PI + 1.3, cz: farD * 1.25, cy: 1.2, ty: -0.1, tx: -0.2 });
+    tl.to(S, { ly: -0.25, lrx: 0, lry: -0.32, cz: farD, duration: A, ease: enter }, 0);
+    tl.to(S, { py: -0.3, pry: PI + 0.42, duration: A * 1.15, ease: enter }, A * 0.35);
+    tl.to(S, { lry: -0.06, pry: PI + 0.22, cz: nearD, cy: 0.45, ty: 0.1, tx: -0.2, cx: -0.2, duration: B - A, ease: drift }, A);
+    tl.to(S, { lry: 0.06, pry: PI + 0.14, cz: nearD * 1.05, cx: 0.1, tx: 0, duration: D - B, ease: drift }, B);
+  } else { // iphone: rises showing its back, spins round to the screen, camera closes in
+    var nearP = distH(3.2, 0.86), farP = distH(3.2, 0.55);
+    Object.assign(S, { py: -4.5, pry: 0.25, prx: 0.35, cz: farP * 1.2, cy: 0.5, ty: 0 });
+    tl.to(S, { py: 0, prx: 0, cz: farP, duration: A, ease: enter }, 0);
+    tl.to(S, { pry: PI + 0.18, duration: Math.min(1.1, B - A), ease: spin }, A * 0.7);
+    tl.to(S, { pry: PI - 0.06, cz: nearP, cy: 0.05, duration: B - A, ease: drift }, A + 0.4);
+    tl.to(S, { pry: PI + 0.12, cz: nearP * 1.08, duration: D - B, ease: drift }, B);
+  }
+  // the screen's own animation runs once the screen faces the camera
+  tl.to(S, { screen: 1, duration: Math.max(0.5, D - A - 0.5), ease: "none" }, A + 0.2);
+
+  {{SCREEN_JS}}
+
+  function render() {
+    if (typeof window.MD_SCREEN_{{ID}} === "function") window.MD_SCREEN_{{ID}}(S.screen, tl.time(), S);
+    capture();
+    var d = S.d;
+    lapG.position.set(S.lx, S.ly + Math.sin(d * 0.8) * 0.01, S.lz); lapG.rotation.set(S.lrx, S.lry, 0);
+    phoneG.position.set(S.px, S.py + Math.sin(d * 0.9 + 1) * 0.012, S.pz); phoneG.rotation.set(S.prx, S.pry, 0);
+    shadow.position.x = CFG.laptop ? S.lx : S.px; shadow.material.opacity = Math.max(0, 1 - Math.abs(Math.min(S.ly, S.py) + 0.25) / 3);
+    camera.position.set(S.cx, S.cy, S.cz); camera.lookAt(S.tx, S.ty, S.tz);
+    renderer.render(scene, camera);
+  }
+
+  function waitPaint(c) { return new Promise(function (r) { if (!c || typeof c.requestPaint !== "function") return r(); var done = false;
+    c.onpaint = function () { if (!done) { done = true; c.onpaint = null; r(); } }; c.requestPaint(); setTimeout(function () { if (!done) { done = true; r(); } }, 120); }); }
+  function onReady() {
+    Promise.all([waitPaint(capL), waitPaint(capP)]).then(function () {
+      paintReady = true; render();
+      window.__timelines = window.__timelines || {};
+      window.__timelines["{{ID}}"] = tl;
+    });
+  }
+})();
+</script>
+</body>
+</html>

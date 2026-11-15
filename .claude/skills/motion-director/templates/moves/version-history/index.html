@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"heading","type":"string","label":"Title of the version panel","default":"Version history"},
+  {"id":"versions","type":"string","label":"Version times, newest first, comma separated (3 to 5)","default":"Now,Today 9:40,Yesterday,Monday,Last week"},
+  {"id":"titles","type":"string","label":"The doc title in each version, newest first","default":"Final draft,Second draft,First draft,Outline,Notes"},
+  {"id":"pick","type":"number","label":"Which version gets restored (1 = the newest)","default":3},
+  {"id":"restore","type":"string","label":"The restore button","default":"Restore"},
+  {"id":"done","type":"string","label":"The restored badge","default":"Restored"},
+  {"id":"screen","type":"number","label":"Brand screen pasted in the newest versions (0 = none)","default":2}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --go: #2BD67B; --pink: #1E1B17; --pmut: #7A7266; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+  /* the page: real paper */
+  #page { position: absolute; overflow: hidden; border-radius: calc(var(--u) * 16);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--paper) 92%, white), var(--paper) 55%, color-mix(in srgb, var(--paper) 94%, #8a7a60));
+    box-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(0,0,0,.25), 0 calc(var(--u) * 44) calc(var(--u) * 84) calc(var(--u) * -20) rgba(0,0,0,.75); }
+  .is-key #page { box-shadow: none; }
+  #page::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 25; opacity: .5; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .42 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); }
+  #page::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 26; mix-blend-mode: soft-light;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 16%), rgba(255,255,255,.7) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 16%)); }
+  #pbar { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 14); box-sizing: border-box; border-bottom: calc(var(--u) * 1.5) solid rgba(0,0,0,.09); background: rgba(255,255,255,.35); z-index: 3; }
+  #pmk { flex: none; border-radius: 28%; overflow: hidden; background: var(--accent); }
+  #pmk img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #when { font-weight: 700; color: var(--pmut); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .ver { position: absolute; left: 0; right: 0; bottom: 0; }
+  .ver .t { position: absolute; font-family: var(--font-display); color: var(--pink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; }
+  .ver .ln { position: absolute; height: calc(var(--u) * 13); border-radius: 99px; background: rgba(30,27,23,.2); }
+  .ver .ln.new { background: color-mix(in srgb, #2BD67B 55%, rgba(30,27,23,.2)); }
+  .ver .im { position: absolute; border-radius: calc(var(--u) * 10); overflow: hidden; box-shadow: 0 calc(var(--u) * 6) calc(var(--u) * 14) rgba(0,0,0,.22); background: #111; }
+  .ver .im img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; display: block; }
+  #stamp { position: absolute; z-index: 30; display: flex; align-items: center; gap: calc(var(--k) * 12); padding: calc(var(--k) * 8) calc(var(--k) * 22) calc(var(--k) * 8) calc(var(--k) * 8); border-radius: 999px; opacity: 0;
+    background: #fff; box-shadow: inset 0 0 0 calc(var(--u) * 2.5) var(--go), 0 calc(var(--u) * 12) calc(var(--u) * 30) rgba(0,0,0,.25); }
+  .is-key #stamp { box-shadow: inset 0 0 0 calc(var(--u) * 2.5) var(--go); }
+  #stamp i { flex: none; width: calc(var(--k) * 46); height: calc(var(--k) * 46); border-radius: 50%; background: var(--go); display: grid; place-items: center; }
+  #stamp i svg, .vr .ok svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+  #stamp span { font-family: var(--font-display); font-size: calc(var(--k) * 34); color: #155E35; white-space: nowrap; }
+  #pflash { position: absolute; inset: 0; z-index: 28; border-radius: inherit; box-shadow: inset 0 0 0 calc(var(--u) * 6) var(--go); opacity: 0; pointer-events: none; }
+
+  /* the version list: glass */
+  #panel { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 44); padding: calc(var(--u) * 34) calc(var(--u) * 24) calc(var(--u) * 24);
+    background: linear-gradient(165deg, rgba(255,255,255,.2), rgba(255,255,255,.08) 55%, rgba(255,255,255,.06));
+    -webkit-backdrop-filter: blur(28px) saturate(170%); backdrop-filter: blur(28px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      inset 0 calc(var(--u) * -40) calc(var(--u) * 70) calc(var(--u) * -40) color-mix(in srgb, var(--accent) 40%, transparent),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -24) rgba(0,0,0,.75); }
+  .is-alpha #panel { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 86%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #panel { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  #hd { display: flex; align-items: center; gap: calc(var(--u) * 16); padding: 0 calc(var(--u) * 14) calc(var(--u) * 22); }
+  #hd svg { flex: none; width: calc(var(--u) * 46); height: calc(var(--u) * 46); fill: none; stroke: var(--ink); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  #hd span { font-family: var(--font-display); font-size: calc(var(--u) * 40); color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+  #vl { position: relative; }
+  #rail { position: absolute; width: calc(var(--u) * 3); border-radius: 2px; background: rgba(255,255,255,.18); }
+  #hl { position: absolute; left: 0; right: 0; top: 0; border-radius: calc(var(--u) * 24); background: rgba(255,255,255,.12); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.18); }
+  .is-key #hl { background: color-mix(in srgb, var(--surface) 84%, #fff); }
+  #hl::before { content: ""; position: absolute; left: 0; top: 22%; bottom: 22%; width: calc(var(--u) * 6); border-radius: 3px; background: var(--hc, var(--accent)); }
+  .vr { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 22); box-sizing: border-box; padding: 0 calc(var(--u) * 18) 0 calc(var(--u) * 28); }
+  .vr .dt { flex: none; position: relative; width: calc(var(--u) * 22); height: calc(var(--u) * 22); border-radius: 50%; background: color-mix(in srgb, var(--ink) 40%, var(--surface)); box-shadow: 0 0 0 calc(var(--u) * 5) var(--surface); }
+  .vr .dt b { position: absolute; inset: 0; border-radius: 50%; background: var(--al); opacity: 0; }
+  .vr .tx { flex: 1; min-width: 0; }
+  .vr .a { font-size: calc(var(--u) * 38); font-weight: 700; color: var(--ink); white-space: nowrap; line-height: 1.2; }
+  .vr .b { position: relative; margin-top: calc(var(--u) * 2); height: calc(var(--u) * 38); }
+  .vr .b span { position: absolute; left: 0; top: 0; font-size: calc(var(--u) * 31); font-weight: 500; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.2; }
+  .vr .rb { position: absolute; right: calc(var(--u) * 18); top: 50%; margin-top: calc(var(--u) * -32); display: grid; place-items: center; height: calc(var(--u) * 64); padding: 0 calc(var(--u) * 24); border-radius: 999px; opacity: 0;
+    background: linear-gradient(180deg, var(--al), var(--accent) 60%, var(--ad)); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key .vr .rb { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  .vr .rb span { font-size: calc(var(--u) * 30); font-weight: 800; color: #fff; white-space: nowrap; }
+  .vr .rb .press { position: absolute; inset: 0; border-radius: inherit; background: #000; opacity: 0; }
+  .compact .vr .rb { top: auto; bottom: calc(var(--u) * 10); margin-top: 0; height: calc(var(--u) * 50); padding: 0 calc(var(--u) * 18); }
+  .compact .vr .rb span { font-size: calc(var(--u) * 26); }
+  .vr .ok { position: absolute; inset: calc(var(--u) * -9); border-radius: 50%; background: var(--go); display: grid; place-items: center; opacity: 0; }
+
+  #cur { position: absolute; left: 0; top: 0; width: calc(var(--u) * 54); height: calc(var(--u) * 54); opacity: 0; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 8) rgba(0,0,0,.5)); }
+  .is-key #cur { filter: none; }
+  #cur svg { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="cam">
+    <div id="page"><div id="pbar"><div id="pmk"></div><span id="when"></span></div><div id="pflash"></div><div id="stamp"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span></span></div></div>
+    <div id="panel">
+      <div id="hd"><svg viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4.5v4h4"/><path d="M12 7.5V12l3 2"/></svg><span></span></div>
+      <div id="vl"><div id="rail"></div><div id="hl"></div></div>
+    </div>
+    <div id="cur"><svg viewBox="0 0 24 24"><path d="M5 3l14 9.2-6.3 1.3 3.6 6.9-2.6 1.3-3.6-6.9L5 19.5z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 0.8 : 0.95);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  let vers = String(v.versions || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 5);
+  if (vers.length < 3) vers = ["Now", "Today 9:40", "Yesterday", "Monday", "Last week"];
+  const N = vers.length;
+  const titles = String(v.titles || "").split(",").map((s) => s.trim());
+  const P = Math.min(N - 1, Math.max(1, (Math.round(+v.pick) || 3) - 1));
+  const scr = +v.screen > 0 ? (v.screens || [])[(+v.screen) - 1] || (v.screens || [])[0] : null;
+  $("#hd span").textContent = v.heading || "";
+  $("#stamp span").textContent = v.done || "";
+  if (v.mark) $("#pmk").appendChild(MV.img(v.mark));
+
+  // ---- layout: page and list side by side, stacked on a tall B-roll frame
+  const regionW = W - safe.left - safe.right, regionH = H - safe.top - safe.bottom;
+  const stack = MV.portrait && !MV.alpha;
+  let PW, PH, LW, gap = 40 * u;
+  if (stack) { PW = 700 * u; PH = 760 * u; LW = Math.min(regionW, 900 * u); }
+  else if (W > H) { PW = MV.alpha ? 500 * u : 640 * u; PH = PW * 1.3; LW = MV.alpha ? 560 * u : 700 * u; }
+  else if (W === H) { PW = 450 * u; PH = 590 * u; LW = 520 * u; gap = 26 * u; }
+  else { PW = 360 * u; PH = 480 * u; LW = regionW - 360 * u - 20 * u; gap = 20 * u; }
+  const compact = MV.portrait && MV.alpha; if (compact) root.classList.add("compact");
+  const page = $("#page"), panel = $("#panel");
+  Object.assign(page.style, { width: PW + "px", height: PH + "px" }); panel.style.width = LW + "px";
+  const k = PW / 640; // page detail scales with the page
+  const ks = Math.max(k, 0.78 * u); // chrome (bar, badge) never drops below a readable size on a small page
+  root.style.setProperty("--k", ks + "px");
+  const BAR = 74 * ks;
+  Object.assign($("#pbar").style, { height: BAR + "px", padding: `0 ${26 * ks}px` });
+  Object.assign($("#pmk").style, { width: 44 * ks + "px", height: 44 * ks + "px" });
+  $("#when").style.fontSize = 28 * ks + "px";
+
+  // one content block per version: newer versions carry more paragraphs and the pasted screen
+  const rnd = MV.rand(5);
+  const vEls = vers.map((_, i) => {
+    const d = document.createElement("div"); d.className = "ver"; d.style.top = BAR + "px";
+    const age = i / Math.max(1, N - 1); // 0 newest, 1 oldest
+    const t = document.createElement("div"); t.className = "t"; t.textContent = titles[i] || titles[titles.length - 1] || "";
+    Object.assign(t.style, { left: 48 * k + "px", top: 44 * k + "px", fontSize: Math.max(54 * k, 40 * u) + "px" }); d.appendChild(t);
+    let y = 44 * k + Math.max(54 * k, 40 * u) * 1.1 + 34 * k; const L = 48 * k, R = PW - 48 * k, inner = R - L;
+    const line = (f, cls) => { const l = document.createElement("div"); l.className = "ln" + (cls ? " " + cls : ""); Object.assign(l.style, { left: L + "px", top: y + "px", width: inner * f + "px", height: 13 * k + "px" }); d.appendChild(l); y += 30 * k; };
+    const paras = age > 0.9 ? 2 : 3;
+    for (let p = 0; p < paras; p++) {
+      const n = 3 + Math.round(rnd() * 2) - (age > 0.6 ? 1 : 0);
+      for (let j = 0; j < n; j++) line(j === n - 1 ? 0.45 + rnd() * 0.3 : 0.86 + rnd() * 0.14, i === 0 && p === paras - 1 ? "" : "");
+      y += 20 * k;
+      if (p === 0 && scr && i <= Math.max(0, P - 1) && y + 210 * k < PH - BAR - 40 * k) { const im = document.createElement("div"); im.className = "im"; Object.assign(im.style, { left: L + "px", top: y + "px", width: inner + "px", height: inner * 0.42 + "px" }); im.appendChild(MV.img(scr)); d.appendChild(im); y += inner * 0.42 + 30 * k; }
+      if (y > PH - BAR - 80 * k) break;
+    }
+    // a bullet list in the older drafts
+    if (age > 0.4) { for (let j = 0; j < 3 && y < PH - BAR - 60 * k; j++) { const b = document.createElement("div"); b.className = "ln"; Object.assign(b.style, { left: L + "px", top: y + "px", width: 13 * k + "px" }); d.appendChild(b); const l = document.createElement("div"); l.className = "ln"; Object.assign(l.style, { left: L + 30 * k + "px", top: y + "px", width: inner * (0.4 + rnd() * 0.35) + "px", height: 13 * k + "px" }); d.appendChild(l); y += 34 * k; } }
+    page.insertBefore(d, $("#pflash")); MV.fitText(t, inner, 14);
+    return d;
+  });
+
+  // the list
+  const vl = $("#vl"), RH = 112 * u;
+  const rows = vers.map((lab, i) => {
+    const r = document.createElement("div"); r.className = "vr"; r.style.height = RH + "px";
+    r.innerHTML = `<div class="dt"><b></b>${i === 0 ? '<div class="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>' : ""}</div><div class="tx"><div class="a"></div><div class="b"><span class="s0"></span></div></div>${i === P ? '<div class="rb"><div class="press"></div><span></span></div>' : ""}`;
+    r.querySelector(".a").textContent = lab; r.querySelector(".s0").textContent = titles[i] || "";
+    if (i === 0) { const s = document.createElement("span"); s.className = "s1"; s.textContent = titles[P] || ""; r.querySelector(".b").appendChild(s); }
+    if (i === P) r.querySelector(".rb span").textContent = v.restore || "";
+    vl.appendChild(r); gsap.set(r, { y: i * RH }); return r;
+  });
+  vl.style.height = N * RH + "px";
+  gsap.set("#hl", { height: RH });
+  const dot0 = 18 * u + 28 * u; // rail x: centre of the dots
+  Object.assign($("#rail").style, { left: (28 + 11 - 1.5) * u + "px", top: RH / 2 + "px", height: (N - 1) * RH + "px" });
+  const rbw = rows[P].querySelector(".rb").getBoundingClientRect().width;
+  rows.forEach((r, i) => { const room = LW - 48 * u - (28 + 22 + 22 + 18) * u, short = room - (i === P && !compact ? rbw + 20 * u : 0);
+    MV.fitText(r.querySelector(".a"), short, 16); r.querySelectorAll(".b span").forEach((s) => MV.fitText(s, i === P ? (compact ? room - rbw - 16 * u : short) : room, 14)); });
+  MV.fitText($("#hd span"), LW - 48 * u - 90 * u, 16);
+  const LH = panel.offsetHeight;
+  // place the pair
+  let pageX, pageY, listX, listY;
+  if (stack) { const tot = PH + gap + LH; pageX = (W - PW) / 2; pageY = (H - tot) / 2; listX = (W - LW) / 2; listY = pageY + PH + gap; }
+  else {
+    const totW = PW + gap + LW, hh = Math.max(PH, LH);
+    let x0 = (W - totW) / 2, y0 = (H - hh) / 2;
+    if (MV.alpha) { if (MV.portrait) { x0 = safe.left; y0 = safe.top + 10 * u; } else if (W > H) { x0 = W - safe.right - totW; y0 = safe.top + (regionH - hh) / 2; } }
+    pageX = x0; pageY = y0 + (hh - PH) / 2; listX = x0 + PW + gap; listY = y0 + (hh - LH) / 2;
+  }
+  gsap.set(page, { left: pageX, top: pageY }); gsap.set(panel, { left: listX, top: listY });
+  root.style.setProperty("--gx", (W / 2 / W * 100) + "%"); root.style.setProperty("--gy", "45%");
+  const cxm = (Math.min(pageX, listX) + Math.max(pageX + PW, listX + LW)) / 2, cym = (Math.min(pageY, listY) + Math.max(pageY + PH, listY + LH)) / 2;
+  gsap.set("#cam", { transformOrigin: `${cxm}px ${cym}px` });
+  // the badge stamps onto the right end of the page bar, clear of the title
+  const st = $("#stamp"); gsap.set(st, { left: PW - st.offsetWidth - 18 * ks, top: (BAR - st.offsetHeight) / 2 + 4 * ks });
+  MV.fitText($("#when"), PW - 90 * ks - st.offsetWidth, 14);
+  const rbr = rows[P].querySelector(".rb").getBoundingClientRect();
+
+  // ---- timeline
+  const showV = (i) => vEls.forEach((d, j) => gsap.set(d, { opacity: j === i ? 1 : 0 }));
+  showV(0); $("#when").textContent = vers[0];
+  tl.fromTo(page, { opacity: 0, y: 80 * u, rotationY: -18, rotationZ: -3, filter: "blur(12px)" }, { opacity: 1, y: 0, rotationY: 0, rotationZ: -1.2, filter: "blur(0px)", duration: 0.85, ease: "expo.out" }, 0.05);
+  tl.fromTo(panel, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.15);
+  tl.fromTo(panel, { y: 80 * u, scale: 0.92, rotationX: 14 }, { y: 0, scale: 1, rotationX: 0, duration: 0.85, ease: "back.out(1.4)" }, 0.15);
+  rows.forEach((r, i) => tl.fromTo(r, { opacity: 0, x: 30 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, 0.3 + i * 0.05));
+  tl.fromTo("#rail", { scaleY: 0, transformOrigin: "50% 0%" }, { scaleY: 1, duration: 0.7, ease: "expo.out" }, 0.35);
+  tl.fromTo("#hl", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.55);
+  tl.set(rows[0].querySelector(".dt b"), { opacity: 1 }, 0.55);
+  tl.fromTo(page, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.2, ease: "power2.inOut" }, 0.4);
+  // 1. the scrub: the highlight steps back in time, the page changes under it each step
+  const S0 = 1.0, DT = Math.min(0.42, 1.3 / P);
+  for (let i = 1; i <= P; i++) {
+    const t = S0 + (i - 1) * DT;
+    tl.to("#hl", { y: i * RH, duration: DT * 0.8, ease: "power3.inOut" }, t);
+    tl.set(rows[i - 1].querySelector(".dt b"), { opacity: 0 }, t + DT * 0.4); tl.set(rows[i].querySelector(".dt b"), { opacity: 1 }, t + DT * 0.4);
+    tl.to(vEls[i - 1], { opacity: 0, y: -16 * k, duration: DT * 0.28, ease: "power2.in" }, t + DT * 0.1);
+    tl.fromTo(vEls[i], { opacity: 0, y: 18 * k }, { opacity: 1, y: 0, duration: DT * 0.6, ease: "expo.out", immediateRender: false }, t + DT * 0.4);
+    tl.set("#when", { textContent: vers[i] }, t + DT * 0.45);
+    tl.to(page, { keyframes: [{ rotationY: 4, scale: 0.988, duration: DT * 0.35, ease: "power2.out" }, { rotationY: 0, scale: 1, duration: DT * 0.6, ease: "back.out(2)" }] }, t + DT * 0.2);
+  }
+  const SE = S0 + P * DT;
+  // 2. the restore button appears on the old version, a cursor glides in and clicks it
+  tl.fromTo(rows[P].querySelector(".rb"), { opacity: 0, scale: 0.6, x: 20 * u }, { opacity: 1, scale: 1, x: 0, duration: 0.5, ease: "back.out(2.2)" }, SE + 0.05);
+  const cx = rbr.left + rbr.width * 0.5, cy = rbr.top + rbr.height * 0.55, C0 = SE + 0.2, K = C0 + 0.65;
+  gsap.set("#cur", { x: cx + 260 * u, y: cy + 200 * u });
+  tl.fromTo("#cur", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, C0);
+  tl.to("#cur", { x: cx, y: cy, duration: 0.6, ease: "power3.inOut" }, C0);
+  tl.to("#cur", { scale: 0.85, duration: 0.07, ease: "power2.out", transformOrigin: "20% 15%" }, K); tl.to("#cur", { scale: 1, duration: 0.3, ease: "back.out(3)" }, K + 0.08);
+  tl.to(rows[P].querySelector(".rb"), { scale: 0.9, duration: 0.07, ease: "power2.out" }, K);
+  tl.to(rows[P].querySelector(".rb .press"), { opacity: 0.22, duration: 0.07 }, K);
+  tl.to(rows[P].querySelector(".rb .press"), { opacity: 0, duration: 0.25, ease: "power2.out" }, K + 0.1);
+  tl.to(rows[P].querySelector(".rb"), { scale: 0.6, opacity: 0, duration: 0.3, ease: "power2.in" }, K + 0.18);
+  tl.to("#cur", { opacity: 0, x: cx + 40 * u, y: cy + 60 * u, duration: 0.4, ease: "power2.in" }, K + 0.35);
+  // 3. the landing: the page snaps back to the top as the restored version, the badge stamps on, the list top takes it
+  const R = K + 0.12;
+  tl.to(page, { keyframes: [{ scale: 1.04, rotationZ: 0, duration: 0.12, ease: "power2.out" }, { scale: 1, duration: 0.6, ease: "back.out(2.6)" }] }, R);
+  tl.fromTo("#pflash", { opacity: 0 }, { keyframes: [{ opacity: 1, duration: 0.1 }, { opacity: 0, duration: 0.7, ease: "power2.out" }] }, R);
+  tl.set("#when", { textContent: vers[0] }, R + 0.1);
+  tl.fromTo(st, { opacity: 0, scale: 1.8, rotation: -14 }, { opacity: 1, scale: 1, rotation: -2, duration: 0.45, ease: "back.out(2)" }, R + 0.12);
+  tl.fromTo("#stamp i", { scale: 0, rotation: -60 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.6)" }, R + 0.2);
+  tl.to("#hl", { y: 0, duration: 0.55, ease: "power3.inOut" }, R);
+  tl.set(rows[P].querySelector(".dt b"), { opacity: 0 }, R + 0.2); tl.set(rows[0].querySelector(".dt b"), { opacity: 1 }, R + 0.2);
+  tl.set("#hl", { "--hc": "#2BD67B" }, R + 0.3);
+  tl.fromTo(rows[0].querySelector(".ok"), { opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)" }, R + 0.45);
+  tl.to(rows[0].querySelector(".s0"), { y: -20 * u, opacity: 0, duration: 0.2, ease: "power2.in" }, R + 0.4);
+  tl.fromTo(rows[0].querySelector(".s1"), { y: 20 * u, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(2)" }, R + 0.55);
+  tl.fromTo(page, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, R + 0.2);
+  // the camera
+  tl.fromTo("#cam", { rotationX: 8, rotationY: -8, scale: 1.03 }, { rotationX: 2, rotationY: 6, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  // exit
+  const X = D - 0.42;
+  tl.to(page, { y: "-=" + 90 * u, opacity: 0, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, X);
+  tl.to(panel, { y: "-=" + 90 * u, opacity: 0, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, X + 0.04);
+  MV.done();
+</script>
+</body>
+</html>

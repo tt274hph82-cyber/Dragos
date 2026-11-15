@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"Names, comma separated ({brand} = the brand name, which gets the lit line)","default":"Average,Top 10%,The old way,{brand}"},
+  {"id":"before","type":"string","label":"Each value at the start, same order","default":"32,48,40,22"},
+  {"id":"after","type":"string","label":"Each value at the end, same order","default":"36,55,31,88"},
+  {"id":"thenLabel","type":"string","label":"The left column heading","default":"Then"},
+  {"id":"nowLabel","type":"string","label":"The right column heading","default":"Now"},
+  {"id":"prefix","type":"string","label":"Before each value","default":""},
+  {"id":"suffix","type":"string","label":"After each value","default":""},
+  {"id":"decimals","type":"number","label":"Decimals","default":0}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 50%; left: 46%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 70%; height: 55%; left: -28%; top: 52%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #tilt, #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #chart { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  /* the two columns: glass rails */
+  .rail { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 12);
+    background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.2) 50%, rgba(255,255,255,.06));
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 20) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.6); }
+  .is-alpha .rail { background: linear-gradient(90deg, color-mix(in srgb, var(--surface) 80%, white 20%), color-mix(in srgb, var(--surface) 60%, white 40%) 50%, color-mix(in srgb, var(--surface) 80%, white 20%)); }
+  .head { position: absolute; white-space: nowrap; font-weight: 800; line-height: 1; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 66%, transparent); }
+
+  .tag { position: absolute; white-space: nowrap; line-height: 1; display: flex; align-items: baseline; gap: .4em; }
+  .tag .n { font-family: var(--font-display); letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--ink) 80%, transparent); }
+  .tag .n .fx { font-size: .62em; }
+  .tag .nm { font-weight: 700; color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  .tag.l { justify-content: flex-end; }
+
+  /* the brand's tag on the right is a frosted pill */
+  .tag.hero { padding: calc(var(--u) * 18) calc(var(--u) * 28) calc(var(--u) * 20); border-radius: calc(var(--u) * 28); overflow: hidden; flex-direction: column; align-items: flex-start; gap: calc(var(--u) * 10);
+    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.07) 60%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 60%, transparent),
+      0 calc(var(--u) * 30) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.6), 0 0 calc(var(--u) * 70) calc(var(--u) * -12) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-alpha .tag.hero { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 76%, white 24%), color-mix(in srgb, var(--surface) 90%, white 10%)); }
+  .tag.hero .n { color: var(--ink); text-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .tag.hero .nm { color: var(--ink); }
+  .tag.hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.34) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); }
+
+  .is-key .rail, .is-key .tag.hero { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .is-key .tag.hero { background: color-mix(in srgb, var(--surface) 82%, white 18%); box-shadow: inset 0 0 0 calc(var(--u) * 2) var(--accent); }
+  .is-key .tag.hero .n { text-shadow: none; }
+  .is-key #glowB, .is-key #halo { display: none; }
+  .is-key .rail { background: color-mix(in srgb, var(--surface) 70%, white 30%); }
+  .is-key .head, .is-key .tag .nm { color: color-mix(in srgb, var(--ink) 66%, var(--surface)); }
+  .is-key .tag .n { color: color-mix(in srgb, var(--ink) 82%, var(--surface)); }
+  .is-key .tag.hero .n, .is-key .tag.hero .nm { color: var(--ink); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="tilt"><div id="cam">
+    <div class="rail" id="railL"></div><div class="rail" id="railR"></div>
+    <div class="head" id="hL"></div><div class="head" id="hR"></div>
+    <svg id="chart" width="{{W}}" height="{{H}}" viewBox="0 0 {{W}} {{H}}">
+      <defs>
+        <linearGradient id="gB" gradientUnits="userSpaceOnUse"><stop offset="0" class="b0" /><stop offset="1" class="b1" /></linearGradient>
+        <filter id="fGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="14" /></filter>
+        <radialGradient id="gHalo"><stop offset="0" class="h0" /><stop offset="1" class="h1" /></radialGradient>
+      </defs>
+      <g id="greys"></g>
+      <line id="glowB" stroke="url(#gB)" filter="url(#fGlow)" stroke-linecap="round" />
+      <line id="lineB" stroke="url(#gB)" stroke-linecap="round" />
+      <line id="coreB" stroke="#fff" stroke-linecap="round" opacity=".5" />
+      <circle id="halo" r="1" fill="url(#gHalo)" opacity="0" />
+      <circle id="ring" r="1" fill="none" opacity="0" />
+      <g id="dots"></g>
+    </svg>
+    <div id="tags"></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.getElementById(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, KEY = root.classList.contains("is-key");
+  const cs = getComputedStyle(root), C = (n) => cs.getPropertyValue(n).trim();
+  const ACC = C("--accent"), ACC2 = C("--accent2"), INK = C("--ink") || "#fff";
+  document.querySelectorAll(".b0").forEach((s) => { s.style.stopColor = `color-mix(in srgb, ${ACC} 75%, ${ACC2})`; });
+  document.querySelectorAll(".b1").forEach((s) => { s.style.stopColor = `color-mix(in srgb, ${ACC} 60%, white)`; });
+  document.querySelectorAll(".h0").forEach((s) => { s.style.stopColor = ACC; s.style.stopOpacity = 0.9; });
+  document.querySelectorAll(".h1").forEach((s) => { s.style.stopColor = ACC; s.style.stopOpacity = 0; });
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  const brand = v.brandName || "";
+  let rawL = list(v.labels).filter((s) => s.length), A = list(v.before).map(Number), Bv = list(v.after).map(Number);
+  let n = Math.min(rawL.length, A.length, Bv.length, 6);
+  if (n < 2 || !A.slice(0, n).every(isFinite) || !Bv.slice(0, n).every(isFinite)) { rawL = ["Average", "Top 10%", "The old way", "{brand}"]; A = [32, 48, 40, 22]; Bv = [36, 55, 31, 88]; n = 4; }
+  let hero = rawL.findIndex((s) => s.includes("{brand}")); if (hero < 0) hero = n - 1;
+  const names = rawL.slice(0, n).map((s) => s.split("{brand}").join(brand));
+  const dec = Math.max(0, +v.decimals || 0), fmt = (x) => (dec ? x.toFixed(dec) : Math.round(x).toLocaleString("en-US"));
+  const fx = (s) => (s ? `<span class="fx">${s}</span>` : "");
+  const num = (x) => fx(v.prefix) + `<span class="k">${fmt(x)}</span>` + fx(v.suffix);
+
+  // ---- type sizes and the tags, measured first: their widths set where the rails stand
+  const tFS = Math.round((P ? 54 : 46) * u), nFS = Math.round((P ? 40 : 36) * u), hFS = Math.round((P ? 96 : 76) * u), headFS = Math.round((P ? 40 : 36) * u);
+  const tags = $("tags");
+  const T = Array.from({ length: n }, (_, i) => {
+    const isH = i === hero;
+    const r = document.createElement("div"); r.className = "tag r" + (isH ? " hero" : "");
+    r.innerHTML = `<span class="n"></span><span class="nm"></span>`;
+    r.querySelector(".n").innerHTML = num(Math.max(A[i], Bv[i])); r.querySelector(".nm").textContent = names[i];
+    r.querySelector(".n").style.fontSize = (isH ? hFS : tFS) + "px"; r.querySelector(".nm").style.fontSize = (isH ? nFS * 1.1 : nFS) + "px";
+    const l = document.createElement("div"); l.className = "tag l"; l.innerHTML = `<span class="n"></span>`;
+    l.querySelector(".n").innerHTML = num(A[i]); l.querySelector(".n").style.fontSize = tFS + "px";
+    tags.append(r, l);
+    MV.fitText(r.querySelector(".nm"), (P ? 300 : 340) * u, 22);
+    return { r, l, isH, k: r.querySelector(".k") };
+  });
+  const rW = Math.max(...T.map((t) => t.r.getBoundingClientRect().width)), lW = Math.max(...T.map((t) => t.l.getBoundingClientRect().width));
+  const rH = T.map((t) => t.r.getBoundingClientRect().height), lH = Math.max(...T.map((t) => t.l.getBoundingClientRect().height));
+
+  // ---- layout: the two rails and the value scale
+  const fl = P ? safe.left : SQ ? 90 * u : 380 * u, fr = P ? W - safe.right : SQ ? W - 90 * u : W - 380 * u;
+  const pad = 30 * u, xL = fl + lW + pad + 10 * u, xR = fr - rW - pad - 10 * u;
+  const Ty = P ? safe.top + (MV.alpha ? 120 : 180) * u : SQ ? 200 * u : 210 * u, By = P ? H - safe.bottom - (MV.alpha ? 40 : 120) * u : SQ ? H - 110 * u : H - 110 * u;
+  const all = [...A.slice(0, n), ...Bv.slice(0, n)], lo = Math.min(...all), hi = Math.max(...all);
+  const yv = (x) => By - ((x - lo) / (hi - lo || 1)) * (By - Ty);
+  const railW = 16 * u;
+  for (const [id, x] of [["railL", xL], ["railR", xR]]) Object.assign($(id).style, { left: x - railW / 2 + "px", width: railW + "px", top: Ty - 60 * u + "px", height: By - Ty + 120 * u + "px" });
+  const heads = [["hL", xL, v.thenLabel], ["hR", xR, v.nowLabel]].map(([id, x, t]) => { const e = $(id); e.textContent = t || ""; e.style.fontSize = headFS + "px"; MV.fitText(e, Math.abs(xR - xL) * 0.8, 22);
+    const w = e.getBoundingClientRect().width; Object.assign(e.style, { left: x - w / 2 + "px", top: Ty - 60 * u - headFS - 40 * u + "px" }); if (!t) e.style.display = "none"; return e; });
+
+  // tags beside their points, pushed apart where values sit close
+  const relax = (ys, hs) => { const o = ys.map((y, i) => ({ i, y })).sort((a, b) => a.y - b.y); for (let k = 0; k < 40; k++) for (let j = 1; j < o.length; j++) { const a = o[j - 1], b = o[j], need = (hs[a.i] + hs[b.i]) / 2 + 10 * u; if (b.y - a.y < need) { const d = (need - (b.y - a.y)) / 2; a.y -= d; b.y += d; } } const r = []; o.forEach((e) => (r[e.i] = e.y)); return r; };
+  const yR = relax(Bv.slice(0, n).map(yv), rH), yL = relax(A.slice(0, n).map(yv), T.map(() => lH));
+  T.forEach((t, i) => {
+    Object.assign(t.r.style, { left: xR + pad + "px", top: yR[i] - rH[i] / 2 + "px" });
+    Object.assign(t.l.style, { left: xL - pad - lW + "px", width: lW + "px", top: yL[i] - lH / 2 + "px" });
+  });
+
+  // ---- the lines and their dots
+  const NS = "http://www.w3.org/2000/svg";
+  const mk = (tag, a, parent) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); parent.append(e); return e; };
+  const sw = (P ? 10 : 9) * u;
+  const Ln = Array.from({ length: n }, (_, i) => {
+    const y0 = yv(A[i]), y1 = yv(Bv[i]), isH = i === hero;
+    const ln = isH ? $("lineB") : mk("line", { stroke: KEY ? `color-mix(in srgb, ${INK} 55%, ${C("--surface") || "#222"})` : INK, "stroke-opacity": KEY ? 1 : 0.5, "stroke-width": sw * 0.7, "stroke-linecap": "round" }, $("greys"));
+    const d0 = mk("circle", { cx: xL, cy: y0, r: (isH ? 1.4 : 1.15) * sw, fill: isH ? "#fff" : `color-mix(in srgb, ${INK} 75%, transparent)` }, $("dots"));
+    const d1 = mk("circle", { cx: xL, cy: y0, r: (isH ? 1.6 : 1.15) * sw, fill: isH ? "#fff" : `color-mix(in srgb, ${INK} 75%, transparent)` }, $("dots"));
+    if (isH) { d0.style.stroke = d1.style.stroke = ACC; d0.setAttribute("stroke-width", 4 * u); d1.setAttribute("stroke-width", 5 * u); }
+    return { i, y0, y1, ln, d0, d1, isH, p: 0 };
+  });
+  const HB = Ln[hero];
+  $("lineB").setAttribute("stroke-width", sw); $("glowB").setAttribute("stroke-width", sw * 3.4); $("coreB").setAttribute("stroke-width", sw * 0.28);
+  const gB = $("gB"); gB.setAttribute("x1", xL); gB.setAttribute("y1", HB.y0); gB.setAttribute("x2", xR); gB.setAttribute("y2", HB.y1);
+  const halo = $("halo"), ring = $("ring");
+  for (const e of [halo, ring]) { e.setAttribute("cx", xR); e.setAttribute("cy", HB.y1); }
+  halo.setAttribute("r", sw * 9); ring.style.stroke = `color-mix(in srgb, ${ACC} 50%, white)`; ring.setAttribute("stroke-width", 3 * u);
+
+  // every frame: each line drawn to its progress, its head and its live value
+  const draw = (L) => {
+    const x = xL + (xR - xL) * L.p, y = L.y0 + (L.y1 - L.y0) * L.p;
+    const lines = L.isH ? [$("lineB"), $("glowB"), $("coreB")] : [L.ln];
+    lines.forEach((e) => { e.setAttribute("x1", xL); e.setAttribute("y1", L.y0); e.setAttribute("x2", x); e.setAttribute("y2", y); });
+    L.d1.setAttribute("cx", x); L.d1.setAttribute("cy", y);
+    T[L.i].k.textContent = fmt(A[L.i] + (Bv[L.i] - A[L.i]) * L.p);
+  };
+  Ln.forEach(draw);
+
+  // ---- slow drift
+  gsap.set("#tilt", { transformOrigin: `${W / 2}px ${H / 2}px` });
+  gsap.set("#cam", { transformOrigin: `${xR}px ${HB.y1}px` });
+  tl.fromTo("#tilt", { rotationY: 10, rotationX: 5 }, { rotationY: -6, rotationX: 2, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the rails rise, the headings, the start points and their values
+  tl.fromTo(["#railL", "#railR"], { scaleY: 0, opacity: 0, transformOrigin: "50% 100%" }, { scaleY: 1, opacity: 1, duration: 0.8, ease: "expo.out", stagger: 0.1 }, 0.02);
+  tl.fromTo(heads, { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.1 }, 0.3);
+  Ln.forEach((L, j) => {
+    tl.fromTo([L.d0, L.d1], { opacity: 0, scale: 0, svgOrigin: `${xL} ${L.y0}` }, { opacity: 1, scale: 1, svgOrigin: `${xL} ${L.y0}`, duration: 0.45, ease: "back.out(2.4)" }, 0.3 + j * 0.06);
+    tl.fromTo(T[L.i].l, { opacity: 0, x: 20 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 0.34 + j * 0.06);
+  });
+
+  // ---- 2. the grey lines run across to now, one after another
+  const greys = Ln.filter((L) => !L.isH);
+  greys.forEach((L, j) => {
+    const at = 0.75 + j * 0.2;
+    tl.to(L, { p: 1, duration: 0.9, ease: "power2.inOut", onUpdate: () => draw(L) }, at);
+    tl.fromTo(T[L.i].r, { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, at + 0.6);
+  });
+
+  // ---- 3. the moment: the brand line climbs last and steepest, its head lands with a ring, the line lights
+  const M = 0.75 + greys.length * 0.2 + 1.05;
+  tl.fromTo([$("lineB"), $("glowB"), $("coreB")], { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "none" }, M - 1.0);
+  tl.to(HB, { p: 1, duration: 1.0, ease: "power3.inOut", onUpdate: () => draw(HB) }, M - 1.0);
+  tl.fromTo(HB.d1, { attr: { r: sw * 1.6 } }, { attr: { r: sw * 2.6 }, duration: 0.1, ease: "power2.out", immediateRender: false }, M);
+  tl.to(HB.d1, { attr: { r: sw * 1.6 }, duration: 0.5, ease: "back.out(3)" }, M + 0.1);
+  tl.fromTo(ring, { attr: { r: sw * 1.6 }, opacity: 0.95 }, { attr: { r: sw * 11 }, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, M + 0.03);
+  tl.fromTo(halo, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, M);
+  tl.to(halo, { opacity: 0.5, duration: 0.8, ease: "power2.out" }, M + 0.4);
+  const hT = T[hero].r;
+  tl.fromTo(hT, { opacity: 0, scale: 0.6, transformOrigin: "0% 50%", filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, M - 0.12);
+  tl.fromTo(hT, { y: 14 * u }, { y: 0, duration: 0.55, ease: "back.out(2)" }, M - 0.12);
+  tl.fromTo(hT, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut", immediateRender: false }, M + 0.35);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.07);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.05, duration: D - M + 0.3, ease: "power2.inOut", immediateRender: false }, M - 0.3);
+  greys.forEach((L) => tl.to([L.ln, L.d0, L.d1, T[L.i].r, T[L.i].l], KEY ? { filter: "brightness(0.6)", duration: 0.6, ease: "power2.inOut" } : { opacity: 0.45, duration: 0.6, ease: "power2.inOut" }, M + 0.15));
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

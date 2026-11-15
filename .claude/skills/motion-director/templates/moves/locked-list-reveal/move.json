@@ -1,0 +1,5 @@
+{ "id": "locked-list-reveal", "name": "Locked list reveal", "oneLiner": "a numbered glass list builds row by row and the open rows write themselves in behind a glowing caret, while one row stays hatched and blurred under a padlock; at the end the lock shakes and springs open, the row floods with the accent and its label is revealed (or it clamps shut and glows as a tease)",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["list", "steps", "secret", "locked", "reveal", "tease", "hidden", "padlock", "numbered", "framework", "unlock", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker lists the steps and holds one back (\"there are five steps, and step four is the one nobody talks about\"): cut in on the count; the lock opens on the word that names it. unlock false when the step is held for later in the video or behind a lead magnet" }

@@ -1,0 +1,5 @@
+{ "id": "network-waterfall", "name": "Network waterfall", "oneLiner": "a dark glass network panel draws a slow request waterfall in real time with the long bars ringed red and a big load time counting up, then a fix slides every bar into a tight parallel stack, the load line jumps left and the number rolls down, goes green and a faster chip stamps in",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "mono"], "from": "new",
+  "tags": ["performance", "speed", "load time", "network", "waterfall", "optimise", "website", "developer", "fast", "data", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says they made something load faster ('it took almost five seconds, now it is under one'): the slow bars draw on the problem, the stack snaps tight and the number goes green on the result" }

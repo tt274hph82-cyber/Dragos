@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"titleA","type":"string","label":"Name of the first tray (the one that fades)","default":"Apps"},
+  {"id":"itemsA","type":"string","label":"First tray icons, comma separated, 2 to 4 short labels","default":"Chat,Search,Docs"},
+  {"id":"titleB","type":"string","label":"Name of the second tray (the one that lights up)","default":"Agents"},
+  {"id":"itemsB","type":"string","label":"Second tray icons, comma separated, 2 to 4 short labels","default":"Inbox,Calendar,Research"},
+  {"id":"glyphsA","type":"string","label":"Glyphs for the first tray, comma separated (empty = guessed from the labels)","default":""},
+  {"id":"glyphsB","type":"string","label":"Glyphs for the second tray, comma separated (empty = guessed from the labels)","default":""},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; background: color-mix(in srgb, var(--accent) 34%, transparent); opacity: 0; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 60%; top: -8%; background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .grp { position: absolute; transform-style: preserve-3d; }
+  .ttl { position: absolute; left: 0; display: flex; align-items: center; box-sizing: border-box; font-weight: 800; color: var(--ink); white-space: nowrap; line-height: 1; letter-spacing: -0.01em;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05)); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.1), 0 calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * -10) rgba(0,0,0,.55); }
+  .is-alpha .ttl { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 84%, white 16%), var(--surface)); }
+  .is-key .ttl { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4); }
+  .is-key .ttl .dot.on { background: var(--ink) !important; }
+  .ttl .dot { display: inline-block; border-radius: 50%; background: color-mix(in srgb, var(--ink) 40%, transparent); vertical-align: middle; }
+  /* the tray: a recessed glass shelf */
+  .tray { position: absolute; left: 0; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(170deg, rgba(255,255,255,.08), rgba(255,255,255,.025));
+    -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.35), inset 0 calc(var(--u) * -1.5) 0 rgba(255,255,255,.18), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.09),
+      0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -22) rgba(0,0,0,.7); }
+  .is-alpha .tray { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 92%, black 8%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .tray::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(108deg, transparent calc(var(--sheen, -50%) - 14%), rgba(255,255,255,.26) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 14%)); }
+  .rim { position: absolute; left: 0; box-sizing: border-box; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 85%, white), 0 0 calc(var(--u) * 60) calc(var(--u) * 4) color-mix(in srgb, var(--accent) 45%, transparent); }
+  /* an app icon: a rounded glass tile with its glyph, the label under it */
+  .ic { position: absolute; transform-style: preserve-3d; }
+  .ic .tile { position: absolute; left: 0; top: 0; display: grid; place-items: center; color: var(--ink); overflow: hidden;
+    background: linear-gradient(150deg, rgba(255,255,255,.3), rgba(255,255,255,.08) 60%, rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.14), 0 calc(var(--u) * 14) calc(var(--u) * 26) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .is-alpha .ic .tile { background: linear-gradient(150deg, color-mix(in srgb, var(--surface) 70%, white 30%), color-mix(in srgb, var(--surface) 88%, white 12%)); }
+  .ic .tile .acc { position: absolute; inset: 0; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 60%, white 40%), var(--accent) 55%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.65); }
+  .ic .tile .gl { position: relative; width: 50%; height: 50%; }
+  .ic .tile::after { content: ""; position: absolute; left: -10%; right: -10%; top: -40%; height: 70%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(255,255,255,.22), transparent); }
+  .ic .nm { position: absolute; left: -20%; right: -20%; text-align: center; font-weight: 600; color: color-mix(in srgb, var(--ink) 82%, transparent); white-space: nowrap; line-height: 1.1; }
+
+  .is-key .tray { background: color-mix(in srgb, var(--surface) 85%, black); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * -1.5) 0 rgba(255,255,255,.18), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.09); }
+  .is-key .ic .tile { background: color-mix(in srgb, var(--surface) 75%, white); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55); }
+  .is-key .ic .nm { color: var(--ink); }
+  .is-key .rim { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  const items = (x, d) => { const a = list(x).filter((s) => s.length).slice(0, 4); while (a.length < 2) a.push(d[a.length]); return a; };
+  const A = { title: String(v.titleA || "Apps").trim(), items: items(v.itemsA, ["Chat", "Search"]), gl: list(v.glyphsA) };
+  const B = { title: String(v.titleB || "Agents").trim(), items: items(v.itemsB, ["Inbox", "Calendar"]), gl: list(v.glyphsB) };
+  const USED = new Set();
+
+  // ---- two trays: side by side on 16:9, stacked on 9:16 and 1:1
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.08, x1: W * 0.92, y0: H * 0.07, y1: H * 0.93 } : { x0: W * 0.06, x1: W * 0.94, y0: H * 0.16, y1: H * 0.84 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0, SIDE = !P && !SQ;
+  const TG = (TOP ? 28 : 56) * u;                          // between the trays
+  const tfs = (TOP ? 36 : 40) * u, TH = tfs * 2.3;          // title chip row
+  const nfs = Math.max(36 * u, (TOP ? 36 : 38) * u);
+  const maxN = Math.max(A.items.length, B.items.length);
+  // icon size from the room: a tray is pad + n icons + gaps + pad wide, icon + label + pads tall
+  const trayW = SIDE ? (RW - TG) / 2 : RW;
+  const trayHmax = SIDE ? RH - TH : (RH - TG) / 2 - TH;
+  const GR = P ? 0.36 : 0.5, PR = P ? 0.32 : 0.42;            // icon gap and tray padding, as a share of the icon
+  const fromW = (trayW) / (maxN * 1.0 + (maxN - 1) * GR + 2 * PR);
+  const fromH = (trayHmax - nfs * 1.6) / (1 + PR * 2 + 0.05);
+  const ic = Math.min(fromW, fromH, (TOP ? 130 : 190) * u);
+  const IG = ic * GR, IP = ic * PR, LBH = nfs * 1.5;
+  const tH = IP + ic + LBH + IP * 0.7;
+  const trayFor = (n) => Math.max(IP * 2 + n * ic + (n - 1) * IG, 0);
+  const tW = SIDE ? trayW : Math.min(RW * 0.94, Math.max(trayFor(A.items.length), trayFor(B.items.length)) * 1.15);
+  const GH = SIDE ? TH + tH : 2 * (TH + tH) + TG, GW = SIDE ? 2 * tW + TG : tW;
+  const gx0 = R.x0 + (RW - GW) / 2, gy0 = R.y0 + (RH - GH) / 2;
+  const rad = Math.min(46 * u, tH * 0.2), irad = ic * 0.23;
+  const rig = document.getElementById("rig");
+
+  const build = (T, k) => {
+    const gx = SIDE ? gx0 + k * (tW + TG) : gx0, gy = SIDE ? gy0 : gy0 + k * (TH + tH + TG);
+    const g = document.createElement("div"); g.className = "grp"; rig.appendChild(g);
+    Object.assign(g.style, { left: gx + "px", top: gy + "px", width: tW + "px", height: TH + tH + "px" });
+    g.innerHTML = `<div class="ttl" style="top:0;height:${tfs * 1.85}px;padding:0 ${tfs * 0.6}px;border-radius:${tfs}px;font-size:${tfs}px"><span class="dot" style="width:${tfs * 0.36}px;height:${tfs * 0.36}px;margin-right:${tfs * 0.36}px;margin-top:${-tfs * 0.1}px"></span>${T.title}</div>
+      <div class="tray" style="top:${TH}px;width:${tW}px;height:${tH}px;border-radius:${rad}px"></div>
+      <div class="rim" style="top:${TH}px;width:${tW}px;height:${tH}px;border-radius:${rad}px"></div>`;
+    MV.fitText(g.querySelector(".ttl"), tW - tfs * 1.6, 24);
+    const n = T.items.length, rowW = n * ic + (n - 1) * IG, ix0 = (tW - rowW) / 2;
+    const icons = T.items.map((label, i) => {
+      const e = document.createElement("div"); e.className = "ic"; g.appendChild(e);
+      Object.assign(e.style, { left: ix0 + i * (ic + IG) + "px", top: TH + IP + "px", width: ic + "px", height: ic + LBH + "px" });
+      e.innerHTML = `<div class="tile" style="width:${ic}px;height:${ic}px;border-radius:${irad}px"><div class="acc"></div>${GLYPH.svg(GLYPH.pick(label, T.gl[i], i + k * 4, USED))}</div><div class="nm" style="top:${ic + nfs * 0.45}px;font-size:${nfs}px">${label}</div>`;
+      MV.fitText(e.querySelector(".nm"), ic + IG * 0.9, 24);
+      return { e, tile: e.querySelector(".tile"), nm: e.querySelector(".nm") };
+    });
+    return { g, gx, gy, ttl: g.querySelector(".ttl"), dot: g.querySelector(".dot"), tray: g.querySelector(".tray"), rim: g.querySelector(".rim"), icons };
+  };
+  const TA = build(A, 0), TB = build(B, 1);
+  const cx = gx0 + GW / 2, cy = gy0 + GH / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  [TA, TB].forEach((T) => gsap.set(T.g, { transformOrigin: `${tW / 2}px ${(TH + tH) / 2}px` }));
+  const l1 = document.querySelector("#ground .l1"); Object.assign(l1.style, { left: TB.gx + tW / 2 - W * 0.3 + "px", top: TB.gy + TH + tH / 2 - H * 0.2 + "px" });
+
+  // ---- camera: a slow 3D drift
+  tl.fromTo("#rig", { rotationY: -10, rotationX: 9, scale: 0.95, y: 22 * u }, { rotationY: 5, rotationX: 3, scale: 1.0, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. each tray slides in empty, then its icons drop in one at a time
+  const fill = (T, t0, gap) => {
+    tl.fromTo(T.tray, { opacity: 0, scaleX: 0.85, y: 20 * u }, { opacity: 1, scaleX: 1, y: 0, duration: 0.6, ease: "expo.out" }, t0);
+    tl.fromTo(T.ttl, { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, t0 + 0.1);
+    T.icons.forEach((c, i) => { const at = t0 + 0.3 + i * gap;
+      tl.fromTo(c.e, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.26, ease: "power2.out" }, at);
+      tl.fromTo(c.tile, { y: -70 * u, z: 120, scale: 1.1, rotationX: 30 }, { y: 0, z: 0, scale: 1, rotationX: 0, duration: 0.6, ease: "back.out(1.9)" }, at);
+      tl.fromTo(c.nm, { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, at + 0.16); });
+    return t0 + 0.3 + (T.icons.length - 1) * gap + 0.5;
+  };
+  const tA = fill(TA, 0.06, 0.2);
+  const tB = fill(TB, tA - 0.15, 0.24);
+
+  // ---- 2. the turn: the first tray drains to grey and falls back, the second lifts and its icons take the accent one by one
+  const L = tB + 0.2;
+  tl.to(TA.g, KEY ? { filter: "grayscale(1) brightness(0.55)", scale: 0.96, duration: 0.6, ease: "power2.inOut" } : { filter: "grayscale(1)", opacity: 0.42, scale: 0.95, duration: 0.6, ease: "power2.inOut" }, L);
+  TB.g.style.zIndex = 5;
+  tl.to(TB.g, { scale: 1.04, z: 50, duration: 0.7, ease: "back.out(1.6)" }, L);
+  tl.to(TB.rim, { opacity: 1, duration: 0.25, ease: "power2.out" }, L + 0.05);
+  TB.dot.classList.add("on");
+  tl.to(TB.dot, { backgroundColor: "#2BD67B", boxShadow: "0 0 10px rgba(43,214,123,.6)", duration: 0.2 }, L + 0.05);
+  tl.to(l1, { opacity: 1, duration: 1.1, ease: "power2.out" }, L - 0.1);
+  tl.fromTo(TB.tray, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, L + 0.1);
+  TB.icons.forEach((c, i) => { const at = L + 0.15 + i * 0.12;
+    tl.to(c.tile.querySelector(".acc"), { opacity: 1, duration: 0.2, ease: "power2.out" }, at);
+    tl.to(c.tile, { color: "#ffffff", duration: 0.2, ease: "power2.out" }, at);
+    tl.fromTo(c.tile, { scale: 1 }, { scale: 1.14, duration: 0.12, ease: "power2.out", immediateRender: false }, at);
+    tl.to(c.tile, { scale: 1, duration: 0.5, ease: "back.out(3)" }, at + 0.12);
+    tl.to(c.nm, { color: v.ink || "#fff", duration: 0.2 }, at); });
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, L + 0.15); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, L + 0.22);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

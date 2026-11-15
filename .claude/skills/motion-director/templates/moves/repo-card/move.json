@@ -1,0 +1,5 @@
+{ "id": "repo-card", "name": "Glass repo card", "oneLiner": "a code repository card (name, description, language dot, contributors) pops in tilted on glass, the star count races up and lands in a gold star burst, then a trending pill springs in under the light",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["repo", "open source", "code", "stars", "developer", "trending", "launch", "proof", "viral", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker mentions an open source project or a repo blowing up ('it has 24k stars', 'it was trending all week'): the burst lands on the star number, the pill on 'trending'" }

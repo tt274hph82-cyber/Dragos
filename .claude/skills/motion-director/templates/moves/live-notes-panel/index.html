@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"file","type":"string","label":"Window title (a file name)","default":"notes.md"},
+  {"id":"title","type":"string","label":"The heading bar","default":"The plan"},
+  {"id":"notes","type":"string","label":"The notes, one per line, split with |","default":"Pick one problem|Build the smallest fix|Ship it this week"},
+  {"id":"marker","type":"string","label":"Line markers: letters, numbers or dots","default":"letters"},
+  {"id":"hi","type":"number","label":"Line the highlighter lands on (1 = first, 0 = none, -1 = last)","default":-1},
+  {"id":"side","type":"string","label":"16:9 and 1:1: right or left","default":"right"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ad: color-mix(in srgb, var(--accent) 65%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(45% 40% at 70% 45%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 10% 100%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='6'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #grp { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1600); }
+  #win { position: relative; box-sizing: border-box; border-radius: calc(var(--u) * 30); overflow: hidden; transform-style: preserve-3d;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, #fff 8%), color-mix(in srgb, var(--surface) 94%, transparent) 40%, color-mix(in srgb, var(--surface) 90%, #000 10%));
+    -webkit-backdrop-filter: blur(26px) saturate(150%); backdrop-filter: blur(26px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13),
+      0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -20) rgba(0,0,0,.7), 0 calc(var(--u) * 6) calc(var(--u) * 16) rgba(0,0,0,.3); }
+  .is-key #win { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.14) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  /* title bar */
+  #bar { position: relative; display: flex; align-items: center; height: calc(var(--u) * 66); padding: 0 calc(var(--u) * 24);
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); border-bottom: calc(var(--u) * 1.5) solid rgba(255,255,255,.08); }
+  .tl { width: calc(var(--u) * 20); height: calc(var(--u) * 20); border-radius: 50%; margin-right: calc(var(--u) * 12); flex: none;
+    box-shadow: inset 0 calc(var(--u) * -2) calc(var(--u) * 3) rgba(0,0,0,.25), inset 0 calc(var(--u) * 1.5) calc(var(--u) * 1) rgba(255,255,255,.35); }
+  #fname { position: absolute; left: 0; right: 0; text-align: center; font-size: calc(var(--u) * 26); font-weight: 600; color: color-mix(in srgb, var(--ink) 66%, transparent); white-space: nowrap; pointer-events: none; }
+  #fname svg { width: calc(var(--u) * 24); height: calc(var(--u) * 24); vertical-align: -0.16em; margin-right: calc(var(--u) * 8); }
+  /* a formatting toolbar, drawn */
+  #tools { display: flex; align-items: center; gap: calc(var(--u) * 22); height: calc(var(--u) * 54); padding: 0 calc(var(--u) * 30); border-bottom: calc(var(--u) * 1.5) solid rgba(255,255,255,.06); }
+  #tools svg { width: calc(var(--u) * 26); height: calc(var(--u) * 26); opacity: .5; flex: none; }
+  #tools .dv { width: calc(var(--u) * 1.5); height: calc(var(--u) * 26); background: rgba(255,255,255,.12); }
+  /* body */
+  #body { position: relative; padding: calc(var(--u) * 30) calc(var(--u) * 32) calc(var(--u) * 26); }
+  #head { position: relative; display: flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: calc(var(--u) * 76); padding: calc(var(--u) * 8) calc(var(--u) * 28);
+    border-radius: calc(var(--u) * 16); color: #fff; font-family: var(--font-display); font-size: calc(var(--u) * 36); letter-spacing: .03em; text-transform: uppercase; text-align: center;
+    background: linear-gradient(175deg, var(--al), var(--accent) 50%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #head { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45); }
+  #headt { white-space: nowrap; }
+  #lines { position: relative; margin-top: calc(var(--u) * 26); }
+  .ln { position: relative; display: flex; align-items: flex-start; gap: calc(var(--u) * 18); margin-bottom: calc(var(--u) * 18); }
+  .mk { flex: none; display: grid; place-items: center; width: calc(var(--u) * 48); height: calc(var(--u) * 48); border-radius: calc(var(--u) * 12); margin-top: calc(var(--u) * 2);
+    font-weight: 800; font-size: calc(var(--u) * 26); color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 12%, transparent); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) color-mix(in srgb, var(--ink) 16%, transparent); }
+  .mk.dot::after { content: ""; width: 34%; height: 34%; border-radius: 50%; background: var(--ink); }
+  .tx { position: relative; flex: 1; min-width: 0; font-size: calc(var(--u) * 38); font-weight: 600; line-height: 1.32; color: var(--ink); letter-spacing: -0.01em; }
+  .tx .c { opacity: 0; }
+  .hl { position: absolute; border-radius: calc(var(--u) * 6); pointer-events: none; transform-origin: 0 50%;
+    background: color-mix(in srgb, var(--accent2) 52%, transparent); mix-blend-mode: normal; }
+  #caret { position: absolute; left: 0; top: 0; width: calc(var(--u) * 4); border-radius: calc(var(--u) * 2); background: var(--accent); opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 10) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #caret { box-shadow: none; }
+  .tight #bar { height: calc(var(--u) * 56); }
+  .tight #body { padding: calc(var(--u) * 20) calc(var(--u) * 28) calc(var(--u) * 10); }
+  .tight #head { min-height: calc(var(--u) * 64); font-size: calc(var(--u) * 32); }
+  .tight #lines { margin-top: calc(var(--u) * 18); }
+  .tight .ln { margin-bottom: calc(var(--u) * 10); }
+  .tight .tx { line-height: 1.24; }
+  .tight .mk { width: calc(var(--u) * 42); height: calc(var(--u) * 42); font-size: calc(var(--u) * 24); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="grp">
+    <div id="win">
+      <div id="bar"><div class="tl" style="background:#FF5F57"></div><div class="tl" style="background:#FEBC2E"></div><div class="tl" style="background:#28C840"></div>
+        <div id="fname"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg><span id="fn"></span></div></div>
+      <div id="tools">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h6.5a4 4 0 0 1 0 8H7zM7 12h7.5a4 4 0 0 1 0 8H7z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M10 4h8M6 20h8M15 4L9 20"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M7 4v7a5 5 0 0 0 10 0V4M5 21h14"/></svg>
+        <div class="dv"></div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.3" fill="#fff"/><circle cx="4.5" cy="12" r="1.3" fill="#fff"/><circle cx="4.5" cy="18" r="1.3" fill="#fff"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="6" height="6" rx="1.5"/><path d="M4.5 7l1.2 1.2L8 5.8M13 7h8M3 15h6v6H3zM13 18h8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1L19 8l-3-3L5 16zM14 7l3 3"/></svg>
+      </div>
+      <div id="body"><div id="head"><span id="headt"></span></div><div id="lines"></div><div id="caret"></div></div>
+      <div class="sh"></div>
+    </div>
+  </div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1.0 : SQ ? 0.78 : 1.05);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const RIGHT = String(v.side || "right").toLowerCase() !== "left";
+
+  // ---- size the window: 16:9 / 1:1 a tall notes window at one side; 9:16 a wide one under the chin
+  let PW, PH, x, y;
+  if (P) { PW = W - safe.left - safe.right; }
+  else if (SQ) { PW = Math.round(W * 0.31); }
+  else { PW = Math.round(Math.min(W * 0.31, 640 * u)); }
+  const win = $("#win"); win.style.width = PW + "px";
+  $("#fn").textContent = v.file || "";
+  const headt = $("#headt"); headt.textContent = v.title || ""; if (!v.title) $("#head").style.display = "none";
+  // 9:16 drops the toolbar to keep the window low
+  if (P) { $("#tools").style.display = "none"; root.classList.add("tight"); }
+  MV.fitText($("#fname"), PW - 300 * u, 12);
+  MV.fitText(headt, PW - 64 * u - 56 * u, 16);
+
+  // ---- the notes: each a marker and a line of characters (they wrap, as notes do)
+  const notes = String(v.notes || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 6);
+  const mode = String(v.marker || "letters").toLowerCase();
+  const lines = $("#lines"), rows = [];
+  notes.forEach((t, i) => {
+    const ln = document.createElement("div"); ln.className = "ln";
+    const mk = document.createElement("div"); mk.className = "mk" + (mode.startsWith("dot") ? " dot" : "");
+    if (!mode.startsWith("dot")) mk.textContent = mode.startsWith("num") ? String(i + 1) : String.fromCharCode(65 + i);
+    const tx = document.createElement("div"); tx.className = "tx";
+    [...t].forEach((ch) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; tx.appendChild(s); });
+    ln.appendChild(mk); ln.appendChild(tx); lines.appendChild(ln); rows.push({ ln, mk, tx, chars: [...tx.children] });
+  });
+  // shrink the body text if the window would run past its zone
+  const bodyEl = $("#body");
+  const maxH = P ? H * 0.645 - H * 0.44 : H * (SQ ? 0.84 : 0.8);
+  if (P) rows.forEach((r) => { r.tx.style.fontSize = 36 * u + "px"; });
+  let fs = P ? 36 : 38;
+  const fitH = () => win.offsetHeight;
+  while (fitH() > maxH && fs > (P ? 28 : 22)) { fs -= 2; rows.forEach((r) => { r.tx.style.fontSize = fs * u + "px"; }); }
+
+  // the window: notes-tall at the side, content-tall under the chin
+  if (P) { PH = win.offsetHeight; x = safe.left; y = H * 0.645 - PH; }
+  else { PH = Math.round(Math.max(win.offsetHeight + 150 * u, H * (SQ ? 0.62 : 0.56))); PH = Math.min(PH, H * 0.86); PH = Math.max(PH, win.offsetHeight); win.style.height = PH + "px";
+    x = RIGHT ? W - (SQ ? W * 0.03 : safe.right) - PW : (SQ ? W * 0.03 : safe.left); y = (H - PH) / 2; }
+  gsap.set("#grp", { x, y });
+
+  // ---- measure every character's caret spot (layout is final: the chars hold their space while hidden)
+  const bodyR = bodyEl.getBoundingClientRect();
+  const loc = (r) => ({ l: r.left - bodyR.left, r: r.right - bodyR.left, t: r.top - bodyR.top, b: r.bottom - bodyR.top });
+  const caret = $("#caret");
+  const lh = parseFloat(getComputedStyle(rows[0] ? rows[0].tx : document.body).fontSize) * 1.1;
+  caret.style.height = lh + "px";
+  rows.forEach((r) => { r.spots = r.chars.map((c) => loc(c.getBoundingClientRect())); });
+
+  // ---- the highlighter strokes for the chosen line, one per wrapped row
+  let hiI = Math.round(+v.hi); if (hiI < 0) hiI = rows.length; const hiRow = rows[hiI - 1];
+  const hls = [];
+  if (hiRow) {
+    const rects = {}; hiRow.chars.forEach((c, k) => { const s = hiRow.spots[k]; const key = Math.round(s.t); (rects[key] = rects[key] || { l: s.l, r: s.r, t: s.t, b: s.b }); rects[key].l = Math.min(rects[key].l, s.l); rects[key].r = Math.max(rects[key].r, s.r); });
+    Object.values(rects).forEach((q) => { const d = document.createElement("div"); d.className = "hl"; const pad = 6 * u;
+      Object.assign(d.style, { left: q.l - pad + "px", top: q.t + (q.b - q.t) * 0.12 + "px", width: q.r - q.l + pad * 2 + "px", height: (q.b - q.t) * 0.8 + "px" });
+      bodyEl.insertBefore(d, bodyEl.firstChild); hls.push(d); });
+    hiRow.tx.style.zIndex = 1;
+  }
+
+  // ---- timeline
+  // the window swings in from its side and settles; the title bar first, then the heading bar slams in
+  const dir = P ? 0 : RIGHT ? 1 : -1;
+  tl.fromTo(win, { opacity: 0, x: dir * 120 * u, y: P ? 60 * u : 0, rotationY: dir * -28, rotationX: P ? 18 : 0, scale: 0.9, transformOrigin: dir > 0 ? "100% 50%" : dir < 0 ? "0% 50%" : "50% 100%" },
+    { opacity: 1, x: 0, y: 0, rotationY: dir * -4, rotationX: 0, scale: 1, duration: 0.8, ease: "expo.out" }, 0.04);
+  tl.fromTo(win, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.out", immediateRender: false }, 0.04);
+  tl.fromTo(".tl", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(2.5)", stagger: 0.05 }, 0.25);
+  tl.fromTo("#fname", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.3);
+  tl.fromTo("#tools svg, #tools .dv", { opacity: 0, y: 6 * u }, { opacity: 0.5, y: 0, duration: 0.4, ease: "expo.out", stagger: 0.03 }, 0.35);
+  if (v.title) {
+    tl.fromTo("#head", { scaleX: 0.2, scaleY: 0.6, opacity: 0, transformOrigin: "0% 50%" }, { scaleX: 1, scaleY: 1, opacity: 1, duration: 0.55, ease: "back.out(1.8)" }, 0.5);
+    tl.fromTo(headt, { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, 0.66);
+  }
+  // the notes type in, one after another, a caret riding the last letter; the gaps spread over the shot
+  const T0 = v.title ? 1.1 : 0.8, HI = hiRow ? 0.75 : 0, END = D - 0.95 - HI;
+  const totalC = rows.reduce((s, r) => s + r.chars.length, 0);
+  const per = Math.max(0.022, Math.min(0.045, (END - T0 - rows.length * 0.28) / Math.max(1, totalC)));
+  const gap = Math.max(0.2, (END - T0 - totalC * per) / Math.max(1, rows.length));
+  let t = T0;
+  rows.forEach((r, i) => {
+    tl.fromTo(r.mk, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2.4)" }, t);
+    t += 0.12;
+    const s0 = r.spots[0]; tl.set(caret, { opacity: 1, x: s0.l, y: s0.t + (s0.b - s0.t - lh) / 2 }, t - 0.02);
+    r.chars.forEach((c, k) => { const s = r.spots[k]; tl.set(c, { opacity: 1 }, t + k * per); tl.set(caret, { x: s.r + 2 * u, y: s.t + (s.b - s.t - lh) / 2 }, t + k * per); });
+    t += r.chars.length * per;
+    // a blink at the end of the line
+    tl.set(caret, { opacity: 0 }, t + 0.12); if (i < rows.length - 1) t += gap; else { tl.set(caret, { opacity: 1 }, t + 0.3); tl.set(caret, { opacity: 0 }, t + 0.48); }
+  });
+  // THE MOMENT: the highlighter swipes across the line that matters
+  if (hiRow) {
+    const TH = t + 0.25;
+    hls.forEach((d, k) => tl.fromTo(d, { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: "power2.inOut" }, TH + k * 0.3));
+    tl.to(hiRow.mk, { backgroundColor: "color-mix(in srgb, var(--accent2) 60%, transparent)", duration: 0.3, ease: "power2.out" }, TH);
+    tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, TH);
+  }
+  // the hold: the window breathes in depth
+  tl.to("#win", { rotationY: dir * 3, rotationX: P ? -3 : 1.5, duration: D - 0.9, ease: "sine.inOut" }, 0.85);
+  // out: it swings back out to its side
+  const O = D - 0.42;
+  tl.to(win, { opacity: 0, x: dir * 90 * u, y: P ? 40 * u : 0, rotationY: dir * -20, scale: 0.94, duration: 0.34, ease: "power3.in" }, O);
+  MV.done();
+</script>
+</body>
+</html>

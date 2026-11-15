@@ -1,0 +1,5 @@
+{ "id": "eval-runs", "name": "Eval runs", "oneLiner": "a glass eval table of test cases: Run is pressed, a scan bar steps down the rows as each one spins and lands a green Pass or a grey Fail, a segmented bar fills under them, and the score counts up big and lands with the status flipping to a green Complete",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "eval", "evals", "testing", "test cases", "benchmark", "quality", "score", "pass", "fail", "prompt", "agent", "llm", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says they tested the prompt or agent before trusting it ('I ran it against fifty test cases', 'it passed five out of six'): the run starts on 'tested', the score lands on the number" }

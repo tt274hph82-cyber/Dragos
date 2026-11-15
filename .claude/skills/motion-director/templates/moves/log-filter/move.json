@@ -1,0 +1,5 @@
+{ "id": "log-filter", "name": "Log filter", "oneLiner": "a dark glass log viewer streams lines, a filter types into its search field, every line that is not an error fades and folds away, the window hugs the errors that are left and one error lifts with its trace line",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "mono"], "from": "new",
+  "tags": ["logs", "error", "debug", "filter", "search", "developer", "server", "monitoring", "bug", "mono", "code", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": true,
+  "say": "when the speaker says they dug through the logs and found the one thing that broke ('thousands of lines, and there it was'): the noise fades on 'filter', the error lifts on 'there it was'" }

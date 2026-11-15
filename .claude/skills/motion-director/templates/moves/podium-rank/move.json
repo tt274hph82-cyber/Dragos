@@ -1,0 +1,5 @@
+{ "id": "podium-rank", "name": "Podium rank", "oneLiner": "three glass steps rise off a lit floor with their rank numerals and scores counting up as they grow; the entries drop onto them third, second, then first, and the winning step floods with the accent under a beam of light while the camera lifts toward it",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["podium", "ranking", "top three", "winner", "first place", "comparison", "best", "award", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker names a top three or says what came first ('third place, second, and the winner was...'): cut in on the ranking, the winner drops onto the top step on the word that names it" }

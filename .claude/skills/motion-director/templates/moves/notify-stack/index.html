@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"line1","type":"string","label":"First notification","default":"You have a new customer"},
+  {"id":"line2","type":"string","label":"Second notification","default":"Payment received"},
+  {"id":"line3","type":"string","label":"Third notification","default":"12 new sign-ups today"},
+  {"id":"title","type":"string","label":"App name on the cards (empty: the brand name)","default":""},
+  {"id":"now","type":"string","label":"Time label on the newest card","default":"now"},
+  {"id":"ago","type":"string","label":"Time label once pushed down","default":"1m ago"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(60% 34% at var(--gx, 50%) var(--gy, 40%), color-mix(in srgb, var(--accent) 34%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 80% 100%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stack { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1400); }
+  .nc { position: absolute; left: 0; top: 0; width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: calc(var(--u) * 26);
+    padding: calc(var(--u) * 26) calc(var(--u) * 32) calc(var(--u) * 26) calc(var(--u) * 26); border-radius: calc(var(--u) * 42); transform-origin: 50% 0%;
+    background: linear-gradient(160deg, rgba(255,255,255,.19), rgba(255,255,255,.07) 60%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(26px) saturate(170%); backdrop-filter: blur(26px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13),
+      inset 0 calc(var(--u) * -30) calc(var(--u) * 60) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 45%, transparent),
+      0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -24) rgba(0,0,0,.6); }
+  .is-alpha .nc { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 90%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .nc { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13); }
+  .nc .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.26) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .tile { flex: none; width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: calc(var(--u) * 24); display: grid; place-items: center;
+    background: linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.14), 0 0 calc(var(--u) * 30) calc(var(--u) * -6) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .tile img { width: 74%; height: 74%; object-fit: contain; }
+  .tx { flex: 1; min-width: 0; }
+  .top { display: flex; align-items: baseline; justify-content: space-between; gap: calc(var(--u) * 16); }
+  .app { font-size: calc(var(--u) * 23); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 62%, transparent); white-space: nowrap; }
+  .tm { font-size: calc(var(--u) * 23); font-weight: 500; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; flex: none; }
+  .ln { margin-top: calc(var(--u) * 8); font-size: calc(var(--u) * 40); font-weight: 650; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stack"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 1 : 1.3);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration;
+  const lines = [v.line1, v.line2, v.line3].filter((s) => s && String(s).trim());
+  const N = lines.length;
+
+  // width: 9:16 the safe width; 16:9 / 1:1 a phone-notification proportion
+  const CW = MV.portrait ? W - safe.left - safe.right : Math.min(700 * u, W - safe.left - safe.right);
+  const stack = document.getElementById("stack"); stack.style.width = CW + "px";
+  const cards = lines.map((txt, i) => {
+    const c = document.createElement("div"); c.className = "nc"; c.id = "n" + i;
+    c.innerHTML = `<div class="tile"></div><div class="tx"><div class="top"><span class="app"></span><span class="tm"></span></div><div class="ln"></div></div><div class="sh"></div>`;
+    if (v.mark) c.querySelector(".tile").appendChild(MV.img(v.mark));
+    c.querySelector(".app").textContent = v.title || v.brandName || "";
+    c.querySelector(".tm").textContent = v.now || "";
+    c.querySelector(".ln").textContent = txt;
+    c.style.zIndex = 10 + i;                       // the newest is on top
+    stack.appendChild(c);
+    return c;
+  });
+  const inner = CW - (26 + 92 + 26 + 32) * u;
+  cards.forEach((c) => { MV.fit(c.querySelector(".ln"), inner, 18); MV.fit(c.querySelector(".app"), inner - 130 * u, 12); });
+  const CH = cards[0].getBoundingClientRect().height, GAP = 16 * u;
+
+  // slots: 0 the newest, full; 1 pushed under it, slightly smaller; 2 tucked in behind slot 1, only its edge shows
+  const SLOT = [
+    { y: 0, scale: 1, opacity: 1, filter: "blur(0px) brightness(1)" },
+    { y: CH + GAP, scale: 0.95, opacity: 1, filter: "blur(0px) brightness(0.84)" },
+    { y: CH + GAP + 48 * u, scale: 0.86, opacity: root.classList.contains("is-key") ? 1 : 0.75, filter: "blur(1.5px) brightness(0.62)" },
+  ];
+  const totalH = CH + GAP + 48 * u + CH * 0.86;
+  let x = (W - CW) / 2, y = (H - totalH) / 2;
+  if (MV.alpha) {
+    if (MV.portrait) { x = safe.left; y = safe.top + 20 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = safe.top + 10 * u; }
+    else { y = safe.top + 10 * u; }
+  } else if (MV.portrait) y = H * 0.4 - totalH / 2;
+  gsap.set(stack, { x, y });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH) / H * 100) + "%");
+
+  // one beat per notification
+  const BEAT = N > 1 ? Math.min(1.05, (D - 1.7) / (N - 1)) : 1;
+  const T = cards.map((_, i) => 0.08 + i * BEAT);
+  cards.forEach((c, i) => {
+    const t = T[i];
+    // it drops in from above the stack, tipped forward, out of blur, and lands on a spring
+    tl.fromTo(c, { y: -CH * 0.75, scale: 0.9, rotationX: -28 }, { y: 0, scale: 1, rotationX: 0, duration: 0.75, ease: "back.out(1.7)" }, t);
+    // focus on a non-overshooting ease (back would push blur() negative, which CSS drops)
+    tl.fromTo(c, { opacity: 0, filter: "blur(12px) brightness(1)" }, { opacity: 1, filter: "blur(0px) brightness(1)", duration: 0.45, ease: "power3.out" }, t);
+    tl.fromTo(c.querySelector(".tile"), { scale: 0.5, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, t + 0.08);
+    tl.fromTo(c.querySelector(".ln"), { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, t + 0.16);
+    tl.fromTo(c, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.75, ease: "power2.inOut" }, t + 0.3);
+    // the older ones make room: pushed down one slot, the oldest tucks in behind
+    for (let j = 0; j < i; j++) {
+      const k = Math.min(2, i - j), s = SLOT[k], o = cards[j];
+      tl.to(o, { y: s.y, scale: s.scale, duration: 0.6, ease: "back.out(1.5)" }, t + 0.02);
+      tl.to(o, { opacity: s.opacity, filter: s.filter, duration: 0.45, ease: "power2.out" }, t + 0.02);
+      if (k === 1) tl.set(o.querySelector(".tm"), { textContent: v.ago || "" }, t + 0.15);
+      if (k === 2) tl.to([o.querySelector(".tx"), o.querySelector(".tile")], { opacity: 0, duration: 0.18, ease: "power2.out" }, t);
+    }
+  });
+  // the hold breathes: the whole stack drifts a few pixels
+  tl.fromTo(stack, { y }, { y: y + 10 * u, duration: D - 0.6, ease: "sine.inOut", immediateRender: false }, 0.3);
+  // exit: each card flicks up and away, the top one first, accelerating
+  cards.slice().reverse().forEach((c, i) => tl.to(c, { y: "-=" + 90 * u, opacity: 0, filter: "blur(12px)", duration: 0.3, ease: "power3.in" }, D - 0.42 + i * 0.04));
+  MV.done();
+</script>
+</body>
+</html>

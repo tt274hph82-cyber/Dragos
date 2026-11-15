@@ -1,0 +1,5 @@
+{ "id": "slack-message", "name": "Glass team chat message", "oneLiner": "a team channel on a glass pane: a message posts with a highlight flash, reactions pile on underneath with their counts climbing, your own fire reaction bursts, then the thread link stacks its avatars and the reply count rolls up",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["team", "chat", "channel", "workspace", "announcement", "reactions", "celebration", "milestone", "company", "coworkers", "thread", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker shares news with their team or a win landing at work ('I posted it in the team channel', 'everyone went crazy'): the message posts on the news, the reactions pile on as they describe the response" }

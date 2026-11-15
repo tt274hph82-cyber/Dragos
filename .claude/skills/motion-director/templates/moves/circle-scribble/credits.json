@@ -1,0 +1,4 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/fonts/PermanentMarker-Regular.ttf", "from": "Permanent Marker by Font Diner, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Permanent+Marker" }
+] }

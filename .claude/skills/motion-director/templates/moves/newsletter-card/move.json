@@ -1,0 +1,5 @@
+{ "id": "newsletter-card", "name": "Glass newsletter signup", "oneLiner": "a newsletter signup card pops in tilted on glass (the latest issue cover, the brand mark, name and reader count), an address types into the field, a cursor presses the button, it turns into a green Subscribed check with a burst and the reader count ticks up by one",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["newsletter", "subscribe", "email", "signup", "list", "lead magnet", "cta", "readers", "letter", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker plugs the newsletter or the free resource ('it is all in my free letter', 'link below to get it'): the press lands on 'subscribe' or 'free', the count ticks as they say who else reads it" }

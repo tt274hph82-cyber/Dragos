@@ -1,0 +1,5 @@
+{ "id": "explainer-build", "name": "Explainer build", "oneLiner": "a glass card assembles on the speaker's cues: the blank card, the title, then 3 to 5 glyph blocks scale in one by one, an accent outline draws around a group and names it, and at the end one block lifts toward camera while the rest dim",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["explainer", "anatomy", "breakdown", "parts", "components", "build", "diagram", "teach", "agent", "framework", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker breaks something into its parts (\"an AI agent is made of four things...\"): set cues to the seconds each part is named so every block lands on its word; the outline lands on the word that groups them, the lift on the one that matters most. layout top keeps it above the speaker" }

@@ -1,0 +1,5 @@
+{ "id": "location-pin-chip", "name": "Location pin chip", "oneLiner": "a glass location chip under the chin: a tiny street-map disc under a glass dome pops, the glass opens out with the place name, and a glossy map pin falls onto the map, squashes and sends a ripple, then pulses through the hold",
+  "category": "system", "kind": "effect", "uses": ["overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["location", "place", "city", "where", "pin", "map", "travel", "vlog", "on location", "event", "chip", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.0, "alpha": true,
+  "say": "when the video opens somewhere or the speaker says where they are ('I'm in Lisbon at the conference'): cut it in on the place name, set duration to the length of the shot to keep it up; sub for a venue or a day" }

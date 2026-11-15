@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Pull request title","default":"Add AI reply drafts"},
+  {"id":"number","type":"string","label":"Pull request number","default":"128"},
+  {"id":"branch","type":"string","label":"Branch being merged","default":"ai-replies"},
+  {"id":"base","type":"string","label":"Branch it merges into","default":"main"},
+  {"id":"checks","type":"string","label":"Checks, comma separated (up to 3)","default":"Build,Tests,Review"},
+  {"id":"times","type":"string","label":"Time beside each check, comma separated","default":"12s,48s,Approved"},
+  {"id":"button","type":"string","label":"Merge button label","default":"Merge pull request"},
+  {"id":"merged","type":"string","label":"Status after the merge","default":"Merged"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .l3 { width: 50%; height: 34%; left: 30%; top: 50%; background: rgba(43,214,123,.0); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+
+  /* header */
+  #ico { display: flex; align-items: center; justify-content: center; border-radius: calc(var(--s) * 18);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 40%, transparent), color-mix(in srgb, var(--accent) 14%, transparent));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #ico svg { width: 60%; height: 60%; }
+  #ttl { font-weight: 750; font-size: calc(var(--s) * 44); line-height: 1.1; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+  #num { font-weight: 500; color: color-mix(in srgb, var(--ink) 48%, transparent); white-space: nowrap; font-size: calc(var(--s) * 40); }
+  /* status pill: Open, flips to Merged */
+  #pill { perspective: 600px; }
+  #pill .f { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 10); border-radius: 99px; backface-visibility: hidden;
+    font-weight: 700; font-size: calc(var(--s) * 32); white-space: nowrap; }
+  #pill .f svg { width: calc(var(--s) * 30); height: calc(var(--s) * 30); flex: none; }
+  #pill .op { color: var(--ink); background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 2) rgba(255,255,255,.28); }
+  #pill .mg { color: #04150B; background: linear-gradient(180deg, var(--okl), var(--ok) 60%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--s) * 8) calc(var(--s) * 26) rgba(43,214,123,.45); visibility: hidden; }
+  .is-key #pill .mg { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+  .is-key #pill .op { background: color-mix(in srgb, var(--surface) 80%, white); }
+  #pill .in { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .chipb { display: flex; align-items: center; height: 100%; padding: 0 calc(var(--s) * 18); border-radius: calc(var(--s) * 14); font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 32); white-space: nowrap; }
+  #cfrom { color: var(--al); background: color-mix(in srgb, var(--accent) 20%, transparent); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 45%, transparent); }
+  #cto { color: color-mix(in srgb, var(--ink) 85%, transparent); background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.18); }
+  .is-key #cfrom { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); } .is-key #cto { background: color-mix(in srgb, var(--surface) 82%, white); }
+  #arr { display: flex; align-items: center; justify-content: center; }
+  #arr svg { width: 100%; height: 100%; }
+  #hr { background: rgba(255,255,255,.1); }
+
+  /* checks */
+  #chk { border-radius: calc(var(--s) * 24); background: rgba(0,0,0,.22); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  .is-key #chk { background: color-mix(in srgb, var(--surface) 70%, black); }
+  .row { position: absolute; left: 0; right: 0; }
+  .row + .row::before { content: ""; position: absolute; left: calc(var(--s) * 28); right: calc(var(--s) * 28); top: 0; height: calc(var(--s) * 1.5); background: rgba(255,255,255,.07); }
+  .st { position: absolute; }
+  .st svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .st .sp { transform-origin: 50% 50%; }
+  .st .ok { opacity: 0; }
+  .lb { position: absolute; display: flex; align-items: center; font-weight: 650; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; }
+  .tm { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-family: var(--mono); font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
+  .tm .w8 { position: absolute; right: 0; color: var(--amb); }
+
+  /* graph */
+  #graph svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+  /* merge button */
+  #btn { border-radius: calc(var(--s) * 22); overflow: hidden; }
+  #btn .bg0 { position: absolute; inset: 0; background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); border-radius: inherit; }
+  #btn .bg1 { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, #55E597, var(--ok) 55%, #1FB765);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), inset 0 calc(var(--s) * -3) 0 rgba(0,0,0,.15); transform-origin: 0 50%; }
+  .is-key #btn .bg0 { background: color-mix(in srgb, var(--surface) 82%, white); }
+  #btn .lab { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 16); font-weight: 750; font-size: calc(var(--s) * 38); white-space: nowrap; }
+  #btn .lab svg { width: calc(var(--s) * 38); height: calc(var(--s) * 38); flex: none; }
+  #btn .l0 { color: color-mix(in srgb, var(--ink) 45%, transparent); }
+  #btn .l1, #btn .l2 { color: #04150B; opacity: 0; }
+  #glow { position: absolute; border-radius: calc(var(--s) * 30); box-shadow: 0 0 calc(var(--s) * 60) calc(var(--s) * 6) rgba(43,214,123,.55); opacity: 0; }
+  .is-key #glow { display: none; }
+  #rip { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.65), rgba(255,255,255,0) 70%); opacity: 0; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="glow"></div>
+      <div id="win">
+        <div id="ico" class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="var(--al)" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="5" r="2.4"/><circle cx="6" cy="19" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M6 7.4v9.2M18 16.6V10a4 4 0 0 0-4-4h-4"/><path d="M12 3.6 9.6 6 12 8.4"/></svg></div>
+        <div id="ttl" class="ab"></div>
+        <div id="num" class="ab"></div>
+        <div id="pill" class="ab"><div class="in">
+          <div class="f op"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="6" cy="5" r="2.2"/><circle cx="6" cy="19" r="2.2"/><circle cx="18" cy="19" r="2.2"/><path d="M6 7.2v9.6M18 16.8V10a4 4 0 0 0-4-4h-3"/></svg><span class="t0">Open</span></div>
+          <div class="f mg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="5" r="2.2"/><circle cx="7" cy="19" r="2.2"/><circle cx="17" cy="12" r="2.2"/><path d="M7 7.2v9.6M7 8c0 3 4 4 7.8 4"/></svg><span class="t1"></span></div>
+        </div></div>
+        <div id="cfrom" class="ab chipb"></div>
+        <div id="arr" class="ab"><svg viewBox="0 0 40 24" fill="none" stroke="color-mix(in srgb, var(--ink) 55%, transparent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h30M26 5l8 7-8 7"/></svg></div>
+        <div id="cto" class="ab chipb"></div>
+        <div id="hr" class="ab"></div>
+        <div id="chk" class="ab"></div>
+        <div id="graph" class="ab"><svg id="gs"></svg></div>
+        <div id="btn" class="ab"><div class="bg0"></div><div class="bg1"></div><div id="rip"></div>
+          <div class="lab l0"><span class="tx0">Checks running</span></div>
+          <div class="lab l1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="5" r="2.2"/><circle cx="7" cy="19" r="2.2"/><circle cx="17" cy="12" r="2.2"/><path d="M7 7.2v9.6M7 8c0 3 4 4 7.8 4"/></svg><span class="tx1"></span></div>
+          <div class="lab l2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="tx2"></span></div>
+        </div>
+      </div>
+      <div id="cur"><svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.4-4.2 2.9 6.6 3-1.3-2.9-6.5 6.1-.3z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q), $$ = (q) => [...document.querySelectorAll(q)];
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const checks = String(v.checks || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 3);
+  const times = String(v.times || "").split(",").map((x) => x.trim());
+  const NC = Math.max(1, checks.length);
+
+  // ---- zone and scale (an 820-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.07; zB = H * 0.9; }
+  const DW = 820, pad = 40, inner = DW - pad * 2;
+  const HY = 36, HH = 76;                         // header row
+  const BY = HY + HH + 26, BH = 62;               // branch row
+  const HRY = BY + BH + 28;
+  const RH = 82, CY = HRY + 26, CH = NC * RH;     // checks
+  const GY = CY + CH + 18, GH = 128;              // graph
+  const BTY = GY + GH + 14, BTH = 100;            // button
+  const DH = BTY + BTH + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- header: icon, title, number; the pill sits right on the branch row
+  box($("#ico"), pad, HY, HH, HH);
+  const ttl = $("#ttl"); ttl.textContent = v.title || "";
+  const num = $("#num"); num.textContent = v.number ? "#" + String(v.number).replace(/^#/, "") : "";
+  const numW = num.textContent ? num.getBoundingClientRect().width / s : 0;
+  MV.fitText(ttl, (inner - HH - 22 - (numW ? numW + 16 : 0)) * s, 24 * s);
+  const tr = ttl.getBoundingClientRect(), tH = tr.height / s, tW = tr.width / s;
+  box(ttl, pad + HH + 22, HY + (HH - tH) / 2);
+  box(num, pad + HH + 22 + tW + 16, HY + (HH - num.getBoundingClientRect().height / s) / 2);
+  // pill: wide enough for either word
+  $(".t1").textContent = v.merged || "Merged";
+  const pw = Math.max(...$$("#pill .f").map((f) => { f.style.position = "absolute"; f.style.inset = "auto"; const w = f.getBoundingClientRect().width / s; f.style.inset = ""; return w; })) + 56;
+  box($("#pill"), DW - pad - pw, BY, pw, BH);
+  // branch chips
+  const cf = $("#cfrom"), ct = $("#cto"); cf.textContent = v.branch || ""; ct.textContent = v.base || "";
+  const room = DW - pad * 2 - pw - 24 - 54 - 16;
+  cf.style.height = ct.style.height = S(BH);
+  let cfs = 32; const cwid = () => (cf.getBoundingClientRect().width + ct.getBoundingClientRect().width) / s;
+  while (cwid() > room && cfs > 22) { cfs -= 1; cf.style.fontSize = ct.style.fontSize = S(cfs); }
+  const cfw = cf.getBoundingClientRect().width / s;
+  box(cf, pad, BY); box($("#arr"), pad + cfw + 8, BY + (BH - 28) / 2, 46, 28); box(ct, pad + cfw + 62, BY);
+  box($("#hr"), pad, HRY, inner, 1.5);
+
+  // ---- checks
+  const chk = $("#chk"); box(chk, pad, CY, inner, CH);
+  const SP = `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="rgba(245,184,61,.25)" stroke-width="4.5"/><circle class="sp" cx="20" cy="20" r="15" fill="none" stroke="var(--amb)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="30 200"/>
+    <g class="ok"><circle cx="20" cy="20" r="19" fill="var(--ok)"/><path d="M12 20.5l5.5 5.5L28.5 15" fill="none" stroke="#04150B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></g></svg>`;
+  const rows = checks.map((c, i) => {
+    const r = document.createElement("div"); r.className = "row"; r.style.top = S(i * RH); r.style.height = S(RH);
+    r.innerHTML = `<div class="st">${SP}</div><div class="lb"></div><div class="tm"><span class="w0"></span><span class="w8">Running</span></div>`;
+    chk.appendChild(r);
+    const st = r.querySelector(".st"); box(st, 28, (RH - 44) / 2, 44, 44);
+    const lb = r.querySelector(".lb"); lb.textContent = c; box(lb, 98, 0, null, RH);
+    const tm = r.querySelector(".tm"); r.querySelector(".w0").textContent = times[i] || ""; box(tm, inner - 28 - 260, 0, 260, RH);
+    MV.fitText(lb, (inner - 98 - 300) * s, 22 * s);
+    gsap.set(r.querySelector(".w0"), { opacity: 0 });
+    return { r, st, sp: r.querySelector(".sp"), ok: r.querySelector(".ok"), tick: r.querySelector(".ok path"), w0: r.querySelector(".w0"), w8: r.querySelector(".w8") };
+  });
+
+  // ---- graph: the base line, the branch running above it with its commits, then the merge curve
+  const GW = inner, gs = $("#gs"); box($("#graph"), pad, GY, GW, GH);
+  gs.setAttribute("viewBox", `0 0 ${GW} ${GH}`);
+  const yM = GH - 30, yB = 34, x0 = 30, xF = 150, xE = GW - 250, xM = GW - 120;
+  const NS = "http://www.w3.org/2000/svg", el = (t, a) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); gs.appendChild(e); return e; };
+  const mainL = el("path", { d: `M${x0} ${yM}H${GW - 20}`, stroke: "color-mix(in srgb, var(--ink) 45%, transparent)", "stroke-width": 6, "stroke-linecap": "round", fill: "none", pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 });
+  const brL = el("path", { d: `M${x0 + 60} ${yM}C${x0 + 60} ${yB} ${x0 + 60} ${yB} ${xF} ${yB}H${xE}`, stroke: "var(--accent)", "stroke-width": 6, "stroke-linecap": "round", fill: "none", pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 });
+  const mgL = el("path", { d: `M${xE} ${yB}C${xM - 10} ${yB} ${xM} ${yB + 20} ${xM} ${yM}`, stroke: "var(--ok)", "stroke-width": 6, "stroke-linecap": "round", fill: "none", pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 });
+  const dot = (x, y, f, r = 13) => el("circle", { cx: x, cy: y, r, fill: f, stroke: "rgba(0,0,0,.35)", "stroke-width": 3, style: `transform-origin:${x}px ${y}px;transform-box:view-box` });
+  const mainD = [dot(x0, yM, "var(--ink)"), dot(x0 + 240, yM, "var(--ink)")];
+  const brD = [xF + 40, xF + 190, xE].map((x) => dot(x, yB, "var(--al)"));
+  const ring = el("circle", { cx: xM, cy: yM, r: 22, fill: "none", stroke: "var(--ok)", "stroke-width": 4, opacity: 0, style: `transform-origin:${xM}px ${yM}px;transform-box:view-box` });
+  const mNode = el("circle", { cx: xM, cy: yM, r: 19, fill: "var(--ok)", stroke: "#04150B", "stroke-width": 4, style: `transform-origin:${xM}px ${yM}px;transform-box:view-box` });
+  gsap.set([...mainD, ...brD, mNode, ring], { scale: 0, transformOrigin: "50% 50%" }); gsap.set(ring, { scale: 1 });
+
+  // ---- button + cursor
+  const btn = $("#btn"); box(btn, pad, BTY, inner, BTH); box($("#glow"), pad, BTY, inner, BTH);
+  $(".tx1").textContent = v.button || ""; $(".tx2").textContent = v.merged || "";
+  [".tx0", ".tx1", ".tx2"].forEach((q) => MV.fitText($(q), (inner - 120) * s, 22 * s));
+  gsap.set("#btn .bg1", { scaleX: 0 });
+  const CU = 60; const cur = $("#cur"); Object.assign(cur.style, { width: S(CU), height: S(CU) });
+  const bx = (pad + inner * 0.62) * s, by = (BTY + BTH * 0.55) * s;          // where the click lands
+  const RP = 360; Object.assign($("#rip").style, { width: S(RP), height: S(RP), left: S(inner * 0.62 - RP / 2), top: S(BTH * 0.55 - RP / 2) });
+
+  // ---- timing
+  const T0 = 0.75, TC = rows.map((_, i) => 1.25 + i * 0.42), TEN = TC[TC.length - 1] + 0.32;
+  const TP = TEN + 0.62, TM = TP + 0.14, TN = TM + 0.42;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#ico", { scale: 0.4, rotation: -25, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: "back.out(2.2)" }, 0.2);
+  tl.fromTo(["#ttl", "#num"], { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.26);
+  tl.fromTo(["#cfrom", "#arr", "#cto", "#pill"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", stagger: 0.05 }, 0.36);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.4);
+  tl.fromTo("#chk", { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.45);
+  tl.fromTo(rows.map((r) => r.r), { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.06 }, 0.5);
+  tl.fromTo("#btn", { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.6);
+  // the graph: base line, then the branch with its commits
+  tl.to(mainL, { attr: { "stroke-dashoffset": 0 }, duration: 0.8, ease: "power2.inOut" }, 0.5);
+  tl.to(mainD, { scale: 1, duration: 0.4, ease: "back.out(3)", stagger: 0.18 }, 0.55);
+  tl.to(brL, { attr: { "stroke-dashoffset": 0 }, duration: 0.95, ease: "power2.inOut" }, 0.75);
+  tl.to(brD, { scale: 1, duration: 0.4, ease: "back.out(3)", stagger: 0.2 }, 1.05);
+  // checks: spinners turn, then each resolves green in order
+  rows.forEach((r, i) => {
+    tl.fromTo(r.sp, { rotation: 0, svgOrigin: "20 20" }, { rotation: 360 * (2 + i), svgOrigin: "20 20", duration: TC[i] - 0.3, ease: "none" }, 0.3);
+    tl.to(r.sp.previousElementSibling ? [r.sp, r.sp.previousElementSibling] : r.sp, { opacity: 0, duration: 0.12, ease: "power2.in" }, TC[i]);
+    tl.fromTo(r.ok, { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)", immediateRender: false }, TC[i]);
+    tl.to(r.tick, { attr: { "stroke-dashoffset": 0 }, duration: 0.28, ease: "power2.out" }, TC[i] + 0.08);
+    tl.to(r.w8, { opacity: 0, y: -10 * s, duration: 0.12, ease: "power2.in" }, TC[i]);
+    tl.set(r.w8, { visibility: "hidden" }, TC[i] + 0.12);
+    tl.fromTo(r.w0, { opacity: 0, y: 10 * s }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out", immediateRender: false }, TC[i] + 0.14);
+    tl.fromTo(r.r, { backgroundColor: "rgba(43,214,123,0.16)" }, { backgroundColor: "rgba(43,214,123,0)", duration: 0.7, ease: "power2.out", immediateRender: false }, TC[i]);
+  });
+  // the button wakes up green, the cursor comes in and presses it
+  tl.to("#btn .bg1", { scaleX: 1, duration: 0.5, ease: "expo.out" }, TEN);
+  tl.to("#btn .l0", { opacity: 0, duration: 0.18, ease: "power2.in" }, TEN);
+  tl.fromTo("#btn .l1", { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, TEN + 0.12);
+  tl.fromTo("#glow", { opacity: 0 }, { opacity: 0.55, duration: 0.5, ease: "power2.out" }, TEN + 0.1);
+  tl.fromTo(cur, { x: bx + 220 * s, y: by + 170 * s, opacity: 0 }, { x: bx, y: by, opacity: 1, duration: 0.6, ease: "expo.out" }, TP - 0.62);
+  tl.to(cur, { scale: 0.86, duration: 0.07, ease: "power2.in", transformOrigin: "20% 10%" }, TP); tl.to(cur, { scale: 1, duration: 0.3, ease: "back.out(3)" }, TP + 0.08);
+  tl.to("#btn", { scale: 0.965, duration: 0.07, ease: "power2.in" }, TP); tl.to("#btn", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TP + 0.08);
+  tl.fromTo("#rip", { scale: 0.1, opacity: 0.9 }, { scale: 1.4, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TP + 0.03);
+  tl.to(cur, { x: bx + 120 * s, y: by + 90 * s, opacity: 0, duration: 0.32, ease: "power2.in" }, TP + 0.42);
+  // the merge: the curve runs into main, the node lands, the status flips
+  gsap.set(mgL, { opacity: 0 }); tl.set(mgL, { opacity: 1 }, TM);
+  tl.to(mgL, { attr: { "stroke-dashoffset": 0 }, duration: 0.42, ease: "power2.in" }, TM);
+  tl.to(mNode, { scale: 1, duration: 0.5, ease: "back.out(3.2)" }, TN);
+  tl.fromTo(ring, { scale: 0.6, opacity: 1 }, { scale: 2.6, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TN);
+  tl.to(brL, { attr: { stroke: "var(--ok)" }, duration: 0.3, ease: "power2.out" }, TN - 0.05);
+  tl.to(brD, { attr: { fill: "var(--okl)" }, duration: 0.3, ease: "power2.out", stagger: -0.05 }, TN - 0.1);
+  tl.to("#btn .l1", { opacity: 0, y: -12 * s, duration: 0.18, ease: "power2.in" }, TN - 0.1);
+  tl.fromTo("#btn .l2", { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, TN);
+  tl.to("#pill .in", { rotationX: 90, duration: 0.14, ease: "power2.in" }, TN - 0.1);
+  tl.set("#pill .op", { visibility: "hidden" }, TN + 0.04); tl.set("#pill .mg", { visibility: "visible" }, TN + 0.04);
+  tl.fromTo("#pill .in", { rotationX: -90 }, { rotationX: 0, duration: 0.55, ease: "back.out(2)", immediateRender: false }, TN + 0.04);
+  tl.fromTo("#pill", { scale: 1 }, { scale: 1.12, duration: 0.1, ease: "power2.out", immediateRender: false }, TN + 0.02); tl.to("#pill", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TN + 0.12);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TN); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TN + 0.07);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TN + 0.05);
+  tl.to("#glow", { opacity: 0.9, duration: 0.1, ease: "power2.out" }, TN); tl.to("#glow", { opacity: 0.35, duration: 0.8, ease: "power2.out" }, TN + 0.1);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

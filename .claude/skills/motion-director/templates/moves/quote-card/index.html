@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"quote","type":"string","label":"The quote (one or two sentences)","default":"We stopped guessing and started shipping something every single week."},
+  {"id":"underline","type":"string","label":"Words to underline, comma separated (empty: the last 3 words)","default":"every single week"},
+  {"id":"kicker","type":"string","label":"Running head at the top of the page","default":"In their words"},
+  {"id":"name","type":"string","label":"Who said it","default":"Early customer"},
+  {"id":"role","type":"string","label":"A short line under the name","default":"after the first month"},
+  {"id":"image","type":"string","label":"Portrait cut-out (path); empty uses the brand person cut-out","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Mag"; src: url("assets/fonts/PlayfairDisplay-Italic-wght.ttf"); font-weight: 400 900; font-style: italic; font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #111; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: a real black leather desk blotter under one warm lamp */
+  #ground { position: absolute; inset: -6%; background: #151413 url(assets/leather.jpg) center / calc(var(--u) * 820); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 46% 40%, rgba(255,220,170,.20), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.65)); }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #page { position: absolute; transform-origin: 50% 50%; }
+  #page-b { position: absolute; inset: 0; }
+  #page-fx { position: absolute; inset: 0; filter: drop-shadow(0 calc(var(--u) * 4) calc(var(--u) * 4) rgba(0,0,0,.35)) drop-shadow(calc(var(--u) * 10) calc(var(--u) * 26) calc(var(--u) * 30) rgba(0,0,0,.55)); }
+  /* the page: a real paper scan, torn out of a magazine along its left edge */
+  #paper { position: absolute; inset: 0; background: #F4F1EA url(assets/paper-white.jpg) center / calc(var(--u) * 640); isolation: isolate; }
+  #paper::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,250,240,.10), transparent 40%, rgba(60,40,20,.06)); }
+  #content { position: absolute; color: #18161a; }
+  #qm { position: absolute; font-family: "MV Mag"; font-style: italic; font-weight: 900; color: var(--accent); line-height: .5; height: .5em; overflow: visible; mix-blend-mode: multiply; transform-origin: 30% 60%; }
+  #quote { position: relative; font-family: "MV Mag"; font-style: italic; font-weight: 500; line-height: 1.24; letter-spacing: -0.005em; text-wrap: balance; margin: 0; }
+  #quote .w { position: relative; z-index: 1; }
+  #run { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 16); font-family: "MV Mag"; font-style: italic; font-weight: 700; color: #3a3632; white-space: nowrap; }
+  #run::before { content: ""; width: calc(var(--u) * 26); height: calc(var(--u) * 26); border-radius: 50%; background: var(--accent); mix-blend-mode: multiply; }
+  #run::after { content: ""; position: absolute; left: 0; right: 0; bottom: calc(var(--u) * -14); height: calc(var(--u) * 2); background: #18161a; }
+  #rule { height: calc(var(--u) * 3); background: #18161a; }
+  #attr { position: absolute; display: flex; align-items: center; }
+  #who { font-family: "MV Mag"; font-style: italic; line-height: 1.15; white-space: nowrap; }
+  #name { font-weight: 800; }
+  #role { font-weight: 400; color: #5a5650; }
+  #ul { position: absolute; left: 0; top: 0; overflow: visible; mix-blend-mode: multiply; filter: url(#bleed); }
+  #ul path { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; opacity: .9; }
+  /* the portrait: a person cut-out as a sticker with a torn white rim, taped beside the name */
+  #por { position: absolute; transform-origin: 50% 40%; }
+  #por-fx { position: relative; filter: url(#rim) drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 7) rgba(20,14,8,.35)); }
+  #por-in { position: relative; overflow: hidden; }
+  #por-in img { display: block; width: 100%; height: auto; }
+  .tape { position: absolute; opacity: .92; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(20,14,8,.22)); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="rim" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="9" result="grow"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="grow" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G" result="torn"/>
+    <feImage href="assets/paper-white.jpg" preserveAspectRatio="xMidYMid slice" result="paper"/>
+    <feComposite in="paper" in2="torn" operator="in" result="rimpaper"/>
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="edge"/>
+    <feGaussianBlur in="edge" stdDeviation="1.4" result="soft"/>
+    <feColorMatrix in="soft" type="matrix" values="0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.35 0" result="cut"/>
+    <feMerge><feMergeNode in="rimpaper"/><feMergeNode in="cut"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="bleed" x="-5%" y="-20%" width="110%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.6"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="page" style="visibility:hidden"><div class="boil" id="page-b">
+      <div id="page-fx"><div id="paper"></div></div>
+      <div id="run"><span id="runt"></span></div>
+      <div id="content">
+        <div id="qm" data-layered>&#8220;</div>
+        <svg id="ul"></svg>
+        <div id="quote"><span id="qtxt"></span></div>
+        <div id="rule"></div>
+      </div>
+      <div id="attr"><div id="who"><div id="name"></div><div id="role"></div></div></div>
+      <div id="por" style="visibility:hidden"><div class="boil" id="por-b"><div id="por-fx"><div id="por-in"></div></div></div></div>
+      <img class="tape" id="tp" src="assets/tape-a.png" alt="" style="visibility:hidden" />
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('italic 500 80px "MV Mag"'), document.fonts.load('italic 900 80px "MV Mag"'), document.fonts.load('italic 800 40px "MV Mag"'), document.fonts.load('italic 400 40px "MV Mag"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- the page: as wide as the frame allows, its height from the content
+  const zTop = safe.top + 30 * u, zBot = H - (MV.portrait ? 330 * (W / 1080) : safe.bottom);
+  const PW = MV.portrait ? Math.min(W - safe.left - safe.right * 0.55, 940 * u) : Math.min(W * (W > H ? 0.6 : 0.82), 1140 * u);
+  const pad = Math.round(Math.min(PW * 0.1, H * 0.075)), inner = PW - pad * 2;
+  const page = document.getElementById("page"), content = document.getElementById("content");
+  content.style.left = pad + "px"; content.style.top = (pad * 1.3) + "px"; content.style.width = inner + "px";
+  const qtxt = document.getElementById("qtxt"), quote = document.getElementById("quote");
+  qtxt.textContent = (v.quote || v.tagline || "").trim();
+  // fit: biggest size that keeps the quote to 5 lines (4 on a wide frame) inside the page and the zone
+  const maxLines = W > H ? 4 : 5;
+  let fs = Math.round(inner * (MV.portrait ? 0.105 : 0.085));
+  quote.style.fontSize = fs + "px";
+  const words = MV.words(qtxt);
+  const nLines = () => Math.round(quote.getBoundingClientRect().height / (fs * 1.24));
+  while ((nLines() > maxLines || words.some((w) => w.getBoundingClientRect().width > inner)) && fs > 26 * u) { fs -= 2; quote.style.fontSize = fs + "px"; }
+  const qm = document.getElementById("qm"), rule = document.getElementById("rule");
+  const attr = document.getElementById("attr"), who = document.getElementById("who");
+  document.getElementById("name").textContent = v.name || "";
+  document.getElementById("role").textContent = v.role || "";
+  let qH, pw, ph, ax, ay, PH;
+  const lay = () => {
+    // the quote mark hangs into the margin above the first line
+    qm.style.fontSize = (fs * 5.2) + "px"; quote.style.paddingTop = (fs * 2.0) + "px";
+    qm.style.left = (-fs * 0.3) + "px"; qm.style.top = (fs * 0.05) + "px";
+    rule.style.width = (inner * 0.16) + "px"; rule.style.marginTop = (fs * 0.7) + "px";
+    qH = content.getBoundingClientRect().height;
+    // attribution: portrait sticker, then name and role
+    pw = Math.round(Math.max(fs * 3.2, 150 * u)); ph = Math.round(pw * 0.92);
+    who.style.fontSize = Math.max(22 * u, fs * 0.52) + "px"; who.style.whiteSpace = "nowrap";
+    ax = pad + pw + pw * 0.26; ay = pad * 1.3 + qH + fs * 0.75;
+    attr.style.left = ax + "px"; attr.style.top = ay + "px"; attr.style.height = ph + "px"; attr.style.width = (PW - ax - pad) + "px";
+    MV.fit(who, PW - ax - pad, 16 * u);
+    PH = Math.round(ay + ph + pad * 0.95);
+  };
+  lay();
+  // the whole page must sit inside the zone, with room for the camera push
+  while (PH > (zBot - zTop) * 0.93 && fs > 26 * u) { fs -= 2; quote.style.fontSize = fs + "px"; lay(); }
+  page.style.width = PW + "px"; page.style.height = PH + "px";
+  // running head: a magazine section line across the top of the page
+  const run = document.getElementById("run"); document.getElementById("runt").textContent = v.kicker || "";
+  run.style.left = pad + "px"; run.style.width = inner + "px"; run.style.top = (pad * 0.42) + "px"; run.style.fontSize = Math.max(18 * u, fs * 0.36) + "px";
+  const cx = W / 2, cy = Math.max(zTop + PH / 2, (zTop + zBot) / 2);
+  page.style.left = (cx - PW / 2) + "px"; page.style.top = Math.min(cy - PH / 2, zBot - PH) + "px";
+  // torn left edge (ripped out of the magazine), clean cut on the other three
+  const r = MV.rand(52), pts = [[PW, 0], [PW, PH]];
+  for (let y = PH; y >= 0; y -= 9 * u) pts.push([r() * 10 * u + Math.sin(y / (60 * u)) * 3 * u + 4 * u, y]);
+  pts.push([4 * u, 0]);
+  document.getElementById("paper").style.clipPath = `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(",")})`;
+
+  // the portrait sticker
+  const por = document.getElementById("por"), pin = document.getElementById("por-in");
+  por.style.left = pad + "px"; por.style.top = ay + "px"; por.style.width = pw + "px";
+  const src = v.image || (v.people && v.people[0]) || v.mark || "";
+  const pic = MV.img(src); pin.appendChild(pic); pin.style.height = ph + "px";
+  // head and shoulders: a torn bottom so the rim never shows a box edge
+  const tr = MV.rand(5), tp2 = []; let yy = 92; for (let i = 0; i <= 30; i++) { yy = Math.min(98, Math.max(86, yy + (tr() - .5) * 4)); tp2.push(`${(i / 30 * 100).toFixed(1)}% ${yy.toFixed(1)}%`); }
+  pin.style.clipPath = `polygon(0 0, 100% 0, ${tp2.reverse().join(",")})`;
+  const rimF = document.querySelector("#rim");
+  rimF.querySelector("feMorphology").setAttribute("radius", (8 * u).toFixed(1));
+  rimF.querySelector("feDisplacementMap").setAttribute("scale", (10 * u).toFixed(1));
+  // tape across the portrait's top edge onto the page
+  // tape across the right shoulder onto the page: on the print, clear of the face
+  const tp = document.getElementById("tp"), tw = pw * 0.6;
+  tp.style.width = tw + "px"; tp.style.left = (pad + pw * 0.9 - tw / 2) + "px"; tp.style.top = (ay + ph * 0.66 - tw * 0.12) + "px"; tp.style.transform = "rotate(-38deg)";
+
+  // ---- the underline: the chosen words (or the last 3), one marker stroke per line, under the baseline
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const want = (v.underline || "").split(/[,\s]+/).map(norm).filter(Boolean);
+  let on = words.map((w) => want.includes(norm(w.textContent)));
+  if (!on.some(Boolean)) on = words.map((_, i) => i >= words.length - Math.min(3, words.length));
+  const cb = content.getBoundingClientRect(), runs = [];
+  words.forEach((w, i) => { if (!on[i]) return; const b = w.getBoundingClientRect(), last = runs[runs.length - 1];
+    if (last && Math.abs(last.top - b.top) < fs * 0.3 && on[i - 1]) last.right = b.right; else runs.push({ left: b.left, right: b.right, top: b.top, bottom: b.bottom }); });
+  const ul = document.getElementById("ul"); ul.setAttribute("width", inner); ul.setAttribute("height", qH);
+  const NS = "http://www.w3.org/2000/svg", ur = MV.rand(31), jj = (a) => (ur() - .5) * a;
+  const ulp = runs.map((rn) => { const x0 = rn.left - cb.left - fs * 0.05, x1 = rn.right - cb.left + fs * 0.08, y = rn.bottom - cb.top - fs * 0.13;
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", `M ${x0} ${y + jj(fs * 0.04)} C ${x0 + (x1 - x0) * 0.33} ${y + fs * 0.04 + jj(fs * 0.03)} ${x0 + (x1 - x0) * 0.66} ${y - fs * 0.02 + jj(fs * 0.03)} ${x1} ${y - fs * 0.05}`);
+    p.setAttribute("stroke-width", Math.max(4, fs * 0.13)); p.style.visibility = "hidden"; ul.appendChild(p); return p; });
+
+  // lines of the quote, for the line-by-line reveal
+  const lines = []; words.forEach((w) => { const t = w.getBoundingClientRect().top, l = lines[lines.length - 1]; if (l && Math.abs(l.t - t) < fs * 0.3) l.ws.push(w); else lines.push({ t, ws: [w] }); });
+
+  // ---- timeline
+  // 0.1 the page is slid in and set down (on twos); 0.5 the quote mark is struck; the lines print in; 1.5 the portrait slaps on, taped; 2.2 the marker underlines the words that matter
+  tl.set(page, { visibility: "visible" }, 0.1);
+  tl.fromTo(page, { x: W * 0.55, y: 60 * u, rotation: 10 }, { x: 0, y: 0, rotation: -1.6, duration: 0.42, ease: twos("power3.out", 0.42), immediateRender: true }, 0.1);
+  tl.fromTo(page, { rotation: -1.6 }, { rotation: -1.1, duration: 0.25, ease: twos("back.out(3)", 0.25) }, 0.52);
+  tl.fromTo(run, { opacity: 0 }, { opacity: 1, duration: 0.17, ease: "steps(2)", immediateRender: true }, 0.4);
+  tl.fromTo(qm, { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, 0.5);
+  tl.fromTo("#page-b", { y: 0 }, { y: 4 * u, duration: STEP, ease: "steps(1)", yoyo: true, repeat: 1 }, 0.62);
+  let t = 0.7;
+  lines.forEach((l) => { tl.fromTo(l.ws, { opacity: 0, y: fs * 0.18 }, { opacity: 1, y: 0, duration: 0.17, ease: twos("power2.out", 0.17), immediateRender: true }, t); t += 0.17; });
+  tl.fromTo(rule, { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.17, ease: twos("power2.out", 0.17), immediateRender: true }, t);
+  const tP = t + 0.12;
+  tl.set(por, { visibility: "visible" }, tP);
+  tl.fromTo(por, { scale: 1.4, rotation: -14, opacity: 0 }, { scale: 1, rotation: -5, opacity: 1, duration: 0.25, ease: twos("back.out(1.6)", 0.25), immediateRender: true }, tP);
+  tl.set(tp, { visibility: "visible" }, tP + 0.3);
+  tl.fromTo(tp, { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, tP + 0.3);
+  tl.fromTo(who, { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.25, ease: twos("power2.out", 0.25), immediateRender: true }, tP + 0.2);
+  let tu = tP + 0.6;
+  ulp.forEach((p) => { const L = p.getTotalLength(), d = Math.min(0.42, 0.2 + L / inner * 0.25);
+    tl.set(p, { visibility: "visible" }, tu);
+    tl.fromTo(p, { strokeDasharray: L + 2, strokeDashoffset: L + 2 }, { strokeDashoffset: 0, duration: d, ease: twos("power2.inOut", d), immediateRender: true }, tu); tu += d + STEP; });
+  // camera: one slow push
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  // boil on twos
+  const boil = (sel, a, seed, px, rot) => { const r2 = MV.rand(seed); for (let tt = a; tt < D; tt += STEP * 2) tl.set(sel, { "--bx": `${((r2() - .5) * 2 * px).toFixed(2)}px`, "--by": `${((r2() - .5) * 2 * px).toFixed(2)}px`, "--br": `${((r2() - .5) * 2 * rot).toFixed(2)}deg` }, tt); };
+  boil("#page-b", 0.8, 9, 1.1 * u, 0.2); boil("#por-b", tP + 0.3, 4, 1.4 * u, 0.5);
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, tt);
+  MV.done();
+})();
+</script>
+</body>
+</html>

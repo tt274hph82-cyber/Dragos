@@ -1,0 +1,5 @@
+{ "id": "app-badge", "name": "App badge climb", "oneLiner": "a home screen of glossy app icons on a wallpaper lit in the brand colours wakes in a wave from the brand's own icon; the camera pushes in on it as its red badge pops on 1 and climbs faster and faster while the icon wiggles harder, then caps at 99+ with a hard bump, a ring breathing out and the rest of the screen dimming back",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["app", "icon", "badge", "notifications", "home screen", "phone", "demand", "messages", "inbox", "overwhelmed", "blowing up", "count", "mobile", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker says the notifications would not stop ('my phone would not stop buzzing', 'the messages kept coming', 'by lunch I had 99+'): cut in on the build-up, the badge climbs while they describe it and 99+ lands on the number or the punchline" }

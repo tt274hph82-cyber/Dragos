@@ -1,0 +1,5 @@
+{ "id": "software-update", "name": "Software update", "oneLiner": "a glass update dialog with the brand's app tile and what is new; a pointer presses Install, the dialog gives way to a progress ring that fills with a rolling percent, the card blacks out to restart with the mark and a boot bar, then it comes back up as the new version badge stamps in with a shock ring and an Up to date pill lands green",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["update", "upgrade", "new version", "release", "install", "restart", "v2", "launch", "changelog", "what is new", "os", "system", "software", "app", "relaunch"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": true,
+  "say": "when the speaker announces a new version or says they upgraded something ('version two is out', 'I updated the whole system', 'it is a completely new version of me'): the press lands on 'install' or 'update', the badge stamps on the version or the new name. Set version, notes and app" }

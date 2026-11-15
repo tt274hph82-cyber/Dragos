@@ -1,0 +1,5 @@
+{ "id": "cohort-grid", "name": "Cohort retention grid", "oneLiner": "a glass retention table tilts in and fills row by row, each cohort's cells popping in left to right in shades of the brand colour while their percentages count up, then one strong cohort row lights and lifts, the other rows dim, a ring closes round it and a chip lands in the empty corner beside it",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["retention", "cohort", "churn", "users", "customers", "subscribers", "saas", "data", "table", "heatmap", "analytics", "growth", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says people stuck around or one group stayed longer ('the March signups kept 60% after four months', 'after the fix, retention jumped'): the grid fills as they set it up, the row lights on the group they name. color green for a plain retention look" }

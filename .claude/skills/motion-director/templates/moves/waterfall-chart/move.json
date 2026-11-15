@@ -1,0 +1,5 @@
+{ "id": "waterfall-chart", "name": "Waterfall chart", "oneLiner": "a glass bar rises from a lit floor with its value counting, then each change steps off the last level with a dashed link, gains growing up in green and losses hanging down in grey, and the total bar drops from above in the accent, lands with a squash and a floor splash, and counts up to the end value while the camera leans in",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["waterfall", "bridge chart", "breakdown", "gains and losses", "net result", "from start to end", "profit", "growth", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker walks from a start number to an end number through what added and what took away ('we started at 120, gained 64, lost 22, and ended at 200'): cut in on the start, the total bar lands on the word that names the result" }

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"percent","type":"number","label":"The top share the marker lands in, in percent (3 gives Top 3%)","default":3},
+  {"id":"lead","type":"string","label":"The word before the number","default":"Top"},
+  {"id":"sub","type":"string","label":"The small line under the number","default":"of everyone"},
+  {"id":"mid","type":"string","label":"The label under the peak (empty = none)","default":"Average"},
+  {"id":"decimals","type":"number","label":"Decimals on the number","default":0}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 50%; left: 48%; top: 6%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 70%; height: 55%; left: -28%; top: 52%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #refl { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #tilt, #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #chart { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  .lab { position: absolute; white-space: nowrap; font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 62%, transparent); letter-spacing: .01em; }
+
+  /* the readout: a frosted pill that rides above the scan line */
+  #pill { position: absolute; left: 0; top: 0; padding: calc(var(--u) * 22) calc(var(--u) * 36) calc(var(--u) * 24); border-radius: calc(var(--u) * 34); overflow: hidden; white-space: nowrap; opacity: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.07) 60%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16),
+      0 calc(var(--u) * 30) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.6); }
+  .is-alpha #pill { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 76%, white 24%), color-mix(in srgb, var(--surface) 90%, white 10%)); }
+  #pill::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.34) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); mix-blend-mode: screen; }
+  #pill .hot { position: absolute; inset: 0; opacity: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 70%, white 30%), 0 0 calc(var(--u) * 70) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  #pt { font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  #pt .ld { font-size: .56em; letter-spacing: 0; margin-right: .22em; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+  #pt .fx { font-size: .62em; }
+  #ps { margin-top: calc(var(--u) * 12); font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 64%, transparent); letter-spacing: .02em; }
+
+  /* the marker: a lit disc that drops onto the tail */
+  #tok { position: absolute; border-radius: 50%; display: grid; place-items: center; overflow: hidden; opacity: 0;
+    background: radial-gradient(70% 70% at 36% 30%, color-mix(in srgb, var(--accent) 50%, white), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.3), 0 calc(var(--u) * 20) calc(var(--u) * 30) calc(var(--u) * -10) rgba(0,0,0,.7), 0 0 calc(var(--u) * 60) calc(var(--u) * -6) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #tok img { width: 78%; height: 78%; border-radius: 50%; object-fit: contain; }
+  #tok b { font-family: var(--font-display); font-weight: 400; color: #fff; line-height: 1; }
+  #ring { position: absolute; border-radius: 50%; opacity: 0; pointer-events: none; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 50%, white); }
+
+  .is-key #pill { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--surface) 82%, white 18%); }
+  .is-key #glow, .is-key #hotG, .is-key #ring, .is-key #pill .hot { display: none; }
+  .is-key #tok { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  /* on a key colour every text and fill is opaque, so the keyer never tints or eats it */
+  .is-key .lab, .is-key #ps { color: color-mix(in srgb, var(--ink) 66%, var(--surface)); }
+  .is-key #pt .ld { color: color-mix(in srgb, var(--ink) 74%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="tilt"><div id="cam">
+    <svg id="chart" width="{{W}}" height="{{H}}" viewBox="0 0 {{W}} {{H}}">
+      <defs>
+        <linearGradient id="gGrey" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="g0" /><stop offset="1" class="g1" /></linearGradient>
+        <linearGradient id="gHot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="t0" /><stop offset="1" class="t1" /></linearGradient>
+        <linearGradient id="gScan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95" /><stop offset="1" stop-color="#fff" stop-opacity=".15" /></linearGradient>
+        <clipPath id="cSweep"><rect id="sweepR" x="0" y="0" width="1" height="{{H}}" /></clipPath>
+        <clipPath id="cTail"><rect id="tailR" x="0" y="0" width="{{W}}" height="{{H}}" /></clipPath>
+        <filter id="fGlow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="12" /></filter>
+        <linearGradient id="gFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".3" /><stop offset=".55" stop-color="#fff" stop-opacity="0" /></linearGradient>
+        <mask id="mRefl" maskUnits="userSpaceOnUse"><rect id="mRect" x="0" y="0" width="{{W}}" height="{{H}}" fill="url(#gFade)" /></mask>
+        <filter id="fSoft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" /></filter>
+      </defs>
+      <g id="refl" mask="url(#mRefl)" filter="url(#fSoft)"><g id="reflFlip"><use href="#shape" /></g></g>
+      <g id="axes"></g>
+      <g id="shape">
+        <path id="ghost" />
+        <path id="grey" fill="url(#gGrey)" clip-path="url(#cSweep)" />
+        <path id="tail" fill="url(#gHot)" clip-path="url(#cTail)" opacity="0" />
+        <path id="glow" fill="none" filter="url(#fGlow)" stroke-linecap="round" />
+        <path id="curve" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <g id="hotC" clip-path="url(#cTail)" opacity="0"><path id="hotG" fill="none" filter="url(#fGlow)" stroke-linecap="round" /><path id="hotL" fill="none" stroke-linecap="round" /></g>
+      </g>
+      <line id="scan" stroke="url(#gScan)" stroke-linecap="round" />
+      <circle id="sdot" r="1" fill="#fff" />
+    </svg>
+    <div class="lab" id="midL"></div>
+    <div id="ring"></div>
+    <div id="tok"></div>
+    <div id="pill"><div class="hot"></div><div id="pt"></div><div id="ps"></div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.getElementById(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const cs = getComputedStyle(root), C = (n) => cs.getPropertyValue(n).trim();
+  const ACC = C("--accent"), INK = C("--ink") || "#fff";
+  const stop = (sel, color, op = 1) => document.querySelectorAll(sel).forEach((s) => { s.style.stopColor = color; s.style.stopOpacity = op; });
+  const KEY = root.classList.contains("is-key"), SURF = C("--surface") || "#222";
+  if (KEY) { stop(".g0", `color-mix(in srgb, ${SURF} 55%, ${INK})`, 1); stop(".g1", `color-mix(in srgb, ${SURF} 85%, ${INK})`, 1); }
+  else { stop(".g0", INK, MV.alpha ? 0.42 : 0.3); stop(".g1", INK, MV.alpha ? 0.14 : 0.04); }
+  stop(".t0", `color-mix(in srgb, ${ACC} 70%, white)`, 0.95); stop(".t1", ACC, 0.35);
+
+  // ---- the numbers: the normal curve, its tail share and the marker position
+  const pct = Math.max(0.1, Math.min(49, isFinite(+v.percent) ? +v.percent : 3));
+  const dec = Math.max(0, +v.decimals || 0);
+  const cdf = (z) => { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2);
+    const p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; };
+  const inv = (p) => { let lo = -6, hi = 6; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (cdf(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; };
+  const ZR = 3.3, zm = Math.min(ZR - 0.4, inv(1 - pct / 100));
+
+  // ---- the plot
+  const sideL = P ? safe.left : SQ ? 100 * u : 260 * u, sideR = P ? W - safe.right : SQ ? W - 100 * u : W - 260 * u;
+  const Lx = sideL, Rx = sideR, Xc = (Lx + Rx) / 2;
+  const By = P ? H - safe.bottom - (MV.alpha ? 90 : 210) * u : SQ ? H - 190 * u : H - 200 * u;
+  const CHt = P ? (MV.alpha ? 500 : 760) * u : SQ ? 500 * u : 520 * u;
+  const zx = (z) => Xc + (z / ZR) * (Rx - Xc), xz = (x) => ((x - Xc) / (Rx - Xc)) * ZR;
+  const hy = (z) => Math.exp(-z * z / 2), yAt = (x) => By - hy(xz(x)) * CHt;
+  const N = 160; let dC = "";
+  for (let i = 0; i <= N; i++) { const x = Lx + (i / N) * (Rx - Lx); dC += (i ? " L" : "M") + x.toFixed(1) + "," + yAt(x).toFixed(1); }
+  const dA = dC + ` L${Rx},${By} L${Lx},${By} Z`;
+  const sw = (P ? 9 : 8) * u;
+  $("curve").setAttribute("d", dC); $("curve").setAttribute("stroke-width", sw); $("curve").style.stroke = `color-mix(in srgb, ${INK} 92%, transparent)`;
+  $("glow").setAttribute("d", dC); $("glow").setAttribute("stroke-width", sw * 3); $("glow").style.stroke = `color-mix(in srgb, ${INK} 40%, transparent)`;
+  $("ghost").setAttribute("d", dA); $("ghost").style.fill = KEY ? `color-mix(in srgb, ${SURF} 92%, ${INK})` : `color-mix(in srgb, ${INK} ${MV.alpha ? 10 : 4}%, transparent)`;
+  $("grey").setAttribute("d", dA); $("tail").setAttribute("d", dA);
+  $("hotL").setAttribute("d", dC); $("hotL").setAttribute("stroke-width", sw * 1.15); $("hotL").style.stroke = `color-mix(in srgb, ${ACC} 80%, white)`;
+  $("hotG").setAttribute("d", dC); $("hotG").setAttribute("stroke-width", sw * 4); $("hotG").style.stroke = ACC;
+  const xm = zx(zm), ym = yAt(xm);
+  $("tailR").setAttribute("x", xm);
+  $("reflFlip").setAttribute("transform", `translate(0 ${2 * By + 6 * u}) scale(1 -1)`);
+  $("mRect").setAttribute("y", By); $("mRect").setAttribute("height", CHt * 0.8);
+  const L = $("curve").getTotalLength();
+  for (const id of ["curve", "glow"]) { $(id).style.strokeDasharray = `${L} ${L}`; $(id).style.strokeDashoffset = L; }
+
+  // ---- axes: a baseline, a centre tick and its label
+  const NS = "http://www.w3.org/2000/svg", ax = $("axes");
+  const mk = (tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); ax.append(e); return e; };
+  const baseL = mk("line", { x1: Lx - 40 * u, x2: Rx + 40 * u, y1: By, y2: By, stroke: INK, "stroke-opacity": 0.45, "stroke-width": 2 * u });
+  const ticks = [-2, -1, 0, 1, 2].map((z) => mk("line", { x1: zx(z), x2: zx(z), y1: By + 10 * u, y2: By + (z ? 22 : 30) * u, stroke: INK, "stroke-opacity": z ? 0.3 : 0.55, "stroke-width": 2 * u }));
+  const midL = $("midL"); midL.textContent = v.mid || ""; midL.style.fontSize = (P ? 40 : 36) * u + "px";
+  MV.fitText(midL, (Rx - Lx) * 0.36, 24);
+  const mw = midL.getBoundingClientRect().width;
+  Object.assign(midL.style, { left: Xc - mw / 2 + "px", top: By + 46 * u + "px" });
+  if (!v.mid) midL.style.display = "none";
+
+  // ---- the marker disc
+  const TD = Math.round((P ? 132 : 118) * u), tok = $("tok"), ring = $("ring");
+  if (v.mark) tok.appendChild(MV.img(v.mark)); else { const b = document.createElement("b"); b.textContent = ((v.brandName || "").replace(/[^A-Za-z0-9]/g, "")[0] || "").toUpperCase(); b.style.fontSize = TD * 0.44 + "px"; tok.appendChild(b); }
+  const tokY = ym - TD - 6 * u;
+  Object.assign(tok.style, { width: TD + "px", height: TD + "px", left: xm - TD / 2 + "px", top: tokY + "px" });
+  Object.assign(ring.style, { width: TD + "px", height: TD + "px", left: xm - TD / 2 + "px", top: tokY + "px" });
+
+  // ---- the readout pill: measured at its widest, then it rides above whatever is under it
+  const pill = $("pill"), pt = $("pt"), ps = $("ps");
+  const fmt = (x) => x.toFixed(dec);
+  pt.innerHTML = (v.lead ? `<span class="ld"></span>` : "") + `<span class="n"></span><span class="fx">%</span>`;
+  if (v.lead) pt.querySelector(".ld").textContent = v.lead;
+  const nEl = pt.querySelector(".n");
+  nEl.textContent = fmt(50);
+  pt.style.fontSize = (P ? 116 : 96) * u + "px"; ps.style.fontSize = (P ? 42 : 38) * u + "px";
+  ps.textContent = v.sub || ""; if (!v.sub) ps.style.display = "none";
+  MV.fitText(pt, (P ? 560 : 600) * u, 40); MV.fitText(ps, (P ? 560 : 600) * u, 24);
+  const pw = pill.offsetWidth, ph = pill.offsetHeight;
+  pill.style.width = pw + "px"; pt.style.textAlign = ps.style.textAlign = "center";
+  // what the pill must clear at each x: the curve, and the disc as a smooth bump around the marker
+  const clear = (x) => { let h = hy(xz(x)) * CHt; const dd = Math.abs(x - xm) / (TD * 1.1); if (dd < 1) h = Math.max(h, (By - tokY + 10 * u) * (0.5 + 0.5 * Math.cos(Math.PI * dd))); return h; };
+  const fx0 = Math.max(P ? safe.left - 30 * u : 40 * u, Lx - 20 * u), fx1 = Math.min(P ? W - safe.right + 30 * u : W - 40 * u, Rx + 10 * u);
+  const pillAt = (x) => { const l = Math.max(fx0, Math.min(fx1 - pw, x - pw / 2)); let h = 0; for (let s = l - 10 * u; s <= l + pw + 10 * u; s += 8 * u) h = Math.max(h, clear(s)); return [l, By - h - ph - 34 * u]; };
+
+  // ---- one state, rendered every frame: the sweep position and how present the readout is
+  const S = { x: Lx, p: 0 };
+  const scan = $("scan"), sdot = $("sdot");
+  scan.setAttribute("stroke-width", 4 * u); sdot.setAttribute("r", sw * 1.25);
+  const render = () => {
+    const x = S.x, y = yAt(x);
+    $("sweepR").setAttribute("width", Math.max(0, x - Lx + 1)); $("sweepR").setAttribute("x", Lx - 1);
+    scan.setAttribute("x1", x); scan.setAttribute("x2", x); scan.setAttribute("y1", y); scan.setAttribute("y2", By);
+    sdot.setAttribute("cx", x); sdot.setAttribute("cy", y);
+    const share = 100 * (1 - cdf(xz(x)));
+    nEl.textContent = fmt(x >= xm - 0.5 ? pct : Math.max(pct, Math.min(50, share)));
+    const [l, t] = pillAt(x); pill.style.left = l + "px"; pill.style.top = t + "px";
+    pill.style.transformOrigin = `${x - l}px ${ph + 34 * u}px`;
+  };
+  const R = { onUpdate: render };
+  render();
+
+  // ---- slow 3D drift, the camera leans in toward the tail at the end
+  gsap.set("#tilt", { transformOrigin: `${W / 2}px ${H / 2}px` });
+  gsap.set("#cam", { transformOrigin: `${(Xc + xm) / 2}px ${ym}px` });
+  tl.fromTo("#tilt", { rotationY: 8, rotationX: 6 }, { rotationY: -5, rotationX: 2, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the baseline, the curve draws itself
+  tl.fromTo(baseL, { attr: { x2: Lx - 40 * u } }, { attr: { x2: Rx + 40 * u }, duration: 0.9, ease: "expo.out" }, 0);
+  ticks.forEach((e, i) => tl.fromTo(e, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.1 + i * 0.05));
+  tl.fromTo(midL, { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.5);
+  tl.fromTo("#ghost", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, 0.3);
+  tl.to(["#curve", "#glow"], { strokeDashoffset: 0, duration: 1.15, ease: "power2.inOut" }, 0.08);
+
+  // ---- 2. the sweep: the area shades grey behind a scan line, the share left above it counts down
+  const T1 = 1.0, M = 2.6;
+  tl.fromTo([scan, sdot], { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, T1 - 0.05);
+  const SD = M - 0.25 - T1, eS = gsap.parseEase("power2.inOut"), fC = (Xc - Lx) / (xm - Lx);
+  let tc = 0; while (tc < 1 && eS(tc) < fC) tc += 0.005;   // when the scan passes the peak: the readout arrives there, at 50
+  tl.fromTo(pill, { opacity: 0, scale: 0.7, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, T1 + tc * SD - 0.2);
+  tl.to(S, { x: xm, duration: SD, ease: "power2.inOut", ...R }, T1);
+
+  // ---- 3. the moment: the marker drops on the tail, the tail floods with the accent
+  const fall = 0.34;
+  tl.fromTo(tok, { y: -380 * u, rotation: -18, opacity: 0 }, { y: 0, rotation: 0, opacity: 1, duration: fall, ease: "power3.in" }, M - fall);
+  tl.to(tok, { scaleX: 1.16, scaleY: 0.84, duration: 0.06, ease: "power2.out", transformOrigin: "50% 100%" }, M);
+  tl.to(tok, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(3)", transformOrigin: "50% 100%" }, M + 0.06);
+  tl.fromTo(ring, { scale: 1, opacity: 0.95 }, { scale: 2.4, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, M + 0.02);
+  tl.to(scan, { stroke: ACC, duration: 0.2, ease: "power2.out" }, M);
+  tl.to(sdot, { opacity: 0, duration: 0.15, ease: "power2.out" }, M);
+  tl.fromTo(["#tail", "#hotC"], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, M);
+  tl.fromTo("#tailR", { attr: { width: 0 } }, { attr: { width: Rx - xm + 10 * u }, duration: 0.55, ease: "expo.out" }, M);
+  tl.to("#grey", { opacity: 0.7, duration: 0.6, ease: "power2.inOut" }, M + 0.2);
+  tl.to(".hot", { opacity: 1, duration: 0.3, ease: "power2.out" }, M);
+  tl.fromTo(pt, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, M);
+  tl.to(pt, { scale: 1, duration: 0.5, ease: "back.out(2.6)" }, M + 0.08);
+  tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut", immediateRender: false }, M + 0.3);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.07);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D - M + 0.2, ease: "power2.inOut", immediateRender: false }, M - 0.2);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

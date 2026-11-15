@@ -1,0 +1,5 @@
+{ "id": "phone-feed", "name": "Phone feed stop", "oneLiner": "a metal-and-glass phone rises turning toward camera, its social feed is flicked and rushes up in a blur, decelerates on a long tail and settles on the brand's post, then a double tap blooms a heart on the image, the like fills and the count ticks up",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["phone", "feed", "scroll", "social", "post", "like", "doomscroll", "thumb stop", "content", "creator", "mobile", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker talks about stopping the scroll or a post blowing up: the feed lands on the post as they name it, the heart pops on 'people loved it'" }

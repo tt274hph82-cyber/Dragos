@@ -1,0 +1,5 @@
+{ "id": "funnel-stages", "name": "Glass funnel", "oneLiner": "3 or 4 stacked glass funnel stages build top to bottom, a pulse of light drops through them while each number counts down from the stage above, and the conversion rate stamps out of the spout",
+  "category": "data", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["chart", "funnel", "conversion", "pipeline", "sales", "growth", "data", "numbers", "stages", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": false,
+  "say": "when the speaker walks through how many people make it from one step to the next (visitors, sign-ups, customers): the pulse drops on each step as it is named, the stamp lands on the final rate" }

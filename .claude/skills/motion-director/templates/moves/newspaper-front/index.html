@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The front page headline (empty uses the brand headline)","default":""},
+  {"id":"deck","type":"string","label":"Line under the headline (empty uses the brand tagline)","default":""},
+  {"id":"masthead","type":"string","label":"Newspaper name ({brand} becomes the brand name)","default":"The {brand} Ledger"},
+  {"id":"edition","type":"string","label":"Middle of the date bar","default":"Late edition"},
+  {"id":"story2","type":"string","label":"Second story headline, beside the photo","default":"How the whole thing was built"},
+  {"id":"story3","type":"string","label":"Third story headline, under the photo","default":"What happens next"},
+  {"id":"caption","type":"string","label":"Photo caption (empty uses the brand name)","default":""},
+  {"id":"centre","type":"string","label":"Keep the authored framing on 9:16 (off)","default":"off"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV News"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  @font-face { font-family: "MV News"; src: url("assets/fonts/PlayfairDisplay-Italic-wght.ttf"); font-weight: 400 900; font-style: italic; font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: a walnut table under one warm lamp */
+  #ground { position: absolute; inset: -10%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1150); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 40% 32%, rgba(255,214,160,.18), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.66)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2600); perspective-origin: 50% 50%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #paper { position: absolute; transform-style: preserve-3d; }
+  #shadow { position: absolute; left: 0; top: 0; width: 100%; transform-origin: 50% 0; background: rgba(0,0,0,.55); border-radius: calc(var(--s) * 6); filter: blur(calc(var(--s) * 26)); }
+  #shadow2 { position: absolute; left: 0; top: 0; width: 100%; transform-origin: 50% 0; background: rgba(0,0,0,.5); filter: blur(calc(var(--s) * 4)); }
+  .half { position: absolute; left: 0; width: 100%; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  #flapW { position: absolute; left: 0; width: 100%; transform-style: preserve-3d; transform-origin: 50% 0; }
+  #flapBack { position: absolute; inset: 0; transform: rotateX(180deg); backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+  .np { position: absolute; inset: 0; background: #ECE5D4 url(assets/newsprint.jpg) center / calc(var(--s) * 820); }
+  .verso { position: absolute; inset: 6% 5%; background: url(assets/newscol.jpg) top center / 33% auto; transform: scaleX(-1); opacity: .16; mix-blend-mode: multiply; }
+  .page { position: absolute; left: 0; width: 100%; }
+  /* the print: everything inked, through a real ink-coverage scan, multiplied into the newsprint */
+  .print { position: absolute; inset: 0; mix-blend-mode: multiply; color: #191613;
+    -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--s) * 300); mask: url(assets/inkmask.png) 0 0 / calc(var(--s) * 300); }
+  .ab { position: absolute; box-sizing: border-box; }
+  .t { white-space: nowrap; line-height: 1; }
+  .serif { font-family: "MV News", serif; }
+  .rule { background: #191613; }
+  .col { background: url(assets/newscol.jpg) 0 0 / 100% auto repeat-y; opacity: .92; }
+  .photo { overflow: hidden; background: radial-gradient(70% 70% at 50% 35%, #d9d4ca, #8f8a82); }
+  .photo img { position: absolute; left: 50%; bottom: 0; height: 104%; transform: translateX(-50%); filter: grayscale(1) contrast(1.28) brightness(1.04); }
+  .photo img.cover { left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; transform: none; }
+  .screen { position: absolute; inset: 0; background: radial-gradient(circle, rgba(236,229,212,0) 0 34%, rgba(236,229,212,.62) 62%) 0 0 / calc(var(--s) * 6) calc(var(--s) * 6); }
+  /* the lamp on the sheet, and the crease where it was folded */
+  .light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(90% 60% at 30% 10%, rgba(255,238,210,.2), transparent 70%), linear-gradient(165deg, transparent 55%, rgba(40,28,15,.12)); }
+  #creaseT { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--s) * 70); background: linear-gradient(transparent, rgba(60,45,25,.16) 85%, rgba(255,255,255,.2) 98%); pointer-events: none; }
+  #creaseB { position: absolute; left: 0; right: 0; top: 0; height: calc(var(--s) * 70); background: linear-gradient(rgba(255,255,255,.18), rgba(60,45,25,.14) 6%, transparent); pointer-events: none; }
+  #flapShade { position: absolute; inset: 0; background: #1b130a; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="paper" data-bleed>
+      <div id="shadow"></div><div id="shadow2"></div>
+      <div id="flapW">
+        <div class="half" id="flap"><div class="np"></div><div class="page" id="pageB"></div><div class="light"></div><div id="creaseB"></div><div id="flapShade"></div></div>
+        <div id="flapBack"><div class="np"></div><div class="verso"></div></div>
+      </div>
+      <div class="half" id="topHalf"><div class="np"></div><div class="page" id="pageT"></div><div class="light"></div><div id="creaseT"></div></div>
+    </div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H } = MV;
+  await Promise.all([document.fonts.load('900 100px "MV News"'), document.fonts.load('700 40px "MV News"'), document.fonts.load('italic 400 40px "MV News"')]);
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait;
+  const brand = (v.brandName || "").trim();
+
+  // ---- the page, designed at 1000 wide (a broadsheet, folded at the middle)
+  const PW = 1000, PH = 1520, FOLD = 760, pad = 44, inner = PW - pad * 2;
+  // scale: the folded half fills the frame
+  const s = P ? Math.min((W - 70 * u) / PW, (H * 0.8) / FOLD) : Math.min((W * 0.86) / PW, (H * 0.84) / FOLD);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px";
+  const paper = $("#paper");
+  const px0 = (W - PW * s) / 2, py0 = (H - FOLD * s) / 2;
+  Object.assign(paper.style, { left: px0 + "px", top: py0 + "px", width: S(PW), height: S(PH) });
+  Object.assign($("#topHalf").style, { top: 0, height: S(FOLD) });
+  Object.assign($("#flapW").style, { top: S(FOLD), height: S(PH - FOLD) });
+  Object.assign($("#flap").style, { top: 0, height: S(PH - FOLD) });
+
+  const page = $("#pageT"); page.style.height = S(PH);
+  const pr = document.createElement("div"); pr.className = "print"; page.appendChild(pr);
+  const box = (e, x, y, w, h) => { Object.assign(e.style, { left: S(x), top: S(y), width: S(w) }); if (h != null) e.style.height = S(h); return e; };
+  const el = (cls, txt, x, y, w, h) => { const d = document.createElement("div"); d.className = "ab " + cls; if (txt != null) d.textContent = txt; box(d, x, y, w, h); pr.appendChild(d); return d; };
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  const fitTo = (e, maxW, min) => { MV.fitText(e, maxW * s, min * s); };
+  const center = (e, cx) => { e.style.left = (cx * s - tw(e) / 2) + "px"; e.style.width = "auto"; };
+
+  // masthead
+  const mh = el("t serif", String(v.masthead || "").split("{brand}").join(brand).trim(), pad, 30, inner);
+  Object.assign(mh.style, { fontWeight: 900, fontSize: S(118), letterSpacing: "-0.01em" }); fitTo(mh, inner, 40); center(mh, PW / 2);
+  const mhH = parseFloat(mh.style.fontSize) / s;
+  let y = 30 + mhH * 1.08 + 14;
+  el("rule", null, pad, y, inner, 5); el("rule", null, pad, y + 9, inner, 1.6);
+  y += 22;
+  const dl = el("t serif", "Vol. 1, No. 1", pad, y, 300); dl.style.fontSize = S(36); dl.style.fontWeight = 600;
+  // the edition, printed in the spot colour (the brand accent) as a reversed box
+  const dm = el("t serif", v.edition || "", pad, y - 6, inner); Object.assign(dm.style, { fontSize: S(34), fontWeight: 700, fontStyle: "italic", color: "#fff", background: "var(--accent)", padding: `${S(7)} ${S(20)} ${S(9)}`, mixBlendMode: "normal" }); fitTo(dm, inner * 0.38, 18); center(dm, PW / 2); if (!dm.textContent) dm.style.display = "none";
+  dm.style.left = (PW / 2 * s - dm.getBoundingClientRect().width / 2) + "px";
+  const dr = el("t serif", v.domain || "", pad, y, 300); Object.assign(dr.style, { fontSize: S(36), fontWeight: 600 }); fitTo(dr, inner * 0.27, 18); dr.style.left = (PW - pad) * s - tw(dr) + "px"; dr.style.width = "auto";
+  fitTo(dl, inner * 0.27, 18);
+  y += 50;
+  el("rule", null, pad, y, inner, 1.6); el("rule", null, pad, y + 6, inner, 5);
+  y += 34;
+  // the headline: as big as three lines across the full width allow
+  const title = (v.title || v.headline || v.tagline || "").trim();
+  const hd = el("serif", title, pad, y, inner);
+  Object.assign(hd.style, { fontWeight: 900, lineHeight: 0.96, letterSpacing: "-0.015em", textAlign: "center", textWrap: "balance" });
+  let hf = P ? 150 : 140; hd.style.fontSize = S(hf);
+  const hLines = () => Math.round(hd.getBoundingClientRect().height / (hf * s * 0.96));
+  const words = MV.words(hd);
+  while ((hLines() > 3 || words.some((w) => w.getBoundingClientRect().width > inner * s)) && hf > 50) { hf -= 3; hd.style.fontSize = S(hf); }
+  y += hd.getBoundingClientRect().height / s + 22;
+  // the deck
+  const dk = el("serif", (v.deck || v.tagline || "").trim(), pad + 40, y, inner - 80);
+  Object.assign(dk.style, { fontStyle: "italic", fontSize: S(40), lineHeight: 1.15, textAlign: "center", textWrap: "balance" });
+  while (dk.getBoundingClientRect().height / s > 100 && parseFloat(dk.style.fontSize) > 30 * s) dk.style.fontSize = (parseFloat(dk.style.fontSize) - 2) + "px";
+  y += dk.textContent ? dk.getBoundingClientRect().height / s + 22 : 0;
+  el("rule", null, pad, y, inner, 1.6);
+  y += 18;
+  // three columns of real set copy down to the fold, the first with a byline
+  const cw = (inner - 2 * 28) / 3;
+  // the set copy is one scan of five short items; a column starts on an item, never mid-paragraph
+  const IMH = cw * 1019 / 800, PARA = [0.004, 0.222, 0.366, 0.592, 0.815];
+  const para = (i) => -PARA[i % 5] * IMH - Math.floor(i / 5) * IMH;
+  const by = el("t serif", brand ? "By " + brand : "", pad, y, cw); Object.assign(by.style, { fontSize: S(30), fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase" }); fitTo(by, cw, 14);
+  for (let k = 0; k < 3; k++) {
+    const x = pad + k * (cw + 28), y0 = k === 0 ? y + 46 : y;
+    const c = el("col", null, x, y0, cw, PH - 60 - y0); c.style.backgroundPosition = `0 ${S(para(k * 2) )}`;
+    if (k) el("rule", null, x - 14.8, y, 1.4, FOLD - 40 - y);
+  }
+  // below the fold: the lead photo with its caption, a story beside it, one under it
+  const F = FOLD, colsTop = F + 30;
+  // cover the upper columns where the lower stories sit (the columns above stop at the fold)
+  [...pr.querySelectorAll(".col")].forEach((c) => { c.style.height = S(F - 20 - parseFloat(c.style.top) / s); });
+  const phW = cw * 2 + 28, phH = 420;
+  const ph = el("photo", null, pad, colsTop, phW, phH);
+  const src = (v.people && v.people[0]) || (v.screens && v.screens[0]) || v.mark;
+  if (src) { const im = MV.img(src, v.people && v.people[0] ? "" : "cover"); ph.appendChild(im); }
+  const sc = document.createElement("div"); sc.className = "screen"; ph.appendChild(sc);
+  el("rule", null, pad, colsTop, phW, 1.4).style.opacity = 0;
+  const cap = el("serif", (v.caption || brand || "").trim(), pad, colsTop + phH + 14, phW);
+  Object.assign(cap.style, { fontStyle: "italic", fontSize: S(32), lineHeight: 1.15, whiteSpace: "nowrap" }); fitTo(cap, phW, 16);
+  const x3 = pad + 2 * (cw + 28);
+  el("rule", null, x3 - 14.8, colsTop, 1.4, PH - 60 - colsTop);
+  const s2 = el("serif", v.story2 || "", x3, colsTop, cw); Object.assign(s2.style, { fontWeight: 800, fontSize: S(50), lineHeight: 1.02, letterSpacing: "-0.01em" });
+  while ((s2.getBoundingClientRect().height / s > 270 || [...MV.words(s2)].some((w) => w.getBoundingClientRect().width > cw * s)) && parseFloat(s2.style.fontSize) > 30 * s) s2.style.fontSize = (parseFloat(s2.style.fontSize) - 2) + "px";
+  const s2b = colsTop + s2.getBoundingClientRect().height / s + 16;
+  el("rule", null, x3 + cw * 0.3, s2b, cw * 0.4, 1.4);
+  el("col", null, x3, s2b + 18, cw, PH - 60 - s2b - 18).style.backgroundPosition = `0 ${S(para(3))}`;
+  const y3 = colsTop + phH + 70;
+  el("rule", null, pad, y3, phW, 1.4);
+  const s3 = el("t serif", v.story3 || "", pad, y3 + 18, phW); Object.assign(s3.style, { fontWeight: 800, fontSize: S(58), letterSpacing: "-0.01em" }); fitTo(s3, phW, 26);
+  const y3b = y3 + 18 + parseFloat(s3.style.fontSize) / s * 1.1 + 16;
+  for (let k = 0; k < 2; k++) { const x = pad + k * (cw + 28); el("col", null, x, y3b, cw, PH - 60 - y3b).style.backgroundPosition = `0 ${S(para(1 + k * 3))}`; if (k) el("rule", null, x - 14.8, y3b, 1.4, PH - 60 - y3b); }
+  el("rule", null, pad, PH - 44, inner, 1.6);
+  // the bottom half is the same page, seen through the flap
+  const pageB = $("#pageB"); pageB.style.height = S(PH); pageB.style.top = S(-FOLD); const prB = pr.cloneNode(true); pageB.appendChild(prB);
+  // each half keeps only the type printed on it (rules and set columns may run across the fold)
+  const foldPx = FOLD * s;
+  [...pr.children].forEach((e) => { if (e.textContent && parseFloat(e.style.top) >= foldPx - 1) e.remove(); });
+  [...prB.children].forEach((e) => { if (e.textContent && parseFloat(e.style.top) < foldPx - 1) e.remove(); });
+
+  // ---- shadows (on the table, under the paper)
+  const sh = $("#shadow"), sh2 = $("#shadow2");
+  const lift = { z: 1, a: -180 };
+  const shape = () => {
+    const a = lift.a * Math.PI / 180, ext = FOLD + Math.max(0, Math.cos(a)) * (PH - FOLD);  // projected length on the table
+    const dz = lift.z;
+    sh.style.height = S(ext); sh2.style.height = S(ext);
+    gsap.set(sh, { x: (14 + dz * 50) * s, y: (26 + dz * 90) * s, opacity: 0.75 - dz * 0.3, scale: 1 + dz * 0.03, z: -6 });
+    gsap.set(sh2, { x: (2 + dz * 10) * s, y: (4 + dz * 16) * s, opacity: Math.max(0, 0.55 - dz * 0.6), z: -5 });
+    gsap.set("#flapW", { rotationX: lift.a, z: lift.a < -170 ? -2 : 0 });
+    // the flap catches less light while it is steep
+    const steep = Math.max(0, Math.min(1, Math.sin(-a)));
+    $("#flapShade").style.opacity = (steep * 0.32).toFixed(3);
+    $("#creaseT").style.opacity = lift.a > -2 ? 1 : 0.4;
+  };
+  shape();
+
+  // ---- the camera: a focus point on the page (design units), a zoom, a tilt
+  const cam = { fx: PW / 2, fy: FOLD / 2, k: 1, rx: 22, rz: -3 };
+  const camSet = () => gsap.set("#cam", { x: (PW / 2 - cam.fx) * s * cam.k, y: (FOLD / 2 - cam.fy) * s * cam.k, scale: cam.k, rotationX: cam.rx, rotationZ: cam.rz, transformOrigin: "50% 50%" });
+  camSet();
+
+  // ---- timeline
+  // 0.0 the folded paper is tossed onto the table; 1.25 it is opened, the lower half swings down from behind;
+  // 2.2 it settles flat; the camera drifts down the columns to the photo and the story beside it
+  tl.fromTo(paper, { x: 160 * u, y: H * 0.75, rotation: 14 }, { x: 0, y: 0, rotation: -2.5, duration: 1.0, ease: "expo.out" }, 0);
+  tl.to(paper, { rotation: -1, duration: 2.4, ease: "sine.inOut" }, 1.0);
+  const TU = 1.25;
+  tl.fromTo(lift, { z: 1 }, { z: 0.3, duration: 0.9, ease: "power2.out", onUpdate: shape, immediateRender: true }, 0);
+  // picked up to open it: the paper rises toward the lens, the shadow spreads, then it is laid flat
+  tl.to(lift, { z: 1.1, duration: 0.5, ease: "power2.inOut", onUpdate: shape }, TU - 0.3);
+  tl.to(paper, { scale: 1.05, duration: 0.5, ease: "power2.inOut" }, TU - 0.3);
+  tl.to(paper, { scale: 1, duration: 0.7, ease: "power3.out" }, TU + 0.95);
+  // a hand lifts it out from behind (slow), then it falls open under its own weight (fast) and settles
+  tl.to(lift, { a: -92, duration: 0.6, ease: "sine.inOut", onUpdate: shape }, TU);
+  tl.to(lift, { a: 2.5, duration: 0.45, ease: "power2.in", onUpdate: shape }, TU + 0.6);
+  tl.to(lift, { a: 0, duration: 0.6, ease: "back.out(2.2)", onUpdate: shape }, TU + 1.05);
+  tl.to(lift, { z: 0, duration: 0.8, ease: "power3.out", onUpdate: shape }, TU + 0.9);
+  // the camera: holds on the headline, then follows the page down as it opens and drifts down the columns
+  const endFy = FOLD + (P ? 300 : 260), endFx = P ? 500 : 470, endK = P ? 1.14 : 1.22;
+  tl.fromTo(cam, { k: 0.94, rx: 24, rz: -4, fy: FOLD / 2 + 30 }, { k: 1.02, rx: 18, rz: -2.5, fy: FOLD / 2, duration: TU, ease: "sine.out", onUpdate: camSet, immediateRender: true }, 0);
+  tl.to(cam, { fy: FOLD * 0.9, k: 0.96, duration: 1.2, ease: "power2.inOut", onUpdate: camSet }, TU + 0.3);
+  tl.to(cam, { fy: endFy, fx: endFx, k: endK, rx: 12, rz: -1, duration: D - TU - 1.2, ease: "power1.inOut", onUpdate: camSet }, TU + 1.2);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -40 * u, y: -60 * u, duration: D, ease: "sine.inOut" }, 0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

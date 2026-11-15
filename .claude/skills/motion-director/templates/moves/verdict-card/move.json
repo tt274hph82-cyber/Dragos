@@ -1,0 +1,5 @@
+{ "id": "verdict-card", "name": "Verdict card", "oneLiner": "a glowing glass app window whips in from the side with motion blur (or blooms out of a dot) and settles at chest height between the hands, then a red X draws in two strokes or a green check pops on it, and it drops out of frame in a blur",
+  "category": "explain", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["verdict", "x", "check", "wrong", "right", "yes", "no", "approve", "reject", "screenshot", "app", "proof", "overlay", "chest"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.0, "alpha": true,
+  "say": "when the speaker judges a tool, a method or a result: 'this doesn't work' (stamp x) or 'this is the one' (stamp check); cut in on the thing's name, the stamp lands on the verdict word" }

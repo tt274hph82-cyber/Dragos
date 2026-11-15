@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"titles","type":"string","label":"Spine titles of the stack under it, split with | (2 to 4, invented or real books you may show)","default":"Quiet Systems|Notes on Making|The Patient Builder|Small Daily Wins"},
+  {"id":"title","type":"string","label":"Title of the top book, the one that turns to camera","default":"Make the Thing"},
+  {"id":"author","type":"string","label":"Author on the top book (empty: the brand name)","default":""},
+  {"id":"blurb","type":"string","label":"Small line on the cover under the title","default":"A field guide"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Serif"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  @font-face { font-family: "MV Book"; src: url("assets/fonts/LibreBaskerville-wght.ttf"); font-weight: 400 700; font-display: block; }
+  @font-face { font-family: "MV Cond"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #140d08; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #back { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 30%, #3a2618, #120b07 75%); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); perspective-origin: 50% 30%; }
+  #world { position: absolute; width: 0; height: 0; transform-style: preserve-3d; }
+  .p3 { transform-style: preserve-3d; }
+  #desk { position: absolute; background: #2a1a10 url(assets/wood.jpg) center / calc(var(--u) * 900); }
+  #desk::after { content: ""; position: absolute; inset: 0; background: radial-gradient(28% 28% at 50% 50%, rgba(255,214,160,.2), transparent 70%), radial-gradient(50% 50% at 50% 50%, transparent 40%, rgba(10,5,2,.85) 100%); }
+  .dshd { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.75), rgba(0,0,0,.35) 60%, transparent); }
+  .book { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .f { position: absolute; backface-visibility: hidden; box-sizing: border-box; overflow: hidden; }
+  /* book cloth: a colour with a scanned leather grain through it */
+  .cloth { background-color: var(--bc); }
+  .cloth::before { content: ""; position: absolute; inset: 0; background: url(assets/leather.jpg) center / calc(var(--u) * 420); mix-blend-mode: overlay; opacity: .55; }
+  .pages { background: repeating-linear-gradient(180deg, #f1ebdd 0 calc(var(--u) * 2.2), #d9d0bd calc(var(--u) * 2.2) calc(var(--u) * 3.2)); }
+  .pages.v { background: repeating-linear-gradient(90deg, #f1ebdd 0 calc(var(--u) * 2.2), #d9d0bd calc(var(--u) * 2.2) calc(var(--u) * 3.2)); }
+  .pages::after { content: ""; position: absolute; inset: 0; background: url(assets/paper-white.jpg) center / calc(var(--u) * 300); mix-blend-mode: multiply; opacity: .5; }
+  .board { position: absolute; background: var(--bc); }
+  .sh { position: absolute; inset: 0; pointer-events: none; }
+  .spt { position: absolute; top: 50%; white-space: nowrap; line-height: 1; transform: translateY(-50%); color: var(--fc); }
+  .band { position: absolute; top: 12%; bottom: 12%; width: calc(var(--u) * 5); background: var(--fc); opacity: .75; }
+  /* the top book's cover */
+  .cv { position: absolute; color: var(--fc); text-align: center; }
+  .cv .ct { position: absolute; left: 10%; right: 10%; font-family: "MV Serif", serif; font-weight: 900; line-height: 1.02; letter-spacing: -.01em; }
+  .cv .cr { position: absolute; left: 30%; right: 30%; height: calc(var(--u) * 4); background: var(--fc); }
+  .cv .cb { position: absolute; left: 8%; right: 8%; font-family: "MV Book", serif; font-style: italic; white-space: nowrap; }
+  .cv .ca { position: absolute; left: 8%; right: 8%; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+  .cv .frame { position: absolute; inset: 5%; border: calc(var(--u) * 3) solid var(--fc); opacity: .55; }
+  .foil { text-shadow: 0 calc(var(--u) * -1) 0 rgba(255,255,255,.35), 0 calc(var(--u) * 1.5) calc(var(--u) * 1) rgba(0,0,0,.45); }
+  #glint { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--g, -40%) - 9%), rgba(255,240,210,.65) var(--g, -40%), transparent calc(var(--g, -40%) + 6%)); }
+  #lamp { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 45% at 45% 35%, rgba(255,220,170,.12), transparent 70%), radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(0,0,0,.6)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="back" data-bg></div>
+  <div id="stage"><div id="world"><div id="desk" class="f"></div></div></div>
+  <div id="lamp" data-bg></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H } = MV;
+  const u = MV.u * (MV.portrait ? 1 : 0.66);
+  await Promise.all([document.fonts.load('900 80px "MV Serif"'), document.fonts.load('700 40px "MV Book"'), document.fonts.load('italic 400 40px "MV Book"'), document.fonts.load('40px "MV Cond"')]);
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait;
+  const world = $("#world");
+  Object.assign(world.style, { left: W / 2 + "px", top: H * (P ? 0.64 : 0.7) + "px" });
+  const div = (par, cls, css) => { const d = document.createElement("div"); d.className = cls; if (css) Object.assign(d.style, css); par.appendChild(d); return d; };
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  // the desk: a plane at y = 0
+  const DS = 4200 * u;
+  Object.assign($("#desk").style, { width: DS + "px", height: DS + "px", left: -DS / 2 + "px", top: -DS / 2 + "px", transform: "rotateX(90deg)" });
+  const shadow = div(world, "f dshd", { transform: "rotateX(90deg) translateZ(1px)" });
+
+  // a book: a box L (along the spine) x T (thick) x Dp (cover width), centred on its own origin
+  const Dp = 480 * u;
+  const face = (b, cls, w, h, tf, css) => { const f = div(b, "f " + cls, Object.assign({ width: w + "px", height: h + "px", left: -w / 2 + "px", top: -h / 2 + "px", transform: tf }, css || {})); return f; };
+  const shade = (f, bg) => div(f, "sh", { background: bg });
+  const makeBook = (L, T, bc, fc, kind) => {
+    const b = div(world, "book"); b.style.setProperty("--bc", bc); b.style.setProperty("--fc", fc);
+    const bd = 7 * u; // board thickness
+    const spine = face(b, "cloth", L, T, `translateZ(${Dp / 2}px)`);
+    shade(spine, "linear-gradient(180deg, rgba(255,255,255,.14), transparent 30%, rgba(0,0,0,.22) 100%)");
+    const top = face(b, "cloth", L, Dp, `rotateX(90deg) translateZ(${T / 2}px)`);
+    shade(top, "linear-gradient(0deg, rgba(0,0,0,.18), transparent 25%), radial-gradient(70% 80% at 35% 40%, rgba(255,240,215,.16), transparent 70%)");
+    const bot = face(b, "cloth", L, Dp, `rotateX(-90deg) translateZ(${T / 2}px)`);
+    for (const s of [1, -1]) { const e = face(b, "pages", Dp, T, `rotateY(${s * 90}deg) translateZ(${L / 2}px)`);
+      div(e, "board", { left: 0, right: 0, top: 0, height: bd + "px" }); div(e, "board", { left: 0, right: 0, bottom: 0, height: bd + "px" });
+      div(e, "board", { left: s > 0 ? "auto" : 0, right: s > 0 ? 0 : "auto", top: 0, bottom: 0, width: bd * 1.6 + "px" });
+      shade(e, `linear-gradient(${s > 0 ? 270 : 90}deg, rgba(0,0,0,.28), rgba(0,0,0,.05) 40%), rgba(0,0,0,${s > 0 ? 0.12 : 0.3})`); }
+    const fore = face(b, "pages", L, T, `rotateY(180deg) translateZ(${Dp / 2}px)`);
+    div(fore, "board", { left: 0, right: 0, top: 0, height: bd + "px" }); div(fore, "board", { left: 0, right: 0, bottom: 0, height: bd + "px" });
+    return { b, spine, top, L, T };
+  };
+
+  // ---- the stack: books from the bottom up, the top one is the hero
+  const titles = String(v.titles || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 4);
+  const NB = Math.max(2, titles.length);
+  const cloths = [["#2f4a3e", "#e9d9a6"], ["#26324a", "#e8e0cc"], ["#6b2a26", "#f0d9a0"], ["#b08a45", "#1d1a16"], ["#33302c", "#e6d7b3"]];
+  const fontsOf = ["MV Book", "MV Cond", "MV Serif", "MV Book"];
+  const books = []; let yAcc = 0;
+  const R = MV.rand(19);
+  for (let i = 0; i < NB; i++) {
+    const L = (700 + R() * 110) * u, T = (70 + R() * 30) * u, [bc, fc] = cloths[i % cloths.length];
+    const bk = makeBook(L, T, bc, fc);
+    bk.y = -(yAcc + T / 2); yAcc += T; bk.x = (R() - 0.5) * 50 * u; bk.ry = (R() - 0.5) * 9;
+    // the spine: bands, the title
+    const sp = bk.spine; const fam = fontsOf[i % fontsOf.length];
+    div(sp, "band", { left: 34 * u + "px" }); div(sp, "band", { right: 34 * u + "px" });
+    const t = div(sp, "spt foil"); t.dataset.layered = ""; t.textContent = titles[i] || ""; t.style.fontFamily = `"${fam}", serif`; t.style.fontWeight = fam === "MV Book" ? 700 : fam === "MV Serif" ? 800 : 400;
+    t.style.fontSize = Math.min(T * (fam === "MV Cond" ? 0.62 : 0.5), 52 * u) + "px"; if (fam === "MV Cond") t.style.textTransform = "uppercase", t.style.letterSpacing = ".06em";
+    MV.fitText(t, L - 140 * u, 10); t.style.left = (L / 2 - tw(t) / 2) + "px";
+    books.push(bk);
+  }
+  // the hero: thicker, in the brand colour, its cover designed on the top face
+  const HL = 720 * u, HT = 92 * u;
+  const hero = makeBook(HL, HT, "var(--accent)", "color-mix(in srgb, var(--accent2) 80%, #fff)");
+  hero.y = -(yAcc + HT / 2); hero.x = 6 * u; hero.ry = 2;
+  { const sp = hero.spine; div(sp, "band", { left: 34 * u + "px" }); div(sp, "band", { right: 34 * u + "px" });
+    const t = div(sp, "spt foil"); t.textContent = v.title || ""; t.style.fontFamily = '"MV Serif", serif'; t.style.fontWeight = 900; t.style.fontSize = 48 * u + "px"; MV.fitText(t, HL * 0.62, 10); t.style.left = 70 * u + "px";
+    const a = div(sp, "spt"); a.textContent = (v.author || v.brandName || "").trim(); a.style.fontWeight = 800; a.style.fontSize = 30 * u + "px"; a.style.letterSpacing = ".12em"; a.style.textTransform = "uppercase"; MV.fitText(a, HL * 0.26, 10); a.style.left = (HL - 70 * u - tw(a)) + "px"; }
+  // cover: native Dp wide x HL tall, turned -90 on the top face so its spine edge is the spine
+  const cv = div(hero.top, "cv", {  width: Dp + "px", height: HL + "px", left: (HL - Dp) / 2 + "px", top: (Dp - HL) / 2 + "px", transform: "rotate(-90deg)" });
+  cv.dataset.layered = ""; div(cv, "frame");
+  const ct = div(cv, "ct foil"); ct.textContent = v.title || ""; ct.style.fontSize = 92 * u + "px"; ct.style.top = HL * 0.2 + "px";
+  while (ct.getBoundingClientRect().width > 0 && ct.scrollHeight > 92 * u * 3.3 && parseFloat(ct.style.fontSize) > 40 * u) ct.style.fontSize = (parseFloat(ct.style.fontSize) - 4 * u) + "px";
+  // the words must fit the width too
+  for (const w of (v.title || "").split(/\s+/)) { const s = document.createElement("span"); s.textContent = w; s.style.whiteSpace = "nowrap"; s.style.font = getComputedStyle(ct).font; s.style.position = "absolute"; s.style.visibility = "hidden"; document.body.appendChild(s); const ww = s.getBoundingClientRect().width; s.remove(); if (ww > Dp * 0.8) ct.style.fontSize = parseFloat(ct.style.fontSize) * Dp * 0.78 / ww + "px"; }
+  const ctH = ct.scrollHeight;
+  div(cv, "cr", { top: HL * 0.2 + ctH + 40 * u + "px" });
+  const cb = div(cv, "cb foil"); cb.textContent = v.blurb || ""; cb.style.fontSize = 36 * u + "px"; cb.style.top = HL * 0.2 + ctH + 74 * u + "px"; MV.fitText(cb, Dp * 0.84, 10);
+  const ca = div(cv, "ca foil"); ca.textContent = (v.author || v.brandName || "").trim(); ca.style.fontSize = 34 * u + "px"; ca.style.top = HL * 0.84 + "px"; MV.fitText(ca, Dp * 0.84, 10);
+  const glint = div(hero.top, "", {}); glint.id = "glint";
+  const all = [...books, hero];
+  // the stack's shadow on the desk
+  Object.assign(shadow.style, { width: 900 * u + "px", height: 640 * u + "px", left: -450 * u + "px", top: -320 * u + "px" });
+  const place = (bk) => gsap.set(bk.b, { x: bk.x, y: bk.y, rotationY: bk.ry });
+  all.forEach(place);
+
+  // ---- timeline
+  // 0.1-1.5 the books drop on to the stack one after another, each lands with a little bounce and nudges the ones under it;
+  // 2.25 the top book slides out toward the lens; 2.75 it stands up and turns its cover to camera (the moment); 3.7 the foil catches the light
+  const H0 = H * 0.9;
+  gsap.set(world, { rotationX: -24, rotationY: -26 });
+  tl.fromTo(world, { rotationX: -24, rotationY: -26, y: 0, z: 0 }, { rotationX: -18, rotationY: -14, duration: 2.3, ease: "sine.inOut" }, 0);
+  all.forEach((bk, i) => {
+    const t0 = 0.08 + i * 0.3, fall = 0.34;
+    tl.fromTo(bk.b, { y: bk.y - H0, rotation: (i % 2 ? 4 : -5), rotationY: bk.ry + (i % 2 ? 8 : -6) }, { y: bk.y, rotation: 0, rotationY: bk.ry, duration: fall, ease: "power2.in", immediateRender: true }, t0);
+    tl.to(bk.b, { y: bk.y - 14 * u, duration: 0.1, ease: "power2.out" }, t0 + fall); tl.to(bk.b, { y: bk.y, duration: 0.14, ease: "power2.in" }, t0 + fall + 0.1);
+    // the books under it give
+    all.slice(0, i).forEach((bb) => { tl.to(bb.b, { y: bb.y + 3 * u, duration: 0.05, ease: "power2.out" }, t0 + fall); tl.to(bb.b, { y: bb.y, duration: 0.3, ease: "expo.out" }, t0 + fall + 0.05); });
+  });
+  tl.fromTo(shadow, { opacity: 0.4, scale: 0.85 }, { opacity: 1, scale: 1.05, duration: 1.6, ease: "power2.out" }, 0.3);
+  // hero: out toward the lens, then up and around to face the camera, the world eases square on
+  const TS = 2.25, TU = 2.75;
+  const liftY = -(P ? 600 : 600) * u, outZ = (P ? 280 : 340) * u;
+  tl.to(hero.b, { z: 300 * u, y: hero.y - 110 * u, x: hero.x + 70 * u, rotationX: -8, duration: 0.55, ease: "power2.inOut" }, TS);
+  tl.to(hero.b, { y: hero.y + liftY, z: outZ + 300 * u, x: 40 * u, rotationX: -90, rotation: 90, rotationY: 0, duration: 1.0, ease: "expo.inOut" }, TU);
+  tl.to(hero.b, { y: hero.y + liftY - 10 * u, rotationX: -86, rotation: 88, duration: D - TU - 1.0, ease: "sine.inOut" }, TU + 1.0);
+  tl.set(hero.spine.querySelectorAll(".spt"), { visibility: "hidden" }, TU + 0.55);
+  tl.to(world, { rotationX: -10, rotationY: -4, y: (P ? 330 : 270) * u, duration: 1.3, ease: "power3.inOut" }, TS + 0.2);
+  tl.to(world, { rotationX: -8, rotationY: -1, y: (P ? 340 : 275) * u, duration: D - TS - 1.5, ease: "sine.inOut" }, TS + 1.5);
+  tl.fromTo(glint, { "--g": "-40%" }, { "--g": "150%", duration: 1.0, ease: "power2.inOut" }, TU + 1.0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{ "sources": [
+  { "file": "assets/card.jpg", "from": "Poly Haven office_notepads (CC0 scanned stationery model): the index card's 4K diffuse map, rendered flat top-down with prop-render.mjs under the studio_small_09 HDRI and cropped", "license": "CC0", "page": "https://polyhaven.com/a/office_notepads" },
+  { "file": "assets/pencil.png", "from": "Poly Haven stationery_supplies (CC0 model), the new pencil alone, rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0)", "license": "CC0", "page": "https://polyhaven.com/a/stationery_supplies" },
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the card's blank back", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; preview ground only", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/fonts/GochiHand-Regular.ttf", "from": "Gochi Hand by Huerta Tipografica, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Gochi+Hand" },
+  { "file": "assets/fonts/PermanentMarker-Regular.ttf", "from": "Permanent Marker by Font Diner, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Permanent+Marker" }
+] }

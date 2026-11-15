@@ -1,0 +1,5 @@
+{ "id": "status-page", "name": "Glass status page all clear", "oneLiner": "a status page on glass under the brand mark: an amber Partial outage banner over four services with 30 days of uptime bars, the hit service pulses amber, then its bar and label flip green and the whole banner turns over to All systems operational",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["status", "uptime", "outage", "incident", "fixed", "resolved", "monitoring", "reliability", "developer", "saas", "operational", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says something went down and came back ('the API was down for an hour', 'the agent caught it and fixed it before anyone noticed'): the amber row pulses on 'down', the banner turns green on 'fixed' or 'back up'" }

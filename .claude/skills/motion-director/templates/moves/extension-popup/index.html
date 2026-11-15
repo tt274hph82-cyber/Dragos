@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"url","type":"string","label":"The page the browser is on","default":"example.com/article"},
+  {"id":"desc","type":"string","label":"One line under the extension name","default":"Works on any page you open"},
+  {"id":"action","type":"string","label":"The one action button","default":"Summarize this page"},
+  {"id":"working","type":"string","label":"Button while it runs","default":"Reading the page"},
+  {"id":"done","type":"string","label":"Green state once it is done","default":"Done"},
+  {"id":"result","type":"string","label":"Result line under the button (empty: none)","default":"5 key points saved to notes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ad: color-mix(in srgb, var(--accent) 72%, #000); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2400px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 36);
+    background: linear-gradient(170deg, rgba(255,255,255,.13), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.1); background: rgba(255,255,255,.04); }
+  .lights i { position: absolute; width: calc(var(--s) * 18); height: calc(var(--s) * 18); border-radius: 50%; }
+  .nav { width: calc(var(--s) * 34); height: calc(var(--s) * 34); opacity: .55; }
+  #url { border-radius: calc(var(--s) * 30); background: rgba(0,0,0,.28); display: flex; align-items: center; gap: calc(var(--s) * 14); padding: 0 calc(var(--s) * 22);
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  .is-key #url { background: color-mix(in srgb, var(--surface) 70%, black); }
+  #url svg { flex: none; width: calc(var(--s) * 26); height: calc(var(--s) * 26); opacity: .6; }
+  #urlt { font-weight: 500; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 80%, transparent); white-space: nowrap; }
+  .ext { border-radius: calc(var(--s) * 14); display: grid; place-items: center; }
+  #puz svg { width: 60%; height: 60%; opacity: .6; }
+  #me { border-radius: calc(var(--s) * 16); overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 85%, #000);
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.3), 0 0 calc(var(--s) * 18) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #me img, #pm img { width: 100%; height: 100%; object-fit: cover; }
+  #me b, #pm b { font-family: var(--font-display); color: #fff; font-size: calc(var(--s) * 32); }
+  #meh { border-radius: calc(var(--s) * 18); background: rgba(255,255,255,.14); opacity: 0; }
+  #mer { border-radius: calc(var(--s) * 18); border: calc(var(--s) * 3) solid var(--al); opacity: 0; }
+  .is-key #mer { display: none; }
+  #avt { border-radius: 50%; background: linear-gradient(140deg, var(--al), var(--accent2)); box-shadow: inset 0 0 0 calc(var(--s) * 2) rgba(255,255,255,.5); }
+  #page i { position: absolute; border-radius: calc(var(--s) * 10); background: rgba(255,255,255,.1); }
+  #page i.hero { background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.05)); border-radius: calc(var(--s) * 18); }
+  #page i.h { background: rgba(255,255,255,.22); }
+  #dimr { background: rgba(0,0,0,.4); opacity: 0; }
+
+  #pop { border-radius: calc(var(--s) * 30); overflow: hidden; transform-origin: 92% 0%;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 72%, rgba(255,255,255,.4) 28%), color-mix(in srgb, var(--surface) 92%, transparent));
+    -webkit-backdrop-filter: blur(30px) saturate(160%); backdrop-filter: blur(30px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.2),
+      0 calc(var(--s) * 50) calc(var(--s) * 100) calc(var(--s) * -20) rgba(0,0,0,.85); }
+  .is-key #pop { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 18%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.25); }
+  #pop::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #pm { border-radius: calc(var(--s) * 18); overflow: hidden; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 85%, #000); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.3); }
+  #pn { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #pd { font-weight: 500; font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 58%, transparent); white-space: nowrap; line-height: 1.2; }
+  #phr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  #btn { border-radius: calc(var(--s) * 24); overflow: hidden; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 14);
+    font-weight: 800; font-size: calc(var(--s) * 38); color: #fff; white-space: nowrap;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #fff), var(--accent) 55%, var(--ad));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--s) * 14) calc(var(--s) * 30) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 80%, transparent); }
+  #btn .fill { position: absolute; inset: 0; background: rgba(255,255,255,.22); transform-origin: 0 50%; transform: scaleX(0); }
+  #btn .ok { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 85%, #fff), var(--ok) 60%, color-mix(in srgb, var(--ok) 75%, #000)); opacity: 0; }
+  #btn span, #btn svg { position: relative; z-index: 2; }
+  #btn svg { width: calc(var(--s) * 38); height: calc(var(--s) * 38); flex: none; }
+  #btn .spin { display: none; width: calc(var(--s) * 32); height: calc(var(--s) * 32); border-radius: 50%; border: calc(var(--s) * 4.5) solid rgba(255,255,255,.35); border-top-color: #fff; box-sizing: border-box; position: relative; z-index: 2; flex: none; }
+  #btn .ck { display: none; }
+  #brg { border-radius: calc(var(--s) * 24); border: calc(var(--s) * 4) solid var(--ok); opacity: 0; }
+  .is-key #brg { display: none; }
+  #res { display: flex; align-items: center; gap: calc(var(--s) * 12); font-weight: 600; font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 85%, transparent); white-space: nowrap; }
+  #res svg { width: calc(var(--s) * 32); height: calc(var(--s) * 32); flex: none; }
+  #cursor { position: absolute; left: 0; top: 0; width: calc(var(--s) * 56); height: calc(var(--s) * 56); filter: drop-shadow(0 calc(var(--s) * 6) calc(var(--s) * 8) rgba(0,0,0,.45)); transform-origin: 12% 8%; opacity: 0; z-index: 40; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="win">
+        <div id="page" class="ab"></div>
+        <div id="dimr" class="ab"></div>
+        <div id="bar" class="ab"></div>
+        <div class="lights"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i></div>
+        <svg class="nav ab" id="nb" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div id="url" class="ab"><svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="#fff"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="#fff" stroke-width="2.2"/></svg><span id="urlt"></span></div>
+        <div id="puz" class="ab ext"><svg viewBox="0 0 24 24"><path d="M10 3.5a2 2 0 0 1 4 0V5h4v4h-1.5a2 2 0 0 0 0 4H18v6h-5v-1.5a2 2 0 0 0-4 0V19H5v-5h1.5a2 2 0 0 0 0-4H5V5h5z" fill="#fff"/></svg></div>
+        <div id="meh" class="ab"></div>
+        <div id="me" class="ab ext"></div>
+        <div id="mer" class="ab"></div>
+        <div id="avt" class="ab"></div>
+      </div>
+      <div id="pop" class="ab">
+        <div id="pm" class="ab"></div><div id="pn" class="ab"></div><div id="pd" class="ab"></div>
+        <div id="phr" class="ab"></div>
+        <div id="btn" class="ab"><i class="fill"></i><i class="ok"></i>
+          <svg class="go" viewBox="0 0 24 24"><path d="M12 2.5l2.2 6.3 6.3 2.2-6.3 2.2L12 19.5l-2.2-6.3L3.5 11l6.3-2.2z" fill="#fff"/></svg>
+          <i class="spin"></i>
+          <svg class="ck" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="30" stroke-dashoffset="30"/></svg>
+          <span id="bt"></span></div>
+        <i id="brg" class="ab"></i>
+        <div id="res" class="ab"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#2BD67B"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="#06210f" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="rest"></span></div>
+      </div>
+      <svg id="cursor" viewBox="0 0 32 32"><path d="M6 3.5v22.2l5.6-5.3 3.6 8.4 4-1.7-3.6-8.3 7.7-.3z" fill="#111" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+
+  // ---- zone (a 900-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.96; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 80 * u; cR = W - 80 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.08; zB = H * 0.92; }
+  const DW = 900, BH = 100, PGH = P ? 700 : 560, DH = BH + PGH;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.06 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- toolbar: lights, back, address, extension puzzle, the brand extension, avatar
+  box($("#bar"), 0, 0, DW, BH);
+  [...document.querySelectorAll(".lights i")].forEach((e, i) => box(e, 30 + i * 28, BH / 2 - 9));
+  const EX = 60, AV = 44;
+  box($("#avt"), DW - 28 - AV, BH / 2 - AV / 2, AV, AV);
+  const meX = DW - 28 - AV - 16 - EX, puzX = meX - 10 - EX;
+  box($("#me"), meX, BH / 2 - EX / 2, EX, EX); box($("#meh"), meX - 6, BH / 2 - EX / 2 - 6, EX + 12, EX + 12); box($("#mer"), meX - 6, BH / 2 - EX / 2 - 6, EX + 12, EX + 12);
+  box($("#puz"), puzX, BH / 2 - EX / 2, EX, EX);
+  box($("#nb"), 128, BH / 2 - 17, 34, 34);
+  const ux = 180; box($("#url"), ux, BH / 2 - 32, puzX - 16 - ux, 64);
+  $("#urlt").textContent = String(v.url || "").replace(/^https?:\/\//, "");
+  MV.fitText($("#urlt"), (puzX - 16 - ux - 90) * s, 20 * s);
+  const markFill = (el) => { if (v.mark) el.appendChild(MV.img(v.mark)); else { const b = document.createElement("b"); b.textContent = (v.brandName || "A").trim().charAt(0).toUpperCase(); el.appendChild(b); } };
+  markFill($("#me")); markFill($("#pm"));
+
+  // ---- the page behind: a plain article skeleton
+  const pg = $("#page"); box(pg, 0, BH, DW, PGH); box($("#dimr"), 0, BH, DW, PGH);
+  const blk = (x, y, w, h, c) => { const i = document.createElement("i"); if (c) i.className = c; box(i, x, y, w, h); pg.appendChild(i); };
+  blk(60, 50, 520, 46, "h"); blk(60, 112, 380, 46, "h"); blk(60, 186, 200, 24);
+  blk(60, 240, DW - 120, P ? 250 : 170, "hero");
+  const ly = 240 + (P ? 250 : 170) + 36; for (let y = ly, k = 0; y < PGH - 40; y += 44, k++) blk(60, y, k % 4 === 3 ? 460 : DW - 120 - (k % 3) * 60, 22);
+
+  // ---- the popup, hung under the brand extension, right aligned
+  const PW = Math.min(640, DW - 60), pp = 34;
+  box($("#pm"), pp, pp, 76, 76);
+  $("#pn").textContent = v.brandName || ""; box($("#pn"), pp + 96, pp + 4);
+  $("#pd").textContent = v.desc || ""; box($("#pd"), pp + 96, pp + 52);
+  MV.fitText($("#pn"), (PW - pp * 2 - 96) * s, 24 * s); MV.fitText($("#pd"), (PW - pp * 2 - 96) * s, 22 * s);
+  box($("#phr"), pp, pp + 76 + 26, PW - pp * 2);
+  const BY = pp + 76 + 26 + 28, BHt = 96, bt = $("#bt");
+  box($("#btn"), pp, BY, PW - pp * 2, BHt); box($("#brg"), pp, BY, PW - pp * 2, BHt);
+  const maxBt = (PW - pp * 2 - 110) * s;
+  let bfs = 38; for (const t of [v.action, v.working, v.done]) { bt.textContent = t || ""; bt.style.fontSize = ""; bfs = Math.min(bfs, MV.fitText(bt, maxBt, 22 * s) / s); }
+  bt.style.fontSize = S(bfs); bt.textContent = v.action || "";
+  const hasRes = !!String(v.result || "").trim();
+  $("#rest").textContent = v.result || "";
+  box($("#res"), pp, BY + BHt + 26); MV.fitText($("#rest"), (PW - pp * 2 - 50) * s, 22 * s);
+  if (!hasRes) $("#res").style.display = "none";
+  const PH = BY + BHt + (hasRes ? 26 + 40 + pp : pp);
+  const popX = Math.min(DW - 24 - PW, meX + EX + 16 - PW), popY = BH + 10;
+  box($("#pop"), popX, popY, PW, PH);
+
+  // ---- place the window
+  const cw = DW * s, ch = DH * s;
+  const x0 = cL + ((cR - cL) - cw) / 2, y0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: x0 + "px", top: y0 + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: x0 - 40 * u + "px", width: cw + 80 * u + "px", top: y0 + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TC1 = 1.4, TOPEN = TC1 + 0.08, TC2 = 2.75, TRUN = TC2 + 0.08, TDONE = Math.min(D - 1.2, TRUN + 0.95);
+  gsap.set("#rig", { transformOrigin: `${x0 + cw / 2}px ${y0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 11, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -5 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#page i", { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.025 }, 0.2);
+  tl.fromTo("#me", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 0.45);
+
+  // the cursor: page, then the brand extension, click
+  const cur = $("#cursor"), path = (sx, sy, mx, my, ex, ey) => { const o = { p: 0 }; return [o, () => { const t = o.p, a = (1 - t) * (1 - t), b = 2 * (1 - t) * t, c = t * t; gsap.set(cur, { x: (a * sx + b * mx + c * ex) * s, y: (a * sy + b * my + c * ey) * s }); }]; };
+  const iX = meX + EX * 0.45, iY = BH / 2 + 4;
+  const [p1, u1] = path(DW * 0.45, DH * 0.78, DW * 0.85, DH * 0.5, iX, iY);
+  tl.fromTo(cur, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.6);
+  tl.fromTo(p1, { p: 0 }, { p: 1, duration: TC1 - 0.68, ease: "power3.inOut", onUpdate: u1, immediateRender: true }, 0.65);
+  tl.fromTo("#meh", { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, TC1 - 0.15);
+  tl.to(cur, { scale: 0.82, duration: 0.07, ease: "power2.out" }, TC1);
+  tl.to(cur, { scale: 1, duration: 0.35, ease: "back.out(3)" }, TC1 + 0.07);
+  tl.to("#me", { scale: 0.86, duration: 0.07, ease: "power2.out" }, TC1);
+  tl.to("#me", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TC1 + 0.07);
+  tl.fromTo("#mer", { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TC1 + 0.02);
+  // the popup drops open from the icon, the page dims
+  tl.fromTo("#pop", { opacity: 0, scale: 0.6, y: -20 * s, rotationX: -18 }, { opacity: 1, scale: 1, y: 0, rotationX: 0, duration: 0.6, ease: "back.out(1.6)" }, TOPEN);
+  tl.fromTo("#pop", { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, TOPEN);
+  tl.to("#dimr", { opacity: 1, duration: 0.4, ease: "power2.out" }, TOPEN);
+  tl.fromTo(["#pm", "#pn", "#pd", "#phr", "#btn"], { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", stagger: 0.05 }, TOPEN + 0.12);
+  tl.fromTo("#pop", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TOPEN + 0.2);
+  // to the button, click, it runs
+  const bX = popX + PW * 0.5, bY = popY + BY + BHt * 0.55;
+  const [p2, u2] = path(iX, iY, bX + 120, popY + BY - 40, bX, bY);
+  tl.fromTo(p2, { p: 0 }, { p: 1, duration: TC2 - TOPEN - 0.45, ease: "power3.inOut", onUpdate: u2, immediateRender: false }, TOPEN + 0.35);
+  tl.to("#meh", { opacity: 0, duration: 0.3 }, TOPEN + 0.4);
+  tl.fromTo("#btn", { filter: "brightness(1)" }, { filter: "brightness(1.15)", duration: 0.2, immediateRender: false }, TC2 - 0.2);
+  tl.to(cur, { scale: 0.82, duration: 0.07, ease: "power2.out" }, TC2);
+  tl.to(cur, { scale: 1, duration: 0.35, ease: "back.out(3)" }, TC2 + 0.07);
+  tl.to("#btn", { scale: 0.94, filter: "brightness(1)", duration: 0.07, ease: "power2.out" }, TC2);
+  tl.to("#btn", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TC2 + 0.07);
+  tl.to(cur, { x: "+=" + 90 * s, y: "+=" + 120 * s, opacity: 0, duration: 0.55, ease: "power2.in" }, TC2 + 0.2);
+  tl.set("#btn .go", { display: "none" }, TRUN); tl.set("#btn .spin", { display: "block" }, TRUN);
+  tl.set(bt, { textContent: v.working || "" }, TRUN);
+  tl.fromTo("#btn .spin", { rotation: 0 }, { rotation: 720, duration: TDONE - TRUN, ease: "none" }, TRUN);
+  tl.fromTo("#btn .fill", { scaleX: 0 }, { scaleX: 1, duration: TDONE - TRUN, ease: "power2.inOut" }, TRUN);
+  // done: green, the check draws, the ring goes out, the result lands
+  tl.set("#btn .spin", { display: "none" }, TDONE); tl.set("#btn .ck", { display: "block" }, TDONE);
+  tl.set(bt, { textContent: v.done || "" }, TDONE);
+  tl.to("#btn .ok", { opacity: 1, duration: 0.2, ease: "power2.out" }, TDONE);
+  tl.fromTo("#btn", { boxShadow: `inset 0 ${2 * s}px 0 rgba(255,255,255,.45), 0 ${14 * s}px ${30 * s}px ${-10 * s}px ${getComputedStyle(root).getPropertyValue("--accent")}` },
+    { boxShadow: `inset 0 ${2 * s}px 0 rgba(255,255,255,.45), 0 ${14 * s}px ${30 * s}px ${-10 * s}px rgba(43,214,123,.7)`, duration: 0.25, immediateRender: false }, TDONE);
+  tl.to("#btn .ck path", { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, TDONE + 0.05);
+  tl.fromTo("#btn", { scale: 1.06 }, { scale: 1, duration: 0.5, ease: "back.out(3)", immediateRender: false }, TDONE);
+  tl.fromTo("#brg", { scale: 1, opacity: 0.9 }, { scale: 1.14, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TDONE + 0.02);
+  if (hasRes) tl.fromTo("#res", { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, TDONE + 0.2);
+  tl.fromTo("#pop", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TDONE + 0.05);
+  tl.fromTo("#pop", { z: 0 }, { z: 30, duration: D - TDONE, ease: "sine.inOut", immediateRender: false }, TDONE);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

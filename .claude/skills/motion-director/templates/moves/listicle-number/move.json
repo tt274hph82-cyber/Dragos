@@ -1,0 +1,5 @@
+{ "id": "listicle-number", "name": "Listicle number", "oneLiner": "a giant extruded ordinal slams in on the beat in the upper third, turns to show its depth, a label wipes in beside it on a dark glass tag over a drawn accent rule",
+  "category": "creator", "kind": "effect", "uses": ["overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["listicle", "number", "ordinal", "chapter", "point", "list", "title", "3d", "overlay"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.2, "alpha": true,
+  "say": "at the start of each point in a list video: cut in on the number word ('number three', 'third'), render once per point with its own number and label" }

@@ -1,0 +1,5 @@
+{ "id": "api-call", "name": "Glass API call", "oneLiner": "an API client on glass: Send is pressed, a lit packet runs up the wire to a server tile whose lights blink, a green packet runs back, 200 OK stamps and the JSON response unfolds key by key",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["api", "request", "response", "json", "server", "backend", "developer", "integration", "webhook", "automation", "ai coding", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says one call does the work ('it is one API call', 'you send the request and it comes back with everything'): the packet leaves on 'send', 200 OK lands on 'comes back', the keys light as the speaker lists what is inside" }

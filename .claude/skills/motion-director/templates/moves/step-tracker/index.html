@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"steps","type":"string","label":"The steps, comma separated, 3 to 6 short labels","default":"Plan,Script,Film,Edit,Post"},
+  {"id":"current","type":"number","label":"The step we are on, 1-based (the ones before it tick off green)","default":2},
+  {"id":"counter","type":"string","label":"The counter over the bar ({n} = the step, {total} = how many; empty = none)","default":"Step {n} of {total}"},
+  {"id":"title","type":"boolean","label":"Full frame only: the current step as a big title under the bar","default":true}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; background: color-mix(in srgb, var(--accent) 42%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 60%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base, .is-alpha #refl { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45) 12%, rgba(255,255,255,.45) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.28); }
+  #refl { position: absolute; filter: blur(calc(var(--u) * 6)); background: linear-gradient(180deg, rgba(255,255,255,.12), transparent 80%); }
+
+  #rail { position: absolute; box-sizing: border-box;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11), 0 calc(var(--u) * 34) calc(var(--u) * 60) calc(var(--u) * -24) rgba(0,0,0,.75); }
+  .is-alpha #rail { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  #rail::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 14%), rgba(255,255,255,.3) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 14%)); }
+  .groove { position: absolute; border-radius: 999px; background: rgba(0,0,0,.35); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 4) rgba(0,0,0,.5), 0 calc(var(--u) * 1) 0 rgba(255,255,255,.1); }
+  .fill { position: absolute; border-radius: 999px; width: 0; }
+  #fok { background: linear-gradient(180deg, #7DF0B0, #2BD67B 50%, #17A85C); box-shadow: 0 0 calc(var(--u) * 14) rgba(43,214,123,.5); }
+  #fac { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 50%, white), var(--accent) 50%, color-mix(in srgb, var(--accent) 70%, black)); box-shadow: 0 0 calc(var(--u) * 16) color-mix(in srgb, var(--accent) 60%, transparent); }
+
+  .nd { position: absolute; border-radius: 50%; display: grid; place-items: center; box-sizing: border-box;
+    background: radial-gradient(70% 70% at 36% 30%, rgba(255,255,255,.3), rgba(255,255,255,.06));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.16), 0 calc(var(--u) * 14) calc(var(--u) * 24) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .is-alpha .nd { background: radial-gradient(70% 70% at 36% 30%, color-mix(in srgb, var(--surface) 70%, white), var(--surface)); }
+  .nd .fc { position: absolute; inset: 0; border-radius: 50%; opacity: 0; }
+  .nd.ok .fc { background: radial-gradient(70% 70% at 36% 30%, #9AF5C4, #2BD67B 55%, #139052); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 0 calc(var(--u) * 26) rgba(43,214,123,.5); }
+  .nd.cur .fc { background: radial-gradient(70% 70% at 36% 30%, color-mix(in srgb, var(--accent) 45%, white), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black)); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 75%, transparent); }
+  .nd .nn { position: relative; font-family: var(--font-display); line-height: 1; color: color-mix(in srgb, var(--ink) 62%, transparent); font-variant-numeric: tabular-nums; }
+  .nd.cur .nn { color: #fff; }
+  .nd svg { position: absolute; width: 52%; height: 52%; fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; }
+  .nr { position: absolute; border-radius: 50%; opacity: 0; border: calc(var(--u) * 3) solid; pointer-events: none; }
+  .lb { position: absolute; white-space: nowrap; font-weight: 700; line-height: 1.1; color: color-mix(in srgb, var(--ink) 50%, transparent); }
+  .lb.done { color: color-mix(in srgb, var(--ink) 78%, transparent); }
+
+  #chip { position: absolute; white-space: nowrap; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; line-height: 1; color: var(--ink);
+    padding: calc(var(--u) * 14) calc(var(--u) * 24); border-radius: 999px; display: flex; align-items: center; gap: calc(var(--u) * 14);
+    background: linear-gradient(160deg, rgba(255,255,255,.18), rgba(255,255,255,.06)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.1); }
+  .is-alpha #chip { background: color-mix(in srgb, var(--surface) 92%, white); }
+  #chip i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 12) var(--accent); flex: none; }
+  #chip .cn { font-variant-numeric: tabular-nums; }
+  #title { position: absolute; white-space: nowrap; font-family: var(--font-display); color: var(--ink); line-height: 1.05; letter-spacing: -0.03em; }
+  #title .w { will-change: transform; }
+  #tmask { position: absolute; overflow: hidden; padding-bottom: .12em; }
+
+  .is-key #rail, .is-key #chip { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  .is-key .nr { display: none; }
+  .is-key .nd.ok .fc, .is-key .nd.cur .fc, .is-key #fok, .is-key #fac, .is-key #chip i { box-shadow: none; }
+  .is-key .lb { color: color-mix(in srgb, var(--ink) 50%, var(--surface)); }
+  .is-key .lb.done { color: color-mix(in srgb, var(--ink) 78%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="floor"></div><div id="refl"></div><div id="base"></div>
+    <div id="chip"><i></i><span class="cn"></span></div>
+    <div id="rail"><div class="groove"></div><div class="fill" id="fok"></div><div class="fill" id="fac"></div></div>
+    <div id="tmask"><div id="title"></div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H;
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim()).filter((s) => s.length);
+  const brand = v.brandName || "";
+  let steps = list(v.steps).map((s) => s.split("{brand}").join(brand)).slice(0, 6);
+  while (steps.length < 3) steps.push(["Start", "Middle", "Finish"][steps.length]);
+  const N = steps.length, CUR = Math.max(1, Math.min(N, Math.round(+v.current || 1))) - 1;
+  const BIG = !MV.alpha && !(v.title === false || String(v.title).toLowerCase() === "false");
+  const CHECK = '<path d="M5.5 12.6l4.2 4.2 8.8-9.4"/>';
+
+  // ---- layout: an overlay keeps to the top of the frame; a cutaway centres the bar with the title under it
+  const ND = Math.min((P ? 128 : SQ ? 120 : 132) * u * (N >= 6 ? 0.88 : 1), ((P ? W - safe.left - safe.right : W) - 60 * u) / N * 0.8);
+  const LFS = (P ? 42 : SQ ? 40 : 44) * u, PADX = 26 * u, PADT = 34 * u, LG = 20 * u, PADB = 32 * u;
+  const RW = P ? W - safe.left - safe.right : SQ ? W - 120 * u : Math.min(W * 0.8, 1560 * u);
+  const RX = P ? safe.left : (W - RW) / 2;
+  // crowded rails stagger their labels, odd steps above the node, so no label has to shrink below a readable size
+  const probe = document.createElement("div"); probe.className = "lb"; probe.style.fontSize = LFS + "px"; document.getElementById("root").appendChild(probe);
+  const widest = Math.max(...steps.map((s) => { probe.textContent = s; return probe.getBoundingClientRect().width; })); probe.remove();
+  const slot0 = (RW - 2 * PADX) / N, STAG = LFS * (slot0 - 14 * u) / widest < 34 * u;
+  const TOPL = STAG ? LFS * 1.1 + LG : 0;
+  const RHt = PADT + TOPL + ND + LG + LFS * 1.1 + PADB;
+  const chip = $("#chip"), cn = chip.querySelector(".cn");
+  const ctext = String(v.counter || "").split("{n}").join(CUR + 1).split("{total}").join(N);
+  cn.textContent = ctext; chip.style.fontSize = (P ? 40 : 38) * u + "px";
+  if (!ctext) chip.style.display = "none";
+  const chH = ctext ? chip.getBoundingClientRect().height + 22 * u : 0;
+  const TFS = (P ? 210 : SQ ? 180 : 200) * u;
+  const titleH = BIG ? TFS * 1.17 + 50 * u : 0;
+  const blockH = chH + RHt + titleH;
+  let RY;
+  if (MV.alpha) RY = (P ? safe.top : H * 0.07) + chH;
+  else { const a = P ? safe.top + 10 * u : SQ ? 80 * u : H * 0.1, b = P ? H - safe.bottom - 40 * u : SQ ? H - 140 * u : H * 0.84; RY = a + (b - a - blockH) / 2 + chH; }
+  const rail = $("#rail");
+  Object.assign(rail.style, { left: RX + "px", top: RY + "px", width: RW + "px", height: RHt + "px", borderRadius: Math.min(48 * u, RHt * 0.3) + "px" });
+  Object.assign(chip.style, { left: RX + 8 * u + "px", top: RY - chH + "px" });
+
+  // ---- nodes along the groove
+  const slot = slot0, ny = PADT + TOPL + ND / 2;
+  const nx = (i) => PADX + slot * (i + 0.5);
+  const GT = 12 * u, groove = rail.querySelector(".groove"), fok = $("#fok"), fac = $("#fac");
+  Object.assign(groove.style, { left: nx(0) + "px", width: nx(N - 1) - nx(0) + "px", top: ny - GT / 2 + "px", height: GT + "px" });
+  for (const f of [fok, fac]) Object.assign(f.style, { left: nx(0) + "px", top: ny - GT / 2 + "px", height: GT + "px" });
+  const NDS = steps.map((s, i) => {
+    const st = i < CUR ? "ok" : i === CUR ? "cur" : "todo";
+    const nd = document.createElement("div"); nd.className = "nd " + st; rail.appendChild(nd);
+    Object.assign(nd.style, { left: nx(i) - ND / 2 + "px", top: ny - ND / 2 + "px", width: ND + "px", height: ND + "px" });
+    nd.innerHTML = `<div class="fc"></div><span class="nn">${i + 1}</span>${st === "ok" ? `<svg viewBox="0 0 24 24">${CHECK}</svg>` : ""}`;
+    const nn = nd.querySelector(".nn"); nn.style.fontSize = ND * 0.42 + "px";
+    const svg = nd.querySelector("svg"), path = svg && svg.querySelector("path");
+    if (path) { path.style.strokeWidth = 3.2; const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L; }
+    const nr = document.createElement("div"); nr.className = "nr"; rail.appendChild(nr);
+    Object.assign(nr.style, { left: nx(i) - ND / 2 + "px", top: ny - ND / 2 + "px", width: ND + "px", height: ND + "px", borderColor: st === "ok" ? "#2BD67B" : "var(--accent)" });
+    const lb = document.createElement("div"); lb.className = "lb" + (i < CUR ? " done" : ""); lb.textContent = s; lb.style.fontSize = LFS + "px"; rail.appendChild(lb);
+    const up = STAG && i % 2 === 1, room = STAG ? Math.min(2 * slot - 20 * u, i === 0 || i === N - 1 ? 1.5 * slot + PADX - 12 * u : 2 * slot) : slot - 14 * u;
+    MV.fitText(lb, room, 22);
+    const r = lb.getBoundingClientRect();
+    let lx = nx(i) - r.width / 2; lx = Math.max(12 * u, Math.min(RW - 12 * u - r.width, lx));
+    Object.assign(lb.style, { left: lx + "px", top: (up ? ny - ND / 2 - LG - r.height : ny + ND / 2 + LG) + "px" });
+    return { i, st, nd, nn, path, nr, lb, fc: nd.querySelector(".fc") };
+  });
+
+  // ---- the big title (full frame)
+  const tmask = $("#tmask"), title = $("#title");
+  if (BIG) {
+    title.textContent = steps[CUR]; title.style.fontSize = TFS + "px";
+    MV.fitText(title, RW - 20 * u, 48);
+    const tr = title.getBoundingClientRect();
+    Object.assign(tmask.style, { left: RX + (RW - tr.width) / 2 + "px", top: RY + RHt + 50 * u + "px", width: tr.width + 4 * u + "px", height: tr.height * 1.15 + "px" });
+  } else tmask.style.display = "none";
+
+  // ---- the floor under the block (full frame only)
+  const floorY = RY + RHt + titleH + 30 * u;
+  $("#floor").style.top = floorY + "px";
+  Object.assign($("#base").style, { left: RX - 40 * u + "px", width: RW + 80 * u + "px", top: floorY - 1.5 * u + "px" });
+  Object.assign($("#refl").style, { left: RX + "px", width: RW + "px", top: floorY + 8 * u + "px", height: RHt * 0.6 + "px", borderRadius: 40 * u + "px", opacity: BIG ? 0 : 1 });
+  if (BIG) $("#refl").style.display = "none";
+  const l1 = $("#ground .l1"); Object.assign(l1.style, { left: RX + nx(CUR) - W * 0.3 + "px", top: RY - H * 0.15 + "px" });
+
+  // ---- the camera: a slow drift that leans toward the current step
+  const cx = RX + RW / 2, cyy = RY + RHt / 2 + titleH / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cyy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cyy}px` });
+  const lean = (nx(CUR) - RW / 2) / RW;
+  tl.fromTo("#rig", { rotationY: 10 - lean * 6, rotationX: 12, scale: 0.94 }, { rotationY: -6 - lean * 8, rotationX: 4, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(l1, { opacity: 0.3 }, { opacity: 1, duration: 1.2, ease: "power2.inOut" }, 0.9);
+
+  // ---- 1. the rail drops in, its nodes pop left to right
+  tl.fromTo("#base", { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.02);
+  tl.fromTo(rail, { y: -40 * u, rotationX: 50, opacity: 0, transformOrigin: "50% 0%" }, { y: 0, rotationX: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.02);
+  if (ctext) tl.fromTo(chip, { opacity: 0, x: -20 * u, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 0.18);
+  NDS.forEach((n, i) => {
+    tl.fromTo(n.nd, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.4)" }, 0.16 + i * 0.05);
+    tl.fromTo(n.lb, { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.22 + i * 0.05);
+  });
+
+  // ---- 2. the steps already done tick off in green, the groove filling behind them
+  const T0 = 0.6, TS = Math.min(0.3, 0.9 / Math.max(1, CUR));
+  let t = T0;
+  NDS.forEach((n, i) => {
+    if (n.st !== "ok") return;
+    t = T0 + i * TS;
+    if (i > 0) tl.to(fok, { width: nx(i) - nx(0), duration: TS, ease: "power2.inOut" }, t - TS);
+    tl.to(n.fc, { opacity: 1, duration: 0.15, ease: "power2.out" }, t);
+    tl.to(n.nn, { opacity: 0, duration: 0.1, ease: "power2.out" }, t);
+    tl.to(n.path, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" }, t + 0.04);
+    tl.fromTo(n.nd, { scale: 1 }, { scale: 1.18, duration: 0.08, ease: "power2.out", immediateRender: false }, t);
+    tl.to(n.nd, { scale: 1, duration: 0.4, ease: "back.out(3)" }, t + 0.08);
+    tl.fromTo(n.nr, { scale: 1, opacity: 0.8 }, { scale: 1.6, opacity: 0, duration: 0.55, ease: "expo.out", immediateRender: false }, t + 0.02);
+  });
+
+  // ---- 3. the moment: the accent runs on to the current step, it lands, rings out and its title rises
+  const A = NDS[CUR], M0 = CUR ? T0 + (CUR - 1) * TS + 0.2 : T0, MD = 0.5, M = M0 + MD;
+  if (CUR > 0) { gsap.set(fac, { left: nx(CUR - 1) + "px" }); tl.fromTo(fac, { width: 0 }, { width: nx(CUR) - nx(CUR - 1), duration: MD, ease: "power3.inOut" }, M0); }
+  else fac.style.display = "none";
+  tl.to(A.fc, { opacity: 1, duration: 0.12, ease: "power2.out" }, M - 0.04);
+  tl.to(A.nn, { color: "#ffffff", duration: 0.12, ease: "power2.out" }, M - 0.04);
+  tl.fromTo(A.nd, { scale: 1 }, { scale: 1.3, duration: 0.1, ease: "power2.out", immediateRender: false }, M - 0.04);
+  tl.to(A.nd, { scale: 1.12, duration: 0.6, ease: "back.out(3)" }, M + 0.06);
+  tl.fromTo(A.nr, { scale: 1, opacity: 0.9 }, { scale: 1.9, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, M);
+  tl.to(A.lb, { color: v.ink || "#fff", scale: 1.1, duration: 0.4, ease: "back.out(2.5)", transformOrigin: STAG && CUR % 2 ? "50% 100%" : "50% 0%" }, M);
+  // a slow breathing ring keeps the current step alive while the shot holds
+  tl.fromTo(A.nr, { scale: 1, opacity: 0.6 }, { scale: 1.6, opacity: 0, duration: 1.0, ease: "power2.out", immediateRender: false }, M + 0.9);
+  tl.fromTo(rail, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.9, ease: "power2.inOut" }, M + 0.1);
+  if (ctext) { tl.fromTo(chip.querySelector("i"), { scale: 1 }, { scale: 1.6, duration: 0.1, ease: "power2.out", immediateRender: false }, M); tl.to(chip.querySelector("i"), { scale: 1, duration: 0.5, ease: "back.out(3)" }, M + 0.1); }
+  if (BIG) {
+    const ws = MV.words(title);
+    tl.fromTo(ws, { yPercent: 110, rotationX: -40 }, { yPercent: 0, rotationX: 0, duration: 0.8, ease: "expo.out", stagger: 0.06 }, M + 0.05);
+  }
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, M + 0.07);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -40 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

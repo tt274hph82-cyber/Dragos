@@ -1,0 +1,5 @@
+{ "id": "two-factor-sms", "name": "Two-factor code", "oneLiner": "a glass text-message notification drops in carrying a login code, the six digits lift out of it one by one and arc down into a six-box code input on the brand's sign-in card, a focus ring hops box to box, then the boxes flash green in a wave and a Verified pill lands",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["2fa", "two factor", "verification", "code", "otp", "sms", "login", "sign in", "security", "verified", "account", "notification", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says they got the code, logged in or verified an account ('it texts you a code', 'and you are in'): the code lands on 'code', Verified on 'you are in'" }

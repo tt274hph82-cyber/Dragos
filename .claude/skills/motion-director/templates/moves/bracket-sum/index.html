@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"The sources, comma separated (2 to 4)","default":"Ads,Sponsors,Products"},
+  {"id":"values","type":"string","label":"Their values, comma separated numbers in the same order","default":"1200,3400,5600"},
+  {"id":"glyphs","type":"string","label":"Glyph per tile, comma separated (video, chart, cart, mail, user...; empty = guessed from each label)","default":""},
+  {"id":"prefix","type":"string","label":"Before every number (a currency sign, or empty)","default":"$"},
+  {"id":"suffix","type":"string","label":"After every number (/mo, %, K, or empty)","default":""},
+  {"id":"totalLabel","type":"string","label":"The small label on the total pill (empty = none)","default":"Total"},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~45%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 64%; height: 40%; background: color-mix(in srgb, var(--accent) 34%, transparent); opacity: 0; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 60%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 62%; top: -10%; background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .glass { position: absolute; box-sizing: border-box;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 26) calc(var(--u) * 54) calc(var(--u) * -22) rgba(0,0,0,.7); }
+  .is-alpha .glass { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .glass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 15%), rgba(255,255,255,.3) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 15%)); }
+  .gt { position: absolute; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.12); }
+  .gt .gl { width: 52%; height: 52%; }
+  .lb { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; color: color-mix(in srgb, var(--ink) 66%, transparent); white-space: nowrap; line-height: 1.1; }
+  .val { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--font-display); color: var(--ink); white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  #wires { position: absolute; left: 0; top: 0; overflow: visible; }
+  #pill { display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--ink); }
+  #pill .fill { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 64%, white 36%), var(--accent) 52%, color-mix(in srgb, var(--accent) 70%, black));
+    box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6), 0 0 calc(var(--u) * 70) color-mix(in srgb, var(--accent) 60%, transparent); }
+  #pill .tl { position: relative; font-weight: 800; text-transform: uppercase; letter-spacing: .14em; line-height: 1; opacity: .7; white-space: nowrap; }
+  #pill .tn { position: relative; font-family: var(--font-display); line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: -0.015em; }
+  #pring { position: absolute; inset: 0; border-radius: inherit; opacity: 0; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 55%, white); box-sizing: border-box; }
+
+  .is-key .glass { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  .is-key #pill .fill { box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6); }
+  .is-key .gt { background: color-mix(in srgb, var(--ink) 12%, var(--surface)); }
+  .is-key .halo { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig">
+    <svg id="wires" xmlns="http://www.w3.org/2000/svg"><g id="base"></g><g id="hot"></g><g id="dots"></g></svg>
+    <div id="tiles"></div>
+    <div id="pill" class="glass"><div class="fill"></div><span class="tl"></span><span class="tn"></span><div id="pring"></div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const L = String(v.labels || "Ads,Sponsors,Products").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 4);
+  while (L.length < 2) L.push(["Source", "Other"][L.length]);
+  const N = L.length;
+  const VS = String(v.values || "").split(",").map((s) => parseFloat(s.replace(/[^\d.\-]/g, "")));
+  const VAL = L.map((_, i) => (isFinite(VS[i]) ? VS[i] : (i + 1) * 1000));
+  const DEC = Math.max(0, ...String(v.values || "").split(",").map((s) => ((s.trim().split(".")[1] || "").replace(/\D/g, "")).length));
+  const PRE = v.prefix == null ? "$" : String(v.prefix), SUF = v.suffix == null ? "" : String(v.suffix);
+  const fmt = (n) => { const [i, d] = Math.abs(n).toFixed(DEC).split("."); return (n < 0 ? "-" : "") + PRE + i.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (d ? "." + d : "") + SUF; };
+  const TOTAL = VAL.reduce((a, b) => a + b, 0);
+  const GL = String(v.glyphs || "").split(",").map((s) => s.trim());
+  const USED = new Set(), gly = L.map((l, i) => GLYPH.pick(l, GL[i], i, USED));
+
+  // ---- layout: tiles on top, the bracket, the total pill under it
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.46 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.07, x1: W * 0.93, y0: H * 0.08, y1: H * 0.92 } : { x0: W * 0.08, x1: W * 0.92, y0: H * 0.09, y1: H * 0.91 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0, GAP = (P ? 26 : 36) * u;
+  const tw = Math.min(360 * u, (RW - GAP * (N - 1)) / N);
+  let th = Math.min(tw * 1.22, RH * 0.44), wh = Math.min(RH * 0.2, 190 * u), ph = Math.min(RH * 0.27, 250 * u);
+  const used = th + wh + ph, y0 = R.y0 + (RH - used) / 2;
+  const TWt = N * tw + (N - 1) * GAP, x0 = R.x0 + (RW - TWt) / 2, cx = x0 + TWt / 2;
+  const rad = Math.min(36 * u, tw * 0.14), gs = Math.min(th * 0.36, tw * 0.44);
+  const vfs = Math.min(th * 0.22, tw * 0.24), lfs = Math.max(26 * u, Math.min(40 * u, th * 0.1));
+  const tiles = document.getElementById("tiles"), T = [];
+  VAL.forEach((val, i) => {
+    const x = x0 + i * (tw + GAP);
+    const el = document.createElement("div"); el.className = "glass"; tiles.appendChild(el);
+    Object.assign(el.style, { left: x + "px", top: y0 + "px", width: tw + "px", height: th + "px", borderRadius: rad + "px" });
+    el.innerHTML = `<div class="gt" style="left:${(tw - gs) / 2}px;top:${th * 0.11}px;width:${gs}px;height:${gs}px;border-radius:${gs * 0.28}px">${GLYPH.svg(gly[i])}</div>
+      <div class="val" style="font-size:${vfs}px;top:${th * 0.11 + gs + th * 0.1}px">${fmt(val)}</div>
+      <div class="lb" style="font-size:${lfs}px;bottom:${th * 0.09}px">${L[i]}</div>`;
+    const ve = el.querySelector(".val"); MV.fitText(ve, tw - 30 * u, 16); MV.fitText(el.querySelector(".lb"), tw - 30 * u, 14);
+    ve.style.minWidth = "0"; ve.textContent = fmt(0);
+    T.push({ el, x, xc: x + tw / 2, ve, gt: el.querySelector(".gt") });
+  });
+
+  // ---- the pill
+  const pill = document.getElementById("pill"), pw = Math.min(RW, Math.max(TWt * (P ? 0.86 : 0.62), 560 * u)), py = y0 + th + wh;
+  Object.assign(pill.style, { left: cx - pw / 2 + "px", top: py + "px", width: pw + "px", height: ph + "px", borderRadius: Math.min(ph / 2, 60 * u) + "px", gap: ph * 0.05 + "px" });
+  const tlb = pill.querySelector(".tl"), tn = pill.querySelector(".tn");
+  const TL = String(v.totalLabel == null ? "Total" : v.totalLabel).trim();
+  tlb.textContent = TL; if (!TL) tlb.style.display = "none";
+  tlb.style.fontSize = ph * 0.15 + "px";
+  tn.style.fontSize = ph * (TL ? 0.5 : 0.6) + "px"; tn.textContent = fmt(TOTAL); MV.fitText(tn, pw - 70 * u, 20);
+  tn.style.minWidth = tn.getBoundingClientRect().width + "px"; tn.style.textAlign = "center"; tn.textContent = fmt(0);
+  const l1 = document.querySelector("#ground .l1"); Object.assign(l1.style, { left: cx - W * 0.32 + "px", top: py + ph / 2 - H * 0.2 + "px" });
+
+  // ---- the bracket: from each tile down, along the bus, into the stem
+  const svg = document.getElementById("wires"); svg.setAttribute("width", W); svg.setAttribute("height", H); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const NS = "http://www.w3.org/2000/svg", yb = y0 + th + 10 * u, yBus = y0 + th + wh * 0.45, yEnd = py - 4 * u, r = Math.min(30 * u, wh * 0.25);
+  const mk = (g, d, st) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("fill", "none"); for (const k in st) { if (k === "stroke") p.style.stroke = st[k]; else p.setAttribute(k, st[k]); } document.getElementById(g).appendChild(p); return p; };
+  const PATHS = T.map((t) => { const dx = t.xc - cx, s = Math.sign(dx);
+    const d = Math.abs(dx) < 2 ? `M${cx},${yb}V${yEnd}` : `M${t.xc},${yb}V${yBus - r}Q${t.xc},${yBus} ${t.xc - s * r},${yBus}H${cx + s * r}Q${cx},${yBus} ${cx},${yBus + r}V${yEnd}`;
+    const base = mk("base", d, { stroke: KEY ? "color-mix(in srgb, var(--ink) 50%, var(--surface))" : "color-mix(in srgb, var(--ink) 42%, transparent)", "stroke-width": 5 * u, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const hot = mk("hot", d, { stroke: "var(--accent)", "stroke-width": 6 * u, "stroke-linecap": "round", opacity: 0, style: KEY ? "" : `filter:drop-shadow(0 0 ${8 * u}px var(--accent))` });
+    const len = base.getTotalLength(); [base, hot].forEach((p) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+    const dot = document.createElementNS(NS, "g"); document.getElementById("dots").appendChild(dot);
+    dot.innerHTML = `<circle class="halo" r="${22 * u}" opacity=".45" style="fill:var(--accent);filter:blur(${6 * u}px)"/><circle r="${10 * u}" fill="#fff"/><circle r="${6 * u}" style="fill:color-mix(in srgb, var(--accent) 40%, white)"/>`;
+    dot.style.opacity = 0;
+    return { base, hot, len, dot }; });
+
+  // ---- camera
+  const cy = y0 + used / 2; gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: -9, rotationX: 10, scale: 0.95, y: 24 * u }, { rotationY: 5, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the sources build and count up
+  T.forEach((t, i) => { const at = 0.06 + i * 0.14;
+    tl.fromTo(t.el, { scale: 0.75, y: 36 * u, rotationX: -20 }, { scale: 1, y: 0, rotationX: 0, duration: 0.75, ease: "back.out(1.7)" }, at);
+    tl.fromTo(t.el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, at);
+    tl.fromTo(t.gt, { scale: 0.4, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, at + 0.08);
+    const o = { n: 0 }; tl.to(o, { n: VAL[i], duration: 0.7, ease: "expo.out", onUpdate: () => { t.ve.textContent = fmt(o.n); } }, at + 0.15); });
+
+  // ---- 2. the bracket draws, the pill arrives
+  const B0 = 0.06 + (N - 1) * 0.14 + 0.6;
+  PATHS.forEach((p) => tl.to(p.base, { strokeDashoffset: 0, duration: 0.6, ease: "expo.inOut" }, B0));
+  tl.fromTo(pill, { opacity: 0, scale: 0.7, y: 30 * u, filter: "blur(10px)" }, { opacity: 1, scale: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, B0 + 0.35);
+  tl.fromTo(pill, { rotationX: -25 }, { rotationX: 0, duration: 0.8, ease: "back.out(1.8)" }, B0 + 0.35);
+
+  // ---- 3. each value runs down the bracket; the total ticks up as it arrives
+  const R0 = B0 + 0.75, RS = Math.min(0.3, 0.9 / N), RUN = 0.55;
+  let acc = 0; const o = { n: 0 };
+  PATHS.forEach((p, i) => { const at = R0 + i * RS, t = T[i];
+    tl.fromTo(t.gt, { scale: 1 }, { scale: 1.15, duration: 0.08, ease: "power2.out", immediateRender: false }, at - 0.05); tl.to(t.gt, { scale: 1, duration: 0.5, ease: "back.out(3)" }, at + 0.03);
+    tl.to(p.dot, { opacity: 1, duration: 0.08 }, at);
+    const pr = { s: 0 };
+    tl.to(pr, { s: 1, duration: RUN, ease: "power2.in", onUpdate: () => { const q = p.base.getPointAtLength(pr.s * p.len); p.dot.setAttribute("transform", `translate(${q.x},${q.y})`); } }, at);
+    tl.to(p.hot, { strokeDashoffset: 0, opacity: 1, duration: RUN, ease: "power2.in" }, at);
+    tl.to(p.dot, { opacity: 0, duration: 0.1 }, at + RUN);
+    acc += VAL[i]; const target = acc;
+    tl.to(o, { n: target, duration: 0.35, ease: "power2.out", onUpdate: () => { tn.textContent = fmt(o.n); } }, at + RUN);
+    tl.fromTo(pill, { scale: 1 }, { scale: 1.05, duration: 0.06, ease: "power2.out", immediateRender: false }, at + RUN); tl.to(pill, { scale: 1, duration: 0.4, ease: "back.out(3)" }, at + RUN + 0.06);
+  });
+  // ---- 4. the total lands
+  const LAND = R0 + (N - 1) * RS + RUN + 0.2;
+  tl.to(pill.querySelector(".fill"), { opacity: 1, duration: 0.2, ease: "power2.out" }, LAND);
+  tl.to(pill, { color: "#ffffff", duration: 0.2 }, LAND);
+  tl.fromTo(pill, { scale: 1 }, { scale: 1.12, duration: 0.09, ease: "power2.out", immediateRender: false }, LAND); tl.to(pill, { scale: 1, duration: 0.6, ease: "back.out(3)" }, LAND + 0.09);
+  tl.fromTo("#pring", { scale: 1, opacity: 0.9 }, { scale: 1.25, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, LAND);
+  tl.fromTo(pill, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, LAND + 0.1);
+  tl.to(l1, { opacity: 1, duration: 1, ease: "power2.out" }, LAND - 0.2);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, LAND); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, LAND + 0.07);
+  T.forEach((t, i) => tl.fromTo(t.el, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.6, ease: "power2.inOut", immediateRender: false }, LAND + 0.05 * i));
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

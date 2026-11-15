@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"file","type":"string","label":"File name on the tab","default":"reply.js"},
+  {"id":"before","type":"string","label":"Unchanged lines above, separated by |","default":"import { ai } from \"./ai\";||async function reply(msg) {"},
+  {"id":"removed","type":"string","label":"Lines that go out (red), separated by |","default":"  const text = draft(msg);|  return text;"},
+  {"id":"added","type":"string","label":"Lines that come in (green), separated by |","default":"  const text = await ai(msg);|  const ok = await check(text);|  return ok ? text : null;"},
+  {"id":"after","type":"string","label":"Unchanged lines below, separated by |","default":"}"},
+  {"id":"plus","type":"number","label":"Lines added on the chip","default":12},
+  {"id":"minus","type":"number","label":"Lines removed on the chip","default":4}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --add: #3DDC84; --addb: rgba(61,220,132,.17); --del: #FF6B6B; --delb: rgba(255,107,107,.17); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.1); }
+  .dots { position: absolute; display: flex; gap: calc(var(--s) * 12); }
+  .dots i { width: calc(var(--s) * 20); height: calc(var(--s) * 20); border-radius: 50%; background: rgba(255,255,255,.22); box-shadow: inset 0 calc(var(--s) * 1) 0 rgba(255,255,255,.3); }
+  #tab { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22); border-radius: calc(var(--s) * 16) calc(var(--s) * 16) 0 0;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 calc(var(--s) * 2) 0 var(--accent); }
+  .is-key #tab { background: color-mix(in srgb, var(--surface) 80%, white); }
+  #tab svg { flex: none; width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  #fname { font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 34); color: var(--ink); white-space: nowrap; }
+  #chip { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 14); padding: 0 calc(var(--s) * 20); border-radius: 99px; opacity: 0;
+    background: rgba(0,0,0,.35); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.16), 0 calc(var(--s) * 10) calc(var(--s) * 24) rgba(0,0,0,.4); white-space: nowrap; }
+  .is-key #chip { background: color-mix(in srgb, var(--surface) 60%, black); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.16); }
+  #chip b { font-family: var(--mono); font-weight: 700; font-size: calc(var(--s) * 36); line-height: 1; }
+  #chip .p { color: var(--add); } #chip .m { color: var(--del); }
+  #chip .sq { display: flex; gap: calc(var(--s) * 5); }
+  #chip .sq i { width: calc(var(--s) * 16); height: calc(var(--s) * 16); border-radius: calc(var(--s) * 3); }
+  #ring { position: absolute; border-radius: 99px; border: calc(var(--s) * 3) solid var(--add); opacity: 0; box-sizing: border-box; }
+  .is-key #ring { display: none; }
+
+  #code { position: absolute; display: flex; flex-direction: column; }
+  .ln { position: relative; flex: none; overflow: hidden; }
+  .ln .bg { position: absolute; inset: 0; transform-origin: 0 50%; }
+  .ln.del .bg { background: var(--delb); box-shadow: inset calc(var(--s) * 5) 0 0 var(--del); }
+  .ln.add .bg { background: var(--addb); box-shadow: inset calc(var(--s) * 5) 0 0 var(--add); }
+  .ln .no { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: flex-end; font-family: var(--mono); font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 34%, transparent); font-variant-numeric: tabular-nums; }
+  .ln .mk { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 700; }
+  .ln.del .mk { color: var(--del); } .ln.add .mk { color: var(--add); }
+  .ln .tx { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-family: var(--mono); color: color-mix(in srgb, var(--ink) 88%, transparent); white-space: pre; }
+  .ln .cr { position: absolute; width: calc(var(--s) * 3.5); background: var(--add); opacity: 0; }
+  .k { color: color-mix(in srgb, var(--accent2) 85%, white); }
+  .f { color: color-mix(in srgb, var(--accent) 35%, white); }
+  .q { color: #9FD8FF; }
+  .pn { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="bar" class="ab"><div class="dots"><i></i><i></i><i></i></div>
+        <div id="tab"><svg viewBox="0 0 24 24"><path d="M6 2.8h8l5 5v13.4H6z" fill="none" stroke="var(--al)" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2.8v5h5M9 13h7M9 16.5h5" fill="none" stroke="var(--al)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fname"></span></div>
+      </div>
+      <div id="code"></div>
+      <div id="ring"></div>
+      <div id="chip"><b class="p"></b><b class="m"></b><span class="sq"><i></i><i></i><i></i><i></i><i></i></span></div>
+    </div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const split = (x) => (x == null || x === "" ? [] : String(x).split("|"));
+  const before = split(v.before), dels = split(v.removed).slice(0, 4), adds = split(v.added).slice(0, 5), after = split(v.after);
+  const NV = before.length + after.length + Math.max(dels.length, adds.length);
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.1; zB = H * 0.9; }
+  else if (SQ) { cL = 80 * u; cR = W - 80 * u; zT = 80 * u; zB = H - 80 * u; }
+  else { cL = W * 0.22; cR = W * 0.78; zT = H * 0.12; zB = H * 0.86; }
+  const pad = 26, barH = 84, rowH = 62, gut = 64, mkW = 44;
+  const DW = 820, DH = barH + 22 + NV * rowH + 30;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- chrome: dots, the file tab, the chip slot on the right
+  box($("#bar"), 0, 0, DW, barH);
+  Object.assign($(".dots").style, { left: S(pad + 6), top: S((barH - 20) / 2) });
+  box($("#tab"), pad + 6 + 3 * 20 + 2 * 12 + 26, 16, 0, barH - 16); $("#tab").style.width = "auto";
+  $("#fname").textContent = v.file || "";
+  const fmt = (n) => Math.round(+n || 0);
+  const chip = $("#chip"); chip.querySelector(".p").textContent = "+" + fmt(v.plus); chip.querySelector(".m").textContent = "-" + fmt(v.minus);
+  const pl = fmt(v.plus), mi = fmt(v.minus), tot = Math.max(1, pl + mi), ng = Math.round((pl / tot) * 5), nr = Math.min(5 - ng, Math.max(mi ? 1 : 0, Math.round((mi / tot) * 5)));
+  [...chip.querySelectorAll(".sq i")].forEach((q, i) => { q.style.background = i < ng ? "var(--add)" : i < ng + nr ? "var(--del)" : "rgba(255,255,255,.2)"; });
+  chip.style.height = S(60);
+  const chipW = chip.getBoundingClientRect().width / s;
+  Object.assign(chip.style, { left: S(DW - pad - chipW), top: S((barH - 60) / 2) });
+  box($("#ring"), DW - pad - chipW, (barH - 60) / 2, chipW, 60);
+  MV.fitText($("#fname"), (DW - pad - chipW - 24 - (pad + 6 + 84 + 26) - 90) * s, 16);
+
+  // ---- syntax colour: keywords, calls, strings, punctuation
+  const KW = /^(import|from|export|default|async|await|function|const|let|var|return|if|else|for|while|new|class|null|true|false|def|self|in|of)$/;
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const hl = (src) => src.replace(/("[^"]*"|'[^']*'|`[^`]*`)|([A-Za-z_$][\w$]*)(?=\s*\()|([A-Za-z_$][\w$]*)|([{}()[\];,.:?=<>!+\-*/]+)|(\s+)|(.)/g, (m, q, f, w, p, sp, o) => {
+    if (q) return `<span class="q">${esc(q)}</span>`;
+    if (f) return KW.test(f) ? `<span class="k">${f}</span>` : `<span class="f">${f}</span>`;
+    if (w) return KW.test(w) ? `<span class="k">${w}</span>` : esc(w);
+    if (p) return `<span class="pn">${esc(p)}</span>`;
+    return esc(m); });
+
+  // ---- rows (a flex column, so a folding row pulls the rest up)
+  const code = $("#code"); box(code, 0, barH + 16, DW, NV * rowH);
+  const txW = DW - pad - gut - mkW - 60;
+  let fs = 36 * s;
+  const meas = document.createElement("span"); meas.style.cssText = `position:absolute;visibility:hidden;white-space:pre;font-family:var(--mono);font-size:${fs}px`; document.body.appendChild(meas);
+  const longest = [...before, ...dels, ...adds, ...after].reduce((a, b) => (b.length > a.length ? b : a), "");
+  meas.textContent = longest || "x";
+  while (meas.getBoundingClientRect().width > txW * s && fs > 14) { fs -= 1; meas.style.fontSize = fs + "px"; }
+  meas.textContent = "M"; const chW = meas.getBoundingClientRect().width; meas.remove();
+  let no = 0;
+  const mkRow = (txt, kind, num) => {
+    const r = document.createElement("div"); r.className = "ln " + kind; r.style.height = S(rowH);
+    r.innerHTML = `<div class="bg"></div><div class="no"></div><div class="mk"></div><div class="tx"></div><i class="cr"></i>`;
+    box(r.querySelector(".no"), pad, 0, gut - 14, rowH); r.querySelector(".no").textContent = num;
+    const mk = r.querySelector(".mk"); box(mk, pad + gut, 0, mkW, rowH); mk.style.fontSize = fs + "px"; mk.textContent = kind === "del" ? "-" : kind === "add" ? "+" : "";
+    const tx = r.querySelector(".tx"); Object.assign(tx.style, { left: S(pad + gut + mkW + 12), fontSize: fs + "px" }); tx.innerHTML = `<span class="c">${hl(txt)}</span>`;
+    const cr = r.querySelector(".cr"); Object.assign(cr.style, { left: S(pad + gut + mkW + 12), top: S(rowH / 2) , height: fs * 1.1 + "px", marginTop: -fs * 0.55 + "px" });
+    code.appendChild(r);
+    return { r, bg: r.querySelector(".bg"), tx, mk, cr, n: txt.length };
+  };
+  const ctxA = before.map((t) => mkRow(t, "ctx", ++no));
+  const delStart = no;
+  const dR = dels.map((t, i) => mkRow(t, "del", delStart + i + 1));
+  const aR = adds.map((t, i) => mkRow(t, "add", delStart + i + 1));
+  no = delStart + adds.length;
+  const ctxB = after.map((t) => mkRow(t, "ctx", ++no));
+  aR.forEach((a) => { a.r.style.height = "0px"; });
+
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TR = 1.05, TO = TR + 0.35 + dR.length * 0.08, TI = TO + 0.45;             // red, fold out, green in
+  const TY = 0.36, TS = TI + aR.length * 0.34 + 0.3;                                // typing per line, the stamp
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo([".dots", "#tab"], { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.18);
+  tl.fromTo([...ctxA, ...dR, ...ctxB].map((x) => x.r), { opacity: 0, x: -26 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out", stagger: 0.05 }, 0.3);
+
+  // red: the old lines flush, then fold away
+  dR.forEach((d, i) => {
+    const t = TR + i * 0.08;
+    tl.fromTo(d.bg, { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.35, ease: "expo.out" }, t);
+    tl.fromTo(d.mk, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.5)" }, t + 0.05);
+    tl.to(d.tx, { color: "color-mix(in srgb, var(--ink) 55%, transparent)", duration: 0.3, ease: "power2.out" }, t + 0.05);
+    tl.to([d.tx, d.mk, d.r.querySelector(".no")], { opacity: 0, x: -30 * s, duration: 0.22, ease: "power2.in" }, TO + i * 0.05);
+    tl.to(d.r, { height: 0, duration: 0.38, ease: "power3.inOut" }, TO + 0.12 + i * 0.05);
+    tl.to(d.bg, { opacity: 0, duration: 0.3, ease: "power2.in" }, TO + 0.18 + i * 0.05);
+  });
+  gsap.set(dR.map((d) => d.bg), { scaleX: 0 });
+  // green: each new line opens, flushes and types itself in
+  aR.forEach((a, i) => {
+    const t = TI + i * 0.34;
+    tl.to(a.r, { height: rowH * s, duration: 0.3, ease: "expo.out" }, t - 0.12);
+    tl.fromTo(a.bg, { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "expo.out" }, t - 0.08);
+    tl.fromTo(a.mk, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.5)" }, t);
+    const k = { c: 0 };
+    tl.fromTo(a.tx, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: TY, ease: `steps(${Math.max(1, a.n)})` }, t);
+    tl.fromTo([a.tx, a.r.querySelector(".no")], { visibility: "hidden" }, { visibility: "visible", duration: 0.01 }, t);
+    tl.fromTo(a.cr, { opacity: 1, x: 0 }, { x: a.n * chW, duration: TY, ease: `steps(${Math.max(1, a.n)})`, immediateRender: false }, t);
+    tl.set(a.cr, { opacity: 0 }, t + TY + 0.08);
+    gsap.set(a.cr, { opacity: 0 });
+  });
+
+  // the stamp: the chip slams onto the bar, a ring goes out, the squares fill in
+  tl.fromTo(chip, { opacity: 0, scale: 2.4, rotation: -14, filter: "blur(8px)" }, { opacity: 1, scale: 1, rotation: -3, filter: "blur(0px)", duration: 0.3, ease: "power4.in" }, TS);
+  tl.to(chip, { scale: 1.08, duration: 0.06, ease: "power1.out" }, TS + 0.3); tl.to(chip, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, TS + 0.36);
+  tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TS + 0.3);
+  tl.fromTo(chip.querySelectorAll(".sq i"), { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(3)", stagger: 0.05 }, TS + 0.34);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, TS + 0.3); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TS + 0.37);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TS + 0.35);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

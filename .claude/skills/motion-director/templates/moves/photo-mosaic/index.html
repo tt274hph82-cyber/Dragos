@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The big picture the tiles resolve into (a path; empty = the first person photo, else the first screen)","default":""},
+  {"id":"label","type":"string","label":"Chip that lands once the picture resolves (empty = none)","default":""},
+  {"id":"density","type":"number","label":"Tiles across (0 = auto, about 22 on 9:16)","default":0}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 160)); }
+  #ground .l1 { width: 80%; height: 50%; left: 10%; top: 18%; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  #ground .l2 { width: 70%; height: 40%; left: 50%; top: 70%; background: color-mix(in srgb, var(--accent) 14%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.6)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; inset: 0; perspective: 2600px; }
+  #cam { position: absolute; inset: 0; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the plate: a slab of dark glass the tiles sit in, rim lit from above */
+  #plate { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 34);
+    background: linear-gradient(165deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 50%, rgba(255,255,255,.07)), color-mix(in srgb, var(--ground) 70%, black);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 110) calc(var(--u) * -30) rgba(0,0,0,.85), 0 0 calc(var(--u) * 120) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  #mos { position: absolute; overflow: hidden; border-radius: calc(var(--u) * 16); background: #050505; }
+  #under { position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.62)), var(--tgt) 0 0 / 100% 100%; opacity: 0; }
+  .t { position: absolute; transform-style: preserve-3d; }
+  .t > b { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: block; }
+  .t .fr { background-repeat: no-repeat; border-radius: calc(var(--u) * 3); }
+  .t .fr i { position: absolute; inset: 0; border-radius: inherit; background: var(--c); opacity: var(--mix, .2); }
+  .t .fr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 calc(var(--u) * 1) 0 rgba(255,255,255,.28); }
+  .t .bk { transform: rotateY(180deg); background-image: var(--tgt); background-repeat: no-repeat; }
+  #glare { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; border-radius: inherit;
+    background: linear-gradient(118deg, transparent calc(var(--sheen, -60%) - 16%), rgba(255,255,255,.30) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 16%)); }
+  #chip { position: absolute; display: flex; align-items: center; white-space: nowrap; box-sizing: border-box; color: var(--ink); font-weight: 800; letter-spacing: -0.01em;
+    background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.06)); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -18) rgba(0,0,0,.75); }
+  #chip .dot { flex: none; border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 18) var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="cam"><div id="rig"><div id="plate"><div id="mos"><i id="under"></i></div><div id="glare"></div></div><div id="chip"><i class="dot"></i><span></span></div></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const load = (src) => new Promise((res) => { if (!src) return res(null); const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+  const people = (Array.isArray(v.people) ? v.people : []).filter(Boolean), shots = (Array.isArray(v.screens) ? v.screens : []).filter(Boolean);
+  const tgtSrc = v.image || people[0] || shots[0] || v.mark || "";
+  const tgt = await load(tgtSrc);
+
+  // ---- the mosaic rect (portrait 5:6, square 1:1, landscape 4:3)
+  const ratio = P ? 6 / 5 : SQ ? 1 : 3 / 4;
+  let MW, MH;
+  if (P) { MW = W - safe.left * 2; MH = MW * ratio; const room = H - safe.top - safe.bottom * 0.62; if (MH > room) { MH = room; MW = MH / ratio; } }
+  else { MH = H * (SQ ? 0.78 : 0.76); MW = MH / ratio; }
+  const PAD = 18 * u, PW = MW + PAD * 2, PH = MH + PAD * 2;
+  const px = (W - PW) / 2, py = P ? safe.top + (H - safe.top - safe.bottom * 0.62 - PH) / 2 : (H - PH) / 2 - (v.label ? 30 * u : 0);
+  const plate = document.getElementById("plate"), mos = document.getElementById("mos");
+  Object.assign(plate.style, { left: px + "px", top: py + "px", width: PW + "px", height: PH + "px" });
+  Object.assign(mos.style, { left: PAD + "px", top: PAD + "px", width: MW + "px", height: MH + "px" });
+
+  // ---- the target: drawn into a canvas (a cut-out stands on the brand's light, a photo covers)
+  const cv = document.createElement("canvas"); cv.width = Math.round(MW); cv.height = Math.round(MH);
+  const g = cv.getContext("2d");
+  const bgG = g.createRadialGradient(cv.width * 0.5, cv.height * 0.42, 0, cv.width * 0.5, cv.height * 0.5, cv.height * 0.75);
+  bgG.addColorStop(0, v.accent || "#C90302"); bgG.addColorStop(0.55, `color-mix(in srgb, ${v.accent} 45%, ${v.ground})`); bgG.addColorStop(1, v.ground || "#050404");
+  g.fillStyle = v.ground || "#050404"; g.fillRect(0, 0, cv.width, cv.height);
+  try { g.fillStyle = bgG; g.fillRect(0, 0, cv.width, cv.height); } catch (e) {}
+  let cut = false;
+  if (tgt) {
+    // a cut-out has transparent corners
+    const pc = document.createElement("canvas"); pc.width = pc.height = 32; const pg = pc.getContext("2d"); pg.drawImage(tgt, 0, 0, 32, 32);
+    try { const a = (x, y) => pg.getImageData(x, y, 1, 1).data[3]; cut = a(1, 1) < 30 && a(30, 1) < 30; } catch (e) {}
+    const ir = tgt.naturalWidth / tgt.naturalHeight;
+    if (cut) { const h = cv.height * 0.9, w = h * ir; const ww = Math.min(w, cv.width * 1.05), hh = ww / ir; g.drawImage(tgt, (cv.width - ww) / 2, cv.height - hh, ww, hh); }
+    else { let w = cv.width, h = w / ir; if (h < cv.height) { h = cv.height; w = h * ir; } g.drawImage(tgt, (cv.width - w) / 2, (cv.height - h) * (ir < 1 ? 0.25 : 0.5), w, h); }
+  }
+  const blob = await new Promise((res) => cv.toBlob(res, "image/jpeg", 0.92));
+  root.style.setProperty("--tgt", `url(${URL.createObjectURL(blob)})`);
+
+  // ---- the grid, and each cell's average colour
+  const COLS = Math.max(10, Math.min(40, Math.round(+v.density || (P ? 22 : SQ ? 22 : 24))));
+  const tw = MW / COLS, ROWS = Math.round(MH / tw), th = MH / ROWS, GAP = Math.max(1.5, 2.4 * u);
+  const sc = document.createElement("canvas"); sc.width = COLS; sc.height = ROWS; const sg = sc.getContext("2d"); sg.imageSmoothingQuality = "high";
+  // two halvings so each cell is a real average, not a point sample
+  const mid = document.createElement("canvas"); mid.width = COLS * 4; mid.height = ROWS * 4; const mg = mid.getContext("2d"); mg.imageSmoothingQuality = "high"; mg.drawImage(cv, 0, 0, mid.width, mid.height);
+  sg.drawImage(mid, 0, 0, COLS, ROWS);
+  let px_ = null; try { px_ = sg.getImageData(0, 0, COLS, ROWS).data; } catch (e) {}
+  const srcs = shots.concat(people.slice(1)).concat(v.mark ? [v.mark] : []);
+  const rnd = MV.rand(11), tiles = [];
+  // the focus: where the close-up starts (the face of a cut-out, else the centre)
+  const fx = 0.5, fy = cut ? 0.34 : 0.45;
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+    const k = (r * COLS + c) * 4, col = px_ ? `rgb(${px_[k]},${px_[k + 1]},${px_[k + 2]})` : "#333";
+    const lum = px_ ? (px_[k] * 0.3 + px_[k + 1] * 0.59 + px_[k + 2] * 0.11) / 255 : 0.3;
+    const t = document.createElement("div"); t.className = "t";
+    const x = c * tw, y = r * th;
+    Object.assign(t.style, { left: x + GAP / 2 + "px", top: y + GAP / 2 + "px", width: tw - GAP + "px", height: th - GAP + "px" });
+    const s = srcs.length ? srcs[Math.floor(rnd() * srcs.length)] : "";
+    const zoom = 160 + Math.floor(rnd() * 260), bx = Math.floor(rnd() * 100), by = Math.floor(rnd() * 100);
+    t.innerHTML = `<b class="fr" style="${s ? `background-image:url(${s});background-size:${zoom}% auto;background-position:${bx}% ${by}%;` : ""}background-color:${col};--c:${col}"><i></i></b><b class="bk" style="background-size:${MW}px ${MH}px;background-position:${-x - GAP / 2}px ${-y - GAP / 2}px"></b>`;
+    mos.appendChild(t);
+    const dx = (c + 0.5) / COLS - fx, dy = ((r + 0.5) / ROWS - fy) * (MH / MW);
+    tiles.push({ t, fr: t.firstChild, c, r, lum, d: Math.hypot(dx, dy) });
+  }
+
+  // ---- the label chip, under the plate
+  const chip = document.getElementById("chip"), lab = String(v.label || "").trim();
+  if (lab) {
+    const chH = (P ? 116 : 96) * u; chip.querySelector("span").textContent = lab;
+    Object.assign(chip.style, { height: chH + "px", padding: `0 ${chH * 0.42}px`, gap: chH * 0.22 + "px", borderRadius: chH / 2 + "px", fontSize: chH * 0.4 + "px" });
+    Object.assign(chip.querySelector(".dot").style, { width: chH * 0.2 + "px", height: chH * 0.2 + "px" });
+    MV.fitText(chip.querySelector("span"), PW * 0.8, 18);
+    const cw = chip.getBoundingClientRect().width;
+    Object.assign(chip.style, { left: (W - cw) / 2 + "px", top: py + PH - chH * 0.5 + "px" });
+  } else chip.style.display = "none";
+
+  // ---- camera: a log-space pull-back from the face to the whole plate
+  const ox = px + PAD + MW * fx, oy = py + PAD + MH * fy;
+  const Z0 = P ? 5.2 : 4.4, cam = document.getElementById("cam");
+  gsap.set(cam, { transformOrigin: `${ox}px ${oy}px` });
+  gsap.set("#rig", { transformOrigin: `${W / 2}px ${py + PH / 2}px` });
+  const z = { k: Math.log(Z0) }, apply = () => { const s = Math.exp(z.k); gsap.set(cam, { scale: s, x: (W / 2 - ox) * (s - 1) / Z0 * 0.0 }); };
+  // the focus point is centred in frame at full zoom and eases back to the plate's own place
+  const pz = { k: 1 };
+  const cx0 = W / 2 - ox, cy0 = (P ? H * 0.46 : H / 2) - oy;
+  const upd = () => { const s = Math.exp(z.k); gsap.set(cam, { scale: s, x: cx0 * pz.k, y: cy0 * pz.k }); };
+  upd();
+  const TZ = 0.55, TZE = 3.05;
+  tl.fromTo(z, { k: Math.log(Z0) }, { k: 0, duration: TZE - TZ, ease: "power2.inOut", onUpdate: upd, immediateRender: false }, TZ);
+  tl.fromTo(pz, { k: 1 }, { k: 0, duration: TZE - TZ, ease: "power2.inOut", onUpdate: upd, immediateRender: false }, TZ);
+  tl.fromTo(z, { k: Math.log(Z0) * 1.04 }, { k: Math.log(Z0), duration: TZ, ease: "sine.out", onUpdate: upd, immediateRender: false }, 0);
+  // slow 3D drift
+  tl.fromTo("#rig", { rotationY: -7, rotationX: 8 }, { rotationY: 6, rotationX: 2, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: -W * 0.06 }, { x: W * 0.08, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. tiles pop out of depth, a ripple from the face outward (only the near ones are in frame at first)
+  tiles.forEach((o) => {
+    const t0 = 0.04 + Math.min(1.9, o.d * 2.6) + (o.c * 7 + o.r * 3) % 5 * 0.012;
+    tl.fromTo(o.t, { opacity: 0, scale: 0.4, z: 120 }, { opacity: 1, scale: 1, z: 0, duration: 0.5, ease: "back.out(1.6)" }, t0);
+  });
+  // ---- 2. the colour comes up as the camera pulls back, so the picture forms out of the screens
+  tl.fromTo(mos, { "--mix": 0.12 }, { "--mix": 0.8, duration: 2.1, ease: "power2.inOut" }, 0.9);
+  tl.fromTo("#under", { opacity: 0 }, { opacity: 1, duration: 1.2, ease: "power1.inOut" }, 1.6);
+  // ---- 3. the resolve: a diagonal wave flips every tile to its piece of the real picture (the moment)
+  const TF = 2.95, SPAN = 0.75;
+  tiles.forEach((o) => { const k = (o.c / COLS) * 0.55 + (o.r / ROWS) * 0.45;
+    tl.to(o.t, { rotationY: 180, duration: 0.5, ease: "back.out(1.3)" }, TF + k * SPAN); });
+  // seams close: the tiles grow into one surface
+  const TS = TF + SPAN + 0.32, grow = 1 + GAP / Math.min(tw, th) + 0.02;
+  tl.to(tiles.map((o) => o.t), { scale: grow, duration: 0.35, ease: "expo.out" }, TS);
+  tl.fromTo("#plate", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TS - 0.05);
+  tl.fromTo("#stage", { scale: 1 }, { scale: 1.018, duration: 0.08, ease: "power2.out", immediateRender: false }, TS);
+  tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, TS + 0.08);
+  if (lab) {
+    tl.fromTo(chip, { opacity: 0, y: 30 * u, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, TS + 0.12);
+    tl.fromTo(chip, { scale: 0.8 }, { scale: 1, duration: 0.6, ease: "back.out(2.2)" }, TS + 0.12);
+  }
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "matrix-2x2", "name": "2x2 matrix", "oneLiner": "a glass board stands up off a lit floor, the two axes draw with arrow tips and four quadrant panes settle with their names; 3 to 6 glyph chips fly in from their own side and land in their quadrant with a squash, the last one lights its whole quadrant in the accent",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["matrix", "2x2", "quadrant", "prioritise", "impact", "effort", "framework", "sort", "decide", "strategy", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker sorts options by two things ('high impact, low effort: that's where agents sit'): cut in on the framework, each item lands as it is named, the hero lights its quadrant on the verdict" }

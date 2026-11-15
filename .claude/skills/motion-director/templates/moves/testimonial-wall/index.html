@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"quote","type":"string","label":"The review that lifts off the wall","default":"I tried ten of these. This is the one I kept."},
+  {"id":"name","type":"string","label":"Its reviewer","default":"Priya S."},
+  {"id":"role","type":"string","label":"Under the name","default":"Verified review"},
+  {"id":"quotes","type":"string","label":"The wall (short reviews, separated by |; empty: generic ones)","default":""},
+  {"id":"names","type":"string","label":"Wall reviewer names (separated by |; empty: generic ones)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --gold: color-mix(in srgb, var(--accent) 22%, #FFC24A); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(60% 40% at 50% 48%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 90% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none; z-index: 30;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #vig { position: absolute; inset: 0; pointer-events: none; z-index: 5; background: radial-gradient(110% 80% at 50% 50%, transparent 45%, rgba(0,0,0,.7)); }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 1600); }
+  #wall { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .col { position: absolute; top: 0; display: flex; flex-direction: column; }
+  .rc { position: relative; box-sizing: border-box; padding: calc(var(--u) * 26) calc(var(--u) * 28); border-radius: calc(var(--u) * 30); margin-bottom: calc(var(--u) * 26);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 70%, rgba(255,255,255,.2)), color-mix(in srgb, var(--surface) 92%, transparent));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.3), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.09), 0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -24) rgba(0,0,0,.8); }
+  .rc .glow { position: absolute; inset: calc(var(--u) * -3); border-radius: calc(var(--u) * 33); border: calc(var(--u) * 4) solid var(--al); opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .who { display: flex; align-items: center; gap: calc(var(--u) * 16); }
+  .ini { flex: none; width: calc(var(--u) * 64); height: calc(var(--u) * 64); border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff;
+    font-size: calc(var(--u) * 28); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.35); }
+  .nm { font-size: calc(var(--u) * 30); font-weight: 750; color: var(--ink); white-space: nowrap; }
+  .ss { display: flex; gap: calc(var(--u) * 4); margin-top: calc(var(--u) * 4); }
+  .ss svg { width: calc(var(--u) * 24); height: calc(var(--u) * 24); }
+  .q { margin-top: calc(var(--u) * 16); font-size: calc(var(--u) * 36); line-height: 1.2; font-weight: 650; color: color-mix(in srgb, var(--ink) 88%, transparent); letter-spacing: -0.01em; }
+
+  /* the hero: a full glass card, front-facing, that lifts off the wall */
+  #hero { position: absolute; left: 0; top: 0; z-index: 10; box-sizing: border-box; padding: calc(var(--u) * 40) calc(var(--u) * 44) calc(var(--u) * 42); border-radius: calc(var(--u) * 44); opacity: 0;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 62%, rgba(255,255,255,.26)), color-mix(in srgb, var(--surface) 90%, transparent));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -30) rgba(0,0,0,.85), 0 0 calc(var(--u) * 140) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 45%, transparent); }
+  #hero .rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.8), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 85%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #hero .sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.26) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  #hero .ini { width: calc(var(--u) * 96); height: calc(var(--u) * 96); font-size: calc(var(--u) * 42); }
+  #hero .who { gap: calc(var(--u) * 22); }
+  #hero .nm { font-size: calc(var(--u) * 42); }
+  #hrole { font-size: calc(var(--u) * 30); font-weight: 600; color: color-mix(in srgb, var(--ink) 55%, transparent); margin-top: calc(var(--u) * 2); white-space: nowrap; display: flex; align-items: center; gap: calc(var(--u) * 8); }
+  #hrole svg { width: calc(var(--u) * 30); height: calc(var(--u) * 30); flex: none; }
+  #hstars { display: flex; gap: calc(var(--u) * 10); margin-top: calc(var(--u) * 30); }
+  .hs { position: relative; width: calc(var(--u) * 62); height: calc(var(--u) * 62); }
+  .hs svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hs .f { clip-path: inset(0 100% 0 0); filter: drop-shadow(0 0 calc(var(--u) * 8) color-mix(in srgb, var(--gold) 70%, transparent)); }
+  #hq { margin-top: calc(var(--u) * 24); font-size: calc(var(--u) * 56); line-height: 1.16; font-weight: 750; letter-spacing: -0.018em; color: var(--ink); text-wrap: balance; }
+  .mk { position: absolute; right: calc(var(--u) * 40); top: calc(var(--u) * 6); width: calc(var(--u) * 120); height: calc(var(--u) * 120); opacity: .95;
+    filter: drop-shadow(0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent) 60%, transparent)); }
+  #hq { position: relative; }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 6) solid var(--gold); opacity: 0; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="wall"></div></div>
+  <div id="vig"></div>
+  <div id="hero">
+    <div class="who"><div class="ini" id="hini"></div><div><div class="nm" id="hnm"></div>
+      <div id="hrole"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="#2BD67B"/><path d="M7.4 12.4l3 3 6.2-6.6" fill="none" stroke="#06301A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></div></div></div>
+    <div id="hstars"></div>
+    <div id="hq"></div>
+    <svg class="mk" viewBox="0 0 24 24"><path d="M10.2 6C6.6 7.1 4.4 9.9 4.4 13.6c0 2.6 1.6 4.3 3.7 4.3 1.9 0 3.3-1.4 3.3-3.2 0-1.8-1.3-3.1-3-3.1-.3 0-.6 0-.8.1.4-1.6 1.7-3 3.3-3.7zM19.4 6c-3.6 1.1-5.8 3.9-5.8 7.6 0 2.6 1.6 4.3 3.7 4.3 1.9 0 3.3-1.4 3.3-3.2 0-1.8-1.3-3.1-3-3.1-.3 0-.6 0-.8.1.4-1.6 1.7-3 3.3-3.7z" fill="var(--accent)"/></svg>
+    <div id="ring"></div>
+    <div class="rim"></div><div class="sheen"></div>
+  </div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = P ? MV.u : MV.u * (SQ ? 1 : 1.05);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s, e = document) => e.querySelector(s);
+  const STAR = "M12 2.6l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17l-5.7 3.1 1.2-6.4-4.7-4.4 6.4-.8z";
+  const split = (s) => String(s || "").split("|").map((x) => x.trim()).filter(Boolean);
+  const Q = split(v.quotes).length ? split(v.quotes) : ["Saved me hours every week", "Set it up in ten minutes", "Worth every minute", "My whole team uses it now", "Best thing I tried this year",
+    "I tell everyone about it", "Finally, it just works", "Changed how I work", "Clear, fast, no fluff", "Paid for itself in a week", "Wish I found this sooner", "Five stars, easy"];
+  const NM = split(v.names).length ? split(v.names) : ["Maya R.", "Jon K.", "Leo M.", "Ava T.", "Sam W.", "Nina P.", "Omar H.", "Kate L.", "Ben D.", "Zoe F.", "Raj V.", "Ella G."];
+  const tints = ["var(--accent)", "var(--accent2)", "color-mix(in srgb, var(--accent) 50%, #3a6df0)", "color-mix(in srgb, var(--accent2) 50%, #2a9d8f)", "#5b5f6b", "color-mix(in srgb, var(--accent) 55%, #000)"];
+  const ini = (n) => n.split(/\s+/).map((p) => p[0] || "").join("").slice(0, 2).toUpperCase();
+  const stars = (n) => Array.from({ length: n }, () => `<svg viewBox="0 0 24 24"><path d="${STAR}" fill="var(--gold)"/></svg>`).join("");
+
+  // ---- the wall: columns of review cards, bigger than the frame, tilted in 3D
+  const COLS = P ? 4 : SQ ? 5 : 7, ROWS = P ? 9 : 6, CWc = 400 * u, GAP = 26 * u, rnd = MV.rand(7);
+  const wall = $("#wall"), cards = [], HC = Math.floor((COLS - 1) / 2), HR = Math.floor((ROWS - 1) / 2);
+  let k = 0;
+  for (let c = 0; c < COLS; c++) {
+    const col = document.createElement("div"); col.className = "col"; col.style.left = c * (CWc + GAP) + "px"; col.style.width = CWc + "px";
+    col.style.top = (c % 2 ? -120 : 0) * u + "px"; wall.appendChild(col);
+    for (let r = 0; r < ROWS; r++, k++) {
+      const hero = c === HC && r === HR;
+      const q = hero ? (v.quote || Q[0]) : Q[k % Q.length], n = hero ? (v.name || NM[0]) : NM[k % NM.length];
+      const el = document.createElement("div"); el.className = "rc"; if (!hero) el.dataset.bleed = "1";
+      el.innerHTML = `<div class="who"><div class="ini" style="background:${tints[k % tints.length]}">${ini(n)}</div><div><div class="nm">${n}</div><div class="ss">${stars(5)}</div></div></div><div class="q">${q}</div><div class="glow"></div>`;
+      col.appendChild(el); cards.push({ el, c, r, hero });
+    }
+  }
+  const WW = COLS * CWc + (COLS - 1) * GAP, WH = Math.max(...[...wall.children].map((c) => c.getBoundingClientRect().height));
+  Object.assign(wall.style, { width: WW + "px", height: WH + "px" });
+  const heroCard = cards.find((c) => c.hero).el;
+  // aim the wall so the hero card sits a little above centre, then the camera drifts
+  const hr0 = { x: heroCard.offsetLeft + heroCard.parentElement.offsetLeft + CWc / 2, y: heroCard.offsetTop + parseFloat(heroCard.parentElement.style.top) + heroCard.offsetHeight / 2 };
+  const cx = W / 2, cy = P ? (safe.top + H - safe.bottom) / 2 : H / 2;
+  const wx = cx - hr0.x, wy = cy - hr0.y;
+  gsap.set(wall, { x: wx, y: wy, transformOrigin: `${hr0.x}px ${hr0.y}px`, rotationX: 22, rotationY: -18, rotationZ: 7 });
+  tl.fromTo(wall, { x: wx + 140 * u, y: wy + 90 * u, z: -260 * u, rotationX: 26, rotationY: -24, rotationZ: 8 },
+    { x: wx - 60 * u, y: wy - 40 * u, z: 0, rotationX: 16, rotationY: -12, rotationZ: 5, duration: D, ease: "power2.out" }, 0);
+  // the cards cascade in, nearest the hero first
+  cards.forEach(({ el, c, r }) => {
+    const d = Math.hypot(c - HC, (r - HR) * 1.2), t = 0.05 + d * 0.12 + rnd() * 0.05;
+    tl.fromTo(el, { opacity: 0, z: -340 * u, rotationX: -25 }, { opacity: 1, z: 0, rotationX: 0, duration: 0.8, ease: "expo.out" }, t);
+  });
+
+  // ---- the hero card: measured where its wall card is at the lift, it rises from there to face the camera
+  const LIFT = 1.45;
+  const hero = $("#hero");
+  $("#hini").textContent = ini(v.name || NM[0]); $("#hini").style.background = tints[(HC * ROWS + HR) % tints.length];
+  $("#hnm").textContent = v.name || NM[0]; $("#hrole span").textContent = v.role || ""; if (!v.role) $("#hrole").style.display = "none";
+  $("#hq").textContent = v.quote || Q[0];
+  for (let i = 0; i < 5; i++) { const s = document.createElement("div"); s.className = "hs";
+    s.innerHTML = `<svg viewBox="0 0 24 24"><path d="${STAR}" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.3)" stroke-width="1.2" stroke-linejoin="round"/></svg><svg class="f" viewBox="0 0 24 24"><path d="${STAR}" fill="var(--gold)" stroke="var(--gold)" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+    $("#hstars").appendChild(s); }
+  const HW = P ? (W - safe.left - safe.right) : Math.min((SQ ? 820 : 900) * u, W * 0.6);
+  hero.style.width = HW + "px";
+  MV.fitText("#hnm", HW - 88 * u - 118 * u, 20);
+  const hq = $("#hq"); let fs = 56 * u; while (hq.getBoundingClientRect().height > fs * 1.16 * 3 + 2 && fs > 36 * u) { fs -= 2; hq.style.fontSize = fs + "px"; }
+  const HH = hero.getBoundingClientRect().height;
+  const fx = P ? safe.left : (W - HW) / 2, fy = P ? cy - HH / 2 - 20 * u : (H - HH) / 2;
+  gsap.set(hero, { x: fx, y: fy, transformOrigin: "50% 50%" });
+  const ro = $("#ring"), hs0 = $("#hstars").getBoundingClientRect(), hb = hero.getBoundingClientRect();
+
+  // measure the wall card on screen at the lift
+  tl.seek(LIFT, false); const wr = heroCard.getBoundingClientRect(); tl.seek(0, false);
+  const s0 = wr.width / HW, dx0 = wr.left + wr.width / 2 - (fx + HW / 2), dy0 = wr.top + wr.height / 2 - (fy + HH / 2);
+
+  tl.fromTo($(".glow", heroCard), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, LIFT - 0.4);
+  tl.to(heroCard, { opacity: 0, duration: 0.1, ease: "power1.in" }, LIFT + 0.02);
+  tl.fromTo(hero, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power1.in" }, LIFT + 0.04);
+  tl.fromTo(hero, { x: fx + dx0, y: fy + dy0, scale: s0, rotationX: 20, rotationY: -16, rotationZ: 7, transformPerspective: 1600 * u },
+    { x: fx, y: fy, scale: 1, rotationX: 6, rotationY: -8, rotationZ: -1.5, duration: 1.0, ease: "expo.out" }, LIFT);
+  tl.to(hero, { rotationX: 2, rotationY: 6, rotationZ: 0.5, duration: D - LIFT - 1.4, ease: "sine.inOut" }, LIFT + 1.0);
+  // the rest of the wall falls back out of focus
+  const rest = cards.filter((c) => !c.hero).map((c) => c.el);
+  tl.to(rest, { opacity: 0.3, filter: "blur(5px)", duration: 0.6, ease: "power2.out" }, LIFT);
+  tl.fromTo("#hero .sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, LIFT + 0.35);
+  // the stars fill one by one; the last one lands with a ring
+  const SF = LIFT + 0.55;
+  [...document.querySelectorAll(".hs")].forEach((s, i) => {
+    tl.fromTo($(".f", s), { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.16, ease: "power2.out" }, SF + i * 0.11);
+    tl.fromTo(s, { scale: 1 }, { scale: 1.25, duration: 0.08, ease: "power2.out", immediateRender: false }, SF + i * 0.11 + 0.1);
+    tl.to(s, { scale: 1, duration: 0.35, ease: "back.out(3)" }, SF + i * 0.11 + 0.18);
+  });
+  const last = document.querySelectorAll(".hs")[4].getBoundingClientRect();
+  const RD = 150 * u; Object.assign(ro.style, { width: RD + "px", height: RD + "px", left: last.left - hb.left + last.width / 2 - RD / 2 + "px", top: last.top - hb.top + last.height / 2 - RD / 2 + "px" });
+  tl.fromTo(ro, { scale: 0.3, opacity: 1 }, { scale: 1.2, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, SF + 0.54);
+  const qw = MV.words("#hq");
+  tl.fromTo(qw, { opacity: 0, y: 20 * u, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, stagger: Math.min(0.035, 0.5 / qw.length), ease: "expo.out" }, LIFT + 0.4);
+  tl.fromTo(".mk", { scale: 0.3, rotation: -30, opacity: 0 }, { scale: 1, rotation: 0, opacity: 0.95, duration: 0.55, ease: "back.out(2.5)" }, LIFT + 0.3);
+  // exit: the hero rises into blur, the wall drops back
+  tl.to(hero, { y: fy - 140 * u, z: -300 * u, opacity: 0, filter: "blur(16px)", duration: 0.42, ease: "power3.in" }, D - 0.44);
+  tl.to(wall, { opacity: 0, duration: 0.4, ease: "power2.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

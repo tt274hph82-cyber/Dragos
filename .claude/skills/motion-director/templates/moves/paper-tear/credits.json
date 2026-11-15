@@ -1,0 +1,4 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/paper-crumpled.jpg", "from": "ambientCG Paper003 (scanned crumpled paper), resized", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper003" }
+] }

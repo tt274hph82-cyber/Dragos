@@ -1,0 +1,35 @@
+{
+ "id": "timeline-track",
+ "name": "Timeline track",
+ "oneLiner": "a glowing line draws while the camera rides its head and four dated glass signs pop as it passes, then the camera pulls back to the whole track and the last node, now, glows in the accent; 16:9 runs left to right across a glossy 3D floor, 9:16 and 1:1 run top to bottom",
+ "category": "explain", "kind": "effect",
+ "uses": [
+  "broll"
+ ],
+ "looks": [
+  "glass"
+ ],
+ "from": "new",
+ "tags": [
+  "timeline",
+  "history",
+  "milestones",
+  "journey",
+  "story",
+  "dates",
+  "years",
+  "roadmap",
+  "camera",
+  "3d",
+  "premium",
+  "dark"
+ ],
+ "formats": [
+  "9:16",
+  "16:9",
+  "1:1"
+ ],
+ "duration": 5.4,
+ "alpha": false,
+ "say": "when the speaker tells how they got here in a few steps ('in 2019 we..., by 2023..., and now...'): cut in on the first date, the last node lands on 'now' or 'today'"
+}

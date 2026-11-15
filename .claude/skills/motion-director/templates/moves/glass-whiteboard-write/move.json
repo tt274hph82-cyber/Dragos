@@ -1,0 +1,5 @@
+{ "id": "glass-whiteboard-write", "name": "Glass whiteboard write", "oneLiner": "a clear glass board on steel standoffs swings in beside the speaker, the room's windows sliding across it as reflections; a rendered marker writes a heading in white, underlines it, writes the points by hand on twos, then loops the key word in red",
+  "category": "explain", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["whiteboard", "glass board", "handwriting", "marker", "write", "explain", "teach", "lesson", "framework", "system", "steps", "diagram", "plan", "notes", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 6.0, "alpha": true,
+  "say": "when the speaker sketches a framework or a short list as if at a board ('the whole system is three things: find the pain, build the fix, charge for it'): cut in on the heading, the lines write as they're said, the red loop lands on the word they stress; set duration longer for slower delivery" }

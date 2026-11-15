@@ -1,0 +1,5 @@
+{ "id": "agent-approval", "name": "Agent approval", "oneLiner": "a glass agent run card ticks through its steps, then pauses amber on the risky one: an approval request lifts out of the row in 3D, a pointer presses Approve, it turns green and sinks back, and the run finishes with the status flipping to a green Done",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "agent", "approval", "human in the loop", "permission", "review", "safety", "automation", "workflow", "run", "pause", "approve", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says the agent stops and asks before doing anything risky ('it checks with me before it sends', 'nothing goes out without my OK'): the card lifts on 'asks', the press lands on 'approve', the green Done on the payoff" }

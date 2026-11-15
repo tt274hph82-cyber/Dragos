@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"shots","type":"string","label":"Screenshots in order, paths separated by commas (2 to 4; empty: the brand screens)","default":""},
+  {"id":"labels","type":"string","label":"A short tag per screenshot, separated by commas (empty: no tags)","default":""},
+  {"id":"beat","type":"number","label":"Seconds each screenshot holds before the next swaps in","default":1.15},
+  {"id":"swap","type":"string","label":"How they swap: cube or flip","default":"cube"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #3a4048; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* look mode (preview only): a dim room standing in for the speaker's footage */
+  #ground { position: absolute; inset: 0; background: radial-gradient(70% 40% at 50% 72%, #4a525c, #24282e 70%); }
+  .is-alpha #ground { display: none; }
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 2000); }
+  #panel { position: absolute; left: 0; top: 0; box-sizing: border-box; border-radius: calc(var(--u) * 36); transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.06) 50%, rgba(255,255,255,.1));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18),
+      0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -24) rgba(0,0,0,.6), 0 0 calc(var(--u) * 90) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-alpha #panel { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 70%, rgba(255,255,255,.3)), color-mix(in srgb, var(--surface) 80%, transparent)); }
+  .is-key #panel { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none; z-index: 6;
+    background: linear-gradient(135deg, rgba(255,255,255,.8), rgba(255,255,255,.1) 35%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  /* the window the screenshots turn in */
+  #win { position: absolute; overflow: hidden; border-radius: calc(var(--u) * 24); background: #0c0c10; perspective: calc(var(--u) * 1600); }
+  .shot { position: absolute; inset: 0; backface-visibility: hidden; transform-style: preserve-3d; }
+  .shot > * { backface-visibility: hidden; }
+  .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; }
+  .shot .shade { position: absolute; inset: 0; background: #000; opacity: 0; }
+  .shot .tag { position: absolute; left: calc(var(--u) * 18); top: calc(var(--u) * 18); padding: calc(var(--u) * 9) calc(var(--u) * 20); border-radius: 999px; white-space: nowrap;
+    background: rgba(14,13,18,.72); color: #fff; font-weight: 750; font-size: calc(var(--u) * 34); letter-spacing: -0.01em;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.22), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key .shot .tag { background: #0e0d12; }
+  #gl { position: absolute; inset: 0; pointer-events: none; z-index: 4; border-radius: inherit; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 8%), rgba(255,255,255,.16) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 8%)); }
+  /* the pager: a small glass pill, the active dot stretches into a bar */
+  #pager { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 10) calc(var(--u) * 14); border-radius: 999px; z-index: 5;
+    background: rgba(14,13,18,.6); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.2); }
+  .is-key #pager { background: #0e0d12; }
+  #pager i { display: block; height: calc(var(--u) * 12); width: calc(var(--u) * 12); border-radius: 999px; background: rgba(255,255,255,.4); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="panel"><div id="win"><div id="gl"></div></div><div id="pager"></div><div id="rim"></div></div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  let shots = String(v.shots || "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (shots.length < 2) shots = (v.screens || []).slice(0, 4);
+  if (shots.length === 1) shots = [shots[0], shots[0]];
+  shots = shots.slice(0, 4);
+  const N = shots.length, tags = String(v.labels || "").split(",").map((s) => s.trim());
+  const FLIP = String(v.swap || "").toLowerCase() === "flip";
+
+  // ---- the top band: from the platform's top line to ~44% of the height, the full width less a margin
+  const PAD = 14 * u, M = 54 * W / 1080;
+  const bandTop = safe.top, bandBot = H * 0.44;
+  let PW = W - 2 * M, ww = PW - 2 * PAD, wh = ww * 9 / 16;
+  if (wh + 2 * PAD > bandBot - bandTop) { wh = bandBot - bandTop - 2 * PAD; ww = wh * 16 / 9; PW = ww + 2 * PAD; }
+  const PH = wh + 2 * PAD, px = (W - PW) / 2, py = bandTop + Math.max(0, (bandBot - bandTop - PH) * 0.35);
+  Object.assign($("#panel").style, { width: PW + "px", height: PH + "px" });
+  Object.assign($("#win").style, { left: PAD + "px", top: PAD + "px", width: ww + "px", height: wh + "px" });
+  gsap.set("#stage", { x: px, y: py });
+  const win = $("#win");
+  const S = shots.map((src, i) => {
+    const d = document.createElement("div"); d.className = "shot";
+    d.innerHTML = `<img src="${src}" alt=""><div class="shade"></div>`;
+    if (tags[i]) { const t = document.createElement("div"); t.className = "tag"; t.textContent = tags[i]; d.appendChild(t); }
+    win.insertBefore(d, $("#gl")); if (tags[i]) MV.fitText(d.querySelector(".tag"), ww * 0.6, 12);
+    gsap.set(d, { opacity: i === 0 ? 1 : 0 });
+    return d;
+  });
+  const pager = $("#pager"), dots = shots.map(() => { const i = document.createElement("i"); pager.appendChild(i); return i; });
+  await Promise.all([...document.images].map((im) => im.decode().catch(() => {})));
+
+  // ---- in: the panel drops into the band from above, tipped back, landing on a long tail
+  gsap.set("#panel", { transformOrigin: "50% 0%" });
+  tl.fromTo("#panel", { y: -140 * u, rotationX: -28, scale: 0.92 }, { y: 0, rotationX: 0, scale: 1, duration: 0.85, ease: "expo.out" }, 0.03);
+  tl.fromTo("#panel", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, 0.03);
+  tl.to("#panel", { rotationX: 4, rotationY: -3, duration: D - 0.9, ease: "sine.inOut" }, 0.88);
+  tl.fromTo("#gl", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, 0.25);
+
+  // ---- the pager follows the active screenshot
+  const dotOn = (i, t) => {
+    dots.forEach((dd, j) => tl.to(dd, { width: (j === i ? 40 : 12) * u, backgroundColor: j === i ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.4)", duration: 0.35, ease: "expo.out" }, t));
+  };
+  dots.forEach((dd, j) => gsap.set(dd, { width: (j === 0 ? 40 : 12) * u, backgroundColor: j === 0 ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.4)" }));
+  { const pr = pager.getBoundingClientRect(); gsap.set(pager, { left: (PW - pr.width) / 2, top: PH - PAD - 20 * u - pr.height }); }
+
+  // ---- the swaps, one per beat: a cube turn (the old face rolls away left, the new one rolls in from the right) or a card flip
+  const beat = Math.max(0.6, +v.beat || 1.15), T0 = 0.95, SW = 0.62;
+  const last = D - 0.45 - SW;
+  let t = T0, cur = 0;
+  const step = () => { const nx = (cur + 1) % N; return nx; };
+  while (t <= last && cur < N - 1) {
+    const a = S[cur], nIdx = step(), b = S[nIdx];
+    if (FLIP) {
+      tl.set(b, { opacity: 1, rotationY: 180, zIndex: 2 }, t); tl.set(a, { zIndex: 1 }, t);
+      tl.fromTo(a, { rotationY: 0 }, { rotationY: -180, duration: SW, ease: "expo.inOut", immediateRender: false }, t);
+      tl.fromTo(b, { rotationY: 180 }, { rotationY: 0, duration: SW, ease: "expo.inOut", immediateRender: false }, t);
+      // the tags ride the faces but sit out the edge-on middle of the turn
+      const ta = a.querySelector(".tag"), tb = b.querySelector(".tag");
+      if (ta) { tl.to(ta, { opacity: 0, duration: 0.12, ease: "power2.in" }, t + 0.1); tl.set(ta, { opacity: 1 }, t + SW); }
+      if (tb) tl.fromTo(tb, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out", immediateRender: false }, t + SW * 0.7);
+    } else {
+      gsap.set([a, b], { transformOrigin: "50% 50%" });
+      tl.set(b, { opacity: 1, zIndex: 2 }, t); tl.set(a, { zIndex: 1 }, t);
+      tl.fromTo(a, { xPercent: 0, rotationY: 0, z: 0 }, { xPercent: -55, rotationY: -62, z: -ww * 0.3, duration: SW, ease: "expo.inOut", immediateRender: false }, t);
+      tl.fromTo(b, { xPercent: 55, rotationY: 62, z: -ww * 0.3 }, { xPercent: 0, rotationY: 0, z: 0, duration: SW, ease: "expo.inOut", immediateRender: false }, t);
+      tl.fromTo(a.querySelector(".shade"), { opacity: 0 }, { opacity: 0.6, duration: SW, ease: "power2.in", immediateRender: false }, t);
+      tl.fromTo(b.querySelector(".shade"), { opacity: 0.6 }, { opacity: 0, duration: SW, ease: "power2.out", immediateRender: false }, t);
+      // the tags never ride the turn: the old one leaves as its face starts to roll, the new one lands once its face is square
+      const ta = a.querySelector(".tag"), tb = b.querySelector(".tag");
+      if (ta) { tl.to(ta, { opacity: 0, duration: 0.12, ease: "power2.in" }, t); tl.set(ta, { opacity: 1 }, t + SW); }
+      if (tb) { tl.set(tb, { opacity: 0 }, t); tl.fromTo(tb, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out", immediateRender: false }, t + SW * 0.88); }
+    }
+    tl.set(a, { opacity: 0 }, t + SW);
+    // the panel answers the swap: a small kick, the sheen passes
+    tl.fromTo("#panel", { scale: 1 }, { scale: 0.985, duration: 0.12, ease: "power2.out", immediateRender: false }, t);
+    tl.to("#panel", { scale: 1, duration: 0.5, ease: "back.out(2.5)" }, t + 0.12);
+    tl.fromTo("#gl", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.7, ease: "power2.inOut", immediateRender: false }, t + 0.1);
+    dotOn(nIdx, t + 0.15);
+    cur = nIdx; t += beat;
+  }
+
+  // ---- out: the panel lifts back out of the band, accelerating
+  tl.to("#panel", { y: -160 * u, rotationX: -24, scale: 0.94, duration: 0.38, ease: "power3.in" }, D - 0.42);
+  tl.to("#panel", { opacity: 0, duration: 0.25, ease: "power2.in" }, D - 0.3);
+  MV.done();
+})();
+</script>
+</body>
+</html>

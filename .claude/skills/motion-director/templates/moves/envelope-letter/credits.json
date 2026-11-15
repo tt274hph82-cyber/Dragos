@@ -1,0 +1,8 @@
+{ "sources": [
+  { "file": "assets/manila.jpg", "from": "ambientCG Paper005 (scanned kraft paper), resized; every panel of the envelope", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper005" },
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the letter", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/leather.jpg", "from": "ambientCG Leather030 (scanned brown leather), resized; the desk", "license": "CC0", "page": "https://ambientcg.com/view?id=Leather030" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the typed ink", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/fonts/SpecialElite-Regular.ttf", "from": "Special Elite by Astigmatic, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Special+Elite" },
+  { "file": "assets/fonts/CoveredByYourGrace.ttf", "from": "Covered By Your Grace by Kimberly Geswein, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Covered+By+Your+Grace" }
+] }

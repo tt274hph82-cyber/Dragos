@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"pros","type":"string","label":"The pros, comma separated, 1 to 4 short labels","default":"Saves hours,Never sleeps,Costs pennies"},
+  {"id":"cons","type":"string","label":"The cons, comma separated, 1 to 4 short labels","default":"A day to set up,Needs checking"},
+  {"id":"prosTitle","type":"string","label":"Left column title","default":"Pros"},
+  {"id":"consTitle","type":"string","label":"Right column title","default":"Cons"},
+  {"id":"winner","type":"string","label":"The side that wins at the end: auto (the longer list), pros, cons or none","default":"auto"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; --bad: #FF5A5F; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 36%; top: 0%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .lw { width: 60%; height: 44%; opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base, .is-alpha .rf { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 10%, rgba(255,255,255,.5) 90%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  .rf { position: absolute; filter: blur(calc(var(--u) * 6)); background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.04) 45%, transparent 85%); }
+  .rf b { position: absolute; left: 0; right: 0; top: 0; height: 100%; border-radius: inherit; opacity: 0; background: linear-gradient(180deg, var(--tone-a), transparent 80%); }
+
+  .col { position: absolute; transform-style: preserve-3d; }
+  .card { position: absolute; inset: 0; box-sizing: border-box;
+    background: linear-gradient(160deg, rgba(255,255,255,.15), rgba(255,255,255,.045) 60%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -26) rgba(0,0,0,.75); }
+  .is-alpha .card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, white 12%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.28) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .card .tw { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+    background: radial-gradient(100% 60% at 50% 0%, var(--tone-a), transparent 75%); box-shadow: inset 0 0 0 calc(var(--u) * 3) var(--tone); }
+  .halo { position: absolute; inset: calc(var(--u) * -10); opacity: 0; pointer-events: none; box-shadow: 0 0 calc(var(--u) * 80) calc(var(--u) * 6) var(--tone-a); }
+  .pro { --tone: #2BD67B; --tone-a: rgba(43,214,123,.4); --tone-t: rgba(43,214,123,.16); }
+  .con { --tone: #FF5A5F; --tone-a: rgba(255,90,95,.4); --tone-t: rgba(255,90,95,.16); }
+
+  .hd { position: absolute; display: flex; align-items: center; white-space: nowrap; }
+  .badge { position: relative; flex: none; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(70% 70% at 36% 30%, color-mix(in srgb, var(--tone) 55%, white), var(--tone) 60%, color-mix(in srgb, var(--tone) 70%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 0 calc(var(--u) * 30) var(--tone-a); }
+  .badge svg { width: 54%; height: 54%; fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; }
+  .ht { font-family: var(--font-display); color: var(--ink); line-height: 1; letter-spacing: -0.015em; }
+  .ct { font-weight: 800; line-height: 1; color: color-mix(in srgb, var(--ink) 50%, transparent); margin-left: auto; font-variant-numeric: tabular-nums; }
+  .sep { position: absolute; height: calc(var(--u) * 2); background: linear-gradient(90deg, rgba(255,255,255,.22), rgba(255,255,255,.04)); }
+
+  .row { position: absolute; box-sizing: border-box; display: flex; align-items: center;
+    background: rgba(255,255,255,.05); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.12), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.06); }
+  .mk { position: relative; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--tone-t); box-shadow: inset 0 0 0 calc(var(--u) * 2) var(--tone-a); }
+  .mk svg { width: 56%; height: 56%; fill: none; stroke: var(--tone); stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+  .rl { font-weight: 700; color: var(--ink); line-height: 1.12; letter-spacing: -0.005em; }
+  .ring { position: absolute; opacity: 0; border-radius: 50%; border: calc(var(--u) * 3) solid var(--tone); pointer-events: none; }
+
+  .is-key .card { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  .is-key .row { background: color-mix(in srgb, var(--surface) 90%, white); }
+  .is-key .halo, .is-key .ring { display: none; }
+  .is-key .badge { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  .is-key .ct { color: color-mix(in srgb, var(--ink) 50%, var(--surface)); }
+  .is-key .mk { background: color-mix(in srgb, var(--tone) 16%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="lw"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="floor"></div><div id="refls"></div><div id="base"></div>
+    <div id="cols"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H;
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim()).filter((s) => s.length);
+  const brand = v.brandName || "";
+  const sides = [
+    { cls: "pro", title: v.prosTitle || "Pros", items: list(v.pros).map((s) => s.split("{brand}").join(brand)).slice(0, 4) },
+    { cls: "con", title: v.consTitle || "Cons", items: list(v.cons).map((s) => s.split("{brand}").join(brand)).slice(0, 4) },
+  ];
+  sides.forEach((s, k) => { if (!s.items.length) s.items = [k ? "A downside" : "An upside"]; });
+  const wv = String(v.winner || "auto").toLowerCase();
+  const WIN = wv === "pros" ? 0 : wv === "cons" ? 1 : wv === "none" ? -1 : sides[0].items.length === sides[1].items.length ? -1 : sides[0].items.length > sides[1].items.length ? 0 : 1;
+  const CHECK = '<path d="M5.5 12.6l4.2 4.2 8.8-9.4"/>', CROSS = '<path d="M7 7l10 10M17 7 7 17"/>';
+
+  // ---- layout: two columns side by side, rows as tall as two lines of label
+  const NR = Math.max(sides[0].items.length, sides[1].items.length);
+  let X0, X1, Y0, Y1;
+  if (P) { X0 = safe.left; X1 = W - safe.right; Y0 = safe.top + 20 * u; Y1 = H - safe.bottom - 60 * u; }
+  else if (SQ) { X0 = 64 * u; X1 = W - 64 * u; Y0 = 70 * u; Y1 = H - 150 * u; }
+  else { X0 = W * 0.13; X1 = W * 0.87; Y0 = H * 0.09; Y1 = H * 0.8; }
+  // tall frames stack the two cards (full-width rows read in one line); wide and square frames sit them side by side
+  const STACK = P;
+  const GAP = (STACK ? 30 : SQ ? 26 : 40) * u, CW = STACK ? X1 - X0 : (X1 - X0 - GAP) / 2;
+  const PAD = (STACK ? 22 : SQ ? 24 : 30) * u, HDH = (STACK ? 120 : SQ ? 124 : 150) * u, RG = (STACK ? 14 : 18) * u;
+  const LF = (STACK ? 44 : SQ ? 40 : 48) * u;
+  const n0 = sides[0].items.length, n1 = sides[1].items.length;
+  const cardH = (n, rh) => HDH + PAD + n * rh + (n - 1) * RG + PAD;
+  const RH = STACK ? Math.min(104 * u, (Y1 - Y0 - GAP - 2 * (HDH + 2 * PAD) - RG * (n0 + n1 - 2)) / (n0 + n1))
+                   : Math.min((SQ ? 132 : 130) * u, (Y1 - Y0 - HDH - PAD * 2 - RG * (NR - 1)) / NR);
+  const CHs = STACK ? [cardH(n0, RH), cardH(n1, RH)] : [cardH(NR, RH), cardH(NR, RH)];
+  const TOT = STACK ? CHs[0] + GAP + CHs[1] : CHs[0];
+  const cy0 = Y0 + (Y1 - Y0 - TOT) / 2;
+  const CHt = TOT;
+  const floorY = cy0 + TOT + 6 * u;
+  $("#floor").style.top = floorY + "px";
+  Object.assign($("#base").style, { left: X0 - 60 * u + "px", width: X1 - X0 + 120 * u + "px", top: floorY - 1.5 * u + "px" });
+  const RAD = 36 * u;
+  const cols = $("#cols"), COLS = [];
+  sides.forEach((s, k) => {
+    const x = STACK ? X0 : X0 + k * (CW + GAP), y = STACK ? cy0 + (k ? CHs[0] + GAP : 0) : cy0, ch = CHs[k];
+    const col = document.createElement("div"); col.className = "col " + s.cls; cols.appendChild(col);
+    Object.assign(col.style, { left: x + "px", top: y + "px", width: CW + "px", height: ch + "px" });
+    col.innerHTML = `<div class="halo"></div><div class="card"><div class="tw"></div></div>`;
+    for (const e of col.querySelectorAll(".halo,.card,.tw")) e.style.borderRadius = RAD + "px";
+    const card = col.querySelector(".card");
+    // header: badge, title, count
+    const hd = document.createElement("div"); hd.className = "hd"; card.appendChild(hd);
+    const BD = HDH - 2 * PAD + 8 * u;
+    hd.innerHTML = `<div class="badge"><svg viewBox="0 0 24 24">${k ? CROSS : CHECK}</svg></div><div class="ht"></div><div class="ct"></div>`;
+    const badge = hd.querySelector(".badge"), ht = hd.querySelector(".ht"), ct = hd.querySelector(".ct");
+    Object.assign(badge.style, { width: BD + "px", height: BD + "px", marginRight: 20 * u + "px" });
+    badge.querySelector("svg").style.strokeWidth = 3;
+    ht.textContent = s.title; ht.style.fontSize = (STACK ? 58 : SQ ? 58 : 68) * u + "px";
+    ct.textContent = String(s.items.length); ct.style.fontSize = (P ? 44 : 46) * u + "px";
+    Object.assign(hd.style, { left: PAD + "px", top: PAD - 4 * u + "px", width: CW - 2 * PAD + "px", height: BD + "px" });
+    MV.fitText(ht, CW - 2 * PAD - BD - 20 * u - 80 * u, 26);
+    const sep = document.createElement("div"); sep.className = "sep"; card.appendChild(sep);
+    Object.assign(sep.style, { left: PAD + "px", width: CW - 2 * PAD + "px", top: HDH - 2 * u + "px" });
+    // rows
+    const MK = Math.min(RH - 26 * u, (SQ ? 76 : 84) * u);
+    const rows = s.items.map((lab, j) => {
+      const r = document.createElement("div"); r.className = "row"; card.appendChild(r);
+      Object.assign(r.style, { left: PAD + "px", top: HDH + PAD + j * (RH + RG) + "px", width: CW - 2 * PAD + "px", height: RH + "px", borderRadius: Math.min(26 * u, RH * 0.3) + "px", padding: `0 ${22 * u}px 0 ${18 * u}px` });
+      r.innerHTML = `<div class="mk"><svg viewBox="0 0 24 24"><path/></svg></div><div class="rl"></div><div class="ring"></div>`;
+      const mk = r.querySelector(".mk"), rl = r.querySelector(".rl"), path = mk.querySelector("path"), ring = r.querySelector(".ring");
+      Object.assign(mk.style, { width: MK + "px", height: MK + "px", marginRight: 20 * u + "px" });
+      Object.assign(ring.style, { width: MK + "px", height: MK + "px", left: 18 * u + "px", top: (RH - MK) / 2 + "px" });
+      path.setAttribute("d", k ? "M7 7l10 10M17 7 7 17" : "M5.5 12.6l4.2 4.2 8.8-9.4"); path.style.strokeWidth = 3.2;
+      rl.textContent = lab; rl.style.fontSize = LF + "px";
+      // up to two lines; a long label shrinks until it fits
+      const room = CW - 2 * PAD - 40 * u - MK - 20 * u;
+      rl.style.width = room + "px";
+      let fs = LF; const lines = 1;
+      if (lines === 1) { rl.style.width = "auto"; MV.fitText(rl, room, 22); }
+      else while ((rl.scrollHeight > fs * 1.12 * 2 + 2 || rl.scrollWidth > room + 1) && fs > 22) { fs -= 2; rl.style.fontSize = fs + "px"; }
+      const L = path.getTotalLength(); path.style.strokeDasharray = L; path.style.strokeDashoffset = L;
+      return { r, mk, rl, path, L, ring };
+    });
+    // reflection: the card as a shape
+    const rf = document.createElement("div"); rf.className = "rf " + s.cls; $("#refls").appendChild(rf);
+    if (STACK && !k) rf.style.display = "none";
+    Object.assign(rf.style, { left: x + "px", top: floorY + 8 * u + "px", width: CW + "px", height: ch * (STACK ? 0.7 : 0.45) + "px", borderRadius: `${RAD * 0.4}px ${RAD * 0.4}px ${RAD}px ${RAD}px` });
+    rf.innerHTML = "<b></b>";
+    COLS.push({ k, x, col, card, hd, badge, ht, ct, rows, rf });
+  });
+
+  // ---- the camera
+  const cx = (X0 + X1) / 2, cy = cy0 + CHt / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: 11, rotationX: 10, scale: 0.94 }, { rotationY: -7, rotationX: 3, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. two cards stand up off the floor, the badges pop
+  tl.fromTo("#base", { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.02);
+  COLS.forEach((c, k) => {
+    const at = 0.04 + k * 0.1;
+    tl.fromTo(c.col, { rotationX: -75, transformOrigin: "50% 100%" }, { rotationX: 0, duration: 0.95, ease: "expo.out" }, at);
+    tl.fromTo(c.col, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, at);
+    tl.fromTo(c.rf, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, at + 0.25);
+    tl.fromTo(c.badge, { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.6)" }, at + 0.32);
+    tl.fromTo(c.ht, { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, at + 0.4);
+    tl.fromTo(c.ct, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, at + 0.5);
+    tl.set(c.ct, { textContent: "0" }, 0);
+  });
+
+  // ---- 2. rows land alternately, a check or a cross is drawn on each, the count ticks
+  const R0 = 0.78, RS = Math.min(0.24, 1.5 / (sides[0].items.length + sides[1].items.length));
+  const seq = []; for (let j = 0; j < NR; j++) for (let k = 0; k < 2; k++) if (COLS[k].rows[j]) seq.push([k, j]);
+  let last = R0;
+  seq.forEach(([k, j], n) => {
+    const c = COLS[k], r = c.rows[j], at = R0 + n * RS, dir = STACK ? (n % 2 ? 1 : -1) : k ? 1 : -1;
+    tl.fromTo(r.r, { x: dir * 60 * u, opacity: 0, rotationY: dir * -30 }, { x: 0, opacity: 1, rotationY: 0, duration: 0.6, ease: "expo.out" }, at);
+    tl.fromTo(r.mk, { scale: 0.3 }, { scale: 1, duration: 0.5, ease: "back.out(2.8)" }, at + 0.08);
+    tl.to(r.path, { strokeDashoffset: 0, duration: 0.26, ease: "power2.out" }, at + 0.16);
+    tl.fromTo(r.ring, { scale: 1, opacity: 0.8 }, { scale: 1.7, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, at + 0.3);
+    tl.set(c.ct, { textContent: String(j + 1) }, at + 0.3);
+    tl.fromTo(c.ct, { scale: 1 }, { scale: 1.3, duration: 0.08, ease: "power2.out", immediateRender: false }, at + 0.3);
+    tl.to(c.ct, { scale: 1, duration: 0.4, ease: "back.out(3)" }, at + 0.38);
+    last = at + 0.4;
+  });
+
+  // ---- 3. the verdict: the winning card steps forward in its colour, the other falls back
+  if (WIN >= 0) {
+    const M = last + 0.35, A = COLS[WIN], B = COLS[1 - WIN];
+    A.col.style.zIndex = 3;
+    tl.to(A.col, { z: 60, y: -16 * u, scale: STACK ? 1.03 : 1.04, duration: 0.8, ease: "back.out(1.7)" }, M);
+    tl.to(A.card.querySelector(".tw"), { opacity: 1, duration: 0.3, ease: "power2.out" }, M);
+    tl.to(A.col.querySelector(".halo"), { opacity: KEY ? 0 : 1, duration: 0.5, ease: "power2.out" }, M);
+    tl.to(A.rf.querySelector("b"), { opacity: 1, duration: 0.5, ease: "power2.out" }, M);
+    tl.fromTo(A.badge, { scale: 1 }, { scale: 1.25, duration: 0.1, ease: "power2.out", immediateRender: false }, M + 0.04);
+    tl.to(A.badge, { scale: 1, duration: 0.6, ease: "back.out(3)" }, M + 0.14);
+    tl.fromTo(A.card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.9, ease: "power2.inOut" }, M + 0.15);
+    const lw = $("#ground .lw"); lw.style.background = WIN ? "rgba(255,90,95,.35)" : "rgba(43,214,123,.3)";
+    Object.assign(lw.style, { left: A.x + CW / 2 - W * 0.3 + "px", top: (STACK ? parseFloat(A.col.style.top) + CHs[WIN] / 2 : cy) - H * 0.22 + "px" });
+    tl.to(lw, { opacity: 1, duration: 0.8, ease: "power2.out" }, M);
+    A.rows.forEach((r, j) => tl.fromTo(r.ring, { scale: 1, opacity: 0.8 }, { scale: 1.8, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, M + 0.1 + j * 0.06));
+    tl.to([B.col, B.rf], MV.alpha ? { filter: "brightness(0.55)", z: -40, duration: 0.7, ease: "power2.inOut" } : { opacity: 0.5, z: -40, duration: 0.7, ease: "power2.inOut" }, M);
+    tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M + 0.04); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, M + 0.11);
+  } else {
+    COLS.forEach((c, k) => tl.fromTo(c.card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.9, ease: "power2.inOut" }, last + 0.3 + k * 0.1));
+  }
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

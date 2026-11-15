@@ -1,0 +1,5 @@
+{ "id": "payment-success", "name": "Glass payment success", "oneLiner": "a checkout card on glass: the card number, expiry and CVC type in, a pointer presses Pay, the button folds into a spinner and bursts into a big success check while the amount stamps down",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["payment", "checkout", "purchase", "sale", "paid", "money", "conversion", "buy", "subscription", "success", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker talks about the first sale, a customer paying, or how easy it is to buy ('and they just paid', 'one click and it's done'): the button is pressed on 'paid', the check lands on the amount" }

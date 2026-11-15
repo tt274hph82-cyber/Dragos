@@ -1,0 +1,5 @@
+{ "id": "priority-sort", "name": "Priority sort", "oneLiner": "a glass task list in the order things came in; Sort by priority is pressed, the most important task lifts off the list and glides up to the top while the rest shuffle into place under it, and every rank number rolls to its new position",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["tasks", "to-do", "priority", "prioritise", "sort", "reorder", "focus", "what matters", "first thing", "planning", "productivity", "list", "agent", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says one thing matters more than the rest ('do this one first', 'it ranks your tasks for you'): the list sorts on 'priority' and the top task lands at number one on the thing they name. Set tasks, prios (1 is highest) and the sort label" }

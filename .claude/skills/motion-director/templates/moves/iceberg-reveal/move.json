@@ -1,0 +1,5 @@
+{ "id": "iceberg-reveal", "name": "Iceberg reveal", "oneLiner": "a faceted 3D ice body breaks the surface showing only its small lit tip and its label; then the murk under the waterline clears top down, light shafts fall, the camera pulls back in log space and the huge hidden mass is revealed with its number landing underneath",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["iceberg", "hidden", "cost", "total cost", "behind the scenes", "surface", "reveal", "below the surface", "money", "explainer", "3d", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says what people see is only the tip ('you see the $20 a month, you don't see the $4,800 it really costs'): cut in on the visible part, the mass is revealed on 'but underneath' and the number lands on the real figure" }

@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Label under the brand icon (empty: the brand name)","default":""},
+  {"id":"count","type":"number","label":"Where the badge climbs to before it caps (99 lands as 99+)","default":99},
+  {"id":"apps","type":"string","label":"Labels of the other icons on the home screen, comma separated","default":"Camera,Mail,Music,Notes,Clock,Weather,Maps,Photos,Calendar,Messages,Settings,Files,Wallet,News,Health,Podcasts,Books,Translate"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --badge: #FF3B30; }
+  /* the wallpaper: the brand colours as soft light on near black */
+  #wall { position: absolute; inset: -10%; background:
+    radial-gradient(45% 35% at 28% 22%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 82% 78%, color-mix(in srgb, var(--accent2) 30%, transparent), transparent 72%),
+    radial-gradient(60% 50% at 70% 30%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 75%),
+    linear-gradient(170deg, color-mix(in srgb, var(--ground) 80%, var(--accent) 20%), var(--ground)); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,.45)); }
+  .is-alpha #wall, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #cam { position: absolute; inset: 0; }
+  #home { position: absolute; inset: 0; }
+  .app { position: absolute; display: flex; flex-direction: column; align-items: center; }
+  .ic { position: relative; border-radius: 23%; display: grid; place-items: center;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--c) 70%, #fff), var(--c) 45%, color-mix(in srgb, var(--c) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2.5) calc(var(--u) * 1) rgba(255,255,255,.45), inset 0 calc(var(--u) * -6) calc(var(--u) * 12) rgba(0,0,0,.25),
+      0 calc(var(--u) * 14) calc(var(--u) * 26) calc(var(--u) * -8) rgba(0,0,0,.55); }
+  .ic svg { width: 56%; height: 56%; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ic .gl { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(120% 70% at 30% -10%, rgba(255,255,255,.38), rgba(255,255,255,.05) 50%, transparent 62%); }
+  .lb { color: #fff; font-weight: 600; white-space: nowrap; text-shadow: 0 1px 6px rgba(0,0,0,.55); letter-spacing: -0.005em; }
+  .app .dm { position: absolute; inset: 0; border-radius: 23%; background: #000; opacity: 0; }
+  /* the brand icon: the mark full bleed, or the logo on the brand colour */
+  #bic { overflow: visible; }
+  #bic .fill { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; background: linear-gradient(150deg, var(--al), var(--accent) 52%, var(--ad)); }
+  #bic .fill img { position: absolute; left: -1%; top: -1%; width: 102%; height: 102%; object-fit: cover; }
+  #bic .fill img.logo { left: 16%; top: 16%; width: 68%; height: 68%; object-fit: contain; }
+  #ring { position: absolute; inset: 0; border-radius: 23%; box-shadow: 0 0 0 calc(var(--u) * 5) rgba(255,255,255,.85); opacity: 0; }
+  #badge { position: absolute; z-index: 3; display: flex; align-items: center; justify-content: center; box-sizing: border-box; border-radius: 999px; color: #fff; font-weight: 700;
+    background: linear-gradient(180deg, #ff6259, var(--badge) 55%, #e0261c); font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: -0.02em;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.35), 0 0 0 calc(var(--u) * 5) rgba(10,8,12,.85), 0 calc(var(--u) * 10) calc(var(--u) * 20) rgba(0,0,0,.5); }
+  .is-key #badge { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.35), 0 0 0 calc(var(--u) * 5) #0a080c; }
+
+  #status { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; color: #fff; }
+  #status .tm { font-weight: 700; letter-spacing: -0.01em; }
+  #status .r { display: flex; align-items: center; }
+  #status svg { fill: #fff; }
+  #dock { position: absolute; border-radius: calc(var(--u) * 70);
+    background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.1)); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .is-alpha #dock { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 80%, #fff 8%), color-mix(in srgb, var(--surface) 92%, transparent));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.3), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -20) rgba(0,0,0,.6); }
+  .is-key #dock { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.3); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="wall"></div>
+  <div id="cam"><div id="home"></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H, $ = (s) => document.querySelector(s);
+  const home = $("#home");
+  const G = {
+    camera: '<rect x="3.5" y="6.5" width="17" height="13" rx="3"/><circle cx="12" cy="13" r="3.6"/><path d="M8.5 6.5l1.4-2.2h4.2l1.4 2.2"/>',
+    mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/>',
+    music: '<path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+    notes: '<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4.5"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/>',
+    weather: '<circle cx="10" cy="10" r="3.5"/><path d="M10 3.5v1.5M3.5 10H5M5.4 5.4l1 1M14.6 5.4l-1 1"/><path d="M9 19.5h8.5a3.2 3.2 0 0 0 0-6.4 4.5 4.5 0 0 0-8.4 1.2A2.6 2.6 0 0 0 9 19.5z"/>',
+    maps: '<path d="M12 20.5s-6-5.6-6-10.5a6 6 0 0 1 12 0c0 4.9-6 10.5-6 10.5z"/><circle cx="12" cy="10" r="2.3"/>',
+    photos: '<circle cx="12" cy="7.5" r="3"/><circle cx="16.5" cy="12" r="3"/><circle cx="12" cy="16.5" r="3"/><circle cx="7.5" cy="12" r="3"/>',
+    calendar: '<rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>',
+    messages: '<path d="M4.5 12a7.5 7 0 1 1 3.4 5.9L4.5 19.5l1-3.3A7 7 0 0 1 4.5 12z"/>',
+    settings: '<circle cx="12" cy="12" r="3"/><path d="M12 3.5v2.3M12 18.2v2.3M3.5 12h2.3M18.2 12h2.3M6 6l1.6 1.6M16.4 16.4 18 18M6 18l1.6-1.6M16.4 7.6 18 6"/>',
+    files: '<path d="M3.5 7.5c0-1.1.9-2 2-2h4l2 2h7c1.1 0 2 .9 2 2v8c0 1.1-.9 2-2 2h-13c-1.1 0-2-.9-2-2z"/>',
+    wallet: '<rect x="3.5" y="6" width="17" height="13" rx="2.5"/><path d="M3.5 10h17M15.5 14.5h2"/>',
+    news: '<rect x="4" y="4.5" width="16" height="15" rx="2.5"/><path d="M7.5 8.5h9M7.5 12h9M7.5 15.5h5.5"/>',
+    health: '<path d="M12 19.5s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 9.5c0 5.6-7 10-7 10z"/>',
+    podcasts: '<circle cx="12" cy="10" r="2.5"/><path d="M12 14v6.5M7.8 14.5a6 6 0 1 1 8.4 0"/>',
+    books: '<path d="M4 5.5c2.6-1 5.4-1 8 .8v13.2c-2.6-1.8-5.4-1.8-8-.8zM20 5.5c-2.6-1-5.4-1-8 .8v13.2c2.6-1.8 5.4-1.8 8-.8z"/>',
+    translate: '<path d="M4 5.5h9M8.5 4v1.5c0 4-2 7-4.5 8.5M6.5 9.5c1 2.2 2.8 3.8 5 4.6M13 20l3.5-8.5L20 20M14.3 17h4.4"/>',
+  };
+  // each glyph keeps its own colour, so a label always sits under the icon it names
+  const COL = { camera: "#8e8e96", mail: "#2f7cf6", music: "#f2455f", notes: "#e8b41f", clock: "#3a3a40", weather: "#3c9df2", maps: "#38b26a", photos: "#e86f3b",
+    calendar: "#f25555", messages: "#34c55a", settings: "#77777f", files: "#3f86e8", wallet: "#2b2b30", news: "#ef4b5d", health: "#f05a7e", podcasts: "#9b52e0", books: "#f08a24", translate: "#4d79e6" };
+  const GK = Object.keys(G);
+  const glyphFor = (label, i) => { const k = String(label || "").toLowerCase(); return G[k] ? k : GK[(i * 7 + 3) % GK.length]; };
+  const labels = String(v.apps || "").split(",").map((s) => s.trim());
+  const bname = v.name || v.brandName || "";
+
+  // ---- layout: a home screen grid (B-roll) or a glass dock of four (overlay)
+  let cols, rows, IC, gx, gy, x0, y0, showLabels = true, brandAt;
+  if (MV.alpha) {
+    cols = 4; rows = 1; showLabels = false;
+    const room = P ? W - safe.left - safe.right : SQ ? W * 0.8 : W * 0.5;
+    IC = Math.min((P ? 190 : 170) * u, room / (4 + 5 * 0.36)); gx = IC * 0.36;
+    const DW = cols * IC + (cols + 1) * gx, DH = IC + 2 * gx * 0.95;
+    const dx = P ? safe.left + (W - safe.left - safe.right - DW) / 2 : SQ ? (W - DW) / 2 : W - safe.right - DW - 40 * u;
+    const dy = P ? safe.top + 60 * u : H - safe.bottom - DH - 20 * u;
+    const dock = document.createElement("div"); dock.id = "dock"; Object.assign(dock.style, { left: dx + "px", top: dy + "px", width: DW + "px", height: DH + "px" }); home.appendChild(dock);
+    x0 = dx + gx; y0 = dy + gx * 0.95; gy = 0; brandAt = 1;
+  } else {
+    cols = P ? 4 : SQ ? 4 : 6; rows = P ? 4 : 3;
+    IC = (P ? 200 : SQ ? 170 : 172) * u;
+    const LBH = 70 * u, pitchY = IC + LBH + (P ? 56 : 40) * u;
+    gx = P ? (W - cols * IC) / (cols + 1) : (SQ ? 70 : 90) * u;
+    const GW = cols * IC + (cols - 1) * gx, GH = rows * pitchY - (P ? 56 : 40) * u;
+    x0 = (W - GW) / 2; y0 = P ? 262 * u : (H - GH) / 2 + 10 * u; gy = pitchY - IC;
+    brandAt = P ? 5 : SQ ? 5 : 8;
+  }
+  const apps = [];
+  let li = 0;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const i = r * cols + c, isB = i === brandAt;
+    const a = document.createElement("div"); a.className = "app";
+    const ic = document.createElement("div"); ic.className = "ic"; Object.assign(ic.style, { width: IC + "px", height: IC + "px" });
+    if (isB) { ic.id = "bic"; const f = document.createElement("div"); f.className = "fill"; ic.appendChild(f);
+      if (v.mark) f.appendChild(MV.img(v.mark)); else if (v.logo) { f.appendChild(MV.img(v.logo, "logo")); } }
+    else { const g = glyphFor(labels[li % Math.max(1, labels.length)], li), col = COL[g]; ic.style.setProperty("--c", col); ic.innerHTML = `<svg viewBox="0 0 24 24">${G[g]}</svg><div class="gl"></div><div class="dm"></div>`; }
+    a.appendChild(ic);
+    if (showLabels) { const lb = document.createElement("div"); lb.className = "lb"; lb.textContent = isB ? bname : labels[li % Math.max(1, labels.length)] || "";
+      Object.assign(lb.style, { fontSize: (P ? 38 : 34) * u + "px", marginTop: 16 * u + "px" }); a.appendChild(lb); MV.fitText(lb, IC + gx * 0.8, 12); }
+    if (!isB) li++;
+    Object.assign(a.style, { left: x0 + c * (IC + gx) + "px", top: y0 + r * (IC + gy) + "px", width: IC + "px" });
+    home.appendChild(a); apps.push(a);
+  }
+  // 9:16 home screen: a status bar and a dock under the grid
+  if (!MV.alpha && P) {
+    const st = document.createElement("div"); st.id = "status";
+    st.innerHTML = `<div class="tm">9:41</div><div class="r"><svg viewBox="0 0 24 16"><rect x="1" y="10" width="3.6" height="5" rx="1"/><rect x="6.5" y="7" width="3.6" height="8" rx="1"/><rect x="12" y="4" width="3.6" height="11" rx="1"/><rect x="17.5" y="1" width="3.6" height="14" rx="1"/></svg><svg viewBox="0 0 30 16"><rect x="1" y="2" width="24" height="12" rx="3.5" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/><rect x="3.2" y="4.2" width="17" height="7.6" rx="2"/><rect x="26.4" y="6" width="2" height="4" rx="1" fill-opacity=".5"/></svg></div>`;
+    Object.assign(st.style, { top: 110 * u + "px", padding: `0 ${110 * u}px`, fontSize: 46 * u + "px" });
+    st.querySelectorAll("svg").forEach((s, i) => { s.style.height = 34 * u + "px"; s.style.width = (i ? 64 : 50) * u + "px"; s.style.marginLeft = 18 * u + "px"; });
+    home.appendChild(st);
+    const DI = 166 * u, dg = (W - 2 * 50 * u - 4 * DI) / 5, DW = W - 100 * u, DH = DI + 2 * dg * 0.62, dyy = H - 50 * u - DH;
+    const dock = document.createElement("div"); dock.id = "dock"; Object.assign(dock.style, { left: 50 * u + "px", top: dyy + "px", width: DW + "px", height: DH + "px" }); home.appendChild(dock);
+    ["messages", "camera", "music", "mail"].forEach((g, i) => { const a = document.createElement("div"); a.className = "app";
+      const ic = document.createElement("div"); ic.className = "ic"; Object.assign(ic.style, { width: DI + "px", height: DI + "px" }); ic.style.setProperty("--c", ["#34c55a", "#8e8e96", "#f2455f", "#2f7cf6"][i]);
+      ic.innerHTML = `<svg viewBox="0 0 24 24">${G[g]}</svg><div class="gl"></div><div class="dm"></div>`; a.appendChild(ic);
+      Object.assign(a.style, { left: 50 * u + dg + i * (DI + dg) + "px", top: dyy + dg * 0.62 + "px" }); home.appendChild(a); apps.push(a); });
+  }
+  const bApp = apps[brandAt], bic = $("#bic");
+  const ring = document.createElement("div"); ring.id = "ring"; bic.appendChild(ring);
+  const badge = document.createElement("div"); badge.id = "badge"; bic.appendChild(badge);
+  const BH = IC * 0.34;
+  Object.assign(badge.style, { height: BH + "px", minWidth: BH + "px", padding: `0 ${BH * 0.28}px`, fontSize: BH * 0.66 + "px", top: -BH * 0.36 + "px", right: -BH * 0.36 + "px" });
+  const capAt = Math.max(2, Math.round(+v.count || 99)), capped = capAt >= 99, last = capped ? "99+" : String(capAt);
+
+  // ---- the camera: brand icon centre is the focus of the push
+  gsap.set("#cam", { transformOrigin: `${W / 2}px ${H / 2}px` });
+  gsap.set(bApp, { transformOrigin: "50% 38%", zIndex: 5 });
+
+  // ---- timeline
+  // 1. the screen wakes: icons spring in from the depth in a wave from the brand icon outward
+  apps.forEach((a, i) => { const ax = parseFloat(a.style.left), ay = parseFloat(a.style.top), d = Math.hypot(ax - parseFloat(bApp.style.left), ay - parseFloat(bApp.style.top)) / (1000 * u);
+    tl.fromTo(a, { scale: 0.55, opacity: 0, y: 30 * u }, { scale: 1, opacity: 1, y: 0, duration: 0.7, ease: "back.out(1.7)" }, 0.08 + d * 0.32); });
+  if ($("#dock")) tl.fromTo("#dock", { opacity: 0, y: 40 * u }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, 0.1);
+  if ($("#status")) tl.fromTo("#status", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.2);
+  if (!MV.alpha) tl.fromTo("#wall", { scale: 1.08 }, { scale: 1, duration: D, ease: "power1.out" }, 0);
+  // the slow push toward the brand icon
+  const PUSH = MV.alpha ? 1.03 : 1.06;
+  tl.fromTo("#cam", { scale: 1 }, { scale: PUSH, duration: D - 0.6, ease: "power2.inOut" }, 0.5);
+
+  // 2. the badge: pops on 1, then climbs faster and faster while the icon wiggles
+  const B0 = 0.95, CL = 1.55, n = { v: 1 };
+  const draw = () => { badge.textContent = String(Math.max(1, Math.min(capAt, Math.floor(n.v)))); };
+  badge.textContent = "1";
+  tl.fromTo(badge, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(3)" }, B0);
+  tl.fromTo(n, { v: 1 }, { v: capAt + 0.99, duration: CL, ease: "power3.in", onUpdate: draw, immediateRender: true }, B0 + 0.3);
+  // every new digit nudges the badge
+  [0.35, 0.62, 0.82, 0.95].forEach((p) => { tl.fromTo(badge, { scale: 1.18 }, { scale: 1, duration: 0.22, ease: "power2.out", immediateRender: false }, B0 + 0.3 + CL * p); });
+  // the wiggle: amplitude and speed rise with the count
+  const wg = { p: 0 }, W0 = B0 + 0.3, WD = CL + 0.25;
+  tl.fromTo(wg, { p: 0 }, { p: 1, duration: WD, ease: "none", onUpdate: () => { const t = wg.p * WD, amp = 1.5 + 5 * wg.p * wg.p, f = 5 + 6 * wg.p;
+    gsap.set(bic, { rotation: amp * Math.sin(t * f * Math.PI * 2) * (wg.p < 0.98 ? 1 : 0) }); gsap.set(bApp, { scale: 1 + 0.16 * wg.p * wg.p }); } }, W0);
+  // 3. the cap lands: 99+, a hard bump, the icon settles, a ring breathes out, the rest of the screen dims back
+  const LND = W0 + WD;
+  tl.set(badge, { textContent: last }, LND - 0.02);
+  tl.fromTo(badge, { scale: 1.45 }, { scale: 1, duration: 0.6, ease: "back.out(3)", immediateRender: false }, LND - 0.02);
+  tl.to(bic, { rotation: 0, duration: 0.5, ease: "back.out(2.5)" }, LND);
+  tl.fromTo(bApp, { scale: 1.32 }, { scale: 1.24, duration: 0.7, ease: "back.out(2.5)", immediateRender: false }, LND);
+  tl.fromTo(ring, { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.3, duration: 0.55, ease: "expo.out", immediateRender: false }, LND);
+  tl.to(apps.filter((a) => a !== bApp).map((a) => a.querySelector(".dm")), { opacity: 0.4, duration: 0.6, ease: "power2.out" }, LND);
+  tl.to(apps.filter((a) => a !== bApp).map((a) => a.querySelector(".lb")).filter(Boolean), { opacity: 0.55, duration: 0.6, ease: "power2.out" }, LND);
+
+  if (MV.alpha) tl.to("#home", { y: P ? -120 * u : 120 * u, opacity: 0, duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

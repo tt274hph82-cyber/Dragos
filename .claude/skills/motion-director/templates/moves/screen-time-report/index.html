@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"minutes","type":"number","label":"The daily total it counts to, in minutes","default":405},
+  {"id":"label","type":"string","label":"Kicker over the total","default":"Daily average"},
+  {"id":"per","type":"string","label":"Line under the big lifted number","default":"every day"},
+  {"id":"week","type":"string","label":"7 daily totals in hours, comma separated (the last is today)","default":"4.6,5.2,3.9,6.1,5.6,7.4,6.75"},
+  {"id":"cats","type":"string","label":"3 categories name:share, comma separated","default":"Social:0.52,Video:0.3,Other:0.18"},
+  {"id":"apps","type":"string","label":"Most used, 3 apps name:minutes, comma separated","default":"Feed:142,Clips:96,Chat:61"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); color: #fff;
+    --c1: var(--accent); --c2: var(--accent2); --c3: #5AB8F5; }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(45% 35% at 78% 20%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 70%),
+    radial-gradient(55% 45% at 12% 90%, color-mix(in srgb, var(--accent2) 40%, transparent), transparent 72%),
+    linear-gradient(170deg, color-mix(in srgb, var(--accent2) 14%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 26%, var(--ground))); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  /* the phone: a generic slab, a polished rim that catches a key light, a deep contact shadow */
+  #ph { position: absolute; left: 0; top: 0; transform-style: preserve-3d; border-radius: var(--pr); padding: var(--bz); box-sizing: border-box;
+    background: linear-gradient(135deg, #5b5a62 0%, #26252b 22%, #121115 60%, #3a3940 100%);
+    box-shadow: inset 0 0 0 calc(var(--bz) * 0.18) rgba(255,255,255,.18), 0 calc(var(--u) * 80) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.8),
+      0 calc(var(--u) * 30) calc(var(--u) * 160) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 30%, transparent); }
+  .is-key #ph { box-shadow: none; }
+  #ph .btn { position: absolute; width: calc(var(--bz) * 0.5); border-radius: 99px; background: linear-gradient(90deg, #4a4950, #222126); }
+  #scr { position: relative; width: 100%; height: 100%; border-radius: calc(var(--pr) - var(--bz)); overflow: hidden; background: linear-gradient(180deg, #121116, #09090B); }
+  #scr .cam { position: absolute; left: 50%; top: calc(var(--pt) * 14); width: calc(var(--pt) * 13); height: calc(var(--pt) * 13); margin-left: calc(var(--pt) * -6.5); border-radius: 50%; background: #000; box-shadow: 0 0 0 calc(var(--pt) * 1.5) #1d1c22; }
+  #scr .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.14) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  #dimp { position: absolute; inset: 0; background: rgba(0,0,0,.45); opacity: 0; z-index: 8; pointer-events: none; }
+  .a { position: absolute; left: 0; top: 0; box-sizing: border-box; white-space: nowrap; }
+  .tt { font-weight: 800; letter-spacing: -0.02em; }
+  .kk { color: rgba(255,255,255,.5); font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  #tot { font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  #tot small { font-size: .6em; font-weight: 700; color: rgba(255,255,255,.6); margin: 0 .12em 0 .04em; }
+  .grid { border-top: calc(var(--pt) * 1) dashed rgba(255,255,255,.1); }
+  .bar { display: flex; flex-direction: column-reverse; border-radius: calc(var(--pt) * 5) calc(var(--pt) * 5) calc(var(--pt) * 2) calc(var(--pt) * 2); overflow: hidden; transform-origin: 50% 100%; opacity: .55; }
+  .bar.today { opacity: 1; box-shadow: 0 0 calc(var(--pt) * 16) color-mix(in srgb, var(--c1) 50%, transparent); }
+  .is-key .bar.today { box-shadow: none; }
+  .bar i { display: block; width: 100%; flex: none; }
+  .dl { color: rgba(255,255,255,.4); font-weight: 700; text-align: center; }
+  .dl.today { color: #fff; }
+  #avg { height: 0; border-top: calc(var(--pt) * 2) dashed rgba(255,255,255,.55); transform-origin: 0 50%; }
+  #avgt { color: rgba(255,255,255,.6); font-weight: 700; }
+  .lg b { display: inline-block; width: calc(var(--pt) * 10); height: calc(var(--pt) * 10); border-radius: 50%; margin-right: calc(var(--pt) * 7); vertical-align: middle; }
+  .lg span { color: rgba(255,255,255,.62); font-weight: 650; }
+  .lg em { display: block; font-style: normal; font-weight: 750; color: #fff; margin-top: calc(var(--pt) * 3); }
+  .hr { height: calc(var(--pt) * 1); background: rgba(255,255,255,.08); }
+  .ap { display: flex; align-items: center; gap: calc(var(--pt) * 14); }
+  .ap .ic { flex: none; width: calc(var(--pt) * 40); height: calc(var(--pt) * 40); border-radius: calc(var(--pt) * 11); display: grid; place-items: center; font-weight: 900; color: #fff;
+    box-shadow: inset 0 calc(var(--pt) * 1.5) 0 rgba(255,255,255,.35); }
+  .ap .mid { flex: 1; min-width: 0; }
+  .ap .nm { font-weight: 700; color: #fff; }
+  .ap .tr { margin-top: calc(var(--pt) * 7); height: calc(var(--pt) * 6); border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .ap .tr i { display: block; height: 100%; border-radius: 99px; transform-origin: 0 50%; }
+  .ap .tm { flex: none; color: rgba(255,255,255,.6); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* the lifted number: a thick slab of smoked glass with the total on it, the moment */
+  #big { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 40); box-sizing: border-box; opacity: 0;
+    background: linear-gradient(160deg, rgba(58,56,66,.92), rgba(20,19,24,.95));
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 60) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.8), 0 0 calc(var(--u) * 120) calc(var(--u) * -20) color-mix(in srgb, var(--c1) 45%, transparent); }
+  .is-key #big { background: #1d1c22; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  #big .k { color: rgba(255,255,255,.55); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  #big .n { font-family: var(--font-display); line-height: .95; letter-spacing: -0.02em; white-space: nowrap; }
+  #big .n small { font-size: .55em; color: var(--c1); margin: 0 .1em 0 .03em; }
+  #big .p { font-weight: 700; color: rgba(255,255,255,.75); white-space: nowrap; }
+  #big .rule { height: calc(var(--u) * 8); border-radius: 99px; overflow: hidden; display: flex; transform-origin: 0 50%; }
+  #big .rule i { display: block; height: 100%; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div>
+  <div id="stage">
+    <div id="ph"><i class="btn" id="b1"></i><i class="btn" id="b2"></i><div id="scr"><div class="cam"></div><div id="dimp"></div><div class="sh"></div></div></div>
+    <div id="big"><div class="k"></div><div class="n"></div><div class="p"></div><div class="rule"></div></div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(() => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const MIN = Math.max(1, Math.round(+v.minutes || 405));
+  const fmt = (m) => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? `${h}<small>h</small> ${r}<small>m</small>` : `${r}<small>m</small>`; };
+  const fmtT = (m) => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? `${h}h ${r}m` : `${r}m`; };
+  let WK = String(v.week || "").split(",").map(parseFloat).filter(isFinite).slice(0, 7); while (WK.length < 7) WK.unshift(WK[0] || 4);
+  const CT = String(v.cats || "").split(",").map((s) => { const [n, x] = s.split(":"); return { n: (n || "").trim(), x: parseFloat(x) }; }).filter((c) => c.n && isFinite(c.x) && c.x > 0).slice(0, 3);
+  while (CT.length < 3) CT.push({ n: ["Social", "Video", "Other"][CT.length], x: [0.5, 0.3, 0.2][CT.length] });
+  const CS = CT.reduce((a, c) => a + c.x, 0); CT.forEach((c) => (c.x /= CS));
+  const AP = String(v.apps || "").split(",").map((s) => { const [n, x] = s.split(":"); return { n: (n || "").trim(), m: parseFloat(x) }; }).filter((a) => a.n && isFinite(a.m)).slice(0, 3);
+  const COL = ["var(--c1)", "var(--c2)", "var(--c3)"];
+
+  // ---- the phone, sized to the frame
+  let PH, px, py;
+  if (P) { PH = Math.min(H - safe.top - safe.bottom + 40 * u, 1020 * u); }
+  else PH = H * (SQ ? 0.84 : 0.86);
+  const PW = PH * 0.485, pt = (PW - 0.06 * PW * 2) / 390;   // screen points
+  const bz = PW * 0.035, pr = PW * 0.16;
+  if (P) { px = (W - safe.right + safe.left) / 2 - PW / 2 - 40 * u; py = safe.top - 20 * u; }
+  else if (SQ) { px = W * 0.33 - PW / 2; py = (H - PH) / 2; }
+  else { px = W * 0.34 - PW / 2; py = (H - PH) / 2; }
+  const ph = $("#ph"), scr = $("#scr");
+  root.style.setProperty("--pt", pt + "px"); root.style.setProperty("--bz", bz + "px"); root.style.setProperty("--pr", pr + "px");
+  Object.assign(ph.style, { width: PW + "px", height: PH + "px" });
+  Object.assign($("#b1").style, { left: -bz * 0.32 + "px", top: PH * 0.2 + "px", height: PH * 0.07 + "px" });
+  Object.assign($("#b2").style, { right: -bz * 0.32 + "px", top: PH * 0.26 + "px", height: PH * 0.11 + "px" });
+  const SW = PW - 2 * bz, SHh = PH - 2 * bz, X0 = 26 * pt, IW = SW - 2 * X0;
+  const add = (cls, x, y, html, fs, w) => { const d = document.createElement("div"); d.className = "a " + cls; d.style.left = x + "px"; d.style.top = y + "px"; if (fs) d.style.fontSize = fs * pt + "px"; if (w) d.style.width = w + "px"; if (html != null) d.innerHTML = html; scr.insertBefore(d, $("#dimp")); return d; };
+
+  // header
+  let y = 52 * pt;
+  add("tt", X0, y, "Screen time", 30);
+  const kk = add("kk", X0, y + 56 * pt, "", 13); kk.textContent = String(v.label || "");
+  const tot = add("", X0, y + 76 * pt, fmt(0), 54); tot.id = "tot";
+  // the week: stacked bars, an average line, today lit
+  const cy0 = y + 170 * pt, chH = 200 * pt, mx = Math.max(...WK) * 1.12, bw = IW / 7 * 0.56;
+  [0, 0.5, 1].forEach((g) => add("grid", X0, cy0 + chH * g, null, 0, IW));
+  const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
+  const bars = WK.map((h, i) => {
+    const bh = chH * h / mx, bx = X0 + (IW / 7) * i + (IW / 7 - bw) / 2;
+    const b = add("bar" + (i === 6 ? " today" : ""), bx, cy0 + chH - bh, CT.map((c, k) => `<i style="height:${bh * c.x}px;background:${COL[k]}"></i>`).join(""), 0, bw);
+    b.style.height = bh + "px";
+    const d = add("dl" + (i === 6 ? " today" : ""), bx - 10 * pt, cy0 + chH + 10 * pt, DAYS[i], 13, bw + 20 * pt);
+    return b;
+  });
+  const avgH = WK.reduce((a, b) => a + b, 0) / 7, ay = cy0 + chH - chH * avgH / mx;
+  const avg = add("", X0, ay, null, 0, IW); avg.id = "avg";
+  const avt = add("", X0 + IW - 34 * pt, ay - 22 * pt, "avg", 12); avt.id = "avgt";
+  // legend
+  const ly = cy0 + chH + 46 * pt;
+  const lgs = CT.map((c, k) => add("lg", X0 + (IW / 3) * k, ly, `<b style="background:${COL[k]}"></b><span></span><em>${fmtT(MIN * c.x)}</em>`, 14));
+  lgs.forEach((l, k) => { $("span", l).textContent = CT[k].n; });
+  // most used
+  const my = ly + 66 * pt;
+  const mu = [add("hr", X0, my, null, 0, IW), add("kk", X0, my + 18 * pt, "Most used", 13)];
+  const amax = Math.max(...AP.map((a) => a.m), 1);
+  const aps = AP.map((a, k) => {
+    const r = add("ap", X0, my + 46 * pt + k * 58 * pt, `<div class="ic" style="background:linear-gradient(150deg, color-mix(in srgb, ${COL[k]} 70%, #fff), ${COL[k]} 55%, color-mix(in srgb, ${COL[k]} 70%, #000))"></div><div class="mid"><div class="nm"></div><div class="tr"><i style="background:${COL[k]};width:${(a.m / amax) * 100}%"></i></div></div><div class="tm">${fmtT(a.m)}</div>`, 16, IW);
+    $(".ic", r).textContent = a.n.slice(0, 1).toUpperCase(); $(".ic", r).style.fontSize = 20 * pt + "px"; $(".nm", r).textContent = a.n; return r;
+  });
+
+  // ---- the lifted slab
+  const big = $("#big"), bk = $(".k", big), bn = $(".n", big), bp = $(".p", big), rule = $(".rule", big);
+  bk.textContent = String(v.label || ""); bn.innerHTML = fmt(MIN); bp.textContent = String(v.per || "");
+  if (!bp.textContent) bp.style.display = "none";
+  rule.innerHTML = CT.map((c, k) => `<i style="width:${c.x * 100}%;background:${COL[k]}"></i>`).join("");
+  const BF = (P ? 170 : SQ ? 150 : 150) * u;
+  bn.style.fontSize = BF + "px"; bk.style.fontSize = BF * 0.17 + "px"; bp.style.fontSize = BF * 0.24 + "px";
+  bk.style.marginBottom = BF * 0.1 + "px"; bp.style.marginTop = BF * 0.1 + "px"; rule.style.marginTop = BF * 0.18 + "px";
+  const pad = BF * 0.32; big.style.padding = `${pad * 0.9}px ${pad}px ${pad}px`;
+  let bxmax = P ? W - safe.right - safe.left + 30 * u : SQ ? W * 0.6 : W * 0.44;
+  MV.fitText(bn, bxmax - 2 * pad, 20);
+  const bW = big.getBoundingClientRect().width, bH = big.getBoundingClientRect().height;
+  let bx, by;
+  if (P) { bx = Math.min(W - safe.right - bW, px + PW * 0.42); by = py + PH * 0.6; if (by + bH > H - safe.bottom + 40 * u) by = H - safe.bottom + 40 * u - bH; bx = Math.max(safe.left - 30 * u, bx); }
+  else if (SQ) { bx = Math.min(W - W * 0.05 - bW, px + PW * 0.78); by = H * 0.5 - bH / 2 + H * 0.08; }
+  else { bx = px + PW + W * 0.06; by = H * 0.5 - bH / 2; }
+  rule.style.width = "100%";
+
+  // ---- the phone: rises turned away, settles, drifts
+  gsap.set(ph, { x: px, y: py, transformOrigin: "50% 50%" });
+  gsap.set("#stage", { perspectiveOrigin: `${px + PW / 2}px ${py + PH / 2}px` });
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: W * 0.04, y: -H * 0.03, rotation: -4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(ph, { y: py + 180 * u, rotationY: 28, rotationX: 16, rotation: -4, scale: 0.88 }, { y: py, rotationY: 14, rotationX: 6, rotation: -1.5, scale: 1, duration: 1.1, ease: "expo.out" }, 0.02);
+  tl.fromTo(ph, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(ph, { rotationY: 7, rotationX: 3, rotation: 0, duration: D - 1.12, ease: "sine.inOut" }, 1.12);
+  tl.fromTo(scr, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.2, ease: "power2.inOut" }, 0.3);
+  // the report fills: the total counts, the week grows bar by bar, the lists follow
+  const cnt = { m: 0 };
+  tl.fromTo(cnt, { m: 0 }, { m: MIN, duration: 1.4, ease: "expo.out", onUpdate: () => { tot.innerHTML = fmt(cnt.m); } }, 0.55);
+  tl.from(bars, { scaleY: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 0.6);
+  tl.fromTo(avg, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 1.25);
+  tl.from(avt, { opacity: 0, duration: 0.3, ease: "power2.out" }, 1.6);
+  tl.from(lgs, { opacity: 0, y: 10 * pt, duration: 0.45, ease: "expo.out", stagger: 0.06 }, 1.3);
+  tl.from(aps, { opacity: 0, x: -20 * pt, duration: 0.5, ease: "expo.out", stagger: 0.08 }, 1.5);
+  tl.from(aps.map((a) => $(".tr i", a)), { scaleX: 0, duration: 0.7, ease: "expo.out", stagger: 0.08 }, 1.6);
+  // today's bar breathes once before the lift
+  tl.to(bars[6], { scaleX: 1.15, duration: 0.18, ease: "power2.out" }, 2.05);
+  tl.to(bars[6], { scaleX: 1, duration: 0.4, ease: "back.out(3)" }, 2.23);
+
+  // ---- the moment: the total lifts off the screen as a slab and lands big beside the phone
+  const LF = 2.35;
+  tl.seek(LF); const tr = tot.getBoundingClientRect(); tl.seek(0);
+  const s0 = tr.height / bn.getBoundingClientRect().height * 0.95;
+  big.style.transformOrigin = "0 0";
+  tl.fromTo(big, { x: tr.left - pad * s0, y: tr.top - (pad * 0.9 + BF * 0.27) * s0, scale: s0, rotationY: 14, rotation: -1.5, opacity: 0 },
+    { x: bx, y: by, scale: 1, rotationY: -6, rotation: 1.5, duration: 0.8, ease: "expo.out", immediateRender: false }, LF);
+  tl.to(big, { opacity: 1, duration: 0.14, ease: "power2.out" }, LF);
+  tl.to(big, { rotationY: -2, rotation: 0, y: by - 10 * u, duration: D - LF - 0.8, ease: "sine.inOut" }, LF + 0.8);
+  tl.to(tot, { opacity: 0.25, duration: 0.14, ease: "power2.out" }, LF - 0.1);
+  // where the slab lands over the phone, the rows under it step back out of its way
+  // the report's words step back as the slab leaves the glass, so nothing reads through it in flight
+  tl.to([...scr.querySelectorAll(".a:not(.bar):not(#tot)")], { opacity: 0.3, duration: 0.14, ease: "power2.out" }, LF - 0.1);
+  if (P || SQ) tl.to([...mu, ...aps], { opacity: 0, duration: 0.3, ease: "power2.out" }, LF + 0.1);
+  tl.to("#dimp", { opacity: 1, duration: 0.5, ease: "power2.out" }, LF);
+  tl.to(ph, { scale: 0.97, duration: 0.8, ease: "expo.out" }, LF);
+  tl.from(rule, { scaleX: 0, duration: 0.7, ease: "expo.out" }, LF + 0.35);
+  tl.from(bp, { opacity: 0, y: 14 * u, duration: 0.5, ease: "expo.out" }, LF + 0.4);
+  if (MV.alpha) tl.to(["#ph", "#big"], { y: "+=" + 110 * u, opacity: 0, duration: 0.38, ease: "power2.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

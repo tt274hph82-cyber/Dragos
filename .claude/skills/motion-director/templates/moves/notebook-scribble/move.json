@@ -1,0 +1,5 @@
+{ "id": "notebook-scribble", "name": "Notebook scribble", "oneLiner": "close on a real yellow legal pad on a leather blotter: a real ballpoint writes a short list on the rules, its tip riding the ink on twos, then loops one word in a brand-colour circle and lifts away",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["notes", "list", "plan", "steps", "handwriting", "notebook", "legal pad", "pen", "circle", "emphasis", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker lays out a plan or a short list and leans on one word ('three steps, and you film it once'): the lines write on as they list them and the circle lands on the word they stress" }

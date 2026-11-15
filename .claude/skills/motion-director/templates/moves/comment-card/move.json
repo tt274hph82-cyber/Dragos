@@ -1,0 +1,5 @@
+{ "id": "comment-card", "name": "Glass comment card", "oneLiner": "a video comment (real face, name, time, the line) pops in tilted on a glass card under a pinned badge, the like count ticks up, the creator's heart lands on it with a burst and the reply count drops in",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["comment", "viewer", "audience", "feedback", "testimonial", "pinned", "creator heart", "likes", "replies", "social proof", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker reads out a viewer's comment or says 'someone commented...': lands on the quote, the creator heart hits as they react to it" }

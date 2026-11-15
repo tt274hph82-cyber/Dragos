@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"f1","type":"string","label":"First callout (points at the app header)","default":"One-tap setup"},
+  {"id":"f2","type":"string","label":"Second callout (points at the main screen)","default":"Live preview"},
+  {"id":"f3","type":"string","label":"Third callout (points at the button)","default":"Private by default"},
+  {"id":"name","type":"string","label":"App name in the header (empty: the brand name)","default":""},
+  {"id":"screen","type":"number","label":"Which brand screen fills the main card (1 = the first)","default":1}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(45% 34% at var(--gx, 40%) var(--gy, 45%), color-mix(in srgb, var(--accent) 32%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 90% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  #shadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.65), transparent 70%); }
+  .is-key #shadow { display: none; }
+
+  #rig { position: absolute; inset: 0; }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #phone { position: absolute; transform-style: preserve-3d; }
+  .slab { position: absolute; inset: 0; border-radius: var(--R); }
+  #frame { position: absolute; inset: 0; border-radius: var(--R); transform: translateZ(0.5px);
+    background: linear-gradient(135deg, #b9bcc2, #3a3c41 18%, #8c8f95 38%, #24262a 62%, #9da0a6 85%, #4a4c51);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.35), inset 0 0 calc(var(--u) * 6) rgba(0,0,0,.6); }
+  #bezel { position: absolute; transform: translateZ(1.5px); border-radius: var(--R2); background: #050506; box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.08); }
+  #screen { position: absolute; border-radius: var(--R3); overflow: hidden; background: #0c0c0f; }
+  #ui { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #fff;
+    background: radial-gradient(90% 40% at 50% 0%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%), #0c0c0f; }
+  #glare { position: absolute; inset: 0; border-radius: var(--R3); pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(118deg, transparent calc(var(--gl, 30%) - 22%), rgba(255,255,255,.13) var(--gl, 30%), transparent calc(var(--gl, 30%) + 2%), transparent calc(var(--gl, 30%) + 16%), rgba(255,255,255,.05) calc(var(--gl, 30%) + 24%), transparent calc(var(--gl, 30%) + 34%)); }
+  .btn { position: absolute; border-radius: 3px; background: linear-gradient(90deg, #2a2c30, #9a9da3 50%, #2a2c30); }
+
+  /* the app screen (laid out at 300 px wide) */
+  #cam { position: absolute; top: 12px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #000; box-shadow: 0 0 0 2px #1a1a1d; }
+  #hdr { position: absolute; left: 16px; right: 16px; top: 48px; display: flex; align-items: center; gap: 12px; }
+  #hdr .mk { width: 44px; height: 44px; border-radius: 12px; flex: none; background-size: cover; background-position: 50% 30%; box-shadow: 0 0 0 1.5px rgba(255,255,255,.2); }
+  #hdr .nm { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
+  #hero { position: absolute; left: 16px; right: 16px; border-radius: 18px; overflow: hidden; box-shadow: 0 10px 24px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.1); }
+  #hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fr { position: absolute; left: 16px; right: 16px; height: 58px; display: flex; align-items: center; gap: 12px; padding: 0 12px; box-sizing: border-box; border-radius: 14px; background: rgba(255,255,255,.06); }
+  .fr .tl { width: 34px; height: 34px; border-radius: 10px; flex: none; background: linear-gradient(150deg, var(--al), var(--accent)); opacity: .9; }
+  .sk { height: 9px; border-radius: 5px; background: rgba(255,255,255,.3); }
+  .sk.d { background: rgba(255,255,255,.14); }
+  #cta { position: absolute; left: 16px; right: 16px; height: 54px; border-radius: 27px; display: grid; place-items: center;
+    background: linear-gradient(180deg, var(--al), var(--accent)); box-shadow: inset 0 1.5px 0 rgba(255,255,255,.4), 0 10px 24px color-mix(in srgb, var(--accent) 50%, transparent); }
+  #cta .sk { width: 110px; height: 11px; background: rgba(255,255,255,.9); }
+
+  /* callouts */
+  #lines { position: absolute; left: 0; top: 0; overflow: visible; }
+  #lines path { fill: none; stroke: color-mix(in srgb, var(--ink) 80%, transparent); stroke-width: calc(var(--u) * 3); stroke-linecap: round; stroke-linejoin: round; }
+  .is-alpha #lines path { filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+  .is-key #lines path { filter: none; }
+  .pin { position: absolute; width: calc(var(--u) * 26); height: calc(var(--u) * 26); margin: calc(var(--u) * -13) 0 0 calc(var(--u) * -13); border-radius: 50%;
+    background: var(--ink); box-shadow: 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 85%, transparent), 0 0 calc(var(--u) * 24) var(--accent); }
+  .is-key .pin { box-shadow: 0 0 0 calc(var(--u) * 6) var(--accent); }
+  .pr { position: absolute; width: calc(var(--u) * 26); height: calc(var(--u) * 26); margin: calc(var(--u) * -13) 0 0 calc(var(--u) * -13); border-radius: 50%; border: calc(var(--u) * 3) solid var(--al); box-sizing: border-box; opacity: 0; }
+  .lab { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 16); padding: calc(var(--u) * 18) calc(var(--u) * 28) calc(var(--u) * 18) calc(var(--u) * 20); box-sizing: border-box;
+    border-radius: calc(var(--u) * 26); background: linear-gradient(160deg, rgba(255,255,255,.18), rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  .is-alpha .lab { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .lab { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13); }
+  .lab .n { flex: none; width: calc(var(--u) * 48); height: calc(var(--u) * 48); border-radius: 50%; display: grid; place-items: center;
+    font-size: calc(var(--u) * 26); font-weight: 800; color: #fff; background: linear-gradient(160deg, var(--al), var(--accent)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4); }
+  .is-portrait .lab { padding: calc(var(--u) * 16) calc(var(--u) * 22) calc(var(--u) * 16) calc(var(--u) * 16); gap: calc(var(--u) * 12); }
+  .is-portrait .lab .n { width: calc(var(--u) * 40); height: calc(var(--u) * 40); font-size: calc(var(--u) * 22); }
+  .lab .t { font-size: calc(var(--u) * 42); font-weight: 650; letter-spacing: -0.01em; color: var(--ink); line-height: 1.12; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="rig">
+    <div id="shadow"></div>
+    <div id="persp"><div id="phone">
+      <div id="frame"></div>
+      <div id="bezel"><div id="screen"><div id="ui">
+        <div id="cam"></div>
+        <div id="hdr"><div class="mk"></div><div class="nm"></div></div>
+        <div id="hero"></div>
+        <div class="fr" id="r1"><div class="tl"></div><div style="flex:1;display:flex;flex-direction:column;gap:7px"><div class="sk" style="width:120px"></div><div class="sk d" style="width:80px"></div></div></div>
+        <div class="fr" id="r2"><div class="tl" style="opacity:.6"></div><div style="flex:1;display:flex;flex-direction:column;gap:7px"><div class="sk" style="width:100px"></div><div class="sk d" style="width:140px"></div></div></div>
+        <div id="cta"><div class="sk"></div></div>
+      </div><div id="glare"></div></div></div>
+    </div></div>
+    <svg id="lines"></svg>
+  </div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (W > H ? 1.08 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const feats = [v.f1, v.f2, v.f3].map((s) => String(s || "").trim());
+
+  // ---- layout: the phone on the left, the callouts in a column to its right
+  const regionL = MV.portrait ? 44 * u : safe.left, regionR = W - safe.right;
+  const regionT = safe.top, regionB = H - safe.bottom;
+  const PH = Math.min(regionB - regionT + (MV.portrait ? 40 : 0) * u, (MV.portrait ? 820 : 920) * u), PW = PH * 0.485;
+  const GAP = (MV.portrait ? 48 : 110) * u;
+  const LW = Math.min((MV.portrait || W === H) ? regionR - regionL - PW - GAP : 620 * u, 620 * u);
+  const groupW = PW + GAP + LW;
+  let gx = MV.portrait || W === H ? regionL : (W - groupW) / 2;
+  if (MV.alpha && W > H) gx = regionR - groupW;
+  const pcx = gx + PW / 2, pcy = regionT + (regionB - regionT) / 2;
+  const phone = $("#phone"); gsap.set(phone, { left: pcx - PW / 2, top: pcy - PH / 2, width: PW, height: PH });
+  const Rr = PW * 0.155, fr = PW * 0.018, bz = PW * 0.03;
+  root.style.setProperty("--R", Rr + "px"); root.style.setProperty("--R2", (Rr - fr) + "px"); root.style.setProperty("--R3", (Rr - fr - bz) + "px");
+  gsap.set("#bezel", { left: fr, top: fr, width: PW - 2 * fr, height: PH - 2 * fr });
+  const SW = PW - 2 * fr - 2 * bz, SH = PH - 2 * fr - 2 * bz;
+  gsap.set("#screen", { left: bz, top: bz, width: SW, height: SH });
+  const k = SW / 300, LH = SH / k;
+  gsap.set("#ui", { width: 300, height: LH, scale: k });
+  for (let i = 14; i >= 1; i--) { const s = document.createElement("div"); s.className = "slab"; s.style.transform = `translateZ(${-i * PW * 0.0045}px)`;
+    s.style.background = `linear-gradient(90deg, #1d1e21, ${i % 3 ? "#5d6066" : "#8a8d93"} 50%, #1d1e21)`; phone.insertBefore(s, phone.firstChild); }
+  [[-1, 0.2, 0.06], [-1, 0.29, 0.1], [1, 0.25, 0.13]].forEach(([side, y0, h]) => { const b = document.createElement("div"); b.className = "btn";
+    gsap.set(b, { left: side < 0 ? -PW * 0.008 : PW - PW * 0.002, top: PH * y0, width: PW * 0.01, height: PH * h, z: -PW * 0.03 }); phone.insertBefore(b, phone.firstChild); });
+  gsap.set("#shadow", { left: pcx - PW * 0.7, top: pcy + PH * 0.44, width: PW * 1.4, height: PH * 0.12 });
+  root.style.setProperty("--gx", ((pcx + groupW * 0.2) / W * 100) + "%"); root.style.setProperty("--gy", (pcy / H * 100) + "%");
+
+  // ---- the app screen, spaced to the screen's height
+  const mk = $("#hdr .mk"); if (v.mark) mk.style.backgroundImage = `url("${v.mark}")`; else mk.style.background = "var(--accent)";
+  $("#hdr .nm").textContent = v.name || v.brandName || "";
+  MV.fitText($("#hdr .nm"), (300 - 32 - 56) * k, 12);
+  const scr = (v.screens || [])[Math.max(0, (+v.screen || 1) - 1)] || (v.screens || [])[0];
+  if (scr) $("#hero").appendChild(MV.img(scr)); else $("#hero").style.background = "linear-gradient(150deg, var(--al), var(--ad))";
+  const heroT = 112, heroH = Math.min(Math.round(268 * 1.05), LH - heroT - 58 * 2 - 54 - 24 * 4 - 20);
+  gsap.set("#hero", { top: heroT, height: heroH });
+  const r1T = heroT + heroH + 20; gsap.set("#r1", { top: r1T }); gsap.set("#r2", { top: r1T + 70 });
+  gsap.set("#cta", { top: LH - 28 - 54 });
+
+  // ---- callouts: labels first (their height decides spacing), then anchors measured in the final pose
+  const labs = [], N = feats.filter(Boolean).length;
+  feats.forEach((txt, i) => { if (!txt) return; const l = document.createElement("div"); l.className = "lab"; l.innerHTML = `<span class="n">${labs.length + 1}</span><span class="t"></span>`;
+    l.querySelector(".t").textContent = txt; $("#rig").appendChild(l); l.style.maxWidth = LW + "px"; labs.push({ el: l, anchor: ["#hdr", "#hero", "#cta"][i] }); });
+  const padX = (MV.portrait ? 16 + 22 + 12 + 40 : 20 + 28 + 16 + 48) * u;
+  labs.forEach((o) => { const t = o.el.querySelector(".t"); t.style.whiteSpace = "nowrap"; MV.fitText(t, LW - padX - 4, Math.round(34 * u));
+    if (t.getBoundingClientRect().width > LW - padX) { t.style.whiteSpace = "normal"; t.style.width = (LW - padX) + "px"; } });
+  const POSE = { rotationX: 6, rotationY: 16, rotationZ: 0, y: 0, scale: 1 };
+  gsap.set(phone, { ...POSE });
+  const svg = $("#lines"); svg.setAttribute("width", W); svg.setAttribute("height", H);
+  const colX = gx + PW + GAP;
+  const anchors = labs.map((o) => { const r = document.querySelector(o.anchor).getBoundingClientRect(); return { x: r.right - (o.anchor === "#hero" ? 26 : 30) * k, y: r.top + r.height / 2 }; });
+  // labels sit level with their anchors, pushed apart so none touch
+  const hs = labs.map((o) => o.el.offsetHeight); let ys = anchors.map((a, i) => a.y - hs[i] / 2);
+  for (let i = 1; i < ys.length; i++) ys[i] = Math.max(ys[i], ys[i - 1] + hs[i - 1] + 26 * u);
+  const over = ys.length ? ys[ys.length - 1] + hs[hs.length - 1] - regionB : 0; if (over > 0) { ys = ys.map((y) => y - over); for (let i = ys.length - 2; i >= 0; i--) ys[i] = Math.min(ys[i], ys[i + 1] - hs[i] - 26 * u); }
+  const phoneRight = Math.max(...anchors.map((a) => a.x)) + 40 * u;
+  labs.forEach((o, i) => {
+    gsap.set(o.el, { left: colX, top: ys[i] });
+    const a = anchors[i], ly = ys[i] + hs[i] / 2, ex = colX - 12 * u, bx = Math.max(phoneRight + 20 * u, ex - 60 * u);
+    const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    p.setAttribute("d", `M ${a.x} ${a.y} L ${bx - Math.abs(ly - a.y) * 0.0} ${a.y} L ${ex - 24 * u} ${ly} L ${ex} ${ly}`);
+    svg.appendChild(p); o.path = p; o.L = p.getTotalLength();
+    const pin = document.createElement("div"); pin.className = "pin"; const pr = document.createElement("div"); pr.className = "pr";
+    gsap.set([pin, pr], { left: a.x, top: a.y }); $("#rig").insertBefore(pr, svg.nextSibling); $("#rig").insertBefore(pin, svg.nextSibling); o.pin = pin; o.pr = pr;
+  });
+  gsap.set(phone, { rotationX: 0, rotationY: 0 });
+
+  // ---- timeline
+  // 1. the phone rises out of depth and turns into its pose
+  tl.fromTo(phone, { y: PH * 0.45, rotationX: 30, rotationY: -26, rotationZ: 5, opacity: 0, scale: 0.92 }, Object.assign({ opacity: 1, duration: 1.0, ease: "expo.out" }, POSE), 0.03);
+  tl.fromTo("#shadow", { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 1.0, ease: "expo.out" }, 0.03);
+  tl.fromTo("#glare", { "--gl": "-20%" }, { "--gl": "70%", duration: 1.4, ease: "power2.out" }, 0.1);
+  // 2. one callout per beat: the pin pops on the screen, the leader line draws out, the label slides off its end
+  const C0 = 0.8, BEAT = Math.min(0.5, (D - 2.2) / Math.max(1, N));
+  labs.forEach((o, i) => {
+    const t = C0 + i * BEAT;
+    tl.fromTo(o.pin, { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, t);
+    tl.fromTo(o.pr, { scale: 1, opacity: 0.9 }, { scale: 2.8, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, t + 0.05);
+    tl.set(o.pr, { opacity: 0 }, 0);
+    tl.fromTo(o.path, { strokeDasharray: o.L, strokeDashoffset: o.L }, { strokeDashoffset: 0, duration: 0.42, ease: "power3.inOut" }, t + 0.08);
+    tl.fromTo(o.el, { opacity: 0, x: -30 * u, scale: 0.9, filter: "blur(8px)" }, { opacity: 1, x: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, t + 0.38);
+    tl.fromTo(o.el.querySelector(".n"), { scale: 0.3 }, { scale: 1, duration: 0.5, ease: "back.out(2.6)" }, t + 0.42);
+  });
+  // the whole rig floats through the hold, a slow push in
+  gsap.set("#rig", { transformOrigin: `${gx + groupW / 2}px ${pcy}px` });
+  tl.fromTo("#rig", { y: 0, scale: 1 }, { y: -12 * u, scale: 1.035, duration: D - 1.0, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#glare", { "--gl": "70%" }, { "--gl": "105%", duration: D - 1.6, ease: "sine.inOut", immediateRender: false }, 1.5);
+  // exit: labels retract, the phone sinks away
+  const X = D - 0.45;
+  labs.slice().reverse().forEach((o, i) => { tl.to(o.el, { opacity: 0, x: 30 * u, duration: 0.26, ease: "power3.in" }, X + i * 0.03);
+    tl.to([o.path, o.pin], { opacity: 0, duration: 0.2, ease: "power2.in" }, X + i * 0.03); });
+  tl.to(phone, { y: PH * 0.3, rotationX: 22, opacity: 0, duration: 0.4, ease: "power3.in" }, X + 0.04);
+  tl.to("#shadow", { opacity: 0, duration: 0.3, ease: "power2.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

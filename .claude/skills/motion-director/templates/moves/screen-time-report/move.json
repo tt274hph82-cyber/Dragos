@@ -1,0 +1,5 @@
+{ "id": "screen-time-report", "name": "Screen time report", "oneLiner": "a generic phone turns in on slow 3D drift with a usage report on it: the daily total counts up, a week of stacked bars grows with today lit, the categories and most-used apps fill in; then the total lifts off the glass as a thick smoked slab and lands big beside the phone while the screen dims behind it",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["screen time", "phone", "usage", "hours", "addiction", "scrolling", "attention", "time", "habit", "social media", "report", "stat", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker confesses or quotes time spent on a phone ('I was on my phone six hours a day'): cut in on the sentence, the slab lands on the number. Set minutes to the real total, per to the line under it, and apps to what ate the time" }

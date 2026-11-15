@@ -1,0 +1,5 @@
+{ "id": "agents-board", "name": "Agents at work", "oneLiner": "a glass goal card with its own bar, then 3 to 5 agent rows with drawn glyph tiles stagger in; each agent's bar fills at its own speed, a check pops as it hits 100%, the goal bar climbs a notch per agent and its check slams last with a stamp",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["agents", "ai", "automation", "parallel", "progress", "team", "subagents", "background", "tasks", "goal", "done", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.6, "alpha": true,
+  "say": "when the speaker says several agents work on one goal at once ('it spins up five agents in the background'): cut in on the goal, the last check and stamp land on 'done' or 'and it's finished'. 9:16 also takes layout top (graphic in the upper ~45%, speaker below)" }

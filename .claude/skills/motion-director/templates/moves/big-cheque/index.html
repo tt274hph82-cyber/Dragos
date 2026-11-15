@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"payee","type":"string","label":"Pay to the order of (empty: the brand name)","default":""},
+  {"id":"amount","type":"string","label":"Amount, a number","default":"10,000"},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"unit","type":"string","label":"Word after the amount in words","default":"Dollars"},
+  {"id":"words","type":"string","label":"Amount in words (empty: spelled out from the amount)","default":""},
+  {"id":"memo","type":"string","label":"Memo line","default":"The first big win"},
+  {"id":"issuer","type":"string","label":"Printed issuer at the top (empty: the brand name)","default":""},
+  {"id":"signer","type":"string","label":"Signature (empty: the issuer)","default":""},
+  {"id":"date","type":"string","label":"Handwritten date","default":"Today"},
+  {"id":"number","type":"string","label":"Cheque number","default":"No. 0001"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Vibes"; src: url("assets/fonts/GreatVibes-latin.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #07060a; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: an event room out of focus, warm lights behind, one spot on the board */
+  #ground { position: absolute; inset: -6%; background: #07060a; }
+  #ground .bk { position: absolute; inset: 0; background: url(assets/fg-bokeh.jpg) center / cover; filter: saturate(.55) sepia(.35) brightness(.55) blur(calc(var(--u) * 6)); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 45% at 50% 46%, rgba(255,226,180,.18), transparent 70%),
+    radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), radial-gradient(120% 95% at 50% 45%, rgba(0,0,0,.25) 30%, rgba(0,0,0,.82)); }
+  .is-alpha #ground, .is-alpha #flash { display: none; }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); perspective-origin: 50% 45%; }
+  #board { position: absolute; transform-style: flat; }
+  #bshd { position: absolute; inset: 0; border-radius: calc(var(--k) * 10);
+    box-shadow: 0 calc(var(--k) * 8) calc(var(--k) * 10) rgba(0,0,0,.5), 0 calc(var(--k) * 40) calc(var(--k) * 80) rgba(0,0,0,.6); }
+  .is-key #bshd { box-shadow: 0 calc(var(--k) * 6) 0 #222; }
+  /* foam core: a white edge under the print */
+  #edge { position: absolute; inset: 0; border-radius: calc(var(--k) * 10); background: #f4f2ee; box-shadow: 0 calc(var(--k) * 7) 0 #d8d4cc, 0 calc(var(--k) * 9) 0 #a9a39a; }
+  #face { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--k) * 10); color: #1f2430;
+    background: linear-gradient(170deg, #fbf8f1, color-mix(in srgb, var(--paper) 70%, #fff)); }
+  #face::before { content: ""; position: absolute; inset: 0; background: url(assets/paper.jpg) center / calc(var(--k) * 700); mix-blend-mode: multiply; opacity: .6; }
+  #guil { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #strip { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 85%, #fff), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, #000)); }
+  .ab { position: absolute; white-space: nowrap; line-height: 1; }
+  .lab { font-weight: 650; color: #4a4f5c; letter-spacing: .01em; }
+  .ln { position: absolute; height: calc(var(--k) * 3); background: #3a3f4c; opacity: .75; }
+  .hand { font-family: "MV Marker", cursive; color: #15204a; }
+  .sig { font-family: "MV Vibes", cursive; color: #15204a; }
+  #iss { font-family: var(--font-display); color: #1a1d26; }
+  #mk { border-radius: calc(var(--k) * 12); overflow: hidden; box-shadow: 0 0 0 calc(var(--k) * 2) rgba(0,0,0,.12); }
+  #mk img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #abox { position: absolute; border: calc(var(--k) * 3) solid #3a3f4c; border-radius: calc(var(--k) * 8); background: rgba(255,255,255,.55); }
+  .print { mix-blend-mode: multiply; }
+  /* light on the board: the spot, a gloss band, the camera flash bloom */
+  #lite { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(80% 90% at 30% 0%, rgba(255,245,225,.3), transparent 60%), linear-gradient(175deg, transparent 55%, rgba(30,25,15,.12)); }
+  #gloss { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sh, -40%) - 10%), rgba(255,255,255,.7) var(--sh, -40%), transparent calc(var(--sh, -40%) + 7%)); }
+  #flare { position: absolute; pointer-events: none; mix-blend-mode: screen; opacity: 0; }
+  #flare .core { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 260); height: calc(var(--u) * 260); margin: calc(var(--u) * -130) 0 0 calc(var(--u) * -130); border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(255,255,255,1), rgba(255,240,215,.6) 25%, rgba(255,220,170,.15) 60%, transparent); }
+  #flare .streak { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 1500); height: calc(var(--u) * 10); margin: calc(var(--u) * -5) 0 0 calc(var(--u) * -750);
+    background: radial-gradient(closest-side, rgba(255,255,255,.95), rgba(255,225,190,.35) 40%, transparent); }
+  .is-key #flare { display: none; }
+  #flash { position: absolute; inset: 0; background: radial-gradient(70% 70% at 50% 40%, rgba(255,252,245,1), rgba(255,245,230,.6)); opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><div class="bk"></div></div>
+  <div id="stage">
+    <div id="board">
+      <div id="bshd"></div><div id="edge"></div>
+      <div id="face"><svg id="guil" preserveAspectRatio="none"></svg><div id="strip"></div><div id="doc"></div><div id="lite"></div><div id="gloss"></div></div>
+    </div>
+  </div>
+  <div id="flare"><div class="streak"></div><div class="core"></div></div>
+  <div id="flash"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('80px "MV Marker"'), document.fonts.load('80px "MV Vibes"')]);
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait;
+  // ---- the board. Wide frames and the overlay: the classic 1400 x 620 cheque. 9:16 B-roll: the same cheque set tall,
+  // 1000 x 1240, so it fills the frame and the payee and amount read big
+  const TALL = P && !MV.alpha;
+  const BWd = TALL ? 1000 : 1400, BHd = TALL ? 1240 : 620;
+  const availW = W - safe.left - safe.right, availH = H - safe.top - safe.bottom;
+  let BW;
+  if (MV.alpha && P) BW = W - 2 * 60 * (W / 1080) - 40 * u;          // overlay on 9:16: the full width, in the upper third
+  else if (TALL) BW = Math.min(W - 60 * u, availH * 0.92 / BHd * BWd);
+  else BW = Math.min(availW * 0.86, availH * 0.82 / BHd * BWd);
+  const k = BW / BWd, BH = BHd * k;
+  root.style.setProperty("--k", k + "px");
+  const cx = W / 2, cy = MV.alpha && P ? MV.overlaySafe.top + BH / 2 + 70 * u : MV.alpha ? H - safe.bottom - BH / 2 - 20 * u : H / 2;
+  Object.assign($("#board").style, { width: BW + "px", height: BH + "px", left: (cx - BW / 2) + "px", top: (cy - BH / 2) + "px" });
+  const K = (n) => n * k + "px", doc = $("#doc");
+  const el = (cls, txt, x, y, fs, id) => { const d = document.createElement("div"); d.className = "ab " + cls; if (id) d.id = id; if (txt != null) d.textContent = txt; Object.assign(d.style, { left: K(x), top: K(y), fontSize: K(fs) }); doc.appendChild(d); return d; };
+  const line = (x0, x1, y) => { const d = document.createElement("div"); d.className = "ln print"; Object.assign(d.style, { left: K(x0), width: K(x1 - x0), top: K(y) }); doc.appendChild(d); return d; };
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+
+  // the security print: fine interlaced waves in the brand colour
+  { const g = $("#guil"); g.setAttribute("viewBox", `0 0 ${BWd} ${BHd}`); let s = "";
+    for (let i = 0; i < Math.ceil(BHd / 22); i++) { let d = ""; for (let x = 0; x <= BWd; x += 10) { const y = 40 + i * 22 + Math.sin(x / 70 + i * 0.6) * 14 + Math.sin(x / 23 + i) * 3; d += (x ? " L " : "M ") + x + " " + y.toFixed(1); }
+      s += `<path d="${d}" fill="none" stroke="var(--accent)" stroke-width="1.1" opacity=".12"/>`; }
+    g.innerHTML = s; }
+  Object.assign($("#strip").style, { width: K(22) });
+  const ONES = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
+  const TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+  const w3 = (x) => { let s = ""; if (x >= 100) { s += ONES[Math.floor(x / 100)] + " hundred"; x %= 100; if (x) s += " "; } if (x >= 20) { s += TENS[Math.floor(x / 10)]; if (x % 10) s += " " + ONES[x % 10].toLowerCase(); } else if (x) s += ONES[x]; return s; };
+  const spell = (x) => { if (!isFinite(x)) return ""; let i = Math.floor(x); const cents = Math.round((x - i) * 100); if (!i) return "Zero"; const parts = []; for (const [d, nm] of [[1e9, "billion"], [1e6, "million"], [1e3, "thousand"], [1, ""]]) { if (i >= d) { parts.push(w3(Math.floor(i / d)) + (nm ? " " + nm : "")); i %= d; } }
+    let s = parts.join(" "); s = s.charAt(0) + s.slice(1).toLowerCase(); return s + " and " + String(cents).padStart(2, "0") + "/100"; };
+  const L0 = 62, RE = BWd - 50;
+  const issuer = (v.issuer || v.brandName || "").trim();
+  const amtS = String(v.amount || "").trim();
+  const n = parseFloat(amtS.replace(/[^0-9.]/g, ""));
+  const wordsS = (v.words || spell(n) || "").trim();
+  const mk = document.createElement("div"); mk.id = "mk"; mk.className = "ab"; doc.appendChild(mk); if (v.mark) mk.appendChild(MV.img(v.mark));
+  let dt, payee, amt, wd, memo, sg;
+  if (!TALL) {
+    Object.assign(mk.style, { left: K(L0), top: K(40), width: K(84), height: K(84) });
+    const iss = el("", issuer, L0 + 108, 58, 56, "iss"); MV.fitText(iss, 640 * k, 14);
+    const no = el("lab print", v.number || "", 1100, 52, 40); MV.fitText(no, 250 * k, 12); no.style.left = (BW - 50 * k - tw(no)) + "px";
+    el("lab print", "Date", 880, 160, 42); line(990, 1350, 206);
+    dt = el("hand", v.date || "", 1010, 136, 62); MV.fitText(dt, 330 * k, 14);
+    const pl = el("lab print", "Pay to the order of", L0, 278, 44); MV.fitText(pl, 400 * k, 12);
+    const px0 = L0 + tw(pl) / k + 24; line(px0, 1000, 330);
+    payee = el("hand", (v.payee || v.brandName || "").trim(), px0 + 16, 246, 84); MV.fitText(payee, (1000 - px0 - 30) * k, 14);
+    const ab = document.createElement("div"); ab.id = "abox"; Object.assign(ab.style, { left: K(1030), top: K(236), width: K(320), height: K(110) }); doc.appendChild(ab);
+    const cur = el("lab print", v.currency || "", 1048, 262, 58); cur.style.color = "#2a2f3a"; cur.style.fontWeight = 800;
+    amt = el("hand", amtS, 1048 + tw(cur) / k + 14, 250, 84); MV.fitText(amt, (300 - tw(cur) / k - 30) * k, 14);
+    line(L0, 1170, 446);
+    wd = el("hand", wordsS, L0 + 14, 382, 60); MV.fitText(wd, 1090 * k, 14);
+    const un = el("lab print", v.unit || "", 1190, 416, 40); MV.fitText(un, 170 * k, 12);
+    const ml = el("lab print", "For", L0, 540, 42);
+    const mx0 = L0 + tw(ml) / k + 18; line(mx0, 680, 580);
+    memo = el("hand", v.memo || "", mx0 + 14, 512, 56); MV.fitText(memo, (680 - mx0 - 24) * k, 14);
+    line(820, 1350, 580);
+    sg = el("sig", (v.signer || issuer || "").trim(), 850, 478, 108); MV.fitText(sg, 480 * k, 14);
+  } else {
+    // header
+    Object.assign(mk.style, { left: K(L0), top: K(50), width: K(96), height: K(96) });
+    const iss = el("", issuer, L0 + 120, 74, 60, "iss"); MV.fitText(iss, (RE - L0 - 120 - 230) * k, 14);
+    const no = el("lab print", v.number || "", 0, 84, 40); MV.fitText(no, 210 * k, 12); no.style.left = (RE * k - tw(no)) + "px";
+    // date, right
+    el("lab print", "Date", 520, 214, 44); line(630, RE, 262);
+    dt = el("hand", v.date || "", 650, 188, 66); MV.fitText(dt, (RE - 670) * k, 14);
+    // pay to: the label, then the payee on its own full-width line
+    const pl = el("lab print", "Pay to the order of", L0, 318, 46); MV.fitText(pl, (RE - L0) * k, 12);
+    line(L0, RE, 476);
+    payee = el("hand", (v.payee || v.brandName || "").trim(), L0 + 14, 376, 110); MV.fitText(payee, (RE - L0 - 30) * k, 14);
+    // the amount box, the width of the cheque
+    const ab = document.createElement("div"); ab.id = "abox"; Object.assign(ab.style, { left: K(L0), top: K(526), width: K(RE - L0), height: K(196) }); doc.appendChild(ab);
+    const cur = el("lab print", v.currency || "", L0 + 36, 582, 90); cur.style.color = "#2a2f3a"; cur.style.fontWeight = 800;
+    amt = el("hand", amtS, L0 + 36 + tw(cur) / k + 22, 556, 140); MV.fitText(amt, (RE - L0 - 90 - tw(cur) / k) * k, 14);
+    { const gw = tw(cur) + 22 * k + tw(amt), x0 = (L0 + (RE - L0) / 2) * k - gw / 2; cur.style.left = x0 + "px"; amt.style.left = (x0 + tw(cur) + 22 * k) + "px"; }
+    // the amount in words, the unit under its line on the right
+    line(L0, RE, 868);
+    wd = el("hand", wordsS, L0 + 14, 790, 68); MV.fitText(wd, (RE - L0 - 28) * k, 14);
+    const un = el("lab print", v.unit || "", 0, 884, 42); MV.fitText(un, 260 * k, 12); un.style.left = (RE * k - tw(un)) + "px";
+    // memo, then the signature
+    const ml = el("lab print", "For", L0, 990, 44);
+    const mx0 = L0 + tw(ml) / k + 20; line(mx0, RE, 1036);
+    memo = el("hand", v.memo || "", mx0 + 14, 962, 66); MV.fitText(memo, (RE - mx0 - 28) * k, 14);
+    line(380, RE, 1186);
+    sg = el("sig", (v.signer || issuer || "").trim(), 410, 1066, 124); MV.fitText(sg, (RE - 440) * k, 14);
+  }
+
+  // ---- timeline
+  // 0.0 the board is raised into the spot; 0.75 payee, 1.25 amount, 1.75 words, 2.35 memo, 2.6 signature, each written on twos;
+  // 3.05 it is held up high and the cameras flash (the moment); a slow sway to the end
+  const twos = (name, d) => { const e = gsap.parseEase(name), m = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * m - 1e-6) / m)); };
+  const write = (e, t, d) => tl.fromTo(e, { clipPath: "inset(-30% 100% -40% -5%)" }, { clipPath: "inset(-30% -5% -40% -5%)", duration: d, ease: twos("power1.inOut", d) }, t);
+  const TH = 3.05;
+  tl.fromTo("#board", { y: H * 0.55, rotationX: 28, rotation: -3 }, { y: 0, rotationX: 10, rotation: -1.2, duration: 0.85, ease: "expo.out" }, 0);
+  tl.to("#board", { rotationX: 7, rotation: 0.8, duration: TH - 0.85, ease: "sine.inOut" }, 0.85);
+  write(dt, 0.55, 0.3); write(payee, 0.8, 0.5); write(amt, 1.3, 0.45); write(wd, 1.8, 0.6); write(memo, 2.35, 0.35); write(sg, 2.55, 0.4);
+  // held up: a lift, a small overshoot, the board tips to face the cameras
+  tl.to("#board", { y: -46 * u, scale: 1.035, rotationX: -3, rotation: -1.5, duration: 0.5, ease: "back.out(1.6)" }, TH);
+  tl.to("#board", { y: -36 * u, rotationX: -1, rotation: 1, duration: D - TH - 0.5, ease: "sine.inOut" }, TH + 0.5);
+  tl.fromTo("#bshd", { opacity: 1 }, { opacity: 0.75, duration: 0.5, ease: "power2.out" }, TH);
+  tl.fromTo("#gloss", { "--sh": "-40%" }, { "--sh": "150%", duration: 0.9, ease: "power2.inOut" }, TH + 0.05);
+  // the flashes, and a flare that catches the gloss
+  const fx = cx + BW * 0.24, fy = cy - BH * 0.22 - 40 * u;
+  Object.assign($("#flare").style, { left: fx + "px", top: fy + "px", width: "0px", height: "0px" });
+  for (const [t, a] of [[TH + 0.12, 0.55], [TH + 0.42, 0.35]]) {
+    tl.fromTo("#flash", { opacity: 0 }, { opacity: a, duration: 0.04, ease: "power2.out", immediateRender: false }, t);
+    tl.to("#flash", { opacity: 0, duration: 0.3, ease: "power2.in" }, t + 0.04);
+  }
+  tl.fromTo("#flare", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out", immediateRender: false }, TH + 0.12);
+  tl.to("#flare", { opacity: 0.0, scale: 1.2, x: -60 * u, duration: 0.9, ease: "power2.out" }, TH + 0.2);
+  tl.fromTo("#ground", { scale: 1.04, x: 0 }, { scale: 1.1, x: -30 * u, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .bk", { opacity: 0.8 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, TH + 0.1);
+  if (MV.alpha) { const X = D - 0.42; tl.to("#board", { y: -(cy + BH), rotationX: 20, duration: 0.4, ease: "power2.in" }, X); tl.set("#board", { opacity: 0 }, D - 0.02); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

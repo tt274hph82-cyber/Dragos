@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Chat panel title","default":"Live chat"},
+  {"id":"watching","type":"string","label":"Viewer count label","default":"2.4K watching"},
+  {"id":"chat","type":"string","label":"Chat messages, separated by |","default":"lets go|first time catching one live|this is wild|how long did that take to set up|saving this one|the setup is so clean|wait which tool is that|ok I need this|hello from the night shift|this changed how I work|again again|chat is moving fast today|need a part two|so good"},
+  {"id":"chatters","type":"string","label":"Chat usernames, separated by |","default":"maya.builds|devon_k|lina|theo.codes|rafa|jun_p|sam.edits|noor|kai.makes|ellie_r"},
+  {"id":"donor","type":"string","label":"Name on the paid message","default":"Jordan K."},
+  {"id":"amount","type":"string","label":"Paid amount","default":"$50.00"},
+  {"id":"paid","type":"string","label":"The paid message","default":"This stream paid for itself already"},
+  {"id":"pinned","type":"string","label":"Pinned label","default":"Pinned"},
+  {"id":"liveLabel","type":"string","label":"Live badge on the player","default":"LIVE"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 64%, #000); --live: #FF3B30; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 36% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 10% 100%, color-mix(in srgb, var(--accent2) 20%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #player { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .glass { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 40); overflow: hidden;
+    background: linear-gradient(165deg, rgba(255,255,255,.16), rgba(255,255,255,.06) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.75); }
+  .is-alpha .glass { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .glass { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 40;
+    background: linear-gradient(108deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  /* the player (B-roll only) */
+  #player { padding: 0; }
+  #player .img { position: absolute; inset: 0; }
+  #player .img img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; filter: brightness(.7) saturate(1.05); }
+  #player .grad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35), transparent 30%, transparent 62%, rgba(0,0,0,.7)); }
+  #lv { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 14); }
+  #lvb { display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 8) calc(var(--u) * 18); border-radius: calc(var(--u) * 12); background: var(--live);
+    font-size: calc(var(--u) * 32); font-weight: 800; letter-spacing: .06em; color: #fff; line-height: 1; box-shadow: 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--live) 60%, transparent); }
+  #lvb i { width: calc(var(--u) * 13); height: calc(var(--u) * 13); border-radius: 50%; background: #fff; }
+  #lvc { display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 8) calc(var(--u) * 18); border-radius: calc(var(--u) * 12); background: rgba(0,0,0,.6);
+    font-size: calc(var(--u) * 32); font-weight: 650; color: #fff; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #lvc svg { width: calc(var(--u) * 34); height: calc(var(--u) * 34); }
+  #pbar { position: absolute; height: calc(var(--u) * 8); border-radius: calc(var(--u) * 4); background: rgba(255,255,255,.25); overflow: hidden; }
+  #pbar i { position: absolute; inset: 0; background: var(--live); }
+
+  /* the chat */
+  #hd { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box;
+    border-bottom: calc(var(--u) * 1.5) solid rgba(255,255,255,.1); }
+  #ht { font-size: calc(var(--u) * 40); font-weight: 750; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+  #hw { display: flex; align-items: center; gap: calc(var(--u) * 10); font-size: calc(var(--u) * 32); font-weight: 600; color: color-mix(in srgb, var(--ink) 58%, transparent); white-space: nowrap; }
+  #hw b { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--live); box-shadow: 0 0 calc(var(--u) * 12) var(--live); }
+  #vp { position: absolute; left: 0; right: 0; overflow: hidden; --mt: 0px;
+    -webkit-mask-image: linear-gradient(180deg, transparent var(--mt), #000 calc(var(--mt) + var(--u) * 90));
+    mask-image: linear-gradient(180deg, transparent var(--mt), #000 calc(var(--mt) + var(--u) * 90)); }
+  .is-key #vp { -webkit-mask-image: none; mask-image: none; }
+  #feed { position: absolute; left: 0; right: 0; top: 0; }
+  .row { position: absolute; left: 0; right: 0; display: flex; align-items: flex-start; gap: calc(var(--u) * 18); box-sizing: border-box; }
+  .av { flex: none; width: calc(var(--u) * 56); height: calc(var(--u) * 56); border-radius: 50%; display: grid; place-items: center; margin-top: calc(var(--u) * 2);
+    font-size: calc(var(--u) * 28); font-weight: 800; color: rgba(0,0,0,.72); background: var(--c); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45); }
+  .msg { flex: 1; min-width: 0; font-size: calc(var(--u) * 36); line-height: 1.32; color: color-mix(in srgb, var(--ink) 92%, transparent); font-weight: 500; }
+  .msg b { color: var(--c); font-weight: 750; margin-right: calc(var(--u) * 14); }
+  .stk .msg b { display: block; margin: 0 0 calc(var(--u) * 2); line-height: 1.2; }
+  .stk .msg span { display: block; white-space: nowrap; }
+  #inp { position: absolute; display: flex; align-items: center; justify-content: space-between; box-sizing: border-box; border-radius: calc(var(--u) * 40);
+    background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); padding: 0 calc(var(--u) * 14) 0 calc(var(--u) * 30);
+    font-size: calc(var(--u) * 34); color: color-mix(in srgb, var(--ink) 42%, transparent); white-space: nowrap; }
+  .is-key #inp { background: color-mix(in srgb, var(--surface) 85%, #fff); }
+  #inp i { width: calc(var(--u) * 60); height: calc(var(--u) * 60); border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.1); }
+  #inp svg { width: 50%; height: 50%; }
+
+  /* the paid message */
+  #paid { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 26); overflow: visible; z-index: 30; transform-origin: 50% 50%;
+    box-shadow: 0 calc(var(--u) * 30) calc(var(--u) * 50) calc(var(--u) * -18) rgba(0,0,0,.8), 0 0 calc(var(--u) * 60) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #paid { box-shadow: none; }
+  #pclip { position: relative; border-radius: inherit; overflow: hidden; }
+  #band { display: flex; align-items: center; gap: calc(var(--u) * 20); box-sizing: border-box; padding: calc(var(--u) * 20) calc(var(--u) * 26);
+    background: linear-gradient(160deg, var(--al), var(--accent) 55%, color-mix(in srgb, var(--accent) 86%, #000)); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  #pav { flex: none; width: calc(var(--u) * 72); height: calc(var(--u) * 72); border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.26);
+    font-size: calc(var(--u) * 34); font-weight: 800; color: #fff; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  #pwho { flex: 1; min-width: 0; }
+  #pname { font-size: calc(var(--u) * 34); font-weight: 650; color: rgba(255,255,255,.86); white-space: nowrap; line-height: 1.15; }
+  #pamt { font-family: var(--font-display); font-size: calc(var(--u) * 50); color: #fff; white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  #pbody { text-wrap: balance; box-sizing: border-box; padding: calc(var(--u) * 20) calc(var(--u) * 28) calc(var(--u) * 24); background: var(--ad); font-size: calc(var(--u) * 38); line-height: 1.28; font-weight: 600; color: #fff; }
+  #psh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--ps, -40%) - 14%), rgba(255,255,255,.45) var(--ps, -40%), transparent calc(var(--ps, -40%) + 14%)); }
+  #pin { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 10) calc(var(--u) * 20) calc(var(--u) * 10) calc(var(--u) * 12); border-radius: calc(var(--u) * 40);
+    background: linear-gradient(160deg, #fff, #e9e6e6); color: #111; font-size: calc(var(--u) * 30); font-weight: 750; white-space: nowrap; line-height: 1;
+    box-shadow: 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -6) rgba(0,0,0,.6); }
+  #pin svg { width: calc(var(--u) * 36); height: calc(var(--u) * 36); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="player" class="glass"><div class="img"></div><div class="grad"></div>
+      <div id="lv"><div id="lvb"><i></i><span id="lvt"></span></div><div id="lvc"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span id="lvn"></span></div></div>
+      <div id="pbar"><i></i></div><div class="sh"></div></div>
+    <div id="chat" class="glass">
+      <div id="hd"><div id="ht"></div><div id="hw"><b></b><span id="hwt"></span></div></div>
+      <div id="vp"><div id="feed"></div></div>
+      <div id="inp"><span id="ip">Say something...</span><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--ink)"><path d="M4 12l16-8-6 16-2.5-6.5z"/></svg></i></div>
+      <div id="paid"><div id="pclip"><div id="band"><div id="pav"></div><div id="pwho"><div id="pname"></div><div id="pamt"></div></div></div><div id="pbody"></div><div id="psh"></div></div>
+        <div id="pin"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3l6 6-3 1-4 4 1 4-2 2-4-4-5 5M9 11L5 7l2-2 4 1 4-4"/></svg><span id="pint"></span></div></div>
+      <div class="sh"></div>
+    </div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H, L = W > H, A = MV.alpha;
+  const u = P ? MV.u * (A ? 0.92 : 1) : MV.u * (A ? 0.92 : SQ ? 1.02 : 1.05);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const split = (s) => String(s || "").split("|").map((x) => x.trim()).filter(Boolean);
+  const msgs = split(v.chat), who = split(v.chatters);
+  const showPlayer = !A && !SQ;
+
+  // ---- layout: chat panel (and the player beside or above it on B-roll)
+  const rw = W - safe.left - safe.right, rh = H - safe.top - safe.bottom;
+  let cx, cy, cw, ch, px, py, pw, ph;
+  if (A) {
+    if (P) { cw = rw; cx = safe.left; cy = safe.top; ch = Math.max(560 * u, H * 0.45 - safe.top); }
+    else { cw = Math.min(660 * u, rw * 0.5); cx = W - safe.right - cw; cy = safe.top; ch = rh; }
+  } else if (P) {
+    pw = rw; ph = pw * 9 / 16; const g = 34 * u; ch = Math.min(rh - ph - g, 820 * u); const tot = ph + g + ch;
+    px = safe.left; py = safe.top + (rh - tot) / 2; cx = px; cw = pw; cy = py + ph + g;
+  } else if (L) {
+    const g = 36 * u; cw = 640 * u; pw = Math.min(rw - cw - g, (rh) * 16 / 9 * 0.86); ph = pw * 9 / 16; ch = Math.max(ph, Math.min(rh, 860 * u));
+    const tot = pw + g + cw; px = (W - tot) / 2; cx = px + pw + g; cy = (H - ch) / 2; py = cy + (ch - ph) / 2;
+  } else { cw = Math.min(780 * u, rw); ch = rh; cx = (W - cw) / 2; cy = safe.top; }
+  gsap.set("#chat", { left: cx, top: cy, width: cw, height: ch });
+  if (showPlayer) {
+    $("#hw").style.display = "none";
+    gsap.set("#player", { left: px, top: py, width: pw, height: ph });
+    const s = (v.screens || [])[0]; if (s) $("#player .img").appendChild(MV.img(s));
+    $("#lvt").textContent = v.liveLabel || ""; $("#lvn").textContent = v.watching || "";
+    gsap.set("#lv", { left: 26 * u, bottom: 52 * u }); gsap.set("#pbar", { left: 26 * u, right: 26 * u, bottom: 24 * u });
+    if (!v.liveLabel) $("#lvb").style.display = "none";
+  }
+  root.style.setProperty("--gx", ((cx + cw / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((cy + ch / 2) / H * 100) + "%");
+
+  // ---- chat chrome
+  const PADX = 30 * u, HH = 100 * u, IH = A && P ? 0 : 76 * u, IB = A && P ? 0 : 26 * u;
+  gsap.set("#hd", { height: HH, paddingLeft: PADX, paddingRight: PADX });
+  $("#ht").textContent = v.title || ""; $("#hwt").textContent = v.watching || "";
+  MV.fitText($("#hwt"), cw * 0.42, 18); MV.fitText($("#ht"), cw - 2 * PADX - $("#hw").getBoundingClientRect().width - 20 * u, 18);
+  if (IH) gsap.set("#inp", { left: PADX * 0.8, right: PADX * 0.8, bottom: IB, height: IH }); else $("#inp").style.display = "none";
+  const VT = HH + 6 * u, VB = IH ? IH + IB + 16 * u : 22 * u, VH = ch - VT - VB;
+  gsap.set("#vp", { top: VT, height: VH, left: PADX, right: PADX });
+
+  // ---- rows: a busy chat, measured; a message that would wrap puts its name on a line of its own
+  const COLS = ["var(--al)", "var(--accent2)", "#7CC4FF", "#C9A6FF", "#FFB27A", "#8FE3FF"];
+  const feed = $("#feed"), N = 34, rows = [], GAP = 16 * u;
+  for (let i = 0; i < N; i++) {
+    const r = document.createElement("div"); r.className = "row";
+    const name = who.length ? who[(i * 3 + 1) % who.length] : "", text = msgs.length ? msgs[(i * 5) % msgs.length] : "";
+    r.style.setProperty("--c", COLS[(i * 7 + 2) % COLS.length]);
+    r.innerHTML = `<div class="av"></div><div class="msg"><b></b><span></span></div>`;
+    r.querySelector(".av").textContent = (name.replace(/[^a-z0-9]/gi, "")[0] || "").toUpperCase();
+    r.querySelector("b").textContent = name; r.querySelector("span").textContent = text;
+    feed.appendChild(r);
+    if (r.querySelector(".msg").getBoundingClientRect().height > 36 * u * 1.32 * 1.5) r.classList.add("stk");
+    const sp = r.querySelector("span"); if (r.classList.contains("stk")) MV.fitText(sp, cw - 2 * PADX - 80 * u, 26 * u);
+    rows.push({ el: r, y: 0, h: r.getBoundingClientRect().height });
+  }
+  const layRows = (holeAt, hole) => { let yy = 0; rows.forEach((r, k) => { if (k === holeAt) yy += hole; r.y = yy; gsap.set(r.el, { y: yy }); yy += r.h + GAP; }); };
+  layRows(-1, 0);
+  const offFor = (k) => VH - (rows[k].y + rows[k].h);
+
+  // ---- paid message
+  $("#pname").textContent = v.donor || ""; $("#pamt").textContent = v.amount || ""; $("#pbody").textContent = v.paid || "";
+  $("#pav").textContent = (String(v.donor || "").replace(/[^a-z0-9]/gi, "")[0] || "").toUpperCase();
+  $("#pint").textContent = v.pinned || ""; if (!v.paid) $("#pbody").style.display = "none";
+  const PW = cw - 2 * PADX; gsap.set("#paid", { width: PW });
+  MV.fitText($("#pname"), PW - 150 * u, 18); MV.fitText($("#pamt"), PW - 150 * u, 22);
+  { const b = $("#pbody"); let fs = 38 * u; while (b.getBoundingClientRect().height > fs * 1.28 * 2 + 44 * u + 2 && fs > 22) { fs -= 2; b.style.fontSize = fs + "px"; } }
+  const PH = $("#paid").getBoundingClientRect().height;
+  const pinW = $("#pin").getBoundingClientRect().width;
+  gsap.set("#pin", { right: 18 * u, top: -26 * u }); if (!v.pinned) $("#pin").style.display = "none";
+  const pinnedY = VT + 14 * u, bottomY = VT + VH - PH;
+
+  // ---- timeline
+  const IN = 0.02;
+  tl.fromTo("#chat", { opacity: 0, y: 80 * u, rotationX: 18, scale: 0.94 }, { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 0.8, ease: "expo.out" }, IN);
+  tl.fromTo("#chat", { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, IN);
+  if (showPlayer) {
+    tl.fromTo("#player", { opacity: 0, y: 60 * u, rotationX: 14, scale: 0.94, filter: "blur(14px)" }, { opacity: 1, y: 0, rotationX: 0, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, IN + 0.08);
+    tl.fromTo("#player .img", { scale: 1.12 }, { scale: 1.0, duration: D, ease: "sine.out" }, 0);
+    tl.fromTo("#lvb i", { opacity: 1 }, { opacity: 0.25, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: Math.floor(D / 0.45) - 1 }, 0.2);
+    tl.fromTo("#lv", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.4);
+    tl.fromTo("#player .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.5);
+  }
+  tl.fromTo("#hw b", { scale: 1 }, { scale: 0.6, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: Math.floor(D / 0.45) - 1 }, 0.1);
+  tl.fromTo("#chat > .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.35);
+
+  // the chat already moving: rows 0..K0 shown at the start, then a new one every beat
+  const K0 = Math.max(0, rows.findIndex((r, k) => offFor(k) < -1) - 1);
+  const PT = 1.6;
+  const pre = []; { let t = 0.3, k = K0 + 1; while (t < PT - 0.1) { pre.push([k, t]); t += 0.15; k++; } }
+  // the paid message takes the slot after the last of those rows: it is part of the feed, a hole the rows flow around
+  const KP = (pre.length ? pre[pre.length - 1][0] : K0) + 1;
+  layRows(KP, PH + GAP);
+  const holeY = rows[KP].y - PH - GAP;
+  const MT = pinnedY - VT + PH + 4 * u, gone = new Set();
+  rows.forEach((r, k) => { if (k > K0) gsap.set(r.el, { opacity: 0 }); });
+  // anything scrolled past the top (or, once pinned, under the card) fades as it goes
+  const hideAbove = (off, t, edge) => rows.forEach((r, k) => { if (!gone.has(k) && r.y + off < edge - 6 * u) { gone.add(k); tl.to(r.el, { opacity: 0, duration: 0.14, ease: "power2.out" }, t); } });
+  const step = (k, t, dd) => {
+    const off = offFor(k); tl.to(feed, { y: off, duration: dd, ease: "power2.out" }, t);
+    tl.fromTo(rows[k].el, { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.22, ease: "power2.out", immediateRender: false }, t);
+    return off;
+  };
+  gsap.set(feed, { y: offFor(K0) });
+  pre.forEach(([k, t]) => hideAbove(step(k, t, 0.14), t, 0));
+  // the paid message posts at the bottom of the chat
+  const off0 = VH - (holeY + PH);
+  tl.to(feed, { y: off0, duration: 0.3, ease: "expo.out" }, PT - 0.05); hideAbove(off0, PT - 0.05, 0);
+  tl.fromTo("#paid", { x: PADX, y: bottomY + 90 * u, scale: 0.86, opacity: 0 }, { y: bottomY, scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.7)" }, PT);
+  tl.fromTo("#paid", { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, PT);
+  tl.fromTo("#psh", { "--ps": "-40%" }, { "--ps": "140%", duration: 0.75, ease: "power2.inOut" }, PT + 0.2);
+  tl.fromTo("#pamt", { scale: 0.7, transformOrigin: "0% 60%" }, { scale: 1, duration: 0.55, ease: "back.out(2.6)" }, PT + 0.12);
+  // new messages push it up with the chat until it reaches the top and sticks there
+  const travel = bottomY - pinnedY, avgH = rows.slice(KP, KP + 8).reduce((a, r) => a + r.h + GAP, 0) / 8;
+  const nRide = Math.max(1, Math.ceil(travel / avgH)), dRide = Math.min(0.2, 1.05 / nRide);
+  let t = PT + 0.55, k = KP, PINNED = null;
+  while (k < N && t < D - 0.45) {
+    const riding = PINNED === null, dd = riding ? Math.min(0.18, dRide) : 0.14;
+    const off = step(k, t, dd);
+    if (riding) {
+      const cy2 = Math.max(pinnedY, VT + off + holeY);
+      tl.to("#paid", { y: cy2, duration: dd, ease: "power2.out" }, t);
+      if (cy2 === pinnedY) PINNED = t + dd;
+      hideAbove(off, t, 0);
+    } else hideAbove(off, t, MT);
+    t += riding ? dRide : 0.22; k++;
+  }
+  if (PINNED === null) PINNED = t;
+  // the moment: it sticks, the pin badge lands, the chat keeps going underneath
+  tl.fromTo("#vp", { "--mt": "0px" }, { "--mt": MT + "px", duration: 0.25, ease: "power2.out", immediateRender: false }, PINNED - 0.1);
+  tl.to("#paid", { scale: 1.04, duration: 0.07, ease: "power2.out" }, PINNED); tl.to("#paid", { scale: 1, duration: 0.5, ease: "back.out(2.6)" }, PINNED + 0.07);
+  tl.fromTo("#pin", { opacity: 0, scale: 0.3, rotation: -30, y: -20 * u }, { opacity: 1, scale: 1, rotation: 0, y: 0, duration: 0.55, ease: "back.out(2.8)" }, PINNED);
+  tl.to("#chat", { y: 8 * u, duration: 0.06, ease: "power2.out" }, PINNED); tl.to("#chat", { y: 0, duration: 0.5, ease: "back.out(2.5)" }, PINNED + 0.06);
+  tl.fromTo("#psh", { "--ps": "-40%" }, { "--ps": "140%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, PINNED + 0.05);
+
+  // slow 3D drift of the whole scene
+  gsap.set("#cam", { transformOrigin: `${cx + cw / 2}px ${cy + ch / 2}px` });
+  tl.fromTo("#cam", { rotationY: L ? -7 : 6, rotationX: 7 }, { rotationY: L ? 4 : -4, rotationX: 2, duration: D, ease: "sine.inOut" }, 0);
+  // exit
+  tl.to("#cam", { y: -110 * u, opacity: 0, duration: 0.4, ease: "power3.in" }, D - 0.42);
+  tl.to(["#chat", "#player"], { filter: "blur(12px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

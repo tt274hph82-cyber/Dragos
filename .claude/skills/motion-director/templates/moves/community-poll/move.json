@@ -1,0 +1,5 @@
+{ "id": "community-poll", "name": "Community poll result", "oneLiner": "a glass community poll post turns in, the votes pour in and the bars race with the runner-up leading early, then the winner overtakes, flips green with a check, lifts with its percent while the rest dim and the footer turns to Final results",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["poll", "vote", "community", "audience", "survey", "results", "winner", "percent", "feedback", "creator", "social", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker says they asked their audience ('I ran a poll', 'you voted and the answer was...'): the bars race under the question and the winner flips green on the answer" }

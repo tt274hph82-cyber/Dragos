@@ -1,0 +1,5 @@
+{ "id": "strike-correct", "name": "Strike and correct", "oneLiner": "a newsprint clipping drops onto a walnut desk, taped down, with a claim set in a heavy serif; a red felt-tip strikes it through on twos and the correction is handwritten above it with a proofreader's caret",
+  "category": "paper", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["myth", "truth", "correction", "misconception", "wrong", "actually", "strike", "marker", "handwriting", "paper", "editorial", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker busts a myth ('everyone says X, but actually Y'): the claim lands as they say it, the strike hits on 'but', the correction writes on as they give the real answer" }

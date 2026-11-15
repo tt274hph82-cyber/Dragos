@@ -1,0 +1,8 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the certificate stock and the back of the roll, warmed in the composition", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/leather.jpg", "from": "ambientCG Leather032 (scanned black leather), resized; the blotter (look mode only)", "license": "CC0", "page": "https://ambientcg.com/view?id=Leather032" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the print", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/seal-base.png, assets/seal-spec.png", "from": "A wax seal (irregular poured rim, pressed die with ring and beads) modelled as a height-field glTF for this move and rendered in grey with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0); the brand colour is multiplied through it, the highlights kept as their own layer", "license": "Original render, free to use; HDRI CC0", "page": "https://polyhaven.com/a/studio_small_09" },
+  { "file": "assets/fonts/PlayfairDisplay-wght.ttf", "from": "Playfair Display by Claus Eggers Sorensen, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Playfair+Display" },
+  { "file": "assets/fonts/GreatVibes-latin.ttf", "from": "Great Vibes by TypeSETit, Google Fonts, subset to Latin", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Great+Vibes" }
+] }

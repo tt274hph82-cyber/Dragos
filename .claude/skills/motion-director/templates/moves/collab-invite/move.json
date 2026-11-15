@@ -1,0 +1,5 @@
+{ "id": "collab-invite", "name": "Glass collab invite", "oneLiner": "a collaboration invite on glass: the real face and the partner's initials sit apart with a dotted link and a plus between them; a finger presses Accept, Decline folds away as Accept drains to green, the two faces slide together and touch, a green outline draws round the pair, a check badge lands on the seam and the line turns over to the joined line",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["collab", "collaboration", "partnership", "invite", "accept", "team up", "guest", "creator", "social", "together", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says they teamed up with someone ('so we decided to collab', 'she invited me and I said yes'): cut in on the invite, Accept is pressed on the yes and the faces join as they say who. Set partner to the real name" }

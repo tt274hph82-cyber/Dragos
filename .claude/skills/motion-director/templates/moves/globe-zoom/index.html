@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"place","type":"string","label":"The place the camera dives to (a city, one or two words)","default":"New York"},
+  {"id":"sub","type":"string","label":"Short label under the place (two to four words; empty: none)","default":"Where it started"},
+  {"id":"lat","type":"number","label":"Latitude of the place in degrees (north positive)","default":40.71},
+  {"id":"lon","type":"number","label":"Longitude of the place in degrees (east positive)","default":-74.01},
+  {"id":"depth","type":"number","label":"How far the camera dives, 2 (a region) to 4.5 (a city)","default":3.6},
+  {"id":"coords","type":"string","label":"Show the coordinates line on the card: yes or no","default":"yes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); background: var(--ground); }
+  /* deep ground: the brand's ground with a far, cold light behind the planet and a warm accent spill */
+  #ground { position: absolute; inset: 0; overflow: hidden;
+    background: radial-gradient(70% 55% at 50% 42%, color-mix(in srgb, var(--ground) 82%, #2a3a66), var(--ground) 70%); }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 80%; height: 45%; left: -20%; top: 5%; background: color-mix(in srgb, #4d7dff 22%, transparent); }
+  #ground .l2 { width: 75%; height: 45%; left: 45%; top: 55%; background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  #stars { position: absolute; inset: -5%; }
+  #stars b { position: absolute; border-radius: 50%; background: #fff; }
+  #halo { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, transparent 86%, rgba(120,170,255,.38) 90%, rgba(90,140,255,.14) 94%, transparent 100%); }
+  #glow { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none; filter: blur(calc(var(--u) * 60));
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 45%, transparent), transparent 75%); }
+  #earth { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  /* the glass shell: a specular window reflection and a rim, it scales past the lens as the camera dives through */
+  #shell { position: absolute; left: 0; top: 0; border-radius: 50%; pointer-events: none; }
+  #shell .spec { position: absolute; left: 14%; top: 7%; width: 42%; height: 28%; border-radius: 50%; transform: rotate(-28deg);
+    background: radial-gradient(closest-side, rgba(255,255,255,.55), rgba(255,255,255,.12) 55%, transparent 100%); filter: blur(calc(var(--u) * 6)); }
+  #shell .spec2 { position: absolute; right: 16%; bottom: 10%; width: 22%; height: 10%; border-radius: 50%; transform: rotate(-30deg);
+    background: radial-gradient(closest-side, rgba(255,255,255,.22), transparent); filter: blur(calc(var(--u) * 5)); }
+  #shell .rim { position: absolute; inset: 0; border-radius: 50%;
+    box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.22), inset calc(var(--u) * 14) calc(var(--u) * 18) calc(var(--u) * 30) calc(var(--u) * -10) rgba(255,255,255,.35),
+      inset calc(var(--u) * -30) calc(var(--u) * -40) calc(var(--u) * 60) calc(var(--u) * -20) rgba(0,0,0,.55); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 52%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  /* the pin: a glossy accent marker that drops onto the city */
+  #pinwrap { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+  #spot { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 70%, #fff 20%), color-mix(in srgb, var(--accent) 35%, transparent) 40%, transparent); mix-blend-mode: screen; }
+  #pshadow { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, rgba(0,0,0,.6), transparent); }
+  .ring { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 70%, #fff); opacity: 0; }
+  #pin { position: absolute; transform-origin: 50% 100%; }
+  #pin svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 14) rgba(0,0,0,.55)); }
+
+  /* the label card */
+  #stem { position: absolute; width: calc(var(--u) * 3); background: linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.15)); transform-origin: 50% 100%; }
+  #card { position: absolute; left: 0; top: 0; box-sizing: border-box; border-radius: calc(var(--u) * 30); overflow: hidden;
+    padding: calc(var(--u) * 36) calc(var(--u) * 48) calc(var(--u) * 38);
+    background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.06) 60%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.8); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.3) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  #card .pl { font-family: var(--font-display); color: var(--ink); line-height: 1; letter-spacing: -0.02em; white-space: nowrap; }
+  #card .sb { display: flex; align-items: center; gap: calc(var(--u) * 14); margin-top: calc(var(--u) * 16); color: color-mix(in srgb, var(--ink) 72%, transparent); font-weight: 700; white-space: nowrap; }
+  #card .sb i { flex: none; width: calc(var(--u) * 18); height: calc(var(--u) * 18); border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 12) var(--accent); }
+  #card .co { margin-top: calc(var(--u) * 14); color: color-mix(in srgb, var(--ink) 58%, transparent); font-weight: 600; letter-spacing: .08em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><div id="stars"></div></div>
+  <div id="glow"></div>
+  <div id="halo"></div>
+  <canvas id="earth"></canvas>
+  <div id="shell"><div class="spec"></div><div class="rim"></div></div>
+  <div id="pinwrap"><div id="spot"></div><div class="ring" id="r1"></div><div class="ring" id="r2"></div><div id="pshadow"></div>
+    <div id="pin"><svg viewBox="0 0 100 130"><defs>
+      <radialGradient id="pg" cx="35%" cy="28%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset=".18" class="a1"/><stop offset=".6" class="a2"/><stop offset="1" class="a3"/></radialGradient>
+    </defs>
+      <path d="M50 128 C 40 104 6 82 6 48 A 44 44 0 1 1 94 48 C 94 82 60 104 50 128 Z" fill="url(#pg)"/>
+      <path d="M50 128 C 40 104 6 82 6 48 A 44 44 0 1 1 94 48 C 94 82 60 104 50 128 Z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>
+      <circle cx="50" cy="47" r="17" fill="#fff"/>
+      <circle cx="50" cy="47" r="17" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="2"/>
+      <ellipse cx="34" cy="24" rx="15" ry="8" fill="#fff" opacity=".45" transform="rotate(-30 34 24)"/>
+    </svg></div></div>
+  <div id="stem"></div>
+  <div id="card"><div class="pl"></div><div class="sb"><i></i><span></span></div><div class="co"></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+  <img id="tday" src="assets/earth-day.jpg" style="display:none" alt="" />
+  <img id="tnight" src="assets/earth-night.jpg" style="display:none" alt="" />
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const RAD = Math.PI / 180;
+  const clampN = (x, a, b, d) => { x = parseFloat(x); return isFinite(x) ? Math.max(a, Math.min(b, x)) : d; };
+  const LAT = clampN(v.lat, -80, 80, 40.71), LON = clampN(v.lon, -180, 180, -74.01), Z = clampN(v.depth, 1.5, 4.5, 3.6);
+
+  // brand accent into the pin's gradient stops (svg stops need real colours)
+  const hex = (h) => { h = String(h || "#FF6A3D").replace("#", ""); const n = parseInt(h.length === 3 ? h.replace(/./g, "$&$&") : h, 16); return [n >> 16, (n >> 8) & 255, n & 255]; };
+  const AC = hex(v.accent), mix = (c, t, w) => `rgb(${c.map((x) => Math.round(x + ((w ? 255 : 0) - x) * t)).join(",")})`;
+  $(".a1").setAttribute("stop-color", mix(AC, 0.35, 1)); $(".a2").setAttribute("stop-color", mix(AC, 0, 1)); $(".a3").setAttribute("stop-color", mix(AC, 0.45, 0));
+
+  // ---- layout: the planet sits in the clear zone, the card above the pin
+  let cx = W / 2, cy;
+  if (P) cy = safe.top + (H - safe.top - safe.bottom) * 0.56; else cy = H * 0.5;
+  const R0 = (P ? 0.4 * W : SQ ? 0.36 * W : 0.36 * H);
+  // the target ends a little below centre so the card has room above it
+  const ty = P ? cy + 40 * u : SQ ? H * 0.6 : H * 0.6;
+
+  // stars: a sparse, seeded field (tiny, dim; they slide slowly as the camera moves)
+  { const r = MV.rand(7), st = $("#stars"); for (let i = 0; i < 90; i++) { const b = document.createElement("b"); const s = (0.8 + r() * 2.2) * u;
+      Object.assign(b.style, { left: r() * 100 + "%", top: r() * 100 + "%", width: s + "px", height: s + "px", opacity: (0.15 + r() * 0.55).toFixed(2) }); st.appendChild(b); } }
+
+  // ---- the renderer: an orthographic sphere, day texture lit by a low sun, city lights on the night side
+  const SC = 0.6;                                       // canvas resolution vs the frame
+  const cvs = $("#earth"), cw = Math.round(W * SC), ch = Math.round(H * SC);
+  cvs.width = cw; cvs.height = ch;
+  const g = cvs.getContext("2d");
+  const out = g.createImageData(cw, ch), O = out.data;
+  let TD = null, TN = null, TW = 0, TH = 0;
+  const load = () => {
+    if (TD) return true;
+    const a = $("#tday"), b = $("#tnight");
+    if (!a.complete || !b.complete || !a.naturalWidth || !b.naturalWidth) return false;
+    try {
+      TW = a.naturalWidth; TH = a.naturalHeight;
+      const c = document.createElement("canvas"); c.width = TW; c.height = TH; const x = c.getContext("2d", { willReadFrequently: true });
+      x.drawImage(a, 0, 0); TD = x.getImageData(0, 0, TW, TH).data;
+      x.clearRect(0, 0, TW, TH); x.drawImage(b, 0, 0, TW, TH); TN = x.getImageData(0, 0, TW, TH).data;
+      return true;
+    } catch (e) { return false; }
+  };
+  // sun from the upper left and a little behind: a lit crescent on the left, the dive lands on the night side where the lights are
+  const Ls = [-0.9, 0.38, -0.12], ll = Math.hypot(...Ls); const LX = Ls[0] / ll, LY = Ls[1] / ll, LZ = Ls[2] / ll;
+  const draw = (S) => {
+    // S: { x, y, r (px, frame space), lat, lon (the view centre, degrees) }
+    if (!load()) return;
+    const sx = S.x * SC, sy = S.y * SC, sr = S.r * SC;
+    const la = S.lat * RAD, lo = S.lon * RAD, cA = Math.cos(la), sA = Math.sin(la), cO = Math.cos(lo), sO = Math.sin(lo);
+    const x0 = Math.max(0, Math.floor(sx - sr * 1.08)), x1 = Math.min(cw, Math.ceil(sx + sr * 1.08));
+    const y0 = Math.max(0, Math.floor(sy - sr * 1.08)), y1 = Math.min(ch, Math.ceil(sy + sr * 1.08));
+    O.fill(0);
+    const inv = 1 / sr, aa = 1.2 * inv;
+    for (let py = y0; py < y1; py++) {
+      const ny = (py + 0.5 - sy) * inv, row = py * cw;
+      for (let px = x0; px < x1; px++) {
+        const nx = (px + 0.5 - sx) * inv, r2 = nx * nx + ny * ny;
+        if (r2 >= 1) continue;
+        const z = Math.sqrt(1 - r2), vy = -ny;
+        // view -> world: undo the tilt (about x), then the spin (about y)
+        const wy = vy * cA + z * sA, wz1 = -vy * sA + z * cA;
+        const wx = nx * cO + wz1 * sO, wz = -nx * sO + wz1 * cO;
+        const lat = Math.asin(wy < -1 ? -1 : wy > 1 ? 1 : wy), lon = Math.atan2(wx, wz);
+        let tx = ((lon / (2 * Math.PI) + 0.5) * TW) | 0, ty2 = ((0.5 - lat / Math.PI) * TH) | 0;
+        if (tx >= TW) tx = TW - 1; if (ty2 >= TH) ty2 = TH - 1;
+        const ti = (ty2 * TW + tx) * 4;
+        const d = nx * LX + vy * LY + z * LZ;
+        let day = (d + 0.08) / 0.3; day = day < 0 ? 0 : day > 1 ? 1 : day; day = day * day * (3 - 2 * day);
+        const lit = 0.18 + 1.05 * (d > 0 ? d : 0);
+        const dr = TD[ti], dg = TD[ti + 1], db = TD[ti + 2];
+        // ocean glint on the day side
+        const ocean = db > dr * 1.25 && db > dg ? 1 : 0;
+        let spec = 0; if (ocean && d > 0) { const hx = LX, hy = LY, hz = LZ + 1, hl = Math.hypot(hx, hy, hz); const nh = (nx * hx + vy * hy + z * hz) / hl; spec = nh > 0.9 ? Math.pow(nh, 60) * 180 : 0; }
+        const k = 1.75 * (1 - day);
+        const n0 = TN[ti], n1 = TN[ti + 1], n2 = TN[ti + 2];
+        // city lights: a curve that keeps the lights hot and lets the bare land fall back to a dim blue
+        let r = dr * lit * day + n0 * n0 * k / 150 + spec, gg = dg * lit * day + n1 * n1 * k / 150 + spec, b = db * lit * day + (n2 * n2 / 150 + 14) * k + spec;
+        // the atmosphere: a cool fresnel rim, warmer where the sun grazes
+        const f = 1 - z, f3 = f * f * f, rim = f3 * (0.35 + 0.65 * day);
+        r = r * (1 - rim * 0.6) + 110 * rim; gg = gg * (1 - rim * 0.6) + 170 * rim; b = b * (1 - rim * 0.6) + 255 * rim;
+        const oi = (row + px) * 4;
+        O[oi] = r > 255 ? 255 : r; O[oi + 1] = gg > 255 ? 255 : gg; O[oi + 2] = b > 255 ? 255 : b;
+        // a soft anti-aliased edge
+        const e = (1 - Math.sqrt(r2)) / aa; O[oi + 3] = e >= 1 ? 255 : (e * 255) | 0;
+      }
+    }
+    g.putImageData(out, 0, 0);
+  };
+  cvs.style.width = W + "px"; cvs.style.height = H + "px";
+
+  // world -> screen for the target, given a view
+  const project = (S, la, lo) => {
+    const a = la * RAD, o = lo * RAD;
+    const wx = Math.cos(a) * Math.sin(o), wy = Math.sin(a), wz = Math.cos(a) * Math.cos(o);
+    const L = S.lat * RAD, Oo = S.lon * RAD;
+    // spin back by the view's lon, then tilt by its lat
+    const x1 = wx * Math.cos(Oo) - wz * Math.sin(Oo), z1 = wx * Math.sin(Oo) + wz * Math.cos(Oo);
+    const vy = wy * Math.cos(L) - z1 * Math.sin(L), vz = wy * Math.sin(L) + z1 * Math.cos(L);
+    return { x: S.x + x1 * S.r, y: S.y - vy * S.r, z: vz };
+  };
+
+  // ---- the camera path, as pure functions of time so every seek is exact
+  const E = (n) => gsap.parseEase(n), eIn = E("expo.out"), eRot = E("power3.inOut"), eDive = E("expo.inOut"), eS = E("sine.inOut");
+  const cl = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const T_DIVE0 = 0.85, T_DIVE1 = 2.95, T_PIN = 2.7;
+  const state = (t) => {
+    const a = eIn(cl(t / 1.1));                                   // the planet rises in
+    const rp = eRot(cl((t - 0.05) / (T_DIVE1 - 0.15)));          // the spin and tilt bring the place round
+    const dp = eDive(cl((t - T_DIVE0) / (T_DIVE1 - T_DIVE0)));   // the dive, in log space
+    const creep = eS(cl((t - T_DIVE1) / (D - T_DIVE1)));
+    const lz = Math.log(Z) * dp + 0.06 * creep;
+    const r = R0 * (0.86 + 0.14 * a) * Math.exp(lz);
+    // the view centre: start well west and tilted to the north, end just on the place (a slow drift continues after)
+    const lat = (LAT * 0.35 + 18) * (1 - rp) + LAT * rp - 0.4 * creep;
+    const lon = (LON + 72) * (1 - rp) + LON * rp + 0.8 * creep;
+    // the frame position glides from the planet's centre to where the place lands
+    const y = cy + 60 * u * (1 - a) + (ty - cy) * dp;
+    return { x: cx, y, r, lat, lon, a, dp, rp };
+  };
+
+  // ---- the pin, card and glass all follow the projected place
+  const pinEl = $("#pin"), PW = (P ? 150 : 124) * u, PH = PW * 1.3;
+  Object.assign(pinEl.style, { width: PW + "px", height: PH + "px", left: -PW / 2 + "px", top: -PH + "px" });
+  const spot = $("#spot"), psh = $("#pshadow"), r1 = $("#r1"), r2 = $("#r2");
+  const SPOT = 260 * u; Object.assign(spot.style, { width: SPOT + "px", height: SPOT + "px" });
+  Object.assign(psh.style, { width: PW * 0.9 + "px", height: PW * 0.3 + "px" });
+  [r1, r2].forEach((r) => Object.assign(r.style, { width: 120 * u + "px", height: 120 * u + "px" }));
+
+  const card = $("#card"), stem = $("#stem");
+  const PLF = (P ? 124 : SQ ? 108 : 100) * u;
+  card.querySelector(".pl").style.fontSize = PLF + "px";
+  card.querySelector(".pl").textContent = v.place || "";
+  const sbt = String(v.sub || "").trim();
+  card.querySelector(".sb span").textContent = sbt; card.querySelector(".sb").style.fontSize = (P ? 48 : 42) * u + "px";
+  if (!sbt) card.querySelector(".sb").style.display = "none";
+  const co = card.querySelector(".co");
+  const showCo = !/^(no|false|0|off)$/i.test(String(v.coords || "yes").trim());
+  co.textContent = `${Math.abs(LAT).toFixed(2)}° ${LAT >= 0 ? "N" : "S"}   ${Math.abs(LON).toFixed(2)}° ${LON >= 0 ? "E" : "W"}`;
+  co.style.fontSize = (P ? 32 : 28) * u + "px"; if (!showCo) co.style.display = "none";
+  const CMAX = (P ? W - safe.left - safe.right : W * (SQ ? 0.8 : 0.5)) - 80 * u;
+  MV.fitText(card.querySelector(".pl"), CMAX, 24); MV.fitText(card.querySelector(".sb span"), CMAX - 30 * u, 16); MV.fitText(co, CMAX, 14);
+  const cr = card.getBoundingClientRect(), CW = cr.width, CH = cr.height;
+  const GAPC = 70 * u;
+
+  const pin = { drop: 0, ds: 0, card: 0 };
+  const place = (S) => {
+    const p = project(S, LAT, LON);
+    const vis = p.z > 0.05 ? 1 : 0;
+    gsap.set("#pinwrap", { x: p.x, y: p.y, opacity: vis });
+    // card above the pin head
+    let x = p.x - CW / 2, y = p.y - PH - GAPC - CH;
+    x = Math.max(P ? safe.left : 40 * u, Math.min((P ? W - safe.right : W - 40 * u) - CW, x));
+    y = Math.max(P ? safe.top : H * 0.06, y);
+    card.style.left = x + "px"; card.style.top = y + "px";
+    const sTop = y + CH, sBot = p.y - PH - 6 * u;
+    Object.assign(stem.style, { left: p.x - 1.5 * u + "px", top: sTop + "px", height: Math.max(0, sBot - sTop) + "px" });
+    return p;
+  };
+
+  const halo = $("#halo"), glow = $("#glow"), shell = $("#shell");
+  const clock = { t: 0 };
+  const drive = () => {
+    const t = clock.t, S = state(t);
+    draw(S);
+    const hr = S.r * 1.12; Object.assign(halo.style, { width: hr * 2 + "px", height: hr * 2 + "px", left: S.x - hr + "px", top: S.y - hr + "px", opacity: S.a * (1 - S.dp * 0.7) });
+    const gr = S.r * 1.6; Object.assign(glow.style, { width: gr * 2 + "px", height: gr * 2 + "px", left: S.x - gr * 0.85 + "px", top: S.y - gr * 1.05 + "px", opacity: 0.8 * S.a * (1 - S.dp) });
+    // the glass shell runs ahead of the planet and passes the lens early in the dive
+    const shr = S.r * (1.03 + S.dp * 1.4); Object.assign(shell.style, { width: shr * 2 + "px", height: shr * 2 + "px", left: S.x - shr + "px", top: S.y - shr + "px", opacity: S.a * Math.max(0, 1 - S.dp * 2.2) });
+    cvs.style.opacity = S.a;
+    gsap.set("#stars", { x: -S.dp * 40 * u, y: S.dp * 20 * u, scale: 1 + S.dp * 0.12, opacity: 1 - S.dp * 0.5 });
+    place(S);
+  };
+  drive();
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: drive }, 0);
+  tl.fromTo("#ground .l1", { x: 0 }, { x: W * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: -W * 0.1, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the moment: the pin drops out of the lens and sticks, the city flares, two rings run out over the lights
+  gsap.set(pinEl, { y: -420 * u, scale: 1.6, opacity: 0 });
+  tl.to(pinEl, { y: 0, scale: 1, duration: 0.42, ease: "power3.in" }, T_PIN);
+  tl.to(pinEl, { opacity: 1, duration: 0.16, ease: "power2.out" }, T_PIN);
+  tl.to(pinEl, { scaleY: 0.8, scaleX: 1.14, duration: 0.07, ease: "power2.out" }, T_PIN + 0.42);
+  tl.to(pinEl, { scaleY: 1, scaleX: 1, duration: 0.55, ease: "back.out(3)" }, T_PIN + 0.49);
+  tl.fromTo(psh, { opacity: 0, scale: 2.2 }, { opacity: 1, scale: 1, duration: 0.42, ease: "power3.in" }, T_PIN);
+  tl.fromTo(spot, { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.8, ease: "expo.out" }, T_PIN + 0.4);
+  tl.fromTo(r1, { opacity: 0.95, scale: 0.4 }, { opacity: 0, scale: 3.6, duration: 1.0, ease: "expo.out", immediateRender: false }, T_PIN + 0.42);
+  tl.fromTo(r2, { opacity: 0.7, scale: 0.4 }, { opacity: 0, scale: 5.2, duration: 1.3, ease: "expo.out", immediateRender: false }, T_PIN + 0.6);
+  gsap.set([r1, r2], { opacity: 0 });
+  tl.fromTo("#earth", { scale: 1 }, { scale: 1.012, duration: 0.06, ease: "power2.out", immediateRender: false }, T_PIN + 0.42);
+  tl.to("#earth", { scale: 1, duration: 0.5, ease: "expo.out" }, T_PIN + 0.48);
+
+  // ---- the card: the stem draws up from the pin, the glass card lands on a spring
+  const TC = T_PIN + 0.62;
+  tl.fromTo(stem, { scaleY: 0 }, { scaleY: 1, duration: 0.3, ease: "expo.out" }, TC);
+  tl.fromTo(card, { opacity: 0, y: 40 * u, scale: 0.86, transformOrigin: "50% 100%" }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, TC + 0.1);
+  tl.fromTo(card, { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.35, ease: "power2.out" }, TC + 0.1);
+  tl.fromTo(card.querySelector(".sb"), { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, TC + 0.3);
+  tl.fromTo(co, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, TC + 0.42);
+  tl.fromTo(card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.9, ease: "power2.inOut" }, TC + 0.3);
+  MV.done();
+</script>
+</body>
+</html>

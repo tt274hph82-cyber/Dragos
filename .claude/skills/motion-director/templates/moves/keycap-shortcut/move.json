@@ -1,0 +1,5 @@
+{ "id": "keycap-shortcut", "name": "Keycap shortcut", "oneLiner": "big glossy physical keycaps sit under a window showing the brand's screen, they press down one by one and stay held with light leaking from beneath, the last one is the accent key: the deck bumps, a ring flies off it, the screen dims and a card lands with the action and the shortcut echoed in small caps, then the keys spring back up",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["keyboard", "shortcut", "hotkey", "keycap", "key", "press", "one keystroke", "trick", "hack", "productivity", "desktop", "os", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker says it takes one shortcut or names the keys ('just hit control shift S', 'one keystroke and it is done'): each key presses as they say it, the card lands on what it does" }

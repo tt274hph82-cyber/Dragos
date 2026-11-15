@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The panel title","default":"Live views"},
+  {"id":"labels","type":"string","label":"Row names, comma separated, 3 to 5 ({brand} = the brand name)","default":"Shorts,Podcast,Newsletter,Long videos"},
+  {"id":"values","type":"string","label":"Where each value ends, same order","default":"4200,860,3400,18200"},
+  {"id":"changes","type":"string","label":"Change for each row in percent, same order (+12 or -3)","default":"+4,-2,+12,+61"},
+  {"id":"hero","type":"number","label":"Which row lifts green, 1 = first (0 = the biggest change)","default":0},
+  {"id":"prefix","type":"string","label":"Before each value","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 34%; left: 44%; top: -10%; background: color-mix(in srgb, var(--accent) 24%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 60%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #ground .l3 { width: 60%; height: 34%; left: 20%; top: 40%; opacity: 0; background: rgba(43,214,123,.22); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig, #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #panel { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 40); transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.13), rgba(255,255,255,.04) 60%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13), 0 calc(var(--u) * 60) calc(var(--u) * 100) calc(var(--u) * -40) rgba(0,0,0,.8); }
+  .is-alpha #panel { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 95%, white 5%)); }
+  #head { position: absolute; display: flex; align-items: center; justify-content: space-between; }
+  #ttl { white-space: nowrap; font-family: var(--font-display); line-height: 1; color: var(--ink); letter-spacing: -0.01em; }
+  #live { display: flex; align-items: center; gap: .45em; white-space: nowrap; font-weight: 700; line-height: 1; letter-spacing: .06em; color: color-mix(in srgb, var(--ink) 70%, transparent);
+    padding: .5em .8em; border-radius: 999px; background: rgba(255,255,255,.07); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #live i { width: .6em; height: .6em; border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 14) var(--accent); }
+  .row { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 26); transform-style: preserve-3d; }
+  .row .bgp { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(160deg, rgba(43,214,123,.26), rgba(43,214,123,.08) 60%, rgba(255,255,255,.04));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 2) rgba(43,214,123,.6), 0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.8), 0 0 calc(var(--u) * 70) calc(var(--u) * -10) rgba(43,214,123,.45); }
+  .is-alpha .row .bgp { background: linear-gradient(160deg, color-mix(in srgb, #2BD67B 30%, var(--surface)), color-mix(in srgb, #2BD67B 12%, var(--surface))); }
+  .row .sep { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.09); }
+  .row .nm { position: absolute; white-space: nowrap; font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 74%, transparent); }
+  .row .vl { position: absolute; white-space: nowrap; font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .row svg { position: absolute; overflow: visible; }
+  .chip { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: .25em; white-space: nowrap; font-weight: 800; line-height: 1;
+    border-radius: calc(var(--u) * 16); color: color-mix(in srgb, var(--ink) 80%, transparent); background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); font-variant-numeric: tabular-nums; }
+  .is-alpha .chip { background: color-mix(in srgb, var(--surface) 70%, white 30%); }
+  .chip .ar { width: 0; height: 0; border-left: .3em solid transparent; border-right: .3em solid transparent; }
+  .chip.up .ar { border-bottom: .42em solid currentColor; }
+  .chip.dn .ar { border-top: .42em solid currentColor; }
+  .chip .gf { position: absolute; inset: 0; border-radius: inherit; opacity: 0; background: linear-gradient(180deg, #4BE592, #2BD67B 50%, #1FB566); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), 0 0 calc(var(--u) * 30) rgba(43,214,123,.55); }
+  .chip .ct { position: relative; display: flex; align-items: center; gap: .25em; }
+  .row.hero .nm { color: var(--ink); }
+
+  .is-key #panel { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  .is-key .row .bgp { background: color-mix(in srgb, #2BD67B 22%, var(--surface)); box-shadow: inset 0 0 0 calc(var(--u) * 2) #2BD67B; }
+  .is-key .glow, .is-key .area { display: none; }
+  .is-key .chip .gf { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l3"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="panel">
+      <div id="head"><div id="ttl"></div><div id="live"><i></i><span>LIVE</span></div></div>
+      <div id="rows"></div>
+    </div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, NS = "http://www.w3.org/2000/svg";
+  const GREEN = "#2BD67B", INK = getComputedStyle(root).getPropertyValue("--ink").trim() || "#fff";
+  const brand = v.brandName || "";
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  let L = list(v.labels).filter((s) => s.length);
+  if (L.length < 2) L = ["Shorts", "Podcast", "Newsletter", "Long videos"];
+  L = L.slice(0, 5);
+  const n = L.length, Vs = list(v.values).map(Number), Cs = list(v.changes).map((s) => parseFloat(s));
+  const rows = L.map((s, i) => ({ name: s.split("{brand}").join(brand), end: isFinite(Vs[i]) ? Vs[i] : 1000 * (i + 1), chg: isFinite(Cs[i]) ? Cs[i] : 5 }));
+  let hi = Math.round(+v.hero || 0) - 1;
+  if (!(hi >= 0 && hi < n)) hi = rows.reduce((b, r, i) => (r.chg > rows[b].chg ? i : b), 0);
+  const fmtV = (x) => (v.prefix || "") + (x >= 10000 ? (x / 1000).toFixed(x >= 100000 ? 0 : 1) + "K" : Math.round(x).toLocaleString("en-US"));
+  const fmtC = (c) => (c > 0 ? "+" : c < 0 ? "-" : "") + Math.abs(c).toFixed(Math.abs(c) < 10 && c % 1 ? 1 : 0) + "%";
+
+  // ---- the panel
+  let PW, PX, PY, rowH;
+  if (MV.alpha && P) { PW = W - safe.left - safe.right; PX = safe.left; rowH = 150 * u; }
+  else if (MV.alpha) { PW = SQ ? W * 0.84 : W * 0.5; PX = SQ ? (W - PW) / 2 : W - safe.right - PW; rowH = (SQ ? 130 : 130) * u; }
+  else if (P) { PW = W - 120 * u; PX = 60 * u; rowH = 196 * u; }
+  else if (SQ) { PW = W - 150 * u; PX = 75 * u; rowH = 150 * u; }
+  else { PW = Math.min(W * 0.66, 1300 * u); PX = (W - PW) / 2; rowH = 156 * u; }
+  const pad = (P ? 44 : 40) * u, headH = (P ? 130 : 112) * u;
+  const PH = pad + headH + n * rowH + pad * 0.6;
+  PY = MV.alpha ? (P ? safe.top + 20 * u : H - safe.bottom - PH) : (H - PH) / 2;
+  const panel = $("#panel");
+  Object.assign(panel.style, { left: PX + "px", top: PY + "px", width: PW + "px", height: PH + "px" });
+  const head = $("#head"), ttl = $("#ttl"), live = $("#live");
+  Object.assign(head.style, { left: pad + "px", right: pad + "px", top: pad + "px", height: headH - pad * 0.4 + "px" });
+  ttl.textContent = v.title || ""; ttl.style.fontSize = (P ? 58 : 50) * u + "px"; live.style.fontSize = (P ? 34 : 30) * u + "px";
+  MV.fitText(ttl, PW - 2 * pad - live.offsetWidth - 30 * u, 30);
+
+  // ---- the rows: name and value on the left, the live line, the change chip on the right
+  const chipW = (P ? 190 : 180) * u, chipH = (P ? 72 : 64) * u;
+  const leftW = P ? 0.36 * (PW - 2 * pad) : SQ ? 0.33 * (PW - 2 * pad) : 0.3 * (PW - 2 * pad);
+  const spX = pad + leftW + 30 * u, spW = PW - pad - chipW - 40 * u - spX, spH = rowH * 0.5;
+  const rand = MV.rand(11), WIN = 34, TOT = 70;
+  const R = rows.map((r, i) => {
+    const el = document.createElement("div"); el.className = "row" + (i === hi ? " hero" : "");
+    Object.assign(el.style, { left: pad * 0.5 + "px", width: PW - pad + "px", top: pad + headH + i * rowH + "px", height: rowH + "px" });
+    el.innerHTML = `<div class="bgp"></div>${i < n - 1 ? '<div class="sep"></div>' : ""}<div class="nm"></div><div class="vl"></div><div class="chip ${r.chg >= 0 ? "up" : "dn"}"><div class="gf"></div><div class="ct"><i class="ar"></i><span></span></div></div>`;
+    $("#rows").appendChild(el);
+    const nm = el.querySelector(".nm"), vl = el.querySelector(".vl"), chip = el.querySelector(".chip");
+    nm.textContent = r.name; nm.style.fontSize = (P ? 40 : 36) * u + "px";
+    vl.textContent = fmtV(r.end); vl.style.fontSize = (P ? 60 : 52) * u + "px";
+    MV.fitText(nm, leftW, 32); MV.fitText(vl, leftW, 30);
+    // a name still too long ends in an ellipsis before the line starts
+    Object.assign(nm.style, { maxWidth: leftW + "px", overflow: "hidden", textOverflow: "ellipsis" });
+    const ix = pad * 0.5, nh = nm.offsetHeight, vh = vl.offsetHeight, gapY = 12 * u, ty = (rowH - nh - vh - gapY) / 2;
+    Object.assign(nm.style, { left: ix + "px", top: ty + "px" }); Object.assign(vl.style, { left: ix + "px", top: ty + nh + gapY + "px" });
+    chip.querySelector("span").textContent = fmtC(r.chg); chip.style.fontSize = (P ? 36 : 32) * u + "px";
+    Object.assign(chip.style, { width: chipW + "px", height: chipH + "px", left: PW - pad - chipW - pad * 0.5 + "px", top: (rowH - chipH) / 2 + "px" });
+    MV.fitText(chip.querySelector("span"), chipW - 60 * u, 24);
+    // the line: a seeded walk whose last stretch matches the change; the hero bends up hard at the end
+    const pts = []; let y = 0;
+    for (let k = 0; k < TOT; k++) {
+      const late = k > TOT - WIN, drift = late && i !== hi ? r.chg / WIN / 10 : (rand() - 0.5) * 0.05;
+      y += drift + (rand() - 0.5) * (i === hi ? 0.22 : 0.32);
+      // the hero runs flat, then bends up hard: a hockey stick that arrives while it lifts
+      if (i === hi && k > TOT - 26) y += k > TOT - 12 ? 0.16 : 0.55;
+      pts.push(y);
+    }
+    const lo = Math.min(...pts.slice(TOT - WIN - 31)), hh = Math.max(...pts.slice(TOT - WIN - 31));
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("width", spW); svg.setAttribute("height", spH); svg.setAttribute("viewBox", `0 0 ${spW} ${spH}`);
+    Object.assign(svg.style, { left: spX + "px", top: (rowH - spH) / 2 + "px" });
+    const gid = "ga" + i, cid = "cl" + i;
+    svg.innerHTML = `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <linearGradient id="${gid}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${GREEN}" stop-opacity=".4"/><stop offset="1" stop-color="${GREEN}" stop-opacity="0"/></linearGradient>
+      <clipPath id="${cid}"><rect x="-20" y="-40" width="0" height="${spH + 80}"/></clipPath></defs>
+      <g clip-path="url(#${cid})"><path class="area" fill="url(#${gid})"/><path class="areag area" fill="url(#${gid}g)" opacity="0"/>
+      <path class="glow" fill="none" stroke="${GREEN}" stroke-width="${10 * u}" stroke-linecap="round" stroke-linejoin="round" opacity="0" style="filter: blur(${6 * u}px)"/>
+      <path class="ln" fill="none" stroke-width="${(i === hi ? 5 : 4) * u}" stroke-linecap="round" stroke-linejoin="round"/>
+      <path class="lng" fill="none" stroke="${GREEN}" stroke-width="${6 * u}" stroke-linecap="round" stroke-linejoin="round" opacity="0"/></g>
+      <circle class="hd" r="${7 * u}"/><circle class="hdg" r="${8 * u}" fill="${GREEN}" opacity="0"/>`;
+    el.appendChild(svg);
+    const ln = svg.querySelector(".ln"); ln.style.stroke = `color-mix(in srgb, ${INK} 70%, transparent)`;
+    const hd = svg.querySelector(".hd"); hd.style.fill = INK;
+    return { r, el, nm, vl, chip, svg, ln, hd, pts, lo, hh, clip: svg.querySelector(`#${cid} rect`), paths: [...svg.querySelectorAll("path")], hdg: svg.querySelector(".hdg"), st: { rev: 0 } };
+  });
+
+  // ---- one state, rendered every frame: the lines scroll left as new points arrive on the right
+  const S = { o: 0 };
+  const yOf = (row, val) => spH - 6 * u - ((val - row.lo) / (row.hh - row.lo || 1)) * (spH - 12 * u);
+  const render = () => {
+    const o = S.o, base = Math.floor(o), fr = o - base, step = spW / (WIN - 1);
+    R.forEach((row) => {
+      let d = "", lx = 0, ly = 0;
+      const last = TOT - 1 - (30 - base);
+      for (let k = 0; k <= WIN; k++) {
+        const idx = Math.max(0, last - WIN + k), x = (k - fr) * step;
+        if (x < -step) continue;
+        d += (d ? " L" : "M") + x.toFixed(1) + "," + yOf(row, row.pts[idx]).toFixed(1);
+      }
+      // the head rides the right edge, between the last point and the one arriving
+      const nx = row.pts[Math.min(TOT - 1, last + 1)], hv = row.pts[last] + (nx - row.pts[last]) * fr;
+      lx = spW; ly = yOf(row, hv); d += ` L${lx.toFixed(1)},${ly.toFixed(1)}`;
+      // end the line at the head (the right edge)
+      const area = d + ` L${lx.toFixed(1)},${spH} L${(-fr * step).toFixed(1)},${spH} Z`;
+      row.paths.forEach((p) => p.setAttribute("d", p.classList.contains("area") ? area : d));
+      row.hd.setAttribute("cx", lx); row.hd.setAttribute("cy", ly); row.hdg.setAttribute("cx", lx); row.hdg.setAttribute("cy", ly);
+      row.clip.setAttribute("width", (spW + 40) * row.st.rev);
+      row.hd.style.opacity = row.st.rev;
+      // the value ticks with the line
+      const f = Math.min(1, o / 30), start = row.r.end / (1 + row.r.chg / 100);
+      row.vl.textContent = fmtV(start + (row.r.end - start) * f);
+    });
+  };
+  render();
+  const RU = { onUpdate: render };
+
+  // ---- the camera: a slow tilt, it leans into the hero row at the end
+  const pcx = PX + PW / 2, pcy = PY + PH / 2, hy = PY + pad + headH + hi * rowH + rowH / 2;
+  gsap.set("#rig", { transformOrigin: `${pcx}px ${pcy}px` });
+  gsap.set("#cam", { transformOrigin: `${pcx}px ${hy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${pcx}px ${PY - 200 * u}px` });
+  tl.fromTo("#rig", { rotationY: -12, rotationX: 9, scale: 0.95 }, { rotationY: 7, rotationX: 3, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0 }, { x: -W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#ground .l3", { top: hy - H * 0.17 });
+
+  // ---- 1. the panel stands up, the rows land, the lines draw in and start to run
+  tl.fromTo(panel, { y: 80 * u, rotationX: -16, transformOrigin: "50% 100%" }, { y: 0, rotationX: 0, duration: 1.0, ease: "expo.out" }, 0);
+  tl.fromTo(panel, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0);
+  tl.fromTo([ttl, live], { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.08 }, 0.2);
+  tl.fromTo(live.querySelector("i"), { opacity: 1 }, { opacity: 0.25, duration: 0.5, ease: "sine.inOut", repeat: Math.floor(D / 0.5) - 1, yoyo: true }, 0.4);
+  R.forEach((row, i) => {
+    const at = 0.25 + i * 0.09;
+    tl.fromTo([row.nm, row.vl, row.chip], { opacity: 0, x: -24 * u }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out", stagger: 0.05 }, at);
+    tl.to(row.st, { rev: 1, duration: 0.9, ease: "power2.inOut", ...RU }, at + 0.1);
+  });
+  tl.to(S, { o: 30, duration: D, ease: "none", ...RU }, 0);
+
+  // ---- 2. the moment: the hero row lifts, its line and chip flip to green
+  const M = 2.75, h = R[hi];
+  tl.to(h.el, { z: 60 * u, scale: 1.035, duration: 0.7, ease: "back.out(1.8)" }, M);
+  tl.to(h.el.querySelector(".bgp"), { opacity: 1, duration: 0.4, ease: "power2.out" }, M);
+  tl.to(h.svg.querySelectorAll(".lng, .areag"), { attr: { opacity: 1 }, duration: 0.35, ease: "power2.out" }, M);
+  tl.to(h.svg.querySelector(".glow"), { attr: { opacity: KEY ? 0 : 0.7 }, duration: 0.35, ease: "power2.out" }, M);
+  tl.to(h.hdg, { attr: { opacity: 1 }, duration: 0.2, ease: "power2.out" }, M);
+  tl.to(h.chip.querySelector(".gf"), { opacity: 1, duration: 0.2, ease: "power2.out" }, M + 0.12);
+  tl.to(h.chip, { color: "#05140B", duration: 0.2, ease: "power2.out" }, M + 0.12);
+  tl.fromTo(h.chip, { scale: 1 }, { scale: 1.16, duration: 0.09, ease: "power2.out", immediateRender: false }, M + 0.12);
+  tl.to(h.chip, { scale: 1, duration: 0.5, ease: "back.out(3)" }, M + 0.21);
+  tl.to(h.vl, { color: GREEN, duration: 0.3, ease: "power2.out" }, M + 0.1);
+  tl.to("#ground .l3", { opacity: MV.alpha ? 0 : 1, duration: 0.8, ease: "power2.out" }, M);
+  R.forEach((row, i) => { if (i !== hi) tl.to(row.el, { opacity: 0.5, duration: 0.6, ease: "power2.inOut" }, M + 0.1); });
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M + 0.12); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.19);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.05, duration: D - M, ease: "power2.inOut", immediateRender: false }, M);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

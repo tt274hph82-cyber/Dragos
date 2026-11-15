@@ -1,0 +1,5 @@
+{ "id": "org-chart", "name": "Org chart new hire", "oneLiner": "a glass team org chart builds from the top down on a dark lit floor: the lead node, the trunk and bus lines draw, the team nodes pop in under them, then the new hire card is held above an empty dashed slot, drops in on a spring, its line draws green and the card lights with a green New hire chip",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["team", "org chart", "hiring", "new hire", "structure", "company", "agents", "roles", "growth", "tree", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says who is on the team or that someone joined ('so I hired my first editor', 'this is the team now', 'my agent team has three departments'): cut in on 'team', the new card drops on the hire's role" }

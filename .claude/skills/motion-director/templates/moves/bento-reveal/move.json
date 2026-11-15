@@ -1,0 +1,5 @@
+{ "id": "bento-reveal", "name": "Bento reveal", "oneLiner": "the brand's screen rises out of depth as the hero tile, then glass bento tiles (the author's cut-out, big glyph badges with one-word labels, a counting stat with a sparkline) fly in from every side and snap into dashed slots around it; the grid clacks shut, a light runs across every tile and the hero rims in the accent",
+  "category": "explain", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["bento", "features", "overview", "product", "everything in one", "toolkit", "what you get", "grid", "launch", "stat", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": false,
+  "say": "when the speaker sums up what a product or offer includes ('it writes, it edits, it publishes', 'here is everything you get'): cut in on the product's name, the tiles land one per item, the clack lands on the last word" }

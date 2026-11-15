@@ -1,0 +1,5 @@
+{ "id": "trending-list", "name": "Glass trending list", "oneLiner": "a trending topics panel on glass (search field, tabs, five ranked topics with post counts) drifts in slow 3D; the brand topic catches a flame, its post count climbs, and it lifts toward camera and hops up the list in two moves while the rows it passes sink, landing at number one lit in the brand colour with a green rank-up chip",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["trending", "viral", "ranking", "number one", "topic", "social", "buzz", "momentum", "list", "climb", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says something started trending or everyone was talking about it ('it was trending by lunch', 'suddenly everyone was posting about it'): cut in on the build-up, the topic lands at number one as they say it. Set topic, countFrom and count to the real story" }

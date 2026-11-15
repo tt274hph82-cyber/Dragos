@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"regions","type":"string","label":"Region:count pairs, comma separated (North America, South America, Europe, Africa, Middle East, Asia, Oceania)","default":"North America:4200,Europe:3100,Asia:2600,South America:900"},
+  {"id":"hero","type":"number","label":"Which region pulses (1 = the first)","default":1},
+  {"id":"prefix","type":"string","label":"Before each count","default":""},
+  {"id":"suffix","type":"string","label":"After each count","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 50%; left: 30%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 70%; height: 55%; left: -28%; top: 52%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #tilt, #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the slab: a pane of dark glass the map is lit inside */
+  #slab { position: absolute; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--u) * 36);
+    background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.035) 45%, rgba(255,255,255,.02));
+    -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 50) calc(var(--u) * 110) calc(var(--u) * -40) rgba(0,0,0,.8); }
+  .is-alpha #slab { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, white 20%), color-mix(in srgb, var(--surface) 94%, white 6%)); }
+  #slab::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -60%) - 12%), rgba(255,255,255,.16) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 12%)); }
+  #map { position: absolute; transform: translateZ(calc(var(--u) * 2)); }
+  #chips { position: absolute; inset: 0; transform-style: preserve-3d; transform: translateZ(calc(var(--u) * 24)); }
+
+  .chip { position: absolute; box-sizing: border-box; white-space: nowrap; opacity: 0; padding: calc(var(--u) * 16) calc(var(--u) * 24) calc(var(--u) * 18); border-radius: calc(var(--u) * 24);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 62%, rgba(255,255,255,.5)), color-mix(in srgb, var(--surface) 86%, transparent) 60%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.15), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.75); }
+  .is-alpha .chip { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 70%, white 30%), color-mix(in srgb, var(--surface) 88%, white 12%)); }
+  .chip .n { font-family: var(--font-display); line-height: 1; letter-spacing: -0.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .chip .n .fx { font-size: .62em; }
+  .chip .nm { margin-top: calc(var(--u) * 8); font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 66%, transparent); }
+  .chip.hero { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 65%, transparent), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.75), 0 0 calc(var(--u) * 60) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .chip.hero .n { text-shadow: 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .chip.hero .nm { color: var(--ink); }
+
+  .is-key #slab, .is-key .chip { -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .is-key #slab { background: color-mix(in srgb, var(--surface) 90%, white 10%); }
+  .is-key .chip { background: color-mix(in srgb, var(--surface) 80%, white 20%); }
+  .is-key .chip.hero { box-shadow: inset 0 0 0 calc(var(--u) * 2) var(--accent); }
+  .is-key .chip.hero .n { text-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="tilt"><div id="cam">
+    <div id="slab"></div>
+    <canvas id="map"></canvas>
+    <div id="chips"></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/land.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.getElementById(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, KEY = root.classList.contains("is-key");
+  const cs = getComputedStyle(root), C = (n) => cs.getPropertyValue(n).trim();
+  // colours as rgb for the canvas
+  const probe = document.createElement("i"); root.appendChild(probe);
+  const rgb = (c) => { probe.style.color = c; const m = getComputedStyle(probe).color.match(/[\d.]+/g) || [255, 255, 255]; return m.slice(0, 3).map(Number); };
+  const ACC = rgb(C("--accent") || "#ff5533"), INK = rgb(C("--ink") || "#ffffff"); probe.remove();
+
+  // ---- the regions and their boxes (lon, lat)
+  const REG = {
+    na: { c: [-100, 46], test: (lo, la) => lo < -30 && la > 12 },
+    sa: { c: [-60, -14], test: (lo, la) => lo < -30 && la <= 12 },
+    me: { c: [45, 26], test: (lo, la) => lo >= 34 && lo < 62 && la > 12 && la < 40 },
+    eu: { c: [16, 52], test: (lo, la) => lo >= -30 && lo < 60 && la >= 36 },
+    af: { c: [20, 4], test: (lo, la) => lo >= -30 && lo < 55 && la < 36 },
+    oc: { c: [134, -25], test: (lo, la) => lo >= 110 && la <= -11 },
+    as: { c: [96, 42], test: (lo, la) => lo >= 60 || (lo >= 45 && la >= 36) },
+  };
+  const ALIAS = [[/south|latin|brazil/i, "sa"], [/north|usa|\bus\b|canada|america/i, "na"], [/middle|gulf|arab/i, "me"], [/europe|\beu\b|\buk\b/i, "eu"], [/africa/i, "af"], [/oceania|australia|pacific/i, "oc"], [/asia|india|china|japan/i, "as"]];
+  const keyOf = (name) => { for (const [re, k] of ALIAS) if (re.test(name)) return k; return null; };
+  let rs = String(v.regions || "").split(",").map((s) => { const i = s.lastIndexOf(":"); return i < 0 ? null : { name: s.slice(0, i).trim(), val: Number(s.slice(i + 1).trim()) }; })
+    .filter((r) => r && r.name && isFinite(r.val) && keyOf(r.name));
+  const seen = new Set(); rs = rs.filter((r) => { const k = keyOf(r.name); if (seen.has(k)) return false; seen.add(k); r.k = k; return true; }).slice(0, 6);
+  if (!rs.length) rs = [{ name: "North America", val: 4200, k: "na" }, { name: "Europe", val: 3100, k: "eu" }, { name: "Asia", val: 2600, k: "as" }];
+  const hero = Math.max(0, Math.min(rs.length - 1, (Math.round(+v.hero) || 1) - 1));
+  const fmt = (x) => Math.round(x).toLocaleString("en-US");
+  const fx = (s) => (s ? `<span class="fx">${s}</span>` : "");
+
+  // ---- the map rectangle
+  const L = window.LAND, cols = L.rows[0].length, rows = L.rows.length;
+  // the whole slab stays inside the frame with even side margins (its glass edge is part of the object)
+  const fl = P ? (MV.alpha ? safe.left : 100 * u) : SQ ? 110 * u : 170 * u, fr = P ? (MV.alpha ? W - safe.right : W - 100 * u) : SQ ? W - 110 * u : W - 170 * u;
+  const mw = fr - fl, pitch = mw / cols, mh = pitch * rows;
+  const mx = fl, my = Math.round((P ? (MV.alpha ? safe.top + 330 * u : H / 2 - mh / 2) : SQ ? H / 2 - mh / 2 + 10 * u : H / 2 - mh / 2 + 10 * u));
+  const cv = $("map"); cv.width = Math.ceil(mw + pitch * 4); cv.height = Math.ceil(mh + pitch * 4);
+  Object.assign(cv.style, { left: mx - pitch * 2 + "px", top: my - pitch * 2 + "px", width: cv.width + "px", height: cv.height + "px" });
+  const ctx = cv.getContext("2d");
+  const pad = 46 * u;
+  Object.assign($("slab").style, { left: mx - pad + "px", top: my - pad + "px", width: mw + pad * 2 + "px", height: mh + pad * 2 + "px" });
+  const lx = (lon) => mx + ((lon + 180) / 360) * mw, ly = (lat) => my + ((L.lat0 - lat) / L.step + 0.5) * pitch;
+
+  // ---- the dots, each tagged with the region it belongs to
+  const idx = Object.fromEntries(rs.map((r, i) => [r.k, i]));
+  const dots = [];
+  for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) {
+    if (L.rows[j][i] !== "1") continue;
+    const lon = -180 + (i + 0.5) * 3, lat = L.lat0 - j * L.step;
+    let k = null; for (const kk of ["na", "sa", "me", "eu", "af", "oc", "as"]) if (REG[kk].test(lon, lat)) { k = kk; break; }
+    const x = mx + (i + 0.5) * pitch, y = my + (j + 0.5) * pitch;
+    dots.push({ x: x - (mx - pitch * 2), y: y - (my - pitch * 2), r: k != null && idx[k] != null ? idx[k] : -1, gx: x, gy: y });
+  }
+  // each lit region: its centre on screen and how far its dots reach
+  const R = rs.map((r, i) => { const [lo, la] = REG[r.k].c, cx = lx(lo), cy = ly(la); let far = 0; dots.forEach((d) => { if (d.r === i) far = Math.max(far, Math.hypot(d.gx - cx, d.gy - cy)); }); return { ...r, i, cx, cy, far: far + pitch, lit: 0, cnt: 0 }; });
+  const H0 = R[hero];
+
+  // ---- the chips: centred on their regions, nudged until nothing overlaps
+  const chips = $("chips"), nFS = Math.round((P ? 54 : 48) * u), lFS = Math.round((P ? 36 : 36) * u);
+  const box = [];
+  let fx0 = P ? (MV.alpha ? safe.left : 50 * u) : 50 * u, fx1 = P ? (MV.alpha ? W - safe.right : W - 50 * u) : W - 50 * u;
+  fx0 = Math.max(fx0, mx - pad * 0.4); fx1 = Math.min(fx1, mx + mw + pad * 0.4);
+  const fy0 = P ? (MV.alpha ? safe.top : 60 * u) : 50 * u, fy1 = P ? (MV.alpha ? H - safe.bottom : H - 60 * u) : H - 50 * u;
+  [H0, ...R.filter((r) => r !== H0)].forEach((r) => {
+    const el = document.createElement("div"); el.className = "chip" + (r.i === hero ? " hero" : "");
+    el.innerHTML = `<div class="n">${fx(v.prefix)}<span class="k">${fmt(r.val)}</span>${fx(v.suffix)}</div><div class="nm"></div>`;
+    el.querySelector(".nm").textContent = r.name;
+    el.querySelector(".n").style.fontSize = (r.i === hero ? nFS * 1.2 : nFS) + "px"; el.querySelector(".nm").style.fontSize = lFS + "px";
+    chips.appendChild(el);
+    MV.fitText(el.querySelector(".nm"), (P ? 300 : 320) * u, 22);
+    const w = el.offsetWidth, h = el.offsetHeight; el.style.width = w + "px";
+    // the spot nearest the region that hides the fewest of the pulsing region's dots, never on another chip
+    const gap = 14 * u, cands = [[0, 0]];
+    for (const rr of [0.55, 0.85, 1.15]) for (let k = 0; k < 12; k++) { const a = (k / 12) * Math.PI * 2; cands.push([Math.cos(a) * (w / 2 + 20 * u) * rr * 1.6, Math.sin(a) * (h / 2 + 20 * u) * rr * 1.6]); }
+    let best = null, bestS = Infinity;
+    for (const [dx, dy] of cands) {
+      let x = r.cx + dx - w / 2, y = r.cy + dy - h / 2;
+      x = Math.max(fx0, Math.min(fx1 - w, x)); y = Math.max(fy0, Math.min(fy1 - h, y));
+      if (box.some((b) => x < b.x + b.w + gap && x + w + gap > b.x && y < b.y + b.h + gap && y + h + gap > b.y)) continue;
+      let sc = 0; for (const d of dots) if (d.r >= 0 && d.gx > x && d.gx < x + w && d.gy > y && d.gy < y + h) sc += d.r === hero ? 2 : 0.15;
+      sc += Math.hypot(x + w / 2 - r.cx, y + h / 2 - r.cy) / (pitch * 0.9);
+      if (sc < bestS) { bestS = sc; best = [x, y]; }
+    }
+    if (!best) best = [Math.max(fx0, Math.min(fx1 - w, r.cx - w / 2)), Math.max(fy0, Math.min(fy1 - h, r.cy - h / 2))];
+    box.push({ x: best[0], y: best[1], w, h });
+    Object.assign(el.style, { left: best[0] + "px", top: best[1] + "px", transformOrigin: `${r.cx - best[0]}px ${r.cy - best[1]}px` });
+    r.el = el; r.k2 = el.querySelector(".k");
+  });
+
+  // ---- one state, drawn every frame
+  const S = { sweep: 0, hot: 0, w1: -1, w2: -1, dim: 0 };
+  const dr = pitch * 0.34;
+  const render = () => {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    const sx = S.sweep * (cv.width + 200 * u) - 100 * u;
+    for (const d of dots) {
+      const base = Math.max(0, Math.min(1, (sx - d.x) / (120 * u)));
+      if (base <= 0) continue;
+      let a = 0.2 * base, col = INK, rad = dr, glow = 0;
+      if (d.r >= 0) {
+        const g = R[d.r], dist = Math.hypot(d.gx - g.cx, d.gy - g.cy), front = g.lit * g.far;
+        const on = Math.max(0, Math.min(1, (front - dist) / (pitch * 3)));
+        a = a + (0.85 - a) * on * (1 - S.dim * (d.r === hero ? 0 : 0.35));
+        if (d.r === hero && S.hot > 0) {
+          const wave = (w) => (w < 0 ? 0 : Math.max(0, 1 - Math.abs(dist - w * (g.far + pitch * 6)) / (pitch * 3.5)));
+          const pk = Math.max(wave(S.w1), wave(S.w2));
+          col = INK.map((c, k) => c + (ACC[k] - c) * S.hot); a = Math.min(1, a + pk * 0.3); rad = dr * (1 + pk * 0.45); glow = (0.35 + pk * 0.6) * S.hot * on;
+        }
+      }
+      if (glow > 0 && !KEY) { ctx.fillStyle = `rgba(${ACC.join(",")},${(glow * 0.35).toFixed(3)})`; ctx.beginPath(); ctx.arc(d.x, d.y, rad * 2.4, 0, 6.2832); ctx.fill(); }
+      ctx.fillStyle = `rgba(${col.map(Math.round).join(",")},${a.toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(d.x, d.y, rad, 0, 6.2832); ctx.fill();
+    }
+  };
+  const RD = { onUpdate: render };
+  render();
+
+  // ---- slow drift: the slab leans back and turns
+  gsap.set("#tilt", { transformOrigin: `${W / 2}px ${my + mh / 2}px` });
+  gsap.set("#cam", { transformOrigin: `${P ? W / 2 : (H0.cx + W / 2) / 2}px ${(H0.cy + my + mh / 2) / 2}px` });
+  tl.fromTo("#tilt", { rotationX: P ? 10 : 18, rotationY: -8 }, { rotationX: P ? 4 : 8, rotationY: 6, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: W * 0.08, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the slab arrives, the dots sweep in grey
+  tl.fromTo("#slab", { opacity: 0, scale: 0.92, y: 40 * u }, { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: "expo.out" }, 0);
+  tl.to(S, { sweep: 1, duration: 1.0, ease: "power2.inOut", ...RD }, 0.05);
+
+  // ---- 2. region by region: the dots light outward from its centre and its count arrives
+  const T0 = 0.75, step = Math.min(0.4, 1.3 / R.length);
+  R.forEach((r, j) => {
+    const at = T0 + j * step;
+    tl.to(r, { lit: 1, duration: 0.8, ease: "power2.out", ...RD }, at);
+    tl.fromTo(r.el, { opacity: 0, scale: 0.6, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, at + 0.12);
+    tl.fromTo(r.el, { y: 18 * u }, { y: 0, duration: 0.6, ease: "back.out(2)" }, at + 0.12);
+    tl.fromTo(r, { cnt: 0 }, { cnt: r.val, duration: 0.9, ease: "power3.out", onUpdate: () => { r.k2.textContent = fmt(r.cnt); } }, at + 0.12);
+  });
+
+  // ---- 3. the moment: one region turns the accent and pulses outward twice, its chip lifts
+  const M = T0 + (R.length - 1) * step + 0.85;
+  tl.to(S, { hot: 1, duration: 0.3, ease: "power2.out", ...RD }, M);
+  tl.fromTo(S, { w1: 0 }, { w1: 1, duration: 0.9, ease: "power1.out", immediateRender: false, ...RD }, M);
+  tl.fromTo(S, { w2: 0 }, { w2: 1, duration: 0.9, ease: "power1.out", immediateRender: false, ...RD }, M + 0.55);
+  tl.to(S, { dim: 1, duration: 0.6, ease: "power2.inOut", ...RD }, M + 0.1);
+  tl.to(H0.el, { scale: 1.14, duration: 0.1, ease: "power2.out" }, M);
+  tl.to(H0.el, { scale: 1.06, duration: 0.6, ease: "back.out(2.6)" }, M + 0.1);
+  // the other chips step back by their text only: the chip body stays solid so no dots show through it
+  R.forEach((r) => { if (r.i !== hero) tl.to(r.el.children, { opacity: 0.55, duration: 0.6, ease: "power2.inOut" }, M + 0.15); });
+  tl.fromTo("#slab", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.1, ease: "power2.inOut", immediateRender: false }, M + 0.1);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.07);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D - M + 0.3, ease: "power2.inOut", immediateRender: false }, M - 0.3);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

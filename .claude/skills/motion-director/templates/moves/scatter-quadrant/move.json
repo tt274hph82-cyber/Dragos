@@ -1,0 +1,5 @@
+{ "id": "scatter-quadrant", "name": "Scatter quadrant", "oneLiner": "a glass plot stands up off a lit floor with two axes and a dashed cross; a field of glass beads drops in out of the camera one by one, then the brand drops last as a lit disc into the top right quadrant, which floods with the accent while the field falls back and the camera pushes in",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["scatter", "plot", "quadrant", "positioning", "market", "competitors", "standout", "two axes", "comparison", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says everyone else trades one thing for another and the brand gets both ('they are fast or good, we are both'): cut in on the market, the brand dot lands on the word that claims the spot" }

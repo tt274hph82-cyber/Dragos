@@ -1,0 +1,5 @@
+{ "id": "review-suggestion", "name": "Glass code review suggestion applied", "oneLiner": "a code editor on glass with one line flagged: a review thread opens under it with a suggested change in red and green, Apply suggestion is clicked and turns green, the line retypes itself as the fix and flushes green, then the thread folds into a Suggestion applied line",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["code review", "review", "suggestion", "pull request", "code", "fix", "developer", "feedback", "ai coding", "agent", "editor", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says the AI reviewed the code and suggested a fix ('it left one comment, I hit apply and it was fixed', 'the reviewer caught it'): the thread opens on 'it suggested', the line rewrites on 'apply'" }

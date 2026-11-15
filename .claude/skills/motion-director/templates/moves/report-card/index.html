@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"rows","type":"string","label":"Subjects and grades: Subject:Grade, comma separated (2 to 5)","default":"Planning:A,Execution:A-,Consistency:B+,Results:A"},
+  {"id":"final","type":"string","label":"The final grade, ringed in green","default":"A+"},
+  {"id":"student","type":"string","label":"Student name (empty uses the brand name)","default":""},
+  {"id":"heading","type":"string","label":"Title of the card","default":"Report card"},
+  {"id":"term","type":"string","label":"Line under the title","default":"End of term"},
+  {"id":"finalLabel","type":"string","label":"Label of the last row","default":"Final grade"},
+  {"id":"centre","type":"string","label":"Keep the authored framing on 9:16 (off)","default":"off"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Serif"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  @font-face { font-family: "MV Hand"; src: url("assets/fonts/CoveredByYourGrace.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #160f0a; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; }
+  /* ground: a brown leather desk under a warm lamp */
+  #ground { position: absolute; inset: -10%; background: #2b1d14 url(assets/leather.jpg) center / calc(var(--u) * 820); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 45% at 42% 32%, rgba(255,220,170,.18), transparent 72%), radial-gradient(130% 100% at 50% 45%, transparent 38%, rgba(0,0,0,.7)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); perspective-origin: 50% 45%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* an open manila folder under the card */
+  #folder { position: absolute; border-radius: calc(var(--s) * 10); background: #c9a878 url(assets/manila.jpg) center / calc(var(--s) * 900);
+    box-shadow: 0 calc(var(--s) * 6) calc(var(--s) * 10) rgba(0,0,0,.45), calc(var(--s) * 20) calc(var(--s) * 40) calc(var(--s) * 60) rgba(0,0,0,.5); }
+  #folder::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 50%; background: linear-gradient(rgba(255,240,210,.1), transparent); }
+  #folder::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: calc(var(--s) * 3); background: linear-gradient(rgba(90,60,25,.35), rgba(255,240,210,.3)); }
+  #tab { position: absolute; border-radius: calc(var(--s) * 10) calc(var(--s) * 10) 0 0; background: #c9a878 url(assets/manila.jpg) center / calc(var(--s) * 900); }
+  #card { position: absolute; }
+  #pen { position: absolute; filter: drop-shadow(calc(var(--s) * 10) calc(var(--s) * 18) calc(var(--s) * 10) rgba(0,0,0,.55)); }
+  #cfx { position: absolute; inset: 0; --lift: 1; filter: drop-shadow(0 calc(var(--s) * (2 + var(--lift) * 8)) calc(var(--s) * (3 + var(--lift) * 8)) rgba(0,0,0,.35)) drop-shadow(calc(var(--s) * (6 + var(--lift) * 16)) calc(var(--s) * (14 + var(--lift) * 34)) calc(var(--s) * (20 + var(--lift) * 24)) rgba(0,0,0,.4)); }
+  /* the card: heavy cream stock, a real paper scan */
+  #stock { position: absolute; inset: 0; border-radius: calc(var(--s) * 6); background: #F1EAD8 url(assets/paper-white.jpg) center / calc(var(--s) * 640); background-blend-mode: multiply; overflow: hidden; }
+  #stock::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(100% 70% at 28% 12%, rgba(255,248,232,.32), transparent 65%), linear-gradient(160deg, transparent 52%, rgba(80,55,25,.13)); }
+  /* everything printed: the brand colour for the rules and the crest, near black for the type, through a real ink scan */
+  #print { position: absolute; inset: 0; mix-blend-mode: multiply; -webkit-mask: linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url(assets/inkmask.png) 0 0 / calc(var(--s) * 260); -webkit-mask-composite: source-over;
+    mask: linear-gradient(rgba(0,0,0,.8), rgba(0,0,0,.8)), url(assets/inkmask.png) 0 0 / calc(var(--s) * 260); mask-composite: add; }
+  .t { position: absolute; white-space: nowrap; line-height: 1; color: #221c16; }
+  .serif { font-family: "MV Serif", serif; }
+  .lab { font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #6b6052; }
+  .rule { position: absolute; background: var(--accent); }
+  .hair { position: absolute; background: rgba(34,28,22,.28); }
+  /* blue pen ink, written in by hand */
+  .hand { position: absolute; white-space: nowrap; line-height: 1; font-family: "MV Hand", cursive; color: #1c2a5c; mix-blend-mode: multiply; }
+  /* the stamp's ink: a real coverage scan over a floor, so the ring prints unevenly like rubber on card */
+  #ring { position: absolute; overflow: visible; mix-blend-mode: multiply;
+    -webkit-mask: linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.62)), url(assets/inkmask.png) 0 0 / calc(var(--s) * 150); -webkit-mask-composite: source-over;
+    mask: linear-gradient(rgba(0,0,0,.62), rgba(0,0,0,.62)), url(assets/inkmask.png) 0 0 / calc(var(--s) * 150); mask-composite: add; }
+  #sheen { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
+    background: linear-gradient(118deg, transparent calc(var(--sh, -40%) - 14%), rgba(255,255,255,.8) var(--sh, -40%), transparent calc(var(--sh, -40%) + 14%)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="tab"></div><div id="folder"></div>
+    <img id="pen" src="assets/pen.png" alt="" />
+    <div id="card"><div id="cfx"><div id="stock"><div id="print"></div><div id="ink"></div><svg id="ring" xmlns="http://www.w3.org/2000/svg"></svg><div id="sheen"></div></div></div></div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H } = MV;
+  await Promise.all([document.fonts.load('900 60px "MV Serif"'), document.fonts.load('italic 400 30px "MV Serif"'), document.fonts.load('60px "MV Hand"')]);
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait;
+
+  // ---- the card, designed at 760 x 1000 (portrait in every frame), on an open folder
+  const CW = 760, CH = 1000;
+  const s = P ? Math.min((W * 0.86) / CW, (H * 0.66) / CH) : Math.min((H * 0.86) / CH, (W * 0.5) / CW);
+  root.style.setProperty("--s", s + "px");
+  const cw = CW * s, ch = CH * s, cx = W / 2 - (P ? 0 : 60 * u), cy = H / 2;
+  const card = $("#card"); Object.assign(card.style, { left: (cx - cw / 2) + "px", top: (cy - ch / 2) + "px", width: cw + "px", height: ch + "px" });
+  // the folder: a bit bigger than the card, the tab peeking out at the top
+  const fw = cw * 1.22, fh = ch * 1.12, fx = cx - fw / 2 + cw * 0.06, fy = cy - fh / 2 + ch * 0.03;
+  Object.assign($("#folder").style, { left: fx + "px", top: fy + "px", width: fw + "px", height: fh + "px" });
+  Object.assign($("#tab").style, { left: (fx + fw * 0.58) + "px", top: (fy - 50 * s) + "px", width: (fw * 0.3) + "px", height: (70 * s) + "px" });
+  gsap.set(["#folder", "#tab"], { rotation: 4, transformOrigin: `${cx - fx}px ${cy - fy}px` });
+
+  // the pen that wrote it, put down beside the card
+  const pen = $("#pen"), pw = P ? W * 0.62 : H * 0.62;
+  pen.style.width = pw + "px";
+  if (P) Object.assign(pen.style, { left: (W - pw * 0.78) + "px", top: (cy + ch / 2 + 70 * u) + "px" });
+  else Object.assign(pen.style, { left: (cx + cw / 2 + 60 * u) + "px", top: (cy + 40 * u) + "px" });
+  gsap.set(pen, { rotation: P ? -14 : -58, transformOrigin: "50% 50%" });
+  const pr = $("#print"), ink = $("#ink");
+  const S = (n) => n * s + "px";
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  const t = (par, cls, txt, x, y, size, extra) => { const e = document.createElement("div"); e.className = cls; e.textContent = txt; Object.assign(e.style, { left: S(x), top: S(y), fontSize: S(size) }, extra || {}); par.appendChild(e); return e; };
+  const box = (par, cls, x, y, w, h) => { const e = document.createElement("div"); e.className = cls; Object.assign(e.style, { left: S(x), top: S(y), width: S(w), height: S(h) }); par.appendChild(e); return e; };
+  const M = 58, IW = CW - M * 2;
+  const brand = (v.brandName || "").trim();
+
+  // header: a printed crest (a ring and the initial, in the brand colour), the title, the term
+  const crest = box(pr, "", M, 52, 116, 116);
+  Object.assign(crest.style, { position: "absolute", borderRadius: "50%", boxShadow: `inset 0 0 0 ${S(6)} var(--accent), inset 0 0 0 ${S(12)} #F1EAD8, inset 0 0 0 ${S(14)} var(--accent)` });
+  const ini = t(crest, "t serif", ((v.student || brand).trim().charAt(0) || "").toUpperCase(), 0, 0, 62, { fontWeight: 900, color: "var(--accent)" });
+  ini.style.left = (116 * s / 2 - tw(ini) / 2) + "px"; ini.style.top = S(26);
+  const hx = M + 116 + 30, hw = CW - M - hx;
+  const hd = t(pr, "t serif", v.heading || "", hx, 56, 66, { fontWeight: 900, letterSpacing: "-0.01em" }); MV.fitText(hd, hw * s, 20 * s);
+  const tm = t(pr, "t serif", v.term || "", hx, 142, 36, { fontStyle: "italic", color: "#5a4e40" }); MV.fitText(tm, hw * s, 16 * s);
+  box(pr, "rule", M, 200, IW, 5); box(pr, "rule", M, 212, IW, 2);
+  // the student
+  t(pr, "t lab", "Student", M, 238, 28);
+  const st = t(pr, "t serif", (v.student || brand).trim(), M, 290, 48, { fontWeight: 700 }); MV.fitText(st, IW * s, 20 * s);
+  // the table
+  const rows = String(v.rows || "").split(",").map((r) => r.trim()).filter(Boolean).slice(0, 5).map((r) => { const k = r.lastIndexOf(":"); return k > 0 ? [r.slice(0, k).trim(), r.slice(k + 1).trim()] : [r, ""]; });
+  const GX = CW - M - 210;                               // the grade column
+  const thY = 372;
+  t(pr, "t lab", "Subject", M, thY, 28); const gl = t(pr, "t lab", "Grade", GX + 20, thY, 28);
+  box(pr, "rule", M, thY + 44, IW, 3);
+  const top0 = thY + 52, bot0 = 818, RH = (bot0 - top0) / Math.max(1, rows.length);
+  const grades = [];
+  rows.forEach(([sub, gr], i) => {
+    const y = top0 + i * RH;
+    const se = t(pr, "t serif", sub, M + 4, y + RH / 2 - 24, 46); MV.fitText(se, (GX - M - 30) * s, 18 * s);
+    se.style.top = (y + RH / 2) * s - parseFloat(se.style.fontSize) * 0.55 + "px";
+    box(pr, "hair", M, y + RH - 1, IW, 1.6);
+    const ge = t(ink, "hand", gr, GX + 40, y + RH / 2 - 44, 86); MV.fitText(ge, 170 * s, 20 * s);
+    ge.style.top = (y + RH / 2) * s - parseFloat(ge.style.fontSize) * 0.56 + "px";
+    grades.push(ge);
+  });
+  box(pr, "hair", GX, top0 - 8, 1.6, bot0 - top0 + 8);
+  // the final row
+  box(pr, "rule", M, bot0 + 4, IW, 3); box(pr, "rule", M, bot0 + 12, IW, 1.4);
+  const fy0 = bot0 + 22, fyH = CH - 40 - fy0;
+  const fl = t(pr, "t serif", v.finalLabel || "", M + 4, fy0 + fyH / 2 - 28, 54, { fontWeight: 900 }); MV.fitText(fl, (GX - M - 40) * s, 20 * s);
+  fl.style.top = (fy0 + fyH / 2) * s - parseFloat(fl.style.fontSize) * 0.55 + "px";
+  const fg = t(ink, "hand", (v.final || "").trim(), GX + 34, fy0 + fyH / 2 - 60, 124); MV.fitText(fg, 160 * s, 30 * s);
+  const fgW = tw(fg), fgS = parseFloat(fg.style.fontSize);
+  fg.style.left = ((GX + 105) * s - fgW / 2) + "px"; fg.style.top = (fy0 + fyH / 2) * s - fgS * 0.55 + "px";
+  // the green ring: a rubber-stamped double ring in green ink, centred on the final grade
+  const ringC = [(GX + 105), fy0 + fyH / 2], RR = Math.min(96, fyH * 0.62);
+  const ring = $("#ring"), rsz = RR * 2.6;
+  Object.assign(ring.style, { left: S(ringC[0] - rsz / 2), top: S(ringC[1] - rsz / 2), width: S(rsz), height: S(rsz) });
+  ring.setAttribute("viewBox", `0 0 ${rsz} ${rsz}`);
+  const NS = "http://www.w3.org/2000/svg", c0 = rsz / 2;
+  ring.innerHTML = `<g id="rg" fill="none" stroke="#1FA85C">
+      <circle cx="${c0}" cy="${c0}" r="${RR}" stroke-width="${RR * 0.13}"/>
+      <circle cx="${c0}" cy="${c0}" r="${RR * 0.8}" stroke-width="${RR * 0.035}"/>
+      ${Array.from({ length: 36 }, (_, k) => { const a = k / 36 * Math.PI * 2; return `<line x1="${c0 + Math.cos(a) * RR * 1.1}" y1="${c0 + Math.sin(a) * RR * 1.1}" x2="${c0 + Math.cos(a) * RR * 1.18}" y2="${c0 + Math.sin(a) * RR * 1.18}" stroke-width="${RR * 0.03}"/>`; }).join("")}
+    </g>`;
+  const rg = ring.querySelector("#rg");
+
+  // ---- timeline
+  // 0.0 the card is laid on the folder; 0.95 the grades are written in row by row; 3.0 the final grade;
+  // 3.62 the green ring is stamped on it (the moment): the card gives, a sheen crosses; slow drift throughout
+  tl.fromTo(card, { x: -220 * u, y: 640 * u, rotation: -16 }, { x: 0, y: 0, rotation: -2, duration: 0.95, ease: "expo.out", immediateRender: true }, 0);
+  tl.fromTo("#cfx", { "--lift": 1 }, { "--lift": 0, duration: 0.8, ease: "power2.out", immediateRender: true }, 0.05);
+  tl.to(card, { rotation: -1, duration: 2.5, ease: "sine.inOut" }, 0.95);
+  // writing: each grade is inked left to right with a pen's pace
+  const wr = (e, t0, d) => tl.fromTo(e, { clipPath: "inset(-30% 104% -30% -6%)" }, { clipPath: "inset(-30% -6% -30% -6%)", duration: d, ease: "power1.inOut", immediateRender: true }, t0);
+  const per = Math.min(0.5, 1.9 / Math.max(1, grades.length));
+  grades.forEach((e, i) => wr(e, 0.95 + i * per, per * 0.72));
+  const TF = 0.95 + grades.length * per + 0.15;
+  wr(fg, TF, 0.5);
+  const TS = TF + 0.62;
+  gsap.set(ring, { opacity: 0 });
+  tl.set(ring, { opacity: 1 }, TS);
+  gsap.set(rg, { transformOrigin: "50% 50%" });
+  tl.fromTo(rg, { scale: 1.45, rotation: -14 }, { scale: 1, rotation: -6, duration: 0.17, ease: "power3.in", transformOrigin: "50% 50%", immediateRender: false }, TS);
+  // the card gives under the stamp, and the camera with it
+  tl.to(card, { scale: 0.985, duration: 0.06, ease: "power2.out" }, TS + 0.15); tl.to(card, { scale: 1, duration: 0.6, ease: "expo.out" }, TS + 0.21);
+  tl.to("#stage", { scale: 1.012, duration: 0.06, ease: "power2.out" }, TS + 0.15); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, TS + 0.21);
+  tl.fromTo("#sheen", { "--sh": "-40%" }, { "--sh": "150%", duration: 1.1, ease: "power2.inOut", immediateRender: true }, TS + 0.25);
+  // the camera drifts in 3D, easing toward the final row
+  tl.fromTo("#cam", { rotationX: 20, rotationZ: -3, scale: 0.97, y: 30 * u }, { rotationX: 10, rotationZ: -0.5, scale: 1.06, y: -40 * u * (P ? 1 : 0.5), duration: D, ease: "sine.inOut", transformOrigin: "50% 60%", immediateRender: true }, 0);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -30 * u, y: -40 * u, duration: D, ease: "sine.inOut" }, 0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

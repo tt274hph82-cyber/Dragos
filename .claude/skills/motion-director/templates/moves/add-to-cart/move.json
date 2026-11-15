@@ -1,0 +1,5 @@
+{ "id": "add-to-cart", "name": "Glass add to cart", "oneLiner": "a product page on glass with a real product cut-out lit in its bay: a pointer presses Add to cart, a ripple runs through the button, the product lifts out and arcs into the cart icon, the cart bumps with a ring as its badge pops in, and the button floods green: Added",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["add to cart", "cart", "ecommerce", "shop", "store", "buy", "purchase", "product", "conversion", "checkout", "impulse buy", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says people buy it or add it to their cart ('they added it straight away', 'one tap and it is in the cart'): the press lands on 'add' or 'buy', the badge pops as the item lands in the cart; swap img for their own product cut-out" }

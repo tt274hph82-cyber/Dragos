@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"axes","type":"string","label":"The skills on the spokes, comma separated (3 to 8)","default":"Speed,Quality,Cost,Reach,Ease"},
+  {"id":"nameA","type":"string","label":"The grey shape ({brand} = the brand name)","default":"Everyone else"},
+  {"id":"dataA","type":"string","label":"Its value on each spoke, same order","default":"62,70,52,46,58"},
+  {"id":"nameB","type":"string","label":"The shape that overtakes it ({brand} = the brand name)","default":"{brand}"},
+  {"id":"dataB","type":"string","label":"Its value on each spoke","default":"92,86,80,94,88"},
+  {"id":"max","type":"number","label":"The value at the outer ring","default":100}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 46%; left: 34%; top: 4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 70%; height: 55%; left: -28%; top: 52%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #tilt, #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the plate: a disc of frosted glass the web is etched into */
+  #plate { position: absolute; border-radius: 50%; overflow: hidden;
+    background: radial-gradient(80% 80% at 35% 25%, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16), 0 calc(var(--u) * 50) calc(var(--u) * 110) calc(var(--u) * -40) rgba(0,0,0,.8); }
+  .is-alpha #plate { background: radial-gradient(80% 80% at 35% 25%, color-mix(in srgb, var(--surface) 72%, white 28%), color-mix(in srgb, var(--surface) 90%, white 10%) 60%); }
+  #plate::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #web { position: absolute; left: 0; top: 0; overflow: visible; }
+  .ax { position: absolute; white-space: nowrap; font-weight: 800; line-height: 1; color: color-mix(in srgb, var(--ink) 72%, transparent); text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(0,0,0,.5); }
+  #legend { position: absolute; display: flex; gap: calc(var(--u) * 18); white-space: nowrap; }
+  .key { display: flex; align-items: center; gap: .5em; padding: calc(var(--u) * 16) calc(var(--u) * 26); border-radius: calc(var(--u) * 40); font-weight: 700; line-height: 1;
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .is-alpha .key { background: color-mix(in srgb, var(--surface) 82%, white 18%); }
+  .key i { width: .55em; height: .55em; border-radius: 50%; flex: none; }
+  .key.b { color: var(--ink); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 60%, transparent), 0 0 calc(var(--u) * 40) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 60%, transparent); }
+
+  .is-key #plate { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--surface) 86%, white 14%); }
+  .is-key .ax { text-shadow: none; }
+  .is-key #glowB, .is-key #pulse { display: none; }
+  .is-key .key.b { box-shadow: inset 0 0 0 calc(var(--u) * 2) var(--accent); }
+  .is-key .ax, .is-key .key { color: color-mix(in srgb, var(--ink) 74%, var(--surface)); }
+  .is-key .key.b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="tilt"><div id="cam">
+    <div id="plate"></div>
+    <svg id="web" width="{{W}}" height="{{H}}" viewBox="0 0 {{W}} {{H}}">
+      <defs>
+        <radialGradient id="gFill" gradientUnits="userSpaceOnUse"><stop offset="0" class="f0" /><stop offset="1" class="f1" /></radialGradient>
+        <filter id="fGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="16" /></filter>
+      </defs>
+      <g id="grid"></g>
+      <polygon id="shA" stroke-linejoin="round" />
+      <polygon id="pulse" fill="none" stroke-linejoin="round" opacity="0" />
+      <polygon id="glowB" fill="none" filter="url(#fGlow)" stroke-linejoin="round" />
+      <polygon id="shB" fill="url(#gFill)" stroke-linejoin="round" />
+      <g id="dots"></g>
+    </svg>
+    <div id="labs"></div>
+    <div id="legend"><div class="key a"><i></i><span></span></div><div class="key b"><i></i><span></span></div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.getElementById(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, KEY = root.classList.contains("is-key");
+  const cs = getComputedStyle(root), C = (n) => cs.getPropertyValue(n).trim();
+  const ACC = C("--accent"), INK = C("--ink") || "#fff";
+  document.querySelectorAll(".f0").forEach((s) => { s.style.stopColor = ACC; s.style.stopOpacity = 0.25; });
+  document.querySelectorAll(".f1").forEach((s) => { s.style.stopColor = `color-mix(in srgb, ${ACC} 70%, white)`; s.style.stopOpacity = 0.6; });
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  const brand = v.brandName || "";
+  let axes = list(v.axes).filter((s) => s.length).slice(0, 8);
+  let A = list(v.dataA).map(Number), Bd = list(v.dataB).map(Number);
+  if (axes.length < 3 || A.length < axes.length || Bd.length < axes.length || ![...A.slice(0, axes.length), ...Bd.slice(0, axes.length)].every(isFinite)) {
+    axes = ["Speed", "Quality", "Cost", "Reach", "Ease"]; A = [62, 70, 52, 46, 58]; Bd = [92, 86, 80, 94, 88]; }
+  const n = axes.length; A = A.slice(0, n); Bd = Bd.slice(0, n);
+  const mx = +v.max > 0 ? +v.max : Math.max(...A, ...Bd);
+  const nameA = String(v.nameA || "").split("{brand}").join(brand), nameB = String(v.nameB || "").split("{brand}").join(brand);
+
+  // ---- the axis labels first: their widths decide how big the web can be
+  const labFS = Math.round((P ? 44 : 40) * u), labs = $("labs");
+  const ang = (i) => -Math.PI / 2 + (i / n) * Math.PI * 2;
+  const LB = axes.map((t) => { const e = document.createElement("div"); e.className = "ax"; e.textContent = t; e.style.fontSize = labFS + "px"; labs.appendChild(e); MV.fitText(e, (P ? 280 : 300) * u, 24); const r = e.getBoundingClientRect(); return { e, w: r.width, h: r.height }; });
+  const g = 44 * u;
+  // the legend under the web
+  const legend = $("legend"), kA = legend.querySelector(".a"), kB = legend.querySelector(".b");
+  kA.querySelector("span").textContent = nameA; kB.querySelector("span").textContent = nameB;
+  kA.querySelector("i").style.background = `color-mix(in srgb, ${INK} 60%, transparent)`; kB.querySelector("i").style.background = ACC; kB.querySelector("i").style.boxShadow = `0 0 ${12 * u}px ${ACC}`;
+  legend.style.fontSize = (P ? 40 : 36) * u + "px";
+  [kA, kB].forEach((k) => MV.fitText(k.querySelector("span"), (P ? 330 : 360) * u, 22));
+  if (!nameA) kA.style.display = "none"; if (!nameB) kB.style.display = "none";
+  const lgW = legend.getBoundingClientRect().width, lgH = legend.getBoundingClientRect().height;
+
+  const fl = P ? safe.left - (MV.alpha ? 0 : 40 * u) : SQ ? 60 * u : 300 * u, fr = P ? W - safe.right + (MV.alpha ? 0 : 40 * u) : SQ ? W - 60 * u : W - 300 * u;
+  const ft = P ? safe.top + (MV.alpha ? 30 : 60) * u : 60 * u, fb = (P ? H - safe.bottom : H - 60 * u) - lgH - 50 * u;
+  const cx = (fl + fr) / 2;
+  // the largest radius whose labels still fit the box
+  const fits = (R, cy) => LB.every((L, i) => { const a = ang(i), x = cx + Math.cos(a) * (R + g), y = cy + Math.sin(a) * (R + g), c = Math.cos(a), s = Math.sin(a);
+    const lx = Math.abs(c) < 0.2 ? x - L.w / 2 : c > 0 ? x : x - L.w, ly = Math.abs(s) < 0.2 ? y - L.h / 2 : s > 0 ? y : y - L.h;
+    return lx >= fl && lx + L.w <= fr && ly >= ft && ly + L.h <= fb; });
+  let R = 80 * u, cy = (ft + fb) / 2;
+  for (let r = (P ? 460 : 420) * u; r > 80 * u; r -= 4 * u) { if (fits(r, cy)) { R = r; break; } }
+  LB.forEach((L, i) => { const a = ang(i), x = cx + Math.cos(a) * (R + g), y = cy + Math.sin(a) * (R + g), c = Math.cos(a), s = Math.sin(a);
+    L.x = Math.abs(c) < 0.2 ? x - L.w / 2 : c > 0 ? x : x - L.w; L.y = Math.abs(s) < 0.2 ? y - L.h / 2 : s > 0 ? y : y - L.h;
+    Object.assign(L.e.style, { left: L.x + "px", top: L.y + "px" }); });
+  // the legend sits under the lowest label
+  const lowest = Math.max(cy + R, ...LB.map((L) => L.y + L.h));
+  Object.assign(legend.style, { left: cx - lgW / 2 + "px", top: lowest + 44 * u + "px" });
+  Object.assign($("plate").style, { left: cx - R * 1.1 + "px", top: cy - R * 1.1 + "px", width: R * 2.2 + "px", height: R * 2.2 + "px" });
+
+  // ---- the web: rings, spokes
+  const NS = "http://www.w3.org/2000/svg";
+  const mk = (tag, a, parent) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); parent.append(e); return e; };
+  const pt = (i, f) => [cx + Math.cos(ang(i)) * R * f, cy + Math.sin(ang(i)) * R * f];
+  const poly = (fs) => fs.map((f, i) => pt(i, f).map((q) => q.toFixed(1)).join(",")).join(" ");
+  const rings = [0.25, 0.5, 0.75, 1].map((f) => mk("polygon", { points: poly(axes.map(() => f)), fill: "none", stroke: INK, "stroke-opacity": f === 1 ? 0.32 : 0.13, "stroke-width": (f === 1 ? 2.5 : 1.6) * u }, $("grid")));
+  const spokes = axes.map((_, i) => { const [x, y] = pt(i, 1); return mk("line", { x1: cx, y1: cy, x2: x, y2: y, stroke: INK, "stroke-opacity": 0.16, "stroke-width": 1.6 * u }, $("grid")); });
+  const gF = $("gFill"); gF.setAttribute("cx", cx); gF.setAttribute("cy", cy); gF.setAttribute("r", R);
+  const sw = (P ? 7 : 6) * u;
+  const shA = $("shA"), shB = $("shB"), glowB = $("glowB"), pulse = $("pulse");
+  shA.style.fill = `color-mix(in srgb, ${INK} ${MV.alpha ? 26 : 16}%, transparent)`; shA.style.stroke = `color-mix(in srgb, ${INK} 62%, transparent)`; shA.setAttribute("stroke-width", sw * 0.7);
+  shB.style.stroke = `color-mix(in srgb, ${ACC} 70%, white)`; shB.setAttribute("stroke-width", sw);
+  glowB.style.stroke = ACC; glowB.setAttribute("stroke-width", sw * 3.2);
+  pulse.style.stroke = `color-mix(in srgb, ${ACC} 50%, white)`; pulse.setAttribute("stroke-width", 3 * u);
+  const dotsA = axes.map(() => mk("circle", { r: sw * 0.9, fill: `color-mix(in srgb, ${INK} 80%, transparent)` }, $("dots")));
+  const dotsB = axes.map(() => mk("circle", { r: sw * 1.3, fill: "#fff", stroke: ACC, "stroke-width": 4 * u }, $("dots")));
+
+  // ---- one state: how far each shape has grown (B can spring past its values a touch)
+  const S = { a: 0, b: 0 };
+  const fA = A.map((x) => Math.max(0, Math.min(1.05, x / mx))), fB = Bd.map((x) => Math.max(0, Math.min(1.05, x / mx)));
+  const render = () => {
+    // B grows spoke by spoke in a quick ripple, so it pushes out past A rather than scaling as one
+    const gb = fB.map((f, i) => f * Math.max(0, Math.min(1.2, S.b * 1.25 - (i / n) * 0.25)));
+    const ga = fA.map((f) => f * S.a);
+    shA.setAttribute("points", poly(ga)); shB.setAttribute("points", poly(gb)); glowB.setAttribute("points", poly(gb));
+    ga.forEach((f, i) => { const [x, y] = pt(i, f); dotsA[i].setAttribute("cx", x); dotsA[i].setAttribute("cy", y); });
+    gb.forEach((f, i) => { const [x, y] = pt(i, f); dotsB[i].setAttribute("cx", x); dotsB[i].setAttribute("cy", y); });
+  };
+  const RD = { onUpdate: render };
+  render();
+  pulse.setAttribute("points", poly(fB));
+
+  // ---- slow 3D drift: the plate leans back and turns
+  gsap.set("#tilt", { transformOrigin: `${cx}px ${cy}px` });
+  gsap.set("#cam", { transformOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#tilt", { rotationX: 16, rotationY: -10 }, { rotationX: 6, rotationY: 8, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: W * 0.08, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the plate and its web open, the labels arrive
+  tl.fromTo("#plate", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.9, ease: "expo.out" }, 0);
+  rings.forEach((e, i) => tl.fromTo(e, { scale: 0.2, opacity: 0, svgOrigin: `${cx} ${cy}` }, { scale: 1, opacity: 1, svgOrigin: `${cx} ${cy}`, duration: 0.8, ease: "expo.out" }, 0.08 + i * 0.07));
+  spokes.forEach((e, i) => { const [x, y] = pt(i, 1); tl.fromTo(e, { attr: { x2: cx, y2: cy } }, { attr: { x2: x, y2: y }, duration: 0.7, ease: "expo.out" }, 0.15 + i * 0.04); });
+  LB.forEach((L, i) => tl.fromTo(L.e, { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.35 + i * 0.05));
+  tl.fromTo(kA, { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.6);
+
+  // ---- 2. the grey shape grows to its values
+  tl.fromTo([shA, ...dotsA], { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, 0.55);
+  tl.to(S, { a: 1, duration: 0.9, ease: "expo.out", ...RD }, 0.55);
+
+  // ---- 3. the moment: the brand shape pushes outward past it and springs into place
+  const T2 = 1.5, M = T2 + 0.85;
+  tl.fromTo([shB, glowB, ...dotsB], { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, T2);
+  tl.to(S, { b: 1, duration: 0.85, ease: "power3.in", ...RD }, T2);
+  tl.to(S, { b: 1.04, duration: 0.08, ease: "power2.out", ...RD }, M);
+  tl.to(S, { b: 1, duration: 0.6, ease: "back.out(3)", ...RD }, M + 0.08);
+  dotsB.forEach((d, i) => { tl.fromTo(d, { attr: { r: sw * 1.3 } }, { attr: { r: sw * 2.3 }, duration: 0.08, ease: "power2.out", immediateRender: false }, M + i * 0.04); tl.to(d, { attr: { r: sw * 1.3 }, duration: 0.45, ease: "back.out(3)" }, M + 0.08 + i * 0.04); });
+  tl.fromTo(pulse, { scale: 1, opacity: 0.9, svgOrigin: `${cx} ${cy}` }, { scale: 1.3, opacity: 0, svgOrigin: `${cx} ${cy}`, duration: 0.9, ease: "expo.out", immediateRender: false }, M + 0.02);
+  tl.fromTo(kB, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, M - 0.05);
+  tl.fromTo("#plate", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, M + 0.2);
+  tl.to([shA, ...dotsA], { opacity: 0.5, duration: 0.6, ease: "power2.inOut" }, M + 0.2);
+  tl.to(kA, { opacity: 0.6, duration: 0.6, ease: "power2.inOut" }, M + 0.2);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.07);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.05, duration: D - M + 0.2, ease: "power2.inOut", immediateRender: false }, M - 0.2);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

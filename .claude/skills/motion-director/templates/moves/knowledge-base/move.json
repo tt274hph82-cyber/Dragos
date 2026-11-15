@@ -1,0 +1,5 @@
+{ "id": "knowledge-base", "name": "Knowledge base index", "oneLiner": "three paper documents drop above a glass knowledge base, each dives in and breaks into chunk tiles that fly into its columns of the grid, a light beam sweeps across and every chunk lights as the counter and bar run up, then the status rolls from Indexing to a green Ready",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "paper"], "from": "new",
+  "tags": ["ai", "rag", "knowledge base", "documents", "embeddings", "index", "chunks", "upload", "train", "custom gpt", "second brain", "memory", "files", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says they gave the AI their own documents to learn from ('I loaded every doc we have', 'it reads all your files first'): the paper drops on 'documents', the chunks fly in as they explain, Ready lands on 'and now it knows'" }

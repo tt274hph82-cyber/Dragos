@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"values","type":"string","label":"The value on each tier, comma separated, 3 to 5, bottom (the most people) first","default":"$1,$10,$100,$1,000"},
+  {"id":"labels","type":"string","label":"A short name under each value, same order (empty = none)","default":""},
+  {"id":"glyph","type":"string","label":"Glyph that crowns the top (crown, trophy, star, rocket, spark, coin; empty = crown)","default":"crown"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 30%; top: 0%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2600px; }
+  #rig { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+  .tier { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+  .f { position: absolute; transform-origin: 50% 100%; backface-visibility: visible; }
+  .f svg { position: absolute; inset: 0; overflow: visible; }
+  .f .txt { position: absolute; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; backface-visibility: hidden; }
+  #root .txt { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 5; }
+  #root .txt .val { color: #fff; text-shadow: 0 0 calc(var(--u) * 34) color-mix(in srgb, var(--accent) 90%, transparent), 0 calc(var(--u) * 4) calc(var(--u) * 16) rgba(0,0,0,.5); }
+  #root.is-key > .txt .val { text-shadow: none; }
+  .f .val, #root .txt .val { font-family: var(--font-display); font-weight: 400; line-height: 1; letter-spacing: -0.02em; white-space: nowrap; color: #fff;
+    text-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 14) rgba(0,0,0,.4); }
+  .f .nm, #root .txt .nm { font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; line-height: 1; color: rgba(255,255,255,.78); }
+  #crown { position: absolute; left: 0; top: 0; color: #fff; opacity: 0; filter: drop-shadow(0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent2) 70%, transparent)); }
+  #crown svg { width: 100%; height: 100%; }
+  #bloom { position: absolute; border-radius: 50%; opacity: 0; pointer-events: none; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 70%); filter: blur(calc(var(--u) * 26)); }
+  #ring { position: absolute; border-radius: 50%; opacity: 0; pointer-events: none; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 45%, white); box-sizing: border-box; }
+  #shadow { position: absolute; border-radius: 50%; pointer-events: none; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.7), transparent 70%); }
+  #floor { position: absolute; height: calc(var(--u) * 2); background: linear-gradient(90deg, transparent, rgba(255,255,255,.22) 20%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.22) 80%, transparent); }
+  .is-key #bloom, .is-key #shadow { display: none; }
+  .is-key #crown { filter: none; }
+  .is-key .f .val { text-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="floor"></div>
+  <div id="shadow"></div>
+  <div id="bloom"></div>
+  <div id="stage"><div id="rig"></div></div>
+  <div id="ring"></div>
+  <div id="crown"></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const cs = getComputedStyle(root), ACC = cs.getPropertyValue("--accent").trim(), SURF = cs.getPropertyValue("--surface").trim() || "#1A1820";
+  const list = (x) => String(x || "").split(",").map((s) => s.trim());
+  const glue = (arr) => { const o = []; for (const s of arr) { if (o.length && /^\d{3}\b/.test(s) && /\d$/.test(o[o.length - 1])) o[o.length - 1] += "," + s; else o.push(s); } return o; };
+  let values = glue(list(v.values)).filter((s) => s.length), labels = list(v.labels);
+  const N = Math.max(3, Math.min(5, values.length || 4));
+  while (values.length < N) values.push(""); values = values.slice(0, N); labels = labels.slice(0, N); while (labels.length < N) labels.push("");
+
+  // ---- the frame: where the pyramid stands
+  let bx, by, bw, bh; // the box its projection must fit
+  if (P) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = A ? H * 0.42 - by : H - safe.bottom - by; }
+  else if (SQ) { bx = W * 0.12; bw = W * 0.76; by = H * (A ? 0.12 : 0.17); bh = H * (A ? 0.5 : 0.72); }
+  else { bx = A ? W * 0.55 : W * 0.28; bw = A ? W * 0.4 : W * 0.44; by = H * 0.16; bh = H * 0.72; }
+  // a square stepped pyramid, half-width B at the base, apex height HA; a little gap between tiers shows each one's top
+  const RX = -16, TH0 = -26, TH1 = -12;                       // the camera looks down a little and turns slowly
+  const fac = Math.cos(Math.abs(TH0) * Math.PI / 180) + Math.sin(Math.abs(TH0) * Math.PI / 180);
+  const KH = P && !A ? 2.2 : 1.8, TOPH = (P ? 270 : 250) * u * (A ? 0.72 : 1); // the apex height ratio, and the room the crown and top value need above it
+  const B = Math.min(bw / (2 * fac) * 0.98, (bh - TOPH) / (KH * 0.98)), HA = B * KH, GAP = Math.max(8 * u, B * 0.035);
+  const th = (HA - GAP * (N - 1)) / (N + 0.5); // the top cap is one and a half tiers tall
+  const halfAt = (y) => B * (1 - y / HA);
+  const ox = bx + bw / 2, oy = by + bh - B * Math.sin(-RX * Math.PI / 180) * 0.7;  // the base centre on screen
+  const rig = document.getElementById("rig"); Object.assign(rig.style, { left: ox + "px", top: oy + "px" });
+  const NS = "http://www.w3.org/2000/svg";
+
+  // tint per tier: plain glass at the base, warming to the accent at the top
+  const tint = (i) => (i === N - 1 ? 1 : 0.12 + 0.5 * (i / (N - 1)));
+  const tiers = [];
+  for (let i = 0; i < N; i++) {
+    const y0 = i * (th + GAP), y1 = i === N - 1 ? HA : y0 + th, wb = halfAt(y0), wt = i === N - 1 ? 0 : halfAt(y1), h = y1 - y0;
+    const s = Math.hypot(wb - wt, h), phi = Math.atan2(wb - wt, h) * 180 / Math.PI;
+    const tier = document.createElement("div"); tier.className = "tier"; tier.style.transform = `translateY(${-y0}px)`; rig.append(tier);
+    const faces = [];
+    const k = tint(i), fillTop = `color-mix(in srgb, ${ACC} ${Math.round(k * 100)}%, white ${Math.round((1 - k) * 100)}%)`;
+    for (let q = 0; q < 4; q++) {
+      const f = document.createElement("div"); f.className = "f";
+      Object.assign(f.style, { width: 2 * wb + "px", height: s + "px", left: -wb + "px", top: -s + "px", transform: `rotateY(${q * 90}deg) translateZ(${wb}px) rotateX(${phi}deg)` });
+      const pts = `${wb - wt},0 ${wb + wt},0 ${2 * wb},${s} 0,${s}`, gid = `g${i}${q}`;
+      const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 2 * wb); sv.setAttribute("height", s);
+      const op = KEY ? 1 : A ? 0.82 : 0.62;
+      sv.innerHTML = `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="${fillTop}" stop-opacity="${op * (0.55 + 0.45 * k)}"/><stop offset="1" stop-color="color-mix(in srgb, ${ACC} ${Math.round(k * 85)}%, ${KEY ? SURF : "#111"})" stop-opacity="${op * (0.5 + 0.4 * k)}"/></linearGradient></defs>`
+        + (KEY ? `<polygon points="${pts}" fill="${SURF}"/>` : "")
+        + `<polygon points="${pts}" fill="url(#${gid})"/>`
+        + `<polygon class="shade" points="${pts}" fill="#000" opacity="0"/>`
+        + `<polygon class="lit" points="${pts}" fill="${ACC}" opacity="0"/>`
+        + `<polygon points="${pts}" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="${2 * u}" stroke-linejoin="round"/>`
+        + `<line x1="${wb - wt + 6 * u}" y1="${1.5 * u}" x2="${wb + wt - 6 * u}" y2="${1.5 * u}" stroke="rgba(255,255,255,.9)" stroke-width="${2.5 * u}" stroke-linecap="round"/>`;
+      f.append(sv); tier.append(f);
+      faces.push({ f, q, shade: sv.querySelector(".shade"), lit: sv.querySelector(".lit") });
+    }
+    if (i < N - 1) { // the step's top, a flat square, catching the light
+      const t = document.createElement("div"); t.className = "f";
+      Object.assign(t.style, { width: 2 * wt + "px", height: 2 * wt + "px", left: -wt + "px", top: -2 * wt + "px", transformOrigin: "50% 50%", transform: `translateY(${wt - h}px) rotateX(90deg)` });
+      const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 2 * wt); sv.setAttribute("height", 2 * wt);
+      sv.innerHTML = `<rect width="${2 * wt}" height="${2 * wt}" fill="${KEY ? SURF : "rgba(255,255,255,.16)"}" stroke="rgba(255,255,255,.5)" stroke-width="${2 * u}"/>`;
+      t.append(sv); tier.append(t);
+    }
+    // the value (and name) printed on the front face, in perspective with it
+    const front = faces[0].f, txt = document.createElement("div"); txt.className = "txt";
+    const isTop = i === N - 1, tY = isTop ? s * 0.5 : 0, tH = isTop ? s * 0.5 : s;
+    Object.assign(txt.style, { top: tY + "px", height: tH + "px" });
+    const val = document.createElement("div"); val.className = "val"; val.textContent = values[i];
+    const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = labels[i];
+    txt.append(val); if (labels[i]) txt.append(nm); if (isTop) document.getElementById("root").append(txt); else front.append(txt);
+    const midW = 2 * halfAt(y0 + h * (isTop ? 0.72 : 0.5)) * (isTop ? 0.62 : 0.74);
+    let vfs = Math.min(tH * (labels[i] ? 0.42 : 0.5), (P ? 110 : 96) * u);
+    if (isTop) vfs = (P ? 120 : 104) * u * (A ? 0.75 : 1);
+    val.style.fontSize = Math.round(vfs) + "px"; nm.style.fontSize = Math.round(Math.max(30 * u, vfs * 0.3)) + "px"; nm.style.marginTop = Math.round(vfs * 0.14) + "px";
+    tiers.push({ tier, faces, val, nm, txt, y0, y1, wb, midW, isTop });
+  }
+  tiers.forEach((t) => { if (t.isTop) t.midW = Math.min(bw, B * 2.4); MV.fitText(t.val, t.midW, 20); MV.fitText(t.nm, t.midW, 24); });
+
+  // ---- the crown above the apex, the bloom and ring at the top, the shadow and floor at the base
+  const cS = Math.round(Math.min(B * 0.4, (P ? 130 : 110) * u * (A ? 0.75 : 1)));
+  const crown = document.getElementById("crown"); crown.innerHTML = GLYPH.svg(GLYPH.names.includes(v.glyph) ? v.glyph : "crown", "gl");
+  const apexY = oy - HA * Math.cos(RX * Math.PI / 180) - 10 * u;
+  const TT = tiers[N - 1].txt; TT.style.position = "absolute"; TT.style.top = "0px";
+  const tth = TT.getBoundingClientRect().height;
+  Object.assign(TT.style, { left: ox - 600 * u + "px", width: 1200 * u + "px", top: apexY - 22 * u - tth + "px" });
+  Object.assign(crown.style, { width: cS + "px", height: cS + "px", left: ox - cS / 2 + "px", top: apexY - 22 * u - tth - 10 * u - cS + "px" });
+  const bloom = document.getElementById("bloom"), bS = B * 1.3;
+  Object.assign(bloom.style, { width: bS + "px", height: bS + "px", left: ox - bS / 2 + "px", top: apexY + th * 0.4 - bS / 2 + "px" });
+  const ring = document.getElementById("ring"), rS = th * 1.1;
+  Object.assign(ring.style, { width: rS + "px", height: rS + "px", left: ox - rS / 2 + "px", top: apexY + th * 0.45 - rS / 2 + "px" });
+  const shadow = document.getElementById("shadow"); Object.assign(shadow.style, { width: B * 3.2 + "px", height: B * 0.5 + "px", left: ox - B * 1.6 + "px", top: oy - B * 0.12 + "px" });
+  const floor = document.getElementById("floor"); Object.assign(floor.style, { left: ox - B * 2 + "px", width: B * 4 + "px", top: oy + B * 0.13 + "px" });
+
+  // ---- light: each face's shade follows its angle to a key light at the upper left, as the camera turns
+  const cam = { th: TH0, rx: RX };
+  const paint = () => {
+    rig.style.transform = `rotateX(${cam.rx}deg) rotateY(${cam.th}deg)`;
+    tiers.forEach((t) => t.faces.forEach((f) => { const a = (f.q * 90 + cam.th) * Math.PI / 180; const lam = Math.max(0, Math.sin(a) * -0.75 + Math.cos(a) * 0.65);
+      f.shade.setAttribute("opacity", (0.55 - 0.5 * lam).toFixed(3)); }));
+  };
+  paint();
+  tl.fromTo(cam, { th: TH0 }, { th: TH1, duration: D, ease: "sine.inOut", onUpdate: paint }, 0);
+
+  // ---- the build: tiers drop onto each other from the base up and settle
+  const T0 = 0.15, STEP = N >= 5 ? 0.32 : 0.4;
+  const at = tiers.map((_, i) => T0 + i * STEP + (i === N - 1 ? 0.15 : 0));
+  tl.fromTo(shadow, { opacity: 0, scaleX: 0.5 }, { opacity: A ? 0.5 : 0.9, scaleX: 1, duration: 0.9, ease: "expo.out" }, T0);
+  tl.fromTo(floor, { opacity: 0, scaleX: 0.3 }, { opacity: 1, scaleX: 1, duration: 0.9, ease: "expo.out" }, T0);
+  tiers.forEach((t, i) => {
+    const s = at[i], drop = (P ? 260 : 200) * u;
+    tl.fromTo(t.tier, { y: -t.y0 - drop, opacity: 0 }, { y: -t.y0, opacity: 1, duration: 0.5, ease: "power3.in" }, s);
+    tl.set(t.tier, { opacity: 1 }, s + 0.12);
+    // the landing: a squash, then the light runs over its faces
+    tl.fromTo(t.tier, { scaleY: 1, scaleX: 1, scaleZ: 1 }, { scaleY: 0.9, scaleX: 1.04, scaleZ: 1.04, duration: 0.07, ease: "power2.out", immediateRender: false }, s + 0.5);
+    tl.to(t.tier, { scaleY: 1, scaleX: 1, scaleZ: 1, duration: 0.5, ease: "back.out(3)" }, s + 0.57);
+    t.faces.forEach((f) => { tl.fromTo(f.lit, { attr: { opacity: 0 } }, { attr: { opacity: t.isTop ? 0.55 : 0.4 }, duration: 0.08, ease: "power2.out", immediateRender: false }, s + 0.5);
+      tl.to(f.lit, { attr: { opacity: t.isTop ? 0.3 : 0 }, duration: 0.7, ease: "power2.out" }, s + 0.6); });
+    if (t.isTop) { tl.fromTo(t.txt, { opacity: 0, y: 40 * u, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, s + 0.55); return; }
+    tl.fromTo(t.txt, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, s + 0.45);
+    tl.fromTo(t.val, { scale: 0.7 }, { scale: 1, duration: 0.6, ease: "back.out(2.2)" }, s + 0.45);
+  });
+  // ---- the moment: the top tier lands, floods with light, the crown drops onto the apex and a ring goes out
+  const TOP = at[N - 1] + 0.5;
+  tl.fromTo(bloom, { opacity: 0, scale: 0.5 }, { opacity: A ? 0.55 : 0.85, scale: 1, duration: 0.8, ease: "expo.out" }, TOP);
+  tl.fromTo(ring, { scale: 0.6, opacity: 0.95 }, { scale: 2.6, opacity: 0, duration: 0.9, ease: "expo.out", immediateRender: false }, TOP);
+  tl.fromTo(crown, { y: -120 * u, opacity: 0, scale: 0.6, rotation: -14 }, { y: 0, opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, TOP + 0.15);
+  tl.to(crown, { y: -8 * u, duration: D - TOP - 0.8, ease: "sine.inOut" }, TOP + 0.75);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, TOP); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TOP + 0.07);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.to(["#stage", "#crown", "#bloom", "#shadow", "#ring", tiers[N - 1].txt], { opacity: 0, y: -40 * u, duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

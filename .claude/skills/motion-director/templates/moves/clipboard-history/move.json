@@ -1,0 +1,5 @@
+{ "id": "clipboard-history", "name": "Clipboard history", "oneLiner": "a glass clipboard panel fills as copies land at the top one by one (text, a link, a screenshot), the count ticking, an accent selection walks down to one copy, Return is pressed and the copy lifts out as a pill, arcs across and drops into a white doc on the caret line under a wash of the brand colour",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["clipboard", "copy", "paste", "copy paste", "history", "snippet", "doc", "notes", "productivity", "desktop", "os", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says they copy things all day or paste something in ('I copy it, then just paste it into the doc', 'it keeps everything you copied'): the copies stack on 'copy', the paste lands on 'paste it in'" }

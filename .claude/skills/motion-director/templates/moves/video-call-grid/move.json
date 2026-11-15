@@ -1,0 +1,5 @@
+{ "id": "video-call-grid", "name": "Glass video call grid", "oneLiner": "a video call window on glass: empty slots fill as people join one by one (the brand photo tile, then initials tiles), the participant count ticks, then the speaker tile lifts with a green talking ring and live voice bars while the others settle back",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["video call", "meeting", "call", "team", "remote", "standup", "clients", "people", "join", "speaker", "productivity", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker talks about getting on a call ('I jumped on a call with the team', 'four of us got on a call and I pitched it'): tiles join as they set the scene, the green ring lands on whoever did the talking" }

@@ -1,0 +1,7 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the sheet (reused from certificate)", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the typed ink", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/plastic.jpg", "from": "ambientCG Plastic012A (scanned dark plastic), resized; the platen rubber and the enamel body (reused from receipt-print)", "license": "CC0", "page": "https://ambientcg.com/view?id=Plastic012A" },
+  { "file": "assets/metal.jpg", "from": "ambientCG Metal009 (scanned brushed metal), cropped strip; the paper bail and the type guide (reused from receipt-print)", "license": "CC0", "page": "https://ambientcg.com/view?id=Metal009" },
+  { "file": "assets/fonts/SpecialElite-Regular.ttf", "from": "Special Elite by Astigmatic, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Special+Elite" }
+] }

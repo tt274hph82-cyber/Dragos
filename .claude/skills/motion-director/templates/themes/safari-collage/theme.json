@@ -1,0 +1,14 @@
+{
+  "id": "safari-collage",
+  "name": "Safari collage",
+  "oneLiner": "a maximal torn-paper collage of real CC0 photos: torn strips with white rims, a real 3D boombox printed silver with the brand mark in its deck, a dive into the speaker, a 12-wedge kaleidoscope, a Muybridge eagle flapping, hills panning at four speeds, a title on a torn newspaper peak",
+  "bestFor": "loud, joyful launches; audio, media, creator and consumer AI brands; anything that wants to feel like a music video or a zine; widescreen intros and ads",
+  "motion": "pieces slide in from their own sides (power3.out) and pop (back.out), every cut-out boils on twos, a power3.in dive through the object's speaker, a turning kaleidoscope, a 12 fps frame-cycle eagle, linear parallax, a steps(3) title slam",
+  "ground": "photo",
+  "format": "16:9 (1920x1080)",
+  "length": "12s (10-15s)",
+  "stills": [2.5, 5.6, 11.5],
+  "sound": { "vibe": "playful", "bpm": [104, 112], "ui": "whoosh on slide-ins, the dive, the eagle and the hills, pop on the object, the mark and every animal, shimmer as the kaleidoscope opens and on the URL, one hit on the title" },
+  "recipe": "RECIPE.md",
+  "preview": "preview.jpg"
+}

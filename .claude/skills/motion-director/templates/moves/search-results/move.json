@@ -1,0 +1,5 @@
+{ "id": "search-results", "name": "Search results lift", "oneLiner": "a query types into a clean search pill, enter is pressed, three results unfold on a paper card and the brand's result (its mark, name, domain and tagline) gets ringed in the accent and lifts toward camera while the others fall back",
+  "category": "productivity", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["search", "google it", "results", "ranking", "seo", "number one", "discover", "found", "query", "typing", "3d", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker says 'if you search for...', 'we rank first for...' or 'people find us by typing...': the query types under the words, the brand result lifts as they name it" }

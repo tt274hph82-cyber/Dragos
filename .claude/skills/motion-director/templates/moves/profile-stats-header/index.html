@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Display name (empty: the brand name)","default":""},
+  {"id":"bio","type":"string","label":"Bio line (empty: the brand tagline)","default":""},
+  {"id":"followersFrom","type":"number","label":"Followers it starts on","default":9874},
+  {"id":"followers","type":"number","label":"Followers it rolls to","default":10312},
+  {"id":"posts","type":"number","label":"Posts","default":412},
+  {"id":"following","type":"number","label":"Following","default":186},
+  {"id":"labels","type":"string","label":"The three stat labels, comma separated (posts, followers, following)","default":"Posts,Followers,Following"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #e9e8ec; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ad: color-mix(in srgb, var(--accent) 65%, #000); --ok: #2BD67B; --okd: #17a95c; }
+  /* ground (look): a soft light studio sweep with the brand colour bleeding in from behind the header */
+  #ground { position: absolute; inset: -5%; background:
+    radial-gradient(55% 40% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(60% 45% at 15% 10%, #ffffff, transparent 70%),
+    linear-gradient(180deg, #f1f0f3, #dedce2); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(125% 100% at 50% 45%, transparent 50%, rgba(20,16,30,.22)); }
+  .is-alpha #ground { display: none; }
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 2200); }
+  #card { position: relative; box-sizing: border-box; border-radius: calc(var(--u) * 36); background: #fff; transform-style: preserve-3d;
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(20,16,30,.06), 0 calc(var(--u) * 3) calc(var(--u) * 6) rgba(20,16,30,.08),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(20,16,30,.35), 0 0 calc(var(--u) * 120) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(20,16,30,.06), 0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(0,0,0,.6); }
+  .is-key #card { box-shadow: none; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 5;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.35) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); mix-blend-mode: soft-light; }
+  /* the banner: the brand's colours as lit glass, two lights drifting, the brand logo faint in the corner */
+  #ban { position: relative; border-radius: calc(var(--u) * 36) calc(var(--u) * 36) 0 0; overflow: hidden;
+    background: linear-gradient(120deg, var(--ad), var(--accent) 48%, color-mix(in srgb, var(--accent2) 80%, var(--accent))); }
+  #ban i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 50)); }
+  #ban .b1 { width: 55%; height: 170%; left: -12%; top: -70%; background: color-mix(in srgb, var(--al) 80%, transparent); }
+  #ban .b2 { width: 45%; height: 150%; left: 62%; top: 15%; background: color-mix(in srgb, var(--accent2) 75%, #fff 15%); opacity: .75; }
+  #ban .gl { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.2), transparent 45%, rgba(0,0,0,.18)),
+    repeating-linear-gradient(115deg, rgba(255,255,255,.05) 0 calc(var(--u) * 2), transparent calc(var(--u) * 2) calc(var(--u) * 26)); }
+  #ban img { position: absolute; right: 4%; bottom: 12%; height: 26%; width: auto; opacity: .22; filter: brightness(0) invert(1); }
+  .is-key #ban i { filter: none; opacity: 0; }
+
+  #body { position: relative; }
+  #avw { position: absolute; border-radius: 50%; }
+  #av { position: absolute; inset: 0; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 8) solid #fff;
+    background-color: color-mix(in srgb, var(--accent) 22%, #fff); background-repeat: no-repeat; background-size: 165% auto; background-position: 50% 8%;
+    box-shadow: 0 calc(var(--u) * 14) calc(var(--u) * 28) calc(var(--u) * -10) rgba(20,16,30,.45); }
+  #ring { position: absolute; inset: calc(var(--u) * -9); width: calc(100% + var(--u) * 18); height: calc(100% + var(--u) * 18); transform: rotate(-90deg); overflow: visible; }
+  #nm { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 12); font-weight: 800; color: #15131a; letter-spacing: -0.02em; white-space: nowrap; }
+  #nm svg { flex: none; }
+  #hdl { position: absolute; color: #77737f; white-space: nowrap; font-weight: 500; }
+  #bio { position: absolute; color: #2c2932; white-space: nowrap; font-weight: 500; }
+  /* stats: big numbers, the followers on an odometer */
+  #st { position: absolute; display: flex; }
+  #st .c { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #st .c + .c::before { content: ""; position: absolute; left: 0; top: 18%; bottom: 18%; width: calc(var(--u) * 1.5); background: rgba(20,16,30,.1); }
+  #st .n { display: flex; font-weight: 800; color: #15131a; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1; transform-origin: 50% 70%; }
+  #st .l { color: #77737f; font-weight: 600; white-space: nowrap; }
+  .od { position: relative; overflow: hidden; display: inline-block; height: 1.08em; }
+  .od .strip { display: flex; flex-direction: column; }
+  .od .strip span { display: block; height: 1.08em; line-height: 1.08em; text-align: center; }
+  .od.cm { width: .3em; }
+  #chip { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 6); padding: calc(var(--u) * 7) calc(var(--u) * 16) calc(var(--u) * 7) calc(var(--u) * 11); border-radius: 999px;
+    background: linear-gradient(180deg, #3fe08c, var(--ok) 55%, var(--okd)); color: #fff; font-weight: 800; white-space: nowrap; transform-origin: 50% 100%;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 10) calc(var(--u) * 22) calc(var(--u) * -6) rgba(43,214,123,.6); }
+  .is-key #chip { box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.45); }
+  #chip svg { flex: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="ban"><i class="b1"></i><i class="b2"></i><div class="gl"></div></div>
+    <div id="body">
+      <div id="avw"><svg id="ring" viewBox="0 0 100 100"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--al)"/><stop offset=".55" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent2)"/></linearGradient></defs>
+        <circle id="rc" cx="50" cy="50" r="48" fill="none" stroke="url(#rg)" stroke-width="3.2" stroke-linecap="round"/></svg><div id="av"></div></div>
+      <div id="nm"><span id="nmt"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="var(--accent)"/><path d="M7.4 12.4l3 3 6.2-6.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div id="hdl"></div>
+      <div id="bio"></div>
+      <div id="st"><div class="c"><div class="n" id="n0"></div><div class="l" id="l0"></div></div><div class="c" id="cf"><div class="n" id="n1"></div><div class="l" id="l1"></div></div><div class="c"><div class="n" id="n2"></div><div class="l" id="l2"></div></div></div>
+      <div id="chip"><svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5L12 5.5l6 6" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="chipt"></span></div>
+    </div>
+    <div id="sheen"></div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H, $ = (s) => document.querySelector(s);
+  const WIDE = !P && !SQ;
+  const brand = v.brandName || "";
+  $("#nmt").textContent = v.name || brand;
+  $("#hdl").textContent = v.handle || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  $("#bio").textContent = v.bio || v.tagline || "";
+  if (v.logo) { const im = MV.img(v.logo); $("#ban").appendChild(im); }
+  if (v.people && v.people[0]) $("#av").style.backgroundImage = `url("${v.people[0]}")`;
+  else if (v.mark) { const a = $("#av"); a.style.backgroundImage = `url("${v.mark}")`; a.style.backgroundSize = "62%"; a.style.backgroundPosition = "50% 50%"; }
+  const L = String(v.labels || "").split(",").map((s) => s.trim());
+  ["#l0", "#l1", "#l2"].forEach((id, i) => { $(id).textContent = L[i] || ""; });
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const to = Math.max(0, Math.round(+v.followers || 0)), from = Math.max(0, Math.min(to, Math.round(+v.followersFrom || 0)));
+  $("#n0").textContent = fmt(+v.posts || 0); $("#n2").textContent = fmt(+v.following || 0);
+  $("#chipt").textContent = "+" + fmt(to - from);
+
+  // ---- geometry: a stacked header (9:16, 1:1) or a wide desktop header (16:9)
+  const CW = MV.alpha ? (P ? W - safe.left - safe.right : SQ ? W - 2 * safe.left : Math.min(1240 * u, W - safe.left - safe.right)) : (P ? W - 100 * u : SQ ? W - 110 * u : 1400 * u);
+  const k = CW / (WIDE ? 1400 : P ? 850 : 1000);          // the header's own unit
+  const BH = (WIDE ? (MV.alpha ? 170 : 230) : 300) * k, AV = (WIDE ? 200 : 230) * k, PADX = 54 * k;
+  const card = $("#card"); card.style.width = CW + "px"; $("#ban").style.height = BH + "px";
+  const avw = $("#avw"); Object.assign(avw.style, { width: AV + "px", height: AV + "px", left: PADX + "px", top: -AV * 0.55 + "px" });
+  const nm = $("#nm"), hdl = $("#hdl"), bio = $("#bio"), st = $("#st");
+  nm.style.fontSize = (WIDE ? 52 : 60) * k + "px"; nm.querySelector("svg").style.width = nm.querySelector("svg").style.height = (WIDE ? 40 : 46) * k + "px";
+  hdl.style.fontSize = (WIDE ? 32 : 36) * k + "px"; bio.style.fontSize = (WIDE ? 32 : 36) * k + "px";
+  [...st.querySelectorAll(".n")].forEach((e) => { e.style.fontSize = (WIDE ? 54 : 70) * k + "px"; });
+  [...st.querySelectorAll(".l")].forEach((e) => { e.style.fontSize = (WIDE ? 26 : 30) * k + "px"; e.style.marginTop = (WIDE ? 18 : 20) * k + "px"; });
+  $("#chip").style.fontSize = (WIDE ? 28 : 32) * k + "px"; $("#chip svg").style.width = $("#chip svg").style.height = (WIDE ? 26 : 30) * k + "px";
+  let bodyH, statW, statX, statY;
+  if (WIDE) {
+    // avatar left, name block beside it, stats on the right of the same row
+    const tx = PADX + AV + 36 * k, nameW = CW * 0.36;
+    Object.assign(nm.style, { left: tx + "px", top: 22 * k + "px" }); MV.fitText($("#nmt"), nameW - 60 * k, 12);
+    Object.assign(hdl.style, { left: tx + "px", top: 96 * k + "px" }); MV.fitText(hdl, nameW, 10);
+    Object.assign(bio.style, { left: tx + "px", top: 146 * k + "px" }); MV.fitText(bio, nameW, 10);
+    statW = CW - (tx + nameW) - PADX; statX = CW - PADX - statW; statY = 30 * k; bodyH = 230 * k;
+  } else {
+    const tx = PADX, nameW = CW - 2 * PADX;
+    Object.assign(nm.style, { left: tx + "px", top: AV * 0.5 + 24 * k + "px" }); MV.fitText($("#nmt"), nameW - 70 * k, 12);
+    Object.assign(hdl.style, { left: tx + "px", top: AV * 0.5 + 104 * k + "px" }); MV.fitText(hdl, nameW, 10);
+    Object.assign(bio.style, { left: tx + "px", top: AV * 0.5 + 160 * k + "px" }); MV.fitText(bio, nameW, 10);
+    statW = CW - 2 * PADX; statX = PADX; statY = AV * 0.5 + 250 * k; bodyH = statY + 190 * k;
+  }
+  Object.assign(st.style, { left: statX + "px", top: statY + "px", width: statW + "px", height: (WIDE ? 150 : 160) * k + "px" });
+  [...st.querySelectorAll(".c")].forEach((c, i) => { c.style.flex = i === 1 ? "1.45 1 0" : "1 1 0"; });
+  $("#body").style.height = bodyH + "px";
+  if (!WIDE) { st.style.borderTop = `${1.5 * u}px solid rgba(20,16,30,.08)`; st.style.paddingTop = 20 * k + "px"; }
+
+  // ---- the odometer: one column per character of the new count; digits spin from the old value
+  const n1 = $("#n1"), sTo = fmt(to), sFrom = fmt(from).padStart(sTo.length, " ");
+  // each column is as wide as this font's widest digit, so neighbours never touch
+  let DW = 0; { const t = document.createElement("span"); n1.appendChild(t); for (let q = 0; q < 10; q++) { t.textContent = String(q); DW = Math.max(DW, t.getBoundingClientRect().width); } t.textContent = ","; var CMW = t.getBoundingClientRect().width; t.remove(); }
+  const cols = [];
+  for (let i = 0; i < sTo.length; i++) {
+    const c = sTo[i], f = sFrom[i];
+    const od = document.createElement("span"); od.className = "od" + (c === "," ? " cm" : "");
+    if (c === ",") { od.style.width = CMW + 2 * k + "px"; od.textContent = ","; od.style.opacity = f === "," ? 1 : 0; n1.appendChild(od); cols.push({ comma: true, od, show: f !== "," }); continue; }
+    const strip = document.createElement("span"); strip.className = "strip";
+    const spins = sTo.length - 1 - i;                     // the units spin most, like a real counter
+    const a = f === " " ? -1 : +f, b = +c, turns = Math.min(3, Math.floor(spins / 2)) + (i === sTo.length - 1 ? 2 : 1);
+    const seq = [a < 0 ? "" : String(a)]; let d = a < 0 ? 0 : a;
+    const steps = (b - d + 10) % 10 + 10 * turns - (a < 0 ? 0 : 0);
+    for (let s = 1; s <= steps; s++) { d = (d + 1) % 10; seq.push(String(d)); }
+    if (a < 0) { seq.length = 1; for (let s = 0; s <= b + 10; s++) seq.push(String(s % 10)); }
+    seq.forEach((t) => { const sp = document.createElement("span"); sp.textContent = t; strip.appendChild(sp); });
+    od.appendChild(strip); n1.appendChild(od);
+    od.style.width = DW + 2 * k + "px";
+    cols.push({ strip, n: seq.length - 1, i });
+  }
+  // the chip sits just above the follower number's top right
+  const CH = card.getBoundingClientRect().height;
+
+  // ---- place
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) {
+    if (P) { x = safe.left; y = safe.top + 30 * u; }
+    else if (SQ) { x = safe.left; y = safe.top; }
+    else { x = W - safe.right - CW; y = H - safe.bottom - CH; }
+  } else if (P) y = (H - CH) / 2 - 60 * u;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+  const nr = n1.getBoundingClientRect(), cr = card.getBoundingClientRect(), chip = $("#chip"), chr = chip.getBoundingClientRect();
+  Object.assign(chip.style, { left: Math.min(CW - chr.width - 16 * k, (nr.left + nr.right) / 2 - cr.left - chr.width / 2) + "px", top: (nr.top - cr.top - BH - chr.height - 8 * k) + "px" });
+
+  // ---- in: the header swings up out of depth and lands on a long tail, then drifts
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  tl.fromTo("#card", { z: -600 * u, rotationX: 28, rotationY: -14, y: 120 * u }, { z: 0, rotationX: 8, rotationY: -6, y: 0, duration: 1.0, ease: "expo.out" }, 0.04);
+  tl.fromTo("#card", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, 0.04);
+  tl.to("#card", { rotationX: 3, rotationY: 6, duration: D - 1.05, ease: "sine.inOut" }, 1.04);
+  tl.fromTo("#ban .b1", { x: 0, y: 0 }, { x: 80 * k, y: 20 * k, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ban .b2", { x: 0, y: 0 }, { x: -90 * k, y: -20 * k, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#av", { scale: 0.3, rotation: -35 }, { scale: 1, rotation: 0, duration: 0.65, ease: "back.out(2)" }, 0.3);
+  tl.fromTo(["#nm", "#hdl", "#bio"], { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: "expo.out" }, 0.42);
+  tl.fromTo("#st .c", { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.08, ease: "expo.out" }, 0.55);
+  const rc = $("#rc"), RL = 2 * Math.PI * 48; gsap.set(rc, { strokeDasharray: RL, strokeDashoffset: RL });
+  tl.to(rc, { strokeDashoffset: 0, duration: 0.9, ease: "power2.inOut" }, 0.5);
+
+  // ---- the roll: every digit spins to its new value, the units fastest, all landing on a long tail
+  const R0 = 1.15, RD = 1.5;
+  cols.forEach((c) => {
+    if (c.comma) { if (c.show) tl.to(c.od, { opacity: 1, duration: 0.2, ease: "power2.out" }, R0 + RD * 0.4); return; }
+    // one driver per column: the strip slides, and digits fade as they leave the window (a counter's blur, and no hidden ink)
+    const spans = [...c.strip.children], o = { p: 0 };
+    const draw = () => { gsap.set(c.strip, { yPercent: -100 * o.p / (c.n + 1) }); spans.forEach((sp, j) => { sp.style.opacity = Math.max(0, 1 - Math.abs(j - o.p) * 1.7).toFixed(3); }); };
+    draw();
+    tl.fromTo(o, { p: 0 }, { p: c.n, duration: RD - c.i * 0.05, ease: "expo.inOut", onUpdate: draw }, R0 + c.i * 0.04);
+  });
+  // the landing: the number bumps, a green flash, the gain chip springs up from its corner
+  const LND = R0 + RD;
+  tl.fromTo(n1, { scale: 1 }, { scale: 1.08, duration: 0.08, ease: "power2.out", immediateRender: false }, LND - 0.05);
+  tl.to(n1, { scale: 1, duration: 0.5, ease: "back.out(3)" }, LND + 0.03);
+  tl.fromTo(n1, { color: "#15131a" }, { color: "#17a95c", duration: 0.12, ease: "power2.out", immediateRender: false }, LND - 0.05);
+  tl.to(n1, { color: "#15131a", duration: 0.8, ease: "power2.out" }, LND + 0.5);
+  tl.fromTo(chip, { scale: 0, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.55, ease: "back.out(2.6)" }, LND);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, LND);
+
+  // ---- overlay exit
+  if (MV.alpha) tl.to("#card", { y: (WIDE ? 160 : -160) * u, z: -300 * u, rotationX: WIDE ? 18 : -18, opacity: 0, duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

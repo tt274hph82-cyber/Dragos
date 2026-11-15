@@ -1,0 +1,5 @@
+{ "id": "crm-deal-card", "name": "CRM deal card", "oneLiner": "a sales pipeline card on a warm lit desk: a deal drops into the first stage with its value counting up, lifts and hops down the stages one by one while the other deals make room, lands in Won with a green edge, a green WON stamp thumps on and the header total adds the deal",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["crm", "pipeline", "deal", "sales", "won", "client", "closed", "revenue", "b2b", "agency", "funnel", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says a deal closed or a client signed ('and they signed', 'that one turned into a 24k contract'): cut in as they name the client, the stamp lands on 'signed' or 'closed'" }

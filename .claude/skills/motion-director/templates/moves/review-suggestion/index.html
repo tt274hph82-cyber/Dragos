@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"file","type":"string","label":"File name on the tab","default":"reply.js"},
+  {"id":"before","type":"string","label":"Code lines above the reviewed line, separated by |","default":"async function reply(msg) {"},
+  {"id":"line","type":"string","label":"The reviewed line as it is now","default":"  const text = draft(msg);"},
+  {"id":"fix","type":"string","label":"The suggested line that replaces it","default":"  const text = await ai(msg);"},
+  {"id":"after","type":"string","label":"Code lines below, separated by |","default":"  return text;|}"},
+  {"id":"reviewer","type":"string","label":"Who suggested it","default":"Reviewer"},
+  {"id":"action","type":"string","label":"Words after the name","default":"suggested a change"},
+  {"id":"button","type":"string","label":"Apply button label","default":"Apply suggestion"},
+  {"id":"resolved","type":"string","label":"Line once applied","default":"Suggestion applied"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; --del: #FF6B6B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #glow { position: absolute; border-radius: calc(var(--s) * 30); box-shadow: 0 0 calc(var(--s) * 60) calc(var(--s) * 6) rgba(43,214,123,.55); opacity: 0; }
+  .is-key #glow { display: none; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+
+  #root { --add: #3DDC84; --addb: rgba(61,220,132,.16); --delb: rgba(255,107,107,.16); }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.1); }
+  .dots { position: absolute; display: flex; gap: calc(var(--s) * 12); }
+  .dots i { width: calc(var(--s) * 20); height: calc(var(--s) * 20); border-radius: 50%; background: rgba(255,255,255,.22); box-shadow: inset 0 calc(var(--s) * 1) 0 rgba(255,255,255,.3); }
+  #tab { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22); border-radius: calc(var(--s) * 16) calc(var(--s) * 16) 0 0;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 calc(var(--s) * 2) 0 var(--accent); }
+  .is-key #tab { background: color-mix(in srgb, var(--surface) 80%, white); }
+  #tab svg { flex: none; width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  #fname { font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 34); color: var(--ink); white-space: nowrap; }
+  #rv { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 10); font-weight: 650; font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; }
+  #rv svg { width: calc(var(--s) * 32); height: calc(var(--s) * 32); flex: none; }
+
+  #code { position: absolute; display: flex; flex-direction: column; }
+  .ln { position: relative; flex: none; overflow: hidden; }
+  .ln .bg { position: absolute; inset: 0; }
+  .ln .no { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: flex-end; font-family: var(--mono); font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 34%, transparent); font-variant-numeric: tabular-nums; }
+  .ln .tx { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-family: var(--mono); color: color-mix(in srgb, var(--ink) 88%, transparent); white-space: pre; }
+  .ln .cr { position: absolute; width: calc(var(--s) * 3.5); background: var(--add); opacity: 0; }
+  .ln.hot .bg { background: color-mix(in srgb, var(--accent) 16%, transparent); box-shadow: inset calc(var(--s) * 5) 0 0 var(--accent); }
+  .ln .gb { position: absolute; inset: 0; background: var(--addb); box-shadow: inset calc(var(--s) * 5) 0 0 var(--add); opacity: 0; }
+  .k { color: color-mix(in srgb, var(--accent2) 85%, white); }
+  .f { color: color-mix(in srgb, var(--accent) 35%, white); }
+  .q { color: #9FD8FF; }
+  .pn { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+
+  /* the review thread */
+  .thr { position: relative; flex: none; overflow: hidden; }
+  #card { position: absolute; border-radius: calc(var(--s) * 24); background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12), 0 calc(var(--s) * 16) calc(var(--s) * 40) rgba(0,0,0,.35); overflow: hidden; }
+  .is-key #card { background: color-mix(in srgb, var(--surface) 70%, black); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  #cbar { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--s) * 5); background: var(--accent); }
+  #who { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 14); font-size: calc(var(--s) * 34); white-space: nowrap; }
+  #who b { font-weight: 750; color: var(--ink); }
+  #who span { color: color-mix(in srgb, var(--ink) 52%, transparent); }
+  #who .av { width: calc(var(--s) * 54); height: calc(var(--s) * 54); border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; background: color-mix(in srgb, var(--accent) 30%, transparent); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 60%, transparent); }
+  #who .av svg { width: 58%; height: 58%; }
+  #sug { position: absolute; border-radius: calc(var(--s) * 16); overflow: hidden; background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  #sug .hd { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; padding-left: calc(var(--s) * 20); font-weight: 650; font-size: calc(var(--s) * 31); letter-spacing: .02em; color: color-mix(in srgb, var(--ink) 58%, transparent); border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.08); white-space: nowrap; }
+  #sug .sl { position: absolute; left: 0; right: 0; display: flex; align-items: center; font-family: var(--mono); white-space: pre; color: color-mix(in srgb, var(--ink) 88%, transparent); }
+  #sug .sl.d { background: var(--delb); } #sug .sl.a { background: var(--addb); }
+  #sug .sl .m { flex: none; text-align: center; font-weight: 700; }
+  #sug .sl.d .m { color: var(--del); } #sug .sl.a .m { color: var(--add); }
+  #btn { position: absolute; border-radius: calc(var(--s) * 18); overflow: hidden; }
+  #btn .bg0 { position: absolute; inset: 0; border-radius: inherit; background: rgba(255,255,255,.1); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.25), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.18); }
+  #btn .bg1 { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, #55E597, var(--ok) 55%, #1FB765); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55); transform-origin: 0 50%; }
+  .is-key #btn .bg0 { background: color-mix(in srgb, var(--surface) 82%, white); }
+  #btn .lab { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 12); font-weight: 750; font-size: calc(var(--s) * 34); white-space: nowrap; }
+  #btn .lab svg { width: calc(var(--s) * 32); height: calc(var(--s) * 32); flex: none; }
+  #btn .l0 { color: var(--ink); } #btn .l1 { color: #04150B; opacity: 0; }
+  #rip { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.65), rgba(255,255,255,0) 70%); opacity: 0; }
+  #res { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 14); font-weight: 700; font-size: calc(var(--s) * 34); color: var(--okl); white-space: nowrap; opacity: 0; }
+  #res i { width: calc(var(--s) * 44); height: calc(var(--s) * 44); border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; background: linear-gradient(180deg, var(--okl), var(--ok) 60%); }
+  #res i svg { width: 64%; height: 64%; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="win">
+        <div id="bar" class="ab"><div class="dots"><i></i><i></i><i></i></div>
+          <div id="tab"><svg viewBox="0 0 24 24"><path d="M6 2.8h8l5 5v13.4H6z" fill="none" stroke="var(--al)" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2.8v5h5M9 13h7M9 16.5h5" fill="none" stroke="var(--al)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fname"></span></div>
+          <div id="rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 5.5h16v10H10l-4.5 4v-4H4z"/></svg><span>1</span></div>
+        </div>
+        <div id="code"></div>
+      </div>
+      <div id="cur"><svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.4-4.2 2.9 6.6 3-1.3-2.9-6.5 6.1-.3z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const split = (x) => (x == null || x === "" ? [] : String(x).split("|"));
+  const before = split(v.before).slice(0, 3), after = split(v.after).slice(0, 3);
+  const oldL = String(v.line || ""), newL = String(v.fix || "");
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 80 * u; cR = W - 80 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.22; cR = W * 0.78; zT = H * 0.07; zB = H * 0.9; }
+  const pad = 26, barH = 84, rowH = 62, gut = 64;
+  const TP = 18, WHO = 58, SGY = TP + WHO + 16, SHD = 50, SLH = 58, SGH = SHD + 2 * SLH, BTY = SGY + SGH + 18, BTH = 74, THH = BTY + BTH + 20, RESH = 76;
+  const NL = before.length + 1 + after.length;
+  const DW = 820, DH = barH + 16 + NL * rowH + THH + 14 + 26;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.06 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- chrome
+  box($("#bar"), 0, 0, DW, barH);
+  Object.assign($(".dots").style, { left: S(pad + 6), top: S((barH - 20) / 2) });
+  box($("#tab"), pad + 6 + 84 + 26, 16, null, barH - 16);
+  $("#fname").textContent = v.file || "";
+  const rv = $("#rv"); rv.style.height = S(barH); const rvW = rv.getBoundingClientRect().width / s; box(rv, DW - pad - 6 - rvW, 0);
+  MV.fitText($("#fname"), (DW - pad - rvW - 30 - (pad + 116) - 70) * s, 16);
+
+  // ---- syntax colour
+  const KW = /^(import|from|export|default|async|await|function|const|let|var|return|if|else|for|while|new|class|null|true|false|def|self|in|of|SELECT|FROM|WHERE)$/;
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const hl = (src) => src.replace(/("[^"]*"|'[^']*'|`[^`]*`)|([A-Za-z_$][\w$]*)(?=\s*\()|([A-Za-z_$][\w$]*)|([{}()[\];,.:?=<>!+\-*/]+)|(\s+)|(.)/g, (m, q, f, w, p, sp, o) => {
+    if (q) return `<span class="q">${esc(q)}</span>`;
+    if (f) return KW.test(f) ? `<span class="k">${f}</span>` : `<span class="f">${f}</span>`;
+    if (w) return KW.test(w) ? `<span class="k">${w}</span>` : esc(w);
+    if (p) return `<span class="pn">${esc(p)}</span>`;
+    return esc(m); });
+
+  // ---- one mono size for the code and the suggestion, measured inside the root
+  const code = $("#code"); box(code, 0, barH + 16, DW, NL * rowH + THH);
+  const txL = pad + gut + 18, txW = DW - txL - pad - 10;
+  const CX = pad + gut - 4, CW = DW - CX - pad;                 // the thread card spans the code column
+  const sgW = CW - 2 * 22, smW = 44, sTxW = sgW - smW - 16;
+  let fs = 36 * s;
+  const meas = document.createElement("span"); meas.style.cssText = `position:absolute;visibility:hidden;white-space:pre;font-family:var(--mono);font-size:${fs}px`; root.appendChild(meas);
+  const widest = (arr) => Math.max(...arr.map((t) => { meas.textContent = t || " "; return meas.getBoundingClientRect().width; }));
+  while ((widest([...before, oldL, newL, ...after]) > txW * s || widest([oldL, newL]) > sTxW * s) && fs > 14) { fs -= 1; meas.style.fontSize = fs + "px"; }
+  meas.textContent = "M"; const chW = meas.getBoundingClientRect().width; meas.remove();
+
+  let no = 0;
+  const mkRow = (txt, hot) => {
+    const r = document.createElement("div"); r.className = "ln" + (hot ? " hot" : ""); r.style.height = S(rowH);
+    r.innerHTML = `<div class="bg"></div><div class="gb"></div><div class="no"></div><div class="tx"></div>${hot ? '<div class="tx tx2"></div><i class="cr"></i>' : ""}`;
+    box(r.querySelector(".no"), pad, 0, gut - 8, rowH); r.querySelector(".no").textContent = ++no;
+    const tx = r.querySelector(".tx"); Object.assign(tx.style, { left: S(txL), fontSize: fs + "px" }); tx.innerHTML = `<span>${hl(txt)}</span>`;
+    code.appendChild(r);
+    return r;
+  };
+  const rows = before.map((t) => mkRow(t));
+  const hot = mkRow(oldL, true);
+  const tx2 = hot.querySelector(".tx2"); Object.assign(tx2.style, { left: S(txL), fontSize: fs + "px" }); tx2.innerHTML = `<span>${hl(newL)}</span>`;
+  const cr = hot.querySelector(".cr"); Object.assign(cr.style, { left: S(txL), top: S(rowH / 2), height: fs * 1.1 + "px", marginTop: -fs * 0.55 + "px" });
+  // the thread sits right under the reviewed line
+  const thr = document.createElement("div"); thr.className = "thr"; thr.style.height = S(THH); code.appendChild(thr);
+  thr.innerHTML = `<div id="card"><i id="cbar"></i><div id="who"><span class="av"><svg viewBox="0 0 24 24" fill="var(--al)"><circle cx="12" cy="8.6" r="4.2"/><path d="M3.8 21c.8-4.4 4.2-6.6 8.2-6.6s7.4 2.2 8.2 6.6z"/></svg></span><b></b><span></span></div>
+    <div id="sug"><div class="hd">Suggested change</div><div class="sl d"><span class="m">-</span><span class="t"></span></div><div class="sl a"><span class="m">+</span><span class="t"></span></div></div>
+    <div id="btn"><div class="bg0"></div><div class="bg1"></div><div id="rip"></div><div class="lab l0"><span class="tx0"></span></div>
+      <div class="lab l1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="tx1">Applied</span></div></div>
+    <div id="res"><i><svg viewBox="0 0 24 24" fill="none" stroke="#04150B" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.5l4.2 4.2L18.5 7.6"/></svg></i><span></span></div></div>`;
+  const card = $("#card"); box(card, CX, 8, CW, THH - 20);
+  const who = $("#who"); who.querySelector("b").textContent = v.reviewer || ""; who.querySelector("span:last-child").textContent = v.action || "";
+  box(who, 22, TP, null, WHO); MV.fitText(who, (CW - 44) * s, 18 * s);
+  const sug = $("#sug"); box(sug, 22, SGY, sgW, SGH);
+  sug.querySelector(".hd").style.height = S(SHD);
+  [...sug.querySelectorAll(".sl")].forEach((el, i) => { el.style.top = S(SHD + i * SLH); el.style.height = S(SLH); el.style.fontSize = fs + "px"; el.querySelector(".m").style.width = S(smW); el.querySelector(".t").innerHTML = hl(i ? newL : oldL); });
+  const btn = $("#btn"); const BW = Math.min(sgW, 420); box(btn, 22, BTY, BW, BTH);
+  $(".tx0").textContent = v.button || ""; MV.fitText($(".tx0"), (BW - 40) * s, 18 * s);
+  gsap.set("#btn .bg1", { scaleX: 0 });
+  const res = $("#res"); res.querySelector("span").textContent = v.resolved || ""; box(res, 26, (RESH - 20 - 44) / 2 - 2, null, 48); MV.fitText(res, (CW - 60) * s, 18 * s);
+  after.forEach((t) => rows.push(mkRow(t)));
+  const RP = 300; Object.assign($("#rip").style, { width: S(RP), height: S(RP), left: S(BW * 0.55 - RP / 2), top: S(BTH * 0.55 - RP / 2) });
+  const CU = 60; const cur = $("#cur"); Object.assign(cur.style, { width: S(CU), height: S(CU) });
+  // the click point in #wrap coordinates (the thread's top before it folds)
+  const thrTop = barH + 16 + (before.length + 1) * rowH + 8;
+  const bx = (CX + 22 + BW * 0.55) * s, by = (thrTop + BTY + BTH * 0.55) * s;
+
+  // ---- timing
+  const TT = 0.95, TA = 2.45, TU = TA + 0.3, TY = 0.5, TF = TU + TY + 0.45;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo([".dots", "#tab", "#rv"], { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.18);
+  tl.fromTo([...rows.slice(0, before.length), hot, ...rows.slice(before.length)], { opacity: 0, x: -26 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out", stagger: 0.05 }, 0.28);
+  tl.fromTo(hot.querySelector(".bg"), { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.5, ease: "expo.out" }, 0.62);
+  // the thread opens under the line
+  gsap.set(thr, { height: 0 });
+  gsap.set("#wrap", { height: ch - THH * s, top: cT + THH * s / 2 }); gsap.set("#base", { top: cT + ch + 34 * u - THH * s / 2 });
+  tl.to(thr, { height: THH * s, duration: 0.6, ease: "expo.out" }, TT);
+  tl.to("#wrap", { height: ch, top: cT, duration: 0.6, ease: "expo.out" }, TT);
+  tl.to("#base", { top: cT + ch + 34 * u, duration: 0.6, ease: "expo.out" }, TT);
+  tl.fromTo(card, { opacity: 0, y: -20 * s, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "expo.out" }, TT + 0.05);
+  tl.fromTo(who, { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, TT + 0.18);
+  tl.fromTo([sug.querySelector(".hd"), ...sug.querySelectorAll(".sl")], { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.07 }, TT + 0.26);
+  tl.fromTo(btn, { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, TT + 0.42);
+  // the press
+  tl.fromTo(cur, { x: bx + 220 * s, y: by + 160 * s, opacity: 0 }, { x: bx, y: by, opacity: 1, duration: 0.6, ease: "expo.out" }, TA - 0.62);
+  tl.to(cur, { scale: 0.86, duration: 0.07, ease: "power2.in", transformOrigin: "20% 10%" }, TA); tl.to(cur, { scale: 1, duration: 0.3, ease: "back.out(3)" }, TA + 0.08);
+  tl.to(btn, { scale: 0.96, duration: 0.07, ease: "power2.in" }, TA); tl.to(btn, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TA + 0.08);
+  tl.fromTo("#rip", { scale: 0.1, opacity: 0.9 }, { scale: 1.4, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TA + 0.03);
+  tl.to("#btn .bg1", { scaleX: 1, duration: 0.4, ease: "expo.out" }, TA + 0.06);
+  tl.to("#btn .l0", { opacity: 0, duration: 0.15, ease: "power2.in" }, TA + 0.06);
+  tl.fromTo("#btn .l1", { opacity: 0, y: 10 * s }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, TA + 0.16);
+  tl.to(cur, { x: bx + 140 * s, y: by + 90 * s, opacity: 0, duration: 0.32, ease: "power2.in" }, TA + 0.42);
+  // the line updates: old text slides out, the fix types in, the row flushes green
+  const hx = hot.querySelector(".tx"), gb = hot.querySelector(".gb"), n = Math.max(1, newL.length);
+  tl.to(hx, { opacity: 0, x: -30 * s, duration: 0.18, ease: "power2.in" }, TU - 0.2);
+  tl.set(hx, { visibility: "hidden" }, TU);
+  tl.to(hot.querySelector(".bg"), { opacity: 0, duration: 0.2, ease: "power2.in" }, TU - 0.05);
+  tl.fromTo(gb, { opacity: 0, scaleX: 0, transformOrigin: "0 50%" }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "expo.out" }, TU);
+  gsap.set(tx2, { visibility: "hidden" });
+  tl.set(tx2, { visibility: "visible" }, TU + 0.05);
+  tl.fromTo(tx2, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: TY, ease: `steps(${n})`, immediateRender: false }, TU + 0.05);
+  tl.fromTo(cr, { opacity: 1, x: 0 }, { x: n * chW, duration: TY, ease: `steps(${n})`, immediateRender: false }, TU + 0.05);
+  tl.set(cr, { opacity: 0 }, TU + 0.05 + TY + 0.1);
+  tl.fromTo(hot, { scale: 1 }, { scale: 1.02, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false, transformOrigin: "0% 50%" }, TU + TY + 0.05);
+  tl.to(gb, { opacity: 0.55, duration: 0.8, ease: "power2.out" }, TU + TY + 0.2);
+  tl.to(sug, { opacity: 0.45, duration: 0.3, ease: "power2.out" }, TU);
+  // the thread folds down to a resolved line
+  tl.to([who, sug, btn], { opacity: 0, y: -12 * s, duration: 0.22, ease: "power2.in", stagger: 0.03 }, TF);
+  tl.to(thr, { height: RESH * s, duration: 0.55, ease: "power3.inOut" }, TF + 0.12);
+  tl.to(card, { height: (RESH - 20) * s, duration: 0.55, ease: "power3.inOut" }, TF + 0.12);
+  const shrink = (THH - RESH) * s;
+  tl.to("#wrap", { height: ch - shrink, top: cT + shrink / 2, duration: 0.55, ease: "power3.inOut" }, TF + 0.12);
+  tl.to("#base", { top: cT + ch + 34 * u - shrink / 2, duration: 0.55, ease: "power3.inOut" }, TF + 0.12);
+  tl.to("#cbar", { backgroundColor: "#2BD67B", duration: 0.3, ease: "power2.out" }, TF + 0.3);
+  tl.fromTo(res, { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, TF + 0.4);
+  tl.fromTo(res.querySelector("i"), { scale: 0.3 }, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TF + 0.42);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TU + TY);
+  tl.to("#stage", { scale: 1.012, duration: 0.07, ease: "power2.out" }, TU + TY + 0.05); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TU + TY + 0.12);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"The plates, in order, comma separated (2 to 6)","default":"Idea,Script,Edit,Post"},
+  {"id":"glyphs","type":"string","label":"Glyph per plate, comma separated (spark, pen, cut, send, video, chart...; empty = guessed from each label)","default":""},
+  {"id":"weak","type":"number","label":"The link that breaks, 1-based between plate n and n+1 (0 = none: the chain pulls taut and every plate lights)","default":0},
+  {"id":"layout","type":"string","label":"9:16 only: full (a vertical chain in the safe frame) or top (a horizontal chain in the top ~40%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 15%; top: 26%; background: color-mix(in srgb, var(--accent) 30%, transparent); opacity: .35; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 60%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 62%; top: -10%; background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+  #ground .l4 { width: 50%; height: 34%; background: rgba(255,77,79,.35); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .plate { position: absolute; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 26) calc(var(--u) * 54) calc(var(--u) * -22) rgba(0,0,0,.7); }
+  .is-alpha .plate { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .plate::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.3) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .plate .lit { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--pc) 40%, transparent), color-mix(in srgb, var(--pc) 10%, transparent) 60%);
+    box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--pc) 75%, white), 0 0 calc(var(--u) * 50) color-mix(in srgb, var(--pc) 55%, transparent); }
+  .gt { position: absolute; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.12); }
+  .gt .on { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--pc) 65%, white 35%), var(--pc) 55%, color-mix(in srgb, var(--pc) 70%, black));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.6); }
+  .gt .gl { position: relative; width: 52%; height: 52%; }
+  .lb { position: absolute; font-weight: 800; color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; }
+  .no { position: absolute; font-weight: 800; color: color-mix(in srgb, var(--ink) 38%, transparent); font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: .06em; }
+  #chain { position: absolute; left: 0; top: 0; overflow: visible; transform: translateZ(2px);
+    filter: drop-shadow(0 calc(var(--u) * 8) calc(var(--u) * 7) rgba(0,0,0,.55)); }
+  .is-key .plate { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  .is-key .plate .lit { box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--pc) 75%, white); }
+  .is-key .gt { background: color-mix(in srgb, var(--ink) 12%, var(--surface)); }
+  .is-key #chain { filter: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i></div>
+  <div id="stage"><div id="rig"><div id="plates"></div>
+    <svg id="chain" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="mt" x1="0" y1="0" x2="0.25" y2="1">
+          <stop offset="0" stop-color="#f6f8fb"/><stop offset=".2" stop-color="#cfd4dc"/><stop offset=".44" stop-color="#6b717b"/>
+          <stop offset=".56" stop-color="#3c4048"/><stop offset=".78" stop-color="#b7bdc6"/><stop offset="1" stop-color="#eef1f5"/>
+        </linearGradient>
+        <clipPath id="ct" clipPathUnits="userSpaceOnUse"><rect x="-20000" y="-20000" width="40000" height="20000"/></clipPath>
+      </defs>
+      <g id="Lb"></g><g id="Lm"></g><g id="Lt"></g>
+    </svg>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const RED = "#FF4D4F";
+  // lit plates take the accent; with a weak link the ones that hold are green and the broken side red
+  root.style.setProperty("--pc", +v.weak >= 1 ? "#2BD67B" : v.accent || "#FF6A3D");
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const L = String(v.labels || "Idea,Script,Edit,Post").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 6);
+  while (L.length < 2) L.push(["Idea", "Ship"][L.length]);
+  const N = L.length, GL = String(v.glyphs || "").split(",").map((s) => s.trim());
+  const WEAK = +v.weak >= 1 && +v.weak <= N - 1 ? Math.round(+v.weak) : 0;
+  const VERT = (P && !TOP) || SQ;
+  const USED = new Set(), gly = L.map((l, i) => GLYPH.pick(l, GL[i], i, USED));
+
+  // ---- layout: plates along the axis, the gap between them is the chain
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.42 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.1, x1: W * 0.9, y0: H * 0.07, y1: H * 0.93 } : { x0: W * 0.05, x1: W * 0.95, y0: H * 0.1, y1: H * 0.9 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0;
+  let pw, ph, g;
+  if (VERT) { ph = Math.min(210 * u, RH / (N + 0.7 * (N - 1))); g = ph * 0.7; pw = Math.min(RW, 760 * u, ph * 4.6); }
+  else { pw = Math.min(330 * u, RW / (N + 0.5 * (N - 1)), (RH * 0.8) / 1.05); g = pw * 0.5; ph = pw * 1.05; }
+  const p = g / 2.4, re = 0.78 * p, ie = 0.8 * p, l = 1.53 * p, t = 0.3 * p, hf = 0.72 * l, he = 0.42 * hf;
+  const TW = VERT ? pw : N * pw + (N - 1) * g, THh = VERT ? N * ph + (N - 1) * g : ph;
+  const ox = R.x0 + (RW - TW) / 2, oy = R.y0 + (RH - THh) / 2;
+  const cx = ox + TW / 2, cy = oy + THh / 2;
+  const rad = Math.min(36 * u, Math.min(pw, ph) * 0.16);
+  // the chain runs down the left of a vertical stack, across the top third of a horizontal row
+  const cX = VERT ? ie + re * 0.2 + 26 * u : 0, cY = VERT ? 0 : ph * 0.2;
+
+  const plates = document.getElementById("plates"), PL = [];
+  for (let i = 0; i < N; i++) {
+    const x = VERT ? ox : ox + i * (pw + g), y = VERT ? oy + i * (ph + g) : oy;
+    const el = document.createElement("div"); el.className = "plate"; plates.appendChild(el);
+    Object.assign(el.style, { left: x + "px", top: y + "px", width: pw + "px", height: ph + "px", borderRadius: rad + "px" });
+    let gs, gx, gy, lx, ly, lfs, maxw;
+    if (VERT) { gs = ph * 0.56; gx = cX + re + 34 * u; gy = (ph - gs) / 2; lfs = Math.min(ph * 0.36, 66 * u); lx = gx + gs + 28 * u; ly = (ph - lfs * 1.1) / 2; maxw = pw - lx - 100 * u; }
+    else { gs = pw * 0.36; gx = (pw - gs) / 2; gy = ph * 0.38; lfs = Math.min(pw * 0.15, 52 * u); lx = 0; ly = ph * 0.38 + gs + ph * 0.07; maxw = pw - 40 * u; }
+    el.innerHTML = `<div class="lit"></div><div class="gt" style="left:${gx}px;top:${gy}px;width:${gs}px;height:${gs}px;border-radius:${gs * 0.28}px"><div class="on"></div>${GLYPH.svg(gly[i])}</div>
+      <div class="lb" style="font-size:${lfs}px;top:${ly}px;${VERT ? `left:${lx}px` : "left:0;right:0;text-align:center"}">${L[i]}</div>
+      <div class="no" style="font-size:${Math.max(22 * u, lfs * 0.5)}px;${VERT ? `right:${30 * u}px;top:${(ph - lfs * 0.5) / 2}px` : `right:${pw * 0.42 - 10 * u}px;left:${pw * 0.42 - 10 * u}px;text-align:center;top:${ph * 0.1}px`}">${String(i + 1).padStart(2, "0")}</div>`;
+    const lb = el.querySelector(".lb"); MV.fitText(lb, maxw, 18);
+    PL.push({ el, x, y, lit: el.querySelector(".lit"), on: el.querySelector(".gt .on"), gt: el.querySelector(".gt") });
+  }
+  if (!VERT) PL.forEach((q) => { q.el.querySelector(".no").style.display = "none"; });
+
+  // ---- the chain: per gap, eyelet - edge link - face link - edge link - eyelet. Edge links are drawn twice:
+  // full under everything, then only their near rail over everything, so they thread through the face links and eyelets
+  const svg = document.getElementById("chain"); svg.setAttribute("width", W); svg.setAttribute("height", H); svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const NS = "http://www.w3.org/2000/svg";
+  const f = (n) => n.toFixed(2);
+  const stad = (c, len, hh) => { const r = hh / 2, x0 = c - len / 2, x1 = c + len / 2; return `M${f(x0 + r)},${f(-r)}H${f(x1 - r)}A${f(r)},${f(r)} 0 0 1 ${f(x1 - r)},${f(r)}H${f(x0 + r)}A${f(r)},${f(r)} 0 0 1 ${f(x0 + r)},${f(-r)}Z`; };
+  const half = (c, len, hh, side) => { const r = hh / 2, x0 = c - len / 2, x1 = c + len / 2;
+    return side < 0 ? `M${f(c)},${f(-r)}H${f(x0 + r)}A${f(r)},${f(r)} 0 0 0 ${f(x0 + r)},${f(r)}H${f(c)}` : `M${f(c)},${f(-r)}H${f(x1 - r)}A${f(r)},${f(r)} 0 0 1 ${f(x1 - r)},${f(r)}H${f(c)}`; };
+  const rod = (d) => `<path d="${d}" fill="none" stroke="#14171c" stroke-width="${f(t * 1.22)}" stroke-linecap="round"/>
+    <path d="${d}" fill="none" stroke="url(#mt)" stroke-width="${f(t)}" stroke-linecap="round"/>
+    <path d="${d}" fill="none" stroke="#ffffff" stroke-opacity=".8" stroke-width="${f(t * 0.26)}" stroke-linecap="round" transform="translate(0,${f(-t * 0.2)})"/>
+    <path class="gl" d="${d}" fill="none" stroke="#ffffff" stroke-width="${f(t * 0.7)}" stroke-linecap="round" opacity="0"/>`;
+  // one screen-space wrapper per piece (it can fall), the segment's own frame inside, the piece's local group inside that
+  const piece = (layer, ax, ay, inner, clip) => { const w = document.createElementNS(NS, "g"); document.getElementById(layer).appendChild(w);
+    w.innerHTML = `<g transform="translate(${f(ax)},${f(ay)}) ${VERT ? "rotate(90) scale(1,-1)" : ""}"><g class="lk"${clip ? ' clip-path="url(#ct)"' : ""}>${inner}</g></g>`;
+    return { w, lk: w.querySelector(".lk") }; };
+  const anchors = PL.map((q) => VERT ? { a: [q.x + cX, q.y + ie], b: [q.x + cX, q.y + ph - ie] } : { a: [q.x + ie, q.y + cY], b: [q.x + pw - ie, q.y + cY] });
+  // eyelets: riveted rings with a dark hole
+  const EY = PL.map((q, i) => { const out = [];
+    if (i > 0) out.push(anchors[i].a); if (i < N - 1) out.push(anchors[i].b);
+    return out.map(([ax, ay]) => piece("Lm", ax, ay, `<circle r="${f(re - t)}" fill="rgba(0,0,0,.6)"/>${rod(`M${f(-(re - t / 2))},0a${f(re - t / 2)},${f(re - t / 2)} 0 1 0 ${f(2 * (re - t / 2))},0a${f(re - t / 2)},${f(re - t / 2)} 0 1 0 ${f(-2 * (re - t / 2))},0`)}`)); });
+  const SEG = [];
+  for (let i = 0; i < N - 1; i++) {
+    const [ax, ay] = anchors[i].b;
+    const e1 = [piece("Lb", ax, ay, rod(stad(p, l, he))), piece("Lt", ax, ay, rod(stad(p, l, he)), true)];
+    const fl = piece("Lm", ax, ay, rod(half(2 * p, l, hf, -1))), fr = piece("Lm", ax, ay, rod(half(2 * p, l, hf, 1)));
+    const e2 = [piece("Lb", ax, ay, rod(stad(3 * p, l, he))), piece("Lt", ax, ay, rod(stad(3 * p, l, he)), true)];
+    // local origins for the clink: each link's own centre along the segment
+    e1.forEach((q) => gsap.set(q.lk, { svgOrigin: `${f(p)} 0` })); [fl, fr].forEach((q) => gsap.set(q.lk, { svgOrigin: `${f(2 * p)} 0` })); e2.forEach((q) => gsap.set(q.lk, { svgOrigin: `${f(3 * p)} 0` }));
+    SEG.push({ links: [e1, [fl, fr], e2], fl, fr });
+  }
+
+  // ---- camera
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: VERT ? -12 : -8, rotationX: VERT ? 6 : 12, scale: 0.95, y: 20 * u }, { rotationY: VERT ? 6 : 6, rotationX: VERT ? 2 : 4, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. plate, then its chain clinks out link by link, then the next plate
+  const STEP = Math.min(0.42, 1.3 / Math.max(1, N - 1));
+  const tP = (i) => 0.08 + i * STEP;
+  PL.forEach((q, i) => { const at = tP(i);
+    tl.fromTo(q.el, { scale: 0.82, y: 30 * u, rotationX: -18 }, { scale: 1, y: 0, rotationX: 0, duration: 0.7, ease: "back.out(1.6)" }, at);
+    tl.fromTo(q.el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, at);
+    tl.fromTo(q.gt, { scale: 0.4, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, at + 0.08);
+    EY[i].forEach((e) => { tl.fromTo(e.w, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, at + 0.1); tl.fromTo(e.lk, { scale: 0.3 }, { scale: 1, duration: 0.45, ease: "back.out(2.4)" }, at + 0.1); });
+  });
+  SEG.forEach((s, i) => s.links.forEach((grp, k) => { const at = tP(i) + 0.2 + k * (STEP - 0.12) / 3;
+    grp.forEach((q) => { tl.fromTo(q.w, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, at);
+      tl.fromTo(q.lk, { scale: 0.2, rotation: k === 1 ? 0 : (k ? 30 : -30) }, { scale: 1, rotation: 0, duration: 0.42, ease: "back.out(2.8)" }, at); }); }));
+  const tBuilt = tP(N - 1) + 0.55;
+
+  // ---- 2. the pull: a jolt along the chain, then a glint runs it and lights each plate it reaches
+  const order = []; // [time offset, element kind, ref]
+  let tt = 0; const GS = Math.min(0.12, 1.1 / (N * 5));
+  for (let i = 0; i < N; i++) { order.push(["plate", i, tt]); tt += GS;
+    if (i < N - 1) { SEG[i].links.forEach((grp, k) => { order.push(["link", [i, k], tt]); tt += GS; }); tt += GS * 0.5; } }
+  const T2 = tBuilt + 0.1;
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, T2); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, T2 + 0.07);
+  SEG.forEach((s) => s.links.forEach((grp, k) => grp.forEach((q) => { tl.to(q.lk, { rotation: k === 1 ? 0 : (k ? -6 : 6), duration: 0.06, ease: "power2.out" }, T2); tl.to(q.lk, { rotation: 0, duration: 0.5, ease: "back.out(3)" }, T2 + 0.06); })));
+  const T3 = T2 + 0.2;
+  const tBreak = WEAK ? T3 + order.find((o) => o[0] === "link" && o[1][0] === WEAK - 1 && o[1][1] === 1)[2] : 1e9;
+  const glint = (els, at) => els.forEach((e) => { const gpaths = e.querySelectorAll(".gl"); tl.fromTo(gpaths, { opacity: 0 }, { opacity: 0.95, duration: 0.08, ease: "power2.out", immediateRender: false }, at); tl.to(gpaths, { opacity: 0, duration: 0.35, ease: "power2.in" }, at + 0.08); });
+  order.forEach(([kind, ref, off]) => { const at = T3 + off; if (at > tBreak + 0.001) return;
+    if (kind === "plate") { const q = PL[ref];
+      tl.to(q.lit, { opacity: 1, duration: 0.3, ease: "power2.out" }, at); tl.to(q.on, { opacity: 1, duration: 0.25, ease: "power2.out" }, at);
+      tl.to(q.gt, { color: "#ffffff", duration: 0.2 }, at);
+      tl.fromTo(q.gt, { scale: 1 }, { scale: 1.14, duration: 0.1, ease: "power2.out", immediateRender: false }, at); tl.to(q.gt, { scale: 1, duration: 0.5, ease: "back.out(3)" }, at + 0.1);
+      tl.fromTo(q.el, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.6, ease: "power2.inOut", immediateRender: false }, at);
+      glint(EY[ref].map((e) => e.w), at); }
+    else { const grp = SEG[ref[0]].links[ref[1]]; glint(grp.map((q) => q.w), at); } });
+
+  const tEnd = T3 + tt;
+  if (!WEAK) {
+    // the whole chain is lit: the stage settles, the light pool blooms
+    tl.to("#ground .l1", { opacity: 1, duration: 1, ease: "power2.out" }, tEnd - 0.4);
+    tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, tEnd); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, tEnd + 0.07);
+  } else {
+    // ---- the weak link: it flashes red, cracks open, and everything past it drops away
+    const s = SEG[WEAK - 1], B = tBreak;
+    [s.fl, s.fr].forEach((q) => { const ps = q.lk.querySelectorAll("path:not(.gl)");
+      tl.to(ps[1], { stroke: RED, duration: 0.08 }, B); tl.to(q.lk.querySelector(".gl"), { stroke: RED, opacity: 0.9, duration: 0.08, ease: "power2.out" }, B); });
+    const l4 = document.querySelector("#ground .l4"), bx = anchors[WEAK - 1].b;
+    Object.assign(l4.style, { left: bx[0] - W * 0.25 + "px", top: bx[1] - H * 0.17 + "px" });
+    tl.to(l4, { opacity: 1, duration: 0.3, ease: "power2.out" }, B);
+    tl.to("#stage", { x: 8 * u, duration: 0.035, ease: "power1.inOut", yoyo: true, repeat: 3 }, B + 0.1);
+    const C = B + 0.26;
+    tl.to("#stage", { scale: 1.025, duration: 0.06, ease: "power2.out" }, C); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, C + 0.06);
+    // the two halves spring apart
+    tl.to(s.fl.lk, { rotation: -38, duration: 0.6, ease: "expo.out" }, C);
+    tl.to(s.fl.w, { y: 26 * u, opacity: 0, duration: 0.9, ease: "power2.in" }, C + 0.1);
+    // downstream falls as one rigid piece
+    const fall = [s.fr.w, ...s.links[2].map((q) => q.w)];
+    for (let i = WEAK; i < N; i++) { fall.push(PL[i].el, ...EY[i].map((e) => e.w)); if (i < N - 1) SEG[i].links.flat().forEach((q) => fall.push(q.w)); }
+    tl.to(fall, { y: (VERT ? 240 : 170) * u, duration: 0.75, ease: "power3.in" }, C);
+    tl.to(fall, { opacity: 0.2, duration: 0.6, ease: "power2.in" }, C + 0.2);
+    for (let i = WEAK; i < N; i++) { PL[i].lit.style.setProperty("--pc", RED); PL[i].on.style.setProperty("--pc", RED);
+      tl.to(PL[i].lit, { opacity: 1, duration: 0.2, ease: "power2.out" }, C); }
+  }
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

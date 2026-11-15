@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"myth","type":"string","label":"The claim that gets struck out","default":"You need a big budget to start"},
+  {"id":"truth","type":"string","label":"The correction written above it","default":"You need a first customer"},
+  {"id":"kicker","type":"string","label":"Small section line above","default":"Common belief"},
+  {"id":"marker","type":"string","label":"Marker colour: red, accent or accent2","default":"red"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV News"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  @font-face { font-family: "MV Pen"; src: url("assets/fonts/CoveredByYourGrace.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground (look mode): a real walnut desk under a warm lamp */
+  #ground { position: absolute; inset: -6%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1100); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 45% 40%, rgba(255,214,160,.16), transparent 60%), radial-gradient(130% 100% at 50% 45%, transparent 45%, rgba(0,0,0,.6)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #clip { position: absolute; transform-origin: 50% 0; }
+  #clip-b { position: absolute; inset: 0; }
+  #clip-fx { position: relative; filter: drop-shadow(0 calc(var(--u) * 18) calc(var(--u) * 20) rgba(0,0,0,.45)); }
+  .is-key #clip-fx { filter: drop-shadow(0 calc(var(--u) * 4) 0 #1a1410); }
+  /* the clipping: scanned newsprint, torn top and bottom, scissor-cut sides */
+  #paper { position: absolute; inset: 0; background: #EFE7D6 url(assets/newsprint.jpg) center / calc(var(--u) * 900); isolation: isolate; }
+  #through { position: absolute; left: 6%; right: 6%; top: 8%; height: 84%; background: url(assets/newscol.jpg) center / cover; transform: scaleX(-1); opacity: .05; mix-blend-mode: multiply; }
+  #body { position: absolute; left: var(--pad); right: var(--pad); background: url(assets/newscol.jpg) top center / 100% auto no-repeat; mix-blend-mode: multiply; opacity: .9; }
+  #content { position: relative; padding: var(--pad); padding-bottom: 0; color: #1a1714; }
+  #kicker { font-family: "MV News"; font-weight: 700; font-size: calc(var(--u) * 26); letter-spacing: .22em; text-transform: uppercase; display: flex; align-items: center; gap: calc(var(--u) * 18); white-space: nowrap; }
+  #kicker::after { content: ""; flex: 1; height: calc(var(--u) * 3); background: #1a1714; }
+  #fix { position: relative; }
+  #truth { position: absolute; left: 0; font-family: "MV Pen", cursive; color: var(--ink); line-height: 1.22; white-space: nowrap; filter: url(#bleed); transform-origin: 0 100%; }
+  #truth .tl { width: max-content; }
+  #head { position: relative; text-wrap: balance; font-family: "MV News"; font-weight: 900; line-height: 1.1; letter-spacing: -0.012em; margin: 0; }
+  #rule { height: calc(var(--u) * 2); background: #1a1714; margin-top: calc(var(--u) * 26); }
+  #rule2 { height: calc(var(--u) * 1); background: #1a1714; margin-top: calc(var(--u) * 4); }
+  /* the red marker: felt-tip strokes that sit IN the paper (multiply), the ink crawling on twos */
+  #marks { position: absolute; inset: 0; overflow: visible; pointer-events: none; mix-blend-mode: multiply; filter: url(#bleed); }
+  .is-key #marks { mix-blend-mode: normal; }
+  #marks path { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; opacity: .92; }
+  .tape { position: absolute; opacity: .92; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(0,0,0,.25)); }
+  .is-key .tape { opacity: 1; filter: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.6"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="clip" style="visibility:hidden"><div class="boil" id="clip-b"><div id="clip-fx">
+      <div id="paper"><div id="through"></div><div id="body"></div></div>
+      <div id="content">
+        <div id="kicker"></div>
+        <div id="fix"><div id="truth"></div></div>
+        <div id="head"><span id="htxt"></span></div>
+        <div id="rule"></div><div id="rule2"></div>
+      </div>
+      <svg id="marks"></svg>
+    </div>
+    <img class="tape" id="tp" src="assets/tape-a.png" alt="" style="visibility:hidden" /></div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('900 100px "MV News"'), document.fonts.load('700 30px "MV News"'), document.fonts.load('80px "MV Pen"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const inks = { red: "#C8262B", accent: v.accent, accent2: v.accent2 };
+  document.getElementById("root").style.setProperty("--ink", inks[v.marker] || inks.red);
+
+  // ---- size: one newspaper column, as wide as the safe area allows
+  const availW = W - safe.left - safe.right;
+  const CW = Math.min(availW * (MV.portrait ? 0.98 : 0.6), (MV.portrait ? 900 : 1000) * u);
+  const pad = Math.round(CW * 0.075), inner = CW - pad * 2;
+  const clip = document.getElementById("clip");
+  clip.style.width = CW + "px"; clip.style.setProperty("--pad", pad + "px");
+  document.getElementById("kicker").textContent = v.kicker || "";
+  const htxt = document.getElementById("htxt"); htxt.textContent = (v.myth || "").trim();
+  const head = document.getElementById("head");
+  // the claim: biggest size that keeps it to 3 lines
+  let fs = Math.round(inner * (MV.portrait ? 0.165 : 0.135));
+  head.style.fontSize = fs + "px";
+  const lineCount = () => Math.round(head.getBoundingClientRect().height / (fs * 1.1));
+  const words = MV.words(htxt);
+  while ((lineCount() > 3 || words.some((w) => w.getBoundingClientRect().width > inner)) && fs > 30 * u) { fs -= 2; head.style.fontSize = fs + "px"; }
+
+  // the correction: handwritten, up to 2 lines, in the band reserved above the claim
+  const truth = document.getElementById("truth"), fix = document.getElementById("fix");
+  const tText = (v.truth || "").trim();
+  let ts = Math.round(fs * 0.82); truth.style.fontSize = ts + "px";
+  // at most 2 balanced lines, each its own block (the pen writes them one after the other)
+  const tw = tText.split(/\s+/);
+  const mk = (txt) => { const d = document.createElement("div"); d.className = "tl"; d.textContent = txt; return d; };
+  const setLines = (k) => { truth.innerHTML = ""; if (k === 1 || tw.length < 2) { truth.append(mk(tText)); return; } let best = 1, bd = 1e9; for (let i = 1; i < tw.length; i++) { const a = tw.slice(0, i).join(" ").length, b = tw.slice(i).join(" ").length; if (Math.abs(a - b) < bd) { bd = Math.abs(a - b); best = i; } } truth.append(mk(tw.slice(0, best).join(" ")), mk(tw.slice(best).join(" "))); };
+  setLines(1);
+  if (truth.getBoundingClientRect().width > inner * 0.94) setLines(2);
+  while (truth.getBoundingClientRect().width > inner * 0.94 && ts > 24 * u) { ts -= 2; truth.style.fontSize = ts + "px"; }
+  const tH = truth.getBoundingClientRect().height;
+  fix.style.height = (tH + fs * 0.62) + "px";
+  truth.style.top = (fs * 0.3) + "px"; truth.style.left = (inner * 0.04) + "px"; truth.style.transform = "rotate(-2.5deg)";
+
+  // ---- clipping height and position: content + a band of real body copy
+  const content = document.getElementById("content");
+  const contentH = content.getBoundingClientRect().height;
+  const zTop = safe.top + 34 * u, zBot = MV.alpha ? H - safe.bottom : H - (MV.portrait ? 330 * (W / 1080) : safe.bottom);
+  const bodyH = Math.round(Math.min(inner * 0.9, Math.max(zBot - zTop - contentH - pad * 0.5, CW * 0.14)));
+  const CH = Math.round(contentH + pad * 0.5 + bodyH);
+  clip.style.height = CH + "px"; document.getElementById("clip-fx").style.height = CH + "px";
+  const body = document.getElementById("body"); body.style.top = (contentH + pad * 0.5) + "px"; body.style.height = (bodyH + 4 * u) + "px";
+  const cx = safe.left + availW / 2, cy = (zTop + zBot) / 2;
+  clip.style.left = (cx - CW / 2) + "px"; clip.style.top = Math.max(safe.top, cy - CH / 2) + "px";
+  const r = MV.rand(43), pts = [], step = 10 * u, amp = 9 * u;
+  for (let x = 0; x <= CW; x += step) pts.push([x, r() * amp + Math.sin(x / (90 * u)) * 3 * u]);
+  pts.push([CW, 0], [CW - 3 * u, CH * 0.5], [CW, CH]);
+  for (let x = CW; x >= 0; x -= step) pts.push([x, CH - r() * amp - Math.sin(x / (70 * u)) * 3 * u]);
+  pts.push([0, CH], [2 * u, CH * 0.5]);
+  document.getElementById("paper").style.clipPath = `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(",")})`;
+  const tp = document.getElementById("tp"), tpw = 230 * u;
+  tp.style.width = tpw + "px"; tp.style.left = (CW * 0.5 - tpw / 2) + "px"; tp.style.top = (-tpw * 0.13) + "px"; tp.style.transform = "rotate(-4deg)";
+
+  // ---- the marks, measured off the real line boxes of the claim
+  const svg = document.getElementById("marks"); svg.setAttribute("width", CW); svg.setAttribute("height", CH);
+  const NS = "http://www.w3.org/2000/svg", cb = clip.getBoundingClientRect();
+  const lines = [];
+  words.forEach((w) => { const b = w.getBoundingClientRect(), last = lines[lines.length - 1];
+    if (last && Math.abs(last.top - b.top) < fs * 0.3) last.right = b.right; else lines.push({ left: b.left, right: b.right, top: b.top, bottom: b.bottom }); });
+  const rr = MV.rand(77), j = (a) => (rr() - 0.5) * a;
+  const strikes = lines.map((ln, k) => {
+    // a fast felt-tip stroke: starts a little before the line, rises slightly, overshoots the end
+    const x0 = ln.left - cb.left - fs * 0.12, x1 = ln.right - cb.left + fs * 0.14;
+    const y = (ln.top + ln.bottom) / 2 - cb.top + fs * 0.06;
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", `M ${x0} ${y + fs * 0.05 + j(fs * 0.04)} C ${x0 + (x1 - x0) * 0.3} ${y + j(fs * 0.06)} ${x0 + (x1 - x0) * 0.66} ${y - fs * 0.02 + j(fs * 0.06)} ${x1} ${y - fs * 0.08 + j(fs * 0.03)}`);
+    p.setAttribute("stroke-width", Math.max(4, fs * 0.11)); p.style.visibility = "hidden"; svg.appendChild(p); return p; });
+  // the caret: a two-stroke wedge under the correction's first letter, pointing up into it
+  const hb = lines[0], tb = truth.getBoundingClientRect();
+  const kx = Math.max(hb.left - cb.left + fs * 0.25, tb.left - cb.left + ts * 0.35), ky = hb.top - cb.top + fs * 0.08, kh = Math.min(fs * 0.5, (hb.top - tb.bottom) * 0.95 + fs * 0.12);
+  const caret = document.createElementNS(NS, "path");
+  caret.setAttribute("d", `M ${kx - kh * 0.55} ${ky} L ${kx} ${ky - kh} L ${kx + kh * 0.6} ${ky + kh * 0.04}`);
+  caret.setAttribute("stroke-width", Math.max(4, ts * 0.095)); caret.style.visibility = "hidden"; svg.appendChild(caret);
+
+  // ---- timeline
+  // 0.12 the clipping drops on twos, 0.5 tape; 0.9 the marker strikes each line; 1.45 the correction writes on; the caret; slow push
+  tl.set(clip, { visibility: "visible" }, 0.12);
+  tl.fromTo(clip, { y: -H * 0.5, rotation: -9, scale: 1.06 }, { y: 0, rotation: -1.5, scale: 1, duration: 0.42, ease: twos("power3.out", 0.42), immediateRender: true }, 0.12);
+  tl.fromTo(clip, { rotation: -1.5 }, { rotation: -2.2, duration: 0.25, ease: twos("back.out(3)", 0.25) }, 0.54);
+  tl.set(tp, { visibility: "visible" }, 0.5);
+  tl.fromTo(tp, { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, 0.5);
+  let t = 0.85;
+  strikes.forEach((p) => { const L = p.getTotalLength(), d = Math.min(0.25, 0.12 + L / CW * 0.14);
+    tl.set(p, { visibility: "visible" }, t);
+    tl.fromTo(p, { strokeDasharray: L + 2, strokeDashoffset: L + 2 }, { strokeDashoffset: 0, duration: d, ease: twos("power2.in", d), immediateRender: true }, t); t += d + STEP; });
+  // the correction: the pen uncovers it about three letters per drawing
+  t += 0.12;
+  [...truth.querySelectorAll(".tl")].forEach((s) => { const n = Math.max(1, Math.ceil(s.textContent.length / 3));
+    tl.fromTo(s, { clipPath: "inset(-30% 104% -30% -4%)" }, { clipPath: "inset(-30% -4% -30% -4%)", duration: n * STEP, ease: `steps(${n})`, immediateRender: true }, t); t += n * STEP + STEP; });
+  const CL = caret.getTotalLength();
+  tl.set(caret, { visibility: "visible" }, t);
+  tl.fromTo(caret, { strokeDasharray: CL + 2, strokeDashoffset: CL + 2 }, { strokeDashoffset: 0, duration: 0.17, ease: twos("none", 0.17), immediateRender: true }, t);
+  // camera: one slow push (the paper is on twos, the lens is not)
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  // boil on twos: the clipping breathes, the ink crawls
+  const rb = MV.rand(9); for (let tt = 0.54; tt < D; tt += STEP * 2) tl.set("#clip-b", { "--bx": `${((rb() - .5) * 2.4 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2.4 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.5).toFixed(2)}deg` }, tt);
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, tt);
+  // exit: an overlay is pulled up off the frame; B-roll holds on the desk
+  if (MV.alpha) { const lift = parseFloat(clip.style.top) + CH + 160 * u;
+    tl.to(clip, { y: -lift, rotation: "+=6", duration: 0.33, ease: twos("power2.in", 0.33) }, D - 0.42); tl.set(clip, { opacity: 0 }, D - 0.06); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

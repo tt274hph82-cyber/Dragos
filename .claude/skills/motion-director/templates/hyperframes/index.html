@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<!-- {{TITLE}}. Made with motion-director on HyperFrames. -->
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand.css" />
+<link rel="stylesheet" href="assets/md.css" />
+<link rel="stylesheet" href="assets/md-world.css" />
+<!-- the chosen theme (film-init --theme): its materials and moves -->
+<link rel="stylesheet" href="assets/theme.css" />
+<script src="assets/beats.js"></script>
+<style>
+  html, body { width: {{W}}px; height: {{H}}px; }
+  /* film-specific styles below. Sizes in px for a {{W}}x{{H}} frame. */
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DURATION}}"
+     data-width="{{W}}" data-height="{{H}}" data-fps="30">
+
+  <!-- the score: synth.mjs writes it from the same beat grid the cuts use -->
+  <audio id="score" data-start="0" data-duration="{{DURATION}}" data-volume="1" src="assets/score.wav"></audio>
+
+  <!--
+    One <section class="clip md-scene"> per shot in beatgrid.md, with the
+    shot's own start and duration. Every text line is a .md-line with an id,
+    a data-in and a data-out (see references/motion-rules.md):
+
+    <section id="s1" class="clip md-scene" data-start="0" data-duration="4">
+      <div class="md-cam" id="s1-cam">
+        <div class="md-shot md-window" id="s1-shot" style="left:...;top:...;width:...;height:...">
+          <img src="assets/shots/shot-1.png" alt="" />
+        </div>
+      </div>
+      <h1 id="s1-title" class="md-line md-display" data-in="words@B1" data-out="blur@B7">Real words, <span class="md-accent">one</span> accent</h1>
+    </section>
+  -->
+
+  <div class="md-grain"></div>
+</div>
+<script src="assets/md.js"></script>
+<script src="assets/md-silk.js"></script>
+<script src="assets/theme.js"></script>
+<script>
+  const tl = gsap.timeline({ paused: true });
+  MD.lines(tl);
+
+  // the film's own moves: camera, screenshots, cursor, marks. Times are beat
+  // specs read through MD.t ("B8", "bar2", "drop-0.2"), never typed seconds.
+
+  MD.finish(tl);
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+</script>
+</body>
+</html>

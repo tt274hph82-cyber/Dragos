@@ -1,0 +1,5 @@
+{ "id": "search-autocomplete", "name": "Search autocomplete", "oneLiner": "a frosted white search bar on dark glass: the query types and the suggestion dropdown refills on every keystroke (popular searches give way to the completions, typed part light, completion bold), the arrow key walks a highlight down, the picked row lifts off the list and zips up into the bar, Return lands with a ring of light",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["search", "autocomplete", "suggestions", "what people search", "demand", "keyword", "google it", "query", "typing", "seo", "trend", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker talks about what people are searching for ('type how to automate and look what comes up', 'everyone is searching for this'): the list fills as they set it up, the pick lands on the exact phrase they name" }

@@ -1,0 +1,5 @@
+{ "id": "blueprint", "name": "Blueprint sheet", "oneLiner": "a cyanotype blueprint on a walnut drafting table under a warm lamp: a gabled studio draws itself in glowing white lines like a plotter, grid lines and their bubbles drop in, dimension strings and figures land, then the title block rules in and its fields are lettered, the project name last, as the camera drifts in 3D",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["blueprint", "plan", "system", "architecture", "build", "design", "framework", "structure", "drawing", "paper", "desk", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker lays out the plan or the system behind something ('here is the blueprint', 'I designed the whole system first', 'this is how it is built'): the drawing builds as they explain and the project name is lettered on the last word" }

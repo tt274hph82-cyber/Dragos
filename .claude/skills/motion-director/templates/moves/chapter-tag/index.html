@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"mode","type":"string","label":"agenda (the list) or tag (the small corner pill)","default":"agenda"},
+  {"id":"items","type":"string","label":"Chapters, separated by |  (3 to 5)","default":"The tools|The setup|My style|The exact cost"},
+  {"id":"current","type":"number","label":"The current chapter, 1-based","default":2},
+  {"id":"title","type":"string","label":"Small heading over the agenda (optional)","default":"In this video"},
+  {"id":"chapter","type":"string","label":"Tag: the chapter name (empty: the current item)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 40% at 80% 40%, color-mix(in srgb, var(--accent2) 26%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 70% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), var(--ground); }
+  #scrim { position: absolute; left: 0; top: 0; bottom: 0; width: 70%; transform-origin: 0 50%;
+    background: linear-gradient(90deg, rgba(0,0,0,.72), rgba(0,0,0,.5) 45%, transparent); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #scrim { display: none; }
+
+  /* ---- agenda */
+  #panel { position: absolute; left: 0; top: 0; box-sizing: border-box; perspective: calc(var(--u) * 1400); }
+  #glass { position: absolute; inset: 0; border-radius: calc(var(--u) * 40); display: none;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 78%, #fff 8%), color-mix(in srgb, var(--surface) 90%, transparent));
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.7); }
+  .is-alpha #glass { display: block; }
+  .is-key #glass { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  #glass .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.16) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  #ttl { position: absolute; font-size: calc(var(--u) * 28); font-weight: 750; letter-spacing: .16em; text-transform: uppercase; color: var(--al); white-space: nowrap; }
+  #track, #trackOn { position: absolute; width: calc(var(--u) * 4); border-radius: calc(var(--u) * 2); transform-origin: 50% 0; }
+  #track { background: rgba(255,255,255,.14); }
+  #trackOn { background: linear-gradient(180deg, var(--al), var(--accent)); box-shadow: 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #trackOn { box-shadow: none; }
+  #hl { position: absolute; border-radius: calc(var(--u) * 26); opacity: 0;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 34%, transparent), color-mix(in srgb, var(--accent) 12%, transparent));
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) color-mix(in srgb, var(--accent) 60%, transparent), 0 0 calc(var(--u) * 30) calc(var(--u) * -6) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #hl { background: color-mix(in srgb, var(--accent) 30%, var(--surface)); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) var(--accent); }
+  .ag { position: absolute; left: 0; display: flex; align-items: center; white-space: nowrap; }
+  .node { position: absolute; border-radius: 50%; box-sizing: border-box; background: var(--surface);
+    border: calc(var(--u) * 4) solid rgba(255,255,255,.7); }
+  .node.on { background: radial-gradient(circle at 35% 30%, #fff, var(--al) 40%, var(--accent)); border-color: #fff;
+    box-shadow: 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent) 90%, transparent); }
+  .is-key .node.on { box-shadow: none; }
+  .pulse { position: absolute; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 3) solid var(--al); opacity: 0; }
+  .num { font-size: calc(var(--u) * 26); font-weight: 700; letter-spacing: .06em; color: color-mix(in srgb, var(--ink) 50%, transparent); font-variant-numeric: tabular-nums; }
+  .lb { font-size: calc(var(--u) * 46); font-weight: 750; letter-spacing: -0.015em; color: var(--ink); text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.35); }
+  .is-key .lb { text-shadow: none; }
+  .caret { display: inline-block; width: calc(var(--u) * 4); height: .95em; margin-left: calc(var(--u) * 4); vertical-align: -0.12em; background: var(--al); opacity: 0; }
+
+  /* ---- tag */
+  #tag { position: absolute; left: 0; top: 0; display: none; }
+  #pill { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 16); height: calc(var(--u) * 66); box-sizing: border-box; white-space: nowrap;
+    padding: 0 calc(var(--u) * 24) 0 calc(var(--u) * 10); border-radius: calc(var(--u) * 33);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, #fff 9%), color-mix(in srgb, var(--surface) 93%, transparent));
+    -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.3) rgba(255,255,255,.1), 0 calc(var(--u) * 16) calc(var(--u) * 34) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .is-key #pill { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4); }
+  #pill .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  #chip { flex: none; display: grid; place-items: center; width: calc(var(--u) * 46); height: calc(var(--u) * 46); border-radius: calc(var(--u) * 14);
+    font-size: calc(var(--u) * 22); font-weight: 800; color: #fff; font-variant-numeric: tabular-nums;
+    background: linear-gradient(155deg, var(--al), var(--accent) 60%, color-mix(in srgb, var(--accent) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), 0 0 calc(var(--u) * 16) calc(var(--u) * -2) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #chip { box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5); }
+  #tlab { font-size: calc(var(--u) * 32); font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
+  #segs { display: flex; gap: calc(var(--u) * 6); margin-left: calc(var(--u) * 4); }
+  #segs i { width: calc(var(--u) * 20); height: calc(var(--u) * 7); border-radius: calc(var(--u) * 4); background: rgba(255,255,255,.18); }
+  #segs i.past { background: color-mix(in srgb, var(--ink) 65%, transparent); }
+  #segs i.now { background: var(--al); box-shadow: 0 0 calc(var(--u) * 10) var(--accent); }
+  .is-key #segs i.now { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div><div id="scrim"></div>
+  <div id="panel"><div id="glass"><div class="sh"></div></div><div id="ttl"></div><div id="track"></div><div id="trackOn"></div><div id="hl"></div></div>
+  <div id="tag"><div id="pill"><div id="chip"></div><div id="tlab" data-block></div><div id="segs"></div><div class="sh"></div></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.alpha ? MV.u * (SQ && String(v.mode || "").toLowerCase() !== "tag" ? 0.8 : 1) : MV.u * (P ? 1.5 : 1.35);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const items = String(v.items || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 5);
+  const N = items.length, cur = Math.max(1, Math.min(N, Math.round(+v.current || 1))) - 1;
+  const pad2 = (k) => String(k).padStart(2, "0");
+  const TAG = String(v.mode || "").toLowerCase() === "tag";
+
+  // type a label in, a character per frame or two; the caret rides the end
+  const typeIn = (el, t, per) => {
+    const txt = el.textContent; el.textContent = "";
+    const chs = [...txt].map((c) => { const s = document.createElement("span"); s.textContent = c; s.style.display = "none"; el.appendChild(s); return s; });
+    const caret = document.createElement("span"); caret.className = "caret"; el.appendChild(caret);
+    chs.forEach((s, k) => tl.set(s, { display: "inline" }, t + k * per));
+    const end = t + chs.length * per;
+    tl.set(caret, { opacity: 1 }, t); tl.set(caret, { opacity: 0 }, end + 0.12); tl.set(caret, { opacity: 1 }, end + 0.24); tl.set(caret, { opacity: 0 }, end + 0.34);
+    return end;
+  };
+
+  if (!TAG) {
+    // ---------------- AGENDA ----------------
+    const panel = $("#panel");
+    const PW = Math.round(P ? Math.min(620 * u, W - safe.left - safe.right) : SQ ? W * 0.4 : Math.min(660 * u, W * 0.38));
+    const PAD = 36 * u, NODE = 26 * u, ROW = (P ? 74 : 88) * u, GX = PAD + NODE / 2;   // the track's x
+    const ttl = $("#ttl"); ttl.textContent = v.title || ""; if (!v.title) ttl.style.display = "none";
+    const TT = v.title ? 58 * u : 0;
+    const rows = items.map((txt, i) => {
+      const r = document.createElement("div"); r.className = "ag";
+      r.innerHTML = `<span class="num">${pad2(i + 1)}</span><span class="lb" data-block></span>`;
+      r.querySelector(".lb").textContent = txt; panel.appendChild(r);
+      const nd = document.createElement("div"); nd.className = "node"; panel.appendChild(nd);
+      const pu = document.createElement("div"); pu.className = "pulse"; panel.appendChild(pu);
+      return { r, nd, pu, lb: r.querySelector(".lb"), num: r.querySelector(".num") };
+    });
+    const TXL = PAD + NODE + 26 * u, inner = PW - TXL - PAD;
+    rows.forEach((o) => { o.lb.style.fontSize = (P ? 44 : 46) * u + "px"; o.num.style.width = 44 * u + "px"; MV.fitText(o.lb, inner - 44 * u - 34 * u, 18); });
+    const PH = PAD + TT + N * ROW + PAD * 0.6;
+    Object.assign(panel.style, { width: PW + "px", height: PH + "px" });
+    Object.assign(ttl.style, { left: TXL + "px", top: PAD - 4 * u + "px" });
+    rows.forEach((o, i) => {
+      const cy = PAD + TT + i * ROW + ROW / 2;
+      Object.assign(o.r.style, { left: TXL + "px", top: cy - ROW / 2 + "px", height: ROW + "px", gap: 14 * u + "px" });
+      Object.assign(o.nd.style, { width: NODE + "px", height: NODE + "px", left: GX - NODE / 2 + "px", top: cy - NODE / 2 + "px" });
+      Object.assign(o.pu.style, { width: NODE + "px", height: NODE + "px", left: GX - NODE / 2 + "px", top: cy - NODE / 2 + "px" });
+      o.cy = cy;
+    });
+    const y1 = rows[0].cy, yN = rows[N - 1].cy;
+    ["#track", "#trackOn"].forEach((s) => Object.assign($(s).style, { left: GX - 2 * u + "px", top: y1 + "px", height: (yN - y1) + "px" }));
+    const hl = $("#hl"); Object.assign(hl.style, { left: PAD * 0.45 + "px", width: PW - PAD * 0.9 + "px", height: ROW - 10 * u + "px", top: rows[cur].cy - (ROW - 10 * u) / 2 + "px" });
+
+    // place: the side of the frame (left), the upper third on 9:16
+    let x = safe.left, y;
+    if (P) y = H * 0.505; else if (SQ) y = H * 0.64 - PH / 2; else y = H * 0.47 - PH / 2;
+    if (!MV.alpha && P) y = H * 0.4 - PH / 2;
+    if (!MV.alpha && !P) x = Math.max(safe.left, W * 0.07);
+    gsap.set(panel, { x, y });
+
+    // ---- in: the scrim or the glass slides in from the side, then one chapter per beat
+    tl.fromTo("#scrim", { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.6, ease: "expo.out" }, 0.02);
+    tl.fromTo("#glass", { x: -60 * u, rotationY: 24, transformOrigin: "0% 50%" }, { x: 0, rotationY: 0, duration: 0.7, ease: "back.out(1.4)" }, 0.04);
+    tl.fromTo("#glass", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, 0.04);
+    tl.fromTo("#glass", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, 0.4);
+    if (v.title) tl.fromTo(ttl, { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.2);
+    tl.fromTo("#track", { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "expo.out" }, 0.25);
+    tl.set("#trackOn", { scaleY: 0 }, 0);
+    const HLT = D - 1.15;                                   // the highlight lands here, then holds
+    const beat = N > 1 ? Math.min(1.5, (HLT - 0.45 - 0.35) / (N - 1)) : 0;
+    const T = rows.map((_, i) => 0.45 + i * beat);
+    rows.forEach((o, i) => {
+      const t = T[i];
+      tl.fromTo(o.nd, { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(3)" }, t);
+      tl.fromTo(o.num, { opacity: 0, x: -10 * u }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, t + 0.02);
+      tl.fromTo(o.r, { x: -8 * u }, { x: 0, duration: 0.6, ease: "expo.out" }, t);
+      const per = Math.min(0.045, 0.5 / Math.max(1, o.lb.textContent.length));
+      typeIn(o.lb, t + 0.06, per);
+      // the lit track reaches down to the newest node
+      if (i > 0) tl.to("#trackOn", { scaleY: (o.cy - y1) / (yN - y1), duration: 0.45, ease: "expo.out" }, t - 0.05);
+      // the one being said is bright, the ones before settle back
+      if (i > 0) tl.to(rows[i - 1].r, { opacity: 0.62, duration: 0.35, ease: "power2.out" }, t);
+    });
+    // the moment: everything settles, the highlight slides onto the current chapter, its node lights and pulses
+    tl.to(rows.map((o) => o.r), { opacity: 0.5, duration: 0.35, ease: "power2.out" }, HLT - 0.1);
+    tl.to(rows[cur].r, { opacity: 1, duration: 0.3, ease: "power2.out" }, HLT);
+    const fromY = rows[N - 1].cy - rows[cur].cy;
+    tl.fromTo(hl, { y: fromY, scaleY: 0.6, opacity: 0 }, { y: 0, scaleY: 1, opacity: 1, duration: 0.5, ease: "back.out(1.6)" }, HLT);
+    const lit = document.createElement("div"); lit.className = "node on"; lit.style.cssText = rows[cur].nd.style.cssText; panel.appendChild(lit);
+    tl.fromTo(lit, { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(3)" }, HLT + 0.12);
+    tl.fromTo(rows[cur].pu, { scale: 1, opacity: 1 }, { scale: 2.6, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, HLT + 0.12);
+    tl.fromTo(rows[cur].lb, { scale: 1, transformOrigin: "0% 50%" }, { scale: 1.06, duration: 0.5, ease: "back.out(2)", immediateRender: false }, HLT + 0.05);
+    tl.set(rows[cur].num, { color: "var(--al)" }, HLT + 0.12);
+    // the panel breathes in depth through the hold
+    tl.fromTo(rows.map((o) => o.r).concat([hl]), { y: 0 }, { y: -4 * u, duration: D - 0.6, ease: "sine.inOut", immediateRender: false }, 0.3);
+    // out: rows flick left, then the glass, accelerating
+    const O = D - 0.42;
+    const outs = rows.map((o) => [o.r, o.nd]).flat().concat([lit, hl, ttl, "#track", "#trackOn"]);
+    tl.to(outs, { x: -60 * u, opacity: 0, duration: 0.24, stagger: Math.min(0.012, 0.08 / outs.length), ease: "power3.in" }, O);
+    tl.to("#glass", { x: -100 * u, opacity: 0, filter: "blur(12px)", duration: 0.3, ease: "power3.in" }, O + 0.08);
+    tl.to("#scrim", { opacity: 0, duration: 0.34, ease: "power2.in" }, O + 0.04);
+  } else {
+    // ---------------- TAG ----------------
+    $("#panel").style.display = "none"; $("#scrim").style.display = "none";
+    const tag = $("#tag"); tag.style.display = "block";
+    $("#chip").textContent = pad2(cur + 1);
+    const tlab = $("#tlab"); tlab.textContent = v.chapter || items[cur] || "";
+    const segs = $("#segs"); items.forEach((_, i) => { const s = document.createElement("i"); s.className = i < cur ? "past" : i === cur ? "now" : ""; segs.appendChild(s); });
+    MV.fitText(tlab, (P ? 360 : 420) * u, 14);
+    const pill = $("#pill"), pw = pill.offsetWidth, ph = pill.offsetHeight;
+    // top-right, inside the platform UI on 9:16
+    const x = W - safe.right - pw, y = P ? safe.top + 8 * u : safe.top;
+    gsap.set(tag, { x, y });
+    // in: a dot at the right, it opens leftwards into the pill, the number pops, the name types, the strip fills
+    const pc = { p: 0 }, clip = () => { pill.style.clipPath = `inset(0 0 0 ${(1 - pc.p) * (pw - ph)}px round ${ph / 2}px)`; };
+    clip();
+    tl.fromTo(pill, { scale: 0, transformOrigin: `${pw - ph / 2}px 50%` }, { scale: 1, duration: 0.35, ease: "back.out(2.6)" }, 0.05);
+    tl.fromTo(pill, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power1.out" }, 0.05);
+    tl.to(pc, { p: 1, duration: 0.55, ease: "expo.out", onUpdate: clip }, 0.22);
+    tl.fromTo("#chip", { scale: 0, rotation: -60 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, 0.3);
+    typeIn(tlab, 0.42, Math.min(0.04, 0.45 / Math.max(1, tlab.textContent.length)));
+    [...segs.children].forEach((s, i) => tl.fromTo(s, { scaleX: 0, transformOrigin: "0% 50%" }, { scaleX: 1, duration: 0.35, ease: "expo.out" }, 0.5 + i * 0.06));
+    // through the section: light passes over the glass now and then, the live segment breathes
+    for (let t = 1.0; t < D - 1.0; t += 2.6) tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, t);
+    const now = segs.children[cur];
+    if (now) for (let t = 1.2; t < D - 0.9; t += 1.2) { tl.to(now, { opacity: 0.45, duration: 0.6, ease: "sine.inOut" }, t); tl.to(now, { opacity: 1, duration: 0.6, ease: "sine.inOut" }, t + 0.6); }
+    // out: the name and strip go, the pill closes back to its dot and is gone
+    const O = D - 0.42;
+    tl.to(["#tlab", "#segs"], { opacity: 0, duration: 0.14, ease: "power2.in" }, O);
+    tl.to(pc, { p: 0, duration: 0.24, ease: "power3.in", onUpdate: clip }, O + 0.04);
+    tl.to(pill, { scale: 0, duration: 0.12, ease: "power3.in" }, O + 0.26);
+  }
+  MV.done();
+</script>
+</body>
+</html>

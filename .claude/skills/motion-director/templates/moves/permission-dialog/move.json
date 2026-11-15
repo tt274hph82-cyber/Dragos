@@ -1,0 +1,5 @@
+{ "id": "permission-dialog", "name": "Permission dialog", "oneLiner": "a glass system dialog rises over the dimmed brand page with the brand tile and the thing it wants (calendar, files, inbox...) side by side, a fingertip taps Allow, the waiting dots between the two tiles fuse into a green link, a check lands on the resource and the buttons give way to a green Connected state",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["permission", "access", "allow", "connect", "integration", "oauth", "calendar", "files", "inbox", "agent access", "setup", "os", "dialog", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says they gave the tool access or connected it to something ('you just let it into your calendar', 'connect your inbox and...'): the tap lands on 'allow' or 'connect', the green Connected on the payoff" }

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"company","type":"string","label":"Who is hiring (empty: the brand name)","default":""},
+  {"id":"role","type":"string","label":"The role, set big","default":"Video editor"},
+  {"id":"chips","type":"string","label":"Detail chips, comma separated (2 or 3)","default":"Remote,Full time"},
+  {"id":"posted","type":"string","label":"Small line under the company","default":"Posted 2 days ago"},
+  {"id":"status","type":"string","label":"Live pill at the top right","default":"Hiring"},
+  {"id":"countLabel","type":"string","label":"Label over the counter","default":"Applicants"},
+  {"id":"count","type":"number","label":"Applicants it climbs to","default":248},
+  {"id":"today","type":"string","label":"Green chip that stamps on at the end (empty: none)","default":"+38 today"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #F4F3EF; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --tx: #17161C; --mu: #8B8893; --ln: rgba(20,18,30,.08); --ok: #2BD67B; --okd: #12924C; --okb: #E3F6EA; }
+  #g { position: absolute; inset: -10%; background:
+    radial-gradient(42% 32% at 86% 8%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%),
+    radial-gradient(48% 36% at 8% 96%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 24% 16%, rgba(255,214,140,.30), transparent 70%),
+    color-mix(in srgb, var(--paper, #F4F3EF) 60%, #F4F3EF); }
+  #grain { position: absolute; inset: 0; z-index: 90; pointer-events: none; opacity: .35; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #cshadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(40,25,15,.34), transparent 70%); filter: blur(calc(var(--u) * 22)); opacity: 0; }
+  .is-alpha #g, .is-alpha #grain, .is-alpha #cshadow { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #wrap { position: absolute; }
+  #pane { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, #FFFFFF, #FBFAF8);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 #fff, 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.06),
+      0 calc(var(--s) * 70) calc(var(--s) * 120) calc(var(--s) * -40) rgba(40,25,15,.42), 0 calc(var(--s) * 30) calc(var(--s) * 150) calc(var(--s) * -30) color-mix(in srgb, var(--accent) 30%, transparent); }
+  .is-alpha #pane { box-shadow: inset 0 calc(var(--s) * 2) 0 #fff, 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.08), 0 calc(var(--s) * 40) calc(var(--s) * 80) calc(var(--s) * -30) rgba(0,0,0,.55); }
+  .is-key #pane { box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.1); }
+  #pane::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 40;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.75) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); mix-blend-mode: soft-light; }
+  /* a soft brand band behind the header, like a cover strip */
+  #band { position: absolute; left: 0; right: 0; top: 0; background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 14%, #fff), color-mix(in srgb, var(--accent2) 16%, #fff) 70%, #fff); }
+  #band::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--s) * 1.5); background: var(--ln); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #mk { border-radius: calc(var(--s) * 22); display: grid; place-items: center; background: #fff; overflow: hidden;
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) var(--ln), 0 calc(var(--s) * 10) calc(var(--s) * 22) calc(var(--s) * -10) rgba(40,25,15,.4); }
+  #mk img { width: 76%; height: 76%; object-fit: contain; }
+  #co { font-weight: 800; font-size: calc(var(--s) * 42); color: var(--tx); white-space: nowrap; line-height: 1.1; letter-spacing: -0.015em; }
+  #po { font-weight: 600; font-size: calc(var(--s) * 34); color: var(--mu); white-space: nowrap; line-height: 1.1; }
+  #live { display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 24) 0 calc(var(--s) * 20); border-radius: 99px; white-space: nowrap;
+    background: #fff; box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(43,214,123,.45); font-weight: 750; font-size: calc(var(--s) * 34); color: var(--okd); }
+  #live .dt { position: relative; flex: none; width: calc(var(--s) * 18); height: calc(var(--s) * 18); border-radius: 50%; background: var(--ok); }
+  #live .pl { position: absolute; inset: 0; border-radius: 50%; border: calc(var(--s) * 3) solid var(--ok); opacity: 0; }
+  #role { font-family: var(--font-display); font-size: calc(var(--s) * 84); color: var(--tx); white-space: nowrap; line-height: 1.05; letter-spacing: -0.02em; }
+  #chips { display: flex; gap: calc(var(--s) * 14); }
+  .chip { display: flex; align-items: center; gap: calc(var(--s) * 10); height: calc(var(--s) * 62); padding: 0 calc(var(--s) * 24) 0 calc(var(--s) * 18); border-radius: 99px; white-space: nowrap;
+    background: #F3F1EE; box-shadow: inset 0 0 0 calc(var(--s) * 1.5) var(--ln); font-weight: 650; font-size: calc(var(--s) * 36); color: #4A4752; }
+  .chip svg { flex: none; width: calc(var(--s) * 30); height: calc(var(--s) * 30); }
+  #rule { height: calc(var(--s) * 1.5); background: var(--ln); }
+  #cl { font-weight: 650; font-size: calc(var(--s) * 36); color: var(--mu); white-space: nowrap; line-height: 1.1; }
+  #cnt { font-family: var(--font-display); font-size: calc(var(--s) * 128); color: var(--tx); white-space: nowrap; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  #stack { height: calc(var(--s) * 96); }
+  .av { position: absolute; top: 0; width: calc(var(--s) * 96); height: calc(var(--s) * 96); border-radius: 50%; box-sizing: border-box; display: grid; place-items: center;
+    border: calc(var(--s) * 5) solid #fff; font-weight: 800; font-size: calc(var(--s) * 36); color: #fff; letter-spacing: .01em; text-shadow: 0 1px 2px rgba(0,0,0,.18);
+    box-shadow: 0 calc(var(--s) * 10) calc(var(--s) * 18) calc(var(--s) * -8) rgba(40,25,15,.45); }
+  .av.more { background: #17161C; color: #fff; font-size: calc(var(--s) * 32); text-shadow: none; }
+  #today { display: flex; align-items: center; gap: calc(var(--s) * 10); height: calc(var(--s) * 64); padding: 0 calc(var(--s) * 24) 0 calc(var(--s) * 16); border-radius: 99px; white-space: nowrap; opacity: 0; z-index: 30;
+    font-weight: 800; font-size: calc(var(--s) * 36); color: #fff; text-shadow: 0 1px 2px rgba(0,60,25,.35);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 72%, #fff), var(--ok) 55%, #1BA85B);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), 0 calc(var(--s) * 14) calc(var(--s) * 26) calc(var(--s) * -8) rgba(20,140,70,.6); }
+  .is-key #today { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55); }
+  #today svg { flex: none; width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  #trg { position: absolute; box-sizing: border-box; border-radius: 99px; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; z-index: 29; }
+  .is-key #trg, .is-key #live .pl { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="g"></div>
+  <div id="cshadow"></div>
+  <div id="stage"><div id="rig">
+    <div id="wrap"><div id="pane">
+      <div id="band"></div>
+      <div id="mk" class="ab"></div><div id="co" class="ab"></div><div id="po" class="ab"></div>
+      <div id="live" class="ab"><i class="dt"><i class="pl"></i></i><span id="lvt"></span></div>
+      <div id="role" class="ab"></div>
+      <div id="chips" class="ab"></div>
+      <div id="rule" class="ab"></div>
+      <div id="cl" class="ab"></div><div id="cnt" class="ab"></div>
+      <div id="stack" class="ab"></div>
+      <i id="trg"></i>
+      <div id="today" class="ab"><svg viewBox="0 0 24 24"><path d="M12 19V6M6.5 11.5L12 6l5.5 5.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="tdt"></span></div>
+    </div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const total = Math.max(0, Math.round(+v.count || 0));
+  const fmtN = (n) => Math.round(n).toLocaleString("en-US");
+
+  // ---- zone and one scale s for the card
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.52; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.08; zB = H * 0.92; }
+  const pad = 46, DW = 880, BH = 176;
+  const yRole = BH + 40, yChips = yRole + 112, yRule = yChips + 62 + 40, yCl = yRule + 38, yCnt = yCl + 62;
+  const DH = yCnt + 128 + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- header band: mark, company, posted line, the live pill
+  $("#band").style.height = S(BH);
+  box($("#mk"), pad, 44, 96, 96); if (v.mark) $("#mk").appendChild(MV.img(v.mark));
+  $("#lvt").textContent = v.status || "";
+  Object.assign($("#live").style, { right: S(pad), top: S(64), height: S(58) });
+  if (!v.status) $("#live").style.display = "none";
+  MV.fitText($("#lvt"), 220 * s, 16);
+  const liveW = v.status ? $("#live").getBoundingClientRect().width / s + 20 : 0;
+  const tx = pad + 96 + 24, tw = (DW - tx - pad - liveW) * s;
+  Object.assign($("#co").style, { left: S(tx), top: S(46) }); $("#co").textContent = v.company || v.brandName || "";
+  Object.assign($("#po").style, { left: S(tx), top: S(100) }); $("#po").textContent = v.posted || "";
+  MV.fitText($("#co"), tw, 18); MV.fitText($("#po"), tw, 16);
+
+  // ---- the role, its chips
+  Object.assign($("#role").style, { left: S(pad), top: S(yRole) }); $("#role").textContent = v.role || "";
+  MV.fitText($("#role"), (DW - pad * 2) * s, 24);
+  const GL = {
+    pin: '<path d="M12 21s-6.5-6.1-6.5-11A6.5 6.5 0 0 1 18.5 10c0 4.9-6.5 11-6.5 11z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="10" r="2.4" fill="currentColor"/>',
+    clock: '<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+    case: '<rect x="3.5" y="7.5" width="17" height="12" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M9 7.5V5.8c0-.7.6-1.3 1.3-1.3h3.4c.7 0 1.3.6 1.3 1.3v1.7" fill="none" stroke="currentColor" stroke-width="2.2"/>' };
+  const chipTx = String(v.chips || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 3);
+  const glOrder = ["pin", "clock", "case"];
+  const chipEls = chipTx.map((t, i) => { const c = document.createElement("div"); c.className = "chip";
+    c.innerHTML = `<svg viewBox="0 0 24 24">${GL[glOrder[i]]}</svg><span></span>`; c.querySelector("span").textContent = t; $("#chips").appendChild(c); return c; });
+  Object.assign($("#chips").style, { left: S(pad), top: S(yChips) });
+  { const room = (DW - pad * 2) * s; let w = $("#chips").getBoundingClientRect().width;
+    if (w > room) chipEls.forEach((c) => MV.fitText(c.querySelector("span"), c.querySelector("span").getBoundingClientRect().width * room / w * 0.95, 16)); }
+  box($("#rule"), pad, yRule, DW - pad * 2, 1.5);
+
+  // ---- applicants: label, the counter, the avatar stack on the right
+  Object.assign($("#cl").style, { left: S(pad), top: S(yCl) }); $("#cl").textContent = v.countLabel || "";
+  Object.assign($("#cnt").style, { left: S(pad - 4), top: S(yCnt) });
+  $("#cnt").textContent = fmtN(total); MV.fitText($("#cnt"), 330 * s, 40);
+  const SHOW = Math.max(1, Math.min(4, total)), AV = 96, OV = 14, step = AV - OV;
+  const more = total - SHOW;
+  const nDisc = SHOW + (more > 0 ? 1 : 0);
+  const stW = AV + (nDisc - 1) * step;
+  box($("#stack"), DW - pad - stW, yCnt + 18, stW, AV);
+  const INI = ["AK", "JM", "RL", "SP", "TD", "EV", "NB", "OC"];
+  const TONES = [["#F4B69C", "#DB6E4E"], ["#A9C6EC", "#4E7FCB"], ["#CDBCF2", "#8566D6"], ["#9FD9DC", "#2F9AA3"], ["#F4D58C", "#D49A2B"], ["#F0A9C4", "#C9517F"]];
+  const avs = [];
+  for (let i = 0; i < SHOW; i++) { const a = document.createElement("i"); a.className = "av"; a.textContent = INI[i % INI.length];
+    const t = TONES[i % TONES.length]; a.style.background = `linear-gradient(150deg, ${t[0]}, ${t[1]})`; a.style.left = S(i * step); a.style.zIndex = 10 + i; $("#stack").appendChild(a); avs.push(a); }
+  let moreEl = null;
+  if (more > 0) { moreEl = document.createElement("i"); moreEl.className = "av more"; moreEl.textContent = "+" + fmtN(more); moreEl.style.left = S(SHOW * step); moreEl.style.zIndex = 30; $("#stack").appendChild(moreEl);
+    MV.fitText(moreEl, (AV - 24) * s, 14); moreEl.style.whiteSpace = ""; }
+  $("#cnt").textContent = "0";
+  // the green chip sits under the stack, its rings go out from it
+  $("#tdt").textContent = v.today || ""; if (!v.today) $("#today").style.display = "none";
+  MV.fitText($("#tdt"), 300 * s, 16);
+  const tdW = $("#today").getBoundingClientRect().width / s;
+  const tdX = DW - pad - tdW + 10, tdY = yCl - 14;
+  Object.assign($("#today").style, { left: S(tdX), top: S(tdY) });
+  box($("#trg"), tdX, tdY, tdW, 64);
+  Object.assign($("#cshadow").style, { left: cL + cw * 0.06 + "px", top: cT + ch * 0.78 + "px", width: cw * 0.88 + "px", height: ch * 0.36 + "px" });
+
+  // ---- timing
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: -11, rotationX: 8, scale: 0.95, y: 20 * u }, { rotationY: P ? 6 : 8, rotationX: 2, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#cshadow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, 0.05);
+  tl.fromTo("#mk", { scale: 0.4, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, 0.2);
+  tl.fromTo(["#co", "#po", "#live"], { opacity: 0, x: -18 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.24);
+  tl.fromTo("#role", { opacity: 0, y: 30 * s }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 0.34);
+  tl.fromTo(chipEls, { opacity: 0, scale: 0.7, y: 10 * s }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(2)", stagger: 0.07 }, 0.48);
+  tl.fromTo("#rule", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.56);
+  tl.fromTo(["#cl", "#cnt"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.66);
+  // the live dot breathes
+  [0.7, 1.7, 2.7].forEach((t) => tl.fromTo("#live .pl", { scale: 1, opacity: 0.8 }, { scale: 2.6, opacity: 0, duration: 0.9, ease: "expo.out", immediateRender: false }, t));
+
+  // the counter climbs fast and settles with a long tail; each avatar drops onto the stack as it passes
+  const C0 = 0.8, CD = 2.5;
+  const co = { n: 0 };
+  tl.to(co, { n: total, duration: CD, ease: "power2.inOut", onUpdate: () => { $("#cnt").textContent = fmtN(co.n); } }, C0);
+  avs.forEach((a, i) => {
+    const t = C0 + 0.2 + i * 0.36;
+    tl.fromTo(a, { opacity: 0, y: -90 * s, scale: 1.25, rotation: i % 2 ? 14 : -14 }, { opacity: 1, y: 0, scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2)" }, t);
+    tl.fromTo("#stack", { y: 0 }, { y: 4 * s, duration: 0.07, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t + 0.2);
+  });
+  const TM = C0 + CD - 0.15;
+  if (moreEl) tl.fromTo(moreEl, { opacity: 0, scale: 0.3, x: -40 * s }, { opacity: 1, scale: 1, x: 0, duration: 0.55, ease: "back.out(2.4)" }, TM - 0.5);
+  tl.fromTo("#cnt", { scale: 1, transformOrigin: "0% 60%" }, { scale: 1.07, duration: 0.1, ease: "power2.out", immediateRender: false }, TM);
+  tl.to("#cnt", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TM + 0.1);
+  // the moment: the green chip stamps on, a ring runs out, the card jolts
+  if (v.today) {
+    tl.fromTo("#today", { opacity: 0, scale: 2.1, rotation: 6 }, { opacity: 1, scale: 1, rotation: -3, duration: 0.24, ease: "power4.in" }, TM + 0.02);
+    tl.to("#today", { scale: 1.07, duration: 0.06, ease: "power1.out" }, TM + 0.26); tl.to("#today", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TM + 0.32);
+    tl.fromTo("#trg", { scale: 1, opacity: 0.9, rotation: -3 }, { scale: 1.5, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TM + 0.28);
+    tl.to("#stage", { scale: 1.016, duration: 0.07, ease: "power2.out" }, TM + 0.26); tl.to("#stage", { scale: 1, duration: 0.55, ease: "expo.out" }, TM + 0.33);
+  }
+  tl.fromTo("#pane", { "--sheen": "-40%" }, { "--sheen": "150%", duration: 1.0, ease: "power2.inOut" }, TM + 0.3);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

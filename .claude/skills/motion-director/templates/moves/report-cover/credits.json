@@ -1,0 +1,22 @@
+{
+ "sources": [
+  {
+   "file": "assets/paper.jpg",
+   "from": "ambientCG Paper001 (scanned white paper); the cover and the pages",
+   "license": "CC0",
+   "page": "https://ambientcg.com/view?id=Paper001"
+  },
+  {
+   "file": "assets/leather.jpg",
+   "from": "ambientCG Leather032 (scanned black leather), resized; the desk pad",
+   "license": "CC0",
+   "page": "https://ambientcg.com/view?id=Leather032"
+  },
+  {
+   "file": "assets/fonts/PlayfairDisplay-wght.ttf",
+   "from": "Playfair Display by Claus Eggers Sorensen, Google Fonts; the report titles",
+   "license": "SIL Open Font License 1.1",
+   "page": "https://fonts.google.com/specimen/Playfair+Display"
+  }
+ ]
+}

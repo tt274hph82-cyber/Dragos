@@ -1,0 +1,5 @@
+{ "id": "kpi-tiles", "name": "KPI tiles", "oneLiner": "2 to 4 glass KPI panes fly in from their own sides and seat on a lit floor, each with a glyph tile, a number that counts up in its own format, a green or red change chip and a sparkline drawn with a riding dot; the hero pane lifts out in the accent at the end",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["kpi", "dashboard", "metrics", "stats", "numbers", "sparkline", "growth", "results", "analytics", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker reels off results ('revenue up 32%, subscribers up 18%...'): cut in on the first number, the hero tile lifts on the one they lean on. Set hero to the metric the sentence ends on" }

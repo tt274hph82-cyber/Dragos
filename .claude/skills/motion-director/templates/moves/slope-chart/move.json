@@ -1,0 +1,5 @@
+{ "id": "slope-chart", "name": "Slope chart", "oneLiner": "two glass rails stand for then and now, each item's start point pops on the left and grey lines run across to where they ended up with their values counting, then the brand line climbs last and steepest, lights in the accent with a glow, its head lands with a ring and a frosted tag while the rest dim",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["slope chart", "then and now", "before and after", "change", "growth", "climb", "comparison", "ranking shift", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says everyone moved a little but one moved the most ('a year ago we were last, now nobody is close', 'everyone grew, we tripled'): cut in on the then, the brand line lands on the word that names the jump" }

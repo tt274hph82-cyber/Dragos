@@ -1,0 +1,9 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the thermal paper", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/stone.jpg", "from": "ambientCG Marble016 (scanned dark stone), resized; the counter", "license": "CC0", "page": "https://ambientcg.com/view?id=Marble016" },
+  { "file": "assets/plastic.jpg", "from": "ambientCG Plastic012A (scanned dark plastic), resized; the printer body", "license": "CC0", "page": "https://ambientcg.com/view?id=Plastic012A" },
+  { "file": "assets/metal.jpg", "from": "ambientCG Metal009 (scanned brushed metal), cropped strip; the tear bar", "license": "CC0", "page": "https://ambientcg.com/view?id=Metal009" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for thermal print and rubber-stamp grit", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/fonts/ShareTechMono-Regular.ttf", "from": "Share Tech Mono by Carrois Apostrophe, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Share+Tech+Mono" },
+  { "file": "assets/fonts/Anton-Regular.ttf", "from": "Anton by Vernon Adams, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Anton" }
+] }

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"text","type":"string","label":"The comment","default":"I tried this after watching and it saved me hours every single week."},
+  {"id":"name","type":"string","label":"Commenter handle","default":"@maya.builds"},
+  {"id":"time","type":"string","label":"Time label","default":"3 days ago"},
+  {"id":"likes","type":"number","label":"Likes it lands on","default":3100},
+  {"id":"likesFrom","type":"number","label":"Likes it starts from","default":1460},
+  {"id":"replies","type":"number","label":"Reply count","default":248},
+  {"id":"creator","type":"string","label":"Creator handle on the pin (empty: @ + brand name)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 85% 96%, color-mix(in srgb, var(--accent2) 26%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1700); }
+  #card { position: relative; box-sizing: border-box; padding: calc(var(--u) * 34) calc(var(--u) * 40) calc(var(--u) * 30); border-radius: calc(var(--u) * 44);
+    transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 80%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.26) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  /* the pinned badge */
+  #pin { display: flex; align-items: center; gap: calc(var(--u) * 10); margin-left: calc(var(--u) * 116); margin-bottom: calc(var(--u) * 14);
+    font-size: calc(var(--u) * 26); font-weight: 600; color: color-mix(in srgb, var(--ink) 58%, transparent); white-space: nowrap; }
+  #pin svg { flex: none; width: calc(var(--u) * 28); height: calc(var(--u) * 28); }
+  .row { display: flex; gap: calc(var(--u) * 24); align-items: flex-start; }
+  #av { position: relative; flex: none; width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: 50%; overflow: hidden;
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 170% auto; background-position: 50% 6%;
+    box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.18), 0 calc(var(--u) * 10) calc(var(--u) * 24) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .col { flex: 1; min-width: 0; }
+  #meta { display: flex; align-items: baseline; gap: calc(var(--u) * 14); white-space: nowrap; }
+  #nm { font-size: calc(var(--u) * 32); font-weight: 700; color: var(--ink); letter-spacing: -0.005em; }
+  #tm { font-size: calc(var(--u) * 28); color: color-mix(in srgb, var(--ink) 50%, transparent); }
+  #body { margin-top: calc(var(--u) * 10); font-size: calc(var(--u) * 44); line-height: 1.25; font-weight: 550; letter-spacing: -0.01em; color: var(--ink); text-wrap: pretty; }
+  .ft { display: flex; align-items: center; gap: calc(var(--u) * 34); margin-top: calc(var(--u) * 22); color: color-mix(in srgb, var(--ink) 66%, transparent);
+    font-size: calc(var(--u) * 28); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .ft .it { display: flex; align-items: center; gap: calc(var(--u) * 12); }
+  .ft svg { width: calc(var(--u) * 38); height: calc(var(--u) * 38); overflow: visible; }
+  #cnt { display: inline-block; }
+  #rep { font-weight: 700; color: color-mix(in srgb, var(--ink) 74%, transparent); }
+  /* the creator's heart: their mark, a heart badge on its corner */
+  #ch { position: relative; width: calc(var(--u) * 58); height: calc(var(--u) * 58); flex: none; }
+  #ch .cav { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: var(--surface); box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #ch .cav img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #ch .hb { position: absolute; right: calc(var(--u) * -12); bottom: calc(var(--u) * -10); width: calc(var(--u) * 34); height: calc(var(--u) * 34); filter: drop-shadow(0 0 calc(var(--u) * 8) var(--accent)); }
+  #ring { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 170); height: calc(var(--u) * 170); margin: calc(var(--u) * -85); border-radius: 50%;
+    border: calc(var(--u) * 6) solid var(--al); box-sizing: border-box; opacity: 0; }
+  .pt { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 14); height: calc(var(--u) * 14); margin: calc(var(--u) * -7); box-shadow: 0 0 calc(var(--u) * 10) currentColor; border-radius: 50%; opacity: 0; }
+  /* the replies drop in under the comment */
+  #rw { overflow: hidden; height: 0; }
+  #rl { display: inline-flex; align-items: center; gap: calc(var(--u) * 12); margin-top: calc(var(--u) * 20); padding: calc(var(--u) * 10) calc(var(--u) * 22) calc(var(--u) * 10) calc(var(--u) * 14);
+    border-radius: calc(var(--u) * 40); background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--al); font-size: calc(var(--u) * 28); font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .is-key #rl { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); }
+  #rl svg { width: calc(var(--u) * 30); height: calc(var(--u) * 30); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="pin"><svg viewBox="0 0 24 24"><path d="M9 3.5h6l-1 5.5 3.5 3.5v1.5h-11V12.5L10 9 9 3.5zM12 14v6.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/></svg><span id="pint"></span></div>
+    <div class="row">
+      <div id="av"></div>
+      <div class="col">
+        <div id="meta"><span id="nm"></span><span id="tm"></span></div>
+        <div id="body"></div>
+        <div class="ft">
+          <div class="it"><svg viewBox="0 0 24 24"><path id="thumb" d="M7.5 10.5v9.5H4.5a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1h3zm0 0l3.6-6.6c.4-.7 1.3-.9 1.9-.5.9.5 1.3 1.6 1 2.6l-.9 3.5h5.2a2 2 0 0 1 2 2.4l-1.3 6.6a2 2 0 0 1-2 1.5H7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="cnt"></span></div>
+          <div class="it"><svg viewBox="0 0 24 24" style="transform: scaleY(-1)"><path d="M7.5 10.5v9.5H4.5a1 1 0 0 1-1-1v-7.5a1 1 0 0 1 1-1h3zm0 0l3.6-6.6c.4-.7 1.3-.9 1.9-.5.9.5 1.3 1.6 1 2.6l-.9 3.5h5.2a2 2 0 0 1 2 2.4l-1.3 6.6a2 2 0 0 1-2 1.5H7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+          <div class="it" id="rep">Reply</div>
+          <div id="ch"><div class="cav"></div>
+            <svg class="hb" viewBox="0 0 24 24"><path d="M12 20.3s-7.4-4.5-9.5-9C1.1 8.2 3 4.7 6.5 4.4c2.1-.2 3.8 1 5.5 3 1.7-2 3.4-3.2 5.5-3 3.5.3 5.4 3.8 4 6.9-2.1 4.5-9.5 9-9.5 9z" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.6"/></svg>
+            <div id="ring"></div><div id="pts"></div></div>
+        </div>
+        <div id="rw"><div id="rl"><svg viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="rn"></span></div></div>
+      </div>
+    </div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const u = MV.portrait ? MV.u * 1.06 : MV.u * (MV.alpha ? 1 : 1.32);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const brand = v.brandName || "";
+  const creator = v.creator || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  $("#pint").textContent = "Pinned by " + creator;
+  $("#nm").textContent = v.name || "";
+  $("#tm").textContent = v.time || "";
+  $("#body").textContent = v.text || v.headline || "";
+  const ppl = v.people || [];
+  if (ppl.length) $("#av").style.backgroundImage = `url("${ppl[1] || ppl[0]}")`;
+  if (v.mark) $("#ch .cav").appendChild(MV.img(v.mark));
+  const to = Math.round(+v.likes || 0), from = Math.min(to, Math.round(+v.likesFrom || 0)), R = Math.round(+v.replies || 0);
+  const fmt = (x) => Math.round(x).toLocaleString("en-US");
+
+  const CW = MV.portrait ? W - safe.left - safe.right : Math.min(820 * u, W - safe.left - safe.right);
+  $("#card").style.width = CW + "px";
+  const inner = CW - (40 + 40 + 92 + 24) * u;
+  MV.fit("#pint", CW - (40 + 40 + 116 + 38) * u, 12);
+  { const nm = $("#nm"), tm = $("#tm"); let f = 1; while (nm.offsetWidth + tm.offsetWidth + 14 * u > inner && f > 0.5) { f -= 0.04; $("#nm").style.fontSize = 32 * u * f + "px"; $("#tm").style.fontSize = 28 * u * f + "px"; } }
+  // the comment wraps to at most 3 lines
+  const body = $("#body"); let fs = 44 * u; while (body.getBoundingClientRect().height > fs * 1.25 * 3 + 2 && fs > 20) { fs -= 2; body.style.fontSize = fs + "px"; }
+  const cnt = $("#cnt"); cnt.textContent = fmt(to); cnt.style.minWidth = cnt.getBoundingClientRect().width + "px"; cnt.textContent = fmt(from);
+  $("#rn").textContent = fmt(R) + " replies";
+  const RH = $("#rl").getBoundingClientRect().height + 20 * u;
+  const CH0 = $("#card").getBoundingClientRect().height, CH = CH0 + RH;
+
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) {
+    if (MV.portrait) { x = safe.left; y = safe.top + 16 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = H * 0.13; }
+    else { y = safe.top + 10; }
+  } else if (MV.portrait) y = (H - CH) / 2 - 120 * u;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  const pts = $("#pts"), P = [], rnd = MV.rand(17);
+  const cols = ["var(--accent)", "var(--al)", "var(--accent2)", "#fff"];
+  for (let i = 0; i < 12; i++) { const d = document.createElement("i"); d.className = "pt"; d.style.background = cols[i % 4]; pts.appendChild(d);
+    const a = (i / 12) * Math.PI * 2 + rnd() * 0.35, r = (90 + rnd() * 70) * u; P.push([d, Math.cos(a) * r, Math.sin(a) * r, 0.6 + rnd() * 0.7]); }
+
+  // 0.05: the card pops in out of depth, tilted, on a spring
+  tl.fromTo("#card", { z: -700 * u, rotationX: 34, rotationY: 28, rotationZ: 6, scale: 0.72 },
+    { z: 0, rotationX: 9, rotationY: 11, rotationZ: 1.5, scale: 1, duration: 0.95, ease: "back.out(1.35)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.to("#card", { rotationX: 3, rotationY: -9, rotationZ: -1, duration: D - 1.45, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#pin", { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.28);
+  tl.fromTo("#av", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, 0.3);
+  tl.fromTo("#meta", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.38);
+  const bw = MV.words("#body");
+  tl.fromTo(bw, { opacity: 0, y: 20 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: Math.min(0.03, 0.6 / bw.length), ease: "expo.out" }, 0.5);
+  tl.fromTo(".ft .it", { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.05, ease: "expo.out" }, 0.9);
+  tl.fromTo("#ch", { opacity: 0 }, { opacity: 0, duration: 0.01 }, 0);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.95);
+  // the likes tick, fast then settling
+  const o = { n: from }, HIT = 2.2;
+  tl.to(o, { n: to, duration: HIT - 1.05, ease: "power3.out", onUpdate: () => { cnt.textContent = fmt(o.n); } }, 1.05);
+  // the creator's heart lands: their mark drops in big, the heart badge pops, a ring and a burst
+  tl.fromTo("#ch", { opacity: 0, scale: 2.4, y: -40 * u, rotation: -18 }, { opacity: 1, scale: 1, y: 0, rotation: 0, duration: 0.42, ease: "back.out(2.2)", immediateRender: false }, HIT - 0.22);
+  tl.fromTo("#ch .hb", { scale: 0, transformOrigin: "50% 55%" }, { scale: 1, duration: 0.5, ease: "back.out(4)" }, HIT);
+  tl.fromTo("#ring", { scale: 0.25, opacity: 1 }, { scale: 1.2, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, HIT);
+  P.forEach(([d, dx, dy, s], i) => tl.fromTo(d, { x: 0, y: 0, scale: s, opacity: 1 }, { x: dx, y: dy, scale: 0, opacity: 1, duration: 0.6, ease: "expo.out", immediateRender: false }, HIT + 0.04 + (i % 3) * 0.02));
+  tl.to("#card", { scale: 1.03, duration: 0.08, ease: "power2.out" }, HIT); tl.to("#card", { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, HIT + 0.08);
+  tl.set("#thumb", { attr: { fill: "currentColor" } }, HIT);
+  tl.set(".ft .it:first-child", { color: "var(--al)" }, HIT);
+  // the replies open under it
+  const RT = HIT + 0.55;
+  tl.to("#rw", { height: RH, duration: 0.5, ease: "expo.out" }, RT);
+  const ro = { n: 0 };
+  tl.fromTo("#rl", { opacity: 0, y: -16 * u, scale: 0.9, transformOrigin: "0% 50%" }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2)" }, RT + 0.08);
+  tl.to(ro, { n: R, duration: 0.6, ease: "power2.out", onUpdate: () => { $("#rn").textContent = fmt(ro.n) + " replies"; } }, RT + 0.08);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, HIT + 0.1);
+  // exit: tips back and flies up into blur, accelerating
+  tl.to("#card", { y: -140 * u, z: -300 * u, rotationX: -18, opacity: 0, filter: "blur(16px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

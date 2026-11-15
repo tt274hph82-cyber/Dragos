@@ -1,0 +1,5 @@
+{ "id": "dot-map", "name": "Dot map", "oneLiner": "a dot-matrix world sweeps in grey on a pane of dark glass, then region by region the dots light outward from each centre as a frosted chip counts its number up, and one region turns the accent and pulses outward twice while its chip lifts and the camera leans in",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["world map", "dot map", "global", "regions", "audience", "where people are", "countries", "reach", "worldwide", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says where people are or how far something reached ('most of you watch from North America', 'it spread to every continent'): cut in on the reach, the lead region pulses on the word that names it" }

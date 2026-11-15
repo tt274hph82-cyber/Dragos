@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"a","type":"string","label":"Left corner: heading|point|point (up to 3 points)","default":"Do it yourself|Full control|Costs nothing"},
+  {"id":"b","type":"string","label":"Right corner, arrives later (empty: one corner only)","default":"Hire it out|Saves your time|Costs more"},
+  {"id":"pick","type":"string","label":"a, b or empty: a green check lands on the chosen side at the end","default":"a"},
+  {"id":"beat","type":"number","label":"Seconds between lines","default":0.55}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(45% 30% at 15% 20%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%),
+    radial-gradient(45% 30% at 85% 20%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 72%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  .col { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1200); }
+  .inner { position: relative; transform-style: preserve-3d; }
+  .slab { position: absolute; left: 0; top: 0; width: 100%; border-radius: calc(var(--u) * 34); transform-origin: 50% 0;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 76%, #fff 10%), color-mix(in srgb, var(--surface) 90%, transparent));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      inset 0 calc(var(--u) * -20) calc(var(--u) * 40) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 36%, transparent),
+      0 calc(var(--u) * 28) calc(var(--u) * 56) calc(var(--u) * -18) rgba(0,0,0,.62); }
+  .is-key .slab { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  .slab .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .hd { position: absolute; white-space: nowrap; font-size: calc(var(--u) * 50); font-weight: 780; letter-spacing: -0.02em; color: var(--ink); line-height: 1.1; }
+  .ul { position: absolute; height: calc(var(--u) * 5); border-radius: calc(var(--u) * 3); transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--accent), var(--al)); box-shadow: 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key .ul { box-shadow: none; }
+  .it { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 14); white-space: nowrap; }
+  .chev { flex: none; width: calc(var(--u) * 30); height: calc(var(--u) * 30); }
+  .chev svg { width: 100%; height: 100%; display: block; }
+  .itx { font-size: calc(var(--u) * 38); font-weight: 600; color: color-mix(in srgb, var(--ink) 88%, transparent); letter-spacing: -0.01em; }
+  .ok { position: absolute; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 28%, color-mix(in srgb, var(--ok) 50%, #fff), var(--ok) 55%, color-mix(in srgb, var(--ok) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), 0 0 calc(var(--u) * 26) rgba(43,214,123,.5), 0 calc(var(--u) * 8) calc(var(--u) * 16) rgba(0,0,0,.4); }
+  .is-key .ok { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55); }
+  .ok svg { width: 58%; height: 58%; overflow: visible; }
+  .okr { position: absolute; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 4) solid var(--ok); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1.0 : SQ ? 0.8 : 1.0);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration;
+  const parse = (s) => String(s || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 4);
+  const cols = [parse(v.a), parse(v.b)].filter((c) => c.length);
+  const pick = String(v.pick || "").toLowerCase().trim(), pickI = pick === "a" ? 0 : pick === "b" && cols.length > 1 ? 1 : -1;
+  const CHEV = '<svg viewBox="0 0 30 30"><path d="M10 6l10 9-10 9" fill="none" stroke="var(--al)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  // the corners: top-left and top-right of the frame, under the platform bar on 9:16
+  const gap = 24 * u;
+  const CW = P ? (W - safe.left - safe.right - gap) / 2 : SQ ? W * 0.4 : Math.min(W * 0.27, 560 * u);
+  const PAD = 30 * u, HD = 50 * u * 1.1, ROW = 54 * u, OKS = 54 * u;
+  const y0 = P ? safe.top + 6 * u : SQ ? safe.top + 2 * u : safe.top;
+  const beat = Math.max(0.25, Math.min(1.2, +v.beat || 0.55));
+
+  const built = cols.map((c, ci) => {
+    const col = document.createElement("div"); col.className = "col";
+    col.innerHTML = '<div class="inner"><div class="slab"><div class="sh"></div></div></div>';
+    root.insertBefore(col, document.getElementById("grain"));
+    const inner = col.querySelector(".inner"), slab = col.querySelector(".slab");
+    const hasOk = ci === pickI;
+    const hd = document.createElement("div"); hd.className = "hd"; hd.textContent = c[0]; inner.appendChild(hd);
+    MV.fitText(hd, CW - PAD * 2 - (hasOk ? OKS + 12 * u : 0), 16);
+    Object.assign(hd.style, { left: PAD + "px", top: PAD - 4 * u + "px" });
+    const hh = hd.getBoundingClientRect().height;
+    const ul = document.createElement("div"); ul.className = "ul"; inner.appendChild(ul);
+    Object.assign(ul.style, { left: PAD + "px", top: PAD + hh + 4 * u + "px", width: Math.min(hd.getBoundingClientRect().width, CW - PAD * 2) + "px" });
+    const rows = c.slice(1).map((t, k) => {
+      const it = document.createElement("div"); it.className = "it"; it.innerHTML = `<div class="chev">${CHEV}</div><div class="itx"></div>`;
+      it.querySelector(".itx").textContent = t; inner.appendChild(it);
+      MV.fitText(it.querySelector(".itx"), CW - PAD * 2 - 44 * u, 14);
+      Object.assign(it.style, { left: PAD - 4 * u + "px", top: PAD + hh + 22 * u + k * ROW + "px", height: ROW + "px" });
+      return it;
+    });
+    const hAt = (n) => PAD + hh + (n ? 22 * u + n * ROW : 12 * u) + PAD * 0.7;   // slab height showing n rows
+    Object.assign(slab.style, { height: hAt(rows.length) + "px" });
+    let ok = null, okr = null;
+    if (hasOk) {
+      ok = document.createElement("div"); ok.className = "ok"; ok.innerHTML = '<svg viewBox="0 0 40 40"><path d="M9 21l7 7 15-16" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      okr = document.createElement("div"); okr.className = "okr";
+      const ox = CW - PAD - OKS + 6 * u, oy = PAD - 4 * u + hh / 2 - OKS / 2;
+      [ok, okr].forEach((e) => { Object.assign(e.style, { width: OKS + "px", height: OKS + "px", left: ox + "px", top: oy + "px" }); inner.appendChild(e); });
+    }
+    const x = ci === 0 ? (P ? safe.left : SQ ? W * 0.05 : safe.left) : (P ? W - safe.right - CW : SQ ? W * 0.95 - CW : W - safe.right - CW);
+    gsap.set(col, { x, y: y0 }); inner.style.width = CW + "px";
+    return { col, inner, slab, hd, ul, rows, ok, okr, hAt, dir: ci === 0 ? -1 : 1 };
+  });
+
+  // timing: each corner's heading lands, then one line per beat; the second corner follows the first
+  let t = 0.08;
+  built.forEach((b, ci) => {
+    const t0 = t;
+    tl.fromTo(b.slab, { scaleY: 0.25, scaleX: 0.8, opacity: 0, filter: "blur(10px)" }, { scaleY: 1, scaleX: 1, opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, t0);
+    tl.fromTo(b.inner, { rotationY: 26 * b.dir, x: 40 * u * b.dir }, { rotationY: 0, x: 0, duration: 0.8, ease: "back.out(1.5)" }, t0);
+    tl.fromTo(b.slab, { height: b.hAt(0) }, { height: b.hAt(0), duration: 0.01 }, t0);
+    const hc = { p: 0 }, hclip = () => { b.hd.style.clipPath = `inset(-20px ${(1 - hc.p) * 100}% -20px -20px)`; }; hclip();
+    tl.to(hc, { p: 1, duration: 0.45, ease: "power3.out", onUpdate: hclip }, t0 + 0.12);
+    tl.fromTo(b.ul, { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "expo.out" }, t0 + 0.24);
+    tl.fromTo(b.slab, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.7, ease: "power2.inOut" }, t0 + 0.2);
+    b.rows.forEach((r, k) => {
+      const tk = t0 + beat * (k + 1);
+      tl.to(b.slab, { height: b.hAt(k + 1), duration: 0.45, ease: "expo.out" }, tk - 0.06);
+      tl.fromTo(r.querySelector(".chev"), { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.6)" }, tk);
+      const tx = r.querySelector(".itx");
+      tl.fromTo(tx, { opacity: 0, x: -18 * u, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, tk + 0.05);
+    });
+    t = t0 + beat * (b.rows.length + 1) + 0.35;
+    // the corner hangs in depth, turned a touch toward the middle
+    tl.fromTo(b.col, { y: "+=0" }, { y: "-=" + 8 * u, duration: D - t0 - 0.5, ease: "sine.inOut" }, t0 + 0.5);
+  });
+  // the moment: the chosen side gets a green check, the other side steps back
+  if (pickI >= 0) {
+    const tp = Math.min(t + 0.1, D - 1.3), b = built[pickI];
+    built.forEach((o, k) => { if (k !== pickI) tl.to(o.inner, MV.v.key && /^#[0-9a-f]{6}$/i.test(MV.v.key) ? { filter: "brightness(0.55) saturate(0.5)", scale: 0.96, duration: 0.45, ease: "power2.out" } : { opacity: 0.42, scale: 0.96, duration: 0.45, ease: "power2.out" }, tp); });
+    tl.fromTo(b.ok, { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, tp);
+    const p = b.ok.querySelector("path"), L = p.getTotalLength(); p.style.strokeDasharray = L;
+    tl.fromTo(p, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, tp + 0.12);
+    tl.fromTo(b.okr, { scale: 1, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, tp + 0.1);
+    tl.fromTo(b.inner, { scale: 1 }, { scale: 1.03, duration: 0.12, ease: "power2.out", immediateRender: false }, tp);
+    tl.to(b.inner, { scale: 1, duration: 0.5, ease: "back.out(3)" }, tp + 0.12);
+    tl.fromTo(b.slab, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.7, ease: "power2.inOut", immediateRender: false }, tp + 0.1);
+  }
+  // out: each corner slides back to its own edge, blurring, accelerating
+  const O = D - 0.42;
+  built.forEach((b, k) => {
+    tl.to(b.inner, { x: 120 * u * b.dir, rotationY: 30 * b.dir, opacity: 0, filter: "blur(12px)", duration: 0.32, ease: "power3.in" }, O + k * 0.05);
+  });
+  MV.done();
+</script>
+</body>
+</html>

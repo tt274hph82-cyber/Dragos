@@ -1,0 +1,5 @@
+{ "id": "pros-cons", "name": "Pros and cons", "oneLiner": "two glass cards stand up off a lit floor, a green check badge over the pros and a red cross over the cons; rows land alternately with each mark drawn and the counts ticking, then the winning card steps forward in its colour while the other falls back",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["pros", "cons", "tradeoffs", "decision", "upsides", "downsides", "review", "honest", "worth it", "list", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker weighs something up ('the good: it saves hours... the catch: a day to set up'): one row per point as it is said, the winning side steps forward on the verdict ('still worth it'). winner auto picks the longer list; set none for a neutral list" }

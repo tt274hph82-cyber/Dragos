@@ -1,0 +1,5 @@
+{ "id": "product-ladder-row", "name": "Product ladder", "oneLiner": "3 to 5 glass steps rise left to right, each carrying a floating glass glyph tile with its name and price on the step's face; a lit puck hops up the steps one by one, each one ringing with light as it lands, and the top tile floods with the accent",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["ladder", "upgrade", "levels", "tiers", "pricing", "plans", "value ladder", "products", "steps", "progression", "good better best", "3d", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker walks up a range of options from cheap to best ('instant coffee, then beans, then a grinder, then the espresso machine'): the puck lands on each as it is named, the top one lights on the final pick" }

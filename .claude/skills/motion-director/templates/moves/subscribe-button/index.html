@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Video title (two lines at most)","default":"The system that runs my whole week"},
+  {"id":"channel","type":"string","label":"Channel name (empty: the brand name)","default":""},
+  {"id":"subsFrom","type":"number","label":"Subscribers before","default":12396},
+  {"id":"subs","type":"number","label":"Subscribers it ticks to","default":12400},
+  {"id":"unit","type":"string","label":"Word after the count (short reads bigger)","default":"subs"},
+  {"id":"button","type":"string","label":"Button label","default":"Subscribe"},
+  {"id":"done","type":"string","label":"Button label once pressed","default":"Subscribed"},
+  {"id":"person","type":"number","label":"Which brand person is on the video (0 = none)","default":1},
+  {"id":"screen","type":"number","label":"Which brand screen is behind them (1 = the first)","default":2}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #rip { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.65), rgba(255,255,255,0) 70%); opacity: 0; pointer-events: none; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+  #vid { border-radius: calc(var(--s) * 24); overflow: hidden; background: #111; box-shadow: 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  #vz { position: absolute; inset: 0; }
+  #vz img.bgi { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; object-position: top left; filter: brightness(.6) saturate(1.1); }
+  #vz .tn { position: absolute; inset: 0; background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 70%, #000), color-mix(in srgb, var(--accent) 30%, transparent) 55%, rgba(0,0,0,.2)); mix-blend-mode: multiply; }
+  #vz img.pp { position: absolute; left: 5%; bottom: 0; height: 100%; filter: drop-shadow(calc(var(--s) * 10) 0 calc(var(--s) * 24) rgba(0,0,0,.6)); }
+  #vz .sh { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(0,0,0,.65)); }
+  #vbar { position: absolute; left: 3%; right: 3%; bottom: 7%; height: calc(var(--s) * 8); border-radius: 99px; background: rgba(255,255,255,.3); }
+  #vbar i { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: inherit; transform-origin: 0 50%; background: var(--accent); }
+  #vbar b { position: absolute; top: 50%; left: 0; width: calc(var(--s) * 22); height: calc(var(--s) * 22); margin: calc(var(--s) * -11); border-radius: 50%; background: var(--accent); }
+  #vt { position: absolute; left: 3%; bottom: 11%; font-weight: 650; font-size: calc(var(--s) * 30); color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 calc(var(--s) * 2) calc(var(--s) * 8) rgba(0,0,0,.6); }
+  #ttl { font-weight: 700; font-size: calc(var(--s) * 40); line-height: 1.18; color: var(--ink); letter-spacing: -0.012em; text-wrap: balance; }
+  #av { border-radius: 50%; padding: calc(var(--s) * 4); background: conic-gradient(from 210deg, var(--al), var(--accent), var(--accent2), var(--al)); }
+  #av i { display: block; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; border: calc(var(--s) * 4) solid var(--surface);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 64%; background-position: 50% 50%; }
+  #nm { display: flex; align-items: center; gap: calc(var(--s) * 10); font-weight: 750; font-size: calc(var(--s) * 46); color: var(--ink); white-space: nowrap; }
+  #nm svg { flex: none; width: calc(var(--s) * 36); height: calc(var(--s) * 36); }
+  #sb { font-weight: 550; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; }
+  #sb b { font-weight: 700; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--ink) 85%, transparent); display: inline-block; transform-origin: 50% 60%; }
+  #btn { border-radius: 99px; }
+  #btn .f { position: absolute; inset: 0; border-radius: inherit; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 12); white-space: nowrap; font-weight: 750; font-size: calc(var(--s) * 42); }
+  #btn .f0 { color: #0B0B0B; background: linear-gradient(180deg, #fff, #E6E6E6); box-shadow: inset 0 calc(var(--s) * -3) 0 rgba(0,0,0,.12), 0 calc(var(--s) * 10) calc(var(--s) * 26) rgba(0,0,0,.4); }
+  #btn .f1 { color: var(--ink); background: rgba(255,255,255,.14); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.2); opacity: 0; justify-content: flex-start; padding-left: calc(var(--s) * 22); box-sizing: border-box; }
+  .is-key #btn .f1 { background: color-mix(in srgb, var(--surface) 75%, white); }
+  #bell { position: relative; flex: none; width: calc(var(--s) * 46); height: calc(var(--s) * 46); }
+  #bell svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #bell .bd { transform-origin: 50% 12%; }
+  #bell .wv { opacity: 0; }
+  #bell .ct { position: absolute; right: calc(var(--s) * -14); top: calc(var(--s) * -12); min-width: calc(var(--s) * 30); height: calc(var(--s) * 30); padding: 0 calc(var(--s) * 7); box-sizing: border-box; border-radius: 99px;
+    background: var(--ok); color: #04150B; font-weight: 800; font-size: calc(var(--s) * 22); display: flex; align-items: center; justify-content: center; opacity: 0; }
+  #glow { position: absolute; border-radius: 99px; background: #fff; filter: blur(calc(var(--s) * 30)); opacity: 0; }
+  .is-key #glow { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="win">
+        <div id="vid" class="ab"><div id="vz"><div class="tn"></div><div class="sh"></div></div><div id="vt"></div><div id="vbar"><i></i><b></b></div></div>
+        <div id="ttl" class="ab"></div>
+        <div id="av" class="ab"><i></i></div>
+        <div id="nm" class="ab"><span id="nmt"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="color-mix(in srgb, var(--ink) 55%, transparent)"/><path d="M7.5 12.3l3 3 6-6.4" fill="none" stroke="var(--surface)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div id="sb" class="ab"><b></b> <span id="sbu"></span></div>
+        <div id="glow" class="ab"></div>
+        <div id="btn" class="ab"><div class="f f0"><span class="t0"></span></div>
+          <div class="f f1"><span id="bell"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+            <g class="bd"><path d="M20 6c-6 0-10 4.6-10 10.5v6.5l-3 4.5h26l-3-4.5v-6.5C30 10.6 26 6 20 6z" fill="currentColor" fill-opacity=".18"/><path d="M16 31.5a4 4 0 0 0 8 0"/></g>
+            <path class="wv w1" d="M5 9.5c-1.6 2.4-2.4 5-2.4 7.8M35 9.5c1.6 2.4 2.4 5 2.4 7.8"/></svg></span><span class="t1"></span></div>
+          <div id="rip"></div>
+        </div>
+      </div>
+      <div id="cur"><svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.4-4.2 2.9 6.6 3-1.3-2.9-6.5 6.1-.3z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+
+  // ---- zone and scale (an 820-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.06; zB = H * 0.92; }
+  const DW = 820, pad = 32, inner = DW - pad * 2;
+  const VY = pad, VH = inner * 9 / 16;
+  const s0 = Math.min((cR - cL) / DW, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s0 + "px");
+  const ttl = $("#ttl"); ttl.textContent = v.title || v.headline || ""; ttl.style.width = (inner - 16) * s0 + "px";
+  { let fs = 40 * s0; ttl.style.fontSize = fs + "px"; while (ttl.getBoundingClientRect().height > fs * 1.18 * 2 + 2 && fs > 22 * s0) { fs -= 1; ttl.style.fontSize = fs + "px"; } }
+  const ttlH = ttl.getBoundingClientRect().height / s0;
+  const TY = VY + VH + 24, RY = TY + ttlH + 28, AV = 116, DH = RY + AV + 34;
+  const s = Math.min(s0, (zB - zT) / DH);
+  root.style.setProperty("--s", s + "px");
+  ttl.style.width = (inner - 16) * s + "px"; ttl.style.fontSize = parseFloat(ttl.style.fontSize) / s0 * s + "px";
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- the video
+  box($("#vid"), pad, VY, inner, VH);
+  const SC = v.screens || [], scr = SC[Math.max(0, Math.min(SC.length - 1, Math.round(+v.screen || 1) - 1))];
+  const pi = Math.round(+v.person || 0), per = pi > 0 ? (v.people || [])[pi - 1] : null;
+  if (scr) $("#vz").insertBefore(MV.img(scr, "bgi"), $("#vz .tn"));
+  if (per) $("#vz").insertBefore(MV.img(per, "pp"), $("#vz .sh"));
+  box(ttl, pad + 8, TY);
+  // ---- the channel row: avatar, name and count, the button on the right
+  box($("#av"), pad + 8, RY, AV, AV);
+  { const i = $("#av i"); if (v.mark) i.style.backgroundImage = `url("${v.mark}")`; else if ((v.people || [])[0]) { i.style.backgroundImage = `url("${v.people[0]}")`; i.style.backgroundSize = "170% auto"; i.style.backgroundPosition = "50% 6%"; } }
+  const t0 = $(".t0"), t1 = $(".t1"); t0.textContent = v.button || ""; t1.textContent = v.done || "";
+  const BH = 88;
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width / s; };
+  let BW0 = tw(t0) + 72, BW1 = 22 + 46 + 12 + tw(t1) + 32;
+  const BWm = Math.max(BW0, BW1, 250);
+  const BX = DW - pad - 8 - BWm;
+  const btn = $("#btn"); box(btn, BX + BWm - BW0, RY + (AV - BH) / 2, BW0, BH);
+  box($("#glow"), BX + BWm - BW0 + 10, RY + (AV - BH) / 2 + 8, BW0 - 20, BH - 16);
+  const NX = pad + 8 + AV + 22, NW = BX - 20 - NX;
+  $("#nmt").textContent = v.channel || v.brandName || "";
+  box($("#nm"), NX, RY + 2); MV.fitText($("#nmt"), (NW - 50) * s, 22 * s);
+  const sbb = $("#sb b"), fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const to = Math.round(+v.subs || 0), from = Math.min(to, Math.round(+v.subsFrom || to));
+  $("#sbu").textContent = v.unit || ""; sbb.textContent = fmt(to);
+  box($("#sb"), NX, RY + 64); MV.fitText($("#sb"), NW * s, 26 * s);
+  sbb.style.minWidth = sbb.getBoundingClientRect().width + "px"; sbb.textContent = fmt(from);
+  const CU = 60, cur = $("#cur"); Object.assign(cur.style, { width: S(CU), height: S(CU) });
+  const bx = (BX + BWm - BW0 * 0.45) * s, by = (RY + AV / 2 + 6) * s;
+  const RP = 300; Object.assign($("#rip").style, { width: S(RP), height: S(RP), left: S(BW0 * 0.55 - RP / 2), top: S(BH / 2 + 6 - RP / 2) });
+
+  // ---- timing
+  const TP = 1.95, TN = TP + 0.1, TB = TN + 0.5;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#vz img.bgi", { scale: 1.08, x: 14 * s }, { scale: 1, x: -8 * s, duration: D, ease: "sine.out" }, 0);
+  tl.fromTo("#vz img.pp", { y: 40 * s, scale: 0.94 }, { y: 0, scale: 1, duration: 0.8, ease: "back.out(1.6)" }, 0.2);
+  // the video plays along: progress creeps, the time counts
+  const pr = { p: 0.31 }, VW = inner * 0.94, VL = 754;
+  const setV = () => { gsap.set("#vbar i", { scaleX: pr.p }); gsap.set("#vbar b", { x: VW * pr.p * s }); $("#vt").textContent = Math.floor(pr.p * VL / 60) + ":" + String(Math.floor((pr.p * VL) % 60)).padStart(2, "0") + " / " + Math.floor(VL / 60) + ":" + String(VL % 60).padStart(2, "0"); };
+  setV(); tl.to(pr, { p: 0.36, duration: D, ease: "none", onUpdate: setV }, 0);
+  const tws = MV.words("#ttl");
+  tl.fromTo(tws, { opacity: 0, y: 16 * s, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: Math.min(0.04, 0.5 / tws.length), ease: "expo.out" }, 0.35);
+  tl.fromTo("#av", { scale: 0.4, rotation: -40, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: "back.out(2)" }, 0.5);
+  tl.fromTo(["#nm", "#sb"], { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.58);
+  tl.fromTo("#btn", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(2.4)" }, 0.7);
+  // the press
+  tl.fromTo(cur, { x: bx + 200 * s, y: by + 160 * s, opacity: 0 }, { x: bx, y: by, opacity: 1, duration: 0.6, ease: "expo.out" }, TP - 0.6);
+  tl.to(cur, { scale: 0.86, duration: 0.07, ease: "power2.in", transformOrigin: "20% 10%" }, TP); tl.to(cur, { scale: 1, duration: 0.3, ease: "back.out(3)" }, TP + 0.08);
+  tl.to("#btn", { scale: 0.93, duration: 0.07, ease: "power2.in" }, TP); tl.to("#btn", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TP + 0.08);
+  tl.fromTo("#rip", { scale: 0.1, opacity: 0.9 }, { scale: 1.4, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TP + 0.03);
+  tl.fromTo("#glow", { opacity: 0 }, { opacity: 0.55, duration: 0.08, ease: "power2.out", immediateRender: false }, TP); tl.to("#glow", { opacity: 0, duration: 0.6, ease: "power2.out" }, TP + 0.1);
+  tl.to(cur, { x: bx + 120 * s, y: by + 110 * s, opacity: 0, duration: 0.35, ease: "power2.in" }, TP + 0.45);
+  // the morph: white pill to the quiet Subscribed pill with its bell, widening to fit
+  const dx = (BW0 - BW1) * s;
+  tl.to("#btn", { width: BW1 * s, x: dx, duration: 0.45, ease: "expo.out" }, TN);
+  tl.to("#btn .f0", { opacity: 0, duration: 0.2, ease: "power2.in" }, TN);
+  tl.to("#btn .f1", { opacity: 1, duration: 0.3, ease: "power2.out" }, TN + 0.08);
+  tl.fromTo(".t1", { opacity: 0, x: 10 * s }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, TN + 0.12);
+  tl.fromTo("#bell", { scale: 0.3, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, TN + 0.1);
+  // the bell rings: a decaying swing, the waves pulse out, the count badge pops
+  [18, -15, 12, -9, 6, -3, 0].forEach((r, i) => tl.to("#bell .bd", { rotation: r, duration: 0.09, ease: "sine.inOut", svgOrigin: "20 7" }, TB + i * 0.09));
+  tl.fromTo("#bell .wv", { opacity: 0, scale: 0.7, transformOrigin: "50% 40%" }, { opacity: 1, scale: 1.1, duration: 0.25, ease: "power2.out" }, TB);
+  tl.to("#bell .wv", { opacity: 0, scale: 1.3, duration: 0.4, ease: "power2.in" }, TB + 0.4);
+  // the count ticks up to its number and bumps
+  const k = { n: from };
+  tl.to(k, { n: to, duration: 0.6, ease: MV.st(0.6), onUpdate: () => { sbb.textContent = fmt(k.n); } }, TN + 0.15);
+  tl.to(sbb, { color: "var(--okl)", duration: 0.2 }, TN + 0.15);
+  tl.fromTo(sbb, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, TN + 0.75); tl.to(sbb, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TN + 0.83);
+  tl.to(sbb, { color: "color-mix(in srgb, var(--ink) 85%, transparent)", duration: 0.8, ease: "power2.out" }, TN + 1.2);
+  tl.fromTo("#av", { scale: 1 }, { scale: 1.08, duration: 0.1, ease: "power2.out", immediateRender: false }, TN); tl.to("#av", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TN + 0.1);
+  tl.to("#stage", { scale: 1.012, duration: 0.07, ease: "power2.out" }, TN); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TN + 0.07);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TN + 0.05);
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

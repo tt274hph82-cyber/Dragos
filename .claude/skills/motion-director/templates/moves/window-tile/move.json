@@ -1,0 +1,5 @@
+{ "id": "window-tile", "name": "Window tiling", "oneLiner": "a pile of smoked-glass app windows lands scattered and tipped across a brand-lit desktop, snap zones flash and every window jumps into a clean grid at once, then a pointer double-clicks the brand window's title bar and it maximises over the dimmed rest, showing the brand's own page",
+  "category": "system", "kind": "effect", "uses": ["broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["windows", "desktop", "organise", "messy", "chaos to order", "clean up", "focus", "workspace", "computer", "apps", "grid", "tidy", "one tool", "os", "system", "maximise"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker goes from chaos to order or narrows down to one tool ('I had ten apps open', 'it organised everything', 'now I only need this one'): the windows snap on 'organised' or 'sorted', the brand window fills the screen on 'this one'. Set apps, pick and screen" }

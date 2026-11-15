@@ -1,0 +1,5 @@
+{ "id": "profile-stats-header", "name": "Profile stats header", "oneLiner": "a full-width light profile header (lit brand banner, real face in a ring, name, handle, bio, three stats) drifts in slow 3D; the follower count rolls like an odometer, every digit spinning to its new value, and lands with a green gain chip",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["profile", "followers", "audience", "growth", "milestone", "creator", "account", "stats", "odometer", "social", "subscribers", "header", "proof", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker talks about audience growth ('I went from under 10K to over 10K in a month', 'this account grew by 400 in a day'): cut in on the build-up, the odometer rolls as they say the number and the gain chip lands on it. Set followersFrom and followers to the real before and after" }

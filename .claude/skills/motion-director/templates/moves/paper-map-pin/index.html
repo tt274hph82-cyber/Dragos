@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"start","type":"string","label":"Label at the start of the route (handwritten)","default":"Today"},
+  {"id":"place","type":"string","label":"Label at the pin (handwritten, the destination)","default":"The goal"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: -6%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1100); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(130% 100% at 50% 45%, transparent 45%, rgba(0,0,0,.6)); }
+  #cam { position: absolute; inset: 0; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #map { position: absolute; }
+  #map-b { position: absolute; inset: 0; }
+  /* the sheet: a real scanned crumpled paper, with a real paper grain over it */
+  #sheet { position: absolute; inset: 0; background: #f1ece0 url(assets/map-paper.jpg) center / calc(var(--u) * 1400); background-blend-mode: multiply; box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 6) rgba(0,0,0,.4), calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * 50) rgba(0,0,0,.5); overflow: hidden; }
+  #sheet::before { content: ""; position: absolute; inset: 0; background: url(assets/paper-white.jpg) center / calc(var(--u) * 700); mix-blend-mode: multiply; opacity: .7; }
+  /* the print: ink on paper, multiplied, with a scanned grit as ink coverage */
+  #print { position: absolute; inset: 0; mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); }
+  #print svg, #route { position: absolute; left: 0; top: 0; overflow: visible; }
+  /* the fold panels: each panel tilts a little differently to the lamp */
+  #folds { position: absolute; inset: 0; pointer-events: none; }
+  .hand { position: absolute; white-space: nowrap; font-family: "MV Marker", cursive; color: #1d1b22; line-height: 1; filter: url(#bleed); }
+  #pin { position: absolute; left: 0; top: 0; transform-origin: 3% 97%; isolation: isolate; }
+  #pin img { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+  #pin .tint { position: absolute; inset: 0; background: var(--accent); mix-blend-mode: multiply; -webkit-mask: url(assets/pin-mask.png) 0 0 / 100% 100%; mask: url(assets/pin-mask.png) 0 0 / 100% 100%; }
+  #pinwrap { position: absolute; left: 0; top: 0; --h: 0; filter: drop-shadow(calc(var(--u) * (4 + var(--h) * 60)) calc(var(--u) * (8 + var(--h) * 90)) calc(var(--u) * (5 + var(--h) * 20)) rgba(0,0,0,calc(.5 - var(--h) * .2))); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.6"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="map"><div class="boil" id="map-b">
+      <div id="sheet"><div id="print" data-bleed></div><svg id="route"></svg><div id="folds"></div></div>
+      <div class="hand" id="lstart"></div><div class="hand" id="lplace"></div>
+      <div id="pinwrap"><div id="pin"><img src="assets/pin-base.png" alt="" /><div class="tint"></div><img src="assets/pin-spec.png" alt="" /></div></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await document.fonts.load('60px "MV Marker"');
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const $ = (id) => document.getElementById(id);
+  const NS = "http://www.w3.org/2000/svg";
+  const svgEl = (par, tag, at) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); par.appendChild(e); return e; };
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+
+  // ---- the sheet: bigger than the frame on 9:16 (a close shot of an open map), with desk around it elsewhere
+  const MW = MV.portrait ? W * 1.12 : W * 0.86, MH = MV.portrait ? H * 1.06 : H * 0.9;
+  const mx = (W - MW) / 2, my = (H - MH) / 2;
+  Object.assign($("map").style, { left: mx + "px", top: my + "px", width: MW + "px", height: MH + "px" });
+  const pr = $("print"), print = svgEl(pr, "svg", { width: MW, height: MH });
+  const R = MV.rand(23), S = Math.min(MW, MH);
+  // a smooth closed or open path through points (Catmull-Rom as cubic Beziers)
+  const smooth = (P, closed) => { const n = P.length, g = (i) => P[closed ? (i + n) % n : Math.max(0, Math.min(n - 1, i))];
+    let d = `M ${P[0][0].toFixed(1)} ${P[0][1].toFixed(1)}`;
+    for (let i = 0; i < (closed ? n : n - 1); i++) { const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+      d += ` C ${(p1[0] + (p2[0] - p0[0]) / 6).toFixed(1)} ${(p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)}, ${(p2[0] - (p3[0] - p1[0]) / 6).toFixed(1)} ${(p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`; }
+    return d + (closed ? " Z" : ""); };
+  const blob = (cx, cy, rx, ry, n, j) => { const P = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2, k = 1 + (R() - 0.5) * j; P.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k]); } return P; };
+
+  // ---- the printed map: an abstract town by the water (no real places), drawn as ink
+  const C = { water: "#a9cbd6", waterLine: "#5f93a6", park: "#c6dbab", hill: "#b79a74", road: "#f0c869", roadCase: "#7d6a55", street: "#9a8f83", grid: "#7aa3b5", block: "#e6dccb" };
+  // water: a bay along the top-left edge, with two depth lines
+  const coast = []; for (let i = 0; i <= 10; i++) { const t = i / 10; coast.push([MW * (-0.05 + t * 0.62) + (R() - 0.5) * S * 0.04, MH * (0.36 - Math.sin(t * Math.PI) * 0.14 - t * 0.3) + (R() - 0.5) * S * 0.04]); }
+  const bay = `${smooth(coast, false)} L ${MW * 0.6} ${-10} L ${-10} ${-10} Z`;
+  svgEl(print, "path", { d: bay, fill: C.water });
+  for (const off of [1, 2]) svgEl(print, "path", { d: smooth(coast.map(([x, y]) => [x - off * S * 0.02, y - off * S * 0.03]), false), fill: "none", stroke: C.waterLine, "stroke-width": 1.4 * u, "stroke-dasharray": `${6 * u} ${5 * u}`, opacity: .7 });
+  svgEl(print, "path", { d: smooth(coast, false), fill: "none", stroke: C.waterLine, "stroke-width": 2.4 * u });
+  // a river from the bay down to the lower edge
+  const riv = [[MW * 0.3, MH * 0.25], [MW * 0.33, MH * 0.42], [MW * 0.24, MH * 0.58], [MW * 0.3, MH * 0.76], [MW * 0.22, MH * 1.05]];
+  svgEl(print, "path", { d: smooth(riv, false), fill: "none", stroke: C.water, "stroke-width": 16 * u, "stroke-linecap": "round" });
+  svgEl(print, "path", { d: smooth(riv, false), fill: "none", stroke: C.waterLine, "stroke-width": 1.4 * u, opacity: .8 });
+  // parks
+  for (const [px, py, rx, ry] of [[0.7, 0.7, 0.1, 0.07], [0.12, 0.68, 0.07, 0.09], [0.55, 0.42, 0.06, 0.05]]) svgEl(print, "path", { d: smooth(blob(MW * px, MH * py, S * rx, S * ry, 9, 0.35), true), fill: C.park });
+  // hills: contour rings at the lower right
+  for (let k = 0; k < 6; k++) { const s = 1 - k * 0.15; svgEl(print, "path", { d: smooth(blob(MW * 0.86, MH * 0.9, S * 0.2 * s, S * 0.15 * s, 11, 0.12), true), fill: "none", stroke: C.hill, "stroke-width": (k % 3 ? 1.2 : 2) * u, opacity: .8 }); }
+  // town: a rotated grid of small blocks with an irregular edge, a second finer grid across the river, minor streets
+  const townAt = (cx, cy, rot, bs, n, seed) => { const rr = MV.rand(seed), g = svgEl(print, "g", { transform: `rotate(${rot} ${cx} ${cy})` });
+    for (let i = -n; i <= n; i++) for (let j = -n; j <= n; j++) { const dd = Math.hypot(i, j * 1.2) / n; if (dd > 0.95 + (rr() - 0.5) * 0.5 || rr() < 0.08) continue;
+      const wide = rr() < 0.25 ? 2 : 1; if (wide === 2 && i === n) continue;
+      svgEl(g, "rect", { x: cx + i * bs + bs * 0.14, y: cy + j * bs + bs * 0.14, width: bs * (wide - 0.28), height: bs * 0.72, fill: C.block, stroke: C.street, "stroke-width": 0.8 * u }); } };
+  townAt(MW * 0.55, MH * 0.58, -12, S * 0.042, 7, 4);
+  townAt(MW * 0.16, MH * 0.4, 8, S * 0.034, 4, 8);
+  townAt(MW * 0.86, MH * 0.3, -30, S * 0.036, 4, 12);
+  // a railway: a black line with ties
+  const rail = smooth([[-0.05, 0.86], [0.3, 0.7], [0.55, 0.68], [0.8, 0.58], [1.05, 0.2]].map(([x, y]) => [MW * x, MH * y]), false);
+  svgEl(print, "path", { d: rail, fill: "none", stroke: "#4a4440", "stroke-width": 3 * u });
+  svgEl(print, "path", { d: rail, fill: "none", stroke: "#4a4440", "stroke-width": 10 * u, "stroke-dasharray": `${1.6 * u} ${9 * u}` });
+  // minor roads
+  for (let k = 0; k < 7; k++) { const y0 = R(), y1 = R(); svgEl(print, "path", { d: smooth([[-0.02, y0], [0.35, y0 * 0.7 + y1 * 0.3 + (R() - .5) * .1], [0.7, y0 * 0.3 + y1 * 0.7 + (R() - .5) * .1], [1.02, y1]].map(([x, y]) => [MW * x, MH * y]), false), fill: "none", stroke: C.street, "stroke-width": 2.2 * u, opacity: .8 }); }
+  // main roads (cased) crossing the sheet
+  const roads = [[[-0.05, 0.62], [0.25, 0.55], [0.5, 0.6], [0.75, 0.5], [1.05, 0.45]], [[0.62, -0.05], [0.58, 0.3], [0.66, 0.55], [0.6, 0.8], [0.68, 1.05]], [[0.1, 1.05], [0.3, 0.85], [0.55, 0.78], [0.9, 0.72], [1.05, 0.62]]];
+  for (const r of roads) { const d = smooth(r.map(([x, y]) => [MW * x, MH * y]), false);
+    svgEl(print, "path", { d, fill: "none", stroke: C.roadCase, "stroke-width": 14 * u, "stroke-linecap": "round" });
+    svgEl(print, "path", { d, fill: "none", stroke: C.road, "stroke-width": 10 * u, "stroke-linecap": "round" }); }
+  // the printed grid with its edge letters and numbers
+  const gstep = S * 0.22, gf = 22 * u;
+  for (let x = gstep * 0.5, i = 0; x < MW; x += gstep, i++) { svgEl(print, "line", { x1: x, y1: 0, x2: x, y2: MH, stroke: C.grid, "stroke-width": 1 * u, opacity: .55 });
+    const t = svgEl(print, "text", { x: x + gstep / 2, y: my < 0 ? -my + safe.top * 0.4 : gf * 1.4, fill: C.grid, "font-size": gf, "text-anchor": "middle", "font-family": "Georgia, serif" }); t.textContent = "ABCDEFGHIJ"[i] || ""; }
+  for (let y = gstep * 0.5, i = 0; y < MH; y += gstep, i++) svgEl(print, "line", { x1: 0, y1: y, x2: MW, y2: y, stroke: C.grid, "stroke-width": 1 * u, opacity: .55 });
+
+  // ---- folds: 3 x 2 panels (2 x 3 on a tall frame), each lit a little differently, with a crease line
+  const cols = MV.portrait ? 2 : 3, rows = MV.portrait ? 3 : 2, folds = $("folds");
+  for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) { const d = document.createElement("div");
+    const dir = i % 2 ? 270 : 90, lit = (i + j) % 2 ? .1 : -.06;
+    Object.assign(d.style, { position: "absolute", left: (i * MW / cols) + "px", top: (j * MH / rows) + "px", width: (MW / cols) + "px", height: (MH / rows) + "px",
+      background: `linear-gradient(${dir}deg, rgba(0,0,0,${0.12 + lit * 0.4}), rgba(255,250,235,${Math.max(0, lit)}) 55%, rgba(0,0,0,${0.06}))`, mixBlendMode: "multiply" });
+    folds.appendChild(d); }
+  for (let i = 1; i < cols; i++) { const c = document.createElement("div"); Object.assign(c.style, { position: "absolute", left: (i * MW / cols - 1.5 * u) + "px", top: 0, width: (3 * u) + "px", height: MH + "px", background: "linear-gradient(90deg, rgba(0,0,0,.18), rgba(255,255,255,.35))" }); folds.appendChild(c); }
+  for (let j = 1; j < rows; j++) { const c = document.createElement("div"); Object.assign(c.style, { position: "absolute", top: (j * MH / rows - 1.5 * u) + "px", left: 0, height: (3 * u) + "px", width: MW + "px", background: "linear-gradient(rgba(0,0,0,.16), rgba(255,255,255,.3))" }); folds.appendChild(c); }
+
+  // ---- the route: from the start mark to the pin, inside the safe band; in brand colour, a marker dash
+  const bandT = safe.top + 140 * u, bandB = H - safe.bottom - 90 * u, bandL = safe.left + 60 * u, bandR = W - safe.right - 40 * u;
+  const A = MV.portrait ? [bandL + (bandR - bandL) * 0.12, bandB - (bandB - bandT) * 0.12] : [W * 0.22, H * 0.7];
+  const B = MV.portrait ? [bandL + (bandR - bandL) * 0.72, bandT + (bandB - bandT) * 0.28] : [W * 0.66, H * 0.36];
+  const loc = (p) => [p[0] - mx, p[1] - my];
+  const a = loc(A), b = loc(B), dx = b[0] - a[0], dy = b[1] - a[1];
+  const rpts = [a, [a[0] + dx * 0.3 + dy * 0.18, a[1] + dy * 0.22 - dx * 0.1], [a[0] + dx * 0.55 - dy * 0.12, a[1] + dy * 0.55 + dx * 0.12], [a[0] + dx * 0.82 + dy * 0.1, a[1] + dy * 0.8 - dx * 0.06], b];
+  const route = $("route"); route.setAttribute("width", MW); route.setAttribute("height", MH);
+  const rp = svgEl(route, "path", { d: smooth(rpts, false), fill: "none", "stroke-width": 9 * u, "stroke-linecap": "round", "stroke-dasharray": `${22 * u} ${16 * u}`, filter: "url(#bleed)", style: "stroke:var(--accent);mix-blend-mode:multiply" });
+  const RL = rp.getTotalLength();
+  // the reveal: a solid mask path over the dashed one, drawn on twos
+  const defs = svgEl(route, "defs", {}), mk = svgEl(defs, "mask", { id: "rmask", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: MW, height: MH });
+  const mp = svgEl(mk, "path", { d: smooth(rpts, false), fill: "none", stroke: "#fff", "stroke-width": 30 * u, "stroke-linecap": "round", "stroke-dasharray": RL, "stroke-dashoffset": RL });
+  rp.setAttribute("mask", "url(#rmask)");
+  // the start mark: a hand-drawn ring
+  const ring = svgEl(route, "circle", { cx: a[0], cy: a[1], r: 20 * u, fill: "none", "stroke-width": 8 * u, filter: "url(#bleed)", style: "stroke:var(--accent);mix-blend-mode:multiply" });
+  const ringC = 2 * Math.PI * 20 * u; ring.setAttribute("stroke-dasharray", ringC); ring.setAttribute("stroke-dashoffset", ringC);
+
+  // ---- labels, handwritten
+  const lf = Math.min(78 * u, (bandR - bandL) * 0.11);
+  const ls = $("lstart"), lp = $("lplace");
+  ls.textContent = v.start || ""; lp.textContent = v.place || "";
+  ls.style.fontSize = (lf * 0.8) + "px"; lp.style.fontSize = lf + "px";
+  MV.fitText(ls, (bandR - bandL) * 0.6, 12 * u); MV.fitText(lp, (bandR - bandL) * 0.7, 12 * u);
+  // start label: right of the ring, a little above; place label: under the pin, centred, held inside the band
+  const lsx = Math.min(a[0] + 40 * u, bandR - mx - tw(ls)), lsy = a[1] - parseFloat(ls.style.fontSize) * 1.5;
+  Object.assign(ls.style, { left: lsx + "px", top: lsy + "px" });
+  const lpw = tw(lp), lpx = Math.max(bandL - mx, Math.min(b[0] - lpw - lf * 0.35, bandR - mx - lpw)), lpy = b[1] - lf * 1.75;
+  Object.assign(lp.style, { left: lpx + "px", top: lpy + "px" });
+  for (const e of [ls, lp]) e.style.clipPath = "inset(-30% 104% -30% -4%)";
+
+  // ---- the pin: its tip (3%, 97% of the render) lands on the end of the route
+  const PWd = Math.min(300 * u, S * 0.3), PHd = PWd * 441 / 402;
+  const pin = $("pin"), pw = $("pinwrap"); Object.assign(pin.style, { width: PWd + "px", height: PHd + "px" });
+  const pinX = b[0] - PWd * 0.03, pinY = b[1] - PHd * 0.97;
+  gsap.set(pin, { x: pinX, y: pinY, opacity: 0 });
+
+  // ---- timeline
+  // 0.0 the open map (a cutaway opens on it); 0.25 the start ring draws, its label writes; 0.7 the route draws on twos;
+  // 1.75 the pin drops out of the lens and sticks with a jolt; 2.2 its label writes; slow push toward the pin
+  tl.fromTo(ring, { attr: { "stroke-dashoffset": ringC } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.33, ease: "steps(4)", immediateRender: true }, 0.25);
+  tl.fromTo(ls, { clipPath: "inset(-30% 104% -30% -4%)" }, { clipPath: "inset(-30% -4% -30% -4%)", duration: 0.42, ease: "steps(5)", immediateRender: true }, 0.35);
+  const RD = 1.0;
+  tl.fromTo(mp, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: RD, ease: twos("power1.inOut", RD), immediateRender: true }, 0.7);
+  const TP = 1.75;
+  tl.set(pin, { opacity: 1 }, TP);
+  tl.fromTo(pin, { scale: 2.4, x: pinX + PWd * 0.6, y: pinY - PHd * 1.1, rotation: 14 }, { scale: 1, x: pinX, y: pinY, rotation: 0, duration: 0.25, ease: twos("power3.in", 0.25), immediateRender: false }, TP);
+  tl.fromTo(pw, { "--h": 1 }, { "--h": 0, duration: 0.25, ease: twos("power3.in", 0.25), immediateRender: true }, TP);
+  // stuck: a one-frame squash of the paper and a small wobble of the pin
+  tl.to("#map-b", { scale: 0.992, duration: STEP, ease: "steps(1)" }, TP + 0.25); tl.to("#map-b", { scale: 1, duration: STEP * 2, ease: "steps(1)" }, TP + 0.25 + STEP);
+  tl.to(pin, { rotation: -5, duration: STEP * 2, ease: "steps(1)" }, TP + 0.25); tl.to(pin, { rotation: 2, duration: STEP * 2, ease: "steps(1)" }, TP + 0.25 + STEP * 2); tl.to(pin, { rotation: 0, duration: STEP * 2, ease: "steps(1)" }, TP + 0.25 + STEP * 4);
+  tl.fromTo(lp, { clipPath: "inset(-30% 104% -30% -4%)" }, { clipPath: "inset(-30% -4% -30% -4%)", duration: 0.5, ease: "steps(6)", immediateRender: true }, TP + 0.42);
+  // boil (twos): paper drift and ink bleed; camera: one slow push toward the pin
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, t = 0; t < D; t += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, t);
+  const rb = MV.rand(9); for (let t = 0; t < D; t += STEP * 2) tl.set("#map-b", { "--bx": `${((rb() - .5) * 1.4 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 1.4 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.1).toFixed(2)}deg` }, t);
+  gsap.set("#cam", { transformOrigin: `${(B[0] / W * 100).toFixed(1)}% ${(B[1] / H * 100).toFixed(1)}%` });
+  tl.fromTo("#cam", { scale: 1, rotation: -0.8 }, { scale: 1.08, rotation: 0, duration: D, ease: "power1.inOut" }, 0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

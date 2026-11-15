@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The card title (what is being taken apart)","default":"An AI agent"},
+  {"id":"blocks","type":"string","label":"The parts, comma separated, 3 to 5 short labels","default":"Search,Code,Memory,Goal"},
+  {"id":"glyphs","type":"string","label":"Glyph per part, comma separated (mail, calendar, doc, chat, code, chart, search, cart, video, phone, db, target, spark...; empty = guessed from the label)","default":""},
+  {"id":"cues","type":"string","label":"Seconds at which each part lands, comma separated (empty = evenly paced)","default":""},
+  {"id":"group","type":"string","label":"Which parts the outline groups, 1-based (2-3 or 1,2); keep them side by side; empty = no outline","default":"1-2"},
+  {"id":"groupName","type":"string","label":"The name on the outline","default":"Tools"},
+  {"id":"lift","type":"number","label":"Which part lifts toward camera at the end, 1-based (0 = none)","default":4},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 30%; top: 0%; background: color-mix(in srgb, var(--accent) 34%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 55%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the card: one big pane of glass */
+  #card { position: absolute; box-sizing: border-box;
+    background: linear-gradient(160deg, rgba(255,255,255,.15), rgba(255,255,255,.05) 55%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(30px) saturate(160%); backdrop-filter: blur(30px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 90%, white 10%), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  #card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 14%), rgba(255,255,255,.18) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 14%)); }
+  #title { position: absolute; font-family: var(--font-display); color: var(--ink); line-height: 1.05; letter-spacing: -0.015em; white-space: nowrap; }
+  #title .w { will-change: transform; }
+
+  /* a part: a smaller pane inside, with a lit glyph tile and its label */
+  .blk { position: absolute; box-sizing: border-box;
+    background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.04));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.09),
+      0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -20) rgba(0,0,0,.5); }
+  .is-alpha .blk { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, white 20%), color-mix(in srgb, var(--surface) 88%, white 12%)); }
+  .blk::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.3) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .blk .gt { position: absolute; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 55%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.65), 0 calc(var(--u) * 12) calc(var(--u) * 30) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .blk .gt .gl { width: 50%; height: 50%; }
+  .blk .bl { position: absolute; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: -0.005em; }
+  .blk .rim { position: absolute; inset: calc(var(--u) * -2); border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--accent) 85%, white), 0 0 calc(var(--u) * 60) calc(var(--u) * 4) color-mix(in srgb, var(--accent) 55%, transparent); }
+
+  /* the group: an accent outline drawn around some parts, its name on a tab */
+  #grp { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  #tag { position: absolute; white-space: nowrap; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #fff; line-height: 1;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 70%, white 30%), var(--accent));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--u) * 10) calc(var(--u) * 24) calc(var(--u) * -6) color-mix(in srgb, var(--accent) 80%, transparent); }
+
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .is-key .blk { background: color-mix(in srgb, var(--surface) 85%, white 15%); }
+  .is-key .blk .rim { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="card"><div id="title"></div><div id="blocks"></div>
+      <svg id="grp"><defs><filter id="fGlow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" /></filter></defs><path id="gGlow" fill="none" /><path id="gLine" fill="none" /></svg>
+      <div id="tag"></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const ACC = getComputedStyle(root).getPropertyValue("--accent").trim();
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  let names = list(v.blocks).filter((s) => s.length).slice(0, 5);
+  while (names.length < 3) names.push(["Input", "Process", "Output"][names.length]);
+  const N = names.length, gl = list(v.glyphs), USED = new Set();
+
+  // ---- region and grid
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.08, x1: W * 0.92, y0: H * 0.1, y1: H * 0.9 } : { x0: W * 0.1, x1: W * 0.9, y0: H * 0.13, y1: H * 0.87 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0;
+  // rows of blocks: one row when it fits (16:9, top), else two (the first row the fuller one)
+  const rows = (!P && !SQ) || TOP || N <= 3 ? [N] : N === 4 ? [2, 2] : [3, 2];
+  const COLS = Math.max(...rows);
+  const S = TOP ? 0.86 : 1;                                   // the top band is short: everything a little tighter
+  const PADC = 48 * u * S, GAPX = 28 * u * S, GAPY = 76 * u * S, TGAP = 82 * u * S;
+  const CW = Math.min(RW, (P ? 9999 : (COLS <= 3 ? 1180 : 1560) * u));
+  const BW = (CW - PADC * 2 - GAPX * (COLS - 1)) / COLS;
+  const BH = Math.min(BW * (rows.length > 1 ? (P ? 0.94 : 0.8) : 0.95), (TOP ? 250 : P ? 340 : 300) * u);
+  const TF = (TOP ? 62 : P ? 76 : 84) * u;
+
+  const card = document.getElementById("card"), title = document.getElementById("title"), blocksEl = document.getElementById("blocks");
+  title.textContent = v.title || v.brandName || ""; title.style.fontSize = TF + "px";
+  MV.fitText(title, CW - PADC * 2, 24);
+  const th = title.offsetHeight;
+  Object.assign(title.style, { left: PADC + "px", top: PADC * 0.9 + "px" });
+  const gridTop = PADC * 0.9 + th + TGAP;
+  const CH = gridTop + rows.length * BH + (rows.length - 1) * GAPY + PADC;
+  // the card fits the region; if it is taller, it scales as one
+  const fs = Math.min(1, RH / CH, RW / CW);
+  const cx = R.x0 + RW / 2, cy = R.y0 + RH / 2;
+  Object.assign(card.style, { width: CW + "px", height: CH + "px", left: cx - CW / 2 + "px", top: cy - CH / 2 + "px", borderRadius: 54 * u * S + "px" });
+
+  const B = names.map((txt, i) => {
+    let r = 0, k = i; while (k >= rows[r]) { k -= rows[r]; r++; }
+    const rowW = rows[r] * BW + (rows[r] - 1) * GAPX;
+    const x = (CW - rowW) / 2 + k * (BW + GAPX), y = gridTop + r * (BH + GAPY);
+    const b = document.createElement("div"); b.className = "blk"; blocksEl.appendChild(b);   // in the DOM first, so text can be measured
+    const gs = Math.min(BH * 0.46, BW * 0.42, 150 * u);
+    b.innerHTML = `<div class="gt">${GLYPH.svg(GLYPH.pick(txt, gl[i], i, USED))}</div><div class="bl"></div><div class="rim"></div>`;
+    Object.assign(b.style, { left: x + "px", top: y + "px", width: BW + "px", height: BH + "px", borderRadius: 34 * u * S + "px" });
+    const gt = b.querySelector(".gt"), bl = b.querySelector(".bl"), ip = Math.min(30 * u, BW * 0.12);
+    Object.assign(gt.style, { left: ip + "px", top: ip + "px", width: gs + "px", height: gs + "px", borderRadius: gs * 0.28 + "px" });
+    bl.textContent = txt; bl.style.fontSize = Math.min((P && !TOP ? 50 : 44) * u * S, BH * 0.17) + "px";
+    MV.fitText(bl, BW - ip * 2, 14);
+    Object.assign(bl.style, { left: ip + "px", bottom: ip * 0.9 + "px" });
+    return { i, b, gt, bl, x, y };
+  });
+
+  // ---- the group: a rounded outline around the chosen parts, its name on a tab across the top edge
+  const parseIdx = (s) => { const out = new Set(); String(s || "").split(",").forEach((p) => { const m = p.trim().match(/^(\d+)\s*-\s*(\d+)$/); if (m) { for (let j = +m[1]; j <= +m[2]; j++) out.add(j - 1); } else if (/^\d+$/.test(p.trim())) out.add(+p.trim() - 1); }); return [...out].filter((j) => j >= 0 && j < N); };
+  const G = parseIdx(v.group), tag = document.getElementById("tag"), gLine = document.getElementById("gLine"), gGlow = document.getElementById("gGlow");
+  let GL = 0;
+  if (G.length) {
+    const gp = 16 * u * S;
+    const l = Math.min(...G.map((j) => B[j].x)) - gp, t = Math.min(...G.map((j) => B[j].y)) - gp;
+    const r = Math.max(...G.map((j) => B[j].x + BW)) + gp, bm = Math.max(...G.map((j) => B[j].y + BH)) + gp;
+    const rr = 44 * u * S;
+    // starts at the tab, runs clockwise, closes back on the tab
+    const d = `M${l + rr},${t} H${r - rr} A${rr},${rr} 0 0 1 ${r},${t + rr} V${bm - rr} A${rr},${rr} 0 0 1 ${r - rr},${bm} H${l + rr} A${rr},${rr} 0 0 1 ${l},${bm - rr} V${t + rr} A${rr},${rr} 0 0 1 ${l + rr},${t} Z`;
+    const svg = document.getElementById("grp"); svg.setAttribute("width", CW); svg.setAttribute("height", CH); svg.setAttribute("viewBox", `0 0 ${CW} ${CH}`);
+    [gLine, gGlow].forEach((p) => p.setAttribute("d", d));
+    gLine.setAttribute("stroke", `color-mix(in srgb, ${ACC} 75%, white)`); gLine.setAttribute("stroke-width", 3.5 * u); gLine.setAttribute("stroke-linecap", "round");
+    gGlow.setAttribute("stroke", ACC); gGlow.setAttribute("stroke-width", 12 * u); gGlow.setAttribute("stroke-opacity", KEY ? 0 : 0.6); gGlow.setAttribute("filter", "url(#fGlow)");
+    GL = gLine.getTotalLength();
+    [gLine, gGlow].forEach((p) => { p.style.strokeDasharray = `${GL} ${GL + 20}`; p.style.strokeDashoffset = GL; });
+    tag.textContent = v.groupName || ""; tag.style.fontSize = 30 * u * S + "px";
+    Object.assign(tag.style, { padding: `${12 * u * S}px ${20 * u * S}px`, borderRadius: 999 + "px" });
+    MV.fitText(tag, r - l - rr * 2, 12);
+    const tH = tag.offsetHeight;
+    Object.assign(tag.style, { left: l + rr * 0.8 + "px", top: t - tH / 2 + "px" });
+    if (!v.groupName) tag.style.display = "none";
+  } else tag.style.display = "none";
+
+  // ---- the camera: the card hangs in 3D and turns slowly
+  gsap.set(card, { scale: fs, transformOrigin: "50% 50%" });
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: -10, rotationX: 9, y: 24 * u }, { rotationY: 6, rotationX: 3, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0 }, { x: -W * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- cues: when each part lands (given in seconds, else evenly paced); squeezed to leave room for the group and the lift
+  let cues = list(v.cues).map(Number).filter((n) => isFinite(n) && n >= 0);
+  const auto = (i) => 0.85 + i * 0.45;
+  cues = names.map((_, i) => (cues[i] !== undefined ? cues[i] : cues.length ? cues[cues.length - 1] + (i - cues.length + 1) * 0.45 : auto(i)));
+  for (let i = 1; i < N; i++) cues[i] = Math.max(cues[i], cues[i - 1] + 0.18);
+  const latest = D - (G.length ? 2.05 : 1.6);
+  if (cues[N - 1] > latest) { const a = Math.min(cues[0], 0.7), k = (latest - a) / Math.max(0.01, cues[N - 1] - cues[0]); cues = cues.map((c) => a + (c - cues[0]) * k); }
+  cues = cues.map((c) => Math.max(0.6, c));
+
+  // 1. the blank card, then the title
+  tl.fromTo(card, { opacity: 0, y: 40 * u, scale: fs * 0.94, filter: "blur(14px)" }, { opacity: 1, y: 0, scale: fs, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.fromTo(card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 1.1, ease: "power2.inOut" }, 0.15);
+  const tw = MV.words(title);
+  tl.fromTo(tw, { opacity: 0, y: 26 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.07 }, Math.min(0.32, cues[0] - 0.35));
+  // 2. each part on its cue: the pane scales in, the glyph tile pops, the label lands
+  B.forEach((o, i) => { const at = cues[i];
+    tl.fromTo(o.b, { scale: 0.62, y: 26 * u }, { scale: 1, y: 0, duration: 0.65, ease: "back.out(1.7)" }, at);
+    tl.fromTo(o.b, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, at);
+    tl.fromTo(o.gt, { scale: 0.3, rotation: -24 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, at + 0.06);
+    tl.fromTo(o.bl, { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, at + 0.14);
+    tl.fromTo(o.b, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut" }, at + 0.18); });
+  // 3. the group: the outline draws itself round, the tab drops onto it
+  const tg = cues[N - 1] + 0.55;
+  if (G.length) {
+    tl.to([gLine, gGlow], { strokeDashoffset: 0, duration: 0.7, ease: "power2.inOut" }, tg);
+    tl.to(gGlow, { strokeOpacity: KEY ? 0 : 0.3, duration: 0.6, ease: "power2.out" }, tg + 0.7);
+    tl.fromTo(tag, { scale: 0.4, y: -14 * u }, { scale: 1, y: 0, duration: 0.55, ease: "back.out(2.2)" }, tg + 0.08);
+    tl.fromTo(tag, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, tg + 0.08);
+    G.forEach((j) => tl.to(B[j].b, { y: -6 * u, duration: 0.5, ease: "back.out(2)" }, tg + 0.1));
+  }
+  // 4. the moment: one part lifts toward camera, the rest of the card falls back
+  const LI = Math.round(+v.lift || 0) - 1;
+  if (LI >= 0 && LI < N) {
+    const ta = Math.max(tg + (G.length ? 0.95 : 0.2), D - 1.35), L = B[LI];
+    L.b.style.zIndex = 5; tag.style.zIndex = 6;
+    const inG = G.includes(LI);
+    gsap.set(L.b, { transformOrigin: "50% 75%" });
+    tl.to(L.b, { scale: rows.length > 1 ? 1.09 : 1.12, y: (inG ? -6 : -18) * u, duration: 0.75, ease: "back.out(1.6)" }, ta);
+    tl.to(L.b, { boxShadow: `inset 0 ${1.5 * u}px 0 rgba(255,255,255,.5), inset 0 0 0 ${1.5 * u}px rgba(255,255,255,.14), 0 ${50 * u}px ${80 * u}px ${-20 * u}px rgba(0,0,0,.75)`, duration: 0.5, ease: "power2.out" }, ta);
+    tl.fromTo(L.b.querySelector(".rim"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, ta + 0.05);
+    tl.fromTo(L.gt, { scale: 1 }, { scale: 1.1, duration: 0.5, ease: "back.out(2.5)" }, ta + 0.05);
+    tl.fromTo(L.b, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, ta + 0.15);
+    B.forEach((o) => { if (o !== L) tl.to(o.b, KEY ? { filter: "brightness(0.45)", duration: 0.6, ease: "power2.inOut" } : { opacity: 0.36, filter: "blur(1.5px)", duration: 0.6, ease: "power2.inOut" }, ta); });
+    if (G.length && !inG) tl.to(["#grp", tag], KEY ? { filter: "brightness(0.5)", duration: 0.6, ease: "power2.inOut" } : { opacity: 0.4, duration: 0.6, ease: "power2.inOut" }, ta);
+    tl.to("#stage", { scale: 1.02, duration: 0.6, ease: "power2.out" }, ta);
+  }
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

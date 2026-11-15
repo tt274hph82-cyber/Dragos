@@ -1,0 +1,5 @@
+{ "id": "stamp-approve", "name": "Stamp approve", "oneLiner": "a real hardboard clipboard with a typed form slides onto a walnut desk on twos, a wooden rubber stamp comes down out of the lens, slams, and lifts away to leave a green APPROVED imprint pressed into the paper",
+  "category": "paper", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper"], "from": "new",
+  "tags": ["approved", "yes", "signed off", "green light", "accepted", "verified", "passed", "stamp", "form", "clipboard", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.6, "alpha": true,
+  "say": "when the speaker says something got the yes ('and it got approved', 'that is a green light', 'verified'): the stamp slams on the word and the green imprint holds while they keep talking" }

@@ -1,0 +1,67 @@
+/* motion-director theme: STUDIO. Design-studio motion: one hero object on a
+   glowing single-colour ground, bold shapes, a designer's cursor and selection
+   boxes, glass objects holding the brand's real screens.
+
+   Numbers, not adjectives:
+     ground: radial, accent-light at 50% 42% -> accent -> accent 22% on black   one colour, lit
+     sunburst 24 rays at 6% white, turning 12deg/s           energy without clutter
+     hero object at 45-60% of the frame height               one thing to look at
+     glass: 28% -> 6% white, blur 14px, rim 1.5px at 70%      reads as a real material
+     pops land on back.out(1.8) in 0.45s; camera sways 6deg   springy, never stepped
+     cursor 64px, selection dashes 3px, handles 16px          a real design tool, scaled up
+*/
+:root, #root {
+  --st-hi: color-mix(in srgb, var(--accent) 62%, #ffffff);
+  --st-mid: var(--accent);
+  --st-deep: color-mix(in srgb, var(--accent) 22%, #050506);
+  --st-ink: #FFFFFF;
+}
+.st-ground { position: absolute; inset: 0; background: radial-gradient(75% 85% at 50% 42%, var(--st-hi) 0%, var(--st-mid) 30%, var(--st-deep) 78%); }
+.st-ground.is-mono { background: #ECECEC radial-gradient(circle, rgba(0, 0, 0, 0.13) 1.4px, transparent 1.8px) 0 0 / 28px 28px; --st-ink: #141414; }
+.st-burst { position: absolute; left: 50%; top: 44%; width: 3000px; height: 3000px; margin: -1500px 0 0 -1500px; border-radius: 50%;
+  background: repeating-conic-gradient(rgba(255, 255, 255, 0.075) 0deg 7.5deg, transparent 7.5deg 15deg);
+  -webkit-mask: radial-gradient(circle, #000 0%, transparent 62%); mask: radial-gradient(circle, #000 0%, transparent 62%); }
+.st-blob { position: absolute; overflow: visible; }
+.st-blob path { fill: var(--st-deep); }
+.st-blob.is-light path { fill: rgba(255, 255, 255, 0.9); }
+.st-swoosh { position: absolute; overflow: visible; }
+.st-swoosh path { fill: none; stroke: rgba(255, 255, 255, 0.92); stroke-width: 16; stroke-linecap: round; }
+
+.st-title { position: absolute; font-family: var(--font-display); font-weight: 800; color: var(--st-ink); letter-spacing: -0.02em; line-height: 0.98; white-space: nowrap;
+  text-shadow: 0 10px 40px color-mix(in srgb, var(--st-deep) 60%, transparent); }
+.st-title .st-hl { position: relative; display: inline-block; }
+
+/* a designer's selection box with handles, and the cursor that makes it */
+.st-select { position: absolute; border: 3px dashed rgba(255, 255, 255, 0.95); }
+.st-select i { position: absolute; width: 16px; height: 16px; background: #fff; border: 3px solid var(--st-deep); }
+.st-select i:nth-child(1) { left: -10px; top: -10px; } .st-select i:nth-child(2) { right: -10px; top: -10px; }
+.st-select i:nth-child(3) { left: -10px; bottom: -10px; } .st-select i:nth-child(4) { right: -10px; bottom: -10px; }
+.st-cursor { position: absolute; left: 0; top: 0; opacity: 0; width: 64px; height: 64px; z-index: 60; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.35)); }
+
+/* the glass folder: a back panel with a tab, real screens as cards inside, a glass front */
+.st-folder { position: absolute; transform-style: preserve-3d; }
+.st-folder .st-back { position: absolute; inset: 0; border-radius: 40px;
+  background: linear-gradient(170deg, color-mix(in srgb, var(--st-hi) 85%, transparent), color-mix(in srgb, var(--st-mid) 80%, #000));
+  clip-path: polygon(0 9%, 3% 0, 34% 0, 39% 9%, 100% 9%, 100% 100%, 0 100%);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.5); }
+.st-folder .st-card { position: absolute; left: 12%; width: 76%; height: 74%; top: 12%; border-radius: 22px; overflow: hidden; background: #fff;
+  box-shadow: 0 20px 40px -14px rgba(0, 0, 0, 0.5); transform-origin: 50% 100%; }
+.st-folder .st-card img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.st-folder .st-front { position: absolute; left: -2%; right: -2%; bottom: -2%; height: 62%; border-radius: 40px; transform-origin: 50% 100%; overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.07) 55%, color-mix(in srgb, var(--st-hi) 22%, transparent));
+  -webkit-backdrop-filter: blur(14px) saturate(170%); backdrop-filter: blur(14px) saturate(170%);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.75), inset 0 0 0 1.5px rgba(255, 255, 255, 0.28), 0 40px 80px -30px rgba(0, 0, 0, 0.55), 0 0 60px -10px color-mix(in srgb, var(--st-hi) 50%, transparent); }
+.st-folder .st-front::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255, 255, 255, 0.45) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); mix-blend-mode: screen; }
+.st-folder .st-label { position: absolute; left: 7%; bottom: 12%; display: flex; align-items: center; gap: 18px; color: #fff; font: 700 40px/1 var(--font-display); letter-spacing: -0.01em; }
+.st-folder .st-label img { height: 56px; width: auto; border-radius: 12px; }
+
+/* a glass lens orb with the mark inside, magnified */
+.st-orb { position: absolute; border-radius: 50%; overflow: hidden;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 58%, rgba(255, 255, 255, 0.22) 72%, rgba(255, 255, 255, 0.05) 74%);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8), inset 0 0 50px rgba(255, 255, 255, 0.35), 0 0 70px color-mix(in srgb, var(--st-hi) 70%, transparent), 0 50px 90px -30px rgba(0, 0, 0, 0.6);
+  -webkit-backdrop-filter: blur(3px) saturate(180%); backdrop-filter: blur(3px) saturate(180%); }
+.st-orb::before { content: ""; position: absolute; left: 14%; top: 8%; width: 46%; height: 26%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 60%, rgba(255, 255, 255, 0.75), transparent 70%); transform: rotate(-24deg); z-index: 2; }
+.st-orb .st-in { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.st-orb .st-in img { width: 56%; height: 56%; object-fit: contain; border-radius: 18%; filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35)); }

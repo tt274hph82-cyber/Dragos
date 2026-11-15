@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"kicker","type":"string","label":"Small line over the title","default":"Agreement"},
+  {"id":"title","type":"string","label":"Contract title","default":"Service Agreement"},
+  {"id":"signer","type":"string","label":"Who signs (empty: the brand name)","default":""},
+  {"id":"party","type":"string","label":"The other party","default":"Your client"},
+  {"id":"between","type":"string","label":"Opening line: {a} is the signer, {b} the other party","default":"This agreement is made between {a} and {b}, and starts on the day it is signed."},
+  {"id":"clauses","type":"string","label":"Clauses: Heading: text | Heading: text (3 to 6)","default":"Scope: The provider delivers the work set out in the brief, on the agreed schedule. | Timeline: Work starts on signing. Each milestone is reviewed before the next one begins. | Payment: Half is due on signing and half on delivery, payable within 14 days. | Ownership: On final payment, all rights in the delivered work pass to the client. | Term: Either side may end this agreement with 30 days notice in writing."},
+  {"id":"flag","type":"string","label":"Text on the sign-here tab","default":"Sign here"},
+  {"id":"sigLabel","type":"string","label":"Label under the signature line","default":"Signature"},
+  {"id":"dateLabel","type":"string","label":"Label under the date line","default":"Date"},
+  {"id":"date","type":"string","label":"Date written in by hand","default":"Today"},
+  {"id":"word","type":"string","label":"Word on the green stamp","default":"Signed"},
+  {"id":"centre","type":"string","label":"Leave off: the page fills the frame and the camera does the framing","default":"off"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Book"; src: url("assets/fonts/LibreBaskerville-wght.ttf"); font-weight: 400 700; font-display: block; }
+  @font-face { font-family: "MV Hand"; src: url("assets/fonts/GreatVibes-latin.ttf"); font-display: block; }
+  @font-face { font-family: "MV Stamp"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1a120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --tx: #1F1D22; --mu: #7E7A80; --ln: rgba(31,29,34,.18); --inkc: #1B2A5C; --stp: #179A52; }
+  /* a real walnut desk under one warm lamp */
+  #ground { position: absolute; inset: -8%; background: #2a1a10 url(assets/wood.jpg) center / calc(var(--u) * 900); }
+  #ground::after { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(55% 45% at 36% 26%, rgba(255,226,180,.24), transparent 70%), radial-gradient(40% 35% at 85% 90%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+      radial-gradient(130% 100% at 50% 45%, transparent 38%, rgba(0,0,0,.72)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2600); perspective-origin: 50% 35%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #sheet { position: absolute; transform-style: preserve-3d; }
+  #shadow { position: absolute; inset: 0; border-radius: calc(var(--s) * 5); box-shadow: 0 calc(var(--s) * 4) calc(var(--s) * 6) rgba(0,0,0,.5), calc(var(--s) * 20) calc(var(--s) * 44) calc(var(--s) * 70) rgba(0,0,0,.6); }
+  #paper { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--s) * 4); background: #F8F6F0 url(assets/paper.jpg) center / calc(var(--s) * 700); }
+  #light { position: absolute; inset: 0; pointer-events: none; z-index: 8;
+    background: radial-gradient(90% 40% at 20% 6%, rgba(255,240,215,.26), transparent 65%), linear-gradient(170deg, transparent 55%, rgba(40,30,20,.12)); }
+  #sheen { position: absolute; inset: 0; pointer-events: none; z-index: 9; mix-blend-mode: soft-light;
+    background: linear-gradient(118deg, transparent calc(var(--sh, -40%) - 10%), rgba(255,255,255,.9) var(--sh, -40%), transparent calc(var(--sh, -40%) + 10%)); }
+  #doc { position: absolute; left: 0; top: 0; width: 100%; box-sizing: border-box; color: var(--tx); z-index: 2; }
+  .kk { font-family: var(--font-body); font-weight: 800; letter-spacing: .3em; text-transform: uppercase; color: var(--mu); white-space: nowrap; }
+  .ti { font-family: "MV Book", serif; font-weight: 700; line-height: 1.12; letter-spacing: -0.01em; white-space: nowrap; }
+  .bt { font-family: "MV Book", serif; font-weight: 400; line-height: 1.5; color: #3A373D; }
+  .rule { background: var(--tx); opacity: .85; }
+  .cl h4 { margin: 0; font-family: "MV Book", serif; font-weight: 700; line-height: 1.3; color: var(--tx); }
+  .cl p { margin: 0; font-family: "MV Book", serif; font-weight: 400; line-height: 1.5; color: #3A373D; }
+  .ab { position: absolute; box-sizing: border-box; }
+  .sl { background: var(--tx); opacity: .8; }
+  .lb { font-family: var(--font-body); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--mu); white-space: nowrap; }
+  .pn { font-family: "MV Book", serif; font-weight: 700; color: var(--tx); white-space: nowrap; }
+  .hand { font-family: "MV Hand", cursive; color: var(--inkc); white-space: nowrap; line-height: 1.3; }
+  /* wet ink: a faint sheen that dries off */
+  .hand.wet { text-shadow: 0 0 calc(var(--s) * 1) rgba(27,42,92,.4); }
+  #flag { display: flex; align-items: center; white-space: nowrap; font-family: var(--font-body); font-weight: 800; color: #3a2a00; z-index: 5;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent2) 80%, white), var(--accent2));
+    clip-path: polygon(0 0, calc(100% - var(--pt)) 0, 100% 50%, calc(100% - var(--pt)) 100%, 0 100%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5); }
+  #flagSh { z-index: 4; background: rgba(0,0,0,.28); filter: blur(calc(var(--s) * 5)); clip-path: polygon(0 0, calc(100% - var(--pt)) 0, 100% 50%, calc(100% - var(--pt)) 100%, 0 100%); }
+  #imp { z-index: 6; display: flex; align-items: center; justify-content: center; color: var(--stp); border: solid var(--stp); font-family: "MV Stamp", sans-serif; text-transform: uppercase; line-height: 1; white-space: nowrap; letter-spacing: .08em;
+    mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 230); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 230); }
+  #imp::before { content: ""; position: absolute; inset: var(--gap); border: solid var(--stp); border-width: inherit; border-radius: inherit; opacity: .9; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="sheet"><div id="shadow"></div><div id="paper">
+      <div id="doc"></div>
+      <div id="light"></div><div id="sheen"></div>
+    </div></div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('700 60px "MV Book"'), document.fonts.load('400 40px "MV Book"'), document.fonts.load('80px "MV Hand"'), document.fonts.load('80px "MV Stamp"')]);
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const signer = (v.signer || v.brandName || "").trim();
+
+  // ---- scale: the sheet is a tall page; the frame shows part of it and the camera travels down to the signature
+  const PW = 860, pad = 72;
+  const sw = P ? W - 120 * (W / 1080) : SQ ? 900 * u : Math.min(W * 0.5, 960 * u);
+  const s = sw / PW; root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px";
+  const sheet = $("#sheet"); Object.assign(sheet.style, { left: (W - sw) / 2 + "px", top: "0px", width: sw + "px" });
+  const doc = $("#doc"); doc.setAttribute("data-bleed", ""); doc.style.padding = `${S(pad)} ${S(pad)} 0`;
+  const add = (tag, cls, txt, css) => { const d = document.createElement(tag); if (cls) d.className = cls; if (txt != null) d.textContent = txt; if (css) Object.assign(d.style, css); doc.appendChild(d); return d; };
+  const kk = add("div", "kk", v.kicker || "", { fontSize: S(30) });
+  const ti = add("div", "ti", v.title || "", { fontSize: S(70), marginTop: S(14) }); MV.fitText(ti, (PW - pad * 2) * s, 20);
+  const rl = add("div", "rule", null, { height: S(3), marginTop: S(28) });
+  const bt = add("div", "bt", null, { fontSize: S(36), marginTop: S(30) });
+  const btx = String(v.between || "").split("{a}").join("\u0001").split("{b}").join("\u0002");
+  btx.split(/(\u0001|\u0002)/).forEach((p) => { if (p === "\u0001" || p === "\u0002") { const b = document.createElement("b"); b.textContent = p === "\u0001" ? signer : (v.party || ""); b.style.color = "var(--tx)"; bt.appendChild(b); } else if (p) bt.appendChild(document.createTextNode(p)); });
+  const clauses = String(v.clauses || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 6).map((x) => { const k = x.indexOf(":"); return k > 0 ? [x.slice(0, k).trim(), x.slice(k + 1).trim()] : ["", x]; });
+  const cls = clauses.map(([h, t], i) => {
+    const c = add("div", "cl", null, { marginTop: S(i ? 30 : 40) });
+    const h4 = document.createElement("h4"); h4.textContent = `${i + 1}. ${h}`; h4.style.fontSize = S(40);
+    const p = document.createElement("p"); p.textContent = t; p.style.fontSize = S(36); p.style.marginTop = S(6);
+    c.append(h4, p); return c;
+  });
+  const sigTop = doc.getBoundingClientRect().height / s + 230;      // design y of the signature block
+  const lineY = sigTop + 120, PH = lineY + 150 + pad;
+  const sx = (W - sw) / 2, sh = PH * s;
+  sheet.style.height = sh + "px";
+  const paperEl = $("#paper");
+  const mk = (cls, txt, x, y, w, h) => { const d = document.createElement("div"); d.className = "ab " + cls; if (txt != null) d.textContent = txt; Object.assign(d.style, { left: S(x), top: S(y), width: S(w), height: S(h) }); paperEl.appendChild(d); return d; };
+
+  // the signature block: two lines, labels under, the signer printed under the signature
+  const c1x = pad, c1w = 440, c2x = pad + 500, c2w = PW - pad - c2x;
+  const l1 = mk("sl", null, c1x, lineY, c1w, 2.5), l2 = mk("sl", null, c2x, lineY, c2w, 2.5);
+  const lb1 = mk("lb", v.sigLabel || "", c1x, lineY + 18, c1w, 40), lb2 = mk("lb", v.dateLabel || "", c2x, lineY + 18, c2w, 40);
+  [lb1, lb2].forEach((e) => { e.style.fontSize = S(28); }); MV.fitText(lb1, c1w * s, 12); MV.fitText(lb2, c2w * s, 12);
+  const pn = mk("pn", signer, c1x, lineY + 66, c1w, 50); pn.style.fontSize = S(38); MV.fitText(pn, c1w * s, 14);
+  const sig = mk("hand wet", signer, c1x + 10, lineY - 128, c1w, 140); sig.style.fontSize = S(118); MV.fitText(sig, (c1w - 20) * s, 20);
+  const dt = mk("hand wet", v.date || "", c2x + 6, lineY - 92, c2w, 100); dt.style.fontSize = S(76); MV.fitText(dt, (c2w - 12) * s, 16);
+  // the sign-here tab, stuck on at the left edge pointing at the line
+  const fH = 70; const flag = mk("", null, -10, lineY - fH - 6, 300, fH); flag.id = "flag";
+  const fsh = mk("", null, -6, lineY - fH + 2, 300, fH); fsh.id = "flagSh";
+  [flag, fsh].forEach((e) => e.style.setProperty("--pt", S(34)));
+  const fsp = document.createElement("span"); fsp.textContent = v.flag || ""; fsp.style.fontSize = S(34); fsp.style.paddingLeft = S(30); flag.appendChild(fsp); MV.fitText(fsp, 220 * s, 12);
+  if (!v.flag) { flag.style.display = "none"; fsh.style.display = "none"; }
+  // the stamp imprint, over the block, a little turned
+  const imp = mk("", v.word || "", 0, 0, 10, 10); imp.id = "imp"; imp.setAttribute("data-layered", "");
+  Object.assign(imp.style, { width: "auto", height: "auto", fontSize: S(96), padding: `${S(18)} ${S(42)} ${S(12)}`, borderWidth: S(7), borderRadius: S(16) }); imp.style.setProperty("--gap", S(7));
+  MV.fitText(imp, 470 * s, 20);
+  const ib = imp.getBoundingClientRect();
+  imp.style.left = S(PW - pad - ib.width / s - 10); imp.style.top = S(lineY - 112 - ib.height / s);
+
+  // ---- the camera: open on the top of the page, travel down so the signature block sits a little above centre
+  const viewTop = P ? safe.top : H * 0.08;
+  const y0 = Math.max(viewTop, (H - sh) / 2);
+  const focus = (lineY - 20) * s;                                 // the signature line, in sheet px
+  const y1 = Math.min(y0, Math.max(H * (P ? 0.88 : 0.92) - sh, H * 0.62 - focus));
+  const TI = 0.0, TS = 1.0, TE = 2.45, TW = 2.55, TWd = 0.95, TD = TW + TWd + 0.1, TST = TD + 0.55;
+  gsap.set(sheet, { y: y0, transformOrigin: "50% 0%" });
+  // a slow camera over the desk
+  tl.fromTo("#cam", { rotationX: 16, rotationZ: -3, scale: 0.97 }, { rotationX: 9, rotationZ: -1, scale: 1.04, duration: D, ease: "sine.inOut", transformOrigin: "50% 45%" }, 0);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -24 * u, y: -40 * u, duration: D, ease: "sine.inOut" }, 0);
+  // the page is slid onto the desk
+  tl.fromTo(sheet, { x: 200 * u, rotation: 9, opacity: 0.0 }, { x: 0, rotation: -1.5, opacity: 1, duration: 0.95, ease: "expo.out" }, TI);
+  tl.fromTo(sheet, { yPercent: 0, z: -120 }, { z: 0, duration: 0.95, ease: "expo.out" }, TI);
+  tl.to(sheet, { rotation: 0, duration: 1.4, ease: "sine.inOut" }, TI + 0.95);
+  // it travels: the page moves up under the lens to the signature
+  tl.fromTo(sheet, { y: y0 + 160 * u }, { y: y0, duration: 0.95, ease: "expo.out" }, TI);
+  tl.to(sheet, { y: y1, duration: TE - TS, ease: "power3.inOut" }, TS);
+  // the tab peels away as the pen arrives
+  tl.to([flag, fsh], { x: -120 * s, rotation: -8, opacity: 0, duration: 0.35, ease: "power2.in", transformOrigin: "0% 50%" }, TW - 0.5);
+  // the signature writes left to right, in ink, on twos
+  const reveal = (el, t, d) => { el.style.clipPath = "inset(-30% 100% -30% -6%)"; const o = { p: 0 };
+    tl.fromTo(o, { p: 0 }, { p: 1, duration: d, ease: twos("power1.inOut", d), onUpdate: () => { el.style.clipPath = `inset(-30% ${(100 - o.p * 106).toFixed(2)}% -30% -6%)`; } }, t); };
+  tl.set([sig, dt], { visibility: "hidden" }, 0); tl.set(sig, { visibility: "visible" }, TW); tl.set(dt, { visibility: "visible" }, TD);
+  reveal(sig, TW, TWd); reveal(dt, TD, 0.42);
+  tl.to([sig, dt], { textShadow: "0 0 0 rgba(27,42,92,0)", duration: 0.8, ease: "power2.out" }, TD + 0.4);
+  // the green stamp slams over the block, the page gives
+  tl.fromTo(imp, { opacity: 0, scale: 1.7, rotation: -14 }, { opacity: 0.92, scale: 1, rotation: -7, duration: 0.2, ease: "power4.in" }, TST);
+  tl.to(sheet, { scale: 0.985, duration: 0.06, ease: "power2.out" }, TST + 0.2); tl.to(sheet, { scale: 1, duration: 0.6, ease: "expo.out" }, TST + 0.26);
+  tl.to("#stage", { scale: 1.02, duration: 0.06, ease: "power2.out" }, TST + 0.2); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, TST + 0.26);
+  tl.fromTo("#sheen", { "--sh": "-40%" }, { "--sh": "150%", duration: 1.2, ease: "power2.inOut" }, TST + 0.3);
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "tier-pyramid", "name": "Glass tier pyramid", "oneLiner": "a stepped glass pyramid builds from the base up in real 3D, each tier dropping onto the last with a squash and a run of light, the values printed on its front faces; the top tier lands lit in the accent and a crown glyph drops onto the apex with a ring of light",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["pyramid", "tiers", "levels", "hierarchy", "pricing", "value ladder", "offer stack", "money", "ranking", "top", "3d", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker stacks levels from the many at the bottom to the few at the top ('a $1 product, a $10 one, a $100 one, and at the top the $1,000 offer'): each tier lands on its number, the crown on the top one" }

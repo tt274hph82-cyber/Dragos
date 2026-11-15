@@ -1,0 +1,5 @@
+{ "id": "gauge-needle", "name": "Gauge needle", "oneLiner": "a glass instrument dial stands on a lit floor, its needle hesitates, then swings across lighting the tick band green to amber and slams into the red, the zone flares, the count rides the needle and the camera kicks",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["gauge", "dial", "meter", "speedometer", "needle", "redline", "pressure", "risk", "overload", "limit", "warning", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker says something is maxed out, overloaded or in the danger zone ('your workload is already in the red'): cut in on the build-up, the needle hits the red on the word that names the danger. Set value under red for a calm reading" }

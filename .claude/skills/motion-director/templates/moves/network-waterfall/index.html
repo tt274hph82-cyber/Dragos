@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"files","type":"string","label":"Requests in the waterfall, comma separated (3 to 7, short file names)","default":"index.html,app.js,styles.css,hero.jpg,tracker.js,api/feed"},
+  {"id":"before","type":"number","label":"Load time before the fix (seconds)","default":4.8},
+  {"id":"after","type":"number","label":"Load time after the fix (seconds)","default":0.9},
+  {"id":"label","type":"string","label":"Label over the big number","default":"Page load"},
+  {"id":"gain","type":"string","label":"Green chip after the fix ({n} = percent faster)","default":"{n}% faster"},
+  {"id":"page","type":"string","label":"Page in the title bar (empty: the brand domain)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B4; --slow: #FF5A5F; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #ground .l3 { width: 60%; height: 34%; left: 20%; top: 44%; background: rgba(43,214,123,.34); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45) 12%, rgba(255,255,255,.45) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 36);
+    background: linear-gradient(170deg, rgba(34,32,42,.66), rgba(12,11,16,.76));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--s) * 44) calc(var(--s) * 100) calc(var(--s) * -26) rgba(0,0,0,.72); }
+  .is-alpha #win { background: linear-gradient(170deg, rgba(30,28,36,.96), rgba(13,12,17,.96)); }
+  .is-key #win { background: #15141A; -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.18) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--s) * 1.5); pointer-events: none; z-index: 31;
+    background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.05) 38%, transparent 55%, color-mix(in srgb, var(--accent) 60%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #okglow { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 29; opacity: 0;
+    box-shadow: inset 0 0 calc(var(--s) * 90) calc(var(--s) * -14) rgba(43,214,123,.5), inset 0 0 0 calc(var(--s) * 2) rgba(43,214,123,.6); }
+  .is-key #okglow { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--ok); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.08); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.015)); }
+  .dots { position: absolute; display: flex; gap: calc(var(--s) * 12); }
+  .dots i { width: calc(var(--s) * 19); height: calc(var(--s) * 19); border-radius: 50%; box-shadow: inset 0 calc(var(--s) * 1) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1) rgba(0,0,0,.2); }
+  .dots i:nth-child(1) { background: #FF5F57; } .dots i:nth-child(2) { background: #FEBC2E; } .dots i:nth-child(3) { background: #28C840; }
+  #tab { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22); border-radius: calc(var(--s) * 16) calc(var(--s) * 16) 0 0;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 calc(var(--s) * 2) 0 var(--accent); font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .is-key #tab { background: #24222B; }
+  #tab svg { flex: none; }
+  #pg { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-family: var(--mono); color: rgba(255,255,255,.5); white-space: pre; }
+
+  #head { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.07); }
+  .hn { position: absolute; display: flex; align-items: center; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.42); white-space: nowrap; }
+  .tick { position: absolute; display: flex; align-items: center; font-family: var(--mono); color: rgba(255,255,255,.45); white-space: pre; transform: translateX(-50%); }
+  .grid { position: absolute; width: calc(var(--s) * 1.5); background: rgba(255,255,255,.07); }
+
+  .row { position: absolute; left: 0; }
+  .row .gl { position: absolute; border-radius: calc(var(--s) * 8); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.4); }
+  .row .nm { position: absolute; display: flex; align-items: center; font-family: var(--mono); color: rgba(236,234,242,.9); white-space: pre; }
+  .row .bar { position: absolute; border-radius: calc(var(--s) * 9); overflow: hidden; }
+  .row .bar .wt { position: absolute; left: 0; top: 0; bottom: 0; opacity: .38; }
+  .row .bar .dl { position: absolute; top: 0; bottom: 0; right: 0; box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45); }
+  .row .bar .sl { position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 calc(var(--s) * 2.5) var(--slow), 0 0 calc(var(--s) * 18) rgba(255,90,95,.5); opacity: 0; }
+  .is-key .row .bar .sl { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--slow); }
+  .row.odd::before { content: ""; position: absolute; inset: 0; background: rgba(255,255,255,.025); }
+
+  #ghost { position: absolute; opacity: 0; background: repeating-linear-gradient(180deg, rgba(255,90,95,.7) 0 calc(var(--s) * 8), transparent calc(var(--s) * 8) calc(var(--s) * 16)); }
+  #load { position: absolute; width: calc(var(--s) * 3); border-radius: 2px; background: var(--slow); box-shadow: 0 0 calc(var(--s) * 14) rgba(255,90,95,.7); }
+  .is-key #load { box-shadow: none; }
+
+  #foot { border-top: calc(var(--s) * 1.5) solid rgba(255,255,255,.08); background: linear-gradient(180deg, rgba(255,255,255,.035), transparent); }
+  #lbl { position: absolute; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5); white-space: nowrap; }
+  #num { position: absolute; font-family: var(--font-display); color: #FF8A8D; line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  #req { position: absolute; font-family: var(--mono); color: rgba(255,255,255,.45); white-space: pre; text-align: right; }
+  #gain { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 24); border-radius: 99px; white-space: nowrap; opacity: 0;
+    background: radial-gradient(circle at 30% 20%, #6FF0A6, var(--ok) 60%, #1FA45C); color: #06210F; font-weight: 800;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--s) * 12) calc(var(--s) * 30) rgba(43,214,123,.4); }
+  .is-key #gain { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5); }
+  #ring { position: absolute; border-radius: 99px; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; box-sizing: border-box; pointer-events: none; }
+  .is-key #ring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="bar" class="ab"><div class="dots"><i></i><i></i><i></i></div>
+        <div id="tab"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4" fill="none" stroke="var(--al)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Network</span></div>
+        <div id="pg"></div></div>
+      <div id="head" class="ab"></div>
+      <div id="rows" class="ab"></div>
+      <div id="foot" class="ab"><div id="lbl"></div><div id="num"></div><div id="req"></div><div id="ring"></div><div id="gain"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#06210F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></div></div>
+      <div id="okglow"></div><div id="rim"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const files = String(v.files || "").split(",").map((t) => t.trim()).filter(Boolean).slice(0, 7);
+  while (files.length < 3) files.push(["index.html", "app.js", "styles.css"][files.length]);
+  const B0 = Math.max(0.2, +v.before || 4.8), A0 = Math.max(0.05, Math.min(B0, +v.after || 0.9));
+  const dec = (x) => (x < 10 ? 1 : 0);
+  const fmt = (x) => x.toFixed(dec(B0)) + "s";
+  const pct = Math.round((1 - A0 / B0) * 100);
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.21; cR = W * 0.79; zT = H * 0.08; zB = H * 0.92; }
+  const N = files.length, DW = 900, pad = 28, barH = 82, headH = 60, rowH = 66, footH = 200;
+  const rowsT = barH + headH, footT = rowsT + N * rowH + 12, DH = footT + footH;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const cw = DW * s, ch = DH * s;
+  const left0 = cL + ((cR - cL) - cw) / 2, top0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: left0 + "px", top: top0 + "px", width: cw + "px", height: ch + "px" });
+
+  // ---- chrome
+  box($("#bar"), 0, 0, DW, barH);
+  Object.assign($(".dots").style, { left: S(pad + 4), top: S((barH - 19) / 2) });
+  const tab = $("#tab"); box(tab, pad + 4 + 81 + 26, 16, 0, barH - 16); tab.style.width = "auto"; tab.style.fontSize = S(32);
+  tab.querySelector("svg").style.width = tab.querySelector("svg").style.height = S(32);
+  const pg = $("#pg"); pg.textContent = String(v.page || v.domain || v.brandName || "").replace(/^https?:\/\//, ""); pg.style.fontSize = S(28);
+  const tabR = (tab.getBoundingClientRect().right - $("#bar").getBoundingClientRect().left) / s;
+  box(pg, tabR + 24, 0, DW - pad - tabR - 24, barH);
+  MV.fitText(pg, (DW - pad - tabR - 24) * s, 12);
+
+  // ---- columns: names on the left, the time track on the right
+  const nameW = 300, trL = pad + nameW, trR = DW - pad - 20, trW = trR - trL;
+  const head = $("#head"); box(head, 0, barH, DW, headH);
+  const hn = document.createElement("div"); hn.className = "hn"; hn.textContent = "Name"; box(hn, pad + 6, 0, nameW - 20, headH); hn.style.fontSize = S(26); head.appendChild(hn);
+  const span = B0 * 1.04, nice = [0.1, 0.2, 0.25, 0.5, 1, 2, 5, 10, 20, 30, 60].find((x) => span / x <= 5) || 60;
+  const X = (t) => trL + (t / span) * trW;
+  for (let t = 0; t <= span + 1e-6; t += nice) {
+    const tk = document.createElement("div"); tk.className = "tick"; tk.textContent = (+t.toFixed(2)) + "s"; tk.style.fontSize = S(30);
+    Object.assign(tk.style, { left: S(X(t) + (t === 0 ? 0 : 0)), top: "0px", height: S(headH) }); if (t === 0) tk.style.transform = "none";
+    head.appendChild(tk);
+    const g = document.createElement("div"); g.className = "grid"; box(g, X(t), rowsT, 1.5, N * rowH); $("#win").insertBefore(g, $("#rows"));
+  }
+  // ticks must not run off the right edge
+  [...head.querySelectorAll(".tick")].forEach((tk) => { const r = tk.getBoundingClientRect(), wr = $("#win").getBoundingClientRect(); if (r.right > wr.right - pad * s) tk.remove(); });
+
+  // ---- rows: a waterfall, before (serial, slow) and after (parallel, fast)
+  const PB = [[0, .09], [.09, .48], [.09, .21], [.21, .75], [.48, .875], [.875, 1], [.6, .8]];
+  const PA = [[0, .2], [.2, .55], [.2, .38], [.24, .72], [.55, .8], [.62, 1], [.3, .5]];
+  const nb = Math.max(...PB.slice(0, N).map((p) => p[1])), na = Math.max(...PA.slice(0, N).map((p) => p[1]));
+  const TYPE = (f) => /\.html?$/i.test(f) ? "#5AA9FF" : /\.(m?js|ts)$/i.test(f) ? "#F7C548" : /\.css$/i.test(f) ? "#B48CFF" : /\.(jpe?g|png|webp|gif|svg|avif|mp4)$/i.test(f) ? "#3FD0C9" : /\.(woff2?|ttf|otf)$/i.test(f) ? "#FF8FB1" : "#9AA4FF";
+  const rowsEl = $("#rows"); box(rowsEl, 0, rowsT, DW, N * rowH);
+  const barHt = 26;
+  const R = files.map((f, i) => {
+    const r = document.createElement("div"); r.className = "row" + (i % 2 ? " odd" : ""); box(r, 0, i * rowH, DW, rowH);
+    const c = TYPE(f);
+    r.innerHTML = `<i class="gl"></i><div class="nm"></div><div class="bar"><i class="wt"></i><i class="dl"></i><i class="sl"></i></div>`;
+    const gl = r.querySelector(".gl"); box(gl, pad + 6, (rowH - 28) / 2, 28, 28); gl.style.background = `linear-gradient(150deg, color-mix(in srgb, ${c} 70%, #fff), ${c})`;
+    const nm = r.querySelector(".nm"); box(nm, pad + 50, 0, nameW - 64, rowH); nm.textContent = f;
+    const b0 = [PB[i][0] / nb * B0, PB[i][1] / nb * B0], a0 = [PA[i][0] / na * A0, PA[i][1] / na * A0];
+    const bar = r.querySelector(".bar");
+    bar.querySelector(".wt").style.cssText += `;width:30%;background:${c}`; bar.querySelector(".dl").style.cssText += `;left:30%;background:linear-gradient(180deg, color-mix(in srgb, ${c} 80%, #fff), ${c})`;
+    box(bar, X(b0[0]), (rowH - barHt) / 2, Math.max(6, X(b0[1]) - X(b0[0])), barHt);
+    rowsEl.appendChild(r);
+    return { r, nm, bar, b0, a0, slow: (b0[1] - b0[0]) / B0 > 0.3 };
+  });
+  // one font for every name (a mono column)
+  let fs = 32 * s; R.forEach((x) => (x.nm.style.fontSize = fs + "px"));
+  const rg = document.createRange();
+  const over = () => R.some((x) => { rg.selectNodeContents(x.nm); return rg.getBoundingClientRect().width > (nameW - 70) * s; });
+  while (over() && fs > 18 * s) { fs -= 1; R.forEach((x) => (x.nm.style.fontSize = fs + "px")); }
+
+  // the load line, and a ghost of it that stays where the slow load ended
+  const ghost = document.createElement("div"); ghost.id = "ghost"; box(ghost, X(B0) - 1, rowsT - 6, 2, N * rowH + 12); $("#win").insertBefore(ghost, $("#rows"));
+  const load = document.createElement("div"); load.id = "load"; box(load, X(B0) - 1.5, rowsT - 6, 3, N * rowH + 12); $("#win").insertBefore(load, $("#rows").nextSibling);
+
+  // ---- footer: the number is the hero
+  const foot = $("#foot"); box(foot, 0, footT, DW, footH);
+  const lbl = $("#lbl"); lbl.textContent = v.label || ""; lbl.style.fontSize = S(30); Object.assign(lbl.style, { left: S(pad + 8), top: S(22) });
+  const num = $("#num"); num.style.fontSize = S(124); Object.assign(num.style, { left: S(pad + 2), top: S(64) });
+  num.textContent = fmt(B0);
+  const gain = $("#gain"); gain.querySelector("span").textContent = String(v.gain || "{n}% faster").split("{n}").join(pct); gain.style.fontSize = S(36); gain.style.height = S(68);
+  gain.querySelector("svg").style.width = gain.querySelector("svg").style.height = S(32);
+  const req = $("#req"); req.textContent = N + " requests"; req.style.fontSize = S(28);
+  const gw = gain.getBoundingClientRect().width / s;
+  Object.assign(gain.style, { left: S(DW - pad - gw), top: S(footH - 68 - 30) });
+  box($("#ring"), DW - pad - gw, footH - 68 - 30, gw, 68);
+  Object.assign(req.style, { right: S(pad + 4), top: S(26) });
+  const numW = num.getBoundingClientRect().width / s;
+  if (numW > DW - pad * 2 - gw - 40) MV.fitText(num, (DW - pad * 2 - gw - 40) * s, 30);
+  MV.fitText(lbl, (DW - pad * 2 - 260) * s, 14);
+
+  Object.assign($("#base").style, { left: left0 - 40 * u + "px", width: cw + 80 * u + "px", top: top0 + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TW0 = 0.45, TW = 1.3;                     // the slow load draws
+  const TF = TW0 + TW + 0.35, TFD = 0.85;          // the fix
+  const TM = TF + TFD;                             // the number lands
+
+  gsap.set("#rig", { transformOrigin: `${left0 + cw / 2}px ${top0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(R.map((x) => [x.r.querySelector(".gl"), x.nm]).flat(), { opacity: 0, x: -18 * s }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out", stagger: 0.03 }, 0.2);
+
+  // the slow load: each request draws when it starts, in real time order; the load line and the number run with it
+  const k = TW / B0;
+  R.forEach((x) => {
+    const t = TW0 + x.b0[0] * k, d = Math.max(0.08, (x.b0[1] - x.b0[0]) * k);
+    tl.fromTo(x.bar, { clipPath: "inset(0 100% 0 0 round 99px)" }, { clipPath: "inset(0 0% 0 0 round 99px)", duration: d, ease: "none" }, t);
+    if (x.slow) tl.fromTo(x.bar.querySelector(".sl"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, t + d - 0.05);
+  });
+  const o = { t: 0 };
+  const setNum = () => { num.textContent = fmt(o.t); };
+  tl.fromTo(load, { x: -(X(B0) - X(0)) * s }, { x: 0, duration: TW, ease: "none" }, TW0);
+  tl.fromTo(o, { t: 0 }, { t: B0, duration: TW, ease: "none", onUpdate: setNum }, TW0);
+  tl.fromTo(load, { opacity: 0 }, { opacity: 1, duration: 0.15 }, TW0);
+
+  // the fix: a light sweeps, every bar slides left and shrinks into a tight parallel stack, the number rolls down
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TF - 0.25);
+  R.forEach((x, i) => {
+    tl.to(x.bar, { left: X(x.a0[0]) * s, width: Math.max(6, X(x.a0[1]) - X(x.a0[0])) * s, duration: TFD, ease: "expo.inOut" }, TF + i * 0.035);
+    if (x.slow) tl.to(x.bar.querySelector(".sl"), { opacity: 0, duration: 0.3, ease: "power2.out" }, TF + 0.2);
+  });
+  tl.to(load, { x: -(X(B0) - X(A0)) * s, background: "#2BD67B", boxShadow: `0 0 ${14 * s}px rgba(43,214,123,.7)`, duration: TFD, ease: "expo.inOut" }, TF);
+  tl.fromTo(ghost, { opacity: 0 }, { opacity: 0.6, duration: 0.3, ease: "power2.out" }, TF + 0.1);
+  tl.to(o, { t: A0, duration: TFD, ease: "expo.inOut", onUpdate: setNum, immediateRender: false }, TF);
+
+  // the moment: the number goes green and stamps, the chip slams in, a ring goes out
+  tl.to(num, { color: "#5BE89A", duration: 0.25, ease: "power2.out" }, TM - 0.1);
+  tl.to(num, { scale: 1.12, duration: 0.08, ease: "power2.out", transformOrigin: "0% 60%" }, TM - 0.05); tl.to(num, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TM + 0.03);
+  tl.fromTo(gain, { opacity: 0, scale: 2.2, rotation: -10, filter: "blur(8px)" }, { opacity: 1, scale: 1, rotation: -2, filter: "blur(0px)", duration: 0.28, ease: "power4.in" }, TM + 0.05);
+  tl.to(gain, { scale: 1.08, duration: 0.06, ease: "power1.out" }, TM + 0.33); tl.to(gain, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, TM + 0.39);
+  tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.5, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TM + 0.33);
+  tl.fromTo("#okglow", { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, TM + 0.33);
+  tl.to("#okglow", { opacity: 0.25, duration: 0.9, ease: "power2.out" }, TM + 0.43);
+  if (!A) { tl.to("#ground .l3", { opacity: 1, duration: 0.15 }, TM + 0.33); tl.to("#ground .l3", { opacity: 0.45, duration: 1.0, ease: "power2.out" }, TM + 0.48); }
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, TM + 0.33); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TM + 0.4);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TM + 0.4);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

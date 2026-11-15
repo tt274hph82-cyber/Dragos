@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"query","type":"string","label":"What gets typed into the bar","default":"how to automate"},
+  {"id":"suggestions","type":"string","label":"Completions that fill the list once the query is typed, comma separated (3 to 5)","default":"how to automate my inbox,how to automate youtube videos,how to automate with ai agents,how to automate excel reports"},
+  {"id":"pick","type":"number","label":"Which completion is picked (1 = the first)","default":3},
+  {"id":"early","type":"string","label":"Popular searches shown while only the first letters are typed, comma separated","default":"how to tie a tie,how to screenshot on mac,how to make money online,how to boil an egg"},
+  {"id":"hint","type":"string","label":"Placeholder in the empty bar","default":"Search"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --txt: #17161c; --dim: #8a8794; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 76%; height: 42%; left: 12%; top: 10%; background: color-mix(in srgb, var(--accent) 34%, transparent); }
+  #ground .l2 { width: 70%; height: 44%; left: 44%; top: 58%; background: color-mix(in srgb, var(--accent) 15%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 52%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2400px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* frosted white glass: the bar and the list hanging from it */
+  #panel { position: absolute; transform-style: preserve-3d; }
+  .glass { position: absolute; left: 0; right: 0; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(170deg, rgba(255,255,255,.94), rgba(244,243,248,.86));
+    -webkit-backdrop-filter: blur(30px) saturate(180%); backdrop-filter: blur(30px) saturate(180%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.8), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.75); }
+  .is-key .glass { background: #f6f5f9; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 #fff; }
+  .glass::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 9; mix-blend-mode: soft-light;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.9) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #bar { top: 0; z-index: 3; display: flex; align-items: center; }
+  #bar .mg { flex: none; color: var(--dim); display: grid; place-items: center; }
+  #bar .mg svg { width: 100%; height: 100%; }
+  #field { position: relative; flex: 1; min-width: 0; white-space: nowrap; color: var(--txt); font-weight: 500; letter-spacing: -0.01em; }
+  #ph { position: absolute; left: 0; top: 0; color: var(--dim); }
+  #q b { font-weight: 500; }
+  #caret { display: inline-block; vertical-align: -0.12em; width: calc(var(--u) * 4); height: 1.05em; margin-left: calc(var(--u) * 3); background: var(--accent); border-radius: 2px; }
+  #go { flex: none; border-radius: 50%; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 70%, white 22%), var(--accent) 55%, color-mix(in srgb, var(--accent) 65%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), 0 calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #go { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55); }
+  #go svg { width: 46%; height: 46%; }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 4) solid var(--accent); box-sizing: border-box; opacity: 0; }
+  .is-key #ring { display: none; }
+  #list { z-index: 2; }
+  #list .rule { position: absolute; left: 4%; right: 4%; top: 0; height: calc(var(--u) * 1.5); background: rgba(20,18,30,.08); }
+  .row { position: absolute; left: 0; right: 0; display: flex; align-items: center; white-space: nowrap; color: var(--txt); }
+  .row .ic { flex: none; color: #9b98a6; display: grid; place-items: center; }
+  .row .ic svg { width: 100%; height: 100%; }
+  .row .tx { flex: 1; min-width: 0; overflow: hidden; letter-spacing: -0.01em; }
+  .row .tx i, #lift .tx i { font-style: normal; font-weight: 400; color: #5d5a66; }
+  .row .tx b, #lift .tx b { font-weight: 800; }
+  #lift .ic, #lift .ar { flex: none; display: grid; place-items: center; color: #9b98a6; }
+  #lift .ic svg, #lift .ar svg { width: 100%; height: 100%; }
+  #lift .tx { flex: 1; min-width: 0; letter-spacing: -0.01em; }
+  .row .ar { flex: none; color: #b5b2be; display: grid; place-items: center; }
+  .row .ar svg { width: 100%; height: 100%; }
+  #sel { position: absolute; left: calc(var(--u) * 12); right: calc(var(--u) * 12); border-radius: calc(var(--u) * 22); opacity: 0;
+    background: color-mix(in srgb, var(--accent) 10%, rgba(20,18,30,.06)); box-shadow: inset calc(var(--u) * 6) 0 0 var(--accent); }
+  #lift { position: absolute; left: calc(var(--u) * 12); right: calc(var(--u) * 12); border-radius: calc(var(--u) * 22); opacity: 0; z-index: 4; display: flex; align-items: center; white-space: nowrap; color: var(--txt);
+    background: #fff; box-shadow: inset calc(var(--u) * 6) 0 0 var(--accent), 0 calc(var(--u) * 24) calc(var(--u) * 46) calc(var(--u) * -14) rgba(0,0,0,.45), 0 0 calc(var(--u) * 50) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key #lift { box-shadow: inset calc(var(--u) * 6) 0 0 var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="panel">
+    <div id="list" class="glass"><i class="rule"></i><div id="sel"></div><div id="rows"></div></div>
+    <div id="lift"></div>
+    <div id="bar" class="glass"><div class="mg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.8 15.8 4.7 4.7"/></svg></div>
+      <div id="field"><span id="ph"></span><span id="q"></span><i id="caret"></i></div>
+      <div id="go"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6.5 18.5 12 13 17.5"/></svg><i id="ring"></i></div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q), A = MV.alpha, P = MV.portrait;
+  const u = P ? MV.u * (A ? 1 : 1.12) : MV.u * 1.15; root.style.setProperty("--u", u + "px");
+  const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const query = String(v.query || "").trim() || "how to";
+  const list = (x) => String(x || "").split(",").map((t) => t.trim()).filter(Boolean);
+  let sug = list(v.suggestions); if (!sug.length) sug = [query + " fast", query + " for free", query + " step by step"];
+  const early = list(v.early);
+  const lc = (t) => t.toLowerCase();
+  const MAXR = 5;
+  // the list after each keystroke: popular searches while they still match, then the completions that match
+  const at = (pre) => { const p = lc(pre); const a = early.filter((t) => lc(t).startsWith(p) && lc(t) !== p), b = sug.filter((t) => lc(t).startsWith(p) && lc(t) !== p);
+    return a.concat(b).slice(0, MAXR); };
+  const finalL = at(query), pickT = sug[Math.max(0, Math.min(sug.length - 1, Math.round(+v.pick || 1) - 1))];
+  let pickI = finalL.indexOf(pickT); if (pickI < 0) { finalL[Math.min(finalL.length, MAXR - 1)] = pickT; pickI = finalL.indexOf(pickT); }
+  const fmtRow = (t, pre) => { const n = lc(t).startsWith(lc(pre)) ? pre.length : 0; return `<i>${esc(t.slice(0, n))}</i><b>${esc(t.slice(n))}</b>`; };
+
+  // ---- size and place
+  const PW = P ? (A ? W - safe.left - safe.right : W - safe.left * 2 * 0.6) : Math.min(W * (W === H ? 0.84 : 0.62), 1180 * u);
+  const BH = 132 * u, RH = 100 * u, LP = 14 * u, FS = 46 * u, RFS = 40 * u;
+  const bar = $("#bar"), lst = $("#list"), panel = $("#panel");
+  Object.assign(bar.style, { height: BH + "px", borderRadius: BH / 2 + "px", padding: `0 ${18 * u}px 0 ${44 * u}px`, gap: 26 * u + "px" });
+  Object.assign(bar.querySelector(".mg").style, { width: 46 * u + "px", height: 46 * u + "px" });
+  Object.assign($("#go").style, { width: BH - 34 * u + "px", height: BH - 34 * u + "px" });
+  Object.assign($("#ring").style, { width: BH - 34 * u + "px", height: BH - 34 * u + "px" });
+  $("#field").style.fontSize = FS + "px"; $("#ph").textContent = v.hint || "";
+  panel.style.width = PW + "px";
+  const listTop = BH * 0.5, rowsTop = listTop + BH * 0.5 + LP;
+  Object.assign(lst.style, { top: listTop + "px", borderRadius: `0 0 ${46 * u}px ${46 * u}px` });
+  $("#list .rule").style.top = BH * 0.5 + "px";
+  const rowsEl = $("#rows"), rows = [];
+  for (let i = 0; i < MAXR; i++) { const r = document.createElement("div"); r.className = "row";
+    Object.assign(r.style, { top: BH * 0.5 + LP + i * RH + "px", height: RH + "px", padding: `0 ${40 * u}px 0 ${48 * u}px`, gap: 28 * u + "px", fontSize: RFS + "px" });
+    r.innerHTML = `<div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.6"/><path d="m15.8 15.8 4.7 4.7"/></svg></div><div class="tx"></div><div class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg></div>`;
+    [r.querySelector(".ic"), r.querySelector(".ar")].forEach((e) => { e.style.width = e.style.height = 34 * u + "px"; });
+    rowsEl.appendChild(r); rows.push(r); }
+  const listH = (n) => n ? BH * 0.5 + LP * 2 + n * RH : BH * 0.5;
+  const PH = BH * 0.5 + listH(MAXR);
+  // the longest text must fit its row: shrink the row font if needed
+  { const tw = PW - (48 + 40 + 28 * 2 + 34 * 2) * u; const probe = rows[0].querySelector(".tx"); let fs = RFS;
+    const all = early.concat(sug); const meas = document.createElement("span"); meas.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;font-weight:800;font-size:${fs}px;font-family:inherit`; rowsEl.appendChild(meas);
+    const wmax = () => Math.max(...all.map((t) => { meas.textContent = t; return meas.getBoundingClientRect().width; }));
+    while (wmax() > tw && fs > 22 * u) { fs -= 2; meas.style.fontSize = fs + "px"; } meas.remove(); rows.forEach((r) => r.style.fontSize = fs + "px"); }
+  let px = (W - PW) / 2, py;
+
+  if (P) { px = A ? safe.left : (W - PW) / 2; py = A ? safe.top + 10 * u : safe.top + Math.max(0, (H - safe.top - safe.bottom - PH) / 2); }
+  else py = A ? safe.top + 10 * u : (H - PH) / 2 - 20 * u;
+  if (A && !P && W > H) px = (W - PW) / 2;
+  gsap.set(panel, { left: px, top: py, height: PH });
+  const sel = $("#sel"); Object.assign(sel.style, { height: RH - 8 * u + "px" });
+  const lift = $("#lift"); Object.assign(lift.style, { height: RH + 6 * u + "px", padding: `0 ${40 * u}px 0 ${48 * u}px`, gap: 28 * u + "px", fontSize: rows[0].style.fontSize });
+  lift.innerHTML = rows[0].innerHTML;
+  const qEl = $("#q");
+  qEl.textContent = pickT + "  "; MV.fitText($("#field"), PW - (44 + 46 + 26 * 2 + 18) * u - (BH - 34 * u), 20); qEl.textContent = "";
+
+  // ---- timeline
+  const T0 = 0.05;
+  tl.fromTo(panel, { opacity: 0, y: -40 * u, scale: 0.95, filter: "blur(14px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, T0);
+  tl.fromTo(panel, { rotationX: 12, rotationY: -8 }, { rotationX: 3, rotationY: 6, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: -W * 0.05 }, { x: W * 0.06, duration: D, ease: "sine.inOut" }, 0);
+  // caret blinks while empty
+  tl.set("#caret", { opacity: 1 }, 0); tl.set("#caret", { opacity: 0 }, 0.3); tl.set("#caret", { opacity: 1 }, 0.55);
+  // 1. typing: the list refreshes on every keystroke, popular searches give way to the completions
+  const T1 = 0.6, per = Math.min(0.085, 1.4 / Math.max(1, query.length));
+  tl.set(qEl, { textContent: "" }, 0); tl.set("#ph", { opacity: 1 }, 0); tl.set("#ph", { opacity: 0 }, T1);
+  gsap.set(lst, { height: listH(0) }); rows.forEach((r) => gsap.set(r, { opacity: 0 }));
+  const prev = rows.map(() => null); let prevN = 0;
+  rows.forEach((r) => tl.set(r.querySelector(".tx"), { innerHTML: "" }, 0));
+  for (let i = 1; i <= query.length; i++) {
+    const t = T1 + i * per, pre = query.slice(0, i);
+    tl.set(qEl, { textContent: pre }, t);
+    if (i < 2 || pre.endsWith(" ")) continue;
+    const L = at(pre), n = L.length;
+    rows.forEach((r, k) => { const txt = L[k] || null, html = txt ? fmtRow(txt, pre) : "";
+      if (txt !== prev[k] || txt) tl.set(r.querySelector(".tx"), { innerHTML: html }, t + 0.02);
+      if (txt && txt !== prev[k]) tl.fromTo(r, { opacity: 0, y: -10 * u }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out", immediateRender: false }, t + 0.03 + k * 0.022);
+      if (!txt && prev[k]) tl.to(r, { opacity: 0, duration: 0.12, ease: "power2.out" }, t + 0.02);
+      prev[k] = txt; });
+    if (n !== prevN) tl.to(lst, { height: listH(n), duration: 0.26, ease: "power3.out" }, t + 0.01);
+    prevN = n;
+  }
+  const TE = T1 + query.length * per;
+  // 2. the arrow key walks the highlight down to the pick
+  const TS = TE + 0.35, STEPd = 0.24;
+  tl.set(sel, { y: BH * 0.5 + LP + 4 * u }, 0);
+  tl.fromTo(sel, { opacity: 0, scaleX: 0.94 }, { opacity: 1, scaleX: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, TS);
+  for (let k = 1; k <= pickI; k++) tl.to(sel, { y: BH * 0.5 + LP + k * RH + 4 * u, duration: 0.22, ease: "expo.out" }, TS + k * STEPd);
+  // 3. the pick: the row lifts off the list toward the lens and its words zip up into the bar (the moment)
+  const K = TS + pickI * STEPd + 0.42, rowY = listTop + BH * 0.5 + LP + pickI * RH - 3 * u;
+  tl.set(lift, { innerHTML: rows[0].innerHTML.replace(/<div class="tx">[\s\S]*?<\/div>/, `<div class="tx">${fmtRow(pickT, query)}</div>`) }, K);
+  tl.set(lift, { innerHTML: "" }, 0);
+  gsap.set(lift, { top: rowY });
+  tl.fromTo(lift, { opacity: 0, scale: 1, z: 0 }, { opacity: 1, scale: 1.08, z: 90, duration: 0.2, ease: "power2.out", immediateRender: false }, K);
+  tl.to(sel, { opacity: 0, duration: 0.1 }, K + 0.05);
+  tl.set(rows[pickI].querySelector(".tx"), { opacity: 0 }, K);
+  tl.to(lift, { y: -(rowY - 10 * u), scale: 0.98, opacity: 0, duration: 0.42, ease: "power3.in" }, K + 0.3);
+  // the bar fills with the full suggestion, letters racing in
+  const rest = pickT.slice(query.length);
+  const fillT = K + 0.5;
+  for (let i = 1; i <= rest.length; i++) tl.set(qEl, { textContent: query + rest.slice(0, i) }, fillT + i * Math.min(0.02, 0.4 / rest.length));
+  tl.to(rows, { opacity: 0, duration: 0.2, ease: "power2.out" }, K + 0.3);
+  tl.to(lst, { height: listH(0), duration: 0.5, ease: "expo.inOut" }, K + 0.36);
+  // Return: the go button presses, a ring of light
+  const R = fillT + 0.55;
+  tl.to("#go", { scale: 0.86, duration: 0.07, ease: "power2.out" }, R); tl.to("#go", { scale: 1, duration: 0.35, ease: "back.out(3)" }, R + 0.07);
+  tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.9, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, R + 0.04);
+  tl.set("#ring", { opacity: 0 }, 0);
+  tl.fromTo("#bar", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.8, ease: "power2.inOut" }, R);
+  tl.set("#caret", { opacity: 0 }, R);
+  if (A) tl.to(panel, { y: -70 * u, opacity: 0, scale: 0.96, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "tool-map", "name": "Tool map", "oneLiner": "a glass bento grid of 4 to 8 role tiles (glyph and label) that builds in once and comes back as the video's recurring map: a light runs across it and the active tile lifts and glows in the accent while the rest fall back; tiles not reached yet wait as dashed slots",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["map", "grid", "bento", "roles", "team", "agents", "tools", "chapters", "overview", "recurring", "progress", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.0, "alpha": true,
+  "say": "when the speaker introduces the set (\"I run six agents...\") build it once with active 0; each time they move to the next one, cut it back in with build false, active set to that tile and reveal to how many have been covered, so the viewer always knows where they are. layout top keeps it above the speaker" }

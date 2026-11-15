@@ -1,0 +1,5 @@
+{ "id": "subscription-renew", "name": "Glass subscription renew", "oneLiner": "a subscription plan card on glass with the end date big and an amber Ending soon chip: a pointer flips the Auto-renew switch, the knob springs across as the track floods green, the label turns over to Renews on, the card grows to open a Next charge row and a green check lands as the chip turns Renewed",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["subscription", "renew", "recurring", "retention", "membership", "saas", "billing", "plan", "toggle", "settings", "mrr", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker talks about recurring revenue or people staying ('and they renewed', 'it just keeps billing every month'): the switch flips on 'renew' or 'every month', the check lands as they say it is locked in" }

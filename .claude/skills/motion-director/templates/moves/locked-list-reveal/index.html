@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"items","type":"string","label":"The list, comma separated, 3 to 6 short labels","default":"Research,Script,Record,Secret step,Publish"},
+  {"id":"locked","type":"number","label":"Which row is locked, 1-based (0 = none)","default":4},
+  {"id":"unlock","type":"boolean","label":"true: the lock opens at the end and its label is revealed; false: it clamps shut and stays a tease","default":true},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 36%; background: color-mix(in srgb, var(--accent) 36%, transparent); opacity: 0; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 60%; top: -8%; background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .row { position: absolute; transform-style: preserve-3d; }
+  .glass { position: absolute; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(165deg, rgba(255,255,255,.15), rgba(255,255,255,.05) 55%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1),
+      0 calc(var(--u) * 22) calc(var(--u) * 44) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  .is-alpha .glass { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .glass::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -50%) - 12%), rgba(255,255,255,.32) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 12%)); }
+  .num { display: grid; place-items: center; font-family: var(--font-display); color: var(--ink); line-height: 1; }
+  .num .acc { position: absolute; inset: 0; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 55%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  .num span { position: relative; }
+  .bar .lb { position: absolute; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; clip-path: inset(-20% 100% -20% 0); }
+  .bar .sk { position: absolute; top: 50%; height: 26%; transform: translateY(-50%); border-radius: 99px; background: color-mix(in srgb, var(--ink) 13%, transparent); }
+  .bar .caret { position: absolute; top: 22%; bottom: 22%; width: calc(var(--u) * 4); border-radius: 4px; background: color-mix(in srgb, var(--accent) 70%, white); box-shadow: 0 0 calc(var(--u) * 16) var(--accent); opacity: 0; }
+  /* the locked row: darker glass, hatching, blurred skeleton and a padlock badge */
+  .bar.lk { background: linear-gradient(165deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); }
+  .is-alpha .bar.lk { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 80%, black 20%), color-mix(in srgb, var(--surface) 92%, black)); }
+  .bar .hatch { position: absolute; inset: 0; opacity: .5;
+    background: repeating-linear-gradient(-45deg, transparent 0 calc(var(--u) * 14), color-mix(in srgb, var(--ink) 7%, transparent) calc(var(--u) * 14) calc(var(--u) * 16)); }
+  .bar .blurred { position: absolute; top: 50%; transform: translateY(-50%); height: 30%; border-radius: 99px; filter: blur(calc(var(--u) * 6)); background: color-mix(in srgb, var(--ink) 30%, transparent); }
+  .bar .flood { position: absolute; inset: 0; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 50%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6); }
+  .badge { position: absolute; top: 50%; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.24), rgba(255,255,255,.06));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.14), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.4); }
+  .badge svg { position: absolute; width: 58%; height: 58%; }
+  .ring { position: absolute; opacity: 0; pointer-events: none; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 55%, white); box-sizing: border-box; }
+  .halo { position: absolute; opacity: 0; pointer-events: none; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 50%, transparent), transparent); }
+
+  .is-key .glass, .is-key .bar.lk { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  .is-key .bar .sk { background: color-mix(in srgb, var(--ink) 13%, var(--surface)); }
+  .is-key .bar .blurred { filter: none; background: color-mix(in srgb, var(--ink) 22%, var(--surface)); }
+  .is-key .bar .caret { box-shadow: none; }
+  .is-key .halo { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><div id="list"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim()).filter((s) => s.length);
+  let items = list(v.items).slice(0, 6);
+  while (items.length < 3) items.push(["Research", "Script", "Record"][items.length]);
+  const N = items.length;
+  const LK = +v.locked >= 1 && +v.locked <= N ? Math.round(+v.locked) - 1 : -1;
+  const UNLOCK = !(v.unlock === false || String(v.unlock).toLowerCase() === "false");
+
+  // ---- the column: a number tile and a bar per row
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.08, x1: W * 0.92, y0: H * 0.1, y1: H * 0.9 } : { x0: W * 0.2, x1: W * 0.8, y0: H * 0.11, y1: H * 0.89 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0;
+  const GAP = (TOP ? 14 : 22) * u;
+  const rh = Math.min((RH - GAP * (N - 1)) / N, (TOP ? 110 : 150) * u);
+  const LH = N * rh + (N - 1) * GAP, y0 = R.y0 + (RH - LH) / 2;
+  const nw = rh, bx = nw + GAP * 0.7, bw = RW - bx, rad = rh * 0.26;
+  const lfs = Math.max(36 * u, Math.min(54 * u, rh * 0.36));
+  const L0 = document.getElementById("list"), rows = [];
+  items.forEach((label, i) => {
+    const y = y0 + i * (rh + GAP), lock = i === LK;
+    const row = document.createElement("div"); row.className = "row"; L0.appendChild(row);
+    Object.assign(row.style, { left: R.x0 + "px", top: y + "px", width: RW + "px", height: rh + "px" });
+    const lx = lock ? rh * 0.95 : rh * 0.34, bs = rh * 0.62;
+    row.innerHTML = `<div class="halo"></div>
+      <div class="glass num" style="left:0;top:0;width:${nw}px;height:${rh}px;border-radius:${rad}px;font-size:${rh * 0.42}px"><div class="acc"></div><span>${i + 1}</span></div>
+      <div class="glass bar${lock ? " lk" : ""}" style="left:${bx}px;top:0;width:${bw}px;height:${rh}px;border-radius:${rad}px">
+        ${lock ? `<div class="hatch"></div><div class="blurred" style="left:${lx}px;width:${bw * 0.48}px"></div><div class="flood"></div>` : `<div class="sk" style="left:${lx}px;width:${bw * (0.36 + ((i * 7) % 3) * 0.08)}px"></div>`}
+        <div class="lb" style="left:${lx}px;font-size:${lfs}px">${label}</div><div class="caret" style="left:${lx}px"></div>
+        ${lock ? `<div class="badge" style="left:${rh * 0.17}px;width:${bs}px;height:${bs}px;margin-top:${-bs / 2}px;border-radius:${bs * 0.3}px">${GLYPH.svg("lock", "g-l")}${GLYPH.svg("unlock", "g-u")}</div>` : ""}
+      </div>
+      <div class="ring" style="left:${bx}px;top:0;width:${bw}px;height:${rh}px;border-radius:${rad}px"></div>`;
+    const lb = row.querySelector(".lb"); MV.fitText(lb, bw - lx - rh * 0.3, 20);
+    const halo = row.querySelector(".halo"); Object.assign(halo.style, { left: bx - bw * 0.1 + "px", top: -rh * 0.9 + "px", width: bw * 1.2 + "px", height: rh * 2.8 + "px" });
+    rows.push({ i, row, lock, y, lx, w: lb.getBoundingClientRect().width, num: row.querySelector(".num"), bar: row.querySelector(".bar"), lb, caret: row.querySelector(".caret"), sk: row.querySelector(".sk"),
+      badge: row.querySelector(".badge"), gl: row.querySelector(".g-l"), gu: row.querySelector(".g-u"), flood: row.querySelector(".flood"), blurred: row.querySelector(".blurred"), ring: row.querySelector(".ring"), halo });
+  });
+  const cx = R.x0 + RW / 2, cy = y0 + LH / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  rows.forEach((r) => { if (r.gu) gsap.set(r.gu, { opacity: 0 }); gsap.set([r.caret, r.lb], { visibility: "hidden" }); });
+
+  // ---- camera: a slow 3D drift
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 8, scale: 0.95, y: 20 * u }, { rotationY: -4, rotationX: 2, scale: 1.0, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the rows build in: the number pops, its bar slides out from behind it
+  rows.forEach((r, k) => { const at = 0.06 + k * 0.12;
+    tl.fromTo(r.row, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power2.out" }, at);
+    tl.fromTo(r.num, { scale: 0.5, rotation: -14 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, at);
+    tl.fromTo(r.bar, { x: -bx * 0.6, scaleX: 0.3, transformOrigin: "0% 50%" }, { x: 0, scaleX: 1, duration: 0.7, ease: "expo.out" }, at + 0.06);
+    if (r.badge) tl.fromTo(r.badge, { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.6)" }, at + 0.3); });
+
+  // ---- 2. the open rows write themselves in, a caret riding the edge of the wipe
+  const tW = 0.06 + N * 0.12 + 0.35; let k = 0;
+  rows.forEach((r) => { if (r.lock) return; const at = tW + k++ * 0.26;
+    const w = r.w;
+    tl.to(r.sk, { opacity: 0, duration: 0.25, ease: "power2.out" }, at);
+    tl.fromTo(r.lb, { clipPath: "inset(-20% 100% -20% 0%)" }, { clipPath: "inset(-20% 0% -20% 0%)", duration: 0.5, ease: "power3.out" }, at);
+    tl.set([r.caret, r.lb], { visibility: "visible" }, at);
+    tl.fromTo(r.caret, { x: 0, opacity: 1 }, { x: w + 8 * u, duration: 0.5, ease: "power3.out", immediateRender: false }, at);
+    tl.to(r.caret, { opacity: 0, duration: 0.2, ease: "power2.in" }, at + 0.42);
+    tl.fromTo(r.bar, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.6, ease: "power2.inOut" }, at); });
+
+  // ---- 3. the lock: it shakes, then springs open and the row floods with the accent (or clamps shut and glows)
+  const Lr = rows.find((r) => r.lock);
+  if (Lr) {
+    const tL = tW + k * 0.26 + 0.35;
+    rows.forEach((r) => { if (!r.lock) tl.to(r.row, KEY ? { filter: "brightness(0.55)", duration: 0.5, ease: "power2.inOut" } : { opacity: 0.45, duration: 0.5, ease: "power2.inOut" }, tL); });
+    Lr.row.style.zIndex = 5;
+    tl.to(Lr.row, { z: 60, scale: 1.04, duration: 0.6, ease: "power3.out" }, tL);
+    tl.to(Lr.badge, { keyframes: [{ rotation: -14, duration: 0.07 }, { rotation: 12, duration: 0.08 }, { rotation: -9, duration: 0.08 }, { rotation: 6, duration: 0.08 }, { rotation: 0, duration: 0.1 }], ease: "power1.inOut" }, tL + 0.1);
+    const tO = tL + 0.62;
+    const l1 = document.querySelector("#ground .l1");
+    Object.assign(l1.style, { left: cx - W * 0.3 + "px", top: Lr.y + rh / 2 - H * 0.18 + "px" });
+    tl.to(l1, { opacity: 1, duration: 1.0, ease: "power2.out" }, tO - 0.1);
+    tl.to(Lr.halo, { opacity: KEY ? 0 : 1, duration: 0.6, ease: "power2.out" }, tO);
+    tl.fromTo(Lr.ring, { scale: 1, opacity: 0.95 }, { scale: 1.12, opacity: 0, duration: 0.75, ease: "expo.out", immediateRender: false }, tO);
+    tl.to(Lr.num.querySelector(".acc"), { opacity: 1, duration: 0.2, ease: "power2.out" }, tO);
+    tl.to(Lr.num, { color: "#ffffff", duration: 0.2, ease: "power2.out" }, tO);
+    tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, tO); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, tO + 0.07);
+    if (UNLOCK) {
+      tl.set(Lr.gl, { opacity: 0 }, tO); tl.set(Lr.gu, { opacity: 1 }, tO);
+      tl.fromTo(Lr.badge, { y: 0, scale: 1 }, { y: -10 * u, scale: 1.18, duration: 0.14, ease: "power2.out", immediateRender: false }, tO);
+      tl.to(Lr.badge, { y: 0, scale: 1, duration: 0.5, ease: "back.out(3)" }, tO + 0.14);
+      tl.to(Lr.badge, { color: "#ffffff", duration: 0.2 }, tO);
+      tl.to(Lr.flood, { opacity: 1, duration: 0.3, ease: "power2.out" }, tO + 0.05);
+      tl.to([Lr.blurred, Lr.bar.querySelector(".hatch")], { opacity: 0, duration: 0.25, ease: "power2.out" }, tO + 0.05);
+      tl.set(Lr.lb, { color: "#ffffff" }, tO);
+      const w = Lr.w;
+      tl.fromTo(Lr.lb, { clipPath: "inset(-20% 100% -20% 0%)" }, { clipPath: "inset(-20% 0% -20% 0%)", duration: 0.55, ease: "power3.out" }, tO + 0.12);
+      tl.set([Lr.caret, Lr.lb], { visibility: "visible" }, tO + 0.12);
+      tl.fromTo(Lr.caret, { x: 0, opacity: 1, background: "#ffffff" }, { x: w + 8 * u, duration: 0.55, ease: "power3.out", immediateRender: false }, tO + 0.12);
+      tl.to(Lr.caret, { opacity: 0, duration: 0.2, ease: "power2.in" }, tO + 0.55);
+      tl.fromTo(Lr.bar, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, tO + 0.3);
+    } else {
+      tl.fromTo(Lr.badge, { scale: 1 }, { scale: 1.3, duration: 0.1, ease: "power2.out", immediateRender: false }, tO);
+      tl.to(Lr.badge, { scale: 1, duration: 0.5, ease: "back.out(3)" }, tO + 0.1);
+      tl.to(Lr.badge, { color: "var(--accent)", duration: 0.2 }, tO);
+    }
+  }
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

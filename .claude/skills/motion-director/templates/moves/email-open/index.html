@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"subject","type":"string","label":"Subject line","default":"Your meeting notes are ready"},
+  {"id":"line1","type":"string","label":"First line of the email","default":"We wrote up the whole call so you never have to."},
+  {"id":"line2","type":"string","label":"Second line of the email","default":"Decisions, owners and next steps are all inside."},
+  {"id":"phrase","type":"string","label":"Phrase to highlight (must appear in a line; empty: the second line)","default":"Decisions, owners and next steps"},
+  {"id":"from","type":"string","label":"Sender (empty: the brand name)","default":""},
+  {"id":"time","type":"string","label":"Time label","default":"now"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); }
+  #ground { position: absolute; inset: -6%; background:
+    radial-gradient(52% 34% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 88% 92%, color-mix(in srgb, var(--accent2) 26%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none; z-index: 50;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 1800); }
+  #scene { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .glass { box-sizing: border-box; border-radius: calc(var(--u) * 44);
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65); }
+  .rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  .sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.24) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  /* the inbox */
+  #inbox { position: absolute; left: 0; top: 0; padding: calc(var(--u) * 30) calc(var(--u) * 26) calc(var(--u) * 26); }
+  #ihd { display: flex; align-items: center; gap: calc(var(--u) * 16); padding: 0 calc(var(--u) * 14) calc(var(--u) * 22); }
+  #ihd b { font-family: var(--font-display); font-size: calc(var(--u) * 44); color: var(--ink); letter-spacing: -0.01em; }
+  #badge { min-width: calc(var(--u) * 46); height: calc(var(--u) * 46); padding: 0 calc(var(--u) * 14); box-sizing: border-box; border-radius: calc(var(--u) * 23); display: grid; place-items: center;
+    background: var(--accent); color: #fff; font-size: calc(var(--u) * 26); font-weight: 800; font-variant-numeric: tabular-nums; box-shadow: 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #list { position: relative; }
+  .rw { position: absolute; left: 0; top: 0; width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: calc(var(--u) * 22);
+    padding: calc(var(--u) * 20) calc(var(--u) * 22); border-radius: calc(var(--u) * 28); }
+  .rw + .rw { }
+  .rw .ra { flex: none; width: calc(var(--u) * 76); height: calc(var(--u) * 76); border-radius: 50%; background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(255,255,255,.06)); }
+  .rw .rb { flex: 1; min-width: 0; }
+  .bar { height: calc(var(--u) * 20); border-radius: calc(var(--u) * 10); background: rgba(255,255,255,.14); }
+  .bar + .bar { margin-top: calc(var(--u) * 16); background: rgba(255,255,255,.08); }
+  .rw.sk::after { content: ""; position: absolute; left: calc(var(--u) * 120); right: calc(var(--u) * 22); bottom: 0; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.07); }
+  /* the brand's unread email */
+  #new { background: linear-gradient(160deg, rgba(255,255,255,.1), rgba(255,255,255,.03)); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.08); }
+  #new .ra { background: none; display: grid; place-items: center; position: relative; }
+  #new .ra img { width: 100%; height: 100%; object-fit: contain; border-radius: 26%; filter: drop-shadow(0 calc(var(--u) * 8) calc(var(--u) * 14) color-mix(in srgb, var(--accent) 50%, transparent)); }
+  #new .top { display: flex; align-items: baseline; gap: calc(var(--u) * 14); }
+  #new .fr { flex: 1; min-width: 0; font-size: calc(var(--u) * 35); font-weight: 800; color: var(--ink); white-space: nowrap; overflow: hidden; }
+  #new .tm { flex: none; font-size: calc(var(--u) * 25); font-weight: 700; color: var(--al); white-space: nowrap; }
+  #new .sb { margin-top: calc(var(--u) * 6); font-size: calc(var(--u) * 31); font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; }
+  #new .pv { margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 26); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; overflow: hidden; }
+  #dot { flex: none; width: calc(var(--u) * 18); height: calc(var(--u) * 18); border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 14) var(--accent); }
+  #hover { position: absolute; inset: 0; border-radius: inherit; background: rgba(255,255,255,.08); opacity: 0; pointer-events: none; }
+  #rip { position: absolute; width: calc(var(--u) * 120); height: calc(var(--u) * 120); margin: calc(var(--u) * -60); border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.45), rgba(255,255,255,0) 70%); opacity: 0; pointer-events: none; }
+
+  /* the open email */
+  #sheet { position: absolute; left: 0; top: 0; overflow: hidden; opacity: 0;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 70%, rgba(255,255,255,.2)), color-mix(in srgb, var(--surface) 82%, transparent));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13),
+      0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -30) rgba(0,0,0,.75), 0 0 calc(var(--u) * 140) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 45%, transparent); }
+  #sc { position: absolute; left: 0; top: 0; box-sizing: border-box; padding: calc(var(--u) * 44) calc(var(--u) * 48) calc(var(--u) * 50); }
+  #sh { display: flex; align-items: center; gap: calc(var(--u) * 22); }
+  #sh .ma { flex: none; width: calc(var(--u) * 88); height: calc(var(--u) * 88); }
+  #sh .ma img { width: 100%; height: 100%; object-fit: contain; border-radius: 26%; }
+  #sh .wh { flex: 1; min-width: 0; }
+  #sh .fn { font-size: calc(var(--u) * 34); font-weight: 800; color: var(--ink); white-space: nowrap; }
+  #sh .to { margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 26); color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: nowrap; }
+  #sh .tm2 { flex: none; align-self: flex-start; margin-top: calc(var(--u) * 6); font-size: calc(var(--u) * 26); color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: nowrap; }
+  #subj { margin-top: calc(var(--u) * 36); font-family: var(--font-display); font-size: calc(var(--u) * 58); line-height: 1.08; letter-spacing: -0.015em; color: var(--ink); text-wrap: balance; }
+  #hr { height: calc(var(--u) * 1.5); margin: calc(var(--u) * 30) 0 calc(var(--u) * 28); background: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,.04)); transform-origin: 0 50%; }
+  .ln { font-size: calc(var(--u) * 38); line-height: 1.42; font-weight: 500; color: color-mix(in srgb, var(--ink) 86%, transparent); text-wrap: pretty; }
+  .ln + .ln { margin-top: calc(var(--u) * 14); }
+  mark { color: var(--ink); font-weight: 650; padding: 0 calc(var(--u) * 6); margin: 0 calc(var(--u) * -6); border-radius: calc(var(--u) * 8);
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 62%, transparent), color-mix(in srgb, var(--accent) 48%, transparent)) no-repeat 0 60% / var(--hl, 0%) 82%; }
+
+  /* the pointer */
+  #cur { position: absolute; left: 0; top: 0; width: calc(var(--u) * 62); height: calc(var(--u) * 62); z-index: 20; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 12) rgba(0,0,0,.55)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="scene">
+    <div id="inbox" class="glass">
+      <div id="ihd"><b id="ib">Inbox</b><div id="badge"><span id="bn">3</span></div></div>
+      <div id="list">
+        <div class="rw" id="new"><div class="ra"></div><div class="rb"><div class="top"><span class="fr" id="fr"></span><span class="tm" id="tm"></span></div><div class="sb" id="sb"></div><div class="pv" id="pv"></div></div><div id="dot"></div><div id="hover"></div><div id="rip"></div></div>
+      </div>
+      <div class="rim"></div><div class="sheen"></div>
+    </div>
+    <div id="sheet" class="glass"><div id="sc">
+      <div id="sh"><div class="ma"></div><div class="wh"><div class="fn" id="fn"></div><div class="to">to me</div></div><div class="tm2" id="tm2"></div></div>
+      <div id="subj"></div><div id="hr"></div>
+      <div class="ln" id="l1"></div><div class="ln" id="l2"></div>
+    </div><div class="rim"></div><div class="sheen"></div></div>
+  </div></div>
+  <svg id="cur" viewBox="0 0 24 24"><path d="M5 2.8l13.6 12.1-6.1.4 3.6 6.4-2.6 1.4-3.6-6.5L5.6 20.5z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const u = MV.portrait ? MV.u * 1.14 : MV.u * (W === H ? 1.0 : 1.04);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const from = v.from || v.brandName || "";
+  // shrink a line until its own text (not its box) fits
+  const fitw = (el, maxW, min) => { if (typeof el === "string") el = $(el); let fs = parseFloat(getComputedStyle(el).fontSize); const r = document.createRange(); r.selectNodeContents(el);
+    while (r.getBoundingClientRect().width > maxW && fs > min) { fs -= 1; el.style.fontSize = fs + "px"; } };
+  const esc = (s) => String(s || "").replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+  $("#fr").textContent = from; $("#fn").textContent = from;
+  $("#tm").textContent = v.time || ""; $("#tm2").textContent = v.time || "";
+  $("#sb").textContent = v.subject || ""; $("#pv").textContent = v.line1 || "";
+  $("#subj").textContent = v.subject || "";
+  if (v.mark) { $("#new .ra").appendChild(MV.img(v.mark)); $("#sh .ma").appendChild(MV.img(v.mark)); }
+  // the key phrase gets a <mark>; if it is not in either line, the whole second line does
+  const key = String(v.phrase || "").trim();
+  const put = (el, line) => { const i = key ? line.indexOf(key) : -1;
+    if (i < 0) { el.textContent = line; return false; }
+    el.innerHTML = esc(line.slice(0, i)) + "<mark>" + esc(key) + "</mark>" + esc(line.slice(i + key.length)); return true; };
+  const hit = put($("#l1"), String(v.line1 || "")) | put($("#l2"), String(v.line2 || ""));
+  if (!hit) $("#l2").innerHTML = "<mark>" + esc(v.line2 || "") + "</mark>";
+
+  // ---- layout: the inbox panel, its rows, then the open sheet over it
+  const PW = MV.portrait ? W - safe.left - safe.right : Math.min((W > H ? 980 : 860) * u, W - safe.left - safe.right);
+  const inbox = $("#inbox"), list = $("#list"); inbox.style.width = PW + "px";
+  const RWW = PW - 52 * u;
+  const mk = () => { const r = document.createElement("div"); r.className = "rw sk"; r.innerHTML = `<div class="ra"></div><div class="rb"><div class="bar"></div><div class="bar"></div></div>`; list.appendChild(r); return r; };
+  const sk = [mk(), mk(), mk()], rnd = MV.rand(7);
+  sk.forEach((r) => { const b = r.querySelectorAll(".bar"); b[0].style.width = (38 + rnd() * 22) + "%"; b[1].style.width = (62 + rnd() * 28) + "%"; });
+  const nr = $("#new");
+  fitw("#fr", RWW - (22 + 76 + 22 + 22 + 18 + 22 + 90) * u, 14); fitw("#sb", RWW - (22 + 76 + 22 + 22 + 18 + 22) * u, 14);
+  // the preview is cut on a word with an ellipsis, as an inbox does
+  { const pv = $("#pv"), r = document.createRange(), maxW = RWW - (22 + 76 + 22 + 22 + 18 + 22) * u; let w = pv.textContent.split(" ");
+    r.selectNodeContents(pv); while (r.getBoundingClientRect().width > maxW && w.length > 1) { w.pop(); pv.textContent = w.join(" ").replace(/[,.;:]$/, "") + "\u2026"; r.selectNodeContents(pv); } }
+  const RH = nr.getBoundingClientRect().height, SH = sk[0].getBoundingClientRect().height;
+  // skeleton rows sit one slot down once the new mail arrives
+  sk.forEach((r, i) => { r.style.height = RH + "px"; gsap.set(r, { y: i * RH }); });
+  list.style.height = RH * 3 + "px";
+  const IH = inbox.getBoundingClientRect().height + RH;   // the panel grows by one row as the new mail lands
+
+  const SW = MV.portrait ? PW : Math.min(PW + 60 * u, W - safe.left - safe.right);
+  const sheet = $("#sheet"), sc = $("#sc"); sc.style.width = SW + "px";
+  // fit the sheet's text: the subject wraps to 2 lines at most, the sender fits
+  { let fs = 58 * u; while ($("#subj").getBoundingClientRect().height > fs * 1.08 * 2 + 2 && fs > 24) { fs -= 2; $("#subj").style.fontSize = fs + "px"; } }
+  fitw("#fn", SW - (48 + 48 + 88 + 22 + 22 + 110) * u, 16);
+  const SHH = sc.getBoundingClientRect().height;
+
+  // the scene: the inbox centred; the sheet opens over it, centred on the same point
+  const SCW = Math.max(PW, SW), SCH = Math.max(IH, SHH);
+  const x0 = MV.portrait ? safe.left : (W - SCW) / 2;
+  const y0 = MV.portrait ? Math.max(safe.top, (H - SCH) / 2 - 70 * u) : (H - SCH) / 2;
+  gsap.set("#scene", { x: x0, y: y0, width: SCW, height: SCH, transformOrigin: "50% 50%" });
+  const ix = (SCW - PW) / 2, iy = (SCH - IH) / 2;
+  gsap.set(inbox, { x: ix, y: iy });
+  $("#stage").style.perspectiveOrigin = `${x0 + SCW / 2}px ${y0 + SCH / 2}px`;
+  root.style.setProperty("--gx", ((x0 + SCW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y0 + SCH / 2) / H * 100) + "%");
+  // the row's rect inside the scene (where the sheet grows from) and the sheet's final rect
+  const hdH = $("#ihd").getBoundingClientRect().height;
+  const rowX = ix + 26 * u, rowY = iy + 30 * u + hdH;
+  const sx = (SCW - SW) / 2, sy = (SCH - SHH) / 2;
+  gsap.set(sheet, { x: rowX, y: rowY, width: RWW, height: RH, borderRadius: 28 * u });
+
+  // ---- motion
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -30 * u, y: 20 * u, duration: D, ease: "sine.inOut" }, 0);
+  // the scene drifts slowly in 3D the whole time
+  tl.fromTo("#scene", { rotationX: 14, rotationY: -16, rotationZ: -1.5 }, { rotationX: 4, rotationY: 9, rotationZ: 0.5, duration: D, ease: "sine.inOut" }, 0);
+  // 0.05: the inbox rises out of depth
+  tl.fromTo(inbox, { z: -500 * u, y: iy + 160 * u, scale: 0.85 }, { z: 0, y: iy, scale: 1, duration: 0.95, ease: "back.out(1.3)" }, 0.05);
+  tl.fromTo(inbox, { opacity: 0, filter: "blur(16px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.05);
+  tl.fromTo(sk, { opacity: 0, x: -24 * u }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.07, ease: "expo.out" }, 0.3);
+  tl.fromTo("#ihd > *", { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: "expo.out" }, 0.25);
+  // 0.8: the new mail drops in on top, bold, the others make room
+  const NT = 0.8;
+  sk.forEach((r, i) => tl.to(r, { y: (i + 1) * RH, duration: 0.6, ease: "back.out(1.4)" }, NT));
+  tl.to(list, { height: RH * 4, duration: 0.6, ease: "back.out(1.4)" }, NT);
+  tl.fromTo(nr, { y: -RH * 0.8, scale: 0.92, rotationX: -18, transformOrigin: "50% 0%" }, { y: 0, scale: 1, rotationX: 0, duration: 0.7, ease: "back.out(1.8)" }, NT);
+  tl.fromTo(nr, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, NT);
+  tl.fromTo("#new .rb", { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, NT + 0.22);
+  tl.fromTo("#new .ra", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, NT + 0.08);
+  tl.fromTo("#dot", { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(4)" }, NT + 0.3);
+  tl.set("#bn", { textContent: "4" }, NT + 0.12);
+  tl.fromTo("#badge", { scale: 1 }, { scale: 1.3, duration: 0.1, ease: "power2.out", immediateRender: false }, NT + 0.12);
+  tl.to("#badge", { scale: 1, duration: 0.4, ease: "back.out(3)" }, NT + 0.22);
+  tl.fromTo(inbox, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, NT + 0.2);
+
+  // the pointer glides in and clicks the row (screen space: measured once the row is laid out)
+  const CK = 2.15;
+  // where the row really is on screen at the click, through the 3D drift
+  tl.seek(CK); const rr = nr.getBoundingClientRect(); tl.seek(0);
+  const tx = rr.left + rr.width * 0.62, ty = rr.top + rr.height * 0.55;
+  tl.fromTo("#cur", { x: W + 40 * u, y: Math.min(H, ty + 420 * u), opacity: 1 }, { x: tx, y: ty, duration: 0.75, ease: "power3.out" }, CK - 0.8);
+  tl.to("#hover", { opacity: 1, duration: 0.2, ease: "power2.out" }, CK - 0.25);
+  tl.to("#cur", { scale: 0.82, duration: 0.08, ease: "power2.out", transformOrigin: "20% 10%" }, CK);
+  tl.to("#cur", { scale: 1, duration: 0.25, ease: "back.out(3)" }, CK + 0.08);
+  tl.to(nr, { scale: 0.975, duration: 0.08, ease: "power2.out" }, CK); tl.to(nr, { scale: 1, duration: 0.3, ease: "back.out(3)" }, CK + 0.08);
+  tl.fromTo("#rip", { left: RWW * 0.62, top: RH * 0.55, scale: 0.2, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, CK);
+  tl.to("#cur", { opacity: 0, y: "+=" + 40 * u, duration: 0.22, ease: "power2.in" }, CK + 0.16);
+
+  // the row becomes the open email: the sheet grows out of it toward camera, the inbox falls back
+  const OT = CK + 0.18;
+  tl.to(sheet, { opacity: 1, duration: 0.25, ease: "power2.out" }, OT);
+  tl.fromTo(sheet, { x: rowX, y: rowY, width: RWW, height: RH, borderRadius: 28 * u, z: 0 },
+    { x: sx, y: sy, width: SW, height: SHH, borderRadius: 44 * u, z: 90 * u, duration: 0.72, ease: "expo.inOut", immediateRender: false }, OT);
+  tl.to(inbox, { z: -260 * u, filter: "blur(7px)", duration: 0.6, ease: "power2.inOut" }, OT);
+  tl.to(inbox, { opacity: 0.25, duration: 0.2, ease: "power2.out" }, OT);
+  // the sheet's content arrives as it opens, overlapping
+  const parts = ["#sh", "#subj", "#hr", "#l1", "#l2"];
+  gsap.set(parts, { opacity: 0 });
+  tl.fromTo("#sh .ma", { scale: 0.5, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, OT + 0.1);
+  tl.fromTo("#sh", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, OT + 0.08);
+  tl.fromTo("#tm2", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, OT + 0.5);
+  tl.fromTo("#subj", { opacity: 0, y: 26 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, OT + 0.48);
+  tl.fromTo("#hr", { opacity: 1, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.6, ease: "expo.out" }, OT + 0.56);
+  tl.fromTo(["#l1", "#l2"], { opacity: 0, y: 18 * u }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "expo.out" }, OT + 0.6);
+  tl.fromTo(sheet, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, OT + 0.6);
+  // the moment: a marker sweeps across the key phrase, the sheet answers with a small push
+  const HL = OT + 1.25;
+  tl.fromTo("#sc", { "--hl": "0%" }, { "--hl": "100%", duration: 0.55, ease: "power2.inOut" }, HL);
+  tl.to(sheet, { scale: 1.025, duration: 0.12, ease: "power2.out" }, HL + 0.45);
+  tl.to(sheet, { scale: 1, duration: 0.6, ease: "back.out(2.5)" }, HL + 0.57);
+  // the camera leans in on the email through the hold
+  tl.fromTo("#stage", { scale: 1, transformOrigin: `${x0 + SCW / 2}px ${y0 + SCH / 2}px` }, { scale: 1.05, duration: D - OT, ease: "sine.inOut", immediateRender: false }, OT);
+  MV.done();
+</script>
+</body>
+</html>

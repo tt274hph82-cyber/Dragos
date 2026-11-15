@@ -1,0 +1,5 @@
+{ "id": "prompt-template-copy", "name": "Prompt template copy", "oneLiner": "a glass prompt template card: each blank field types in its value and turns solid, the counter ticks to all filled, a cursor presses Copy and the button flips to a green Copied with a pulse",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["prompt", "template", "copy", "clipboard", "ai", "chatgpt", "claude", "fill in", "fields", "free resource", "prompt pack", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker gives a prompt or template to steal ('here is the exact prompt', 'just swap in your topic and copy it'): the blanks fill as they name them, Copied lands on 'copy it' or 'steal this'" }

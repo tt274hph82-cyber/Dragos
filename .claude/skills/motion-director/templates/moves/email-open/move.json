@@ -1,0 +1,5 @@
+{ "id": "email-open", "name": "Glass email open", "oneLiner": "a bold unread email from the brand drops into a glass inbox, a cursor clicks it, the row expands into the open email on a glass sheet lifting toward camera, and a marker sweeps over the key phrase",
+  "category": "productivity", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["email", "inbox", "newsletter", "message", "announcement", "launch", "receipt", "reply", "outreach", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": false,
+  "say": "when the speaker says 'I got an email...', 'they emailed me back', or describes what lands in your inbox: the click hits as they say it, the highlight lands on the line that matters" }

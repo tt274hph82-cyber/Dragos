@@ -1,0 +1,5 @@
+{ "id": "review-stars", "name": "Glass rating card", "oneLiner": "an app-store style rating card pops in tilted on glass: the big rating counts up while five stars fill one by one with a glint, the number stamps, then a review quote and its reviewer slide in",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["rating", "reviews", "stars", "app store", "testimonial", "five stars", "social proof", "trust", "customers", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says how people rate it ('4.9 stars', 'people love it', 'here is what one user said'): the last star fills on the number, the quote lands as they read it" }

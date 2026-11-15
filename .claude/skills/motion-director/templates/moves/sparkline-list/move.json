@@ -1,0 +1,5 @@
+{ "id": "sparkline-list", "name": "Sparkline list", "oneLiner": "a glass watchlist panel stands up with a pulsing live tag; each row has a name, a value that ticks and a live sparkline that scrolls left as new points arrive, with a change chip; one row bends up hard, lifts out of the list and flips green, line, glow and chip",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["sparkline", "watchlist", "live", "dashboard", "metrics", "trend", "growth", "winner", "analytics", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker compares a few channels or products and one is taking off ('everything else was flat, but the long videos went up 61 percent'): cut in on the list, the row lifts green on the word that names the winner" }

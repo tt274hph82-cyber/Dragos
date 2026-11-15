@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"screen","type":"number","label":"Which brand screen the page loads into (1 = the first)","default":2},
+  {"id":"url","type":"string","label":"Address in the top strip (empty: the brand domain)","default":""},
+  {"id":"focusX","type":"number","label":"Where a narrow page crops the screen, 0 = left edge, 50 = centre","default":0},
+  {"id":"heroLast","type":"string","label":"Land the headline block last with a push-in (yes or no)","default":"yes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --go: #2BD67B; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 28%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #cshadow { display: none; }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cshadow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.75), transparent); filter: blur(20px); }
+
+  #win { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 44); padding: calc(var(--u) * 14); transform-style: preserve-3d;
+    background: linear-gradient(165deg, rgba(255,255,255,.2), rgba(255,255,255,.07) 55%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(28px) saturate(170%); backdrop-filter: blur(28px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 60) calc(var(--u) * 110) calc(var(--u) * -30) rgba(0,0,0,.8), 0 0 calc(var(--u) * 140) calc(var(--u) * -40) color-mix(in srgb, var(--accent) 50%, transparent); }
+  .is-alpha #win { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 86%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #win { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  #strip { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 18); height: calc(var(--u) * 72); padding: 0 calc(var(--u) * 14) calc(var(--u) * 14); }
+  #fav { flex: none; width: calc(var(--u) * 48); height: calc(var(--u) * 48); border-radius: 30%; overflow: hidden; background: rgba(255,255,255,.14); position: relative; }
+  #fav img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; }
+  #addr { position: relative; flex: 1; min-width: 0; height: calc(var(--u) * 56); border-radius: 999px; background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); display: flex; align-items: center; padding: 0 calc(var(--u) * 26); box-sizing: border-box; }
+  .is-key #addr { background: color-mix(in srgb, var(--surface) 70%, #000); }
+  #url { font-size: calc(var(--u) * 34); font-weight: 600; color: color-mix(in srgb, var(--ink) 82%, transparent); white-space: nowrap; opacity: 0; }
+  #ubar { position: absolute; left: calc(var(--u) * 26); top: 50%; height: calc(var(--u) * 18); margin-top: calc(var(--u) * -9); width: 42%; border-radius: 99px; }
+  #spin { flex: none; position: relative; width: calc(var(--u) * 48); height: calc(var(--u) * 48); }
+  #spin svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #spin .ring { fill: none; stroke: color-mix(in srgb, var(--ink) 20%, transparent); stroke-width: 3.2; }
+  #spin .arc { fill: none; stroke: var(--al); stroke-width: 3.2; stroke-linecap: round; stroke-dasharray: 22 100; }
+  #spin .ok { position: absolute; inset: 0; border-radius: 50%; background: var(--go); display: grid; place-items: center; opacity: 0; box-shadow: 0 0 calc(var(--u) * 22) rgba(43,214,123,.6); }
+  .is-key #spin .ok { box-shadow: none; }
+  #spin .ok svg { width: 62%; height: 62%; left: 19%; top: 19%; fill: none; stroke: #fff; stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  #page { position: relative; border-radius: calc(var(--u) * 30); overflow: hidden; background: color-mix(in srgb, var(--surface) 70%, #000); transform-style: preserve-3d; }
+  .is-key #page { background: color-mix(in srgb, var(--surface) 70%, #000); }
+  .blk { position: absolute; overflow: visible; }
+  .blk .real { position: absolute; inset: 0; overflow: hidden; opacity: 0; }
+  .blk .real img { position: absolute; display: block; max-width: none; }
+  .blk .sk { position: absolute; border-radius: calc(var(--u) * 20); background: rgba(255,255,255,.045); }
+  .is-key .blk .sk { background: color-mix(in srgb, var(--surface) 88%, #fff); }
+  .sk i { position: absolute; display: block; border-radius: calc(var(--u) * 12);
+    background: linear-gradient(100deg, rgba(255,255,255,.1) 40%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.1) 60%);
+    background-size: var(--bw) 100%; background-repeat: no-repeat; background-color: rgba(255,255,255,.1);
+    background-position: calc(var(--sx, -100%) - var(--ox, 0px)) 0; }
+  .is-key .sk i { background-color: color-mix(in srgb, var(--surface) 70%, #fff); }
+  .sk i.acc { background-color: color-mix(in srgb, var(--accent) 40%, rgba(255,255,255,.08)); }
+  .sk i.rd { border-radius: 50%; }
+  #sheen { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; border-radius: inherit;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="cam">
+    <div id="cshadow"></div>
+    <div id="win">
+      <div id="strip"><div id="fav"></div><div id="addr"><div id="ubar" class="sk"><i style="inset:0;border-radius:99px"></i></div><span id="url"></span></div><div id="spin"><svg viewBox="0 0 24 24"><circle class="ring" cx="12" cy="12" r="9"/><circle class="arc" cx="12" cy="12" r="9"/></svg><div class="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div></div>
+      <div id="page"></div>
+      <div id="sheen"></div>
+    </div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 0.85 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const scr = (v.screens || [])[Math.max(0, (+v.screen || 1) - 1)] || (v.screens || [])[0];
+  if (v.mark) $("#fav").appendChild(MV.img(v.mark));
+  $("#url").textContent = String(v.url || v.domain || v.brandName || "").replace(/^https?:\/\//, "");
+
+  // ---- layout: one floating page; wide frames get a 16:9 page, tall ones a taller crop of the same screen
+  const regionW = W - safe.left - safe.right, regionH = H - safe.top - safe.bottom;
+  let PW, PH;
+  if (MV.portrait) { PW = Math.min(regionW, 940 * u) - 28 * u; PH = Math.min(MV.alpha ? regionH - 120 * u : 1180 * u, PW * 1.06); }
+  else if (W === H) { PW = Math.min(regionW, 900 * u) - 28 * u; PH = PW * 0.72; }
+  else { PW = MV.alpha ? Math.min(regionW * 0.5, 900 * u) : Math.min(1340 * u, regionW); PH = PW * 0.5625; }
+  const win = $("#win"), page = $("#page");
+  page.style.width = PW + "px"; page.style.height = PH + "px";
+  const WW = PW + 28 * u, WH = win.offsetHeight;
+  let x0 = (W - WW) / 2, y0 = (H - WH) / 2;
+  if (MV.alpha) { if (MV.portrait) { x0 = safe.left + (regionW - WW) / 2; y0 = safe.top + 10 * u; } else if (W > H) { x0 = W - safe.right - WW; y0 = safe.top + (regionH - WH) / 2; } }
+  gsap.set(win, { left: x0, top: y0 });
+  gsap.set("#cshadow", { left: x0 + WW * 0.08, top: y0 + WH - 40 * u, width: WW * 0.84, height: 120 * u });
+  root.style.setProperty("--gx", ((x0 + WW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y0 + WH * 0.5) / H * 100) + "%");
+  MV.fitText($("#url"), $("#addr").clientWidth - 52 * u, 14);
+
+  // the screen covers the page (cropped from focusX on a narrow page); every block shows its own window onto it
+  const IR = 16 / 9, sc = Math.max(PW / IR, PH);
+  const IW = sc * IR, IH = sc, IX = -(IW - PW) * Math.min(1, Math.max(0, (+v.focusX || 0) / 100)), IY = 0;
+  const wide = PW / PH > 1.2;
+  // blocks in page fractions [x, y, w, h, kind]; the hero is the headline block
+  const L = wide
+    ? [[0, 0, 1, 0.1, "nav"], [0, 0.1, 0.52, 0.5, "hero"], [0.52, 0.1, 0.48, 0.5, "media"], [0, 0.6, 0.34, 0.4, "card"], [0.34, 0.6, 0.33, 0.4, "card"], [0.67, 0.6, 0.33, 0.4, "card"]]
+    : [[0, 0, 1, 0.075, "nav"], [0, 0.075, 1, 0.4, "hero"], [0, 0.475, 0.56, 0.27, "media"], [0.56, 0.475, 0.44, 0.27, "card"], [0, 0.745, 0.5, 0.255, "card"], [0.5, 0.745, 0.5, 0.255, "card"]];
+  const G = 8 * u, rnd = MV.rand(11);
+  const bars = []; // every shimmering shape, with its left edge in page px
+  const blocks = L.map(([fx, fy, fw, fh, kind]) => {
+    const x = fx * PW, y = fy * PH, w = fw * PW, h = fh * PH;
+    const b = document.createElement("div"); b.className = "blk"; Object.assign(b.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+    b.innerHTML = '<div class="real"></div><div class="sk"></div>';
+    if (scr) { const im = MV.img(scr); Object.assign(im.style, { width: IW + "px", height: IH + "px", left: (IX - x) + "px", top: (IY - y) + "px" }); b.querySelector(".real").appendChild(im); }
+    const sk = b.querySelector(".sk"); Object.assign(sk.style, { left: G + "px", top: G + "px", width: (w - 2 * G) + "px", height: (h - 2 * G) + "px" });
+    const sw = w - 2 * G, sh = h - 2 * G;
+    const add = (l, t, ww, hh, cls) => { const i = document.createElement("i"); if (cls) i.className = cls; Object.assign(i.style, { left: l + "px", top: t + "px", width: ww + "px", height: hh + "px" }); sk.appendChild(i); bars.push([i, x + G + l]); };
+    const p = Math.min(sw, sh) * 0.12 + 10 * u;
+    if (kind === "nav") {
+      const hh = Math.min(sh * 0.42, 22 * u), cy = (sh - hh) / 2;
+      add(p, (sh - hh * 1.6) / 2, hh * 1.6, hh * 1.6, "rd"); add(p + hh * 2.2, cy, sw * 0.14, hh);
+      [0.46, 0.56, 0.66].forEach((f) => add(sw * f, cy, sw * 0.07, hh));
+      add(sw - p - sw * 0.13, (sh - hh * 1.5) / 2, sw * 0.13, hh * 1.5, "acc");
+    } else if (kind === "hero") {
+      const lh = Math.min(sh * 0.12, 50 * u), gap = lh * 0.55; let t = sh * 0.16;
+      add(p, t, Math.min(sw * 0.3, 160 * u), lh * 0.45); t += lh * 0.45 + gap * 1.4;
+      [0.86, 0.72].forEach((f) => { add(p, t, (sw - 2 * p) * f, lh); t += lh + gap; });
+      t += gap * 0.4; [0.8, 0.62].forEach((f) => { add(p, t, (sw - 2 * p) * f, lh * 0.38); t += lh * 0.38 + gap * 0.7; });
+      t += gap * 0.6; add(p, t, Math.min((sw - 2 * p) * 0.4, 300 * u), lh * 1.05, "acc");
+    } else if (kind === "media") {
+      add(p, p, sw - 2 * p, sh - 2 * p);
+      const s = Math.min(sw, sh) * 0.16; add(sw / 2 - s / 2, sh / 2 - s / 2, s, s, "rd");
+    } else {
+      add(p, p, sw - 2 * p, (sh - 2 * p) * 0.5);
+      const lh = Math.min(sh * 0.08, 22 * u); add(p, p + (sh - 2 * p) * 0.5 + lh, (sw - 2 * p) * 0.8, lh); add(p, p + (sh - 2 * p) * 0.5 + lh * 2.6, (sw - 2 * p) * 0.55, lh);
+    }
+    page.appendChild(b); return { b, kind };
+  });
+  page.style.setProperty("--bw", PW * 0.9 + "px");
+  bars.forEach(([i, ox]) => i.style.setProperty("--ox", ox + "px"));
+  $("#ubar i").style.setProperty("--ox", "0px");
+
+  // ---- timeline
+  // the camera: the page turns slowly the whole shot
+  gsap.set("#cam", { transformOrigin: `${x0 + WW / 2}px ${y0 + WH / 2}px` });
+  tl.fromTo(win, { z: -700 * u, rotationX: 26, rotationY: -24, rotationZ: -4, y: 120 * u },
+    { z: 0, rotationX: 9, rotationY: -12, rotationZ: -1, y: 0, duration: 1.05, ease: "back.out(1.3)" }, 0.05);
+  tl.fromTo(win, { opacity: 0, filter: "blur(16px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.fromTo("#cshadow", { opacity: 0, scaleX: 0.5 }, { opacity: 0.9, scaleX: 1, duration: 1, ease: "power2.out" }, 0.25);
+  tl.to(win, { rotationX: 3, rotationY: 7, rotationZ: 0.4, duration: D - 1.1, ease: "sine.inOut" }, 1.1);
+  // 1. the skeleton: blocks fade up in a quick cascade, a shimmer sweeps across them twice
+  blocks.forEach((o, i) => tl.fromTo(o.b.querySelector(".sk"), { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.45, ease: "expo.out" }, 0.25 + i * 0.05));
+  tl.fromTo("#ubar", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.3);
+  tl.fromTo(page, { "--sx": (-PW * 0.9) + "px" }, { "--sx": (PW * 1.1) + "px", duration: 0.75, ease: "power1.inOut", repeat: 1 }, 0.35);
+  tl.fromTo("#ubar", { "--sx": (-PW * 0.9) + "px" }, { "--sx": (PW * 0.9) + "px", duration: 0.75, ease: "power1.inOut", repeat: 1 }, 0.35);
+  tl.fromTo("#spin .arc", { rotation: 0, transformOrigin: "50% 50%" }, { rotation: 360 * 4, duration: 3.0, ease: "none" }, 0.2);
+  // 2. the page resolves block by block: the skeleton drops back, the real screen lifts out of blur and settles
+  const heroLast = String(v.heroLast || "yes").toLowerCase() !== "no";
+  const order = heroLast ? [0, 2, 3, 4, 5, 1] : [0, 1, 2, 3, 4, 5];
+  const R0 = 1.75, RS = 0.2;
+  order.forEach((bi, k) => {
+    const o = blocks[bi], t = R0 + k * RS + (heroLast && k === order.length - 1 ? 0.18 : 0);
+    const big = heroLast && k === order.length - 1;
+    tl.to(o.b.querySelector(".sk"), { opacity: 0, scale: 0.96, duration: 0.3, ease: "power2.in" }, t);
+    tl.fromTo(o.b.querySelector(".real"), { opacity: 0, filter: "blur(10px) brightness(1.6)" }, { opacity: 1, filter: "blur(0px) brightness(1)", duration: big ? 0.55 : 0.45, ease: "power3.out" }, t + 0.06);
+    tl.fromTo(o.b, { z: 0, scale: 1 }, { keyframes: [{ z: (big ? 90 : 40) * u, scale: big ? 1.035 : 1.015, duration: 0.18, ease: "power2.out" }, { z: 0, scale: 1, duration: big ? 0.7 : 0.5, ease: "back.out(2.2)" }], immediateRender: false }, t + 0.04);
+  });
+  const TD = R0 + (order.length - 1) * RS + (heroLast ? 0.18 : 0);
+  // the address resolves with the first block
+  tl.to("#ubar", { opacity: 0, duration: 0.25, ease: "power2.in" }, R0);
+  tl.fromTo("#url", { opacity: 0, x: -10 * u }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, R0 + 0.1);
+  tl.fromTo("#fav img", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, R0 + 0.1);
+  // 3. the landing: the hero hits, the spinner becomes a green check, the camera pushes in, the glass catches the light
+  tl.to("#spin .arc", { opacity: 0, duration: 0.15 }, TD + 0.1); tl.to("#spin .ring", { opacity: 0, duration: 0.15 }, TD + 0.1);
+  tl.fromTo("#spin .ok", { opacity: 0, scale: 0.2, rotation: -50 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, TD + 0.12);
+  tl.to(win, { scale: 1.012, duration: 0.1, ease: "power2.out" }, TD + 0.06); tl.to(win, { scale: 1, duration: 0.5, ease: "back.out(2)" }, TD + 0.16);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, TD + 0.1);
+  tl.fromTo("#cam", { scale: 1 }, { scale: MV.alpha ? 1.02 : 1.07, duration: D - TD - 0.2, ease: "power2.inOut", immediateRender: false }, TD - 0.3);
+  // exit
+  const X = D - 0.42;
+  tl.to(win, { y: "-=" + 90 * u, opacity: 0, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, X);
+  tl.to("#cshadow", { opacity: 0, duration: 0.3, ease: "power2.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

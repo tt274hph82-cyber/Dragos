@@ -1,0 +1,5 @@
+{ "id": "terminal-run", "name": "Glass terminal run", "oneLiner": "a dark glass terminal tilts in, a command types at the prompt, output lines stream in one by one with a spinner that turns into a check, and a green success line stamps in with a flash before the cursor blinks on a fresh prompt",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "mono"], "from": "new",
+  "tags": ["terminal", "code", "command", "deploy", "build", "install", "developer", "cli", "ship", "success", "mono", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says it takes one command, or that they shipped, installed or deployed something ('one command and it's live'): the command types under the words, the green line lands on 'done' or 'live'" }

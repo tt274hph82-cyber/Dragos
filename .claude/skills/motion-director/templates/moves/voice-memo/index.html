@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Recording name","default":"New recording"},
+  {"id":"transcript","type":"string","label":"What was said (appears under the wave)","default":"Every reply is drafted before I even open the app."},
+  {"id":"phrase","type":"string","label":"Words in the transcript that get highlighted (empty: none)","default":"drafted before I even open"},
+  {"id":"time","type":"string","label":"Timer when it stops (m:ss)","default":"0:12"},
+  {"id":"label","type":"string","label":"Small label over the transcript","default":"Transcript"},
+  {"id":"saved","type":"string","label":"Chip once it stops","default":"Saved"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ok: #2BD67B; --rec: #FF3B30; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 48);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #rd { border-radius: 50%; background: var(--rec); box-shadow: 0 0 calc(var(--s) * 18) var(--rec); }
+  .is-key #rd { box-shadow: none; }
+  #ttl { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #tmr { font-family: var(--font-display); font-size: calc(var(--s) * 52); color: var(--ink); white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; text-align: right; }
+  #wave { overflow: visible; }
+  #wave .mid { position: absolute; left: 0; right: 0; height: calc(var(--s) * 2); background: rgba(255,255,255,.12); }
+  #wave .b { position: absolute; border-radius: calc(var(--s) * 4); background: linear-gradient(180deg, #fff, color-mix(in srgb, var(--ink) 75%, var(--accent))); }
+  #wave .b.f { background: rgba(255,255,255,.18); }
+  #ph { position: absolute; width: calc(var(--s) * 4); border-radius: calc(var(--s) * 2); background: var(--rec); box-shadow: 0 0 calc(var(--s) * 16) var(--rec); }
+  #ph::before { content: ""; position: absolute; left: 50%; top: calc(var(--s) * -8); width: calc(var(--s) * 18); height: calc(var(--s) * 18); margin-left: calc(var(--s) * -9); border-radius: 50%; background: var(--rec); }
+  .is-key #ph { box-shadow: none; }
+  #lab { font-weight: 700; font-size: calc(var(--s) * 28); letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
+  #tx { font-size: calc(var(--s) * 44); line-height: 1.34; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; z-index: 2; }
+  #tx .w { opacity: 0; }
+  .hl { position: absolute; z-index: 1; border-radius: calc(var(--s) * 8); background: color-mix(in srgb, var(--accent) 62%, transparent); transform-origin: 0 50%; transform: scaleX(0);
+    box-shadow: 0 0 calc(var(--s) * 26) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-key .hl { background: var(--accent); box-shadow: none; }
+  #stop { border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 calc(var(--s) * 5) rgba(255,255,255,.85), 0 calc(var(--s) * 14) calc(var(--s) * 30) calc(var(--s) * -10) rgba(0,0,0,.6); }
+  #stop i { position: absolute; left: 30%; top: 30%; width: 40%; height: 40%; border-radius: calc(var(--s) * 10); background: var(--rec); }
+  #play { position: absolute; left: 27%; top: 25%; width: 50%; height: 50%; opacity: 0; }
+  #ok { display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 26); border-radius: calc(var(--s) * 34);
+    background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); font-weight: 800; font-size: calc(var(--s) * 36); white-space: nowrap;
+    box-shadow: inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--ok) 60%, transparent), 0 0 calc(var(--s) * 30) rgba(43,214,123,.5); }
+  .is-key #ok { background: color-mix(in srgb, var(--ok) 25%, var(--surface)); box-shadow: inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--ok) 60%, transparent); }
+  #ok svg { width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  #rg { position: absolute; border-radius: 50%; border: calc(var(--s) * 4) solid var(--ok); box-sizing: border-box; opacity: 0; }
+  .is-key #rg { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <i id="rd" class="ab"></i><div id="ttl" class="ab"></div><div id="tmr" class="ab">0:00</div>
+      <div id="wave" class="ab"><i class="mid"></i><i id="ph"></i></div>
+      <div id="lab" class="ab"></div><div id="tx" class="ab"></div>
+      <div id="stop" class="ab"><i></i><svg id="play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="#fff" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg></div><i id="rg"></i>
+      <div id="ok" class="ab"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="30" stroke-dashoffset="30"/></svg><span id="okt"></span></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+
+  // ---- zone (a 760-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 110 * u; cR = W - 110 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.28; cR = W * 0.72; zT = H * 0.06; zB = H * 0.92; }
+  const pad = 44, DW = 760, inner = DW - pad * 2;
+  let s = Math.min((cR - cL) / DW, P ? 1.08 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- transcript first: its height sets the card
+  const WY = 130, WH = 190, LY = WY + WH + 44, TY = LY + 50;
+  const tx = $("#tx"); tx.textContent = v.transcript || ""; box(tx, pad, TY, inner);
+  let fs = 44; while (tx.getBoundingClientRect().height / s > 44 * 1.34 * 3 + 4 && fs > 28) { fs -= 2; tx.style.fontSize = S(fs); }
+  const txH = tx.getBoundingClientRect().height / s;
+  const CY = TY + txH + 40, CB = 104, DH = CY + CB + 40;
+  s = Math.min(s, (zB - zT) / DH); root.style.setProperty("--s", s + "px");
+  tx.style.fontSize = S(fs); box(tx, pad, TY, inner);
+
+  box($("#rd"), pad, 46, 26, 26); box($("#ttl"), pad + 44, 36); $("#ttl").textContent = v.title || "";
+  const end = String(v.time || "0:12"), endSec = (() => { const m = end.split(":"); return m.length > 1 ? (+m[0] || 0) * 60 + (+m[1] || 0) : +m[0] || 0; })();
+  $("#tmr").textContent = end; Object.assign($("#tmr").style, { right: S(pad), top: S(36) });
+  const tmW = $("#tmr").getBoundingClientRect().width / s;
+  MV.fitText($("#ttl"), (inner - 44 - tmW - 30) * s, 22 * s);
+  $("#tmr").textContent = "0:00";
+  box($("#lab"), pad, LY); $("#lab").textContent = v.label || "";
+  box($("#stop"), DW / 2 - CB / 2, CY, CB, CB); box($("#rg"), DW / 2 - CB / 2, CY, CB, CB);
+  $("#okt").textContent = v.saved || "";
+  box($("#ok"), 0, CY + (CB - 68) / 2, null, 68);
+
+  // ---- the waveform: speech-like bars from a seeded source, syllable bumps under an envelope
+  const wave = $("#wave"); box(wave, pad, WY, inner, WH);
+  $("#wave .mid").style.top = S(WH / 2 - 1);
+  const BW = 9, BG = 7, NB = Math.floor((inner + BG) / (BW + BG)), rnd = MV.rand(7);
+  const bars = [];
+  for (let i = 0; i < NB; i++) {
+    const x = i * (BW + BG), syl = Math.abs(Math.sin(i * 0.55 + Math.sin(i * 0.13) * 2)), gap = (i % 17 > 14) ? 0.18 : 1;
+    const a = Math.max(0.06, Math.min(1, (0.25 + 0.75 * syl) * (0.55 + 0.45 * rnd()) * gap));
+    const f = document.createElement("i"); f.className = "b f"; box(f, x, WH / 2 - 3, BW, 6); wave.appendChild(f);
+    const b = document.createElement("i"); b.className = "b"; const h = Math.max(8, a * WH * 0.92); box(b, x, WH / 2 - h / 2, BW, h); wave.appendChild(b);
+    bars.push(b);
+  }
+  wave.appendChild($("#ph")); $("#ph").style.height = S(WH + 10); $("#ph").style.top = S(-5);
+  gsap.set(bars, { scaleY: 0 });
+
+  // ---- words and the highlight under the key phrase
+  const words = MV.words(tx);
+  const norm = (t) => t.toLowerCase().replace(/[^\p{L}\p{N}']/gu, "");
+  const kw = String(v.phrase || "").split(/\s+/).map(norm).filter(Boolean);
+  let ks = -1;
+  if (kw.length) for (let i = 0; i + kw.length <= words.length && ks < 0; i++) if (kw.every((k, j) => norm(words[i + j].textContent) === k)) ks = i;
+  const hls = [];
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  if (ks >= 0) {
+    const wb = $("#card").getBoundingClientRect(), lines = [];
+    for (let i = ks; i < ks + kw.length; i++) { const r = words[i].getBoundingClientRect(); const l = lines.find((q) => Math.abs(q.top - r.top) < 4); if (l) { l.right = r.right; } else lines.push({ top: r.top, left: r.left, right: r.right, h: r.height }); }
+    lines.forEach((l) => { const d = document.createElement("i"); d.className = "hl"; $("#card").appendChild(d);
+      Object.assign(d.style, { left: l.left - wb.left - 8 * s + "px", top: l.top - wb.top + l.h * 0.1 + "px", width: l.right - l.left + 16 * s + "px", height: l.h * 0.84 + "px" }); hls.push(d); });
+  }
+
+  // ---- timing
+  const TR = 0.45, TSTOP = Math.min(3.9, D - 1.5), TH = TSTOP - 0.62;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#ttl", "#tmr", "#lab"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.15);
+  tl.fromTo("#stop", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2.2)" }, 0.3);
+  // the record dot pulses for as long as it records
+  tl.fromTo("#rd", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 0.2);
+  for (let t = TR; t < TSTOP - 0.3; t += 0.6) tl.fromTo("#rd", { opacity: 1 }, { opacity: 0.35, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, t);
+  // the playhead sweeps, each bar springs up as it passes, the timer runs
+  const REC = TSTOP - TR;
+  tl.fromTo("#ph", { x: 0 }, { x: (NB - 1) * (BW + BG) * s + BW * s / 2, duration: REC, ease: "none" }, TR);
+  bars.forEach((b, i) => tl.to(b, { scaleY: 1, duration: 0.35, ease: "back.out(2.6)" }, TR + (i / NB) * REC));
+  const clk = { t: 0 };
+  tl.fromTo(clk, { t: 0 }, { t: endSec, duration: REC, ease: "none", immediateRender: false, onUpdate: () => { const n = Math.floor(clk.t); $("#tmr").textContent = Math.floor(n / 60) + ":" + String(n % 60).padStart(2, "0"); } }, TR);
+  // the transcript trails the voice by a beat, word by word
+  const WS = TR + 0.35, WE = TH - 0.15;
+  words.forEach((w, i) => tl.fromTo(w, { opacity: 0, y: 10 * s, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.3, ease: "power3.out", immediateRender: false }, WS + (i / Math.max(1, words.length)) * (WE - WS)));
+  // the key phrase gets the marker, and lifts
+  hls.forEach((d, i) => tl.to(d, { scaleX: 1, duration: 0.42, ease: "power3.inOut" }, TH + i * 0.32));
+  if (ks >= 0) {
+    const kws = words.slice(ks, ks + kw.length);
+    tl.to(kws, { color: "#fff", duration: 0.2 }, TH);
+    tl.to(kws, { scale: 1.06, y: -3 * s, duration: 0.2, ease: "power2.out", stagger: 0.03 }, TH + 0.1);
+    tl.to(kws, { scale: 1, y: 0, duration: 0.5, ease: "back.out(3)", stagger: 0.03 }, TH + 0.32);
+  }
+  // stop: the button presses, the wave settles, it slides aside and the green saved chip lands
+  tl.to("#stop", { scale: 0.86, duration: 0.08, ease: "power2.out" }, TSTOP);
+  tl.to("#stop", { scale: 1, duration: 0.3, ease: "back.out(3)" }, TSTOP + 0.08);
+  tl.to("#stop i", { scale: 0, rotation: 90, duration: 0.22, ease: "power2.in" }, TSTOP + 0.05);
+  tl.fromTo("#play", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.6)", immediateRender: false }, TSTOP + 0.22);
+  tl.to("#ph", { opacity: 0, duration: 0.2, ease: "power2.out" }, TSTOP);
+  tl.to("#rd", { opacity: 1, backgroundColor: "rgba(255,255,255,.35)", boxShadow: "0 0 0 rgba(0,0,0,0)", duration: 0.3, ease: "power2.out" }, TSTOP);
+  tl.to(bars, { scaleY: 0.82, duration: 0.5, ease: "power2.out", stagger: { each: 0.004, from: "end" } }, TSTOP + 0.05);
+  const okW = $("#ok").getBoundingClientRect().width / s, gapX = 24, groupW = CB + gapX + okW, gx = DW / 2 - groupW / 2;
+  gsap.set("#ok", { left: S(gx + CB + gapX) });
+  tl.to(["#stop", "#rg"], { x: (gx - (DW / 2 - CB / 2)) * s, duration: 0.5, ease: "expo.out" }, TSTOP + 0.15);
+  tl.fromTo("#ok", { opacity: 0, x: -30 * s, scale: 0.7 }, { opacity: 1, x: 0, scale: 1, duration: 0.55, ease: "back.out(2.2)" }, TSTOP + 0.2);
+  tl.to("#ok path", { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, TSTOP + 0.3);
+  tl.fromTo("#rg", { scale: 1, opacity: 0.9 }, { scale: 1.8, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TSTOP + 0.05);
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TSTOP + 0.2);
+  tl.set("#tmr", { textContent: end }, TSTOP);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

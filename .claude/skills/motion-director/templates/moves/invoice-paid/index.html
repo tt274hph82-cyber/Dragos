@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"sender","type":"string","label":"Who sends the invoice (empty: the brand name)","default":""},
+  {"id":"number","type":"string","label":"Invoice number","default":"No. 0042"},
+  {"id":"numLabel","type":"string","label":"Label over the number","default":"Invoice"},
+  {"id":"client","type":"string","label":"Billed to","default":"Your client"},
+  {"id":"billLabel","type":"string","label":"Label over the client","default":"Billed to"},
+  {"id":"items","type":"string","label":"Line items: label: amount; label: amount (2 to 4)","default":"Strategy call: 400; Build and launch: 1,800; Support: 200"},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"total","type":"string","label":"Total (empty: the sum of the items)","default":""},
+  {"id":"totalLabel","type":"string","label":"Total label","default":"Total due"},
+  {"id":"dueLabel","type":"string","label":"Status before it is paid","default":"Due in 14 days"},
+  {"id":"paidLabel","type":"string","label":"Status once paid (green)","default":"Paid in full"},
+  {"id":"paidTotalLabel","type":"string","label":"Total label once paid","default":"Total paid"},
+  {"id":"footer","type":"string","label":"Line at the foot, right (the left is the brand domain)","default":"Thank you"},
+  {"id":"ribbon","type":"string","label":"Word on the green corner ribbon","default":"Paid"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #111; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --tx: #1C1B21; --mu: #85828C; --ln: rgba(28,27,33,.14); --ok: #2BD67B; --okd: #129150; }
+  /* ground: a real black leather desk pad under one warm desk lamp */
+  #ground { position: absolute; inset: -8%; background: #151515 url(assets/leather.jpg) center / calc(var(--u) * 820); }
+  #ground::after { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(55% 45% at 38% 30%, rgba(255,226,180,.22), transparent 70%), radial-gradient(40% 35% at 85% 90%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+      radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.7)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); perspective-origin: 50% 40%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #sheet { position: absolute; transform-style: preserve-3d; }
+  #shadow { position: absolute; inset: 0; border-radius: calc(var(--s) * 6); box-shadow: 0 calc(var(--s) * 4) calc(var(--s) * 6) rgba(0,0,0,.5), calc(var(--s) * 18) calc(var(--s) * 40) calc(var(--s) * 60) rgba(0,0,0,.55); }
+  #paper { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--s) * 5); background: #F7F6F2 url(assets/paper.jpg) center / calc(var(--s) * 700); }
+  /* the lamp on the sheet: warm from top left, falling off to the far corner, a faint raking edge */
+  #light { position: absolute; inset: 0; pointer-events: none; z-index: 8;
+    background: radial-gradient(90% 70% at 18% 8%, rgba(255,240,215,.28), transparent 65%), linear-gradient(160deg, transparent 50%, rgba(40,30,20,.14)); }
+  #sheen { position: absolute; inset: 0; pointer-events: none; z-index: 9; mix-blend-mode: soft-light;
+    background: linear-gradient(118deg, transparent calc(var(--sh, -40%) - 14%), rgba(255,255,255,.9) var(--sh, -40%), transparent calc(var(--sh, -40%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #doc { color: var(--tx); z-index: 2; }
+  #mk { border-radius: calc(var(--s) * 14); overflow: hidden; box-shadow: 0 0 0 calc(var(--s) * 1.5) var(--ln); }
+  #mk img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #from { font-family: var(--font-display); font-size: calc(var(--s) * 44); line-height: 1.05; white-space: nowrap; }
+  #inv { font-weight: 800; font-size: calc(var(--s) * 34); letter-spacing: .32em; text-align: right; white-space: nowrap; color: var(--tx); }
+  #num { font-weight: 600; font-size: calc(var(--s) * 32); text-align: right; white-space: nowrap; color: var(--mu); font-variant-numeric: tabular-nums; }
+  .k { font-weight: 700; font-size: calc(var(--s) * 26); letter-spacing: .14em; text-transform: uppercase; color: var(--mu); white-space: nowrap; }
+  .vv { font-weight: 700; font-size: calc(var(--s) * 38); white-space: nowrap; color: var(--tx); }
+  .rule { height: calc(var(--s) * 2); background: var(--tx); opacity: .85; }
+  .hair { height: calc(var(--s) * 1.5); background: var(--ln); }
+  .it { font-weight: 550; font-size: calc(var(--s) * 36); white-space: nowrap; color: var(--tx); }
+  .am { font-weight: 650; font-size: calc(var(--s) * 36); white-space: nowrap; color: var(--tx); text-align: right; font-variant-numeric: tabular-nums; }
+  #tl { font-weight: 750; font-size: calc(var(--s) * 36); white-space: nowrap; }
+  #tv { font-weight: 850; font-size: calc(var(--s) * 76); letter-spacing: -0.025em; text-align: right; white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; }
+  #st { display: flex; align-items: center; gap: calc(var(--s) * 12); white-space: nowrap; }
+  #st .due, #st .pd { display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22); height: calc(var(--s) * 60); border-radius: 99px; font-weight: 750; font-size: calc(var(--s) * 32); }
+  #st .due { color: #9A5B00; background: rgba(255,170,40,.16); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(200,120,0,.28); }
+  #st .due i { width: calc(var(--s) * 14); height: calc(var(--s) * 14); border-radius: 50%; background: #E89A1A; }
+  #st .pd { position: absolute; left: 0; top: 0; color: #fff; opacity: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 75%, #fff), var(--ok) 55%, #1BA85B); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--s) * 8) calc(var(--s) * 16) calc(var(--s) * -6) rgba(10,110,50,.5); text-shadow: 0 1px 2px rgba(0,60,25,.35); }
+  #st .pd svg { flex: none; width: calc(var(--s) * 32); height: calc(var(--s) * 32); }
+
+  /* the corner ribbon: green satin wrapped round the top right corner */
+  #rib { z-index: 6; display: flex; align-items: center; justify-content: center; transform-origin: 50% 50%;
+    background: linear-gradient(180deg, #46E08F, var(--ok) 30%, #22B865 70%, #179A52);
+    box-shadow: 0 calc(var(--s) * 6) calc(var(--s) * 12) rgba(0,40,15,.35), inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 calc(var(--s) * -2) 0 rgba(0,60,25,.35); }
+  #rib::before, #rib::after { content: ""; position: absolute; left: 0; right: 0; height: calc(var(--s) * 2.5); background: rgba(255,255,255,.55); }
+  #rib::before { top: calc(var(--s) * 9); } #rib::after { bottom: calc(var(--s) * 9); }
+  #ribt { position: relative; font-weight: 900; font-size: calc(var(--s) * 46); letter-spacing: .28em; text-transform: uppercase; color: #fff; white-space: nowrap; text-shadow: 0 calc(var(--s) * 2) calc(var(--s) * 3) rgba(0,60,25,.4); padding-left: .28em; }
+  #ribg { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
+    background: linear-gradient(90deg, transparent calc(var(--rg, -30%) - 10%), rgba(255,255,255,1) var(--rg, -30%), transparent calc(var(--rg, -30%) + 10%)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="sheet"><div id="shadow"></div><div id="paper">
+      <div id="doc" class="ab"></div>
+      <div id="rib" class="ab"><span id="ribt"></span><i id="ribg"></i></div>
+      <div id="light"></div><div id="sheen"></div>
+    </div></div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H;
+  const cur$ = v.currency || "";
+  const items = String(v.items || "").split(";").map((x) => x.trim()).filter(Boolean).slice(0, 4).map((x) => { const k = x.lastIndexOf(":"); return k > 0 ? [x.slice(0, k).trim(), x.slice(k + 1).trim()] : [x, ""]; });
+  const num = (x) => parseFloat(String(x).replace(/[^0-9.]/g, "")) || 0;
+  const sum = items.reduce((a, [, b]) => a + num(b), 0);
+  const fmt = (n) => cur$ + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const totalS = v.total ? (/^[0-9.,\s]+$/.test(String(v.total)) ? cur$ + String(v.total).trim() : String(v.total)) : fmt(sum);
+  const totalN = v.total ? num(v.total) : sum;
+
+  // ---- the sheet's design and its scale
+  const PW = 860, pad = 60, NI = items.length;
+  const hdY = pad, hdH = 96, biY = hdY + hdH + 52, biH = 92, thY = biY + biH + 50, rowH = 78, tbY = thY + 50;
+  const totY = tbY + NI * rowH + 34, stY = totY + 120, ftY = stY + 60 + 70, PH = ftY + 50 + pad;
+  let zW, zH;
+  if (P) { zW = W - safe.left - safe.right; zH = H - safe.top - safe.bottom; }
+  else if (SQ) { zW = W - 200 * u; zH = H - 200 * u; }
+  else { zW = W * 0.5; zH = H * 0.84; }
+  const s = Math.min(zW / PW, zH / PH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const sw = PW * s, sh = PH * s, sx = (W - sw) / 2, sy = (H - sh) / 2;
+  Object.assign($("#sheet").style, { left: sx + "px", top: sy + "px", width: sw + "px", height: sh + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const doc = $("#doc"); box(doc, 0, 0, PW, PH);
+  const el = (cls, txt, x, y, w, h, id) => { const d = document.createElement("div"); d.className = "ab " + cls; if (id) d.id = id; if (txt != null) d.textContent = txt; box(d, x, y, w, h); doc.appendChild(d); return d; };
+  const inner = PW - pad * 2;
+
+  // header: the sender's mark and name (the top right corner is left for the ribbon)
+  const mk = el("", null, pad, hdY, 96, 96, "mk"); if (v.mark) mk.appendChild(MV.img(v.mark));
+  const from = el("", v.sender || v.brandName || "", pad + 96 + 24, hdY + 22, 340, 56, "from");
+  MV.fitText(from, 340 * s, 18);
+  const r1 = el("rule", null, pad, hdY + hdH + 24, inner, 2);
+  // billed to, and the invoice number beside it (clear of the ribbon)
+  const c2 = 470;
+  const bk = el("k", v.billLabel || "", pad, biY, c2 - pad - 30, 32), bv = el("vv", v.client || "", pad, biY + 40, c2 - pad - 30, 50);
+  const dk = el("k", v.numLabel || "", c2, biY, 220, 32), dv = el("vv", v.number || "", c2, biY + 40, 220, 50);
+  MV.fitText(bv, (c2 - pad - 34) * s, 18); MV.fitText(dv, 216 * s, 16); MV.fitText(bk, (c2 - pad - 34) * s, 14); MV.fitText(dk, 216 * s, 14);
+  const inv = null, nm = null;
+  // the table
+  const th1 = el("k", "Description", pad, thY, inner * 0.6, 32), th2 = el("k", "Amount", PW - pad - 260, thY, 260, 32); th2.style.textAlign = "right";
+  const r2 = el("hair", null, pad, tbY - 8, inner, 1.5);
+  const rows = items.map(([a, b], i) => {
+    const y = tbY + i * rowH;
+    const it = el("it", a, pad, y + 18, inner - 290, 46), am = el("am", b ? (/^[0-9.,\s]+$/.test(b) ? fmt(num(b)) : b) : "", PW - pad - 270, y + 18, 270, 46);
+    MV.fitText(it, (inner - 300) * s, 18); MV.fitText(am, 266 * s, 16); am.style.width = S(270);
+    const hr = el("hair", null, pad, y + rowH - 2, inner, 1.5);
+    return [it, am, hr];
+  });
+  const r3 = el("rule", null, PW - pad - 470, totY, 470, 2);
+  const tlb = el("", v.totalLabel || "", pad, totY + 40, inner * 0.4, 46, "tl"); MV.fitText(tlb, inner * 0.38 * s, 16);
+  const tv = el("", totalS, PW - pad - 520, totY + 24, 520, 80, "tv"); MV.fitText(tv, 516 * s, 24); tv.style.width = S(520);
+  // status pill at the foot
+  const st = el("", null, pad, stY, inner, 60, "st");
+  st.innerHTML = `<span class="due"><i></i><b></b></span><span class="pd"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.8" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><b></b></span>`;
+  st.querySelector(".due b").textContent = v.dueLabel || ""; st.querySelector(".pd b").textContent = v.paidLabel || "";
+  MV.fitText(st.querySelector(".due b"), (inner - 80) * s, 14); MV.fitText(st.querySelector(".pd b"), (inner - 90) * s, 14);
+
+  // the foot: a hairline, the domain and a thank-you, quiet
+  const r4 = el("hair", null, pad, ftY - 22, inner, 1.5);
+  const fl = el("k", v.domain || v.handle || "", pad, ftY, inner * 0.55, 34), fr = el("k", v.footer || "", PW - pad - inner * 0.4, ftY, inner * 0.4, 34);
+  fr.style.textAlign = "right"; MV.fitText(fl, inner * 0.53 * s, 14); MV.fitText(fr, inner * 0.38 * s, 14); fr.style.width = S(inner * 0.4);
+  [fl, fr].forEach((x) => { x.style.textTransform = "none"; x.style.letterSpacing = ".02em"; x.style.fontSize = S(30); x.style.fontWeight = "600"; });
+  MV.fitText(fl, inner * 0.53 * s, 14); MV.fitText(fr, inner * 0.38 * s, 14);
+  tlb.innerHTML = '<span class="a"></span><span class="b"></span>'; const tla = tlb.querySelector(".a"), tlbb = tlb.querySelector(".b");
+  tla.textContent = v.totalLabel || ""; tlbb.textContent = v.paidTotalLabel || "";
+  [tla, tlbb].forEach((x) => { x.style.position = "absolute"; x.style.left = "0"; x.style.top = "0"; MV.fitText(x, inner * 0.38 * s, 16); });
+  gsap.set(tlbb, { opacity: 0 });
+
+  // the ribbon across the top right corner: its centre line meets the top edge and the right edge L in from the corner
+  const L = 300, T = 92, RL = L * Math.SQRT2 + T * 2.4;
+  const rib = $("#rib"); box(rib, PW - L / 2 - RL / 2, L / 2 - T / 2, RL, T);
+  $("#ribt").textContent = v.ribbon || ""; MV.fitText($("#ribt"), (L * Math.SQRT2 - T * 1.6) * s, 18);
+  gsap.set(rib, { rotation: 45 });
+  const out = (L / Math.SQRT2 + T * 1.2) * s / Math.SQRT2;   // slid out past the corner, fully clipped by the paper
+
+  // ---- timeline
+  const TP = 2.75;                                   // paid
+  gsap.set("#sheet", { transformOrigin: "50% 60%" });
+  // the camera drifts slowly over the desk, leaning in toward the total
+  tl.fromTo("#cam", { rotationX: 20, rotationZ: -5, scale: 0.94, y: 30 * u }, { rotationX: 10, rotationZ: -1.5, scale: 1.04, y: -10 * u, duration: D, ease: "sine.inOut", transformOrigin: "50% 55%" }, 0);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -30 * u, y: -24 * u, duration: D, ease: "sine.inOut" }, 0);
+  // the sheet is slid onto the pad, a little turn as it settles
+  tl.fromTo("#sheet", { x: 260 * u, y: 520 * u, rotation: 14 }, { x: 0, y: 0, rotation: -2, duration: 1.0, ease: "expo.out" }, 0);
+  tl.to("#sheet", { rotation: 0, duration: 1.4, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#shadow", { opacity: 0.4, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.9, ease: "power2.out" }, 0);
+  // the eye reads it top to bottom
+  const reveal = [[mk, from], [r1], [bk, bv, dk, dv], [th1, th2, r2], ...rows, [r3, tlb], [st], [r4, fl, fr]];
+  reveal.forEach((g, i) => tl.fromTo(g, { opacity: 0, y: 10 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.45 + i * 0.09));
+  // the total counts up as it is reached
+  const o = { n: 0 }; tl.fromTo(tv, { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.45 + (reveal.length - 3) * 0.09);
+  const numeric = !v.total || /^[0-9.,\s]+$/.test(String(v.total));
+  if (numeric && totalN) tl.to(o, { n: totalN, duration: 0.9, ease: "power3.out", onUpdate: () => { tv.textContent = fmt(o.n); } }, 0.45 + (reveal.length - 3) * 0.09);
+  gsap.set(tv, { textContent: totalS });
+
+  // paid: the ribbon slides in over the corner and snugs down, the sheet gives, the status turns green
+  gsap.set(rib, { x: out, y: -out, autoAlpha: 0 });
+  tl.set(rib, { autoAlpha: 1 }, TP);
+  tl.to(rib, { x: 0, y: 0, duration: 0.55, ease: "back.out(1.5)" }, TP);
+  tl.to("#sheet", { scale: 0.985, duration: 0.07, ease: "power2.out" }, TP + 0.3); tl.to("#sheet", { scale: 1, duration: 0.6, ease: "expo.out" }, TP + 0.37);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TP + 0.3); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, TP + 0.37);
+  tl.fromTo(rib, { "--rg": "-30%" }, { "--rg": "130%", duration: 0.8, ease: "power2.inOut" }, TP + 0.45);
+  tl.to(st.querySelector(".due"), { opacity: 0, scale: 0.9, duration: 0.15, ease: "power2.in" }, TP + 0.3);
+  tl.fromTo(st.querySelector(".pd"), { opacity: 0, scale: 1.4 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)", transformOrigin: "0% 50%" }, TP + 0.5);
+  tl.to(tla, { opacity: 0, y: -8 * s, duration: 0.15, ease: "power2.in" }, TP + 0.3);
+  tl.fromTo(tlbb, { opacity: 0, y: 8 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, TP + 0.47);
+  tl.to(tv, { color: "#129150", duration: 0.35, ease: "power2.out" }, TP + 0.5);
+  tl.fromTo("#sheen", { "--sh": "-40%" }, { "--sh": "150%", duration: 1.2, ease: "power2.inOut" }, TP + 0.55);
+  MV.done();
+</script>
+</body>
+</html>

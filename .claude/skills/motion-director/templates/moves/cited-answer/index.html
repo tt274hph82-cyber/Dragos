@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"query","type":"string","label":"The question in the header","default":"Why do short hooks work?"},
+  {"id":"answer","type":"string","label":"The answer, with citation numbers in brackets like [1]","default":"Viewers decide in the first second whether to stay [1]. A clear promise beats a clever line [2]. Paying it off fast keeps them watching [3]."},
+  {"id":"label","type":"string","label":"Label over the source list","default":"Sources"},
+  {"id":"sources","type":"string","label":"Source names in citation order, separated by |","default":"Field Notes|The Study Hall|Creator Weekly"},
+  {"id":"kinds","type":"string","label":"Small line under each source, separated by |","default":"Article|Study|Newsletter"},
+  {"id":"pick","type":"number","label":"Which citation the pointer hovers (1 = the first)","default":2},
+  {"id":"srcTitle","type":"string","label":"Title on the lifted source card","default":"What viewers decide in one second"},
+  {"id":"quote","type":"string","label":"The cited passage on the source card","default":"A plain promise held attention longer than a clever one."}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 48);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #tile { border-radius: calc(var(--s) * 20); display: grid; place-items: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent2) 70%, white), var(--accent) 120%);
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 0 calc(var(--s) * 30) calc(var(--s) * -4) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #tile { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+  #tile svg { width: 62%; height: 62%; }
+  #q { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  #ans { font-size: calc(var(--s) * 42); line-height: 1.42; font-weight: 550; color: var(--ink); letter-spacing: -0.005em; }
+  #ans .w { opacity: 0; }
+  .cite { display: inline-flex !important; align-items: center; justify-content: center; vertical-align: 0.12em; min-width: calc(var(--s) * 50); height: calc(var(--s) * 50); margin-left: calc(var(--s) * 6);
+    padding: 0 calc(var(--s) * 10); box-sizing: border-box; border-radius: calc(var(--s) * 14); font-size: calc(var(--s) * 34); font-weight: 800; line-height: 1;
+    color: color-mix(in srgb, var(--ink) 85%, transparent); background: rgba(255,255,255,.12); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.22); }
+  .is-key .cite { background: color-mix(in srgb, var(--surface) 75%, #fff); }
+  .cite.on { color: #fff; background: linear-gradient(180deg, var(--al), var(--accent) 60%, var(--ad)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.4), 0 0 calc(var(--s) * 26) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key .cite.on { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.4); }
+  #lab { font-size: calc(var(--s) * 34); font-weight: 800; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; letter-spacing: .02em; }
+  .src { display: flex; align-items: center; gap: calc(var(--s) * 20); padding: 0 calc(var(--s) * 18); border-radius: calc(var(--s) * 24); }
+  .src .bg { position: absolute; inset: 0; border-radius: inherit; background: color-mix(in srgb, var(--accent) 22%, transparent); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 60%, transparent); opacity: 0; }
+  .is-key .src .bg { background: color-mix(in srgb, var(--surface) 70%, var(--accent) 30%); }
+  .src .n { position: relative; flex: none; width: calc(var(--s) * 50); height: calc(var(--s) * 50); border-radius: calc(var(--s) * 14); display: grid; place-items: center;
+    font-size: calc(var(--s) * 34); font-weight: 800; color: #fff; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 72%, #fff), var(--c) 50%, color-mix(in srgb, var(--c) 65%, #000));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.45); }
+  .src .nm { position: relative; font-size: calc(var(--s) * 38); font-weight: 650; color: var(--ink); white-space: nowrap; }
+  .src .k { position: relative; margin-left: auto; font-size: calc(var(--s) * 34); font-weight: 500; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
+
+  #pop { position: absolute; box-sizing: border-box; border-radius: calc(var(--s) * 36); overflow: hidden;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 70%, #fff 18%), color-mix(in srgb, var(--surface) 90%, #000));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.18),
+      0 calc(var(--s) * 70) calc(var(--s) * 120) calc(var(--s) * -20) rgba(0,0,0,.9), 0 0 calc(var(--s) * 70) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-key #pop { background: color-mix(in srgb, var(--surface) 84%, #fff); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.18); }
+  #pop .mono { position: absolute; border-radius: calc(var(--s) * 16); display: grid; place-items: center; font-family: var(--font-display); font-size: calc(var(--s) * 34); color: #fff;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 72%, #fff), var(--c) 50%, color-mix(in srgb, var(--c) 65%, #000)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.45); }
+  #ps { font-size: calc(var(--s) * 34); font-weight: 650; color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; }
+  #pt { font-family: var(--font-display); font-size: calc(var(--s) * 42); color: var(--ink); line-height: 1.12; letter-spacing: -0.01em; }
+  #pq { font-size: calc(var(--s) * 36); font-weight: 500; color: color-mix(in srgb, var(--ink) 82%, transparent); line-height: 1.38; padding-left: calc(var(--s) * 22); }
+  #pq::before { content: ""; position: absolute; left: 0; top: calc(var(--s) * 6); bottom: calc(var(--s) * 6); width: calc(var(--s) * 6); border-radius: 3px; background: var(--accent); }
+  #pq mark { color: var(--ink); background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 40%, transparent), color-mix(in srgb, var(--accent) 40%, transparent)) no-repeat 0 0 / var(--hl, 0%) 100%; border-radius: 4px; }
+  #cur { position: absolute; left: 0; top: 0; width: calc(var(--s) * 64); height: calc(var(--s) * 64); z-index: 60; overflow: visible; filter: drop-shadow(0 calc(var(--s) * 6) calc(var(--s) * 8) rgba(0,0,0,.5)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="card">
+        <div id="tile" class="ab"><svg viewBox="0 0 24 24"><path d="M12 2.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z" fill="#fff"/><path d="M19 15.5c.25 1.9 1.1 2.75 3 3-1.9.25-2.75 1.1-3 3-.25-1.9-1.1-2.75-3-3 1.9-.25 2.75-1.1 3-3z" fill="#fff" opacity=".85"/></svg></div>
+        <div id="q" class="ab"></div><div id="hr" class="ab"></div>
+        <div id="ans" class="ab"></div>
+        <div id="lab" class="ab"></div>
+        <div id="srcs"></div>
+      </div>
+      <div id="pop"><div class="mono"></div><div id="ps" class="ab"></div><div id="pt" class="ab"></div><div id="pq" class="ab"></div></div>
+    </div>
+    <svg id="cur" viewBox="0 0 32 32"><path d="M6 3.5v21.2l5.6-5.3 3.6 8.3 3.8-1.6-3.6-8.2h7.8z" fill="#fff" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const names = String(v.sources || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 4);
+  const kinds = String(v.kinds || "").split("|").map((x) => x.trim());
+  const COLS = ["#3D7BFD", "#14B8A6", "#8B5CF6", "#F59E0B"];
+
+  // ---- zone (a 760-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 110 * u; cR = W - 110 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.28; cR = W * 0.72; zT = H * 0.06; zB = H * 0.92; }
+  const pad = 40, DW = 760, inner = DW - pad * 2, HR = 128;
+  const S0 = Math.min((cR - cL) / DW, P ? 1.08 : 1.3);
+  let s = S0; root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- the answer: text with [n] chips
+  const ans = $("#ans");
+  // a chip sits after the punctuation it cites ("stay [1]." reads "stay.1")
+  ans.innerHTML = esc(v.answer || "").replace(/\s*\[(\d+)\]([.,;:!?]?)/g, (m, n, p) => `${p}<span class="cite" data-n="${n}">${n}</span>`);
+  // split the text around the chips into words
+  const parts = []; [...ans.childNodes].forEach((c) => { if (c.nodeType === 3) { const sp = document.createElement("span"); sp.textContent = c.textContent; c.replaceWith(sp); parts.push(sp); } });
+  parts.forEach((p) => MV.words(p));
+  // glue each chip to the word before it, so a line never starts with a chip
+  [...ans.querySelectorAll(".cite")].forEach((c) => { const p = c.previousElementSibling, ws = p ? p.querySelectorAll(".w") : []; if (ws.length) ws[ws.length - 1].appendChild(c); });
+  const seq = [...ans.querySelectorAll(".w, .cite")];
+  const chips = [...ans.querySelectorAll(".cite")];
+  const pickN = String(Math.max(1, +v.pick || 1));
+  const chip = chips.find((c) => c.dataset.n === pickN) || chips[0];
+
+  // ---- the source rows
+  const srcs = $("#srcs");
+  const rows = names.map((nm, i) => { const r = document.createElement("div"); r.className = "src ab"; r.style.setProperty("--c", COLS[i % COLS.length]);
+    r.innerHTML = `<i class="bg"></i><div class="n">${i + 1}</div><div class="nm"></div><div class="k"></div>`; r.querySelector(".nm").textContent = nm; r.querySelector(".k").textContent = kinds[i] || ""; srcs.appendChild(r); return r; });
+
+  // ---- measure at S0
+  const lay = () => {
+    box($("#tile"), pad, 34, 68, 68); box($("#q"), pad + 88, 46); $("#q").textContent = v.query || "";
+    MV.fitText($("#q"), (inner - 88) * s, 22 * s);
+    box($("#hr"), pad, HR, inner, 1.5);
+    box(ans, pad, 156, inner);
+  };
+  lay();
+  const ansH = ans.getBoundingClientRect().height / s;
+  const LY = 156 + ansH + 30, RY = LY + 58, RH = 74;
+  const CH = RY + rows.length * RH + 30;
+  // the lifted source card: under the cited line, as wide as the card allows
+  const PW = DW - 80, PP = 34;
+  const pop = $("#pop"); pop.style.width = S(PW);
+  pop.querySelector(".mono").textContent = (names[(+chip?.dataset.n || 1) - 1] || "S").trim().charAt(0).toUpperCase();
+  pop.style.setProperty("--c", COLS[((+chip?.dataset.n || 1) - 1) % COLS.length]);
+  $("#ps").textContent = names[(+chip?.dataset.n || 1) - 1] || "";
+  $("#pt").textContent = v.srcTitle || ""; $("#pq").innerHTML = `<mark>${esc(v.quote || "")}</mark>`;
+  const placePop = () => { box(pop.querySelector(".mono"), PP, PP, 60, 60); box($("#ps"), PP + 80, PP + 9); MV.fitText($("#ps"), (PW - PP * 2 - 80) * s, 20 * s);
+    box($("#pt"), PP, PP + 88, PW - PP * 2); box($("#pq"), PP, 0, PW - PP * 2); };
+  placePop();
+  const ptH = $("#pt").getBoundingClientRect().height / s;
+  $("#pq").style.top = S(PP + 88 + ptH + 20);
+  const PH = PP + 88 + ptH + 20 + $("#pq").getBoundingClientRect().height / s + PP;
+  const cb = chip ? chip.getBoundingClientRect() : null, ab0 = ans.getBoundingClientRect();
+  const chipY = cb ? 156 + (cb.bottom - ab0.top) / s : 156 + ansH;
+  const PY = chipY + 22;
+  const DH = Math.max(CH, PY + PH) + 10;
+  s = Math.min(S0, (zB - zT) / DH); root.style.setProperty("--s", s + "px");
+  lay(); placePop(); $("#pq").style.top = S(PP + 88 + ptH + 20);
+  box($("#lab"), pad + 4, LY); $("#lab").textContent = v.label || ""; if (!v.label) $("#lab").remove();
+  rows.forEach((r, i) => { box(r, pad - 18 + 0, RY + i * RH, inner + 36 - 36, RH - 8); MV.fitText(r.querySelector(".nm"), (inner - 300) * s, 20 * s); MV.fitText(r.querySelector(".k"), 200 * s, 18 * s); });
+
+  const cw = DW * s, ch = CH * s, dh = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - dh) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + dh + 30 * u + "px" });
+  // the source card sits under the chip, centred on it but inside the card
+  const cbx = chip ? (chip.getBoundingClientRect().left + chip.getBoundingClientRect().width / 2 - $("#wrap").getBoundingClientRect().left) / s : DW / 2;
+  const PX = Math.max(20, Math.min(DW - PW - 20, cbx - PW / 2));
+  box(pop, PX, PY, PW, PH);
+
+  // ---- timing: the answer streams in chunks, chips pop as they are reached
+  const TS = 0.75, rnd = MV.rand(17), chunks = []; { let i = 0; while (i < seq.length) { const n = seq[i].classList.contains("cite") ? 1 : 1 + Math.floor(rnd() * 3); chunks.push(Math.min(seq.length, i + n)); i += n; } }
+  const STEP = Math.min(0.1, 1.5 / Math.max(1, chunks.length)), TE = TS + chunks.length * STEP;
+  const TH = Math.max(TE + 0.75, D - 2.55);
+
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + dh / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#card", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#tile", { scale: 0.5, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 0.15);
+  tl.fromTo("#q", { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.2);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.22);
+  tl.fromTo("#tile svg", { rotation: 0 }, { rotation: 180, duration: TE - 0.4, ease: "power1.inOut" }, 0.4);
+  let prev = 0;
+  chunks.forEach((end, c) => { const t = TS + c * STEP;
+    for (let i = prev; i < end; i++) { const el = seq[i];
+      if (el.classList.contains("cite")) tl.fromTo(el, { opacity: 0, scale: 0.3, y: 8 * s }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(2.6)", immediateRender: false }, t);
+      else tl.fromTo(el, { opacity: 0, y: 6 * s }, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out", immediateRender: false }, t); }
+    prev = end; });
+  gsap.set(chips, { opacity: 0 });
+  $("#lab") && tl.fromTo("#lab", { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, TE - 0.25);
+  rows.forEach((r, i) => tl.fromTo(r, { opacity: 0, y: 22 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, TE - 0.18 + i * 0.08));
+
+  // ---- the pointer hovers the chip: it lights, its source row lights, the source card lifts
+  const cur = $("#cur");
+  tl.seek(TH); const hb = chip.getBoundingClientRect(); tl.seek(0);
+  const px = hb.left + hb.width * 0.5, py = hb.top + hb.height * 0.62;
+  tl.fromTo(cur, { opacity: 0, left: px + "px", top: py + "px", x: 150 * s, y: 230 * s }, { opacity: 1, x: 0, y: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TH - 0.6);
+  tl.set(cur, { opacity: 0 }, 0);
+  tl.set(chip, { className: "cite on" }, TH);
+  tl.fromTo(chip, { scale: 1 }, { scale: 1.2, duration: 0.14, ease: "power2.out", immediateRender: false }, TH);
+  tl.to(chip, { scale: 1.08, duration: 0.5, ease: "back.out(3)" }, TH + 0.14);
+  const ri = (+chip.dataset.n || 1) - 1, row = rows[ri];
+  row && tl.to(row.querySelector(".bg"), { opacity: 1, duration: 0.3, ease: "power2.out" }, TH + 0.05);
+  // everything but the cited sentence steps back
+  const ci = seq.indexOf(chip); let st = ci - 1; while (st > 0 && !seq[st - 1].classList.contains("cite")) st--;
+  const keep = new Set(seq.slice(Math.max(0, st), ci + 1));
+  const rest = seq.filter((e) => !keep.has(e) && !e.classList.contains("cite"));
+  tl.to(rest, { opacity: 0.22, duration: 0.4, ease: "power2.out" }, TH + 0.08);
+  tl.to(rows.filter((r, i) => i !== ri).concat($("#lab") ? [$("#lab")] : []), { opacity: 0.22, duration: 0.4, ease: "power2.out" }, TH + 0.08);
+  const ry = RY + ri * RH; if (row && ry < PY + PH && ry + RH > PY) tl.to(row, { opacity: 0.25, duration: 0.4, ease: "power2.out" }, TH + 0.25);
+  const ox = (cbx - PX) * s;
+  gsap.set(pop, { transformOrigin: `${ox}px 0px`, opacity: 0 });
+  tl.fromTo(pop, { opacity: 0, scale: 0.4, y: -26 * s, z: 0, rotationX: 24 }, { opacity: 1, scale: 1, y: 0, z: 150 * s, rotationX: 0, duration: 0.85, ease: "back.out(1.5)", immediateRender: false }, TH + 0.1);
+  tl.fromTo(["#pop .mono", "#ps", "#pt", "#pq"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, TH + 0.25);
+  tl.fromTo("#pq mark", { "--hl": "0%" }, { "--hl": "100%", duration: 0.75, ease: "power2.inOut" }, TH + 0.62);
+  tl.to(cur, { x: 70 * s, y: -46 * s, opacity: 0, duration: 0.55, ease: "power2.in" }, TH + 0.45);
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, TH + 0.15);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

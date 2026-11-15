@@ -1,0 +1,5 @@
+{ "id": "automation-rule", "name": "Automation rule", "oneLiner": "a glass When/Then rule card: the switch flips on green, the trigger block flashes, a light runs down the wire into each action which spins and ticks green, the run counter rolls up, then it fires again faster and again, the last count landing green with a ring",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["automation", "workflow", "trigger", "action", "rule", "if this then that", "zap", "no code", "runs", "on autopilot", "integration", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker describes a set-and-forget rule ('when someone fills the form, it adds them to the sheet and sends the email'): the trigger flashes on 'when', the actions tick on 'it adds', the counter keeps rolling on 'every single time'" }

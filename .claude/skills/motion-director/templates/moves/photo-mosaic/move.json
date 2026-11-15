@@ -1,0 +1,5 @@
+{ "id": "photo-mosaic", "name": "Photo mosaic resolve", "oneLiner": "the camera starts tight on a wall of tiny tiles cut from the brand's own screens, pulls back in log space until the tiles tint into one big picture (the author's face by default), then a diagonal wave flips every tile to its piece of the real photo and the seams close into one image under a sheen",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["mosaic", "photo", "face", "identity", "body of work", "made of", "community", "audience", "every video", "portrait", "zoom out", "reveal", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.9, "alpha": false,
+  "say": "when the speaker says what something is made of ('every one of these videos made me', 'this channel is built from 300 uploads', 'you are the people behind it'): cut in on the noun, the flip wave lands as they finish the sentence" }

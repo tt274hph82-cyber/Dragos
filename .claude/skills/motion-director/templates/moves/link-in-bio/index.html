@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Display name (empty: the brand name)","default":""},
+  {"id":"sub","type":"string","label":"Line under the name (empty: the brand handle)","default":""},
+  {"id":"links","type":"string","label":"The link buttons, comma separated (up to 4)","default":"Latest video,Free guide,Newsletter,Work with me"},
+  {"id":"glyphs","type":"string","label":"A glyph per button: play, doc, mail, case, link, cart, calendar, star","default":"play,doc,mail,case"},
+  {"id":"pick","type":"number","label":"Which button is tapped (1 = the first)","default":2},
+  {"id":"clicks","type":"number","label":"Click count it lands on","default":2481},
+  {"id":"clickWord","type":"string","label":"Word after the count","default":"clicks"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(46% 36% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 28%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 15%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 2400); }
+  /* the page: the brand colour lit from above, sinking to near black, with two slow lights */
+  #page { position: absolute; left: 0; top: 0; width: 760px; transform-origin: 0 0; perspective: 2200px; }
+  #card { position: relative; width: 760px; border-radius: 64px; overflow: hidden; transform-style: preserve-3d;
+    background: radial-gradient(80% 42% at 50% 0%, color-mix(in srgb, var(--accent) 85%, #fff 10%), transparent 75%),
+      linear-gradient(180deg, var(--accent), var(--ad) 38%, color-mix(in srgb, var(--accent) 18%, #0b0909) 78%);
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.16), inset 0 3px 0 rgba(255,255,255,.3), 0 70px 120px -30px rgba(0,0,0,.8); }
+  .is-alpha #card { box-shadow: inset 0 0 0 2px rgba(255,255,255,.16), inset 0 3px 0 rgba(255,255,255,.3), 0 60px 100px -30px rgba(0,0,0,.6); }
+  .is-key #card { box-shadow: inset 0 0 0 2px rgba(255,255,255,.16); }
+  #card .lt { position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none; }
+  #lt1 { width: 560px; height: 560px; left: -200px; top: 280px; background: color-mix(in srgb, var(--accent) 70%, transparent); opacity: .55; }
+  #lt2 { width: 480px; height: 480px; left: 420px; top: 760px; background: color-mix(in srgb, var(--accent2) 50%, transparent); opacity: .22; }
+  .is-key #card .lt { display: none; }
+  #sheen { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.55) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  #avw { position: relative; margin: 74px auto 0; width: 196px; height: 196px; }
+  #av { position: absolute; inset: 0; border-radius: 50%; box-sizing: border-box; border: 7px solid #fff;
+    background: color-mix(in srgb, var(--accent) 22%, #fff) no-repeat; background-size: 165% auto; background-position: 50% 8%;
+    box-shadow: 0 18px 36px -10px rgba(0,0,0,.55); }
+  #nm { margin-top: 30px; text-align: center; font-size: 62px; font-weight: 800; letter-spacing: -0.02em; color: #fff; white-space: nowrap; line-height: 1.1; }
+  #sb { margin-top: 8px; text-align: center; font-size: 40px; font-weight: 500; color: rgba(255,255,255,.75); white-space: nowrap; line-height: 1.2; }
+  #soc { display: flex; justify-content: center; gap: 26px; margin-top: 36px; }
+  #soc i { width: 74px; height: 74px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.14); box-shadow: inset 0 0 0 2px rgba(255,255,255,.2); }
+  #soc svg { width: 38px; height: 38px; fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #links { margin: 56px 56px 140px; display: flex; flex-direction: column; gap: 24px; }
+  .lk { position: relative; height: 128px; border-radius: 34px; background: linear-gradient(180deg, #ffffff, #f1eff4); display: flex; align-items: center; gap: 24px; padding: 0 22px;
+    box-shadow: inset 0 2px 0 #fff, inset 0 -4px 0 rgba(0,0,0,.07), 0 14px 28px -10px rgba(0,0,0,.55); transform-origin: 50% 50%; }
+  .lk .g { flex: none; width: 84px; height: 84px; border-radius: 24px; display: grid; place-items: center; background: linear-gradient(160deg, var(--al), var(--accent) 50%, var(--ad));
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.4), 0 6px 12px -4px rgba(0,0,0,.4); }
+  .lk .g svg { width: 46px; height: 46px; fill: none; stroke: #fff; stroke-width: 2.1; stroke-linecap: round; stroke-linejoin: round; }
+  .lk .t { flex: 1; min-width: 0; font-size: 46px; font-weight: 700; letter-spacing: -0.015em; color: #16141b; white-space: nowrap; }
+  .lk .ar { flex: none; width: 40px; height: 40px; }
+  .lk .ar svg { width: 100%; height: 100%; fill: none; stroke: #b4b0bb; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .lk .pr { position: absolute; inset: 0; border-radius: inherit; background: #16141b; opacity: 0; pointer-events: none; }
+  .lk .rc { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; }
+  .lk .rp { position: absolute; width: 120px; height: 120px; margin: -60px 0 0 -60px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%); opacity: 0; }
+  .lk .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+  .lk .sub { display: flex; align-items: center; gap: 10px; height: 0; overflow: hidden; opacity: 0; white-space: nowrap;
+    font-size: 38px; font-weight: 800; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--accent) 85%, #000); }
+  .lk .sub svg { flex: none; width: 40px; height: 40px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .lk .sub .w { font-weight: 600; color: #77737f; }
+  #touch { position: absolute; left: 0; top: 0; z-index: 9; width: 110px; height: 110px; margin: -55px 0 0 -55px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.75), rgba(255,255,255,.4) 60%, rgba(255,255,255,.2));
+    box-shadow: 0 0 0 3px rgba(255,255,255,.8), 0 12px 26px rgba(0,0,0,.45); opacity: 0; }
+  .is-key #touch { background: rgba(255,255,255,.8); box-shadow: 0 0 0 3px #fff; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="page"><div id="card">
+    <div class="lt" id="lt1"></div><div class="lt" id="lt2"></div>
+    <div id="avw"><div id="av"></div></div>
+    <div id="nm"></div><div id="sb"></div>
+    <div id="soc"></div>
+    <div id="links"></div>
+    <div id="sheen"></div>
+    <div id="touch"></div>
+  </div></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H, $ = (s) => document.querySelector(s);
+  const G = { play: '<path d="M8.5 5.5v13L19 12z"/>', doc: '<path d="M7 3.5h7l4 4V20H7z"/><path d="M14 3.5V8h4M9.8 12h5.4M9.8 15.5h5.4"/>',
+    mail: '<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M4.5 7l7.5 6 7.5-6"/>', case: '<rect x="3.5" y="7.5" width="17" height="11.5" rx="2.5"/><path d="M9 7.5V5.8c0-.7.6-1.3 1.3-1.3h3.4c.7 0 1.3.6 1.3 1.3v1.7M3.5 12.5h17"/>',
+    link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>', cart: '<path d="M3.5 4.5h2.4l2 10.5h10l2-7.5H7"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="16.5" cy="19" r="1.4"/>',
+    calendar: '<rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>', star: '<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>',
+    camera: '<rect x="3.5" y="6.5" width="17" height="13" rx="3"/><circle cx="12" cy="13" r="3.6"/><path d="M8.5 6.5l1.4-2.2h4.2l1.4 2.2"/>', globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.6 2.6 14.4 0 17M12 3.5c-2.6 2.6-2.6 14.4 0 17"/>',
+    tap: '<path d="M9.5 11V5.8a1.6 1.6 0 0 1 3.2 0V11l4.4.9c1.1.2 1.8 1.3 1.6 2.4l-.9 4.4c-.2 1-1 1.8-2.1 1.8h-4.4c-.7 0-1.3-.3-1.7-.9L6 15.8a1.5 1.5 0 0 1 2.3-1.9l1.2 1.3"/>' };
+
+  // ---- the page content
+  const brand = v.brandName || "";
+  $("#nm").textContent = v.name || brand; $("#sb").textContent = v.sub || v.handle || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  if (v.people && v.people[0]) $("#av").style.backgroundImage = `url("${v.people[0]}")`;
+  else if (v.mark) { const a = $("#av"); a.style.backgroundImage = `url("${v.mark}")`; a.style.backgroundSize = "62%"; a.style.backgroundPosition = "50% 50%"; }
+  MV.fitText($("#nm"), 640, 20); MV.fitText($("#sb"), 640, 16);
+  $("#soc").innerHTML = ["play", "camera", "mail", "globe"].map((g) => `<i><svg viewBox="0 0 24 24">${G[g]}</svg></i>`).join("");
+  const labels = String(v.links || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 4);
+  const gl = String(v.glyphs || "").split(",").map((s) => s.trim());
+  const pick = Math.max(1, Math.min(labels.length, Math.round(+v.pick) || 1)) - 1;
+  $("#links").innerHTML = labels.map((l, i) => `<div class="lk"><div class="g"><svg viewBox="0 0 24 24">${G[gl[i]] || G.link}</svg></div><div class="tx"><div class="t"></div></div><div class="ar"><svg viewBox="0 0 24 24"><path d="M9 5.5l6.5 6.5L9 18.5"/></svg></div><div class="rc"><div class="rp"></div></div><div class="pr"></div></div>`).join("");
+  const lks = [...document.querySelectorAll(".lk")];
+  // the counter chip springs out of the tapped button's top corner, a badge over the edge
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const clicks = Math.max(1, Math.round(+v.clicks || 0));
+  // the tapped button grows a second line: the click counter
+  const sub = document.createElement("div"); sub.className = "sub";
+  sub.innerHTML = `<svg viewBox="0 0 24 24">${G.tap}</svg><span class="n"></span><span class="w"></span>`;
+  sub.querySelector(".n").textContent = fmt(clicks); sub.querySelector(".w").textContent = v.clickWord || "";
+  if (!v.clickWord) sub.querySelector(".w").remove();
+  lks[pick].querySelector(".tx").appendChild(sub);
+  const BW = 760 - 112;
+  lks.forEach((b, i) => { const t = b.querySelector(".t"); t.textContent = labels[i]; MV.fitText(t, BW - 44 - 84 - 24 - 40 - 24, 18); });
+  sub.querySelector(".n").style.minWidth = sub.querySelector(".n").getBoundingClientRect().width + "px";
+
+  // ---- scale the page into the frame
+  const page = $("#page"), card = $("#card"), PHt = card.getBoundingClientRect().height;
+  const availH = MV.alpha ? H - safe.top - safe.bottom : P ? H - 2 * 230 * (W / 1080) : H * 0.9;
+  const availW = MV.alpha ? (P ? W - safe.left - safe.right : W * 0.4) : P ? W - 160 * u : W * 0.5;
+  const s = Math.min(availH / PHt, availW / 760), CW = 760 * s, CH = PHt * s;
+  gsap.set(page, { scale: s });
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) { if (P) { x = safe.left + (W - safe.left - safe.right - CW) / 2; y = safe.top; } else { x = W - safe.right - CW - 40 * u; } }
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  // ---- in: the page swings up out of depth on a long tail, then drifts
+  gsap.set(card, { transformOrigin: "50% 60%" });
+  tl.fromTo(card, { z: -700, rotationX: 28, rotationY: 14, y: 160, opacity: 0 }, { z: 0, rotationX: 8, rotationY: 7, y: 0, opacity: 1, duration: 1.05, ease: "expo.out" }, 0.04);
+  tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, 0.04);
+  tl.to(card, { rotationX: 3, rotationY: -7, duration: D - 1.1, ease: "sine.inOut" }, 1.09);
+  tl.fromTo("#lt1", { x: 0, y: 0 }, { x: 160, y: -120, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#lt2", { x: 0, y: 0 }, { x: -140, y: 80, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#av", { scale: 0.3, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.65, ease: "back.out(2)" }, 0.28);
+  tl.fromTo(["#nm", "#sb"], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.07, ease: "expo.out" }, 0.4);
+  tl.fromTo("#soc i", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.45, stagger: 0.05, ease: "back.out(2.2)" }, 0.5);
+  // the buttons stack in, each one landing on a spring
+  const B0 = 0.72, BS = 0.12;
+  lks.forEach((b, i) => {
+    tl.fromTo(b, { y: 120, rotationX: -40, scale: 0.9, opacity: 0 }, { y: 0, rotationX: 0, scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.6)" }, B0 + i * BS);
+  });
+
+  // ---- the tap (the moment that lands): the finger comes in, presses, a ripple, the counter springs out and ticks up
+  const b = lks[pick], bx = b.offsetLeft + 300, by = b.offsetTop + b.offsetHeight / 2;
+  // positions in card space: the touch sits on the card, the ripple inside the button
+  const T = B0 + labels.length * BS + 0.85;
+  gsap.set("#touch", { x: bx + 140, y: by + 300 });
+  tl.fromTo("#touch", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, T - 0.55);
+  tl.to("#touch", { x: bx, y: by, duration: 0.5, ease: "power3.inOut" }, T - 0.55);
+  tl.to("#touch", { scale: 0.74, duration: 0.08, ease: "power2.out" }, T);
+  tl.to(b, { scale: 0.955, duration: 0.08, ease: "power2.out" }, T);
+  tl.to(b.querySelector(".pr"), { opacity: 0.08, duration: 0.08, ease: "power2.out" }, T);
+  tl.to(b, { scale: 1.035, duration: 0.55, ease: "back.out(3)", boxShadow: "inset 0 2px 0 #fff, inset 0 -4px 0 rgba(0,0,0,.07), 0 26px 44px -12px rgba(0,0,0,.7)" }, T + 0.1);
+  tl.to(b.querySelector(".pr"), { opacity: 0, duration: 0.4, ease: "power2.out" }, T + 0.1);
+  tl.to("#touch", { scale: 1.15, opacity: 0, duration: 0.35, ease: "power2.out" }, T + 0.14);
+  gsap.set(b.querySelector(".rp"), { left: 300 - 22, top: b.offsetHeight / 2 });
+  tl.fromTo(b.querySelector(".rp"), { scale: 0.3, opacity: 1 }, { scale: 9, opacity: 0, duration: 0.8, ease: "expo.out" }, T + 0.02);
+  // the button opens a line under its label and the count ticks up in it
+  tl.to(b, { height: 196, duration: 0.6, ease: "expo.out" }, T + 0.16);
+  tl.to(sub, { height: 50, marginTop: 4, duration: 0.6, ease: "expo.out" }, T + 0.16);
+  tl.to(sub, { opacity: 1, duration: 0.3, ease: "power2.out" }, T + 0.26);
+  tl.fromTo(sub.querySelector("svg"), { scale: 0.3, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, T + 0.26);
+  const c = { n: clicks * 0.9 }, nEl = sub.querySelector(".n"), draw = () => { nEl.textContent = fmt(c.n); };
+  tl.fromTo(c, { n: Math.floor(clicks * 0.9) }, { n: clicks, duration: 1.3, ease: "expo.out", onUpdate: draw, immediateRender: true }, T + 0.26);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, T + 0.2);
+
+  if (MV.alpha) tl.to(card, { y: -200, z: -300, rotationX: -18, opacity: 0, duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

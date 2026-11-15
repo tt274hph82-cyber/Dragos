@@ -1,0 +1,5 @@
+{ "id": "icon-trays", "name": "Icon trays", "oneLiner": "two recessed glass trays, each with a name, fill with app-icon tiles (glyph and label) that drop in one at a time; then the first tray drains to grey and falls back while the second lifts, gets a lit rim and its icons take the accent one by one",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["apps", "icons", "tools", "categories", "groups", "old vs new", "shift", "stack", "agents", "compare", "trays", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker sorts tools into two groups and moves the viewer from one to the other (\"you know the chat apps... but the next wave is personal agents\"): cut in on the first group; the second tray lights on the word that names it" }

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Document title on its first page","default":"Terms of Service"},
+  {"id":"section","type":"string","label":"Heading of the section it lands in","default":"Your content"},
+  {"id":"line","type":"string","label":"The line it lands on and highlights","default":"You grant us a worldwide licence to use your content."},
+  {"id":"page","type":"number","label":"The page it lands on","default":14},
+  {"id":"pages","type":"number","label":"Total pages","default":38},
+  {"id":"body","type":"string","label":"Filler sentences for the pages (separated by |; empty: generic terms)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --ink-p: #1E1C1A; --hl: color-mix(in srgb, var(--accent2) 78%, #FFE45C); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(60% 40% at 50% 50%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 10% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none; z-index: 20;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  /* the window the pages scroll through: soft-faded top and bottom, the pages tilted in 3D inside */
+  #vp { position: absolute; left: 0; overflow: hidden; perspective: calc(var(--u) * 2000);
+    -webkit-mask: linear-gradient(180deg, transparent, #000 13%, #000 87%, transparent); mask: linear-gradient(180deg, transparent, #000 13%, #000 87%, transparent); }
+  #cam { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  #tilt { position: absolute; left: 0; top: 0; }
+  #doc { position: absolute; left: 0; top: 0; }
+  .pg { position: relative; box-sizing: border-box; background-color: var(--paper, #F3EFE6); color: var(--ink-p); overflow: hidden;
+    box-shadow: 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -20) rgba(0,0,0,.75), 0 0 0 calc(var(--u) * 1) rgba(0,0,0,.2); }
+  /* real paper: fibres, a little tooth, light falling across it */
+  .pg::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9 .05' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .44 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); }
+  .pg::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(120deg, rgba(255,255,255,.35), transparent 35%, transparent 70%, rgba(0,0,0,.08)); }
+  .pg .in { position: relative; z-index: 1; }
+  .pg h1 { margin: 0 0 calc(var(--u) * 10); font-family: var(--font-display); font-size: calc(var(--u) * 74); line-height: 1.02; letter-spacing: -0.02em; font-weight: 400; }
+  .pg .sub { font-size: calc(var(--u) * 30); color: rgba(30,28,26,.55); margin-bottom: calc(var(--u) * 46); font-weight: 600; letter-spacing: .02em; }
+  .pg h2 { margin: calc(var(--u) * 36) 0 calc(var(--u) * 14); font-size: calc(var(--u) * 44); line-height: 1.1; font-weight: 800; letter-spacing: -0.01em; }
+  .pg p { margin: 0 0 calc(var(--u) * 22); font-size: calc(var(--u) * 36); line-height: 1.42; color: rgba(30,28,26,.86); }
+  .pg .rule { height: calc(var(--u) * 3); background: var(--accent); width: calc(var(--u) * 120); margin-bottom: calc(var(--u) * 30); }
+  .pg .ft { position: absolute; left: 0; right: 0; bottom: calc(var(--u) * 34); text-align: center; z-index: 1; font-size: calc(var(--u) * 26); font-weight: 600; color: rgba(30,28,26,.45); font-variant-numeric: tabular-nums; }
+  #key { position: relative; font-weight: 650; }
+  .hl { position: absolute; z-index: 0; border-radius: calc(var(--u) * 6); background: var(--hl); mix-blend-mode: multiply; transform-origin: 0 50%; transform: scaleX(0);
+    clip-path: polygon(1% 8%, 99% 0, 100% 92%, 0 100%); }
+  .bar { position: absolute; z-index: 1; width: calc(var(--u) * 8); border-radius: 99px; background: var(--accent); transform-origin: 50% 0; transform: scaleY(0); }
+
+  #chip { position: absolute; left: 0; top: 0; z-index: 10; display: flex; align-items: center; gap: calc(var(--u) * 14); padding: calc(var(--u) * 14) calc(var(--u) * 28) calc(var(--u) * 14) calc(var(--u) * 22);
+    border-radius: 999px; background: linear-gradient(160deg, #2c2a30, #161519); color: #fff; font-size: calc(var(--u) * 36); font-weight: 750; white-space: nowrap; font-variant-numeric: tabular-nums;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -14) rgba(0,0,0,.8); }
+  #chip svg { width: calc(var(--u) * 36); height: calc(var(--u) * 36); flex: none; }
+  #chip .of { color: rgba(255,255,255,.5); font-weight: 600; }
+  #pn { display: inline-block; text-align: right; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><filter id="mb" x="-5%" y="-20%" width="110%" height="140%"><feGaussianBlur id="mbg" stdDeviation="0 0"/></filter></svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="vp"><div id="cam"><div id="tilt"><div id="doc" data-layered></div></div></div></div>
+  <div id="chip"><svg viewBox="0 0 24 24"><path d="M6 2.8h8.2L19 7.6v13.6H6z M14 2.8v5h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Page <span id="pn"></span> <span class="of"></span></span></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = P ? MV.u : MV.u * (SQ ? 0.95 : 1);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const S = String(v.body || "").split("|").map((s) => s.trim()).filter(Boolean);
+  const SENT = S.length ? S : ["These terms apply to every account and every plan.", "We may update them from time to time and will tell you when we do.",
+    "Using the service after a change means you accept it.", "You are responsible for keeping your login details safe.", "Some features may change, pause or stop without notice.",
+    "We are not liable for losses you could not reasonably expect.", "Payments renew automatically until you cancel.", "Refunds are handled case by case.",
+    "You must not use the service to break any law.", "We may suspend accounts that put other users at risk.", "If a clause cannot be enforced, the rest still applies.",
+    "Notices are sent to the email address on your account.", "Nothing here limits rights you have under local law.", "Tools you connect are governed by their own terms."];
+  const HEADS = ["Who we are", "Your account", "Payments", "Changes to the service", "Acceptable use", "Privacy", "Ending your account", "Liability", "Disputes", "Notices"];
+  // sentences dealt from a seeded shuffle, so no line repeats until the deck runs out
+  const rnd = MV.rand(23), deck = SENT.map((s, i) => [rnd(), s]).sort((a, b) => a[0] - b[0]).map((x) => x[1]);
+  let di = 0; const para = (n) => { const s = []; for (let i = 0; i < n; i++) s.push(deck[di++ % deck.length]); return s.join(" "); };
+  const PG = Math.max(2, Math.round(+v.page || 14)), PGS = Math.max(PG, Math.round(+v.pages || PG));
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+
+  // ---- the window and the page size
+  // the page counter chip sits above the window, the window below it
+  const CHH = 70 * u, T0 = P ? safe.top : H * 0.05;
+  const VT = T0 + CHH + 20 * u, VB = H - safe.bottom, VH = VB - VT;
+  const vp = $("#vp"); Object.assign(vp.style, { top: VT + "px", width: W + "px", height: VH + "px" });
+  // a whole page, its edges visible: 9:16 the safe width, elsewhere a centred page
+  const PW = P ? W - safe.left - safe.right : Math.min(SQ ? 860 * u : 1000 * u, W * 0.7), PH = PW * 1.294;
+  const PX = P ? safe.left : (W - PW) / 2;
+  const pad = P ? 50 * u : PW * 0.085, padT = PW * 0.09, LIM = PH - padT - 110 * u;
+  const N = 4, GAPP = 46 * u, pageNo = (i) => i === 0 ? 1 : i === N - 1 ? PG : Math.round(1 + (i / (N - 1)) * (PG - 1));
+  const doc = $("#doc");
+  let sec = 1;
+  // fill each page block by block, stopping before its footer
+  const add = (inn, h) => { const t = document.createElement("template"); t.innerHTML = h; const el = t.content.firstElementChild; inn.appendChild(el); if (inn.scrollHeight > LIM) { el.remove(); return false; } return true; };
+  for (let i = 0; i < N; i++) {
+    const pg = document.createElement("div"); pg.className = "pg";
+    Object.assign(pg.style, { width: PW + "px", height: PH + "px", marginBottom: GAPP + "px", padding: `${padT}px ${pad}px 0 ${pad}px` });
+    pg.innerHTML = `<div class="in"></div><div class="ft">${pageNo(i)}</div>`; doc.appendChild(pg);
+    const inn = pg.firstElementChild, fixed = [];
+    if (i === 0) fixed.push(`<h1>${esc(v.title || "Terms of Service")}</h1>`, `<div class="sub">${PGS} pages</div>`, `<div class="rule"></div>`, `<h2>${sec++}. ${HEADS[0]}</h2>`);
+    else if (i === N - 1) fixed.push(`<p>${para(2)}</p>`, `<h2>${Math.max(sec + 2, Math.round(PG / 1.1))}. ${esc(v.section || "Your content")}</h2>`, `<p>${para(1)} <span id="key">${esc(v.line || "")}</span> ${para(1)}</p>`);
+    else { sec = Math.max(sec, Math.round(pageNo(i) / 1.2)); fixed.push(`<p>${para(2)}</p>`, `<h2>${sec++}. ${HEADS[sec % HEADS.length]}</h2>`); }
+    fixed.forEach((h) => { const t = document.createElement("template"); t.innerHTML = h; inn.appendChild(t.content.firstElementChild); });
+    for (let k = 0; k < 12; k++) { const h = k % 3 === 2 && i < N - 1 ? `<h2>${sec}. ${HEADS[(sec + 3) % HEADS.length]}</h2>` : `<p>${para(k % 2 ? 2 : 3)}</p>`; if (!add(inn, h)) { if (!add(inn, `<p>${para(1)}</p>`)) break; } else if (h.startsWith("<h2")) sec++; }
+    // never end a page on a heading
+    const lc = inn.lastElementChild; if (lc && lc.tagName === "H2" && i !== N - 1) lc.remove();
+  }
+  doc.style.width = PW + "px";
+  // the window clips the pages, so their text may run past it; the key paragraph stays checked
+  doc.querySelectorAll("p, h1, h2, .sub, .ft").forEach((e) => { if (!e.querySelector("#key")) e.dataset.bleed = "1"; });
+  // the last page's top is where its own text starts: put the key line on a fresh part of the page
+  const pages = [...doc.querySelectorAll(".pg")];
+  const dr = doc.getBoundingClientRect(), key = $("#key");
+  const kr = [...key.getClientRects()].filter((r) => r.width > 2);
+  const kTop = Math.min(...kr.map((r) => r.top)) - dr.top, kBot = Math.max(...kr.map((r) => r.bottom)) - dr.top;
+  // the highlighter strokes, one per line of the key, and a margin bar beside them
+  const lastPg = pages[N - 1], lpr = lastPg.getBoundingClientRect(), hls = [];
+  kr.forEach((r) => { const h = document.createElement("div"); h.className = "hl"; const lh = r.height;
+    Object.assign(h.style, { left: r.left - lpr.left - 8 * u + "px", top: r.top - lpr.top + lh * 0.1 + "px", width: r.width + 16 * u + "px", height: lh * 0.86 + "px" });
+    lastPg.appendChild(h); hls.push(h); });
+  const bar = document.createElement("div"); bar.className = "bar";
+  Object.assign(bar.style, { left: pad - 28 * u + "px", top: kTop - (lpr.top - dr.top) + "px", height: kBot - kTop + "px" }); lastPg.appendChild(bar);
+
+  // ---- the scroll: a flick, fast then a long settling tail, ending with the key line just above the window centre
+  const kMid = (kTop + kBot) / 2, endY = VH * 0.46 - kMid, startY = VH * 0.1;
+  const S0 = 0.5, S1 = 2.4, A = 0.12, B = 0.32, eo = gsap.parseEase("expo.out");
+  const sp = (t) => { const p = Math.max(0, Math.min(1, (t - S0) / (S1 - S0))); return p < A ? B * (p / A) * (p / A) : B + (1 - B) * eo((p - A) / (1 - A)); };
+  const yAt = (t) => startY + (endY - startY) * sp(t);
+  const mbg = document.getElementById("mbg"), pn = $("#pn");
+  $(".of").textContent = "of " + PGS;
+  pn.textContent = String(PGS); pn.style.minWidth = pn.getBoundingClientRect().width + "px";
+  const drive = (t) => {
+    const y = yAt(t), vel = Math.abs(y - yAt(t - 1 / 30));
+    gsap.set(doc, { x: PX, y });
+    const b = Math.min(28, vel * 0.16);
+    mbg.setAttribute("stdDeviation", `0 ${b.toFixed(2)}`); doc.style.filter = b > 0.2 ? "url(#mb)" : "none";
+    pn.textContent = String(Math.round(1 + (PG - 1) * sp(t)));
+  };
+  const clock = { t: 0 }; drive(0);
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: () => drive(clock.t) }, 0);
+
+  // ---- the window tilts, the pages rise in, then the camera pushes in on the line
+  gsap.set("#tilt", { width: W, height: VH, transformOrigin: `50% ${VH * 0.46}px` });
+  tl.fromTo("#tilt", { rotationX: 30, rotationY: -10, rotationZ: -3, z: -300 * u, opacity: 0 }, { rotationX: 12, rotationY: -6, rotationZ: -1.5, z: 0, opacity: 1, duration: 0.9, ease: "expo.out" }, 0);
+  tl.to("#tilt", { rotationX: 4, rotationY: 5, rotationZ: 0, duration: D - 0.9, ease: "sine.inOut" }, 0.9);
+  gsap.set("#cam", { transformOrigin: `${W / 2}px ${VH * 0.46}px` });
+  const HT = S1 - 0.15;
+  tl.to("#cam", { scale: 1.12, duration: D - HT, ease: "power2.out" }, HT);
+  hls.forEach((h, i) => tl.to(h, { scaleX: 1, duration: 0.32, ease: "power2.inOut" }, HT + 0.1 + i * 0.28));
+  tl.to(bar, { scaleY: 1, duration: 0.4, ease: "expo.out" }, HT + 0.05);
+  // the rest of the page dims a touch so the line reads first
+  tl.to([...lastPg.querySelectorAll("p")].filter((e) => !e.contains(key)), { opacity: 0.5, duration: 0.5, ease: "power2.out" }, HT + 0.2);
+  tl.fromTo(key, { color: "rgba(30,28,26,.86)" }, { color: "#000", duration: 0.3, ease: "power1.out" }, HT + 0.1);
+
+  // the page counter: top of the window, lands with a tick when the scroll stops
+  const chip = $("#chip"), cw = chip.getBoundingClientRect().width;
+  gsap.set(chip, { x: P ? safe.left : (W - cw) / 2, y: T0 });
+  tl.fromTo(chip, { opacity: 0, y: T0 + 30 * u, scale: 0.8 }, { opacity: 1, y: T0, scale: 1, duration: 0.5, ease: "back.out(2)" }, 0.35);
+  tl.fromTo(chip, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, S1 - 0.5);
+  tl.to(chip, { scale: 1, duration: 0.4, ease: "back.out(3)" }, S1 - 0.42);
+  tl.set(chip, { background: "linear-gradient(160deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #000))" }, S1 - 0.5);
+  // exit
+  tl.to(["#vp", chip], { opacity: 0, y: "-=" + 60 * u, duration: 0.4, ease: "power2.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

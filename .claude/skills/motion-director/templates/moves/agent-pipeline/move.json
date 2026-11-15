@@ -1,0 +1,5 @@
+{ "id": "agent-pipeline", "name": "Agent pipeline", "oneLiner": "a chain or branching tree of 3 to 6 glass nodes: the input lights, curved edges draw with a glowing dot riding each, nodes go from dim to lit in order and converge on an accent output node that floods with light",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["agent", "workflow", "pipeline", "flow", "steps", "process", "automation", "chain", "tree", "branches", "nodes", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker walks through how the work flows (\"it takes the brief, researches, drafts, edits, then publishes\"): cut in on the first step, the output node lights on the result word. shape tree for parallel steps that merge (\"cuts, sound and captions all at once\"). layout top keeps it above the speaker" }

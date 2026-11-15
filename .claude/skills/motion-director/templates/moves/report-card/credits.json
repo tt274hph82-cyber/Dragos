@@ -1,0 +1,46 @@
+{
+ "sources": [
+  {
+   "file": "assets/paper-white.jpg",
+   "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the card stock, warmed in the composition (reused from certificate)",
+   "license": "CC0",
+   "page": "https://ambientcg.com/view?id=Paper001"
+  },
+  {
+   "file": "assets/manila.jpg",
+   "from": "ambientCG Paper005 (scanned kraft paper), resized; the folder (reused from envelope-letter)",
+   "license": "CC0",
+   "page": "https://ambientcg.com/view?id=Paper005"
+  },
+  {
+   "file": "assets/leather.jpg",
+   "from": "ambientCG Leather030 (scanned brown leather), resized; the desk (reused from envelope-letter)",
+   "license": "CC0",
+   "page": "https://ambientcg.com/view?id=Leather030"
+  },
+  {
+   "file": "assets/pen.png",
+   "from": "Poly Haven stationery_supplies (CC0 model), the black and green ballpoint alone, rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0) (reused from notebook-scribble)",
+   "license": "CC0",
+   "page": "https://polyhaven.com/a/stationery_supplies"
+  },
+  {
+   "file": "assets/inkmask.png",
+   "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the print and the stamp",
+   "license": "CC0",
+   "page": "https://ambientcg.com/view?id=Plaster003"
+  },
+  {
+   "file": "assets/fonts/PlayfairDisplay-wght.ttf",
+   "from": "Playfair Display by Claus Eggers Sorensen, Google Fonts",
+   "license": "SIL Open Font License 1.1",
+   "page": "https://fonts.google.com/specimen/Playfair+Display"
+  },
+  {
+   "file": "assets/fonts/CoveredByYourGrace.ttf",
+   "from": "Covered By Your Grace by Kimberly Geswein, Google Fonts; the handwritten grades",
+   "license": "SIL Open Font License 1.1",
+   "page": "https://fonts.google.com/specimen/Covered+By+Your+Grace"
+  }
+ ]
+}

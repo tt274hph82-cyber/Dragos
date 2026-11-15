@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"app","type":"string","label":"The app asking (empty: the brand name)","default":""},
+  {"id":"ask","type":"string","label":"Line above the resource","default":"wants access to"},
+  {"id":"resource","type":"string","label":"What it wants access to","default":"Your calendar"},
+  {"id":"glyph","type":"string","label":"Resource icon: calendar, files, mail, mic, camera, photos, contacts, location","default":"calendar"},
+  {"id":"detail","type":"string","label":"Small line under it (empty: none)","default":"To read and add events"},
+  {"id":"deny","type":"string","label":"The secondary button","default":"Not now"},
+  {"id":"allow","type":"string","label":"The button that gets tapped","default":"Allow"},
+  {"id":"done","type":"string","label":"The connected state","default":"Connected"},
+  {"id":"screen","type":"number","label":"Which brand screen sits dimmed behind (1 = the first, 0 = none)","default":2}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --go: #2BD67B; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 34% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #page { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #page { position: absolute; border-radius: calc(var(--u) * 40); overflow: hidden; background: var(--surface);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  #page img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; display: block; filter: blur(3px) saturate(120%); transform: scale(1.03); }
+  #page .dim { position: absolute; inset: 0; background: #000; opacity: 0; }
+
+  #dlg { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 56); text-align: center;
+    padding: calc(var(--u) * 60) calc(var(--u) * 48) calc(var(--u) * 44);
+    background: linear-gradient(170deg, rgba(255,255,255,.2), rgba(255,255,255,.08) 55%, rgba(255,255,255,.06));
+    -webkit-backdrop-filter: blur(30px) saturate(170%); backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      inset 0 calc(var(--u) * -40) calc(var(--u) * 70) calc(var(--u) * -40) color-mix(in srgb, var(--glow, var(--accent)) 45%, transparent),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -20) rgba(0,0,0,.75); }
+  .is-alpha #dlg { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #dlg { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  #dlg .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  #pair { position: relative; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 34); height: calc(var(--u) * 166); }
+  .tw { position: relative; flex: none; width: calc(var(--u) * 166); height: calc(var(--u) * 166); }
+  .tile { position: absolute; inset: 0; border-radius: 26%; overflow: hidden; display: grid; place-items: center;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 72%, #fff), var(--c) 46%, color-mix(in srgb, var(--c) 62%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2.5) calc(var(--u) * 1) rgba(255,255,255,.5), inset 0 calc(var(--u) * -6) calc(var(--u) * 12) rgba(0,0,0,.28),
+      0 calc(var(--u) * 18) calc(var(--u) * 30) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .tile svg { width: 52%; height: 52%; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .tile .gl { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(120% 70% at 30% -10%, rgba(255,255,255,.4), rgba(255,255,255,.06) 50%, transparent 62%); }
+  .tile.brand { background: linear-gradient(150deg, var(--al), var(--accent) 52%, var(--ad)); }
+  .tile.brand img { position: absolute; left: 18%; top: 18%; width: 64%; height: 64%; object-fit: contain; }
+  .tile.brand.full img { left: -1%; top: -1%; width: 102%; height: 102%; object-fit: cover; }
+  #link { position: relative; flex: none; width: calc(var(--u) * 120); height: calc(var(--u) * 20); }
+  #link i { position: absolute; top: 0; width: calc(var(--u) * 20); height: calc(var(--u) * 20); border-radius: 50%; background: color-mix(in srgb, var(--ink) 60%, transparent); }
+  #bar { position: absolute; left: calc(var(--u) * -6); right: calc(var(--u) * -6); top: calc(var(--u) * 3); height: calc(var(--u) * 14); border-radius: 99px; background: var(--go); transform-origin: 0 50%; transform: scaleX(0);
+    box-shadow: 0 0 calc(var(--u) * 24) rgba(43,214,123,.7); }
+  .is-key #bar { box-shadow: none; }
+  #ok { position: absolute; right: calc(var(--u) * -20); top: calc(var(--u) * -20); width: calc(var(--u) * 64); height: calc(var(--u) * 64); border-radius: 50%; background: var(--go); display: grid; place-items: center; opacity: 0;
+    box-shadow: 0 0 0 calc(var(--u) * 6) var(--surface), 0 0 calc(var(--u) * 28) rgba(43,214,123,.55); }
+  .is-key #ok { box-shadow: 0 0 0 calc(var(--u) * 6) var(--surface); }
+  #ok svg, #st i svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+  #glowr { position: absolute; inset: calc(var(--u) * -14); border-radius: 30%; border: calc(var(--u) * 5) solid var(--go); box-sizing: border-box; opacity: 0; }
+
+  #ask { margin-top: calc(var(--u) * 44); font-size: calc(var(--u) * 38); font-weight: 600; color: color-mix(in srgb, var(--ink) 72%, transparent); white-space: nowrap; line-height: 1.25; }
+  #ask b { color: var(--ink); font-weight: 750; }
+  #res { margin-top: calc(var(--u) * 8); font-family: var(--font-display); font-size: calc(var(--u) * 66); color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; line-height: 1.15; }
+  #det { margin-top: calc(var(--u) * 14); font-size: calc(var(--u) * 36); font-weight: 500; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.25; }
+  #act { position: relative; margin-top: calc(var(--u) * 46); height: calc(var(--u) * 112); }
+  #btns { position: absolute; inset: 0; display: flex; gap: calc(var(--u) * 20); }
+  .b { flex: 1; min-width: 0; position: relative; display: grid; place-items: center; border-radius: calc(var(--u) * 32); overflow: hidden;
+    font-size: calc(var(--u) * 40); font-weight: 700; white-space: nowrap; color: var(--ink); background: rgba(255,255,255,.1); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.16); }
+  .is-key .b { background: color-mix(in srgb, var(--surface) 86%, #fff); }
+  .b.yes { color: #fff; background: linear-gradient(180deg, var(--al), var(--accent) 60%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), 0 calc(var(--u) * 16) calc(var(--u) * 34) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key .b.yes { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  .b .press { position: absolute; inset: 0; background: #000; opacity: 0; }
+  .b span { position: relative; }
+  #st { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 20); border-radius: calc(var(--u) * 32); opacity: 0;
+    background: rgba(43,214,123,.14); box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(43,214,123,.55), 0 0 calc(var(--u) * 50) rgba(43,214,123,.28); }
+  .is-key #st { background: color-mix(in srgb, var(--surface) 80%, #2BD67B); box-shadow: inset 0 0 0 calc(var(--u) * 2) #2BD67B; }
+  #st i { flex: none; width: calc(var(--u) * 62); height: calc(var(--u) * 62); border-radius: 50%; background: var(--go); display: grid; place-items: center; }
+  #st span { font-family: var(--font-display); font-size: calc(var(--u) * 48); color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+
+  #touch { position: absolute; left: 0; top: 0; width: calc(var(--u) * 86); height: calc(var(--u) * 86); margin: calc(var(--u) * -43) 0 0 calc(var(--u) * -43); border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.7), rgba(255,255,255,.35) 60%, rgba(255,255,255,.18));
+    box-shadow: 0 0 0 calc(var(--u) * 3) rgba(255,255,255,.7), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.4); opacity: 0; }
+  .is-key #touch { background: rgba(255,255,255,.75); box-shadow: 0 0 0 calc(var(--u) * 3) #fff; }
+  #rip { position: absolute; inset: 0; border-radius: calc(var(--u) * 32); border: calc(var(--u) * 5) solid #fff; box-sizing: border-box; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="cam">
+    <div id="page"><div class="dim"></div></div>
+    <div id="dlg">
+      <div id="pair">
+        <div class="tw" id="twA"><div class="tile brand"><div class="gl"></div></div></div>
+        <div id="link"><i></i><i></i><i></i><div id="bar"></div></div>
+        <div class="tw" id="twB"><div class="tile" id="rtile"></div><div id="glowr"></div><div id="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div></div>
+      </div>
+      <div id="ask"><b></b> <span></span></div>
+      <div id="res"></div>
+      <div id="det"></div>
+      <div id="act">
+        <div id="btns"><div class="b no"><span></span></div><div class="b yes"><div class="press"></div><span></span><div id="rip"></div></div></div>
+        <div id="st"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span></span></div>
+      </div>
+      <div class="sh"></div>
+    </div>
+    <div id="touch"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 0.85 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const app = v.app || v.brandName || "";
+
+  // generic stroke glyphs on coloured glass
+  const G = {
+    calendar: ['<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M7.5 14h2M11 14h2M14.5 14h2M7.5 17h2M11 17h2"/>', "#3D7BFD"],
+    files: ['<path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2.2h7a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/><path d="M3.5 10.5h17"/>', "#0EA5E9"],
+    mail: ['<rect x="3.5" y="6" width="17" height="12" rx="2"/><path d="M4.2 7.2 12 13l7.8-5.8"/>', "#4C6FE0"],
+    mic: ['<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M6 11.5a6 6 0 0 0 12 0M12 17.5v3"/>', "#F59E0B"],
+    camera: ['<rect x="3" y="7" width="13" height="10.5" rx="2.2"/><path d="M16 11l5-3v8l-5-3"/>', "#14B8A6"],
+    photos: ['<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17.5l5-4.5 3.5 3 3-2.5 4.5 4"/>', "#EC4899"],
+    contacts: ['<circle cx="12" cy="9" r="3.6"/><path d="M5 19.5c1.2-3.4 4-5 7-5s5.8 1.6 7 5"/>', "#8B5CF6"],
+    location: ['<path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>', "#22A06B"],
+  };
+  const g = G[String(v.glyph || "").toLowerCase().trim()] || G.calendar;
+  const rt = $("#rtile"); rt.style.setProperty("--c", g[1]); rt.innerHTML = `<svg viewBox="0 0 24 24">${g[0]}</svg><div class="gl"></div>`;
+  const bt = $("#twA .tile");
+  if (v.mark) { bt.insertBefore(MV.img(v.mark), bt.firstChild);
+    const p = new Image(); p.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 64; const x = c.getContext("2d"); x.drawImage(p, 0, 0, 64, 64);
+      const a = (i, j) => x.getImageData(i, j, 1, 1).data[3];
+      if (a(32, 3) > 200 && a(3, 32) > 200 && a(60, 32) > 200 && a(32, 60) > 200) bt.classList.add("full"); } catch (e) {} }; p.src = v.mark; }
+  $("#ask b").textContent = app; $("#ask span").textContent = v.ask || "";
+  $("#res").textContent = v.resource || "";
+  $("#det").textContent = v.detail || ""; if (!v.detail) $("#det").remove();
+  $(".b.no span").textContent = v.deny || ""; $(".b.yes span").textContent = v.allow || "";
+  if (!v.deny) $(".b.no").remove();
+  $("#st span").textContent = v.done || "";
+  const scr = +v.screen > 0 ? (v.screens || [])[(+v.screen) - 1] || (v.screens || [])[0] : null;
+  if (scr) $("#page").insertBefore(MV.img(scr), $("#page .dim")); else $("#page").remove();
+
+  // ---- layout
+  const regionW = W - safe.left - safe.right;
+  const DW = MV.portrait ? Math.min(regionW, 940 * u) : Math.min(860 * u, regionW);
+  const dlg = $("#dlg"); dlg.style.width = DW + "px";
+  const inner = DW - 96 * u;
+  MV.fitText($("#ask"), inner, 16); MV.fitText($("#res"), inner, 20); $("#det") && MV.fitText($("#det"), inner, 16);
+  document.querySelectorAll(".b span").forEach((s) => MV.fitText(s, inner / 2 - 40 * u, 16));
+  MV.fitText($("#st span"), inner - 120 * u, 18);
+  const DH = dlg.offsetHeight;
+  let cx = W / 2, top0;
+  if (MV.portrait) { cx = MV.alpha ? safe.left + regionW / 2 : W / 2; top0 = MV.alpha ? safe.top + 10 * u : (H - DH) / 2; }
+  else { if (MV.alpha && W > H) cx = W - safe.right - DW / 2; top0 = MV.alpha ? safe.top + (H - safe.top - safe.bottom - DH) / 2 : (H - DH) / 2; }
+  gsap.set(dlg, { left: cx - DW / 2, top: top0 });
+  const PW = MV.portrait ? Math.min(W * 0.92, DW * 1.1) : Math.min(DW * 1.75, W * 0.7), PH = MV.portrait ? H * 0.76 : H * 0.84;
+  $("#page") && gsap.set("#page", { left: cx - PW / 2, top: (MV.portrait ? H / 2 : H / 2) - PH / 2, width: PW, height: PH, z: -300 * u });
+  root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", ((top0 + DH * 0.4) / H * 100) + "%");
+
+  const yb = $(".b.yes").getBoundingClientRect();
+  const tx = yb.left + yb.width * 0.52, ty = yb.top + yb.height * 0.56;
+
+  // ---- timeline
+  $("#page") && tl.fromTo("#page", { opacity: 0, y: 40 * u }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 0);
+  $("#page") && tl.to("#page .dim", { opacity: 0.62, duration: 0.6, ease: "power2.out" }, 0.25);
+  tl.fromTo(dlg, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.15);
+  tl.fromTo(dlg, { scale: 0.84, y: 70 * u, rotationX: 18 }, { scale: 1, y: 0, rotationX: 0, duration: 0.85, ease: "back.out(1.5)" }, 0.15);
+  tl.fromTo("#twA", { scale: 0.4, x: 60 * u, rotation: -14 }, { scale: 1, x: 0, rotation: 0, duration: 0.65, ease: "back.out(2)" }, 0.3);
+  tl.fromTo("#twB", { scale: 0.4, x: -60 * u, rotation: 14 }, { scale: 1, x: 0, rotation: 0, duration: 0.65, ease: "back.out(2)" }, 0.38);
+  tl.fromTo(["#ask", "#res", "#det", "#act"].filter((s) => $(s)), { opacity: 0, y: 26 * u }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out", stagger: 0.07 }, 0.42);
+  tl.fromTo("#dlg .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.6);
+  // the waiting dots: a little wave travels from the app to the resource while it asks
+  const dots = [...document.querySelectorAll("#link i")];
+  dots.forEach((d, i) => { gsap.set(d, { left: (i * 50) * u }); tl.fromTo(d, { opacity: 0, scale: 0 }, { opacity: 0.45, scale: 1, duration: 0.3, ease: "back.out(2)" }, 0.55 + i * 0.05); });
+  for (let w = 0; w < 3; w++) dots.forEach((d, i) => { const t = 0.85 + w * 0.42 + i * 0.1;
+    tl.to(d, { opacity: 1, scale: 1.25, duration: 0.14, ease: "power2.out" }, t); tl.to(d, { opacity: 0.45, scale: 1, duration: 0.24, ease: "power2.in" }, t + 0.14); });
+  // the fingertip glides in and lands on Allow
+  const F0 = 1.2, F1 = 1.9;
+  gsap.set("#touch", { x: tx + 260 * u, y: ty + 320 * u });
+  tl.fromTo("#touch", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, F0);
+  tl.to("#touch", { x: tx, y: ty, duration: F1 - F0, ease: "power3.inOut" }, F0);
+  // the tap
+  const K = F1 + 0.04;
+  tl.to("#touch", { scale: 0.78, duration: 0.08, ease: "power2.out" }, K);
+  tl.to(".b.yes", { scale: 0.93, duration: 0.08, ease: "power2.out" }, K);
+  tl.to(".b.yes .press", { opacity: 0.25, duration: 0.08 }, K);
+  tl.to(".b.yes", { scale: 1, duration: 0.45, ease: "back.out(3)" }, K + 0.1);
+  tl.to(".b.yes .press", { opacity: 0, duration: 0.25, ease: "power2.out" }, K + 0.1);
+  tl.fromTo("#rip", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.25, duration: 0.5, ease: "power2.out", immediateRender: false }, K + 0.08);
+  tl.set("#rip", { opacity: 0 }, 0);
+  tl.to("#touch", { scale: 1.15, opacity: 0, duration: 0.35, ease: "power2.out" }, K + 0.12);
+  // the moment that lands: the dots fuse into a green link, the tiles pull together, the check stamps on
+  const C = K + 0.22;
+  tl.to(dots, { opacity: 0, scale: 0.4, duration: 0.15, ease: "power2.in" }, C - 0.05);
+  tl.to("#bar", { scaleX: 1, duration: 0.38, ease: "expo.out" }, C);
+  tl.to("#twA", { x: 14 * u, duration: 0.5, ease: "back.out(2.4)" }, C + 0.05);
+  tl.to("#twB", { x: -14 * u, duration: 0.5, ease: "back.out(2.4)" }, C + 0.05);
+  tl.to("#link", { scaleX: 0.78, duration: 0.5, ease: "back.out(2.4)" }, C + 0.05);
+  tl.fromTo("#ok", { opacity: 0, scale: 0.2, rotation: -40 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2.6)", immediateRender: false }, C + 0.3);
+  tl.set("#ok", { opacity: 0 }, 0);
+  tl.fromTo("#glowr", { opacity: 0.95, scale: 0.9 }, { opacity: 0, scale: 1.35, duration: 0.7, ease: "power2.out", immediateRender: false }, C + 0.3);
+  tl.set("#glowr", { opacity: 0 }, 0);
+  tl.to("#twB", { scale: 1.08, duration: 0.12, ease: "power2.out" }, C + 0.3); tl.to("#twB", { scale: 1, duration: 0.5, ease: "back.out(2.4)" }, C + 0.42);
+  // the buttons give way to the connected state
+  tl.to("#btns", { opacity: 0, y: 24 * u, scale: 0.96, filter: "blur(6px)", duration: 0.22, ease: "power2.in" }, C - 0.04);
+  tl.fromTo("#st", { opacity: 0, y: -18 * u, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(2)", immediateRender: false }, C + 0.1);
+  tl.fromTo("#st i", { scale: 0, rotation: -60 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)", immediateRender: false }, C + 0.2);
+  tl.fromTo(root, { "--glow": "var(--accent)" }, { "--glow": "#2BD67B", duration: 0.01 }, C + 0.3);
+  tl.to(dlg, { scale: 1.015, duration: 0.1, ease: "power2.out" }, C + 0.28); tl.to(dlg, { scale: 1, duration: 0.5, ease: "back.out(2)" }, C + 0.38);
+  tl.fromTo("#dlg .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, C + 0.35);
+  // the camera: a slow 3D drift the whole time
+  gsap.set("#cam", { transformOrigin: `${cx}px ${top0 + DH / 2}px` });
+  tl.fromTo("#cam", { rotationX: 9, rotationY: 8, scale: 1.04 }, { rotationX: 2, rotationY: -6, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  // exit
+  const X = D - 0.42;
+  tl.to(dlg, { y: -90 * u, opacity: 0, scale: 0.96, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, X);
+  $("#page") && tl.to("#page", { opacity: 0, duration: 0.38, ease: "power2.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

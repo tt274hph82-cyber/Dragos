@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"Names, comma separated, 4 to 9; the biggest value takes the centre ({brand} = the brand name)","default":"Search,Video,Social,Email,Referral,Ads,Events"},
+  {"id":"values","type":"string","label":"A value for each, same order (bubbles are sized by area)","default":"38,21,14,9,7,6,5"},
+  {"id":"prefix","type":"string","label":"Before each value","default":""},
+  {"id":"suffix","type":"string","label":"After each value","default":"%"},
+  {"id":"decimals","type":"number","label":"Decimals","default":0}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 56%; height: 36%; left: 22%; top: 32%; opacity: 0; background: color-mix(in srgb, var(--accent) 50%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 60%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #ground .l3 { width: 70%; height: 46%; left: 40%; top: -12%; background: rgba(255,255,255,.08); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig, #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .bub { position: absolute; border-radius: 50%; box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: radial-gradient(75% 75% at 34% 26%, rgba(255,255,255,.3), rgba(255,255,255,.09) 50%, rgba(255,255,255,.03) 80%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18),
+      inset 0 calc(var(--u) * -18) calc(var(--u) * 40) calc(var(--u) * -14) rgba(255,255,255,.14), 0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -26) rgba(0,0,0,.75); }
+  .is-alpha .bub { background: radial-gradient(75% 75% at 34% 26%, color-mix(in srgb, var(--surface) 55%, white 45%), color-mix(in srgb, var(--surface) 82%, white 18%) 55%, color-mix(in srgb, var(--surface) 92%, white 8%)); }
+  .bub.hero { background: radial-gradient(70% 70% at 34% 26%, color-mix(in srgb, var(--accent) 45%, white), var(--accent) 52%, color-mix(in srgb, var(--accent) 65%, black));
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.28),
+      inset 0 calc(var(--u) * -30) calc(var(--u) * 60) calc(var(--u) * -20) rgba(0,0,0,.35), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.8), 0 0 calc(var(--u) * 120) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .bub::after { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 16%), rgba(255,255,255,.4) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 16%)); }
+  .bub .nm { white-space: nowrap; font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 80%, transparent); }
+  .bub .vl { white-space: nowrap; font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .bub .vl .fx { font-size: .55em; margin-left: .03em; opacity: .7; }
+  .bub.hero .nm, .bub.hero .vl { color: #fff; }
+  .bub.hero .vl { margin-top: calc(var(--u) * 10); }
+  .bub.hero img { border-radius: 50%; object-fit: contain; margin-bottom: calc(var(--u) * 14); }
+  #ring { position: absolute; border-radius: 50%; opacity: 0; pointer-events: none; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 50%, white 50%); }
+
+  .is-key .bub { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--surface) 76%, white 24%); }
+  .is-key .bub.hero { background: var(--accent); box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.5); }
+  .is-key #ring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l3"></i><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="pack"></div>
+    <div id="ring"></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H;
+  const brand = v.brandName || "";
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  let L = list(v.labels).filter((s) => s.length), V = list(v.values).map(Number);
+  if (L.length < 3) { L = ["Search", "Video", "Social", "Email", "Referral", "Ads", "Events"]; V = [38, 21, 14, 9, 7, 6, 5]; }
+  let items = L.slice(0, 9).map((s, i) => ({ raw: s, name: s.split("{brand}").join(brand), val: isFinite(V[i]) && V[i] > 0 ? V[i] : 1 }));
+  items.sort((a, b) => b.val - a.val);
+  const n = items.length, dec = +v.decimals || 0, fmt = (x) => (dec ? x.toFixed(dec) : Math.round(x).toLocaleString("en-US"));
+
+  // ---- the pack, in unit space: the biggest at the origin, each next one tangent to two placed ones, nearest the centre
+  const rr = items.map((it) => Math.sqrt(it.val));
+  const gapU = rr[0] * 0.05, ax = P ? 1.12 : SQ ? 1 : 0.8;     // portrait packs taller, landscape wider
+  const C = [{ x: 0, y: 0, r: rr[0] }];
+  const ok = (x, y, r) => C.every((c) => Math.hypot(x - c.x, y - c.y) >= c.r + r + gapU - 1e-9);
+  const cost = (x, y) => Math.hypot(x * ax, y / ax);
+  for (let i = 1; i < n; i++) {
+    const r = rr[i]; let best = null;
+    const tryP = (x, y) => { if (ok(x, y, r)) { const k = cost(x, y); if (!best || k < best.k) best = { x, y, k }; } };
+    for (const a of C) for (let s = 0; s < 72; s++) { const t = (s / 72) * Math.PI * 2, dd = a.r + r + gapU; tryP(a.x + Math.cos(t) * dd, a.y + Math.sin(t) * dd); }
+    for (let p = 0; p < C.length; p++) for (let q = p + 1; q < C.length; q++) {
+      const a = C[p], b = C[q], ra = a.r + r + gapU, rb = b.r + r + gapU, dx = b.x - a.x, dy = b.y - a.y, dd = Math.hypot(dx, dy);
+      if (dd > ra + rb || dd < Math.abs(ra - rb) || !dd) continue;
+      const aa = (ra * ra - rb * rb + dd * dd) / (2 * dd), hh = Math.sqrt(Math.max(0, ra * ra - aa * aa)), mx = a.x + (aa * dx) / dd, my = a.y + (aa * dy) / dd;
+      tryP(mx + (hh * dy) / dd, my - (hh * dx) / dd); tryP(mx - (hh * dy) / dd, my + (hh * dx) / dd);
+    }
+    C.push({ x: best.x, y: best.y, r });
+  }
+  // fit the pack to the frame, centred on the biggest
+  const ext = (f) => Math.max(...C.map(f));
+  const exX = ext((c) => Math.abs(c.x) + c.r), exY = ext((c) => Math.abs(c.y) + c.r);
+  let bx, by, bw, bh;
+  if (MV.alpha && P) { bw = W - safe.left - safe.right; bh = 780 * u; bx = safe.left + bw / 2; by = safe.top + bh / 2 + 20 * u; }
+  else if (MV.alpha) { bw = W * (SQ ? 0.8 : 0.42); bh = H - safe.top - safe.bottom; bx = SQ ? W / 2 : W - safe.right - bw / 2; by = safe.top + bh / 2; }
+  else if (P) { bw = W - safe.left - safe.right + 40 * u; bh = H - safe.top - safe.bottom - 200 * u; bx = W / 2; by = H / 2; }
+  else if (SQ) { bw = W - 70 * u; bh = H - 90 * u; bx = W / 2; by = H / 2; }
+  else { bw = W - 300 * u; bh = H - 150 * u; bx = W / 2; by = H / 2; }
+  const k = Math.min(bw / 2 / exX, bh / 2 / exY);
+  const B = C.map((c, i) => ({ i, x: bx + c.x * k, y: by + c.y * k, r: c.r * k, it: items[i] }));
+
+  // ---- the bubbles
+  const pack = $("#pack"), rand = MV.rand(7);
+  B.forEach((b) => {
+    const el = document.createElement("div"); el.className = "bub" + (b.i === 0 ? " hero" : "");
+    Object.assign(el.style, { left: b.x - b.r + "px", top: b.y - b.r + "px", width: 2 * b.r + "px", height: 2 * b.r + "px", zIndex: b.i === 0 ? 30 : 10 });
+    pack.appendChild(el);
+    const inner = 2 * b.r * (b.i === 0 ? 0.74 : 0.78);
+    if (b.i === 0 && b.it.raw.includes("{brand}") && v.mark) { const im = MV.img(v.mark); const s = b.r * 0.42; Object.assign(im.style, { width: s + "px", height: s + "px" }); el.appendChild(im); }
+    const vl = document.createElement("div"); vl.className = "vl";
+    vl.innerHTML = (v.prefix ? `<span class="fx">${v.prefix}</span>` : "") + `<span class="n">${fmt(b.it.val)}</span>` + (v.suffix ? `<span class="fx">${v.suffix}</span>` : "");
+    const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = b.it.name;
+    if (b.i === 0) { el.append(vl, nm); } else { el.append(nm, vl); }
+    nm.style.fontSize = (b.i === 0 ? (P ? 54 : 48) : P ? 40 : 36) * u + "px";
+    vl.style.fontSize = Math.min(b.r * (b.i === 0 ? 0.62 : 0.56), (b.i === 0 ? 230 : 96) * u) + "px";
+    MV.fitText(nm, inner, 20); MV.fitText(vl, inner, 20);
+    const nfs = parseFloat(nm.style.fontSize || getComputedStyle(nm).fontSize), vfs = parseFloat(vl.style.fontSize);
+    // a bubble too small for a readable name stays a plain bubble; one with room for the name but not the number keeps the name
+    if (b.i > 0) {
+      const nameOK = nfs >= 34 * u, valOK = vfs >= 36 * u && nm.offsetHeight + vl.offsetHeight <= 2 * b.r * 0.72;
+      if (!nameOK) { nm.style.display = "none"; vl.style.display = "none"; } else if (!valOK) vl.style.display = "none";
+    }
+    vl.querySelector(".n").textContent = fmt(0);
+    b.el = el; b.nm = nm; b.vl = vl; b.n = vl.querySelector(".n");
+    // where it floats in from: out along its own direction, a little scattered
+    const ang = b.i === 0 ? 0 : Math.atan2(b.y - by, b.x - bx) + (rand() - 0.5) * 0.6, far = Math.max(W, H) * (0.36 + rand() * 0.14);
+    b.fx = Math.cos(ang) * far; b.fy = Math.sin(ang) * far;
+  });
+  const hero = B[0];
+
+  // ---- the camera: a slow orbit and drift; it leans into the centre at the end
+  gsap.set("#rig", { transformOrigin: `${bx}px ${by}px` });
+  gsap.set("#cam", { transformOrigin: `${hero.x}px ${hero.y}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${bx}px ${by - 300 * u}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 8, scale: 0.95 }, { rotationY: -8, rotationX: 3, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l3", { x: 0 }, { x: -W * 0.15, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#ground .l1", { left: hero.x - W * 0.28, top: hero.y - H * 0.18 });
+
+  // ---- 1. the others float in and gather round an empty centre
+  const others = B.slice(1).sort((a, b) => a.r - b.r);          // small ones first, the bigger ones settle the shape
+  others.forEach((b, j) => {
+    const at = 0.05 + j * 0.11;
+    tl.fromTo(b.el, { x: b.fx, y: b.fy, scale: 0.5 }, { x: 0, y: 0, scale: 1, duration: 1.15, ease: "expo.out" }, at);
+    tl.fromTo(b.el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, at);
+    tl.fromTo([b.nm, b.vl], { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, at + 0.35);
+    const o = { p: 0 }; tl.to(o, { p: 1, duration: 1.0, ease: "power3.out", onUpdate: () => { b.n.textContent = fmt(b.it.val * o.p); } }, at + 0.3);
+  });
+
+  // ---- 2. the moment: the biggest swells up in the centre and shoulders the rest into place
+  const M = 0.05 + (n - 1) * 0.11 + 0.85;
+  tl.fromTo(hero.el, { scale: 0.05, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.7, ease: "back.out(1.6)" }, M - 0.12);
+  B.slice(1).forEach((b) => { const dx = b.x - hero.x, dy = b.y - hero.y, dd = Math.hypot(dx, dy) || 1, at = M + 0.08 + dd / (W * 8), push = 0.07 * hero.r;
+    tl.to(b.el, { x: (dx / dd) * push, y: (dy / dd) * push, duration: 0.16, ease: "power2.out" }, at);
+    tl.to(b.el, { x: 0, y: 0, duration: 0.8, ease: "back.out(2.6)" }, at + 0.16); });
+  tl.fromTo([hero.nm, hero.vl, hero.el.querySelector("img")].filter(Boolean), { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, M + 0.2);
+  { const o = { p: 0 }; tl.to(o, { p: 1, duration: 1.1, ease: "power3.out", onUpdate: () => { hero.n.textContent = fmt(hero.it.val * o.p); } }, M + 0.15); }
+  const ring = $("#ring");
+  Object.assign(ring.style, { width: 2 * hero.r + "px", height: 2 * hero.r + "px", left: hero.x - hero.r + "px", top: hero.y - hero.r + "px" });
+  tl.fromTo(ring, { scale: 0.9, opacity: 0.9 }, { scale: 1.7, opacity: 0, duration: 0.9, ease: "expo.out", immediateRender: false }, M + 0.32);
+  tl.to("#ground .l1", { opacity: MV.alpha ? 0 : 1, duration: 0.8, ease: "power2.out" }, M);
+  tl.fromTo(hero.el, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, M + 0.55);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, M + 0.32); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.39);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.05, duration: D - M, ease: "power2.inOut", immediateRender: false }, M);
+  // the rest bob gently once they are packed
+  B.slice(1).forEach((b, j) => tl.to(b.el, { yPercent: (j % 2 ? 1.6 : -1.6), duration: D - M - 0.6, ease: "sine.inOut" }, M + 0.6));
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

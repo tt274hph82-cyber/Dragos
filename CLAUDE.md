@@ -162,3 +162,8 @@ For story Reels (strange-history storytime, 2-3 min), use the engine's story mod
 - **Captions:** top of frame (y about 318), Figtree 46 px; the phrase builds word by word in chunks of up to 4 words, the spoken word white and bold, earlier words grey, key words (`KEY`) in a blue selection box with two corner handles.
 - Narration is Austin at speed 1.15 (the references run about 3.5 words a second; Austin lands near 2.6). Original topics and drawings only; a generic phone, no brand names or logos.
 
+## motion-director (branded motion graphics skill)
+- `.claude/skills/motion-director/` (github.com/sharbelxyz/motion-director @ a21ffbf, MIT). Installed in the repo, not `~/.claude/skills`, so it survives new containers; its 266 move preview clips (75 MB) stay local only (its `.gitignore`); re-copy from the repo to restore them. Follow its `SKILL.md`.
+- Setup: `node .claude/skills/motion-director/scripts/check-setup.mjs --fix` (Node 22, ffmpeg, HyperFrames 0.8.188 via npx with its own headless Chrome; all ok in the sandbox). Projects and brands default to `~/motion-director`, which a new container loses: keep our work in `videos/motion-director/`.
+- Our brand: `videos/motion-director/brands/blocky-what-if/` (`brand.json`, the channel logo as `mark.png`, the pet-swallowed thumbnail as the screen). Example: `subscribe-button` in 9:16 (`subscribe-9x16.mp4`, 4.2 s, about 40 s to render): `node ../../.claude/skills/motion-director/scripts/move-render.mjs --move subscribe-button --brand brands/blocky-what-if --aspect 9:16 --vars '{"title":"…","subsFrom":12480,"subs":12481}'`. Pass `title` in `--vars`: the brand's `examples` block is not picked up for our brand. `--bg none --format mov` gives a transparent overlay.
+

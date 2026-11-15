@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"file","type":"string","label":"File name on the tab","default":"load.js"},
+  {"id":"code","type":"string","label":"Code lines, separated by |","default":"async function load(user) {|  const res = await fetch(user.url);|  const items = res.data.items;|  return items.map(render);|}"},
+  {"id":"bug","type":"number","label":"Line number that breaks (1 = first)","default":4},
+  {"id":"fix","type":"string","label":"What that line becomes","default":"  return (items || []).map(render);"},
+  {"id":"error","type":"string","label":"Error name on the toast","default":"TypeError"},
+  {"id":"message","type":"string","label":"Error message on the toast","default":"items is undefined"},
+  {"id":"fixed","type":"string","label":"Toast title once fixed","default":"Fixed"},
+  {"id":"fixedNote","type":"string","label":"Toast line once fixed","default":"0 errors, tests pass"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B8; --err: #FF5A5F; --errl: #FF9EA1; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #win { position: absolute; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.1); }
+  .dots { position: absolute; display: flex; gap: calc(var(--s) * 12); }
+  .dots i { width: calc(var(--s) * 20); height: calc(var(--s) * 20); border-radius: 50%; background: rgba(255,255,255,.22); box-shadow: inset 0 calc(var(--s) * 1) 0 rgba(255,255,255,.3); }
+  #tab { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22); border-radius: calc(var(--s) * 16) calc(var(--s) * 16) 0 0;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 calc(var(--s) * 2) 0 var(--accent); }
+  .is-key #tab { background: color-mix(in srgb, var(--surface) 80%, white); }
+  #tab svg { flex: none; width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  #fname { font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 34); color: var(--ink); white-space: nowrap; }
+  #code { position: absolute; }
+  .ln { position: absolute; left: 0; right: 0; }
+  .ln .bg { position: absolute; inset: 0; transform-origin: 0 50%; opacity: 0; }
+  .ln .no { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; justify-content: flex-end; font-family: var(--mono); font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 34%, transparent); font-variant-numeric: tabular-nums; }
+  .ln .tx { position: absolute; top: 0; bottom: 0; display: flex; align-items: center; font-family: var(--mono); color: color-mix(in srgb, var(--ink) 88%, transparent); white-space: pre; }
+  .gd { position: absolute; border-radius: 50%; opacity: 0; }
+  #sq { position: absolute; overflow: visible; }
+  #car { position: absolute; width: calc(var(--s) * 4); background: var(--al); box-shadow: 0 0 calc(var(--s) * 10) var(--accent); opacity: 0; }
+  #spark { position: absolute; width: calc(var(--s) * 44); height: calc(var(--s) * 44); opacity: 0; }
+  #spark svg { width: 100%; height: 100%; overflow: visible; }
+  .k { color: color-mix(in srgb, var(--accent2) 85%, white); } .f { color: color-mix(in srgb, var(--accent) 35%, white); } .q { color: #9FD8FF; } .pn { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+
+  /* the toast */
+  #toast { perspective: 900px; }
+  #toast .in { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #toast .f { position: absolute; inset: 0; border-radius: calc(var(--s) * 26); box-sizing: border-box; display: flex; align-items: center; gap: calc(var(--s) * 20); padding: 0 calc(var(--s) * 26); }
+  #toast .er { background: linear-gradient(170deg, #3A1214, #240A0C); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,160,160,.35), inset 0 0 0 calc(var(--s) * 2) rgba(255,90,95,.6), 0 calc(var(--s) * 24) calc(var(--s) * 50) calc(var(--s) * -10) rgba(0,0,0,.7), 0 0 calc(var(--s) * 50) rgba(255,90,95,.35); }
+  #toast .ok { visibility: hidden; background: linear-gradient(170deg, #0F3A22, #0A2416); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(160,255,200,.35), inset 0 0 0 calc(var(--s) * 2) rgba(43,214,123,.7), 0 calc(var(--s) * 24) calc(var(--s) * 50) calc(var(--s) * -10) rgba(0,0,0,.7), 0 0 calc(var(--s) * 50) rgba(43,214,123,.4); }
+  .is-key #toast .er { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,160,160,.35), inset 0 0 0 calc(var(--s) * 2) rgba(255,90,95,.6); }
+  .is-key #toast .ok { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(160,255,200,.35), inset 0 0 0 calc(var(--s) * 2) rgba(43,214,123,.7); }
+  #toast .ic { flex: none; width: calc(var(--s) * 58); height: calc(var(--s) * 58); }
+  #toast .tt { display: flex; flex-direction: column; justify-content: center; min-width: 0; gap: calc(var(--s) * 4); }
+  #toast .h { font-weight: 800; font-size: calc(var(--s) * 38); line-height: 1.1; white-space: nowrap; }
+  #toast .m { font-family: var(--mono); font-size: calc(var(--s) * 30); line-height: 1.15; white-space: nowrap; }
+  #toast .er .h { color: var(--errl); } #toast .er .m { color: rgba(255,220,220,.85); }
+  #toast .ok .h { color: var(--okl); } #toast .ok .m { color: rgba(220,255,235,.85); }
+  #tring { position: absolute; border-radius: calc(var(--s) * 30); border: calc(var(--s) * 3) solid var(--ok); box-sizing: border-box; opacity: 0; }
+  .is-key #tring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="win">
+        <div id="bar" class="ab"><div class="dots"><i></i><i></i><i></i></div>
+          <div id="tab"><svg viewBox="0 0 24 24"><path d="M6 2.8h8l5 5v13.4H6z" fill="none" stroke="var(--al)" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2.8v5h5M9 13h7M9 16.5h5" fill="none" stroke="var(--al)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="fname"></span></div>
+        </div>
+        <div id="code"></div>
+      </div>
+      <div id="toast" class="ab"><div class="in">
+        <div class="f er"><svg class="ic" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="var(--err)"/><path d="M20 10.5v11.5" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/><circle cx="20" cy="28.6" r="2.6" fill="#fff"/></svg>
+          <div class="tt"><div class="h" id="eh"></div><div class="m" id="em"></div></div></div>
+        <div class="f ok"><svg class="ic" viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="var(--ok)"/><path id="okp" d="M11.5 20.5l6 6 11-12" fill="none" stroke="#04150B" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+          <div class="tt"><div class="h" id="oh"></div><div class="m" id="om"></div></div></div>
+      </div><div id="tring"></div></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const lines = String(v.code || "").split("|").slice(0, 7);
+  const bi = Math.max(0, Math.min(lines.length - 1, Math.round(+v.bug || 1) - 1));
+  const fix = String(v.fix || lines[bi]);
+
+  // ---- zone and scale (820 wide; the toast hangs off the top right)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.1; zB = H * 0.9; }
+  else if (SQ) { cL = 80 * u; cR = W - 80 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.23; cR = W * 0.77; zT = H * 0.1; zB = H * 0.88; }
+  const DW = 820, pad = 26, barH = 84, rowH = 66, gut = 64, TOFF = 112;
+  const TH = 128, CY = TOFF + barH + 18, DH = CY + lines.length * rowH + 30;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.06 : 1.28);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- window chrome
+  box($("#win"), 0, TOFF, DW, DH - TOFF);
+  box($("#bar"), 0, 0, DW, barH);
+  Object.assign($(".dots").style, { left: S(pad + 6), top: S((barH - 20) / 2) });
+  box($("#tab"), pad + 6 + 84 + 26, 16, null, barH - 16);
+  $("#fname").textContent = v.file || "";
+  // ---- the toast: as wide as its longest line, docked over the bar on the right
+  $("#eh").textContent = v.error || ""; $("#em").textContent = v.message || "";
+  $("#oh").textContent = v.fixed || ""; $("#om").textContent = v.fixedNote || "";
+  const tMaxW = DW - 44;
+  ["#eh", "#em", "#oh", "#om"].forEach((q) => MV.fitText($(q), (tMaxW - 26 * 2 - 58 - 20) * s, 18 * s));
+  const twid = Math.max(...["#eh", "#em", "#oh", "#om"].map((q) => { const r = document.createRange(); r.selectNodeContents($(q)); return r.getBoundingClientRect().width / s; }));
+  const TW = Math.min(tMaxW, twid + 26 * 2 + 58 + 20 + 10);
+  const TX = DW - TW - 22, TY = TOFF + 24 - TH;
+  box($("#toast"), TX, TY, TW, TH); box($("#tring"), 0, 0, TW, TH);
+  // the file tab must stay clear of the toast
+  MV.fitText($("#fname"), (DW - (pad + 6 + 84 + 26) - 140) * s, 16 * s);
+
+  // ---- syntax colour
+  const KW = /^(import|from|export|default|async|await|function|const|let|var|return|if|else|for|while|new|class|null|true|false|def|self|in|of|try|catch|throw)$/;
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const hl = (src) => src.replace(/("[^"]*"|'[^']*'|`[^`]*`)|([A-Za-z_$][\w$]*)(?=\s*\()|([A-Za-z_$][\w$]*)|([{}()[\];,.:?=<>!+\-*/|&]+)|(\s+)|(.)/g, (m, q, f, w, p, sp, o) => {
+    if (q) return `<span class="q">${esc(q)}</span>`;
+    if (f) return KW.test(f) ? `<span class="k">${f}</span>` : `<span class="f">${f}</span>`;
+    if (w) return KW.test(w) ? `<span class="k">${w}</span>` : esc(w);
+    if (p) return `<span class="pn">${esc(p)}</span>`;
+    return esc(m); });
+
+  // ---- rows
+  const code = $("#code"); box(code, 0, barH + 18, DW, lines.length * rowH);
+  const txL = pad + gut + 26, txW = DW - txL - 34;
+  let fs = 36 * s;
+  const meas = document.createElement("span"); meas.style.cssText = `position:absolute;visibility:hidden;white-space:pre;font-family:var(--mono);font-size:${fs}px`; root.appendChild(meas);
+  const longest = [...lines, fix].reduce((a, b) => (b.length > a.length ? b : a), "");
+  meas.textContent = longest || "x";
+  while (meas.getBoundingClientRect().width > txW * s && fs > 14) { fs -= 1; meas.style.fontSize = fs + "px"; }
+  meas.textContent = "M"; const chW = meas.getBoundingClientRect().width; meas.remove();
+  const R = lines.map((t, i) => {
+    const r = document.createElement("div"); r.className = "ln"; box(r, 0, i * rowH, null, rowH);
+    r.innerHTML = `<div class="bg"></div><div class="no"></div><div class="tx"></div>`;
+    box(r.querySelector(".no"), pad, 0, gut - 14, rowH); r.querySelector(".no").textContent = i + 1;
+    const tx = r.querySelector(".tx"); Object.assign(tx.style, { left: S(txL), fontSize: fs + "px" }); tx.innerHTML = `<span style="white-space:pre">${hl(t)}</span>`;
+    code.appendChild(r); return { r, tx, bg: r.querySelector(".bg"), n: t.length };
+  });
+  const B = R[bi];
+  const tx2 = document.createElement("div"); tx2.className = "tx"; Object.assign(tx2.style, { left: S(txL), fontSize: fs + "px", visibility: "hidden" }); tx2.innerHTML = `<span style="white-space:pre">${hl(fix)}</span>`; B.r.appendChild(tx2);
+  const gd = document.createElement("i"); gd.className = "gd"; box(gd, pad + 4, (rowH - 16) / 2, 16, 16); B.r.appendChild(gd);
+  // squiggle under the code part of the broken line
+  const ind = (lines[bi].match(/^\s*/) || [""])[0].length, sqx = txL * s + ind * chW, sqw = Math.max(chW * 3, (B.n - ind) * chW);
+  const NS = "http://www.w3.org/2000/svg", sq = document.createElementNS(NS, "svg"); sq.id = "sq";
+  const amp = 4 * s, per = 14 * s; let dd = `M0 ${amp}`; for (let x = 0; x + per <= sqw + 1; x += per) dd += ` q${per / 4} ${-amp * 2} ${per / 2} 0 t${per / 2} 0`;
+  sq.setAttribute("width", sqw + per); sq.setAttribute("height", amp * 3); sq.style.cssText = `left:${sqx}px;top:${(rowH / 2) * s + fs * 0.62}px`;
+  sq.innerHTML = `<path d="${dd}" fill="none" stroke="var(--err)" stroke-width="${2.6 * s}" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>`;
+  B.r.appendChild(sq);
+  const car = $("#car") || (() => { const c = document.createElement("i"); c.id = "car"; return c; })(); B.r.appendChild(car);
+  Object.assign(car.style, { left: S(txL), top: (rowH * s - fs * 1.15) / 2 + "px", height: fs * 1.15 + "px" });
+  const spark = document.createElement("div"); spark.id = "spark";
+  spark.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 1.5c.6 4.8 2.7 7.2 7.5 8.2-4.8 1-6.9 3.4-7.5 8.3-.6-4.9-2.7-7.3-7.5-8.3 4.8-1 6.9-3.4 7.5-8.2z" fill="var(--al)" stroke="#fff" stroke-width=".6" stroke-linejoin="round"/><circle cx="19.5" cy="18.5" r="2" fill="var(--al)"/></svg>`;
+  B.r.appendChild(spark); Object.assign(spark.style, { left: S(txL), top: S(-20) });
+
+  // ---- timing
+  const TQ = 0.85, TT = 1.15, TF = 2.0, nOld = B.n - ind, TDEL = TF + 0.08, DDEL = Math.min(0.45, 0.02 * nOld + 0.1);
+  const nNew = fix.length - (fix.match(/^\s*/) || [""])[0].length, TTY = TDEL + DDEL + 0.12, DTY = Math.min(0.8, 0.028 * nNew + 0.15), TOK = TTY + DTY + 0.18;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#win", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#win", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo([".dots", "#tab"], { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.18);
+  tl.fromTo(R.map((x) => x.r), { opacity: 0, x: -26 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out", stagger: 0.05 }, 0.3);
+  // the break: the squiggle draws, the row flushes red
+  gsap.set(B.bg, { background: "linear-gradient(90deg, rgba(255,90,95,.22), rgba(255,90,95,.05) 80%)", boxShadow: `inset ${5 * s}px 0 0 var(--err)` });
+  tl.fromTo(B.bg, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "expo.out" }, TQ);
+  tl.to(sq.querySelector("path"), { attr: { "stroke-dashoffset": 0 }, duration: 0.4, ease: "power2.out" }, TQ + 0.05);
+  tl.fromTo(gd, { opacity: 0, scale: 0, backgroundColor: "#FF5A5F" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(3)" }, TQ + 0.05);
+  // the toast drops onto the card, the card takes the hit
+  tl.fromTo("#toast", { y: -120 * s, opacity: 0, rotation: 4, scale: 1.1 }, { y: 0, opacity: 1, rotation: 0, scale: 1, duration: 0.5, ease: "back.out(1.9)" }, TT);
+  tl.fromTo("#win", { x: 0 }, { keyframes: { x: [0, -10 * s, 8 * s, -5 * s, 3 * s, 0], easeEach: "sine.inOut" }, duration: 0.42, immediateRender: false }, TT + 0.2);
+  // the fix: the spark rides in, the AI caret erases and types
+  tl.fromTo(spark, { opacity: 0, scale: 0.2, rotation: -60, x: (B.n * chW) + 30 * s }, { opacity: 1, scale: 1, rotation: 0, x: B.n * chW + 10 * s, duration: 0.45, ease: "back.out(2.5)" }, TF - 0.25);
+  tl.set(car, { opacity: 1, x: B.n * chW }, TF);
+  tl.to(sq, { opacity: 0, duration: 0.2, ease: "power2.in" }, TF);
+  tl.fromTo(B.tx, { clipPath: "inset(-20% 0% -20% 0)" }, { clipPath: `inset(-20% ${100 - (ind / B.n) * 100}% -20% 0)`, duration: DDEL, ease: `steps(${Math.max(1, nOld)})`, immediateRender: false }, TDEL);
+  tl.to(car, { x: ind * chW, duration: DDEL, ease: `steps(${Math.max(1, nOld)})` }, TDEL);
+  tl.to(spark, { x: ind * chW + 10 * s, duration: DDEL, ease: "power2.inOut" }, TDEL);
+  tl.to(B.bg, { opacity: 0.4, duration: 0.3, ease: "power2.out" }, TDEL);
+  tl.set(B.tx, { visibility: "hidden" }, TTY - 0.02); tl.set(tx2, { visibility: "visible" }, TTY - 0.02);
+  tl.fromTo(tx2, { clipPath: `inset(-20% ${100 - (ind / fix.length) * 100}% -20% 0)` }, { clipPath: "inset(-20% 0% -20% 0)", duration: DTY, ease: `steps(${Math.max(1, nNew)})`, immediateRender: false }, TTY);
+  tl.to(car, { x: fix.length * chW, duration: DTY, ease: `steps(${Math.max(1, nNew)})` }, TTY);
+  tl.to(spark, { x: fix.length * chW + 10 * s, duration: DTY, ease: "power1.inOut" }, TTY);
+  tl.to([car, spark], { opacity: 0, duration: 0.2, ease: "power2.in" }, TOK);
+  // fixed: the row flushes green, the dot goes green, the toast flips
+  tl.set(B.bg, { background: "linear-gradient(90deg, rgba(43,214,123,.24), rgba(43,214,123,.05) 80%)", boxShadow: `inset ${5 * s}px 0 0 var(--ok)`, opacity: 1, scaleX: 0 }, TOK);
+  tl.to(B.bg, { scaleX: 1, duration: 0.4, ease: "expo.out" }, TOK);
+  tl.to(B.bg, { opacity: 0.45, duration: 0.9, ease: "power2.out" }, TOK + 0.5);
+  tl.to(gd, { backgroundColor: "#2BD67B", scale: 1.25, duration: 0.2, ease: "power2.out" }, TOK); tl.to(gd, { scale: 1, duration: 0.4, ease: "back.out(3)" }, TOK + 0.2);
+  const TFL = TOK + 0.12;
+  tl.to("#toast .in", { rotationX: 90, duration: 0.15, ease: "power2.in" }, TFL);
+  tl.set("#toast .er", { visibility: "hidden" }, TFL + 0.15); tl.set("#toast .ok", { visibility: "visible" }, TFL + 0.15);
+  tl.fromTo("#toast .in", { rotationX: -90 }, { rotationX: 0, duration: 0.6, ease: "back.out(2.2)", immediateRender: false }, TFL + 0.15);
+  tl.to("#okp", { attr: { "stroke-dashoffset": 0 }, duration: 0.3, ease: "power2.out" }, TFL + 0.3);
+  tl.fromTo("#tring", { scale: 1, opacity: 0.9 }, { scale: 1.25, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TFL + 0.3);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TFL + 0.25); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TFL + 0.32);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TFL + 0.3);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

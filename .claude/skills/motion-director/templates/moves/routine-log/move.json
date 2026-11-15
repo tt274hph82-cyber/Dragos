@@ -1,0 +1,5 @@
+{ "id": "routine-log", "name": "Routine log", "oneLiner": "a glass log of scheduled jobs: rows of time, name and machine tag reveal top-down with pending dots, a lit cursor sweeps down the times and each row flips to a green FIRED check while the header counter rolls up, the last one landing with a pop",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["routines", "cron", "scheduled", "jobs", "automation", "agents", "log", "background", "fired", "while you sleep", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.5, "alpha": true,
+  "say": "when the speaker says jobs run on a schedule without them ('every morning at 4am it...', 'these fire while I sleep'): cut in on the schedule, the counter lands as they say how many ran. 9:16 also takes layout top (graphic in the upper ~45%, speaker below)" }

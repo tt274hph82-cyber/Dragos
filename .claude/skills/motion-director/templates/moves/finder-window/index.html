@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"folders","type":"string","label":"Folders in the first column, comma separated (up to 8)","default":"Archive,Clients,Finance,Ideas,Projects,Scripts,Templates"},
+  {"id":"target","type":"string","label":"The folder that gets opened (one of folders)","default":"Projects"},
+  {"id":"files","type":"string","label":"Files inside it, comma separated (up to 5)","default":"brief.md,notes.txt,plan.pdf,assets.zip"},
+  {"id":"label","type":"string","label":"What the caption card says about those files","default":"Everything it can read"},
+  {"id":"places","type":"string","label":"Sidebar places (wide frames), comma separated","default":"Recents,Desktop,Documents,Downloads"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --fold: #79A7E6; --sel: var(--accent); --an: var(--accent2); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(50% 40% at 85% 10%, color-mix(in srgb, var(--accent) 65%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 10% 95%, color-mix(in srgb, var(--accent2) 50%, transparent), transparent 72%),
+    linear-gradient(160deg, color-mix(in srgb, var(--accent2) 18%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 30%, var(--ground))); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  /* the window: dark smoked glass, a lit top rim, a deep soft shadow */
+  #win { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 26); overflow: hidden;
+    background: linear-gradient(170deg, rgba(40,39,46,.94), rgba(24,23,28,.96));
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.22), 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.8), 0 calc(var(--u) * 30) calc(var(--u) * 160) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 30%, transparent); }
+  .is-key #win { background: #1f1e24; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.2); }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.16) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  .abs { position: absolute; left: 0; top: 0; box-sizing: border-box; }
+  #tb { border-bottom: calc(var(--u) * 1.5) solid rgba(255,255,255,.07); background: rgba(255,255,255,.03); display: flex; align-items: center; }
+  #tb .dots { display: flex; gap: calc(var(--u) * 11); }
+  #tb .dots i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.2); }
+  #tb .nav { display: flex; gap: calc(var(--u) * 18); opacity: .55; }
+  #tb .nav svg { width: calc(var(--u) * 22); height: calc(var(--u) * 22); }
+  #path { color: #fff; font-weight: 750; white-space: nowrap; letter-spacing: -0.01em; display: flex; align-items: center; gap: calc(var(--u) * 12); }
+  #path svg { flex: none; }
+  #sb { background: rgba(255,255,255,.035); border-right: calc(var(--u) * 1.5) solid rgba(255,255,255,.06); }
+  #sb .cap { position: absolute; font-weight: 700; color: rgba(255,255,255,.35); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .sbi { display: flex; align-items: center; color: rgba(255,255,255,.62); font-weight: 600; white-space: nowrap; }
+  .sbi svg { flex: none; }
+  .colr { border-right: calc(var(--u) * 1.5) solid rgba(255,255,255,.06); }
+  .row { display: flex; align-items: center; color: rgba(255,255,255,.86); font-weight: 600; white-space: nowrap; }
+  .row .nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .row svg.g { flex: none; overflow: visible; }
+  .row svg.ch { flex: none; opacity: .4; }
+  .row.on { color: #fff; } .row.on svg.ch { opacity: .9; }
+  /* the selection: brand fill, a lit top edge */
+  #sel { border-radius: calc(var(--u) * 10); background: linear-gradient(180deg, color-mix(in srgb, var(--sel) 88%, #fff), var(--sel));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.35), 0 calc(var(--u) * 8) calc(var(--u) * 22) calc(var(--u) * -6) color-mix(in srgb, var(--sel) 70%, transparent); opacity: 0; }
+  .is-key #sel { box-shadow: none; }
+  #col2 { overflow: hidden; }
+  #ann { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  #ann .bx { fill: color-mix(in srgb, var(--an) 8%, transparent); stroke: var(--an); stroke-linecap: round; filter: drop-shadow(0 0 calc(var(--u) * 8) color-mix(in srgb, var(--an) 60%, transparent)); }
+  #ann .ld { fill: none; stroke: var(--an); stroke-linecap: round; filter: drop-shadow(0 0 calc(var(--u) * 6) color-mix(in srgb, var(--an) 50%, transparent)); }
+  #ann .dt { fill: var(--an); }
+  .is-key #ann .bx, .is-key #ann .ld { filter: none; }
+  /* the caption card: frosted white, hangs off the window */
+  #card { display: flex; align-items: center; gap: calc(var(--u) * 20); border-radius: calc(var(--u) * 22); background: linear-gradient(165deg, #fff, #ECEBEF); color: #141318; opacity: 0;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.08), 0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -18) rgba(0,0,0,.7); }
+  .is-key #card { box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.15); }
+  #card .n { flex: none; display: grid; place-items: center; border-radius: calc(var(--u) * 14); background: #141318; color: #fff; font-weight: 800; white-space: nowrap; }
+  #card .t { font-family: var(--font-display); letter-spacing: -0.01em; white-space: nowrap; line-height: 1.05; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div>
+  <div id="stage">
+    <div id="plate">
+      <div id="win"><div class="sh"></div></div>
+      <svg id="ann"><rect class="bx" /><path class="ld" /><circle class="dt" r="1" /></svg>
+      <div id="card" class="abs"><div class="n"></div><div class="t"></div></div>
+    </div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(() => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const list = (s, n, d) => { const a = String(s || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, n); return a.length ? a : d; };
+  const F = list(v.folders, 8, ["Archive", "Clients", "Projects", "Scripts"]);
+  let TI = F.findIndex((f) => f.toLowerCase() === String(v.target || "").trim().toLowerCase()); if (TI < 0) TI = Math.min(F.length - 1, Math.floor(F.length / 2));
+  const FI = list(v.files, 5, ["notes.txt"]);
+  const PL = list(v.places, 5, []);
+  const SVGNS = "http://www.w3.org/2000/svg";
+
+  // ---- glyphs: drawn, never an icon font
+  const folder = (s) => `<svg class="g" width="${s}" height="${s * 0.8}" viewBox="0 0 30 24"><defs><linearGradient id="fg${Math.round(s)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A9C9F2"/><stop offset="1" stop-color="#5E8FD6"/></linearGradient></defs>
+    <path d="M1 4.5 Q1 2 3.5 2 H11 L13.6 4.6 H26.5 Q29 4.6 29 7 V20.5 Q29 23 26.5 23 H3.5 Q1 23 1 20.5 Z" fill="#4E7BC0"/>
+    <path d="M1 8.6 Q1 6.6 3.4 6.6 H26.6 Q29 6.6 29 8.6 V20.5 Q29 23 26.5 23 H3.5 Q1 23 1 20.5 Z" fill="url(#fg${Math.round(s)})"/><path d="M3 7.6 H27" stroke="#fff" stroke-opacity=".45" stroke-width=".8"/></svg>`;
+  const EXTC = { pdf: "#E5484D", md: "#8A8FA3", txt: "#8A8FA3", zip: "#C9A227", png: "#3FA7D6", jpg: "#3FA7D6", csv: "#2BB673", doc: "#4A7BE0", docx: "#4A7BE0", mp4: "#9B5DE5", mov: "#9B5DE5", js: "#D9B700", json: "#D9B700", py: "#3D7BD9" };
+  const page = (s, ext) => `<svg class="g" width="${s * 0.8}" height="${s}" viewBox="0 0 24 30"><path d="M2 2.5 Q2 1 3.5 1 H15.5 L22 7.5 V27.5 Q22 29 20.5 29 H3.5 Q2 29 2 27.5 Z" fill="#F4F4F7"/><path d="M15.5 1 V6 Q15.5 7.5 17 7.5 H22 Z" fill="#C9CAD3"/>
+    <path d="M6 12 H18 M6 15.5 H18 M6 19 H14" stroke="#B9BAC5" stroke-width="1.3" stroke-linecap="round"/><rect x="4" y="21.6" width="16" height="5.4" rx="1.4" fill="${EXTC[ext] || "#8A8FA3"}"/></svg>`;
+  const chev = (s) => `<svg class="ch" width="${s}" height="${s}" viewBox="0 0 10 10"><path d="M3.5 1.5 L7 5 L3.5 8.5" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const SBG = [
+    `<circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 5.5 V10 L13 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>`,
+    `<rect x="2" y="3.5" width="16" height="10.5" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7 17.5 H13 M10 14 V17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>`,
+    `<path d="M5 2 H12 L16 6 V18 H5 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>`,
+    `<circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 5.5 V13.5 M6.8 10.5 L10 13.7 L13.2 10.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>`,
+    `<path d="M3 6 Q3 4 5 4 H8.5 L10.5 6 H15 Q17 6 17 8 V15 Q17 17 15 17 H5 Q3 17 3 15 Z" fill="none" stroke="currentColor" stroke-width="1.6"/>`];
+
+  // ---- layout: rows sized to the frame; the window leaves room under the files for the leader
+  const RH = (P ? 88 : SQ ? 62 : 58) * u, FS = (P ? 38 : SQ ? 28 : 26) * u, TB = (P ? 90 : 66) * u, PAD = 16 * u;
+  const SIDE = !P;
+  const CH = (P ? 124 : SQ ? 96 : 92) * u;                     // caption card height
+  const rowsN = Math.max(F.length, FI.length + 3);
+  const wh = TB + PAD + rowsN * RH + PAD + CH * 0.35;
+  let ww, zx, zy, zw, zh;
+  if (P) { zx = 40 * u; zw = W - 80 * u; zy = safe.top; zh = H - safe.top - safe.bottom; ww = zw; }
+  else if (SQ) { zx = W * 0.06; zw = W * 0.88; zy = H * 0.07; zh = H * 0.86; ww = zw; }
+  else { zx = W * 0.1; zw = W * 0.8; zy = H * 0.08; zh = H * 0.84; ww = Math.min(zw, 1500 * u); }
+  const TOT = wh + CH * 0.65;
+  const wx = zx + (zw - ww) / 2, wy = zy + Math.max(0, (zh - TOT) / 2);
+  const sbw = SIDE ? ww * (SQ ? 0.24 : 0.2) : 0;
+  const c1w = (ww - sbw) * (P ? 0.5 : 0.46), c2x = sbw + c1w, c2w = ww - c2x;
+  const plate = $("#plate"), win = $("#win");
+  Object.assign(plate.style, { width: ww + "px", height: TOT + "px" });
+  Object.assign(win.style, { width: ww + "px", height: wh + "px" });
+  const el = (cls, x, y, w, h, html, parent = win) => { const d = document.createElement("div"); d.className = "abs " + cls; Object.assign(d.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" }); if (html != null) d.innerHTML = html; parent.appendChild(d); return d; };
+
+  // title bar: dots, back and forward, the path of where we are
+  const tb = el("", 0, 0, ww, TB); tb.id = "tb"; tb.style.padding = `0 ${26 * u}px`; tb.style.gap = 30 * u + "px";
+  tb.innerHTML = `<div class="dots"><i></i><i></i><i></i></div><div class="nav"><svg viewBox="0 0 10 10"><path d="M6.5 1.5 L3 5 L6.5 8.5" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg><svg viewBox="0 0 10 10"><path d="M3.5 1.5 L7 5 L3.5 8.5" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg></div><div id="path"></div>`;
+  const path = $("#path"); path.style.fontSize = FS * 1.02 + "px";
+  path.innerHTML = folder(FS * 1.1) + `<span></span>`;
+  $("span", path).textContent = F[TI];
+
+  // sidebar
+  if (SIDE) {
+    const sb = el("", 0, TB, sbw, wh - TB); sb.id = "sb";
+    const cap = document.createElement("div"); cap.className = "cap"; cap.textContent = "Places"; Object.assign(cap.style, { left: 26 * u + "px", top: 22 * u + "px", fontSize: FS * 0.62 + "px" }); sb.appendChild(cap);
+    PL.forEach((p, i) => { const r = el("sbi", 18 * u, 62 * u + i * RH * 0.92, sbw - 30 * u, RH * 0.92, `<svg width="${FS * 0.95}" height="${FS * 0.95}" viewBox="0 0 20 20">${SBG[i % SBG.length]}</svg><span>${""}</span>`, sb);
+      r.style.fontSize = FS * 0.86 + "px"; r.style.gap = 16 * u + "px"; r.style.paddingLeft = 10 * u + "px"; $("span", r).textContent = p; MV.fitText($("span", r), sbw - 90 * u, 10); });
+  }
+  // column 1: the folders
+  el("colr", sbw, TB, c1w, wh - TB);
+  const y0 = TB + PAD, IN = 10 * u;
+  const sel = el("", sbw + IN, y0, c1w - IN * 2, RH); sel.id = "sel";
+  const rows = F.map((f, i) => { const r = el("row", sbw + IN, y0 + i * RH, c1w - IN * 2, RH, `${folder(FS * 1.3)}<span class="nm"></span>${chev(FS * 0.7)}`);
+    Object.assign(r.style, { fontSize: FS + "px", gap: 18 * u + "px", padding: `0 ${16 * u}px` }); $(".nm", r).textContent = f; return r; });
+  // column 2: the opened folder's files
+  const col2 = el("", c2x, TB, c2w, wh - TB); col2.id = "col2";
+  const frows = FI.map((f, i) => { const ext = (f.match(/\.([a-z0-9]+)$/i) || [, ""])[1].toLowerCase();
+    const r = el("row", IN, PAD + i * RH, c2w - IN * 2, RH, `${page(FS * 1.35, ext)}<span class="nm"></span>`, col2);
+    Object.assign(r.style, { fontSize: FS + "px", gap: 18 * u + "px", padding: `0 ${16 * u}px` }); $(".nm", r).textContent = f; return r; });
+  win.appendChild($(".sh", win));
+
+  // ---- annotation: a box around the files, a leader straight down into the caption card
+  const card = $("#card"), cn = $(".n", card), ct = $(".t", card);
+  cn.textContent = `${FI.length} ${FI.length === 1 ? "file" : "files"}`;
+  Object.assign(cn.style, { fontSize: FS * 0.78 + "px", height: CH * 0.58 + "px", padding: `0 ${18 * u}px` });
+  ct.textContent = String(v.label || "").trim(); ct.style.fontSize = FS * 1.4 + "px";
+  if (!ct.textContent) ct.style.display = "none";
+  card.style.padding = `0 ${34 * u}px 0 ${CH * 0.21}px`; card.style.height = CH + "px";
+  const RMAX = P ? W - safe.right - wx : ww + 20 * u;   // 9:16: the card keeps clear of the platform's right-hand buttons
+  const maxCW = Math.min(ww * (P ? 0.92 : 0.7), RMAX + 10 * u);
+  MV.fitText(ct, maxCW - cn.getBoundingClientRect().width - 90 * u, 12);
+  const cw = card.getBoundingClientRect().width;
+  const bx = c2x + IN * 0.4, by = TB + PAD - 8 * u, bw = c2w - IN * 0.8 - 10 * u, bh = FI.length * RH + 16 * u;
+  const lx = bx + bw / 2, ly0 = by + bh, cy = wh - CH * 0.35;
+  const cx = Math.max(Math.min(lx - 60 * u, ww - cw), Math.min(lx - cw + 60 * u, lx - cw / 2));
+  const cxx = Math.max(Math.min(cx, RMAX - cw), -10 * u);
+  Object.assign(card.style, { left: cxx + "px", top: cy + "px" });
+  const ann = $("#ann"); ann.setAttribute("width", ww); ann.setAttribute("height", TOT); ann.style.width = ww + "px"; ann.style.height = TOT + "px";
+  const bxr = $(".bx", ann); Object.assign(bxr.style, {}); bxr.setAttribute("x", bx); bxr.setAttribute("y", by); bxr.setAttribute("width", bw); bxr.setAttribute("height", bh); bxr.setAttribute("rx", 16 * u); bxr.setAttribute("stroke-width", 4 * u);
+  const ld = $(".ld", ann); ld.setAttribute("d", `M${lx} ${ly0} V${cy}`); ld.setAttribute("stroke-width", 4 * u);
+  const dt = $(".dt", ann); dt.setAttribute("cx", lx); dt.setAttribute("cy", ly0); dt.setAttribute("r", 8 * u);
+  const per = 2 * (bw + bh), lLen = cy - ly0;
+  gsap.set(bxr, { attr: { "stroke-dasharray": per, "stroke-dashoffset": per }, fillOpacity: 0 });
+  gsap.set(ld, { attr: { "stroke-dasharray": lLen, "stroke-dashoffset": lLen } });
+  gsap.set(dt, { scale: 0, svgOrigin: `${lx} ${ly0}` });
+  card.style.transformOrigin = `${lx - cxx}px 0`;
+
+  // ---- position, perspective
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 40%" });
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+
+  // ---- timeline
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.04, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(plate, { y: wy + 150 * u, rotationX: 24, rotationY: -12, scale: 0.9 }, { y: wy, rotationX: 8, rotationY: -6, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(plate, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(plate, { rotationX: 3, rotationY: 5, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.3);
+  // the folders settle in, top to bottom
+  tl.from(rows, { opacity: 0, x: -24 * u, duration: 0.45, ease: "expo.out", stagger: 0.035 }, 0.32);
+  // the selection walks down the column a row at a time (key presses), then lands on the target
+  const S0 = 0.95, STEP = 0.12;
+  tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, S0);
+  for (let i = 1; i <= TI; i++) tl.to(sel, { y: i * RH, duration: 0.07, ease: "power2.out" }, S0 + i * STEP);
+  const LAND = S0 + Math.max(1, TI) * STEP + 0.1;
+  rows.forEach((r, i) => { if (i <= TI) tl.set(r, { className: "abs row on" }, S0 + i * STEP); if (i < TI) tl.set(r, { className: "abs row" }, S0 + (i + 1) * STEP); });
+  // landing: the bar squashes, the folder swells, the path flips to the folder's name
+  tl.fromTo(sel, { scaleX: 1, scaleY: 1 }, { scaleX: 1.03, scaleY: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, LAND);
+  tl.to(sel, { scaleX: 1, scaleY: 1, duration: 0.4, ease: "back.out(3)" }, LAND + 0.08);
+  tl.fromTo($("svg.g", rows[TI]), { scale: 1 }, { scale: 1.22, duration: 0.12, ease: "power2.out", immediateRender: false, transformOrigin: "50% 60%" }, LAND);
+  tl.to($("svg.g", rows[TI]), { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, LAND + 0.12);
+  tl.fromTo(path, { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, LAND + 0.05);
+  // the folder opens: column 2 wipes in, its files cascade, the camera leans in toward them
+  const OP = LAND + 0.22;
+  tl.fromTo(col2, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "expo.out" }, OP);
+  tl.from(frows, { opacity: 0, x: -36 * u, duration: 0.5, ease: "expo.out", stagger: 0.07 }, OP + 0.08);
+  tl.to(plate, { scale: 1.04, duration: D - OP, ease: "power2.out" }, OP);
+  // the box draws around them, the leader drops, the card lands on it
+  const AN = OP + 0.38 + FI.length * 0.07;
+  tl.to(bxr, { attr: { "stroke-dashoffset": 0 }, duration: 0.5, ease: "power2.inOut" }, AN);
+  tl.to(bxr, { fillOpacity: 1, duration: 0.4, ease: "power2.out" }, AN + 0.3);
+  tl.to(dt, { scale: 1, duration: 0.3, ease: "back.out(3)" }, AN + 0.4);
+  tl.to(ld, { attr: { "stroke-dashoffset": 0 }, duration: 0.3, ease: "power2.in" }, AN + 0.45);
+  const CL = AN + 0.72;
+  tl.fromTo(card, { opacity: 0, scale: 0.7, y: -20 * u }, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "back.out(1.9)" }, CL);
+  tl.from(ct, { opacity: 0, x: -20 * u, duration: 0.4, ease: "expo.out" }, CL + 0.12);
+  if (MV.alpha) tl.to(plate, { y: wy + 120 * u, opacity: 0, scale: 0.96, duration: 0.38, ease: "power2.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

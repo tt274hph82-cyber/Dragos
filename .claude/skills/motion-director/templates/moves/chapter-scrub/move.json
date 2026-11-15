@@ -1,0 +1,5 @@
+{ "id": "chapter-scrub", "name": "Glass chapter scrub", "oneLiner": "a video player on glass with its progress bar split into chapter segments: a cursor lands on the bar and scrubs across, a hover preview frame with the chapter title and timestamp follows it and the hovered segment swells, then the click jumps the playhead, the frame cuts to that chapter and the chapter name flips in the controls",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["chapters", "video", "player", "timestamps", "skip", "scrub", "youtube", "creator", "navigation", "structure", "agenda", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker tells people where to skip to or how the video is split up ('if you just want the build, jump to chapter three', 'it is all in the chapters'): the preview runs across on 'chapters', the click lands on the chapter they name" }

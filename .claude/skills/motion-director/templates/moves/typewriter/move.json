@@ -1,0 +1,5 @@
+{ "id": "typewriter", "name": "Typewriter line", "oneLiner": "a close-up of a sheet in a typewriter under a warm lamp: the line types out key by key in uneven ink, the carriage stepping left on every stroke as the two-colour ribbon jumps to the strike and the keys go down, then the return lever throws the carriage back and the platen feeds the paper up a line",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["typewriter", "writing", "script", "first line", "draft", "story", "letter", "words", "paper", "3d", "typing"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker talks about writing something or reads out the first line ('it starts with one sentence', 'I wrote the script first', 'here is the line I opened with'): the line types as they say it and the carriage returns on the last word" }

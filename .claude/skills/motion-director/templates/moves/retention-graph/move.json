@@ -1,0 +1,5 @@
+{ "id": "retention-graph", "name": "Glass retention graph", "oneLiner": "an audience retention card on glass: the curve draws itself with a lit area under it, a dip and a spike get timestamp chips as the line reaches them, then a playhead rides the curve from the left and snaps onto the spike, the band behind it lights and the spike chip lifts",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["retention", "analytics", "audience", "watch time", "graph", "video", "creator", "youtube", "hook", "data", "chart", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker talks about where viewers dropped off or rewatched ('everyone left at the two minute mark', 'this is the part people replayed'): the dip chip lands on 'left', the playhead snaps to the spike on 'replayed'" }

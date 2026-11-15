@@ -1,0 +1,5 @@
+{ "id": "tweet-thread", "name": "Glass post thread", "oneLiner": "three posts from the same account land one under another on tilted glass cards, a lit wire draws down from avatar to avatar as each one arrives, then a pulse of light runs the whole thread, lighting every like and stamping the 3/3 chip",
+  "category": "social", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["thread", "social", "posts", "tweet", "series", "steps", "story", "proof", "viral", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker says 'I wrote a thread about this' or walks through a point in three beats: each post lands on a beat, the pulse runs down on the payoff. t1-t3 are the three posts, short (2 lines max)" }

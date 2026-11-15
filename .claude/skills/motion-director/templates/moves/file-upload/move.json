@@ -1,0 +1,5 @@
+{ "id": "file-upload", "name": "Glass file upload", "oneLiner": "a paper file swoops in out of depth over a glass drop zone, the dashed border lights up, the file drops in, a big progress ring fills to 100 and bursts into an Uploaded check",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["upload", "file", "drop", "drag and drop", "document", "pdf", "import", "progress", "ai tool", "input", "done", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker hands a tool a file ('just drop your PDF in', 'upload the transcript'): the file lands on 'drop', the check bursts as they say it is ready" }

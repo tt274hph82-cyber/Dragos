@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The label heading","default":"Ingredients"},
+  {"id":"lines","type":"string","label":"The printed lines, separated by | (3 to 7)","default":"Water, glycerin, sodium chloride|Cocamidopropyl betaine, citric acid|Added sugar 12 g per serving|Natural flavouring, sea salt|Sodium benzoate (preservative)"},
+  {"id":"pick","type":"number","label":"Which line the marker boxes (1 = first)","default":3},
+  {"id":"note","type":"string","label":"Handwritten note beside the box (empty: none)","default":"Read this"},
+  {"id":"amount","type":"string","label":"Size printed top right (empty: none)","default":"250 ml"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Pack"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Mono"; src: url("assets/fonts/ShareTechMono-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #8a6a40; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: "Inter", sans-serif; }
+  /* ground (look): the side of a real cardboard pack under a soft key light */
+  #ground { position: absolute; inset: -8%; background: #a8814e url(assets/box.jpg) center / cover; }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 40% 35%, rgba(255,240,215,.16), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 38%, rgba(30,15,0,.62)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 2600); }
+  /* the label: a real paper scan, the print pressed into it, a faint curl where it is stuck on */
+  #lab { position: absolute; left: 0; top: 0; border-radius: calc(var(--cu) * 10); transform-style: preserve-3d;
+    filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(40,20,0,.35)) drop-shadow(calc(var(--u) * 6) calc(var(--u) * 22) calc(var(--u) * 26) rgba(40,20,0,.35)); }
+  .is-alpha #lab { filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(0,0,0,.4)) drop-shadow(calc(var(--u) * 8) calc(var(--u) * 30) calc(var(--u) * 40) rgba(0,0,0,.5)); }
+  .is-key #lab { filter: none; }
+  #paper { position: absolute; inset: 0; border-radius: inherit; background: #f7f4ec url(assets/paper-white.jpg) center / calc(var(--cu) * 700); background-blend-mode: multiply; overflow: hidden; }
+  #paper::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(0,0,0,.06), transparent 12%, transparent 86%, rgba(0,0,0,.08)), linear-gradient(180deg, rgba(255,255,255,.35), transparent 30%); }
+  #print { position: relative; padding: calc(var(--cu) * 52) calc(var(--cu) * 56); box-sizing: border-box; color: #1d1b1a; mix-blend-mode: multiply;
+    -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--cu) * 1100); mask: url(assets/inkmask.png) 0 0 / calc(var(--cu) * 1100); }
+  .hd { display: flex; align-items: flex-end; justify-content: space-between; gap: calc(var(--cu) * 20); }
+  #ti { font-family: "MV Pack"; text-transform: uppercase; font-size: calc(var(--cu) * 74); line-height: .95; letter-spacing: .01em; white-space: nowrap; }
+  #am { font-family: "MV Pack"; font-size: calc(var(--cu) * 40); line-height: 1; white-space: nowrap; padding-bottom: calc(var(--cu) * 4); }
+  .rule { height: calc(var(--cu) * 5); background: #1d1b1a; margin: calc(var(--cu) * 18) 0 calc(var(--cu) * 16); }
+  .rule.t { height: calc(var(--cu) * 2); margin: calc(var(--cu) * 20) 0 calc(var(--cu) * 14); }
+  #ls .ln { display: block; width: max-content; max-width: 100%; font-size: calc(var(--cu) * 33); font-weight: 600; line-height: 1.5; letter-spacing: -0.005em; white-space: nowrap; transform-origin: 0 50%; }
+  .sm { font-size: calc(var(--cu) * 22); line-height: 1.42; font-weight: 500; color: #3a3633; }
+  .sm b { font-family: "MV Pack"; font-weight: 400; letter-spacing: .04em; font-size: calc(var(--cu) * 24); margin-right: calc(var(--cu) * 8); color: #1d1b1a; }
+  .ft { display: flex; align-items: flex-end; justify-content: space-between; margin-top: calc(var(--cu) * 22); }
+  #bc { display: flex; align-items: stretch; height: calc(var(--cu) * 110); }
+  #bc i { display: block; background: #151312; }
+  #bcn { font-family: "MV Mono"; font-size: calc(var(--cu) * 22); letter-spacing: .18em; margin-top: calc(var(--cu) * 4); }
+  #lot { font-family: "MV Mono"; font-size: calc(var(--cu) * 21); line-height: 1.4; text-align: right; color: #3a3633; }
+  #dim { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; }
+  /* the marker: a hand-drawn box in the brand colour, soaked into the paper */
+  #mk { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; mix-blend-mode: multiply; }
+  #mk path { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; opacity: .92; }
+  .is-alpha #mk { mix-blend-mode: normal; }
+  #note { position: absolute; left: 0; top: 0; padding: calc(var(--cu) * 10) calc(var(--cu) * 24) calc(var(--cu) * 14); white-space: nowrap; font-family: "MV Marker"; color: var(--accent); line-height: 1;
+    background: #fbf9f3 url(assets/paper-white.jpg) center / calc(var(--cu) * 500); background-blend-mode: multiply; border-radius: calc(var(--cu) * 4);
+    box-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(40,20,0,.3), calc(var(--u) * 4) calc(var(--u) * 14) calc(var(--u) * 18) rgba(40,20,0,.3); }
+  .is-key #note { box-shadow: none; }
+  #note::before { content: ""; position: absolute; left: 50%; top: calc(var(--cu) * -14); width: calc(var(--cu) * 90); height: calc(var(--cu) * 30); margin-left: calc(var(--cu) * -45); background: rgba(240,232,210,.82); transform: rotate(-3deg);
+    box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 2) rgba(0,0,0,.12); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="stage"><div id="lab">
+      <div id="paper"></div>
+      <div id="print">
+        <div class="hd"><div id="ti"></div><div id="am"></div></div>
+        <div class="rule"></div>
+        <div id="ls"></div>
+        <div class="rule t"></div>
+        <div class="sm"><b>DIRECTIONS</b>Use as directed. Store in a cool, dry place away from direct sunlight. Close the cap after use.</div>
+        <div class="sm" style="margin-top: calc(var(--cu) * 8)"><b>STORAGE</b>Best before: see base of pack.</div>
+        <div class="ft"><div><div id="bc"></div><div id="bcn"></div></div><div id="lot">LOT 24B17<br>EXP 09 / 27<br>MADE IN EU</div></div>
+      </div>
+      <div id="dim"></div>
+      <svg id="mk"><path id="mkp" pathLength="1"/></svg>
+      <div id="note"></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H, $ = (s) => document.querySelector(s);
+  await Promise.all(['40px "MV Pack"', '20px "MV Mono"', '40px "MV Marker"'].map((f) => document.fonts.load(f)));
+
+  // ---- the label's size: its own unit (cu) so the print scales as one sheet
+  const CW = MV.alpha ? (P ? W - safe.left - safe.right : SQ ? W * 0.62 : H * 0.6) : (P ? W * 0.76 : SQ ? W * 0.62 : H * 0.66);
+  const cu = CW / 800; root.style.setProperty("--cu", cu + "px");
+  const lab = $("#lab"); lab.style.width = CW + "px";
+  $("#ti").textContent = v.title || "";
+  $("#am").textContent = v.amount || "";
+  const lines = String(v.lines || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 7);
+  const pick = Math.max(1, Math.min(lines.length, Math.round(+v.pick || 1))) - 1;
+  const ls = $("#ls");
+  const lineEls = lines.map((t) => { const d = document.createElement("span"); d.className = "ln"; d.textContent = t; ls.appendChild(d); return d; });
+  const inner = CW - 112 * cu;
+  MV.fitText($("#ti"), inner - ($("#am").getBoundingClientRect().width + 20 * cu), 12);
+  lineEls.forEach((el) => MV.fitText(el, inner, 10));
+  // a barcode: 30 seeded bars and its digits, ink not a font
+  const rb = MV.rand(7), bc = $("#bc");
+  for (let i = 0; i < 46; i++) { const b = document.createElement("i"); const w = [2, 2, 3, 4, 6][Math.floor(rb() * 5)] * cu; b.style.width = w + "px"; b.style.marginRight = [2, 3, 4, 6][Math.floor(rb() * 4)] * cu + "px"; if (i % 7 === 0) b.style.background = "transparent"; bc.appendChild(b); }
+  $("#bcn").textContent = "5 012345 678900";
+  const CH = lab.getBoundingClientRect().height; lab.style.height = CH + "px";
+
+  // ---- the marker box: measured on the picked line, drawn by hand (a slightly crooked rectangle that overruns its start)
+  const lr = lineEls[pick].getBoundingClientRect(), cr = lab.getBoundingClientRect();
+  const pad = 14 * cu, bx = lr.left - cr.left - pad, by = lr.top - cr.top - pad * 0.55, bw = lr.width + pad * 2, bh = lr.height + pad * 1.1;
+  const r = MV.rand(19), j = (n) => (r() - 0.5) * n * cu;
+  const pts = [[bx + j(6), by + j(6)], [bx + bw + j(8), by + j(8)], [bx + bw + j(8), by + bh + j(6)], [bx + j(8), by + bh + j(6)], [bx + j(6), by - 4 * cu], [bx + 26 * cu, by - 6 * cu]];
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; const mx = (x0 + x1) / 2 + j(4), my = (y0 + y1) / 2 + j(4); d += ` Q ${mx} ${my} ${x1} ${y1}`; }
+  const mk = $("#mk"); Object.assign(mk.style, { width: CW + "px", height: CH + "px" }); mk.setAttribute("viewBox", `0 0 ${CW} ${CH}`);
+  const mkp = $("#mkp"); mkp.setAttribute("d", d); mkp.setAttribute("stroke-width", 7 * cu); mkp.style.strokeDasharray = "1 1"; mkp.style.strokeDashoffset = "1";
+  // the dim: everything but the box goes back a step (a soft hole cut where the box is)
+  $("#dim").style.background = `radial-gradient(${bw * 0.75}px ${bh * 1.6}px at ${bx + bw / 2}px ${by + bh / 2}px, transparent 60%, rgba(247,244,236,.55) 100%)`;
+  // the note: on a strip of tape-stuck paper, past the box's right end or below it
+  const note = $("#note"), hasNote = !!(v.note || "").trim();
+  if (hasNote) {
+    note.textContent = v.note; note.style.fontSize = 40 * cu + "px";
+    MV.fitText(note, CW * 0.6, 10);
+    const nw = note.getBoundingClientRect().width, nh = note.getBoundingClientRect().height;
+    // a free spot for it: right of the line under the box, else right of the line over it, else hanging off the label's top-right corner
+    const rel = (el) => { const q = el.getBoundingClientRect(); return { l: q.left - cr.left, r: q.right - cr.left, t: q.top - cr.top, b: q.bottom - cr.top }; };
+    const right = CW - 30 * cu;
+    let nx = right - nw, ny = -nh * 0.45;
+    for (const k of [pick + 1, pick - 1]) { const el = lineEls[k]; if (!el) continue; const q = rel(el);
+      if (right - (q.r + 30 * cu) >= nw && (k > pick ? q.t >= by + bh - 4 * cu : q.b <= by + 4 * cu)) { nx = right - nw; ny = (q.t + q.b) / 2 - nh / 2 + (k > pick ? 6 : -6) * cu; break; } }
+    Object.assign(note.style, { left: nx + "px", top: ny + "px" });
+  } else note.style.display = "none";
+
+  // ---- place the label and plan the push-in toward the box
+  let cx = W / 2, cy = H / 2;
+  if (MV.alpha) {
+    if (P) { cx = safe.left + CW / 2; cy = safe.top + CH / 2 + 10 * u; }
+    else if (SQ) { cx = W - safe.right - CW / 2; cy = H / 2; }
+    else { cx = W - safe.right - CW / 2 - 40 * u; cy = H / 2; }
+  }
+  const lx = cx - CW / 2, ly = cy - CH / 2;
+  gsap.set(lab, { x: lx, y: ly, transformOrigin: `${bx + bw / 2}px ${by + bh / 2}px` });
+  // B-roll: the camera pushes so the box comes to the frame centre; overlay: the label itself leans in, smaller
+  const fx = lx + (bx + bw / 2) * 0.3 + CW * 0.7 / 2, fy = ly + by + bh / 2 + (hasNote ? 40 * cu : 0);
+  const PUSH = MV.alpha ? 1.1 : (P ? 1.2 : SQ ? 1.3 : 1.4);
+
+  // ---- in: the label settles from a tilt, long tail
+  if (MV.alpha) {
+    tl.fromTo(lab, { y: ly + 260 * u, rotation: 8, rotationX: 22, opacity: 0 }, { y: ly, rotation: -2, rotationX: 6, opacity: 1, duration: 0.85, ease: "expo.out" }, 0.04);
+  } else {
+    tl.fromTo(lab, { y: ly + 70 * u, rotation: 4, rotationX: 16, scale: 1.04 }, { y: ly, rotation: -2, rotationX: 6, scale: 1, duration: 1.0, ease: "expo.out" }, 0);
+  }
+  tl.to(lab, { rotation: -1, rotationX: 2, rotationY: -3, duration: D - 1, ease: "sine.inOut" }, 1);
+
+  // ---- the moment: the rest dims, the marker goes round the line, the camera pushes in on it
+  const M0 = 1.0;
+  tl.fromTo("#dim", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, M0);
+  tl.fromTo(mkp, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.62, ease: "power2.inOut" }, M0 + 0.05);
+  if (!MV.alpha) {
+    gsap.set("#cam", { transformOrigin: `${fx}px ${fy}px` });
+    tl.fromTo("#cam", { scale: 1, x: 0, y: 0 }, { scale: PUSH, x: W / 2 - fx, y: H / 2 - fy, duration: 1.1, ease: "expo.inOut" }, M0 - 0.1);
+    tl.to("#cam", { scale: PUSH * 1.04, duration: D - M0 - 1.0, ease: "sine.out" }, M0 + 1.0);
+  } else {
+    tl.to(lab, { scale: PUSH, duration: 1.0, ease: "expo.inOut" }, M0 - 0.1);
+  }
+  if (hasNote) tl.fromTo(note, { scale: 0.4, rotation: -14, opacity: 0 }, { scale: 1, rotation: -5, opacity: 1, duration: 0.5, ease: "back.out(2.2)" }, M0 + 0.6);
+
+  // ---- overlay exit: the label falls away, accelerating
+  if (MV.alpha) { const X = D - 0.42; tl.to(lab, { y: "+=" + 300 * u, duration: 0.36, ease: "power2.in" }, X); tl.to(lab, { opacity: 0, duration: 0.24, ease: "power2.in" }, X + 0.12); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

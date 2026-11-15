@@ -1,0 +1,5 @@
+{ "id": "book-highlight", "name": "Book highlight", "oneLiner": "a macro shot on a real paper book page curving into its gutter: a highlighter swipes the key sentence on twos, then a real ballpoint writes a note in the margin and draws an arrow up to the line",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["book", "quote", "lesson", "principle", "read", "highlight", "margin note", "key line", "study", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": false,
+  "say": "when the speaker quotes a rule or a line worth remembering ('the one line that changed how I work'): the highlighter runs as they read it and the note lands on their comment about it" }

@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"What is being shared (empty: the brand headline, then the brand name)","default":""},
+  {"id":"sub","type":"string","label":"Line under it (empty: the brand domain)","default":""},
+  {"id":"name","type":"string","label":"Label under the brand app tile (empty: the brand name)","default":""},
+  {"id":"apps","type":"string","label":"The other app tiles, comma separated (up to 3)","default":"Message,Mail,Notes"},
+  {"id":"actions","type":"string","label":"The rows under the tiles, comma separated (up to 2)","default":"Copy link,Save for later"},
+  {"id":"done","type":"string","label":"The confirmation pill","default":"Shared"},
+  {"id":"screen","type":"number","label":"Which brand screen is the page being shared (1 = the first)","default":1}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --go: #2BD67B; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 34% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #page { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the page being shared, behind the sheet */
+  #page { position: absolute; border-radius: calc(var(--u) * 44); overflow: hidden; background: var(--surface);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  #page img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; }
+  #page .dim { position: absolute; inset: 0; background: #000; opacity: 0; }
+
+  #sheet { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 56); display: flex; flex-direction: column;
+    padding: calc(var(--u) * 18) calc(var(--u) * 40) calc(var(--u) * 40);
+    background: linear-gradient(170deg, rgba(255,255,255,.2), rgba(255,255,255,.08) 55%, rgba(255,255,255,.06));
+    -webkit-backdrop-filter: blur(30px) saturate(170%); backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      inset 0 calc(var(--u) * -40) calc(var(--u) * 70) calc(var(--u) * -40) color-mix(in srgb, var(--accent) 45%, transparent),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -20) rgba(0,0,0,.75); }
+  .is-alpha #sheet { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #sheet { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  #sheet .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  #grab { align-self: center; flex: none; width: calc(var(--u) * 96); height: calc(var(--u) * 10); border-radius: 99px; background: rgba(255,255,255,.35); margin-bottom: calc(var(--u) * 26); }
+
+  #head { display: flex; align-items: center; gap: calc(var(--u) * 26); flex: none; }
+  #thumb { flex: none; width: calc(var(--u) * 124); height: calc(var(--u) * 124); border-radius: calc(var(--u) * 26); overflow: hidden; background: var(--accent);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.2), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.4); }
+  #thumb img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; }
+  #ht { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 6); }
+  #tt { font-size: calc(var(--u) * 42); font-weight: 700; letter-spacing: -0.015em; color: var(--ink); white-space: nowrap; line-height: 1.15; }
+  #sb { font-size: calc(var(--u) * 34); font-weight: 500; color: color-mix(in srgb, var(--ink) 58%, transparent); white-space: nowrap; line-height: 1.2; }
+  #x { flex: none; width: calc(var(--u) * 64); height: calc(var(--u) * 64); border-radius: 50%; background: rgba(255,255,255,.12); display: grid; place-items: center; align-self: flex-start; }
+  .is-key #x { background: color-mix(in srgb, var(--surface) 80%, #fff); }
+  #x svg { width: 44%; height: 44%; stroke: color-mix(in srgb, var(--ink) 70%, transparent); stroke-width: 2.6; stroke-linecap: round; fill: none; }
+  .rule { flex: none; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.12); margin: calc(var(--u) * 30) 0; }
+
+  #apps { display: flex; flex: none; }
+  .app { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 16); }
+  .tw { position: relative; width: calc(var(--u) * 136); height: calc(var(--u) * 136); }
+  .tile { position: absolute; inset: 0; border-radius: 26%; overflow: hidden; display: grid; place-items: center;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 72%, #fff), var(--c) 46%, color-mix(in srgb, var(--c) 62%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2.5) calc(var(--u) * 1) rgba(255,255,255,.5), inset 0 calc(var(--u) * -6) calc(var(--u) * 12) rgba(0,0,0,.28),
+      0 calc(var(--u) * 14) calc(var(--u) * 24) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .tile svg { width: 54%; height: 54%; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .tile .gl { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(120% 70% at 30% -10%, rgba(255,255,255,.4), rgba(255,255,255,.06) 50%, transparent 62%); }
+  .tile .press { position: absolute; inset: 0; background: #000; opacity: 0; }
+  .tile.brand { background: linear-gradient(150deg, var(--al), var(--accent) 52%, var(--ad)); }
+  .tile.brand img { position: absolute; left: 18%; top: 18%; width: 64%; height: 64%; object-fit: contain; }
+  .tile.brand.full img { left: -1%; top: -1%; width: 102%; height: 102%; object-fit: cover; }
+  .lab { font-size: calc(var(--u) * 36); font-weight: 600; color: color-mix(in srgb, var(--ink) 80%, transparent); white-space: nowrap; line-height: 1.2; }
+  .app.hit .lab { color: var(--ink); }
+  #rip { position: absolute; inset: 0; border-radius: 30%; border: calc(var(--u) * 6) solid var(--al); box-sizing: border-box; opacity: 0; }
+  #ok { position: absolute; right: calc(var(--u) * -18); top: calc(var(--u) * -18); width: calc(var(--u) * 58); height: calc(var(--u) * 58); border-radius: 50%; background: var(--go); display: grid; place-items: center; opacity: 0;
+    box-shadow: 0 0 0 calc(var(--u) * 5) var(--surface), 0 0 calc(var(--u) * 26) rgba(43,214,123,.5); }
+  .is-key #ok { box-shadow: 0 0 0 calc(var(--u) * 5) var(--surface); }
+  #ok svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  #rows { display: flex; flex-direction: column; gap: calc(var(--u) * 16); flex: none; margin-top: calc(var(--u) * 34); }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 20); height: calc(var(--u) * 100); padding: 0 calc(var(--u) * 32); box-sizing: border-box;
+    border-radius: calc(var(--u) * 28); background: rgba(255,255,255,.09); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.14); }
+  .is-key .row { background: color-mix(in srgb, var(--surface) 88%, #fff); }
+  .row span { font-size: calc(var(--u) * 38); font-weight: 600; color: var(--ink); white-space: nowrap; min-width: 0; }
+  .row svg { flex: none; width: calc(var(--u) * 44); height: calc(var(--u) * 44); fill: none; stroke: color-mix(in srgb, var(--ink) 75%, transparent); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+
+  #toast { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 18); padding: calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * 20) calc(var(--u) * 22); border-radius: 999px; white-space: nowrap;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 80%, #fff), var(--surface));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(43,214,123,.45), 0 calc(var(--u) * 24) calc(var(--u) * 50) rgba(0,0,0,.55), 0 0 calc(var(--u) * 50) rgba(43,214,123,.35); opacity: 0; }
+  .is-key #toast { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) rgba(43,214,123,.45); }
+  #toast i { flex: none; width: calc(var(--u) * 64); height: calc(var(--u) * 64); border-radius: 50%; background: var(--go); display: grid; place-items: center; }
+  #toast i svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+  #toast span { font-family: var(--font-display); font-size: calc(var(--u) * 46); color: var(--ink); letter-spacing: -0.01em; line-height: 1.1; }
+
+  #touch { position: absolute; left: 0; top: 0; width: calc(var(--u) * 86); height: calc(var(--u) * 86); margin: calc(var(--u) * -43) 0 0 calc(var(--u) * -43); border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.7), rgba(255,255,255,.35) 60%, rgba(255,255,255,.18));
+    box-shadow: 0 0 0 calc(var(--u) * 3) rgba(255,255,255,.7), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.4); opacity: 0; }
+  .is-key #touch { background: rgba(255,255,255,.75); box-shadow: 0 0 0 calc(var(--u) * 3) #fff; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="cam">
+    <div id="page"><div class="dim"></div></div>
+    <div id="sheet">
+      <div id="grab"></div>
+      <div id="head"><div id="thumb"></div><div id="ht"><div id="tt"></div><div id="sb"></div></div><div id="x"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></div></div>
+      <div class="rule"></div>
+      <div id="apps"></div>
+      <div id="rows"></div>
+      <div class="sh"></div>
+    </div>
+    <div id="toast"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i><span></span></div>
+    <div id="touch"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const compact = MV.portrait && MV.alpha;                    // the 9:16 overlay: header and tiles only, high in the frame
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 0.85 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const name = v.name || v.brandName || "";
+
+  // ---- glyphs for the other apps: clean strokes on coloured glass, generic
+  const G = {
+    chat: ['<path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7.5L6 19.5V16a2 2 0 0 1-2-2z"/>', "#2FB37A"],
+    mail: ['<rect x="3.5" y="6" width="17" height="12" rx="2"/><path d="M4.2 7.2 12 13l7.8-5.8"/>', "#4C6FE0"],
+    note: ['<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/>', "#E39A2B"],
+    link: '<path d="M10 14a4.5 4.5 0 0 0 6.4 0l2.6-2.6a4.5 4.5 0 0 0-6.4-6.4L11.5 6"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0L5 12.6a4.5 4.5 0 0 0 6.4 6.4l1.1-1.1"/>',
+    save: '<path d="M7 3.5h10v17l-5-4-5 4z"/>',
+  };
+  const others = String(v.apps || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 3);
+  const OG = [G.chat, G.mail, G.note];
+  // the brand's tile sits third (second when there are fewer)
+  const BI = Math.min(2, others.length);
+  const list = others.map((l, i) => ({ l, g: OG[i % 3] }));
+  list.splice(BI, 0, { l: name, brand: true });
+  const apps = $("#apps");
+  const tiles = list.map((a) => {
+    const d = document.createElement("div"); d.className = "app" + (a.brand ? " hit" : "");
+    d.innerHTML = `<div class="tw"><div class="tile${a.brand ? " brand" : ""}"></div></div><div class="lab"></div>`;
+    const t = d.querySelector(".tile");
+    if (a.brand) { if (v.mark) t.appendChild(MV.img(v.mark)); d.querySelector(".tw").insertAdjacentHTML("beforeend", '<div id="rip"></div><div id="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>'); }
+    else { t.style.setProperty("--c", a.g[1]); t.innerHTML = `<svg viewBox="0 0 24 24">${a.g[0]}</svg>`; }
+    t.insertAdjacentHTML("beforeend", '<div class="gl"></div><div class="press"></div>');
+    d.querySelector(".lab").textContent = a.l; apps.appendChild(d); return d;
+  });
+  const hit = tiles[BI], hTile = hit.querySelector(".tile");
+  if (v.mark) { const p = new Image(); p.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); g.drawImage(p, 0, 0, 64, 64);
+      const a = (x, y) => g.getImageData(x, y, 1, 1).data[3];
+      if (a(32, 3) > 200 && a(3, 32) > 200 && a(60, 32) > 200 && a(32, 60) > 200) hTile.classList.add("full"); } catch (e) {} }; p.src = v.mark; }
+
+  const acts = compact ? [] : String(v.actions || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 2);
+  acts.forEach((l, i) => { const r = document.createElement("div"); r.className = "row"; r.innerHTML = `<span></span><svg viewBox="0 0 24 24">${i ? G.save : G.link}</svg>`; r.querySelector("span").textContent = l; $("#rows").appendChild(r); });
+  if (!acts.length) $("#rows").remove();
+
+  const scr = (v.screens || [])[Math.max(0, (+v.screen || 1) - 1)] || (v.screens || [])[0];
+  if (scr) { $("#thumb").appendChild(MV.img(scr)); $("#page").insertBefore(MV.img(scr), $("#page .dim")); }
+  else if (v.mark) { $("#thumb").appendChild(MV.img(v.mark)); }
+  $("#tt").textContent = v.title || v.headline || v.brandName || "";
+  $("#sb").textContent = v.sub || v.domain || "";
+  $("#toast span").textContent = v.done || "";
+  if (!v.done) $("#toast span").remove();
+
+  // ---- layout
+  const regionW = W - safe.left - safe.right;
+  const SW = MV.portrait ? regionW : Math.min(840 * u, regionW);
+  const sheet = $("#sheet"); sheet.style.width = SW + "px";
+  const inner = SW - 80 * u;
+  MV.fitText($("#tt"), inner - (124 + 26 + 64 + 26) * u, 18); MV.fitText($("#sb"), inner - (124 + 26 + 64 + 26) * u, 14);
+  const colW = inner / tiles.length;
+  tiles.forEach((t) => MV.fitText(t.querySelector(".lab"), colW - 10 * u, 14));
+  $("#rows") && [...document.querySelectorAll(".row span")].forEach((s) => MV.fitText(s, inner - 140 * u, 16));
+  MV.fitText($("#toast span") || $("#toast i"), regionW - 160 * u, 18);
+  const SH = sheet.offsetHeight, toast = $("#toast"), TH = toast.offsetHeight, TW = toast.offsetWidth, TG = 34 * u;
+  const groupH = SH + TG + TH;
+  let cx = W / 2, top0;
+  if (MV.portrait) { cx = MV.alpha ? safe.left + regionW / 2 : W / 2; top0 = compact ? safe.top + 10 * u : safe.top + (H - safe.top - safe.bottom - groupH) / 2; }
+  else { if (MV.alpha && W > H) cx = W - safe.right - SW / 2; top0 = safe.top + (H - safe.top - safe.bottom - groupH) / 2; }
+  gsap.set(sheet, { left: cx - SW / 2, top: top0 });
+  gsap.set(toast, { left: cx - TW / 2, top: top0 + SH + TG });
+  // the page behind: a tall screen, wider than the sheet, set back
+  const PW = MV.portrait ? Math.min(W * 0.9, SW * 1.12) : Math.min(SW * 1.5, W * 0.62), PH = MV.portrait ? H * 0.78 : H * 0.84;
+  gsap.set("#page", { left: cx - PW / 2, top: (MV.portrait ? H * 0.47 : H / 2) - PH / 2, width: PW, height: PH, z: -260 * u });
+  root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", ((top0 + SH * 0.6) / H * 100) + "%");
+
+  // where things are (sheet-local offsets measured at rest)
+  const sr = sheet.getBoundingClientRect(), hr = hit.querySelector(".tw").getBoundingClientRect();
+  const tx = hr.left + hr.width * 0.55, ty = hr.top + hr.height * 0.55;
+
+  // ---- timeline
+  // 1. the page sits there, then the sheet rises over it and the page dims
+  tl.fromTo("#page", { opacity: 0, y: 40 * u }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 0);
+  tl.to("#page .dim", { opacity: 0.66, duration: 0.6, ease: "power2.out" }, 0.25);
+  tl.fromTo(sheet, { opacity: 0, y: SH * 0.55, rotationX: 22, filter: "blur(14px)" }, { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.85, ease: "expo.out" }, 0.12);
+  tl.fromTo(["#grab", "#head", ".rule"], { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.28);
+  tl.fromTo("#thumb", { scale: 0.7, rotation: -8 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, 0.32);
+  tiles.forEach((t, i) => {
+    tl.fromTo(t.querySelector(".tw"), { y: 50 * u, scale: 0.5 }, { y: 0, scale: 1, duration: 0.6, ease: "back.out(2)" }, 0.4 + i * 0.06);
+    tl.fromTo(t, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.4 + i * 0.06);
+  });
+  document.querySelectorAll(".row").forEach((r, i) => tl.fromTo(r, { opacity: 0, y: 30 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.6 + i * 0.07));
+  tl.fromTo("#sheet .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.55);
+  // 2. the fingertip glides in and lands on the brand's tile
+  const F0 = 1.15, F1 = 1.85;
+  gsap.set("#touch", { x: tx + 300 * u, y: ty + (compact ? 140 : 380) * u });
+  tl.fromTo("#touch", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, F0);
+  tl.to("#touch", { x: tx, y: ty, duration: F1 - F0, ease: "power3.inOut" }, F0);
+  tiles.forEach((t, i) => { if (i !== BI) tl.to(t, { opacity: 0.55, duration: 0.4, ease: "power2.out" }, F1 - 0.2); });
+  // 3. the tap (the moment that lands): press, release on a spring, a ripple, the green check
+  const K = F1 + 0.04;
+  tl.to("#touch", { scale: 0.78, duration: 0.08, ease: "power2.out" }, K);
+  tl.to(hit.querySelector(".tw"), { scale: 0.88, duration: 0.08, ease: "power2.out" }, K);
+  tl.to(hTile.querySelector(".press"), { opacity: 0.3, duration: 0.08 }, K);
+  tl.to(hit.querySelector(".tw"), { scale: 1.12, duration: 0.5, ease: "back.out(3)" }, K + 0.1);
+  tl.to(hTile.querySelector(".press"), { opacity: 0, duration: 0.25, ease: "power2.out" }, K + 0.1);
+  tl.to("#touch", { scale: 1.15, opacity: 0, duration: 0.35, ease: "power2.out" }, K + 0.12);
+  tl.fromTo("#rip", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.7, duration: 0.7, ease: "power2.out", immediateRender: false }, K + 0.1);
+  tl.set("#rip", { opacity: 0 }, 0);
+  tl.fromTo("#ok", { opacity: 0, scale: 0.2, rotation: -40 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2.6)", immediateRender: false }, K + 0.3);
+  tl.set("#ok", { opacity: 0 }, 0);
+  tl.to(hit.querySelector(".tw"), { scale: 1.06, duration: 0.6, ease: "sine.inOut" }, K + 0.6);
+  // 4. the confirmation drops in under the sheet
+  const T = K + 0.45;
+  tl.fromTo(toast, { opacity: 0, y: -30 * u, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(2)" }, T);
+  tl.fromTo("#toast i", { scale: 0, rotation: -60 }, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2.6)" }, T + 0.1);
+  tl.to(sheet, { scale: 0.985, duration: 0.1, ease: "power2.out" }, K); tl.to(sheet, { scale: 1, duration: 0.5, ease: "back.out(2)" }, K + 0.1);
+  // the camera: a slow 3D drift the whole time
+  gsap.set("#cam", { transformOrigin: `${cx}px ${top0 + SH / 2}px` });
+  tl.fromTo("#cam", { rotationX: 10, rotationY: -8, scale: 1.04 }, { rotationX: 3, rotationY: 6, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  // exit: everything drops away, accelerating
+  const X = D - 0.42;
+  tl.to(toast, { y: -40 * u, opacity: 0, filter: "blur(10px)", duration: 0.32, ease: "power3.in" }, X);
+  tl.to(sheet, { y: 120 * u, opacity: 0, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, X + 0.03);
+  tl.to("#page", { opacity: 0, duration: 0.38, ease: "power2.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

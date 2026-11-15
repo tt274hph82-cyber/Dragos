@@ -1,0 +1,5 @@
+{ "id": "quote-card", "name": "Quote card", "oneLiner": "a magazine page torn along one edge is set down on a black leather blotter: a giant serif quote mark strikes in the brand colour, the quote prints line by line in an editorial italic, a cut-out portrait is taped beside the name and a marker underlines the words that matter",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["quote", "testimonial", "review", "pull quote", "customer", "said", "magazine", "portrait", "paper", "editorial", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker quotes someone ('one customer told me...', 'as she put it'): the page lands on the quote, the underline hits the words they lean on" }

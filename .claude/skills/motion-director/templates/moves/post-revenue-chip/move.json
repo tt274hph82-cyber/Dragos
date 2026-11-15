@@ -1,0 +1,5 @@
+{ "id": "post-revenue-chip", "name": "Post with revenue chip", "oneLiner": "on warm paper a white social post (the brand's face, name, the line) rises in slow 3D; a selection highlight sweeps across the key phrase word by word, then a revenue chip slides out from under the post, swings down and snaps onto its corner: the number counts up, a green line draws and a green change pill lands with a pulse",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["post", "community", "proof", "revenue", "sales", "income", "money", "result", "testimonial", "win", "first sale", "highlight", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker reads out a win someone posted and what it earned ('she posted this on Friday, and look what it made'): the highlight sweeps on the line they quote, the chip snaps on the number. Set text, phrase (part of it), amount, prefix and change" }

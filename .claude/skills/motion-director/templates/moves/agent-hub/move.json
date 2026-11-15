@@ -1,0 +1,5 @@
+{ "id": "agent-hub", "name": "Agent hub", "oneLiner": "4 to 6 glass tool tiles pop in around the brand mark, connectors draw into the hub, packets of light flow along them, then an output card drops out under the hub; mode fanout runs it the other way, one prompt out to every tool",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["agent", "hub", "integrations", "workflow", "automation", "connect", "tools", "orchestrator", "fan out", "network", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says one agent pulls from all their tools (\"it reads my email, my calendar, my docs...\"): each tile pops on its word, the output card lands on the result. Fanout: \"one prompt and it posts everywhere\". layout top keeps it above the speaker's head" }

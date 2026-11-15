@@ -1,0 +1,5 @@
+{ "id": "dock-bounce", "name": "Dock bounce", "oneLiner": "a glass desktop dock rises, a cursor glides along it and the icons swell under it, it clicks the brand's app, the icon bounces three times with a squash on every landing and its window springs open out of the icon onto the brand's real screen",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["dock", "desktop", "app", "launch", "open", "click", "cursor", "computer", "mac", "software", "product", "window", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.0, "alpha": true,
+  "say": "when the speaker opens the tool or says 'I just open it up': the click lands on 'open', the window springs out on the product's name" }

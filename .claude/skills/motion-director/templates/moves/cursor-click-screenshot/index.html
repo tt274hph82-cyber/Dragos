@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The screenshot (path; empty: a brand screen)","default":""},
+  {"id":"button","type":"string","label":"The button that gets clicked, in % of the image: x,y,w,h","default":"27.8,52.5,12.2,6.3"},
+  {"id":"label","type":"string","label":"Tag that pops above the button after the click (empty: none)","default":"One click"},
+  {"id":"zoom","type":"number","label":"Push-in toward the button (1 to 1.8)","default":1.35}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 85% 8%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 8% 95%, color-mix(in srgb, var(--accent2) 70%, transparent), transparent 72%),
+    linear-gradient(150deg, color-mix(in srgb, var(--accent2) 30%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 35%, var(--ground))); }
+  #bd2 { position: absolute; width: 70%; height: 50%; left: 30%; top: 30%; border-radius: 50%; filter: blur(calc(var(--u) * 120)); background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #bd2, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; border-radius: calc(var(--u) * 26); overflow: hidden; background: #141317;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.75),
+      0 calc(var(--u) * 30) calc(var(--u) * 160) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 35%, transparent); }
+  .is-key #win { box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 6) calc(var(--u) * 26); border-radius: calc(var(--u) * 10);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 23); font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #scr { position: relative; overflow: hidden; }
+  #cam { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; }
+  .lay { position: absolute; left: 0; top: 0; display: block; max-width: none; }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  /* the button: its own pixels on a layer that presses in, a hover wash, a glow that blooms on the click */
+  #btn { position: absolute; overflow: hidden; border-radius: calc(var(--u) * 6); transform-origin: 50% 50%; }
+  #btn .wash { position: absolute; inset: 0; background: #fff; opacity: 0; mix-blend-mode: screen; }
+  #btn .press { position: absolute; inset: 0; opacity: 0; box-shadow: inset 0 calc(var(--u) * 6) calc(var(--u) * 14) rgba(0,0,0,.55); background: rgba(0,0,0,.18); }
+  #bloom { position: absolute; border-radius: calc(var(--u) * 14); opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 3) rgba(255,255,255,.9), 0 0 calc(var(--u) * 40) calc(var(--u) * 10) color-mix(in srgb, var(--accent2) 60%, transparent); }
+  .is-key #bloom { box-shadow: 0 0 0 calc(var(--u) * 4) #fff; }
+
+  #over { position: absolute; left: 0; overflow: visible; pointer-events: none; transform-style: preserve-3d; }
+  .ring { position: absolute; left: 0; top: 0; border-radius: 50%; box-sizing: border-box; opacity: 0; border: calc(var(--u) * 5) solid #fff;
+    box-shadow: 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent2) 70%, transparent), inset 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--accent2) 50%, transparent); }
+  .is-key .ring { box-shadow: none; }
+  /* the pointer: a real macOS-style arrow, white with an ink outline, a soft contact shadow under it */
+  #cur { position: absolute; left: 0; top: 0; transform-origin: 0 0; opacity: 0; }
+  #cur svg { display: block; overflow: visible; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 12) rgba(0,0,0,.45)); }
+  .is-key #cur svg { filter: none; }
+  .pill { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * 12) calc(var(--u) * 20);
+    border-radius: 999px; background: linear-gradient(160deg, #2d2b33, #18171c); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 80%, transparent), 0 calc(var(--u) * 14) calc(var(--u) * 26) calc(var(--u) * -8) rgba(0,0,0,.6);
+    font-weight: 750; color: #fff; white-space: nowrap; transform-origin: 50% 100%; opacity: 0; }
+  .pill b { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--accent); flex: none; box-shadow: 0 0 calc(var(--u) * 10) var(--accent); }
+  .is-key .pill { background: #1d1c21; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div><div id="bd2"></div>
+  <div id="stage">
+    <div id="plate">
+      <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span></div>
+        <div id="scr"><div id="cam"><div id="btn"><div class="wash"></div><div class="press"></div></div><div id="bloom"></div></div></div><div class="sh"></div></div>
+      <div id="over"><div class="ring" id="r1"></div><div class="ring" id="r2"></div><div class="pill"><b></b><span></span></div>
+        <div id="cur"><svg viewBox="-2 -2 22 32"><path d="M0 0 L0 24.5 L5.6 19.3 L9.4 28.2 L13.4 26.5 L9.7 17.8 L17.2 17.8 Z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg></div></div>
+    </div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const scr0 = v.screens || [], ppl = v.people || [];
+  const src = v.image || scr0[1] || scr0[0] || ppl[0];
+  const isPhoto = !v.image ? !scr0.length : ppl.includes(v.image);
+  const probe = new Image(); probe.src = src; try { await probe.decode(); } catch (e) {}
+  const IW = probe.naturalWidth || 1920, IH = probe.naturalHeight || 1080, IA = IW / IH;
+  const BB = String(v.button || "").split(",").map(parseFloat), B = BB.length === 4 && BB.every(isFinite) && BB[2] > 0 && BB[3] > 0 ? BB : [40, 45, 20, 8];
+  const Z = Math.max(1, Math.min(1.8, +v.zoom || 1.35));
+  const tx = B[0] + B[2] / 2, ty = B[1] + B[3] / 2;
+
+  // ---- the window: as big as the zone allows; 9:16 and 1:1 show a crop of a wide image kept around the button
+  const BAR = isPhoto ? 0 : 54 * u;
+  let zx, zy, zw, zh;
+  if (P) { zx = 40 * u; zw = W - 80 * u; zy = safe.top; zh = H - safe.top - safe.bottom; }
+  else { zx = W * 0.07; zw = W * 0.86; zy = H * 0.08; zh = H * 0.84; }
+  const WA = P ? Math.min(IA, 1.1) : SQ ? Math.min(IA, 1.3) : IA;
+  let ww = zw, SH = ww / WA;
+  if (SH + BAR > zh) { SH = zh - BAR; ww = SH * WA; }
+  const SW = ww, wh = SH + BAR, wx = zx + (zw - ww) / 2, wy = zy + (zh - wh) / 2;
+  let imgW, imgH; if (WA < IA) { imgH = SH; imgW = SH * IA; } else { imgW = SW; imgH = SW / IA; }
+  // the crop keeps the button a little left of centre so the pointer, coming from the lower right, has room
+  const offX = Math.max(0, Math.min(imgW - SW, (tx / 100) * imgW - SW * 0.44)), offY = Math.max(0, Math.min(imgH - SH, (ty / 100) * imgH - SH * 0.5));
+  const PX = (x) => (x / 100) * imgW - offX, PY = (y) => (y / 100) * imgH - offY;
+
+  const plate = $("#plate"), win = $("#win"), scr = $("#scr"), cam = $("#cam"), over = $("#over");
+  Object.assign(plate.style, { width: ww + "px", height: wh + "px" });
+  $("#bar").style.height = BAR + "px"; if (!BAR) $("#bar").style.display = "none";
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  Object.assign(over.style, { top: BAR + "px", width: SW + "px", height: SH + "px" });
+  const base = MV.img(src, "lay"); Object.assign(base.style, { width: imgW + "px", height: imgH + "px", left: -offX + "px", top: -offY + "px" }); cam.insertBefore(base, cam.firstChild);
+  $("#bar .url").textContent = v.domain || ""; if (!v.domain) $("#bar .url").style.display = "none";
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 50%" });
+
+  // ---- the button layer: the same pixels, so pressing it presses the real button
+  const bx = PX(B[0]), by = PY(B[1]), bw = (B[2] / 100) * imgW, bh = (B[3] / 100) * imgH;
+  const btn = $("#btn"), bloom = $("#bloom");
+  Object.assign(btn.style, { left: bx + "px", top: by + "px", width: bw + "px", height: bh + "px" });
+  const bi = MV.img(src, "lay"); Object.assign(bi.style, { width: imgW + "px", height: imgH + "px", left: -offX - bx + "px", top: -offY - by + "px" }); btn.insertBefore(bi, btn.firstChild);
+  const bp = 7 * u; Object.assign(bloom.style, { left: bx - bp + "px", top: by - bp + "px", width: bw + 2 * bp + "px", height: bh + 2 * bp + "px" });
+
+  // ---- the push: one scale about the click point, clamped so the scaled image never leaves the screen
+  const CX = PX(tx), CY = PY(ty);
+  const ox = Math.max(0, Math.min(SW, CX)), oy = Math.max(0, Math.min(SH, CY));
+  cam.style.transformOrigin = `${ox}px ${oy}px`;
+  const toScr = (x, y, s) => [ox + (x - ox) * s, oy + (y - oy) * s];
+
+  // ---- the pointer and its tag
+  const CUR = (P ? 150 : SQ ? 140 : 132) * u, cur = $("#cur"), svgc = $("svg", cur);
+  svgc.setAttribute("width", CUR * 22 / 32); svgc.setAttribute("height", CUR);
+  const tipX = CUR * (2 / 32), tipY = CUR * (2 / 32);   // the viewBox starts at -2,-2: the tip sits 2 units in
+  const pill = $(".pill"), lab = String(v.label || "").trim();
+  if (lab) { $("span", pill).textContent = lab; pill.style.fontSize = (P ? 38 : 32) * u + "px"; MV.fitText($("span", pill), SW * 0.6, 14); } else pill.style.display = "none";
+  const pw = pill.getBoundingClientRect().width, ph = pill.getBoundingClientRect().height;
+  const RS = Math.max(bh * Z * 1.5, 110 * u);
+  for (const r of ["#r1", "#r2"]) Object.assign($(r).style, { width: RS + "px", height: RS + "px" });
+
+  // ---- one clock drives the push, the pointer's path and the tag (exact at any seek)
+  const PU0 = 0.45, PU1 = 1.75, G0 = 0.62, G1 = 1.62, K = 1.86;
+  const ePu = gsap.parseEase("power3.inOut"), eG = gsap.parseEase("expo.out"), eS = gsap.parseEase("sine.inOut"), cl = (a) => Math.max(0, Math.min(1, a));
+  const dx0 = Math.min(SW * 0.55, 560 * u) + CUR, dy0 = Math.min(SH * 0.5, 520 * u) + CUR;
+  const scaleAt = (t) => {
+    let s = 1 + (Z - 1) * ePu(cl((t - PU0) / (PU1 - PU0)));
+    s += (Z - 1) * 0.12 * eS(cl((t - PU1) / (D - PU1)));           // keeps creeping in after it lands
+    const k = t - K; if (k > 0 && k < 0.4) s += 0.035 * Math.sin(Math.min(1, k / 0.4) * Math.PI) * Math.exp(-k * 4); // the click bumps the page
+    return s;
+  };
+  const clock = { t: 0 };
+  const drive = (t) => {
+    const s = scaleAt(t);
+    cam.style.transform = `scale(${s})`;
+    const [ex, ey] = toScr(CX, CY, s);
+    // the pointer: a quadratic curve in from the lower right, a long expo tail, a tiny settle loop after
+    const g = eG(cl((t - G0) / (G1 - G0))), q = 1 - g;
+    const sx = ex + dx0, sy = ey + dy0, kx = ex + dx0 * 0.05, ky = ey + dy0 * 0.85;
+    let cx = q * q * sx + 2 * q * g * kx + g * g * ex, cy = q * q * sy + 2 * q * g * ky + g * g * ey;
+    // it overshoots a hair past the button's centre on the way in and drifts back under the click
+    const h = cl((t - G1) / 0.4); cx += Math.sin(h * Math.PI) * -6 * u; cy += Math.sin(h * Math.PI) * -4 * u;
+    const after = cl((t - K - 0.3) / (D - K - 0.3)); cx += eS(after) * 14 * u; cy += eS(after) * 10 * u;
+    cur.style.left = cx - tipX + "px"; cur.style.top = cy - tipY + "px";
+    for (const r of ["#r1", "#r2"]) { $(r).style.left = ex - RS / 2 + "px"; $(r).style.top = ey - RS / 2 + "px"; }
+    if (lab) {
+      const [bl, bt] = toScr(bx, by, s), [br, bb] = toScr(bx + bw, by + bh, s);
+      // the tag sits beside the button where the page has room (right first), else above it, never on the pointer
+      const right = br + 30 * u + pw < SW - 14 * u, left = bl - 30 * u - pw > 14 * u, above = bt - ph - 28 * u > 12 * u;
+      let px, py, org;
+      if (right) { px = br + 30 * u; py = (bt + bb) / 2 - ph / 2; org = "0 50%"; }
+      else if (left) { px = bl - 30 * u - pw; py = (bt + bb) / 2 - ph / 2; org = "100% 50%"; }
+      else if (above) { px = (bl + br) / 2 - pw / 2; py = bt - ph - 28 * u; org = "50% 100%"; }
+      else { px = (bl + br) / 2 - pw / 2; py = bb + CUR + 20 * u; org = "50% 0"; }
+      pill.style.left = Math.max(14 * u, Math.min(SW - pw - 14 * u, px)) + "px";
+      pill.style.top = Math.max(12 * u, Math.min(SH - ph - 12 * u, py)) + "px";
+      pill.style.transformOrigin = org;
+    }
+  };
+  drive(0);
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: () => drive(clock.t) }, 0);
+
+  // ---- the pointer arrives, hovers, clicks
+  tl.fromTo(cur, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out" }, G0);
+  tl.fromTo(cur, { rotation: -14, scale: 1.08 }, { rotation: 0, scale: 1, duration: 0.9, ease: "expo.out" }, G0);
+  tl.fromTo("#btn .wash", { opacity: 0 }, { opacity: 0.14, duration: 0.2, ease: "power2.out" }, G1 - 0.2);
+  // the click: the pointer dips, the button presses in, the rings leave, the glow blooms
+  tl.to(cur, { scale: 0.84, duration: 0.07, ease: "power2.in" }, K - 0.07);
+  tl.to(cur, { scale: 1, duration: 0.3, ease: "back.out(3)" }, K + 0.06);
+  tl.to(btn, { scale: 0.94, duration: 0.07, ease: "power2.in" }, K - 0.07);
+  tl.to(btn, { scale: 1, duration: 0.36, ease: "back.out(3)" }, K + 0.06);
+  tl.fromTo("#btn .press", { opacity: 0 }, { opacity: 1, duration: 0.07, ease: "power2.in" }, K - 0.07);
+  tl.to("#btn .press", { opacity: 0, duration: 0.3, ease: "power2.out" }, K + 0.08);
+  tl.to("#btn .wash", { opacity: 0.32, duration: 0.08, ease: "power2.out" }, K + 0.06);
+  tl.to("#btn .wash", { opacity: 0.1, duration: 0.5, ease: "power2.out" }, K + 0.16);
+  tl.fromTo(bloom, { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.14, ease: "power2.out" }, K);
+  tl.to(bloom, { opacity: 0.55, duration: 0.6, ease: "power2.out" }, K + 0.2);
+  tl.fromTo("#r1", { opacity: 0.95, scale: 0.25 }, { opacity: 0, scale: 1.2, duration: 0.55, ease: "expo.out", immediateRender: false }, K);
+  tl.fromTo("#r2", { opacity: 0.7, scale: 0.25 }, { opacity: 0, scale: 1.7, duration: 0.75, ease: "expo.out", immediateRender: false }, K + 0.09);
+  if (lab) tl.fromTo(pill, { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.2)" }, K + 0.18);
+
+  // ---- the page: rises in tipped back, drifts slowly in 3D
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.05, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#bd2", { x: 0, y: 0 }, { x: -W * 0.25, y: H * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+  tl.fromTo(plate, { y: wy + 140 * u, rotationX: 22, rotationY: -12, scale: 0.92 }, { y: wy, rotationX: 7, rotationY: -6, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(plate, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(plate, { rotationX: 3, rotationY: 4, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.35);
+  if (MV.alpha) tl.to(plate, { y: wy + 120 * u, opacity: 0, scale: 0.94, duration: 0.38, ease: "power2.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

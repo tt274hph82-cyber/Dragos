@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Video title under the player (empty: none)","default":"How the whole system fits together"},
+  {"id":"chapters","type":"string","label":"Chapter titles, separated by |","default":"Intro|The setup|The build|The results"},
+  {"id":"times","type":"string","label":"Chapter start times (m:ss), separated by commas","default":"0:00,1:45,4:30,9:10"},
+  {"id":"length","type":"string","label":"Video length (m:ss)","default":"12:48"},
+  {"id":"pick","type":"number","label":"Which chapter the cursor lands on and clicks (1 = the first)","default":3},
+  {"id":"person","type":"number","label":"Which brand person is on the video (0 = none)","default":1}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #rip { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.65), rgba(255,255,255,0) 70%); opacity: 0; pointer-events: none; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+  #vid { border-radius: calc(var(--s) * 24); overflow: hidden; background: #111; box-shadow: 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  .fr { position: absolute; inset: 0; overflow: hidden; }
+  .fr img.bgi { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; filter: brightness(.6) saturate(1.1); }
+  .fr .tn { position: absolute; inset: 0; background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 70%, #000), color-mix(in srgb, var(--accent) 30%, transparent) 55%, rgba(0,0,0,.2)); mix-blend-mode: multiply; }
+  #pp { position: absolute; left: 6%; bottom: 0; height: 96%; filter: drop-shadow(calc(var(--s) * 10) 0 calc(var(--s) * 24) rgba(0,0,0,.6)); }
+  #shade { position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(180deg, transparent, rgba(0,0,0,.82)); }
+  #bar { position: absolute; }
+  .seg { position: absolute; top: 0; bottom: 0; border-radius: calc(var(--s) * 3); background: rgba(255,255,255,.3); transform-origin: 50% 50%; overflow: hidden; }
+  .seg .bf { position: absolute; inset: 0; background: rgba(255,255,255,.55); transform-origin: 0 50%; transform: scaleX(0); }
+  .seg .pf { position: absolute; inset: 0; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+  #knob { position: absolute; width: calc(var(--s) * 26); height: calc(var(--s) * 26); margin: calc(var(--s) * -13); border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--s) * 14) color-mix(in srgb, var(--accent) 80%, transparent); }
+  #ctl { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 20); white-space: nowrap; color: #fff; }
+  #ctl svg { width: calc(var(--s) * 40); height: calc(var(--s) * 40); flex: none; }
+  #ct { font-weight: 650; font-size: calc(var(--s) * 34); font-variant-numeric: tabular-nums; color: rgba(255,255,255,.92); }
+  #cn { position: relative; display: flex; align-items: center; gap: calc(var(--s) * 8); font-weight: 700; font-size: calc(var(--s) * 34); overflow: hidden; height: calc(var(--s) * 44); }
+  #cn span { display: block; white-space: nowrap; }
+  #cn i { font-style: normal; color: rgba(255,255,255,.55); }
+  #pv { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; pointer-events: none; transform-origin: 50% 100%; }
+  #pvt { display: flex; align-items: center; height: calc(var(--s) * 56); padding: 0 calc(var(--s) * 20); border-radius: calc(var(--s) * 14); white-space: nowrap; overflow: hidden;
+    background: rgba(12,12,12,.86); color: #fff; font-weight: 750; font-size: calc(var(--s) * 36); box-shadow: 0 calc(var(--s) * 8) calc(var(--s) * 22) rgba(0,0,0,.5); position: relative; }
+  #pvt span { display: block; }
+  #pvf { position: relative; margin-top: calc(var(--s) * 12); border-radius: calc(var(--s) * 16); overflow: hidden; background: #111;
+    box-shadow: 0 0 0 calc(var(--s) * 4) #fff, 0 calc(var(--s) * 18) calc(var(--s) * 40) rgba(0,0,0,.6); }
+  #pvf .fr img.bgi { filter: brightness(.75) saturate(1.1); }
+  #pvf img.mp { position: absolute; left: 6%; bottom: 0; height: 96%; }
+  #pvs { margin-top: calc(var(--s) * 10); font-weight: 750; font-size: calc(var(--s) * 34); color: #fff; font-variant-numeric: tabular-nums; text-shadow: 0 calc(var(--s) * 2) calc(var(--s) * 10) rgba(0,0,0,.8); }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  #ring { position: absolute; width: calc(var(--s) * 60); height: calc(var(--s) * 60); margin: calc(var(--s) * -30); border-radius: 50%; border: calc(var(--s) * 4) solid #fff; opacity: 0; }
+  #list { position: absolute; }
+  #hlr { position: absolute; left: 0; right: 0; border-radius: calc(var(--s) * 20); background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #hlr i { position: absolute; left: calc(var(--s) * 10); top: 22%; bottom: 22%; width: calc(var(--s) * 6); border-radius: 3px; background: var(--accent); box-shadow: 0 0 calc(var(--s) * 12) var(--accent); }
+  .is-key #hlr { background: color-mix(in srgb, var(--surface) 75%, white); }
+  .rw { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: calc(var(--s) * 26); padding-left: calc(var(--s) * 34); white-space: nowrap; }
+  .rw b { flex: none; font-weight: 700; font-size: calc(var(--s) * 34); font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--ink) 55%, transparent); }
+  .rw span { font-weight: 700; font-size: calc(var(--s) * 38); color: var(--ink); }
+  #ttl { font-weight: 700; font-size: calc(var(--s) * 40); line-height: 1.18; color: var(--ink); letter-spacing: -0.012em; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="win">
+        <div id="vid" class="ab"><div id="frames"></div><div id="flash"></div><div id="shade"></div>
+          <div id="bar"><div id="knob"></div></div>
+          <div id="ctl"><svg viewBox="0 0 24 24"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.6-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8z" fill="#fff"/></svg><span id="ct"></span><div id="cn"><i>&#183;</i><span id="cnt"></span></div></div>
+          <div id="ring"></div>
+          <div id="pv"><div id="pvt"><span></span></div><div id="pvf"></div><div id="pvs"></div></div>
+        </div>
+        <div id="ttl" class="ab"></div>
+        <div id="list" class="ab"><div id="hlr"><i></i></div></div>
+      </div>
+      <div id="cur"><svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.4-4.2 2.9 6.6 3-1.3-2.9-6.5 6.1-.3z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const sec = (t) => { const m = String(t || "").trim().match(/^(\d+):(\d\d)$/); return m ? +m[1] * 60 + +m[2] : NaN; };
+  const mmss = (x) => Math.floor(x / 60) + ":" + String(Math.floor(x % 60)).padStart(2, "0");
+  const LEN = Math.max(20, sec(v.length) || 600);
+  const names = String(v.chapters || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 6);
+  const NCh = Math.max(1, names.length);
+  let starts = String(v.times || "").split(",").map(sec).slice(0, NCh);
+  if (starts.length !== NCh || starts.some((x) => !(x >= 0)) || starts.some((x, i) => i && x <= starts[i - 1])) starts = names.map((_, i) => (i * LEN) / NCh);
+  starts[0] = 0;
+  const fr = starts.map((x) => x / LEN), ends = fr.map((x, i) => (i < NCh - 1 ? fr[i + 1] : 1));
+  const pick = Math.max(0, Math.min(NCh - 1, Math.round(+v.pick || 1) - 1));
+  const chAt = (x) => { let k = 0; fr.forEach((f, i) => { if (x >= f) k = i; }); return k; };
+
+  // ---- zone and scale (an 820-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.1; zB = H * 0.9; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.2; cR = W * 0.8; zT = H * 0.08; zB = H * 0.9; }
+  const DW = 820, pad = 26, inner = DW - pad * 2, VH = inner * 9 / 16;
+  const hasT = !!(v.title || "").trim();
+  const LST = P, RH = 74, LY = pad + VH + (hasT ? 24 + 48 + 22 : 22);
+  const DH = LST ? LY + NCh * RH + 26 : pad + VH + (hasT ? 24 + 48 + 26 : pad);
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- frames: one per chapter (the brand screens in turn behind the same person)
+  box($("#vid"), pad, pad, inner, VH);
+  const SC = v.screens || [], pi = Math.round(+v.person || 0), per = pi > 0 ? (v.people || [])[pi - 1] : null;
+  const scrOf = (i) => SC.length ? SC[(i + 1) % SC.length] : null;
+  const mkFrame = (i, host, mini) => { const f = document.createElement("div"); f.className = "fr"; const sc = scrOf(i); if (sc) { const im = MV.img(sc, "bgi"); im.style.objectPosition = ["0% 0%", "100% 20%", "50% 60%", "0% 100%"][i % 4]; f.appendChild(im); }
+    const tn = document.createElement("div"); tn.className = "tn"; f.appendChild(tn); if (mini && per) f.appendChild(MV.img(per, "mp")); host.appendChild(f); return f; };
+  const big = names.map((_, i) => mkFrame(i, $("#frames"), false));
+  if (per) { const pp = MV.img(per); pp.id = "pp"; $("#frames").appendChild(pp); }
+  big.forEach((f, i) => gsap.set(f, { opacity: i === 0 ? 1 : 0 }));
+  // ---- the chapter bar: segments with gaps, controls under it
+  const BL = 30, BW = inner - 60, BY = VH - 126, BHt = 10, GAP = 6;
+  box($("#bar"), BL, BY, BW, BHt);
+  const segs = names.map((_, i) => { const e = document.createElement("div"); e.className = "seg"; const x0 = fr[i] * BW + (i ? GAP / 2 : 0), x1 = ends[i] * BW - (i < NCh - 1 ? GAP / 2 : 0);
+    e.style.left = S(x0); e.style.width = S(x1 - x0); e.innerHTML = `<i class="bf"></i><i class="pf"></i>`; $("#bar").insertBefore(e, $("#knob")); return { e, x0, x1, bf: e.querySelector(".bf"), pf: e.querySelector(".pf") }; });
+  const fillTo = (x, which) => segs.forEach((g, i) => { const px = x * BW; gsap.set(g[which], { scaleX: Math.max(0, Math.min(1, (px - g.x0) / (g.x1 - g.x0))) }); });
+  box($("#ctl"), BL - 4, BY + 58, BW, 52);
+  const ct = $("#ct"), cnt = $("#cnt");
+  const setPlay = (x) => { fillTo(x, "pf"); gsap.set("#knob", { x: x * BW * s, y: BHt / 2 * s }); ct.textContent = mmss(x * LEN) + " / " + mmss(LEN); };
+  // the chapter name in the controls: fit the longest so a flip never changes the row
+  ct.textContent = mmss(LEN) + " / " + mmss(LEN);
+  const roomCN = BW - 60 - ct.getBoundingClientRect().width / s - 70;
+  { let fs = 34; const longest = names.reduce((a, b) => (b.length > a.length ? b : a), ""); cnt.textContent = longest; while (cnt.getBoundingClientRect().width / s > roomCN && fs > 20) { fs -= 1; $("#cn").style.fontSize = S(fs); } }
+  // ---- the hover preview
+  const PW = 236, PH = PW * 9 / 16;
+  const pvf = $("#pvf"); pvf.style.width = S(PW); pvf.style.height = S(PH);
+  const minis = names.map((_, i) => mkFrame(i, pvf, true));
+  const pvt = $("#pvt"), pvts = pvt.querySelector("span"), pvs = $("#pvs");
+  // title chip width fixed to the longest name, fitted to the video width
+  { let fs = 36; const longest = names.reduce((a, b) => (b.length > a.length ? b : a), ""); pvts.textContent = longest; const room = Math.min(inner - 40, 520);
+    while (pvts.getBoundingClientRect().width / s > room && fs > 22) { fs -= 1; pvt.style.fontSize = S(fs); } pvt.style.width = pvts.getBoundingClientRect().width / s + 40 + 4 + "px"; pvt.style.width = S(pvts.getBoundingClientRect().width / s + 44); pvt.style.justifyContent = "center"; }
+  const pvr = () => $("#pv").getBoundingClientRect();
+  let curCh = -1;
+  const setHover = (x) => {
+    const k = chAt(x);
+    if (k !== curCh) { curCh = k; pvts.textContent = names[k]; minis.forEach((m, i) => gsap.set(m, { opacity: i === k ? 1 : 0 })); segs.forEach((g, i) => gsap.set(g.e, { scaleY: i === k ? 1.9 : 1 })); }
+    pvs.textContent = mmss(x * LEN);
+    fillTo(x, "bf");
+    const w = $("#pv").offsetWidth / s, hgt = $("#pv").offsetHeight / s;
+    const px = Math.max(10, Math.min(inner - w - 10, BL + x * BW - w / 2));
+    gsap.set("#pv", { x: px * s, y: Math.max(8, BY - 22 - hgt) * s });
+    gsap.set("#cur", { x: (pad + BL + x * BW) * s, y: (pad + BY + BHt / 2) * s });
+  };
+  const ttl = $("#ttl"); ttl.textContent = v.title || ""; box(ttl, pad + 8, pad + VH + 24); MV.fitText(ttl, (inner - 16) * s, 24 * s); if (!hasT) ttl.style.display = "none";
+  // portrait: the chapter list under the player, the playing one highlighted
+  const rws = [];
+  if (LST) {
+    box($("#list"), pad, LY, inner, NCh * RH);
+    names.forEach((n, i) => { const r = document.createElement("div"); r.className = "rw"; r.style.top = S(i * RH); r.style.height = S(RH);
+      r.innerHTML = `<b></b><span></span>`; r.querySelector("b").textContent = mmss(starts[i]); r.querySelector("span").textContent = n; $("#list").appendChild(r); rws.push(r); });
+    const bw = Math.max(...rws.map((r) => r.querySelector("b").getBoundingClientRect().width / s));
+    rws.forEach((r) => { r.querySelector("b").style.width = S(bw); MV.fitText(r.querySelector("span"), (inner - 34 - bw - 26 - 20) * s, 22 * s); });
+    box($("#hlr"), 0, 4, null, RH - 8);
+  } else $("#list").style.display = "none";
+  const CU = 50; Object.assign($("#cur").style, { width: S(CU), height: S(CU) });
+
+  // ---- timing
+  const p0 = 0.035, h0 = Math.max(0.04, Math.min(fr[Math.min(1, NCh - 1)] * 0.5, 0.08)), hT = (fr[pick] + ends[pick]) / 2 - (ends[pick] - fr[pick]) * 0.2;
+  const TH = 1.05, TS = TH + 0.35, TE = TS + 1.25, TC = TE + 0.18;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(".fr img.bgi", { scale: 1.08 }, { scale: 1, duration: D, ease: "sine.out" }, 0);
+  if (per) tl.fromTo("#pp", { y: 40 * s, scale: 0.94 }, { y: 0, scale: 1, duration: 0.8, ease: "back.out(1.6)" }, 0.2);
+  tl.fromTo(segs.map((g) => g.e), { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.07 }, 0.35);
+  tl.fromTo("#ctl", { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.5);
+  tl.fromTo("#knob", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 0.7);
+  if (hasT) tl.fromTo("#ttl", { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.45);
+  // the video plays along until the click
+  const pl = { x: p0 }; cnt.textContent = names[0]; setPlay(p0);
+  tl.to(pl, { x: p0 + 0.012, duration: TC, ease: "none", onUpdate: () => setPlay(pl.x) }, 0);
+  // the cursor lands on the bar, the preview pops up and follows it across the chapters
+  const hv = { x: h0 }; setHover(h0); gsap.set(["#pv", "#cur"], { opacity: 0 });
+  gsap.set(segs.map((g) => g.e), { scaleY: 1 });
+  tl.fromTo("#cur", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, TH - 0.25);
+  tl.fromTo("#pv", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.2)" }, TH);
+  tl.fromTo(segs.map((g) => g.bf), { opacity: 0 }, { opacity: 1, duration: 0.2 }, TH);
+  tl.to(hv, { x: hT, duration: TE - TS, ease: "power2.inOut", onUpdate: () => setHover(hv.x) }, TS);
+  // the click: the playhead jumps, the frame cuts to the chapter, the controls flip to its name
+  tl.to("#cur", { scale: 0.86, duration: 0.07, ease: "power2.in", transformOrigin: "20% 10%" }, TC); tl.to("#cur", { scale: 1, duration: 0.3, ease: "back.out(3)" }, TC + 0.08);
+  box($("#ring"), BL + hT * BW, BY + BHt / 2);
+  tl.fromTo("#ring", { opacity: 0.95, scale: 0.4 }, { opacity: 0, scale: 2.4, duration: 0.6, ease: "expo.out", immediateRender: false }, TC + 0.02);
+  const jp = { x: p0 + 0.012 };
+  tl.to(jp, { x: hT, duration: 0.35, ease: "expo.out", onUpdate: () => setPlay(jp.x) }, TC + 0.02);
+  tl.to("#pv", { opacity: 0, scale: 0.85, y: "+=" + 20 * s, duration: 0.3, ease: "power2.in" }, TC + 0.12);
+  tl.to(segs.map((g) => g.bf), { opacity: 0, duration: 0.3 }, TC + 0.12);
+  tl.to(segs.map((g) => g.e), { scaleY: 1, duration: 0.3, ease: "power2.out" }, TC + 0.2);
+  tl.to(segs[pick].e, { scaleY: 1.5, duration: 0.15, ease: "power2.out" }, TC); tl.to(segs[pick].e, { scaleY: 1, duration: 0.5, ease: "back.out(3)" }, TC + 0.4);
+  tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.3, duration: 0.06, immediateRender: false }, TC + 0.08); tl.to("#flash", { opacity: 0, duration: 0.4, ease: "power2.out" }, TC + 0.14);
+  tl.set(big, { opacity: 0 }, TC + 0.1); tl.set(big[pick], { opacity: 1 }, TC + 0.1);
+  tl.fromTo(big[pick], { scale: 1.08 }, { scale: 1, duration: 1.2, ease: "expo.out", immediateRender: false }, TC + 0.1);
+  tl.to(cnt, { y: -44 * s, opacity: 0, duration: 0.16, ease: "power2.in" }, TC + 0.08);
+  const sw = { k: 0 };
+  tl.to(sw, { k: 1, duration: 0.02, ease: "none", onUpdate: () => { cnt.textContent = names[sw.k > 0.5 ? pick : 0]; } }, TC + 0.23);
+  tl.fromTo(cnt, { y: 44 * s, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "back.out(2)", immediateRender: false }, TC + 0.24);
+  tl.to("#cur", { x: "+=" + 90 * s, y: "+=" + 90 * s, opacity: 0, duration: 0.4, ease: "power2.in" }, TC + 0.45);
+  if (LST) {
+    tl.fromTo(rws, { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.55);
+    tl.fromTo("#hlr", { opacity: 0, scaleX: 0.9 }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "expo.out" }, 0.8);
+    tl.to("#hlr", { y: pick * RH * s, duration: 0.55, ease: "back.out(1.6)" }, TC + 0.1);
+    tl.to(rws[pick].querySelector("b"), { color: "var(--al)", duration: 0.3 }, TC + 0.2);
+    tl.fromTo(rws[pick], { scale: 1 }, { scale: 1.04, duration: 0.1, ease: "power2.out", transformOrigin: "0 50%", immediateRender: false }, TC + 0.2); tl.to(rws[pick], { scale: 1, duration: 0.45, ease: "back.out(3)" }, TC + 0.3);
+  }
+  const pl2 = { x: hT };
+  tl.to(pl2, { x: hT + 0.015, duration: D - TC - 0.4, ease: "none", onUpdate: () => setPlay(pl2.x) }, TC + 0.4);
+  tl.to("#stage", { scale: 1.012, duration: 0.07, ease: "power2.out" }, TC); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TC + 0.07);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TC + 0.1);
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

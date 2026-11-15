@@ -1,0 +1,5 @@
+{ "id": "affiliate-stats", "name": "Affiliate stats", "oneLiner": "a dark glass affiliate dashboard turns in out of depth: the referral link chip, clicks and signups count up in their tiles, earnings climbs big while its area chart draws with a riding dot, then a green Payout sent chip stamps on with the amount and a ring",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["affiliate", "referral", "commission", "earnings", "payout", "passive income", "clicks", "signups", "dashboard", "money", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says a link pays them or what a referral earned ('I just share my link and it pays me', 'that one link made me 2k last month'): cut in on 'link', the payout chip stamps on the amount" }

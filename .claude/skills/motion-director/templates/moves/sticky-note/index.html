@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"note","type":"string","label":"What is written on the note (a short line)","default":"Ship the first version on Friday"},
+  {"id":"tone","type":"string","label":"Note colour: yellow, accent or accent2","default":"yellow"},
+  {"id":"side","type":"string","label":"Overlay side: left or right","default":"left"},
+  {"id":"underline","type":"string","label":"Underline the last word: yes or no","default":"yes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Hand"; src: url("assets/fonts/GochiHand-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #cfcac2; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground (look mode): a real painted plaster wall under a warm desk lamp */
+  #ground { position: absolute; inset: -6%; background: #d9d4cb url(assets/wall.jpg) center / calc(var(--u) * 1000); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 42% 38%, rgba(255,226,180,.20), transparent 70%), radial-gradient(120% 95% at 50% 45%, transparent 40%, rgba(30,22,12,.45)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #note { position: absolute; transform-origin: 50% 8%; }
+  #note-b { position: absolute; inset: 0; }
+  /* the cast shadow follows the paper's real outline (the curl throws it wider at the bottom): a contact shadow and a soft lamp shadow, down and right */
+  #nfx { position: absolute; inset: 0; --lift: 0; filter: drop-shadow(calc(var(--u) * (2 + var(--lift) * 10)) calc(var(--u) * (3 + var(--lift) * 14)) calc(var(--u) * (3 + var(--lift) * 6)) rgba(28,20,10,.30)) drop-shadow(calc(var(--u) * (9 + var(--lift) * 30)) calc(var(--u) * (16 + var(--lift) * 40)) calc(var(--u) * (18 + var(--lift) * 14)) rgba(28,20,10,.40)); }
+  .is-key #nfx { filter: drop-shadow(calc(var(--u) * 3) calc(var(--u) * 5) 0 #2a2218); }
+  #sheet { position: absolute; inset: 0; perspective: calc(var(--u) * 1400); transform-style: preserve-3d; }
+  /* the note: a real paper scan, multiplied by the note colour (the paper's own tooth stays) */
+  .pp { position: absolute; left: 0; right: 0; background-color: var(--note-tone); background-image: url(assets/paper-white.jpg); background-size: calc(var(--u) * 520); background-blend-mode: multiply; }
+  #flat { top: 0; }
+  #flat::after { content: ""; position: absolute; inset: 0; background: radial-gradient(90% 80% at 25% 15%, rgba(255,255,240,.16), transparent 60%); pointer-events: none; }
+  #flat::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 17%; background: linear-gradient(rgba(120,90,10,.07), rgba(120,90,10,.02)); }
+  #curl, #curl2 { transform-origin: 50% 0; transform-style: preserve-3d; }
+  #curl { overflow: visible; }
+  /* the lifted edge turns away from the lamp above: it darkens a little toward the rim, no crease line */
+  #curl::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: var(--c1h); background: linear-gradient(rgba(70,50,0,0), rgba(70,50,0,.05)); }
+  #curl2::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(70,50,0,.05), rgba(70,50,0,.13)); }
+  #ink { position: absolute; font-family: "MV Hand", cursive; color: #1d1b24; line-height: 1.02; filter: url(#bleed); }
+  #ul { position: absolute; overflow: visible; filter: url(#bleed); }
+  #ul path { fill: none; stroke: #1d1b24; stroke-linecap: round; stroke-linejoin: round; }
+  .tape { position: absolute; opacity: .92; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(20,14,8,.25)); }
+  .is-key .tape { opacity: 1; filter: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.4"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="note" style="visibility:hidden"><div class="boil" id="note-b">
+      <div id="nfx"><div id="sheet">
+        <div class="pp" id="flat"><div id="ink"></div><svg id="ul" style="visibility:hidden"><path id="ulp"/></svg></div>
+        <div class="pp" id="curl"><div class="pp" id="curl2"></div></div>
+      </div></div>
+      <img class="tape" id="tp" src="assets/tape-a.png" alt="" style="visibility:hidden" />
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await document.fonts.load('80px "MV Hand"');
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const tones = { yellow: "#FBE27A", accent: v.accent, accent2: v.accent2 };
+  document.getElementById("root").style.setProperty("--note-tone", tones[v.tone] || tones.yellow);
+
+  // ---- size and place: an overlay sits in a side zone of the upper frame; B-roll centres a big note on the wall
+  const right = v.side === "right";
+  let S, cx, cy;
+  if (!MV.alpha) { S = MV.portrait ? 780 * u : 700 * u; cx = W / 2; cy = MV.portrait ? safe.top + (H - safe.top - 330 * (W / 1080)) * 0.46 : H * 0.5; }
+  else if (MV.portrait) { S = 440 * u; cx = right ? W - safe.right - S / 2 - 16 * u : safe.left + S / 2 + 16 * u; cy = safe.top + S / 2 + 30 * u; }
+  else if (W > H) { S = 470 * u; cx = right ? W - safe.right - S / 2 - 30 * u : safe.left + S / 2 + 40 * u; cy = safe.top + S / 2 + 30 * u; }
+  else { S = 420 * u; cx = right ? W - safe.right - S / 2 - 20 * u : safe.left + S / 2 + 20 * u; cy = safe.top + S / 2 + 20 * u; }
+  const note = document.getElementById("note");
+  note.style.width = S + "px"; note.style.height = S + "px"; note.style.left = (cx - S / 2) + "px"; note.style.top = (cy - S / 2) + "px";
+  // the paper bends in two facets: a gentle lift, then the rim curling toward the lens
+  const FL = Math.round(S * 0.72), C1 = Math.round(S * 0.15), C2 = S - FL - C1;
+  const flat = document.getElementById("flat"), curl = document.getElementById("curl"), curl2 = document.getElementById("curl2");
+  flat.style.height = (FL + 1) + "px"; curl.style.top = FL + "px"; curl.style.height = (C1 + 1) + "px"; curl.style.setProperty("--c1h", (C1 + 1) + "px");
+  curl.style.backgroundPosition = `0 ${-FL}px`; curl2.style.top = C1 + "px"; curl2.style.height = C2 + "px"; curl2.style.backgroundPosition = `0 ${-(FL + C1)}px`;
+  gsap.set(curl, { rotateX: 9 }); gsap.set(curl2, { rotateX: 17 });
+
+  // ---- the handwriting: fitted to the flat part, up to 4 lines
+  const ink = document.getElementById("ink"), pad = S * 0.1;
+  ink.style.left = pad + "px"; ink.style.top = (S * 0.16) + "px"; ink.style.width = (S - pad * 2) + "px";
+  ink.textContent = (v.note || "").trim();
+  let fs = S * 0.235; ink.style.fontSize = fs + "px";
+  const maxH = FL - S * 0.16 - S * 0.06;
+  const words = MV.words(ink);
+  while ((ink.getBoundingClientRect().height > maxH || words.some((w) => w.getBoundingClientRect().width > S - pad * 2)) && fs > 20 * u) { fs -= 2; ink.style.fontSize = fs + "px"; }
+  // a slight downhill slope, the way a hand writes on a wall
+  ink.style.transform = "rotate(-2.2deg)"; ink.style.transformOrigin = "0 0";
+  words.forEach((w) => { w.style.clipPath = "inset(-30% 108% -30% -8%)"; });
+
+  // ---- underline under the last word, drawn in one wobbly stroke
+  const ul = document.getElementById("ul"), ulp = document.getElementById("ulp");
+  const doUL = (v.underline || "yes") !== "no" && words.length;
+  if (doUL) {
+    const lw = words[words.length - 1], fb = flat.getBoundingClientRect(), b = lw.getBoundingClientRect();
+    const x0 = b.left - fb.left - fs * 0.06, x1 = b.right - fb.left + fs * 0.08, y = b.bottom - fb.top - fs * 0.06;
+    ul.style.left = "0px"; ul.style.top = "0px"; ul.setAttribute("width", S); ul.setAttribute("height", FL);
+    const r = MV.rand(23), j = () => (r() - 0.5) * fs * 0.05;
+    ulp.setAttribute("d", `M ${x0} ${y + j()} C ${x0 + (x1 - x0) * 0.35} ${y + fs * 0.05 + j()} ${x0 + (x1 - x0) * 0.7} ${y - fs * 0.04 + j()} ${x1} ${y - fs * 0.02} L ${x1 - (x1 - x0) * 0.86} ${y + fs * 0.16 + j()}`);
+    ulp.setAttribute("stroke-width", Math.max(3, fs * 0.075));
+  }
+
+  // tape across the glued top edge, half on the note, half on the wall
+  const tp = document.getElementById("tp"), tw = S * 0.48;
+  tp.style.width = tw + "px"; tp.style.left = (S / 2 - tw / 2 + S * 0.03) + "px"; tp.style.top = (-tw * 0.12) + "px"; tp.style.transform = "rotate(-5deg)";
+
+  // ---- timeline
+  // 0.08 the note slaps on (on twos), 0.34 the tape, 0.5 the words write on, then the underline; a slow camera push (B-roll)
+  tl.set(note, { visibility: "visible" }, 0.08);
+  tl.fromTo(note, { scale: 1.32, rotation: -15, opacity: 0, y: -40 * u }, { scale: 1, rotation: -3, opacity: 1, y: 0, duration: 0.25, ease: twos("back.out(1.7)", 0.25), immediateRender: true }, 0.08);
+  // the shadow: lifted high off the wall during the throw, pressed flat as it lands
+  tl.fromTo("#nfx", { "--lift": 1 }, { "--lift": 0, duration: 0.25, ease: twos("power2.out", 0.25), immediateRender: true }, 0.08);
+  // the curl springs back after the slap
+  tl.fromTo(curl, { rotateX: 2 }, { rotateX: 9, duration: 0.42, ease: twos("back.out(2.2)", 0.42), immediateRender: true }, 0.25);
+  tl.fromTo(curl2, { rotateX: 3 }, { rotateX: 17, duration: 0.42, ease: twos("back.out(2.2)", 0.42), immediateRender: true }, 0.25);
+  tl.set(tp, { visibility: "visible" }, 0.34);
+  tl.fromTo(tp, { scale: 1.4, rotation: -14, opacity: 0 }, { scale: 1, rotation: -5, opacity: 1, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, 0.34);
+  // the writing: the pen uncovers about two letters per drawing (12 fps), a short lift between words
+  let t = 0.5;
+  words.forEach((w) => { const n = Math.max(1, Math.ceil([...w.textContent].length / 2));
+    tl.fromTo(w, { clipPath: "inset(-30% 108% -30% -8%)" }, { clipPath: "inset(-30% -8% -30% -8%)", duration: n * STEP, ease: `steps(${n})`, immediateRender: true }, t); t += n * STEP + STEP; });
+  const endW = t;
+  if (doUL) { const L = ulp.getTotalLength(); tl.set(ul, { visibility: "visible" }, endW + 0.05); tl.fromTo(ulp, { strokeDasharray: L, strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.25, ease: twos("power2.inOut", 0.25), immediateRender: true }, endW + 0.05); }
+  // boil: paper breathes, ink crawls (on twos)
+  const rb = MV.rand(9); for (let k = 0, tt = 0.34; tt < D; tt += STEP * 2, k++) tl.set("#note-b", { "--bx": `${((rb() - .5) * 2.2 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2.2 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.5).toFixed(2)}deg` }, tt);
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, tt);
+  if (!MV.alpha) tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  // exit (overlay): peeled off and thrown up out of frame, accelerating; B-roll holds
+  if (MV.alpha) {
+    const X = D - 0.42;
+    tl.to(curl, { rotateX: 30, duration: 0.17, ease: twos("power2.in", 0.17) }, X); tl.to(curl2, { rotateX: 40, duration: 0.17, ease: twos("power2.in", 0.17) }, X);
+    tl.to(note, { y: -(cy + S), rotation: "+=12", scale: 0.8, duration: 0.33, ease: twos("power2.in", 0.33) }, X + 0.04);
+    tl.set(note, { opacity: 0 }, D - 0.04);
+  }
+  MV.done();
+})();
+</script>
+</body>
+</html>

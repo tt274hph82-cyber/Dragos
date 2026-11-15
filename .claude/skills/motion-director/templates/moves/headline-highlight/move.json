@@ -1,0 +1,5 @@
+{ "id": "headline-highlight", "name": "Headline clipping", "oneLiner": "a real newsprint clipping drops onto a walnut desk, taped down, with the headline set in a heavy serif; a brand-colour highlighter swipes across the key words while the camera slowly pushes in",
+  "category": "paper", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["headline", "news", "press", "quote", "highlight", "proof", "paper", "editorial", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.6, "alpha": true,
+  "say": "when the speaker cites a headline, a claim or a quote ('they wrote that...', 'the headline was'): the highlighter lands on the words they stress" }

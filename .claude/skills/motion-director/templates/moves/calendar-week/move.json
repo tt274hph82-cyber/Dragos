@@ -1,0 +1,5 @@
+{ "id": "calendar-week", "name": "Calendar week", "oneLiner": "a glass week view turns in slow 3D, event blocks drop into their days and snap on springs faster and faster until the week is full, then one big accent block is held above Wednesday, slams into its slot, nudges its neighbours and catches a sheen",
+  "category": "productivity", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["calendar", "week", "schedule", "busy", "time", "planning", "routine", "productivity", "block", "deep work", "time back", "meetings", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker describes their week or a routine ('my week looks like this', 'I block three hours for it'): the week fills under the setup, the big block slams in on the thing they protect" }

@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"lead","type":"string","label":"Top node name (empty: the brand name)","default":""},
+  {"id":"leadRole","type":"string","label":"Top node role","default":"Founder"},
+  {"id":"teams","type":"string","label":"Team nodes, comma separated (2 or 3)","default":"Content,Product,Growth"},
+  {"id":"under","type":"number","label":"Which team the new hire joins, 1-based","default":1},
+  {"id":"hire","type":"string","label":"The new hire card title","default":"Video editor"},
+  {"id":"hireTag","type":"string","label":"Green chip on the new hire","default":"New hire"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 30%; top: 0%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #tree { position: absolute; transform-style: preserve-3d; }
+  #wires { position: absolute; left: 0; top: 0; overflow: visible; }
+  #wires path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  #wires .w { stroke: rgba(255,255,255,.28); }
+  #wires .wg { stroke: var(--ok); }
+  #wires .wd { stroke: rgba(255,255,255,.16); stroke-dasharray: 2 14; }
+  .is-alpha #wires .w { stroke: rgba(255,255,255,.55); }
+
+  .nd { position: absolute; box-sizing: border-box; }
+  .gs { position: absolute; inset: 0; border-radius: inherit; overflow: hidden;
+    background: linear-gradient(158deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 60%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11), 0 calc(var(--s) * 30) calc(var(--s) * 60) calc(var(--s) * -22) rgba(0,0,0,.7); }
+  .is-alpha .gs { background: linear-gradient(158deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .gs { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11); }
+  .gs::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.28) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .ct { position: absolute; inset: 0; }
+  .nm { position: absolute; white-space: nowrap; font-weight: 800; color: var(--ink); line-height: 1.1; letter-spacing: -0.01em; }
+  .sb { position: absolute; white-space: nowrap; font-weight: 600; color: color-mix(in srgb, var(--ink) 60%, transparent); line-height: 1.1; }
+  .is-key .sb { color: color-mix(in srgb, var(--ink) 60%, var(--surface)); }
+  .ph { position: absolute; border-radius: 50%; overflow: hidden; background: color-mix(in srgb, var(--accent) 30%, var(--surface));
+    box-shadow: 0 0 0 calc(var(--s) * 4) rgba(255,255,255,.14), 0 calc(var(--s) * 12) calc(var(--s) * 24) calc(var(--s) * -10) rgba(0,0,0,.6); }
+  .ph img { width: 100%; height: 100%; object-fit: cover; }
+  .ph.mk { background: #fff; display: grid; place-items: center; }
+  .ph.mk img { width: 74%; height: 74%; object-fit: contain; }
+  .gt { position: absolute; border-radius: 50%; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,.05)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1) rgba(255,255,255,.12); }
+  .gt svg { width: 50%; height: 50%; }
+  .dots { position: absolute; display: flex; }
+  .dots i { flex: none; border-radius: 50%; box-sizing: border-box; border: calc(var(--s) * 3) solid color-mix(in srgb, var(--surface) 80%, #000); }
+  .ghost .gs { background: rgba(255,255,255,.04); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .is-key .ghost .gs { background: color-mix(in srgb, var(--surface) 70%, #000); }
+  .ghost b { position: absolute; display: block; border-radius: 99px; background: rgba(255,255,255,.1); }
+  #slot { position: absolute; box-sizing: border-box; border-radius: calc(var(--s) * 36); border: calc(var(--s) * 3) dashed color-mix(in srgb, var(--accent) 70%, #fff); background: color-mix(in srgb, var(--accent) 10%, transparent); opacity: 0; }
+  #hsh { position: absolute; border-radius: calc(var(--s) * 36); background: rgba(0,0,0,.6); filter: blur(calc(var(--s) * 22)); opacity: 0; }
+  .is-key #hsh { display: none; }
+  #hire .gs { background: linear-gradient(158deg, color-mix(in srgb, var(--surface) 62%, rgba(255,255,255,.4)), color-mix(in srgb, var(--surface) 88%, transparent)); }
+  .is-key #hire .gs { background: var(--surface); }
+  #hire .lit { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 0 0 calc(var(--s) * 3.5) var(--ok), 0 0 calc(var(--s) * 80) calc(var(--s) * 4) rgba(43,214,123,.4);
+    background: radial-gradient(90% 70% at 50% 0%, rgba(43,214,123,.22), transparent 70%); }
+  .is-key #hire .lit { box-shadow: inset 0 0 0 calc(var(--s) * 3.5) var(--ok); }
+  #hav { position: absolute; border-radius: 50%; display: grid; place-items: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 55%, #fff), var(--accent) 60%, color-mix(in srgb, var(--accent) 70%, #000));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--s) * 14) calc(var(--s) * 26) calc(var(--s) * -10) rgba(0,0,0,.6); }
+  #hav svg { width: 54%; height: 54%; }
+  #tag { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 8); padding: 0 calc(var(--s) * 20) 0 calc(var(--s) * 12); border-radius: 99px; white-space: nowrap; opacity: 0;
+    font-weight: 800; color: #fff; text-shadow: 0 1px 2px rgba(0,60,25,.35);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 72%, #fff), var(--ok) 55%, #1BA85B);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), 0 calc(var(--s) * 14) calc(var(--s) * 26) calc(var(--s) * -8) rgba(20,140,70,.6); }
+  .is-key #tag { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55); }
+  #tag svg { flex: none; }
+  #ring { position: absolute; box-sizing: border-box; border-radius: calc(var(--s) * 36); border: calc(var(--s) * 4) solid var(--ok); opacity: 0; }
+  .is-key #ring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="vig"></div>
+  <div id="stage"><div id="rig"><div id="tree">
+    <svg id="wires"></svg>
+    <div id="nodes"></div>
+    <div id="slot"></div>
+    <div id="hsh"></div>
+    <div id="hire" class="nd"><div class="gs"></div><div class="ct"><div id="hav"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8.6" r="3.9"/><path d="M4.6 20.2c.9-3.9 3.9-6 7.4-6s6.5 2.1 7.4 6"/></svg></div><div class="nm" id="hnm"></div>
+      <div id="tag"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.8" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="tgt"></span></div></div><i class="lit"></i></div>
+    <i id="ring"></i>
+  </div></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q), NS = "http://www.w3.org/2000/svg";
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const teams = String(v.teams || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 3);
+  while (teams.length < 2) teams.push(["Content", "Growth"][teams.length]);
+  const N = teams.length, HI = Math.max(0, Math.min(N - 1, Math.round(+v.under || 1) - 1));
+
+  // ---- design grid (units), one scale s
+  const DW = 900, TOPW = 560, TOPH = 156, MIDW = N === 3 ? 276 : 380, MIDH = 236, LEAFW = MIDW, LEAFH = 268;
+  const GAPX = (DW - N * MIDW) / (N - 1 || 1);
+  const yTop = 0, yBus = TOPH + 54, yMid = yBus + 54, yBus2 = yMid + MIDH + 46, yLeaf = yBus2 + 46, DH = yLeaf + LEAFH;
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 80 * u; cR = W - 80 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.24; cR = W * 0.76; zT = H * 0.08; zB = H * 0.92; }
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.05 : 1.2);
+  root.style.setProperty("--s", s + "px");
+  const tw = DW * s, th = DH * s;
+  const tL = cL + (cR - cL - tw) / 2, tT = A && P ? zT : zT + (zB - zT - th) / 2;
+  Object.assign($("#tree").style, { left: tL + "px", top: tT + "px", width: tw + "px", height: th + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const mk = (cls, html) => { const d = document.createElement("div"); d.className = cls; if (html) d.innerHTML = html; return d; };
+  const R = 36;
+
+  // ---- wires (drawn in design units)
+  const svg = $("#wires"); svg.setAttribute("viewBox", `0 0 ${DW} ${DH}`); svg.setAttribute("width", tw); svg.setAttribute("height", th);
+  const path = (d, cls, sw) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("class", cls); p.setAttribute("stroke-width", sw); svg.appendChild(p); return p; };
+  const midX = (i) => i * (MIDW + GAPX) + MIDW / 2, rr = 22;
+  const trunk = path(`M${DW / 2} ${TOPH} V${yBus}`, "w", 3);
+  const busL = path(`M${DW / 2} ${yBus} H${midX(0) + rr} Q${midX(0)} ${yBus} ${midX(0)} ${yBus + rr} V${yMid}`, "w", 3);
+  const busR = path(`M${DW / 2} ${yBus} H${midX(N - 1) - rr} Q${midX(N - 1)} ${yBus} ${midX(N - 1)} ${yBus + rr} V${yMid}`, "w", 3);
+  const drops = []; for (let i = 1; i < N - 1; i++) drops.push(path(`M${midX(i)} ${yBus} V${yMid}`, "w", 3));
+  const legs = teams.map((_, i) => path(`M${midX(i)} ${yMid + MIDH} V${yLeaf}`, i === HI ? "wd" : "w", i === HI ? 3 : 3));
+  const legG = path(`M${midX(HI)} ${yMid + MIDH} V${yLeaf}`, "wg", 4);
+  const dash = (p) => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; return L; };
+  [trunk, busL, busR, ...drops, legG].forEach(dash);
+  legs.forEach((p, i) => { if (i !== HI) dash(p); });
+
+  // ---- the lead node
+  const lead = mk("nd", `<div class="gs"></div><div class="ct"><div class="ph mk"></div><div class="nm"></div><div class="sb"></div></div>`);
+  box(lead, (DW - TOPW) / 2, yTop, TOPW, TOPH); lead.style.borderRadius = S(R); $("#nodes").appendChild(lead);
+  const lph = lead.querySelector(".ph"); box(lph, 30, 28, 100, 100); if (v.mark) lph.appendChild(MV.img(v.mark));
+  const lnm = lead.querySelector(".nm"), lsb = lead.querySelector(".sb");
+  Object.assign(lnm.style, { left: S(156), top: S(30), fontSize: S(46) }); lnm.textContent = v.lead || v.brandName || "";
+  Object.assign(lsb.style, { left: S(156), top: S(88), fontSize: S(36) }); lsb.textContent = v.leadRole || "";
+  MV.fitText(lnm, (TOPW - 156 - 30) * s, 18); MV.fitText(lsb, (TOPW - 156 - 30) * s, 16);
+
+  // ---- team nodes: glyph, name, a few member dots
+  const USED = new Set(), TONES = ["#F4B69C", "#A9C6EC", "#CDBCF2", "#9FD9DC", "#F4D58C", "#F0A9C4"];
+  const mids = teams.map((t, i) => {
+    const n = mk("nd", `<div class="gs"></div><div class="ct"><div class="gt">${GLYPH.svg(GLYPH.pick(t, "", i, USED))}</div><div class="nm"></div><div class="dots"></div></div>`);
+    box(n, i * (MIDW + GAPX), yMid, MIDW, MIDH); n.style.borderRadius = S(R); $("#nodes").appendChild(n);
+    box(n.querySelector(".gt"), (MIDW - 76) / 2, 26, 76, 76);
+    const nm = n.querySelector(".nm"); nm.textContent = t; Object.assign(nm.style, { fontSize: S(40) });
+    MV.fitText(nm, (MIDW - 36) * s, 16);
+    const nw = nm.getBoundingClientRect().width / s; Object.assign(nm.style, { left: S((MIDW - nw) / 2), top: S(118) });
+    const dots = n.querySelector(".dots"), k = 2 + ((i + 1) % 2), dd = 44, ov = 12;
+    for (let j = 0; j < k; j++) { const d = document.createElement("i"); Object.assign(d.style, { width: S(dd), height: S(dd), background: TONES[(i * 2 + j) % TONES.length], marginLeft: j ? S(-ov) : 0 }); dots.appendChild(d); }
+    const dw = k * dd - (k - 1) * ov; Object.assign(dots.style, { left: S((MIDW - dw) / 2), top: S(172) });
+    return n;
+  });
+
+  // ---- leaves: quiet skeleton cards under the other teams, an empty slot under the hire's team
+  const ghosts = teams.map((_, i) => { if (i === HI) return null;
+    const g = mk("nd ghost", `<div class="gs"></div><b></b><b></b><b></b>`); box(g, i * (MIDW + GAPX), yLeaf, LEAFW, LEAFH - 40); g.style.borderRadius = S(R); $("#nodes").appendChild(g);
+    const bs = g.querySelectorAll("b"); box(bs[0], (LEAFW - 84) / 2, 30, 84, 84); bs[0].style.borderRadius = "50%"; box(bs[1], LEAFW * 0.2, 140, LEAFW * 0.6, 22); box(bs[2], LEAFW * 0.3, 178, LEAFW * 0.4, 18);
+    return g; }).filter(Boolean);
+  const hx = HI * (MIDW + GAPX);
+  box($("#slot"), hx, yLeaf, LEAFW, LEAFH); box($("#hsh"), hx + 10, yLeaf + 30, LEAFW - 20, LEAFH - 20); box($("#ring"), hx, yLeaf, LEAFW, LEAFH);
+  const hire = $("#hire"); box(hire, hx, yLeaf, LEAFW, LEAFH); hire.style.borderRadius = S(R);
+  box($("#hav"), (LEAFW - 96) / 2, 24, 96, 96);
+  const hnm = $("#hnm"); hnm.textContent = v.hire || ""; hnm.style.fontSize = S(40); MV.fitText(hnm, (LEAFW - 32) * s, 16);
+  { const w = hnm.getBoundingClientRect().width / s; Object.assign(hnm.style, { left: S((LEAFW - w) / 2), top: S(136) }); }
+  const tag = $("#tag"); $("#tgt").textContent = v.hireTag || ""; Object.assign(tag.style, { height: S(56), fontSize: S(34) });
+  tag.querySelector("svg").style.width = tag.querySelector("svg").style.height = S(30);
+  MV.fitText($("#tgt"), (LEAFW - 90) * s, 14);
+  { const w = tag.getBoundingClientRect().width / s; Object.assign(tag.style, { left: S((LEAFW - w) / 2), top: S(192) }); }
+  if (!v.hireTag) tag.style.display = "none";
+
+  // ---- timing: a slow top-down camera, the tree builds, the hire drops in and lights
+  const cx = tL + tw / 2, cy = tT + th / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationX: 16, rotationY: -9, y: 70 * u, scale: 1.04 }, { rotationX: 5, rotationY: 7, y: -10 * u, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.06, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  const pop = (el, t, from) => { tl.fromTo(el, Object.assign({ y: -40 * s, z: -260, rotationX: 30, scale: 0.9 }, from || {}), { y: 0, z: 0, rotationX: 0, scale: 1, duration: 0.8, ease: "expo.out" }, t);
+    tl.fromTo(el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, t); };
+  pop(lead, 0.05, { y: -70 * s, z: -400 });
+  tl.fromTo(lph, { scale: 0.4, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, 0.25);
+  const L1 = 0.5;
+  tl.to(trunk, { strokeDashoffset: 0, duration: 0.28, ease: "power2.in" }, L1);
+  tl.to([busL, busR], { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, L1 + 0.26);
+  if (drops.length) tl.to(drops, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, L1 + 0.3);
+  // team nodes land as their wires arrive (outer pair when the bus reaches them)
+  mids.forEach((m, i) => { const t = L1 + 0.42 + (i === 0 || i === N - 1 ? 0.14 : 0); pop(m, t, { y: -30 * s });
+    tl.fromTo(m.querySelector(".gt"), { scale: 0.4, rotation: -24 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, t + 0.15);
+    tl.fromTo(m.querySelectorAll(".dots i"), { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(2.6)", stagger: 0.05 }, t + 0.3); });
+  const L2 = L1 + 1.0;
+  legs.forEach((p, i) => { if (i !== HI) tl.to(p, { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, L2); else tl.fromTo(p, { opacity: 0 }, { opacity: 1, duration: 0.3 }, L2); });
+  ghosts.forEach((g, k) => pop(g, L2 + 0.2 + k * 0.06, { y: -20 * s }));
+  tl.fromTo("#slot", { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.45, ease: "expo.out" }, L2 + 0.2);
+  tl.to("#slot", { scale: 1.03, duration: 0.25, yoyo: true, repeat: 1, ease: "sine.inOut" }, L2 + 0.6);
+  tl.fromTo([...mids, lead, ...ghosts].map((n) => n.querySelector(".gs")), { "--sheen": "-50%" }, { "--sheen": "150%", duration: 1.0, ease: "power2.inOut", stagger: 0.03 }, L1 + 0.6);
+
+  // the new hire: held above the slot, lifted and tilted, then drops in and snaps
+  const HT = L2 + 0.45, SNAP = HT + 0.95;
+  const LIFT = { y: -46 * s, x: 24 * s, rotation: 4, scale: 1.16 };
+  tl.fromTo(hire, { ...LIFT, y: LIFT.y - 30 * s, scale: 1.45, opacity: 0 }, { ...LIFT, opacity: 1, duration: 0.5, ease: "expo.out" }, HT);
+  tl.fromTo("#hsh", { y: 60 * s, x: 40 * s, opacity: 0 }, { y: 70 * s, x: 46 * s, opacity: 0.75, duration: 0.5, ease: "expo.out" }, HT);
+  tl.to(hire, { y: LIFT.y + 8 * s, rotation: 3, duration: 0.45, ease: "sine.inOut" }, HT + 0.5);
+  tl.to(hire, { y: 0, x: 0, rotation: 0, scale: 1, duration: 0.62, ease: "back.out(1.9)" }, SNAP - 0.12);
+  tl.to("#hsh", { y: 8 * s, x: 0, opacity: 0.5, duration: 0.5, ease: "expo.out" }, SNAP - 0.12);
+  tl.to("#slot", { opacity: 0, scale: 1.06, duration: 0.3, ease: "power2.out" }, SNAP);
+  tl.to(legs[HI], { opacity: 0, duration: 0.2 }, SNAP);
+  tl.to(legG, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, SNAP);
+  tl.to("#tree", { y: 6 * s, duration: 0.07, ease: "power2.out" }, SNAP + 0.02); tl.to("#tree", { y: 0, duration: 0.45, ease: "back.out(2.5)" }, SNAP + 0.09);
+  ghosts.forEach((g, k) => tl.fromTo(g, { y: 0 }, { y: 7 * s, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, SNAP + 0.03 + k * 0.02));
+  // it lights: green rim, the chip stamps on, a ring runs out, its team node answers
+  const LT = SNAP + 0.3;
+  tl.to("#hire .lit", { opacity: 1, duration: 0.3, ease: "power2.out" }, LT);
+  tl.fromTo("#hav", { scale: 1 }, { scale: 1.12, duration: 0.1, ease: "power2.out", immediateRender: false }, LT); tl.to("#hav", { scale: 1, duration: 0.5, ease: "back.out(3)" }, LT + 0.1);
+  tl.fromTo(tag, { opacity: 0, scale: 2.1, rotation: 6 }, { opacity: 1, scale: 1, rotation: -3, duration: 0.24, ease: "power4.in" }, LT + 0.12);
+  tl.to(tag, { scale: 1.07, duration: 0.06, ease: "power1.out" }, LT + 0.36); tl.to(tag, { scale: 1, duration: 0.5, ease: "back.out(3)" }, LT + 0.42);
+  tl.fromTo("#ring", { scale: 1, opacity: 0.85 }, { scale: 1.18, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, LT + 0.36);
+  tl.fromTo(mids[HI], { scale: 1 }, { scale: 1.05, duration: 0.1, ease: "power2.out", immediateRender: false }, LT + 0.05); tl.to(mids[HI], { scale: 1, duration: 0.5, ease: "back.out(3)" }, LT + 0.15);
+  tl.fromTo("#hire .gs", { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.9, ease: "power2.inOut" }, LT + 0.2);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Newsletter name (empty: the brand name)","default":""},
+  {"id":"desc","type":"string","label":"One line on what it is (empty: the brand tagline)","default":""},
+  {"id":"cta","type":"string","label":"Button","default":"Subscribe"},
+  {"id":"done","type":"string","label":"Button after the press","default":"Subscribed"},
+  {"id":"email","type":"string","label":"Address typed in the field","default":"you@email.com"},
+  {"id":"readers","type":"number","label":"Reader count (0 hides it)","default":12400},
+  {"id":"readersLabel","type":"string","label":"Reader count label","default":"readers"},
+  {"id":"image","type":"string","label":"Issue cover for the B-roll version (path; empty: the first brand screen; none: no cover)","default":""},
+  {"id":"coverTag","type":"string","label":"Tag on the cover","default":"Latest issue"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ok: #2BD67B; --okg: rgba(43,214,123,.5); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 15% 100%, color-mix(in srgb, var(--accent2) 24%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1800); }
+  #card { position: relative; box-sizing: border-box; padding: calc(var(--u) * 30) calc(var(--u) * 34) calc(var(--u) * 34); border-radius: calc(var(--u) * 44); transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 90%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 82%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.24) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  #cover { position: relative; border-radius: calc(var(--u) * 26); overflow: hidden; margin-bottom: calc(var(--u) * 28); background: #111;
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  #cover img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 12%; }
+  #cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.45)); }
+  #ctag { position: absolute; left: calc(var(--u) * 20); top: calc(var(--u) * 20); z-index: 2; display: flex; align-items: center; gap: calc(var(--u) * 10);
+    padding: calc(var(--u) * 9) calc(var(--u) * 20) calc(var(--u) * 9) calc(var(--u) * 16); border-radius: 999px; background: rgba(12,12,14,.78);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.2); color: #fff; font-size: calc(var(--u) * 26); font-weight: 800; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  #ctag b { width: calc(var(--u) * 12); height: calc(var(--u) * 12); border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 10) var(--accent); }
+
+  .hd { display: flex; align-items: center; gap: calc(var(--u) * 24); }
+  #logo { flex: none; width: calc(var(--u) * 100); height: calc(var(--u) * 100); border-radius: calc(var(--u) * 26); display: grid; place-items: center; overflow: hidden;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 40%, var(--surface)), var(--surface)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.3), 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  #logo img { width: 70%; height: 70%; object-fit: contain; }
+  #logo span { font-family: var(--font-display); font-size: calc(var(--u) * 52); color: var(--ink); }
+  .who { flex: 1; min-width: 0; }
+  #ttl { font-family: var(--font-display); font-size: calc(var(--u) * 50); line-height: 1.05; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
+  #rd { margin-top: calc(var(--u) * 8); display: flex; align-items: center; gap: calc(var(--u) * 10); font-size: calc(var(--u) * 30); font-weight: 650; color: color-mix(in srgb, var(--ink) 58%, transparent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #rd svg { width: calc(var(--u) * 32); height: calc(var(--u) * 32); flex: none; }
+  #rn { display: inline-block; }
+  #desc { margin-top: calc(var(--u) * 22); font-size: calc(var(--u) * 38); line-height: 1.22; font-weight: 550; color: color-mix(in srgb, var(--ink) 86%, transparent); text-wrap: balance; }
+  #form { position: relative; margin-top: calc(var(--u) * 26); display: flex; gap: calc(var(--u) * 14); height: calc(var(--u) * 104); }
+  #field { flex: 1; min-width: 0; display: flex; align-items: center; padding: 0 calc(var(--u) * 26); border-radius: calc(var(--u) * 24); background: rgba(0,0,0,.42);
+    box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 6) rgba(0,0,0,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); font-size: calc(var(--u) * 36); color: var(--ink); white-space: nowrap; overflow: hidden; }
+  .is-key #field { background: color-mix(in srgb, var(--surface) 60%, #000); }
+  #ph { color: color-mix(in srgb, var(--ink) 38%, transparent); }
+  #caret { display: inline-block; width: calc(var(--u) * 3); height: calc(var(--u) * 42); margin-left: calc(var(--u) * 3); background: var(--ink); vertical-align: middle; }
+  #btn { position: relative; flex: none; display: grid; place-items: center; padding: 0 calc(var(--u) * 34); border-radius: calc(var(--u) * 24); overflow: hidden;
+    background: linear-gradient(180deg, var(--al), var(--accent) 45%); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 80%, transparent);
+    color: #fff; font-family: var(--font-display); font-size: calc(var(--u) * 34); letter-spacing: .02em; white-space: nowrap; }
+  #btn .a, #btn .b { grid-area: 1 / 1; display: flex; align-items: center; gap: calc(var(--u) * 12); }
+  #btn .b { color: #052A16; }
+  #btn .b svg { width: calc(var(--u) * 40); height: calc(var(--u) * 40); flex: none; }
+  #okbg { position: absolute; inset: 0; background: linear-gradient(180deg, #5BEA9E, var(--ok) 50%); opacity: 0; }
+  #btn .a, #btn .b { position: relative; z-index: 1; }
+  #wave { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 60); height: calc(var(--u) * 60); margin: calc(var(--u) * -30); border-radius: 50%; background: rgba(255,255,255,.55); opacity: 0; }
+  #ring { position: absolute; border-radius: calc(var(--u) * 30); border: calc(var(--u) * 5) solid var(--ok); opacity: 0; pointer-events: none; box-sizing: border-box; }
+  .pt { position: absolute; width: calc(var(--u) * 14); height: calc(var(--u) * 14); margin: calc(var(--u) * -7); border-radius: 50%; opacity: 0; box-shadow: 0 0 calc(var(--u) * 10) var(--okg); }
+  /* on a green key the success green would key out: the done state turns white with a deep green check */
+  .is-key #okbg { background: #fff; }
+  .is-key #btn .b { color: #0B6B37; }
+  .is-key #btn .b path { stroke: #0B6B37; }
+  .is-key #ring, .is-key #pts { display: none; }
+  #cur { position: absolute; left: 0; top: 0; width: calc(var(--u) * 66); height: calc(var(--u) * 66); z-index: 20; opacity: 0; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 12) rgba(0,0,0,.55)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="cover"><span id="ctag"><b></b><span></span></span></div>
+    <div class="hd">
+      <div id="logo"></div>
+      <div class="who"><div id="ttl"></div>
+        <div id="rd"><svg viewBox="0 0 24 24"><path d="M3.5 6.5h17v11h-17z M3.5 6.8l8.5 6.4 8.5-6.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span id="rn"></span><span id="rl"></span></div></div>
+    </div>
+    <div id="desc"></div>
+    <div id="form">
+      <div id="field"><span id="ph"></span><span id="typed"></span><span id="caret"></span></div>
+      <div id="btn"><div id="okbg"></div><div id="wave"></div><span class="a"></span>
+        <span class="b"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.6 4.6L19 7.6" fill="none" stroke="#052A16" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></span></div>
+      <div id="ring"></div><div id="pts"></div>
+    </div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div></div>
+  <svg id="cur" viewBox="0 0 24 24"><path d="M5 2.8l13.6 12.1-6.1.4 3.6 6.4-2.6 1.4-3.6-6.5L5.6 20.5z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = P ? MV.u * 1.04 : MV.u * (MV.alpha ? 1 : 1.2);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const brand = v.brandName || "";
+  $("#ttl").textContent = v.title || brand;
+  $("#desc").textContent = v.desc || v.tagline || "";
+  if (!$("#desc").textContent) $("#desc").style.display = "none";
+  $("#btn .a").textContent = v.cta || "Subscribe";
+  $("#btn .b span").textContent = v.done || "Subscribed";
+  const email = String(v.email || "you@email.com");
+  const R = Math.round(+v.readers || 0), fmt = (x) => Math.round(x).toLocaleString("en-US");
+  if (R > 0) { $("#rn").textContent = fmt(R); $("#rl").textContent = " " + (v.readersLabel || ""); } else $("#rd").style.display = "none";
+  // the logo tile: the brand mark, else its initial
+  if (v.mark) $("#logo").appendChild(MV.img(v.mark)); else { const s = document.createElement("span"); s.textContent = (brand[0] || "N").toUpperCase(); $("#logo").appendChild(s); }
+  // the cover: only on the full-frame version (an overlay stays compact)
+  const img = String(v.image || "").trim(), coverSrc = img === "none" ? "" : img || (v.screens || [])[0] || "";
+  const showCover = !MV.alpha && !!coverSrc;
+  if (showCover) { $("#cover").prepend(MV.img(coverSrc)); $("#ctag span").textContent = v.coverTag || ""; if (!v.coverTag) $("#ctag").style.display = "none"; }
+  else $("#cover").style.display = "none";
+
+  // size
+  const CW = P ? W - safe.left - safe.right : Math.min((MV.alpha ? 820 : 900) * u, W - safe.left - safe.right);
+  $("#card").style.width = CW + "px";
+  const inner = CW - 68 * u;
+  if (showCover) $("#cover").style.height = Math.round(inner * (P ? 0.5 : 0.42)) + "px";
+  MV.fitText("#ttl", inner - 124 * u, 20);
+  const dsc = $("#desc"); let fs = 38 * u; while (dsc.getBoundingClientRect().height > fs * 1.22 * 2 + 2 && fs > 28 * u) { fs -= 2; dsc.style.fontSize = fs + "px"; }
+  // the button holds the wider of its two labels so it never jumps
+  const btn = $("#btn"), la = $("#btn .a"), lb = $("#btn .b");
+  MV.fitText(la, inner * 0.42, 16); $("#btn .b span").style.fontSize = la.style.fontSize || ""; MV.fitText($("#btn .b span"), inner * 0.42 - 52 * u, 16);
+  btn.style.width = Math.max(la.getBoundingClientRect().width, lb.getBoundingClientRect().width) + 68 * u + "px";
+  $("#ph").textContent = email;
+  MV.fitText("#field", inner - btn.getBoundingClientRect().width - 14 * u - 60 * u, 16);
+  $("#ph").textContent = "";
+  const CH = $("#card").getBoundingClientRect().height;
+
+  // place
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) {
+    if (P) { x = safe.left; y = safe.top + 16 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = H * 0.13; }
+    else { y = safe.top + 10; }
+  } else if (P) y = safe.top + (H - safe.top - safe.bottom - CH) / 2;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  // the success ring hugs the button; seeded green particles
+  const fr = $("#form").getBoundingClientRect(), br = btn.getBoundingClientRect(), cr = $("#card").getBoundingClientRect();
+  const bx = br.left - fr.left, bw = br.width, bh = br.height;
+  Object.assign($("#ring").style, { left: bx - 8 * u + "px", top: -8 * u + "px", width: bw + 16 * u + "px", height: bh + 16 * u + "px" });
+  const pts = $("#pts"), PS = [], rnd = MV.rand(17), cols = ["#2BD67B", "#7CF0B0", "#ffffff", "#2BD67B"];
+  for (let i = 0; i < 14; i++) { const d = document.createElement("i"); d.className = "pt"; d.style.background = cols[i % 4];
+    d.style.left = bx + bw / 2 + "px"; d.style.top = bh / 2 + "px"; pts.appendChild(d);
+    const a = (i / 14) * Math.PI * 2 + rnd() * 0.3, r = (bw * 0.55 + rnd() * 70 * u); PS.push([d, Math.cos(a) * r, Math.sin(a) * r * 0.7, 0.6 + rnd() * 0.8]); }
+
+  // ---- motion
+  tl.fromTo("#card", { z: -700 * u, rotationX: 32, rotationY: -26, rotationZ: -6, scale: 0.74 },
+    { z: 0, rotationX: 8, rotationY: -10, rotationZ: -1.5, scale: 1, duration: 0.95, ease: "back.out(1.3)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.to("#card", { rotationX: 3, rotationY: 8, rotationZ: 0.5, duration: D - 1.45, ease: "sine.inOut" }, 1.0);
+  if (showCover) {
+    tl.fromTo("#cover img", { scale: 1.25 }, { scale: 1.04, duration: D, ease: "power2.out" }, 0);
+    tl.fromTo("#ctag", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.55);
+  }
+  tl.fromTo("#logo", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, 0.3);
+  tl.fromTo(".who", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.38);
+  const dw = MV.words("#desc");
+  tl.fromTo(dw, { opacity: 0, y: 18 * u, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, stagger: Math.min(0.03, 0.45 / dw.length), ease: "expo.out" }, 0.48);
+  tl.fromTo("#form", { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.66);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.9);
+  // the address types itself, the caret blinking on twos
+  const ty = { n: 0 }, T0 = 0.95, T1 = 1.75, typed = $("#typed");
+  tl.to(ty, { n: email.length, duration: T1 - T0, ease: "none", onUpdate: () => { typed.textContent = email.slice(0, Math.round(ty.n)); } }, T0);
+  for (let t = T1 + 0.1; t + 0.25 < 2.29; t += 0.5) { tl.set("#caret", { opacity: 0 }, t); tl.set("#caret", { opacity: 1 }, t + 0.25); }
+  // the cursor comes in and presses
+  const CK = 2.15;
+  const tx = br.left + bw * 0.55, tyy = br.top + bh * 0.55;
+  tl.fromTo("#cur", { x: tx + 260 * u, y: tyy + 300 * u, opacity: 0 }, { x: tx, y: tyy, opacity: 1, duration: 0.7, ease: "power3.out" }, CK - 0.72);
+  tl.to("#cur", { scale: 0.82, duration: 0.08, ease: "power2.out", transformOrigin: "20% 10%" }, CK);
+  tl.to("#cur", { scale: 1, duration: 0.25, ease: "back.out(3)" }, CK + 0.08);
+  tl.to("#cur", { x: tx + 120 * u, y: tyy + 160 * u, opacity: 0, duration: 0.4, ease: "power2.in" }, CK + 0.35);
+  // the press: the button sinks, a wave, then it turns into the green check
+  tl.to(btn, { scale: 0.93, duration: 0.08, ease: "power2.out" }, CK);
+  tl.to(btn, { scale: 1, duration: 0.5, ease: "back.out(3)" }, CK + 0.08);
+  tl.fromTo("#wave", { scale: 0.3, opacity: 0.7 }, { scale: bw / (60 * u) * 1.3, opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, CK);
+  const OK = CK + 0.14;
+  tl.to("#okbg", { opacity: 1, duration: 0.18, ease: "power2.out" }, OK);
+  if (!root.classList.contains("is-key")) tl.to(btn, { boxShadow: "inset 0 2px 0 rgba(255,255,255,.45), 0 0 " + 36 * u + "px rgba(43,214,123,.5)", duration: 0.3, ease: "power2.out" }, OK);
+  tl.fromTo(la, { opacity: 1, y: 0 }, { opacity: 0, y: -34 * u, duration: 0.12, ease: "power2.in" }, OK - 0.06);
+  tl.fromTo(lb, { opacity: 0, y: 30 * u, scale: 0.8 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2.4)" }, OK + 0.08);
+  tl.fromTo("#btn .b svg", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, OK + 0.1);
+  tl.fromTo("#ring", { scale: 0.92, opacity: 1 }, { scale: 1.18, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, OK + 0.05);
+  PS.forEach(([d, dx, dy, s], i) => tl.fromTo(d, { x: 0, y: 0, scale: s, opacity: 1 }, { x: dx, y: dy, scale: 0, opacity: 1, duration: 0.65, ease: "expo.out", immediateRender: false }, OK + 0.06 + (i % 3) * 0.02));
+  tl.to("#caret", { opacity: 0, duration: 0.01 }, OK);
+  // the reader count ticks up by one, flashing green
+  if (R > 0) {
+    const rc = { n: 0 }, rn = $("#rn");
+    tl.fromTo(rc, { n: 0 }, { n: 1, duration: 0.01, ease: "none", onUpdate: () => { rn.textContent = fmt(R + Math.round(rc.n)); }, immediateRender: false }, OK + 0.18);
+    tl.set("#rn", { color: root.classList.contains("is-key") ? "#0B6B37" : "#2BD67B" }, OK + 0.18);
+    tl.fromTo("#rn", { y: 18 * u, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "back.out(3)", immediateRender: false }, OK + 0.18);
+    tl.to("#rn", { color: "var(--ink)", duration: 0.8, ease: "power1.out" }, OK + 0.9);
+  }
+  tl.to("#card", { scale: 1.025, duration: 0.08, ease: "power2.out" }, OK); tl.to("#card", { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, OK + 0.08);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, OK + 0.12);
+  // exit
+  tl.to("#card", { y: -140 * u, z: -300 * u, rotationX: -18, opacity: 0, filter: "blur(16px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

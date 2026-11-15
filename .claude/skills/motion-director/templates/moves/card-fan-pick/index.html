@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"count","type":"number","label":"How many cards land on the desk, 3 to 6 (0 = 4 on 9:16 and 1:1, 5 on 16:9)","default":0},
+  {"id":"pick","type":"number","label":"Which card is picked up, 1-based (0 = the one nearest the middle)","default":0},
+  {"id":"label","type":"string","label":"The pill on the picked card (empty = no pill)","default":"This one"},
+  {"id":"tone","type":"string","label":"Colour of the pick: accent (a brand moment), green (the proven winner) or red (the one to avoid)","default":"accent"},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~45%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --pt: var(--accent); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 64%; height: 42%; background: color-mix(in srgb, var(--pt) 34%, transparent); opacity: 0; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 60%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 62%; top: -10%; background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #desk { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2000px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the desk: a dark polished top with a pool of light; it only exists on the full-frame cut */
+  #desk { position: absolute; transform: translateZ(-2px); box-sizing: border-box;
+    background: radial-gradient(34% 26% at 50% 20%, color-mix(in srgb, var(--surface) 70%, #ffffff 12%), color-mix(in srgb, var(--surface) 92%, #000000) 75%);
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.16), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.07), inset 0 0 calc(var(--u) * 120) rgba(0,0,0,.6), 0 calc(var(--u) * 60) calc(var(--u) * 120) rgba(0,0,0,.6); }
+  #desk::after { content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: .5; mix-blend-mode: overlay;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  #pool { position: absolute; border-radius: 50%; opacity: 0; transform: translateZ(-1px); background: radial-gradient(closest-side, color-mix(in srgb, var(--pt) 50%, transparent), transparent); }
+  .cell, .lift { position: absolute; transform-style: preserve-3d; }
+  .lift { inset: 0; }
+  .sh { position: absolute; inset: 4% 2% -4% 2%; border-radius: 9%; background: rgba(0,0,0,.75); filter: blur(calc(var(--u) * 16)); opacity: 0; }
+  .card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(162deg, rgba(255,255,255,.17), rgba(255,255,255,.06) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .is-alpha .card { background: linear-gradient(162deg, color-mix(in srgb, var(--surface) 84%, white 16%), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .card::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 15%), rgba(255,255,255,.32) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 15%)); }
+  .bk { position: absolute; inset: 0; opacity: 0; background: linear-gradient(162deg, color-mix(in srgb, var(--surface) 80%, white 10%), var(--surface)); }
+  .rim { position: absolute; inset: 0; pointer-events: none; opacity: 0; box-sizing: border-box;
+    box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--pt) 80%, white), 0 0 calc(var(--u) * 60) color-mix(in srgb, var(--pt) 60%, transparent); }
+  .thumb { position: absolute; overflow: hidden; background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 55%, var(--surface)), color-mix(in srgb, var(--accent2) 40%, var(--surface)));
+    box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.14); }
+  .thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .gx { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.9); }
+  .thumb .gx svg { width: 30%; height: 30%; }
+  .av { position: absolute; border-radius: 50%; overflow: hidden; background: color-mix(in srgb, var(--accent) 70%, var(--surface)); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.3); }
+  .av img { width: 100%; height: 100%; object-fit: cover; }
+  .bar { position: absolute; border-radius: 99px; background: color-mix(in srgb, var(--ink) 30%, transparent); }
+  .bar.b2 { background: color-mix(in srgb, var(--ink) 15%, transparent); }
+  .row { position: absolute; display: flex; align-items: center; box-sizing: border-box; }
+  .row .gi { flex: none; display: grid; place-items: center; color: color-mix(in srgb, var(--ink) 70%, transparent);
+    background: linear-gradient(150deg, rgba(255,255,255,.16), rgba(255,255,255,.04)); box-shadow: inset 0 calc(var(--u) * 1) 0 rgba(255,255,255,.35); }
+  .row .gi svg { width: 58%; height: 58%; }
+  .row .sk { flex: 1; border-radius: 99px; background: color-mix(in srgb, var(--ink) 14%, transparent); }
+  .row .val { flex: none; font-weight: 800; color: color-mix(in srgb, var(--ink) 88%, transparent); font-variant-numeric: tabular-nums; line-height: 1; white-space: nowrap; letter-spacing: -0.01em; }
+  .row.hot .val { color: color-mix(in srgb, var(--pt) 45%, white); }
+  .pill { position: absolute; display: flex; align-items: center; white-space: nowrap; box-sizing: border-box; color: #fff; font-weight: 800; line-height: 1; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--pt) 62%, white 38%), var(--pt) 52%, color-mix(in srgb, var(--pt) 70%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -8) rgba(0,0,0,.6), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--pt) 55%, transparent); }
+  .pill svg { flex: none; }
+  .ring { position: absolute; inset: 0; opacity: 0; pointer-events: none; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--pt) 55%, white); box-sizing: border-box; }
+
+  .is-key .card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .is-key .sh, .is-key #pool { display: none; }
+  .is-key .rim { box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--pt) 80%, white); }
+  .is-key .pill { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  .is-key .bar { background: color-mix(in srgb, var(--ink) 30%, var(--surface)); }
+  .is-key .bar.b2, .is-key .row .sk { background: color-mix(in srgb, var(--ink) 15%, var(--surface)); }
+  .is-key .row .gi { background: color-mix(in srgb, var(--ink) 12%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><div id="desk"></div><div id="pool"></div><div id="cards"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const TONES = { red: "#FF4D4F", green: "#2BD67B" };
+  const tone = String(v.tone || "accent").toLowerCase();
+  root.style.setProperty("--pt", TONES[tone] || v.accent || "#FF6A3D");
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const N = Math.max(3, Math.min(6, Math.round(+v.count || (P || SQ ? 4 : 5))));
+  const LABEL = String(v.label == null ? "This one" : v.label).trim();
+  const shots = (Array.isArray(v.screens) ? v.screens : []).filter(Boolean);
+  const markSrc = v.mark || v.logo || "";
+  const rnd = MV.rand(7 + N * 13);
+  const TILT = MV.alpha ? 22 : 30, COS = Math.cos(TILT * Math.PI / 180);
+
+  // ---- the region and the deal: cols x rows of cards, as big as the region allows (the desk tilt foreshortens rows)
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 20 * u, y1: TOP ? H * 0.46 : H - safe.bottom - 20 * u }
+              : SQ ? { x0: W * 0.07, x1: W * 0.93, y0: H * 0.1, y1: H * 0.9 } : { x0: W * 0.05, x1: W * 0.95, y0: H * 0.12, y1: H * 0.88 };
+  const RW = R.x1 - R.x0, RH = (R.y1 - R.y0) / COS, RATIO = 1.3, G = TOP ? 0.2 : 0.1;
+  let best = { w: 0 };
+  for (let cols = 1; cols <= N; cols++) { const rows = Math.ceil(N / cols); if (rows * cols - N >= cols) continue;
+    const w = Math.min(RW / (cols + (cols - 1) * G), RH / (rows * RATIO + (rows - 1) * G));
+    if (w > best.w * 1.03) best = { w, cols, rows }; }
+  const { cols, rows } = best; const cw = Math.min(best.w * 0.98, (P ? 440 : 400) * u), ch = cw * RATIO;
+  const GX = cw * (1 + G) + (RW - (cols * cw + (cols - 1) * cw * G)) / Math.max(1, cols) * 0.35, GY = ch + cw * G;
+  const cx = (R.x0 + R.x1) / 2, cy = (R.y0 + R.y1) / 2;
+  const cards = document.getElementById("cards"), C = [];
+  const rad = cw * 0.075, pad = cw * 0.06, iw = cw - pad * 2;
+  const pick0 = +v.pick >= 1 && +v.pick <= N ? Math.round(+v.pick) - 1 : null;
+  const fmtK = (n) => n >= 1000 ? (n / 1000).toFixed(n < 10000 ? 1 : 0).replace(/\.0$/, "") + "K" : String(n);
+  const ORIG = ["50% 0%", "100% 20%", "0% 60%", "70% 100%", "20% 10%", "90% 70%"];
+  for (let i = 0; i < N; i++) {
+    const r = Math.floor(i / cols), k = i % cols, inRow = Math.min(cols, N - r * cols);
+    const x = cx + (k - (inRow - 1) / 2) * GX - cw / 2 + (rnd() - 0.5) * cw * 0.08;
+    const y = cy + (r - (rows - 1) / 2) * GY - ch / 2 + (rnd() - 0.5) * cw * 0.06;
+    const rz = (rnd() - 0.5) * 14 + (k - (inRow - 1) / 2) * 2.5;
+    const cell = document.createElement("div"); cell.className = "cell"; cards.appendChild(cell);
+    Object.assign(cell.style, { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" });
+    const th = iw * 0.5625, avs = cw * 0.12, ty = pad + th + cw * 0.05, my = ty + avs + cw * 0.06, rh = (ch - my - pad) / 3;
+    const si = shots.length ? (i + (i >= shots.length ? 1 : 0)) % shots.length : -1;
+    const shot = si >= 0 ? `<img src="${shots[si]}" style="transform:scale(${i === 0 ? 1 : 1.5});transform-origin:${ORIG[i % ORIG.length]}">` : `<div class="gx">${GLYPH.svg("play")}</div>`;
+    const vals = [fmtK(Math.round(18 + rnd() * 300) * 1000), (2.4 + rnd() * 5.2).toFixed(1) + "%", Math.round(38 + rnd() * 30) + "%"];
+    const gls = ["play", "target", "chart"], gis = rh * 0.62, vfs = Math.max(20 * u, rh * 0.42);
+    const rowsHtml = vals.map((val, j) => `<div class="row" style="left:${pad}px;top:${my + j * rh}px;width:${iw}px;height:${rh}px;gap:${cw * 0.04}px">
+        <div class="gi" style="width:${gis}px;height:${gis}px;border-radius:${gis * 0.3}px">${GLYPH.svg(gls[j])}</div>
+        <div class="sk" style="height:${rh * 0.16}px;max-width:${iw * (0.42 - j * 0.06)}px"></div><div style="flex:1"></div>
+        <div class="val" style="font-size:${vfs}px">${val}</div></div>`).join("");
+    cell.innerHTML = `<div class="sh"></div><div class="lift"><div class="card" style="border-radius:${rad}px"><div class="bk"></div>
+        <div class="thumb" style="left:${pad}px;top:${pad}px;width:${iw}px;height:${th}px;border-radius:${rad * 0.6}px">${shot}</div>
+        <div class="av" style="left:${pad}px;top:${ty}px;width:${avs}px;height:${avs}px">${markSrc ? `<img src="${markSrc}">` : ""}</div>
+        <div class="bar" style="left:${pad + avs + cw * 0.04}px;top:${ty + avs * 0.1}px;width:${(iw - avs - cw * 0.04) * (0.9 - (i % 3) * 0.1)}px;height:${avs * 0.28}px"></div>
+        <div class="bar b2" style="left:${pad + avs + cw * 0.04}px;top:${ty + avs * 0.62}px;width:${(iw - avs - cw * 0.04) * (0.55 - (i % 2) * 0.1)}px;height:${avs * 0.24}px"></div>
+        ${rowsHtml}<div class="rim" style="border-radius:${rad}px"></div></div>
+        <div class="ring" style="border-radius:${rad}px"></div></div>`;
+    C.push({ i, cell, x, y, rz, lift: cell.querySelector(".lift"), card: cell.querySelector(".card"), sh: cell.querySelector(".sh") });
+  }
+  // the dealt cards must rest inside the frame (with a margin) under the desk tilt, which magnifies the near row:
+  // measured in the rig's opening and closing poses, the spread is pulled in toward the middle if it would not
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  document.getElementById("stage").style.perspectiveOrigin = `${cx}px ${cy}px`;
+  C.forEach((c) => gsap.set(c.lift, { rotation: c.rz }));
+  for (let pass = 0; pass < 3; pass++) {
+    let lo = 1e9, hi = -1e9;
+    [{ rotationX: TILT + 6, rotationZ: -3, scale: 0.95, y: 30 * u }, { rotationX: TILT, rotationZ: 2, scale: 1, y: 0 }].forEach((pose) => {
+      gsap.set("#rig", pose); C.forEach((c) => { const r = c.card.getBoundingClientRect(); lo = Math.min(lo, r.left); hi = Math.max(hi, r.right); }); });
+    const mL = 40 * u, f = Math.min((cx - mL) / Math.max(1, cx - lo), (W - mL - cx) / Math.max(1, hi - cx));
+    if (f >= 1) break;
+    const k = f * 0.98; C.forEach((c) => { c.x = cx + (c.x + cw / 2 - cx) * k - cw / 2; c.cell.style.left = c.x + "px"; });
+  }
+  gsap.set("#rig", { clearProps: "transform" }); C.forEach((c) => gsap.set(c.lift, { clearProps: "transform" }));
+  // the pick: the one nearest the middle unless told
+  let pk = pick0;
+  if (pk === null) { let b = 1e9; C.forEach((c) => { const d = Math.hypot(c.x + cw / 2 - cx, (c.y + ch / 2 - cy) * 1.3) + c.i * 0.01; if (d < b) { b = d; pk = c.i; } }); }
+  const A = C[pk];
+  A.card.querySelector(".row").classList.add("hot");
+  // its pill rides the top edge of the card
+  let pill = null;
+  if (LABEL) {
+    pill = document.createElement("div"); pill.className = "pill"; A.lift.appendChild(pill);
+    const ph = Math.max(54 * u, cw * 0.17), fs = ph * 0.46, gl = tone === "green" ? "check" : tone === "red" ? "x" : "star";
+    pill.innerHTML = `${GLYPH.svg(gl)}<span>${LABEL}</span>`;
+    Object.assign(pill.style, { height: ph + "px", padding: `0 ${ph * 0.42}px 0 ${ph * 0.3}px`, gap: ph * 0.18 + "px", borderRadius: ph / 2 + "px", fontSize: fs + "px", top: -ph * 0.55 + "px", transform: "translateZ(2px)" });
+    const s = pill.querySelector("svg"); s.style.width = s.style.height = ph * 0.5 + "px"; s.setAttribute("stroke-width", "2.6");
+    MV.fitText(pill.querySelector("span"), cw * 1.05 - ph, 18);
+    pill.style.left = (cw - pill.getBoundingClientRect().width) / 2 + "px";
+  }
+
+  // ---- the desk and the camera
+  const desk = document.getElementById("desk");
+  // a table top: its far edge shows above the spread, the rest runs out of frame
+  const dTop = cy - (rows * GY) / 2 - cw * 0.5;
+  Object.assign(desk.style, { left: -W * 0.6 + "px", top: dTop + "px", width: W * 2.2 + "px", height: H * 1.6 + "px", borderRadius: cw * 0.1 + "px" });
+  const pool = document.getElementById("pool");
+  Object.assign(pool.style, { left: cx - cw * 1.3 + "px", top: cy - ch * 0.9 + "px", width: cw * 2.6 + "px", height: ch * 1.8 + "px" });
+  const l1 = document.querySelector("#ground .l1"); Object.assign(l1.style, { left: cx - W * 0.32 + "px", top: cy - H * 0.24 + "px" });
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  document.getElementById("stage").style.perspectiveOrigin = `${cx}px ${cy}px`;
+  tl.fromTo("#rig", { rotationX: TILT + 6, rotationZ: -3, scale: 0.95, y: 30 * u }, { rotationX: TILT, rotationZ: 2, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the deal: each card falls onto the desk, skids, settles; its shadow tightens as it lands
+  const order = C.map((c) => c.i).sort((a, b) => ((a * 5 + 2) % N) - ((b * 5 + 2) % N));
+  order.forEach((ci, k) => { const c = C[ci], at = 0.05 + k * 0.2, fall = 0.36, side = c.x + cw / 2 < cx ? -1 : 1;
+    gsap.set(c.cell, { z: 1 + k * 0.6 });
+    tl.fromTo(c.lift, { z: 640 * u, x: side * 90 * u, y: -50 * u, rotation: c.rz + side * 22, rotationX: -18 }, { z: 0, x: side * -6 * u, y: 0, rotation: c.rz - side * 1.5, rotationX: 0, duration: fall, ease: "power2.in" }, at);
+    tl.fromTo(c.lift, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, at);
+    tl.to(c.lift, { z: 16 * u, duration: 0.11, ease: "power2.out" }, at + fall);
+    tl.to(c.lift, { z: 0, duration: 0.13, ease: "power2.in" }, at + fall + 0.11);
+    tl.to(c.lift, { x: 0, rotation: c.rz, duration: 0.5, ease: "expo.out" }, at + fall);
+    tl.fromTo(c.sh, { opacity: 0, scale: 1.35, x: side * 60 * u, rotation: c.rz + side * 22 }, { opacity: KEY ? 0 : 0.85, scale: 1, x: 0, rotation: c.rz, duration: fall, ease: "power2.in" }, at);
+    tl.to("#stage", { y: 3 * u, duration: 0.05, ease: "power2.out" }, at + fall); tl.to("#stage", { y: 0, duration: 0.25, ease: "expo.out" }, at + fall + 0.05);
+  });
+  const tDealt = 0.05 + (N - 1) * 0.2 + 0.62;
+  // a light crosses the spread
+  C.forEach((c) => tl.fromTo(c.card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut" }, tDealt + (c.x - R.x0) / RW * 0.35));
+
+  // ---- 2. the pick: the card comes up off the desk, squares to the viewer and lifts toward the middle
+  const PK = tDealt + 0.45, LIFT = 0.95;
+  // where the picked card ends: measured, not guessed (the lift runs along the desk normal and the perspective magnifies it)
+  const ZL = 320 * u, RHs = R.y1 - R.y0;
+  const tH = P ? Math.min(RW * 0.72 * RATIO, RHs * 0.8) : RHs * 0.68, tY = cy + RHs * 0.02;
+  let tx = cx - (A.x + cw / 2), ty = (tY - (A.y + ch / 2)) / COS, S = tH / ch, tX = cx, tgtH = tH;
+  // the card must stay inside the safe left/right (with a margin) in its final hold pose: the rig's end tilt,
+  // the hold drift (z + rotationY) and the 2% stage bump on landing; if it would not, it ends smaller
+  const xL = safe.left + 24 * u, xR = W - safe.right - 24 * u;
+  for (let pass = 0; pass < 4; pass++) {
+    gsap.set("#rig", { rotationX: TILT, rotationZ: 1, scale: 1, y: 0 });
+    for (let it = 0; it < 6; it++) {
+      gsap.set(A.cell, { x: tx, y: ty }); gsap.set(A.lift, { z: ZL, rotationX: -TILT, rotation: 0, rotationY: 0, scale: S });
+      const r = A.card.getBoundingClientRect();
+      tx += (tX - (r.left + r.right) / 2) * 0.9; ty += (tY - (r.top + r.bottom) / 2) / COS * 0.9; S *= Math.pow(tgtH / r.height, 0.9);
+    }
+    gsap.set("#rig", { rotationZ: 2 }); gsap.set(A.lift, { z: ZL + 8 * u, rotationY: 2 });
+    const r = A.card.getBoundingClientRect(), mid = (r.left + r.right) / 2, half = (r.right - r.left) / 2 * 1.02;
+    if (half * 2 > xR - xL) { tgtH *= (xR - xL) / (half * 2) * 0.99; continue; }
+    if (mid - half < xL) { tX += xL - (mid - half); continue; }
+    if (mid + half > xR) { tX -= mid + half - xR; continue; }
+    break;
+  }
+  gsap.set("#rig", { rotationX: TILT, rotationZ: 1, scale: 1, y: 0 });
+  gsap.set(A.cell, { x: 0, y: 0 }); gsap.set(A.lift, { z: 0, rotationX: 0, rotationY: 0, rotation: A.rz, scale: 1 });
+  A.cell.style.zIndex = 9;
+  tl.to(A.cell, { z: 10, duration: 0.01 }, PK);
+  tl.to(A.lift, { z: 70 * u, rotation: 0, duration: 0.28, ease: "power2.out" }, PK);
+  tl.to(A.cell, { x: tx, y: ty, duration: LIFT, ease: "expo.inOut" }, PK);
+  tl.to(A.lift, { z: ZL, rotationX: -TILT, scale: S, duration: LIFT, ease: "back.out(1.3)" }, PK + 0.18);
+  tl.to(A.sh, { opacity: 0.3, scale: 1.25, duration: LIFT, ease: "power2.out" }, PK);
+  C.forEach((c) => { if (c !== A) tl.to(c.lift, KEY ? { filter: "brightness(0.42)", duration: 0.6, ease: "power2.inOut" } : { opacity: 0.3, duration: 0.4, ease: "power2.out" }, PK); });
+  const land = PK + LIFT * 0.62;
+  tl.to(A.card.querySelector(".bk"), { opacity: 0.88, duration: 0.5, ease: "power2.out" }, PK + 0.2);
+  tl.to(A.card.querySelector(".rim"), { opacity: 1, duration: 0.35, ease: "power2.out" }, land - 0.15);
+  tl.fromTo(A.cell.querySelector(".ring"), { scale: 1, opacity: 0.95 }, { scale: 1.22, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, land);
+  tl.to(pool, { opacity: KEY ? 0 : 1, duration: 0.8, ease: "power2.out" }, land - 0.3);
+  tl.to(l1, { opacity: 1, duration: 1.1, ease: "power2.out" }, land - 0.3);
+  tl.fromTo(A.card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, land);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, land); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, land + 0.07);
+  if (pill) { tl.fromTo(pill, { opacity: 0, y: 20 * u, scale: 0.5 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(2.6)", immediateRender: false }, land + 0.12); }
+  // the held card breathes
+  tl.to(A.lift, { z: ZL + 8 * u, rotationY: 2, duration: Math.max(0.3, D - land - 0.5), ease: "sine.inOut" }, land + 0.5);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

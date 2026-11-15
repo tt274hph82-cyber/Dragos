@@ -1,0 +1,8 @@
+{ "sources": [
+  { "file": "assets/newsprint.jpg", "from": "ambientCG Paper002 (scanned recycled paper), warmed and resized", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper002" },
+  { "file": "assets/newscol.jpg", "from": "Neutral newsprint filler (weather, tides, market prices, small ads, a notice) written for the headline-highlight move and typeset in Old Standard TT by Alexey Kryukov (Google Fonts), letterpress-treated; body copy and mirrored show-through. The font itself is not shipped.", "license": "Original text, free to use; font under SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Old+Standard+TT" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; preview ground only", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/tape-a.png", "from": "ambientCG Paper004 (scanned ribbed kraft paper), recoloured to masking-tape crepe with torn ends", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper004" },
+  { "file": "assets/fonts/PlayfairDisplay-wght.ttf", "from": "Playfair Display by Claus Eggers Sorensen, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Playfair+Display" },
+  { "file": "assets/fonts/CoveredByYourGrace.ttf", "from": "Covered By Your Grace by Kimberly Geswein, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Covered+By+Your+Grace" }
+] }

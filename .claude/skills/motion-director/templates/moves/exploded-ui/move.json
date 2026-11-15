@@ -1,0 +1,5 @@
+{ "id": "exploded-ui", "name": "Exploded UI", "oneLiner": "a browser window showing the brand's real screen tips into an isometric view and its parts (navigation, headline, sign-up, media) lift off the page as lit glass slabs on long tails, each leaving a hatched slot and a soft shadow below, numbered labels draw out to the side one per beat, then every part drops back into its slot at once with a kick and a light sweep and the page turns to face the camera",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["ui", "breakdown", "anatomy", "layers", "exploded view", "how it works", "landing page", "website", "design", "structure", "3d", "isometric", "teardown", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker breaks a page or product into its parts ('it's really just four pieces', 'here is what makes this page convert'): cut in on the setup line, the labels land one per part as they name them, and the snap closes on the sentence that sums it up. Set layers to the real regions of the screenshot in % (x,y,w,h,Label)" }

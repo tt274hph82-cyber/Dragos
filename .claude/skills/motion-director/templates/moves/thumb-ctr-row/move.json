@@ -1,0 +1,5 @@
+{ "id": "thumb-ctr-row", "name": "Thumbnail CTR row", "oneLiner": "the brand's own thumbnails drop in as glass video cards (a row on 16:9, a studio-style list on 9:16), each with a metric chip that counts up and a bar that fills; then the set splits at once: the weak ones drain to grey and sink, the strong ones lift with a lit green rim and green chips",
+  "category": "creator", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["thumbnails", "ctr", "click through", "a/b test", "packaging", "youtube", "analytics", "compare", "winners", "side by side", "metrics", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker compares thumbnails or posts by a number (\"put them side by side and it's obvious: these four pull 6%, those three don't\"): cut in on the first thumbnail; the split lands on \"obvious\". Set values to the real numbers, label and unit to the metric" }

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"store","type":"string","label":"Header at the top of the receipt (empty uses the brand name)","default":""},
+  {"id":"title","type":"string","label":"Line under the header","default":"Monthly costs"},
+  {"id":"items","type":"string","label":"Line items: label: value; label: value","default":"Hosting: $12; Domain: $1; Email tool: $9; Design: $0"},
+  {"id":"totalLabel","type":"string","label":"Total label","default":"Total"},
+  {"id":"total","type":"string","label":"The total that gets stamped","default":"$22"},
+  {"id":"meta","type":"string","label":"Small line under the title","default":"No. 0042"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Thermal"; src: url("assets/fonts/ShareTechMono-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Stamp"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #141416; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: a real dark stone counter under a shop light */
+  #ground { position: absolute; inset: -6%; background: #18181a url(assets/stone.jpg) center / calc(var(--u) * 900); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 55% at 50% 38%, rgba(255,236,210,.16), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.62)); }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 70%; }
+  /* the printer: a real scanned dark plastic body, a slot, and a brushed steel tear bar */
+  #printer { position: absolute; background: #222225 url(assets/plastic.jpg) center / calc(var(--u) * 500); border-radius: calc(var(--u) * 46) calc(var(--u) * 46) 0 0; box-shadow: 0 calc(var(--u) * -6) calc(var(--u) * 30) rgba(0,0,0,.55), 0 calc(var(--u) * -2) calc(var(--u) * 4) rgba(0,0,0,.6); }
+  #printer::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(rgba(255,255,255,.16), rgba(255,255,255,.04) calc(var(--u) * 14), transparent calc(var(--u) * 40), rgba(0,0,0,.28)); }
+  #slot { position: absolute; background: #050506; border-radius: calc(var(--u) * 10); box-shadow: inset 0 calc(var(--u) * 6) calc(var(--u) * 8) rgba(0,0,0,.9), 0 calc(var(--u) * 2) 0 rgba(255,255,255,.08); }
+  /* the power light: a small green glow in the plastic */
+  #led { position: absolute; width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: #6CFF8E; box-shadow: 0 0 calc(var(--u) * 10) calc(var(--u) * 3) rgba(90,255,140,.55), inset 0 calc(var(--u) * -2) calc(var(--u) * 3) rgba(0,90,30,.6); }
+  #bar { position: absolute; background: #9a9ca0 url(assets/metal.jpg) center / calc(var(--u) * 700) auto; filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 3) rgba(0,0,0,.6)); }
+  #bar::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,.35), transparent 40%, rgba(0,0,0,.25)); }
+  /* the receipt */
+  #rfx { position: absolute; inset: 0; filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 3) rgba(0,0,0,.35)) drop-shadow(calc(var(--u) * 8) calc(var(--u) * 22) calc(var(--u) * 26) rgba(0,0,0,.5)); }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 1600); }
+  #feed { position: absolute; overflow: hidden; transform-origin: 50% 100%; }
+  #rc { position: absolute; left: 0; top: 0; width: 100%; }
+  #rpaper { position: absolute; inset: 0; background: #F6F6F2 url(assets/paper-white.jpg) center / calc(var(--u) * 520); }
+  /* thermal paper: a faint cool sheen across the lifted end */
+  #rpaper::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,.18), transparent 30%), linear-gradient(90deg, rgba(0,0,0,.05), transparent 12%, transparent 88%, rgba(0,0,0,.05)); }
+  #print { position: absolute; font-family: "MV Thermal", monospace; color: #232327; line-height: 1.32; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); opacity: .9; }
+  #print .row { display: flex; justify-content: space-between; align-items: baseline; white-space: nowrap; gap: .6em; }
+  #print .row .lead { flex: 1; overflow: hidden; color: #232327; opacity: .55; }
+  #print .ctr { text-align: center; white-space: nowrap; }
+  #print .big { font-size: 1.7em; line-height: 1.2; -webkit-text-stroke: .045em #232327; letter-spacing: .04em; }
+  #print .sep { overflow: hidden; white-space: nowrap; opacity: .8; }
+  #print .tot { font-size: 1.35em; -webkit-text-stroke: .04em #232327; }
+  #bars { display: flex; justify-content: center; align-items: stretch; }
+  #bars i { display: block; background: #232327; }
+  /* the stamp: brand-colour rubber-stamp ink, pressed into the paper (multiply), with a scanned grit */
+  #stamp { position: absolute; font-family: "MV Stamp"; color: var(--accent); border: solid var(--accent); text-align: center; line-height: 1; mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 220); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 220); white-space: nowrap; }
+  #stamp .lab { display: block; letter-spacing: .3em; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="printer"><div id="slot"></div><div id="led"></div></div>
+    <div id="bar"></div>
+    <div id="rfx"><div id="persp"><div id="feed"><div id="rc">
+      <div id="rpaper"></div>
+      <div id="print" data-block></div>
+      <div id="stamp" data-layered style="visibility:hidden"><span class="lab" id="slab"></span><span id="sval"></span></div>
+    </div></div></div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('40px "MV Thermal"'), document.fonts.load('80px "MV Stamp"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- geometry: the printer sits at the foot of the frame, the receipt rises out of its slot
+  const RW = Math.round(MV.portrait ? 620 * u : 540 * u);
+  const PY = Math.round(MV.portrait ? H - 470 * (W / 1080) : H * 0.8);       // printer top face
+  const slotY = Math.round(PY + (MV.portrait ? 92 : 62) * u);
+  const topY = Math.round(MV.portrait ? safe.top + 10 * u : safe.top + 90 * u);
+  const RL = slotY - topY;                                                     // receipt length when fully out
+  const cx = W / 2, PWd = RW + 300 * u;
+  const pr = document.getElementById("printer"), slot = document.getElementById("slot"), bar = document.getElementById("bar");
+  Object.assign(pr.style, { left: (cx - PWd / 2) + "px", top: PY + "px", width: PWd + "px", height: (H - PY + 60 * u) + "px" });
+  Object.assign(slot.style, { left: (PWd / 2 - RW / 2 - 26 * u) + "px", top: (slotY - PY - 13 * u) + "px", width: (RW + 52 * u) + "px", height: (26 * u) + "px" });
+  const led = document.getElementById("led"); led.style.left = (PWd - 70 * u) + "px"; led.style.top = (slotY - PY + 70 * u) + "px";
+  // tear bar: on the far lip of the slot, its teeth pointing up the paper
+  const BW = RW + 170 * u, BH = 36 * u;
+  Object.assign(bar.style, { left: (cx - BW / 2) + "px", top: (slotY - 13 * u - BH + 6 * u) + "px", width: BW + "px", height: BH + "px" });
+  const teeth = [], tn = Math.round(BW / (13 * u));
+  for (let i = 0; i <= tn; i++) teeth.push(`${(i / tn * 100).toFixed(2)}% ${i % 2 ? 0 : 38}%`);
+  bar.style.clipPath = `polygon(${teeth.join(",")}, 100% 100%, 0 100%)`;
+
+  // ---- the receipt
+  const feed = document.getElementById("feed"), rc = document.getElementById("rc"), print = document.getElementById("print");
+  Object.assign(feed.style, { left: (cx - RW / 2) + "px", top: topY + "px", width: RW + "px", height: RL + "px" });
+  rc.style.height = RL + "px";
+  const padX = RW * 0.08, padT = RW * 0.1;
+  Object.assign(print.style, { left: padX + "px", top: padT + "px", width: (RW - padX * 2) + "px" });
+  const el = (cls, txt) => { const d = document.createElement("div"); if (cls) d.className = cls; if (txt != null) d.textContent = txt; return d; };
+  const row = (a, b, lead) => { const d = el("row"); d.append(el("", a)); if (lead) d.append(el("lead", ".".repeat(60))); d.append(el("", b)); return d; };
+  const sepRow = () => el("sep", "-".repeat(80));
+  const store = (v.store || v.brandName || "Receipt").toUpperCase();
+  const items = (v.items || "").split(";").map((s) => s.trim()).filter(Boolean).map((s) => { const k = s.lastIndexOf(":"); return k > 0 ? [s.slice(0, k).trim(), s.slice(k + 1).trim()] : [s, ""]; });
+  print.append(el("ctr big", store), el("ctr", (v.title || "").toUpperCase()), el("ctr", (v.meta || "").toUpperCase()), sepRow());
+  items.forEach(([a, b]) => print.append(row(a.toUpperCase(), b, true)));
+  print.append(sepRow());
+  const totRow = el("row tot"); totRow.append(el("", (v.totalLabel || "Total").toUpperCase()), el("lead", ".".repeat(60))); print.append(totRow);
+  const gap = el(""); print.append(gap);
+  print.append(sepRow(), el("ctr", "THANK YOU"));
+  const bars = el(""); bars.id = "bars"; print.append(bars);
+  // fit: the biggest type that keeps everything on the paper
+  let fs = RW * 0.062; print.style.fontSize = fs + "px";
+  const lay = () => { gap.style.height = (fs * 2.6) + "px"; bars.style.height = (fs * 2.2) + "px"; bars.style.marginTop = (fs * 0.6) + "px"; };
+  lay();
+  while (print.getBoundingClientRect().height > RL - padT * 1.6 && fs > 14 * u) { fs -= 1; print.style.fontSize = fs + "px"; lay(); }
+  // leaders and rules: exactly as many characters as fit (the font is monospaced)
+  const probe = document.createElement("span"); probe.textContent = "0000000000"; print.appendChild(probe); const cw = probe.getBoundingClientRect().width / 10; probe.remove();
+  const colW = RW - padX * 2;
+  print.querySelectorAll(".sep").forEach((e) => { e.textContent = "-".repeat(Math.floor(colW / cw)); });
+  print.querySelectorAll(".row").forEach((r) => { const ld = r.querySelector(".lead"); if (!ld) return; ld.textContent = ""; const used = [...r.children].filter((c) => c !== ld).reduce((a, c) => a + c.getBoundingClientRect().width, 0);
+    const gapPx = parseFloat(getComputedStyle(r).columnGap) || 0, n = r.children.length - 1, rcw = cw * (parseFloat(getComputedStyle(r).fontSize) / fs);
+    ld.textContent = ".".repeat(Math.max(0, Math.floor((colW - used - gapPx * n) / rcw) - 1)); ld.style.flex = "none"; });
+  // barcode: printed bars, seeded
+  const rb = MV.rand(88); let bw = 0; const maxBW = (RW - padX * 2) * 0.7;
+  while (bw < maxBW) { const w = (1 + Math.floor(rb() * 3)) * fs * 0.09, g = (1 + Math.floor(rb() * 2)) * fs * 0.09; const b = document.createElement("i"); b.style.width = w + "px"; b.style.marginRight = g + "px"; bars.appendChild(b); bw += w + g; }
+  // the leading edge was torn on the last receipt's tear bar: zigzag
+  const zz = [], zn = Math.round(RW / (13 * u)), za = 9 * u;
+  for (let i = 0; i <= zn; i++) zz.push(`${(i / zn * RW).toFixed(1)}px ${(i % 2 ? 0 : za).toFixed(1)}px`);
+  document.getElementById("rpaper").style.clipPath = `polygon(${zz.join(",")}, ${RW}px ${RL + 40 * u}px, 0 ${RL + 40 * u}px)`;
+  // where the print ends (the paper below it stays in the printer)
+  const pb = print.getBoundingClientRect(), rcb = rc.getBoundingClientRect();
+  const out = Math.min(RL, pb.bottom - rcb.top + padT * 0.8);     // how much paper is fed out in the end
+  // the stamp: over the total line, overlapping the paper's edge a little the way a hand stamps
+  const stamp = document.getElementById("stamp"), tb = totRow.getBoundingClientRect();
+  document.getElementById("slab").textContent = (v.totalLabel || "Total").toUpperCase();
+  document.getElementById("sval").textContent = v.total || "";
+  const ss = fs * 2.5; stamp.style.fontSize = ss + "px"; stamp.style.borderWidth = Math.max(3, fs * 0.2) + "px"; stamp.style.borderRadius = (fs * 0.3) + "px";
+  stamp.style.padding = `${ss * 0.12}px ${ss * 0.22}px ${ss * 0.08}px`;
+  document.getElementById("slab").style.fontSize = (ss * 0.26) + "px";
+  MV.fit(stamp, RW * 0.66, 14 * u);
+  const sb = stamp.getBoundingClientRect();
+  stamp.style.left = (RW * 0.93 - sb.width) + "px"; stamp.style.top = (tb.top - rcb.top + tb.height * 0.5 - sb.height * 0.42) + "px";
+  stamp.style.transform = "rotate(-9deg)";
+
+  // ---- timeline
+  // the printer feeds in short bursts on twos (12 fps): header, pause, items, pause, total and footer; the paper lifts as it comes out; 2.55 the stamp thumps on the total
+  const hdr = print.children[3].getBoundingClientRect().bottom - rcb.top + fs * 0.3;
+  const itm = totRow.getBoundingClientRect().top - rcb.top - fs * 0.2;
+  gsap.set(rc, { y: RL });
+  const fy = (n) => RL - n;                       // y for n px of paper out
+  const seg = (a, b, t0, d) => tl.fromTo(rc, { y: fy(a) }, { y: fy(b), duration: d, ease: `steps(${Math.max(1, Math.round(d * 12))})`, immediateRender: false }, t0);
+  seg(0, hdr, 0.15, 0.58);
+  seg(hdr, itm, 0.9, 0.67);
+  seg(itm, out, 1.75, 0.58);
+  // the paper lifts toward the lens as more of it is out (a gentle curl)
+  tl.fromTo(feed, { rotateX: 0 }, { rotateX: -12, duration: 2.2, ease: twos("power1.inOut", 2.2), immediateRender: true }, 0.15);
+  // a tiny tremor while the head prints
+  const rv = MV.rand(6); for (let t = 0.15; t < 2.33; t += STEP) tl.set("#cam", { x: ((rv() - .5) * 1.6 * u).toFixed(2) }, t);
+  tl.set("#cam", { x: 0 }, 2.34);
+  // the stamp: it comes down from above the lens and thumps into the paper
+  const TS = 2.55;
+  tl.set(stamp, { visibility: "visible" }, TS);
+  tl.fromTo(stamp, { scale: 1.9, opacity: 0, rotation: -16 }, { scale: 1, opacity: 1, rotation: -9, duration: 0.13, ease: twos("power4.in", 0.13), immediateRender: true }, TS);
+  tl.fromTo("#persp", { y: 0 }, { y: 5 * u, duration: STEP, ease: "steps(1)", immediateRender: true }, TS + 0.13);
+  tl.to("#persp", { y: 0, duration: STEP, ease: "steps(1)" }, TS + 0.13 + STEP);
+  // camera: one slow push toward the receipt
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.07, duration: D, ease: "power1.inOut" }, 0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

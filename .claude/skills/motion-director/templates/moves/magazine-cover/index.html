@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"masthead","type":"string","label":"Magazine name across the top (an invented title)","default":"Makers"},
+  {"id":"issue","type":"string","label":"Issue line, top left","default":"Issue 07"},
+  {"id":"edition","type":"string","label":"Edition line, top right","default":"The builder issue"},
+  {"id":"name","type":"string","label":"Cover star name (empty: the brand name)","default":""},
+  {"id":"sub","type":"string","label":"Line under the cover star","default":"How the work gets made"},
+  {"id":"lines","type":"string","label":"Coverlines down the left, split with | (up to 3)","default":"Tools that do the work|Inside the workflow|The new playbook"},
+  {"id":"photo","type":"string","label":"Cover photo path (empty: the first brand person, else a brand screen)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Didone"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #120e0b; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: a walnut desk under one warm lamp */
+  #ground { position: absolute; inset: -10%; background: #2a1a10 url(assets/wood.jpg) center / calc(var(--u) * 900); }
+  #ground::after { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(50% 42% at 40% 36%, rgba(255,214,160,.26), transparent 70%), linear-gradient(rgba(20,10,4,.25), rgba(20,10,4,.25)),
+      radial-gradient(120% 95% at 50% 45%, transparent 35%, rgba(0,0,0,.78)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); perspective-origin: 50% 38%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .iss { position: absolute; transform-style: flat; }
+  .shd { position: absolute; inset: 0; border-radius: calc(var(--c) * 4); background: rgba(0,0,0,.001);
+    box-shadow: 0 calc(var(--c) * 3) calc(var(--c) * 4) rgba(0,0,0,.45), calc(var(--c) * 14) calc(var(--c) * 30) calc(var(--c) * 50) rgba(0,0,0,.5); }
+  /* the page block under a cover: the thickness of a perfect-bound magazine */
+  .blk { position: absolute; inset: 0; border-radius: calc(var(--c) * 4); background: #ece6da;
+    box-shadow: 0 calc(var(--c) * 2) 0 #d9d1c2, 0 calc(var(--c) * 4) 0 #cfc6b5, 0 calc(var(--c) * 6) 0 #bdb3a1; }
+  .cov { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--c) * 3); }
+  /* older issues on the desk: same masthead, other colourways */
+  .old .cov { background: var(--oc) url(assets/paper.jpg) center / calc(var(--c) * 600); background-blend-mode: multiply; }
+  .old .om { position: absolute; left: 0; right: 0; text-align: center; font-family: "MV Didone", serif; font-weight: 900; text-transform: uppercase; line-height: 1; white-space: nowrap; letter-spacing: -.01em; }
+  .old .ob { position: absolute; border-radius: 50% 50% 0 0; background: rgba(0,0,0,.28); }
+  .old .ol { position: absolute; height: calc(var(--c) * 14); border-radius: 2px; background: rgba(255,255,255,.45); }
+  .old .gl { position: absolute; inset: 0; background: linear-gradient(125deg, rgba(255,255,255,.18), transparent 40%), radial-gradient(90% 70% at 20% 10%, rgba(255,235,205,.18), transparent 60%); }
+  /* the new cover */
+  #sweep { position: absolute; inset: 0; background:
+      radial-gradient(70% 55% at 58% 42%, #fff 0%, color-mix(in srgb, var(--paper) 92%, #fff) 45%, color-mix(in srgb, var(--paper) 78%, #b9ad98) 100%),
+      var(--paper); }
+  #sweep::after { content: ""; position: absolute; inset: 0; background: url(assets/paper.jpg) center / calc(var(--c) * 600); mix-blend-mode: multiply; opacity: .55; }
+  #mast { position: absolute; left: 0; width: 100%; text-align: center; white-space: nowrap; font-family: "MV Didone", serif; font-weight: 900; text-transform: uppercase; line-height: .8; color: var(--accent); letter-spacing: -.015em; }
+  #mast .ch { display: inline-block; }
+  #photo { position: absolute; }
+  #photo img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; object-position: 50% 100%; filter: drop-shadow(0 calc(var(--c) * 10) calc(var(--c) * 24) rgba(40,25,10,.28)); }
+  #photo.full img { object-fit: cover; object-position: 50% 0%; filter: none; }
+  .band { position: absolute; top: calc(var(--c) * 30); font-weight: 800; font-size: calc(var(--c) * 34); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: #1d1915; line-height: 1; }
+  .cl { position: absolute; left: calc(var(--c) * 40); color: #1d1915; }
+  .cl .r { width: calc(var(--c) * 64); height: calc(var(--c) * 7); background: var(--accent); margin-bottom: calc(var(--c) * 12); }
+  .cl .t { font-weight: 850; font-size: calc(var(--c) * 44); line-height: 1.04; letter-spacing: -.01em; }
+  .cl .t b { display: block; color: var(--accent); font-weight: 900; font-size: 1.18em; line-height: 1.02; margin-bottom: .2em; }
+  #star { position: absolute; left: calc(var(--c) * 40); white-space: nowrap; font-family: var(--font-display); text-transform: uppercase; color: #fff; line-height: .92; letter-spacing: -.01em;
+    text-shadow: 0 calc(var(--c) * 3) calc(var(--c) * 14) rgba(0,0,0,.45); }
+  #sub { position: absolute; left: calc(var(--c) * 42); white-space: nowrap; font-weight: 700; font-size: calc(var(--c) * 38); color: #fff; text-shadow: 0 calc(var(--c) * 2) calc(var(--c) * 8) rgba(0,0,0,.5); }
+  #bar { position: absolute; background: #fff; border-radius: calc(var(--c) * 2); box-shadow: 0 0 0 calc(var(--c) * 1) rgba(0,0,0,.15); }
+  #bar svg { position: absolute; left: 8%; top: 10%; width: 84%; height: 80%; }
+  /* print and light on the cover: ink grain, a lamp from top left, the laminate sheen */
+  #grainp { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: multiply; opacity: .22; background: url(assets/paper.jpg) center / calc(var(--c) * 420); }
+  #lamp { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(80% 60% at 18% 6%, rgba(255,240,215,.26), transparent 62%), linear-gradient(160deg, transparent 52%, rgba(40,25,10,.16)); }
+  #gloss { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sh, -40%) - 12%), rgba(255,255,255,.55) var(--sh, -40%), transparent calc(var(--sh, -40%) + 9%)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div class="iss old" id="oldA" data-bleed><div class="shd"></div><div class="blk"></div><div class="cov"></div></div>
+    <div class="iss old" id="oldB" data-bleed><div class="shd"></div><div class="blk"></div><div class="cov"></div></div>
+    <div class="iss" id="mag"><div class="shd" id="mshd"></div><div class="blk"></div>
+      <div class="cov" id="cover">
+        <div id="sweep"></div>
+        <div id="mast" data-layered></div>
+        <div id="photo"></div>
+        <div class="band" id="bandL"></div><div class="band" id="bandR"></div>
+        <div id="cls"></div>
+        <div id="star"></div><div id="sub"></div>
+        <div id="bar"><svg id="bars" preserveAspectRatio="none"></svg></div>
+        <div id="grainp"></div><div id="lamp"></div><div id="gloss"></div>
+      </div>
+    </div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('900 100px "MV Didone"')]);
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H;
+  // ---- the cover, designed at 800 x 1040
+  const CWd = 800, CHd = 1040;
+  const availW = W - safe.left - safe.right, availH = H - safe.top - safe.bottom;
+  let CH = P ? Math.min(availH * 0.8, availW * 0.92 / CWd * CHd) : H * 0.8;
+  const CW = CH * CWd / CHd, c = CW / CWd;
+  root.style.setProperty("--c", c + "px");
+  const C = (n) => n * c + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: C(x), top: C(y), width: C(w), height: C(h) });
+  const cx = W / 2, cy = H / 2 + (P ? 0 : 10 * u);
+  const place = (el, dx, dy) => Object.assign(el.style, { width: CW + "px", height: CH + "px", left: (cx - CW / 2 + dx) + "px", top: (cy - CH / 2 + dy) + "px" });
+  place($("#mag"), 0, 0);
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+
+  // older issues fanned under it on the desk
+  const mastText = String(v.masthead || "").trim();
+  const olds = [["#oldA", -0.34 * CW, 0.07 * CH, -9, `color-mix(in srgb, var(--accent2) 70%, #6d5a3a)`, "#fff"], ["#oldB", 0.31 * CW, -0.06 * CH, 8, `color-mix(in srgb, var(--accent) 35%, #1a1a1e)`, "var(--accent2)"]];
+  for (const [id, dx, dy, rot, bgc, mc] of olds) {
+    const e = $(id); place(e, dx, dy); gsap.set(e, { rotation: rot, z: -4 * c });
+    const cov = e.querySelector(".cov"); cov.style.setProperty("--oc", bgc);
+    const m = document.createElement("div"); m.className = "om"; m.textContent = mastText; m.style.color = mc; m.style.top = C(70); m.style.fontSize = C(170); cov.appendChild(m); MV.fitText(m, 720 * c, 10);
+    const b = document.createElement("div"); b.className = "ob"; box(b, 210, 380, 420, 700); cov.appendChild(b);
+    [[40, 420, 190], [40, 450, 150], [40, 560, 200], [40, 590, 120]].forEach(([x, y, w]) => { const l = document.createElement("div"); l.className = "ol"; box(l, x, y, w, 14); cov.appendChild(l); });
+    const g = document.createElement("div"); g.className = "gl"; cov.appendChild(g);
+  }
+  if (MV.alpha) olds.forEach(([id]) => ($(id).style.display = "none"));
+
+  // masthead: sized to the cover width, set behind the photo
+  const mast = $("#mast"); mast.style.top = C(100); mast.style.fontSize = "100px";
+  mast.innerHTML = [...mastText].map((ch) => `<span class="ch">${ch === " " ? "&nbsp;" : ch.replace(/[<&]/g, "")}</span>`).join("");
+  const mw = tw(mast) || 1; const mfs = Math.min(100 * (720 * c) / mw, 260 * c); mast.style.fontSize = mfs + "px";
+  const mastH = mfs * 0.8;
+
+  // the photo: a person cut-out standing in the sweep, its head over the masthead; or a screen full bleed
+  const ph = $("#photo"), src = v.photo || (v.people && v.people[0]) || (v.screens && v.screens[0]) || "";
+  const isPerson = !!(v.photo || (v.people && v.people[0]));
+  if (src) {
+    const im = MV.img(src); ph.appendChild(im);
+    await new Promise((r) => (im.complete ? r() : (im.onload = im.onerror = r)));
+    if (isPerson) { const ar = (im.naturalWidth || 1) / (im.naturalHeight || 1); const hh = 900, ww = Math.min(hh * ar, 940); box(ph, 492 - ww / 2, CHd - hh, ww, hh); }
+    else { ph.classList.add("full"); box(ph, 0, 100 + mastH / c + 30, CWd, CHd); }
+  }
+  // the bands
+  const bl = $("#bandL"), br = $("#bandR"); bl.textContent = v.issue || ""; br.textContent = v.edition || "";
+  bl.style.left = C(40); MV.fitText(bl, 330 * c, 10); MV.fitText(br, 360 * c, 10); br.style.left = (CW - 40 * c - tw(br)) + "px";
+  // coverlines in the left column, first word in the accent
+  const lines = String(v.lines || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 3);
+  const cls = $("#cls"), clEls = [];
+  let y = 350;
+  lines.forEach((t) => {
+    const d = document.createElement("div"); d.className = "cl"; d.style.top = C(y); d.style.width = C(240);
+    const words = t.split(/\s+/), first = words.shift();
+    d.innerHTML = `<div class="r"></div><div class="t"><b></b> <span></span></div>`;
+    d.querySelector("b").textContent = first; d.querySelector("span").textContent = words.join(" ");
+    cls.appendChild(d);
+    // the accent word on its own row, the rest on one row under it
+    const sp = d.querySelector("span"); sp.style.whiteSpace = "nowrap"; sp.style.display = "block";
+    MV.fitText(sp, 240 * c, 24 * c); MV.fitText(d.querySelector("b"), 240 * c, 24 * c);
+    y += d.getBoundingClientRect().height / c + 24; clEls.push(d);
+  });
+  // the cover star, big, over the bottom of the photo
+  const star = $("#star"); star.textContent = (v.name || v.brandName || "").trim(); star.style.fontSize = C(128); MV.fitText(star, 540 * c, 20);
+  const sfs = parseFloat(star.style.fontSize) || 128 * c;
+  const sub = $("#sub"); sub.textContent = v.sub || ""; MV.fitText(sub, 560 * c, 14);
+  const subFs = parseFloat(getComputedStyle(sub).fontSize);
+  sub.style.top = (CH - 44 * c - subFs * 1.1) + "px";
+  star.style.top = (CH - 44 * c - subFs * 1.1 - 14 * c - sfs * 0.92) + "px";
+  // barcode
+  box($("#bar"), 640, 900, 120, 100);
+  { const s = $("#bars"); s.setAttribute("viewBox", "0 0 100 60"); const r = MV.rand(41); let x = 0, d = "";
+    while (x < 100) { const w = 0.8 + Math.floor(r() * 3) * 0.9; if (x + w > 100) break; d += `<rect x="${x.toFixed(2)}" y="0" width="${w.toFixed(2)}" height="60" fill="#111"/>`; x += w + 0.8 + Math.floor(r() * 3) * 0.9; }
+    s.innerHTML = d; }
+
+  // ---- timeline
+  // 0.1 photo rises into the sweep; 0.45 masthead letters set behind the head; 0.9 bands and coverlines; 1.45 cover star;
+  // 2.1 the camera pulls back off the cover to the desk while the issue hovers; 3.15 it drops onto the stack (the moment), gloss runs
+  const TD = 3.15;
+  const chs = [...mast.querySelectorAll(".ch")];
+  tl.fromTo(ph, { y: 110 * c, opacity: 0 }, { y: 0, opacity: 1, duration: 1.0, ease: "expo.out" }, 0.1);
+  tl.fromTo(chs, { opacity: 0, y: -60 * c, scale: 1.35 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "expo.out", stagger: 0.05, transformOrigin: "50% 100%" }, 0.42);
+  tl.fromTo([bl, br], { opacity: 0, y: -14 * c }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.08 }, 0.85);
+  clEls.forEach((d, i) => {
+    tl.fromTo(d.querySelector(".r"), { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out", transformOrigin: "0% 50%" }, 0.95 + i * 0.16);
+    tl.fromTo(d.querySelector(".t"), { opacity: 0, x: -28 * c }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out" }, 1.0 + i * 0.16);
+  });
+  tl.fromTo(star, { opacity: 0, y: 40 * c, clipPath: "inset(0 0 100% 0)" }, { opacity: 1, y: 0, clipPath: "inset(0 0 -20% 0)", duration: 0.7, ease: "expo.out" }, 1.45);
+  tl.fromTo(sub, { opacity: 0, y: 16 * c }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 1.65);
+  tl.fromTo("#bar", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 1.8);
+  // camera: close on the cover, then back off over the desk and keep drifting
+  const z0 = P ? 1.1 : 1.1;
+  tl.fromTo("#cam", { scale: z0, rotationX: 0, rotationZ: 0, y: 0 }, { scale: z0 * 1.015, duration: 2.1, ease: "none" }, 0);
+  const z1 = P ? 0.95 : 1.06;
+  tl.to("#cam", { scale: z1, rotationX: 24, rotationZ: -5, y: (P ? 30 : -40) * u, duration: 1.35, ease: "power3.inOut", transformOrigin: "50% 50%" }, 2.1);
+  tl.to("#cam", { scale: z1 * 1.04, rotationX: 20, rotationZ: -3, y: (P ? 10 : -30) * u, duration: D - 3.45, ease: "sine.inOut" }, 3.45);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -24 * u, y: -30 * u, duration: D, ease: "sine.inOut" }, 0);
+  // the new issue hovers while the camera pulls back, then drops onto the desk
+  const LIFT = 70 * c;
+  tl.fromTo("#mag", { z: LIFT, rotation: 0 }, { z: LIFT, rotation: 2, duration: TD, ease: "sine.inOut" }, 0);
+  tl.fromTo("#mshd", { opacity: 0.35, scale: 1.06, x: 30 * c, y: 50 * c }, { opacity: 0.35, scale: 1.06, x: 30 * c, y: 50 * c, duration: 0.01 }, 0);
+  tl.to("#mag", { z: 0, rotation: -1.5, duration: 0.24, ease: "power3.in" }, TD);
+  tl.to("#mshd", { opacity: 1, scale: 1, x: 0, y: 0, duration: 0.24, ease: "power3.in" }, TD);
+  tl.to("#mag", { scale: 0.99, duration: 0.06, ease: "power2.out" }, TD + 0.24); tl.to("#mag", { scale: 1, duration: 0.5, ease: "expo.out" }, TD + 0.3);
+  tl.to(["#oldA", "#oldB"], { x: (i) => (i ? 8 : -8) * c, y: (i) => (i ? -4 : 6) * c, duration: 0.45, ease: "expo.out" }, TD + 0.24);
+  tl.to("#stage", { y: 5 * u, duration: 0.06, ease: "power2.out" }, TD + 0.24); tl.to("#stage", { y: 0, duration: 0.5, ease: "expo.out" }, TD + 0.3);
+  tl.fromTo("#gloss", { "--sh": "-40%" }, { "--sh": "150%", duration: 1.1, ease: "power2.inOut" }, TD + 0.2);
+  MV.done();
+})();
+</script>
+</body>
+</html>

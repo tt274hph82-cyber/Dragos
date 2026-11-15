@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"merchant","type":"string","label":"Shop name printed on the receipt","default":"Corner Supply Co."},
+  {"id":"date","type":"string","label":"Date printed on the receipt","default":"Oct 12"},
+  {"id":"items","type":"string","label":"Line items: label: amount; label: amount (2 to 4)","default":"Notebook: 12.00; Desk lamp: 34.50; Cables: 9.80"},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"category","type":"string","label":"Category the card files it under","default":"Office"},
+  {"id":"cardTitle","type":"string","label":"Expense card heading","default":"New expense"},
+  {"id":"cardSub","type":"string","label":"Line under the heading","default":"Scanned just now"},
+  {"id":"merchantLabel","type":"string","label":"Row label for the shop","default":"Merchant"},
+  {"id":"dateLabel","type":"string","label":"Row label for the date","default":"Date"},
+  {"id":"categoryLabel","type":"string","label":"Row label for the category","default":"Category"},
+  {"id":"amountLabel","type":"string","label":"Label over the amount","default":"Amount"},
+  {"id":"scanLabel","type":"string","label":"Title on the phone screen","default":"Scan receipt"},
+  {"id":"status","type":"string","label":"Green status once filed","default":"Ready to submit"},
+  {"id":"centre","type":"string","label":"Leave off: the layout is framed by hand","default":"off"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Thermal"; src: url("assets/fonts/ShareTechMono-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #141416; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --ok: #2BD67B; --dim: color-mix(in srgb, var(--ink) 60%, transparent); --al: color-mix(in srgb, var(--accent) 55%, #fff); }
+  /* a real dark stone counter under one light */
+  #ground { position: absolute; inset: -8%; background: #18181a url(assets/stone.jpg) center / calc(var(--u) * 900); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 45% at 40% 30%, rgba(255,236,210,.17), transparent 70%), radial-gradient(45% 40% at 85% 85%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.66)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2600); perspective-origin: 50% 40%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #scene { position: absolute; transform-style: preserve-3d; }
+  .ab { position: absolute; box-sizing: border-box; }
+
+  /* the receipt: thermal paper, torn edges, printed in a scanned ink mask */
+  #rcpt { filter: drop-shadow(0 calc(var(--s) * 3) calc(var(--s) * 3) rgba(0,0,0,.4)) drop-shadow(calc(var(--s) * 10) calc(var(--s) * 26) calc(var(--s) * 30) rgba(0,0,0,.5)); }
+  #rpaper { position: absolute; inset: 0; background: #F6F6F2 url(assets/paper-white.jpg) center / calc(var(--s) * 520); }
+  #rpaper::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,.15), transparent 30%), linear-gradient(90deg, rgba(0,0,0,.05), transparent 12%, transparent 88%, rgba(0,0,0,.05)); }
+  #print { position: absolute; font-family: "MV Thermal", monospace; color: #232327; line-height: 1.34; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); opacity: .9; }
+  #print .row { display: flex; justify-content: space-between; white-space: nowrap; gap: .6em; }
+  #print .ctr { text-align: center; white-space: nowrap; }
+  #print .big { font-size: 1.5em; line-height: 1.2; -webkit-text-stroke: .045em #232327; letter-spacing: .03em; }
+  #print .sep { overflow: hidden; white-space: nowrap; opacity: .8; }
+  #print .tot { font-size: 1.3em; -webkit-text-stroke: .04em #232327; }
+  #bars { display: flex; justify-content: center; align-items: stretch; }
+  #bars i { display: block; background: #232327; }
+
+  /* the phone: a dark bezel round a see-through screen (the camera view) */
+  #phone { border-radius: calc(var(--s) * 78); z-index: 5;
+    box-shadow: inset 0 0 0 calc(var(--s) * 26) #0c0c0e, inset 0 0 0 calc(var(--s) * 28) #2a2a2e, 0 0 0 calc(var(--s) * 3) #4a4a50, 0 0 0 calc(var(--s) * 5) #19191c,
+      0 calc(var(--s) * 50) calc(var(--s) * 90) calc(var(--s) * -20) rgba(0,0,0,.7); }
+  #phone::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset calc(var(--s) * 2) calc(var(--s) * 2) 0 rgba(255,255,255,.22), inset calc(var(--s) * -2) calc(var(--s) * -2) 0 rgba(0,0,0,.5); }
+  #scr { position: absolute; border-radius: calc(var(--s) * 54); overflow: hidden; background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,.02) 55%, rgba(0,0,0,.42)); }
+  #scr::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(125deg, rgba(255,255,255,.14), transparent 30%, transparent 70%, rgba(255,255,255,.05)); }
+  #island { border-radius: 999px; background: #050506; z-index: 7; }
+  .btn-side { background: linear-gradient(90deg, #3a3a40, #1b1b1e); border-radius: calc(var(--s) * 4); }
+  #topbar { display: flex; align-items: center; justify-content: center; font-weight: 750; color: #fff; white-space: nowrap; text-shadow: 0 1px 3px rgba(0,0,0,.6); z-index: 6;
+    background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,0)); }
+  #shut { border-radius: 50%; border: calc(var(--s) * 6) solid #fff; box-shadow: 0 0 calc(var(--s) * 14) rgba(0,0,0,.5); z-index: 6; }
+  #shut i { position: absolute; inset: calc(var(--s) * 8); border-radius: 50%; background: #fff; }
+  .br { width: calc(var(--s) * 54); height: calc(var(--s) * 54); border: 0 solid #fff; z-index: 6; filter: drop-shadow(0 0 calc(var(--s) * 6) rgba(0,0,0,.6)); }
+  #b1 { border-top-width: calc(var(--s) * 7); border-left-width: calc(var(--s) * 7); border-top-left-radius: calc(var(--s) * 16); }
+  #b2 { border-top-width: calc(var(--s) * 7); border-right-width: calc(var(--s) * 7); border-top-right-radius: calc(var(--s) * 16); }
+  #b3 { border-bottom-width: calc(var(--s) * 7); border-left-width: calc(var(--s) * 7); border-bottom-left-radius: calc(var(--s) * 16); }
+  #b4 { border-bottom-width: calc(var(--s) * 7); border-right-width: calc(var(--s) * 7); border-bottom-right-radius: calc(var(--s) * 16); }
+  #sline { height: calc(var(--s) * 6); border-radius: 99px; z-index: 6; background: var(--al); box-shadow: 0 0 calc(var(--s) * 20) calc(var(--s) * 4) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #sglow { z-index: 5; background: linear-gradient(rgba(255,255,255,0), color-mix(in srgb, var(--accent) 22%, transparent)); mix-blend-mode: screen; }
+  .fb { border-radius: calc(var(--s) * 10); border: calc(var(--s) * 4) solid var(--al); background: color-mix(in srgb, var(--accent) 12%, transparent); z-index: 6; box-shadow: 0 0 calc(var(--s) * 14) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #flash { z-index: 8; background: #fff; opacity: 0; }
+
+  /* the expense card: glass */
+  #card { border-radius: calc(var(--s) * 44); z-index: 10; overflow: hidden;
+    background: linear-gradient(170deg, rgba(40,40,46,.72), rgba(20,20,24,.82));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14), 0 calc(var(--s) * 50) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.8); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #tile { border-radius: calc(var(--s) * 22); background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 80%, white 15%), color-mix(in srgb, var(--accent) 70%, black)); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--s) * 10) calc(var(--s) * 20) calc(var(--s) * -6) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #tile svg { position: absolute; inset: 22%; width: 56%; height: 56%; }
+  .ct { font-weight: 800; font-size: calc(var(--s) * 48); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  .cs { font-weight: 600; font-size: calc(var(--s) * 34); color: var(--dim); white-space: nowrap; line-height: 1.1; }
+  .hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.13); }
+  .rl { font-weight: 650; font-size: calc(var(--s) * 36); color: var(--dim); white-space: nowrap; line-height: 1.1; }
+  .rv { font-weight: 750; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; text-align: right; line-height: 1.1; }
+  .slot { border-radius: calc(var(--s) * 12); background: rgba(255,255,255,.07); }
+  #amt { font-family: var(--font-display); font-size: calc(var(--s) * 84); color: var(--ink); white-space: nowrap; text-align: right; line-height: 1; letter-spacing: -0.01em; }
+  #cat { display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 20); border-radius: 999px; font-weight: 750; font-size: calc(var(--s) * 36); color: var(--ink); white-space: nowrap;
+    background: color-mix(in srgb, var(--accent) 28%, rgba(255,255,255,.08)); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 55%, transparent); }
+  #cat svg { width: calc(var(--s) * 30); height: calc(var(--s) * 30); flex: none; }
+  #stat { display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 26); border-radius: 999px; font-weight: 800; font-size: calc(var(--s) * 36); color: #fff; white-space: nowrap;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 70%, #fff), var(--ok) 55%, #1BA85B); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--s) * 12) calc(var(--s) * 24) calc(var(--s) * -8) rgba(10,110,50,.6); text-shadow: 0 1px 2px rgba(0,60,25,.35); }
+  #stat svg { width: calc(var(--s) * 34); height: calc(var(--s) * 34); flex: none; }
+  .chip { display: flex; align-items: center; padding: 0 calc(var(--s) * 22); border-radius: calc(var(--s) * 18); font-weight: 800; font-size: calc(var(--s) * 40); color: #fff; white-space: nowrap; z-index: 20;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, white 20%), var(--accent) 60%, color-mix(in srgb, var(--accent) 80%, black));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--s) * 18) calc(var(--s) * 30) calc(var(--s) * -8) rgba(0,0,0,.6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam"><div id="scene"></div></div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await document.fonts.load('40px "MV Thermal"');
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H;
+  const cur$ = v.currency || "";
+  const items = String(v.items || "").split(";").map((x) => x.trim()).filter(Boolean).slice(0, 4).map((x) => { const k = x.lastIndexOf(":"); return k > 0 ? [x.slice(0, k).trim(), x.slice(k + 1).trim()] : [x, "0"]; });
+  const num = (x) => parseFloat(String(x).replace(/[^0-9.]/g, "")) || 0;
+  const total = items.reduce((a, [, b]) => a + num(b), 0);
+  const money = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const totalS = cur$ + money(total);
+
+  // ---- layout in design units: phone (520 x 1000) and the expense card, overlapping
+  const PHW = 520, PHH = 1000;
+  const CW = P ? 860 : 760, CH = 600;
+  let phX, phY, cX, cY, DW, DH;
+  if (P) { const ov = 150; DW = CW; DH = PHH + CH - ov; phX = (DW - PHW) / 2; phY = 0; cX = 0; cY = PHH - ov; }
+  else { const ov = SQ ? 300 : 70; DW = PHW + CW - ov; DH = PHH; phX = 0; phY = 0; cX = PHW - ov; cY = (PHH - CH) / 2 + (SQ ? 150 : 40); }
+  let zL, zR, zT, zB;
+  if (P) { zL = safe.left; zR = W - safe.right; zT = safe.top - 40 * u; zB = H - safe.bottom + 60 * u; }
+  else { zL = W * (SQ ? 0.07 : 0.1); zR = W * (SQ ? 0.93 : 0.9); zT = H * 0.07; zB = H * 0.93; }
+  const s = Math.min((zR - zL) / DW, (zB - zT) / DH, 1.2);
+  root.style.setProperty("--s", s + "px");
+  const sL = zL + ((zR - zL) - DW * s) / 2, sT = zT + ((zB - zT) - DH * s) / 2;
+  const scene = $("#scene"); Object.assign(scene.style, { left: sL + "px", top: sT + "px", width: DW * s + "px", height: DH * s + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const mk = (cls, txt, x, y, w, h, par, id) => { const d = document.createElement("div"); d.className = "ab " + (cls || ""); if (id) d.id = id; if (txt != null) d.textContent = txt; box(d, x, y, w, h); (par || scene).appendChild(d); return d; };
+
+  // ---- the receipt, lying where the phone's camera will frame it
+  const RW = 400, rX = phX + (PHW - RW) / 2, rY = phY + 130;
+  const rc = mk("", null, rX, rY, RW, 100, scene, "rcpt"); rc.setAttribute("data-layered", "");
+  const rp = mk("", null, 0, 0, RW, 100, rc, "rpaper"); rp.style.width = "100%"; rp.style.height = "100%";
+  const print = mk("", null, 30, 40, RW - 60, 10, rc, "print"); print.style.height = "auto"; print.setAttribute("data-block", "");
+  const el = (cls, txt) => { const d = document.createElement("div"); if (cls) d.className = cls; if (txt != null) d.textContent = txt; return d; };
+  const row = (a, b) => { const d = el("row"); d.append(el("", a), el("", b)); return d; };
+  const sepRow = () => el("sep", "-".repeat(60));
+  const mRow = el("ctr big", String(v.merchant || "").toUpperCase());
+  const dRow = row("DATE", String(v.date || "").toUpperCase());
+  print.append(mRow, el("ctr", "RECEIPT"), sepRow(), dRow, sepRow());
+  items.forEach(([a, b]) => print.append(row(a.toUpperCase(), money(num(b)))));
+  print.append(sepRow());
+  const tRow = el("row tot"); tRow.append(el("", "TOTAL"), el("", totalS)); print.append(tRow);
+  print.append(sepRow(), el("ctr", "THANK YOU"));
+  const bars = el(""); bars.id = "bars"; print.append(bars);
+  let fs = 30 * s; print.style.fontSize = fs + "px"; bars.style.height = (fs * 1.8) + "px"; bars.style.marginTop = (fs * 0.5) + "px";
+  const maxH = 690 * s;
+  while ((print.getBoundingClientRect().width > (RW - 60) * s + 1 || print.getBoundingClientRect().height > maxH) && fs > 14 * s) { fs -= 1; print.style.fontSize = fs + "px"; bars.style.height = (fs * 1.8) + "px"; }
+  [mRow].forEach((e) => MV.fitText(e, (RW - 60) * s, 10));
+  const probe = document.createElement("span"); probe.textContent = "0000000000"; print.appendChild(probe); const chw = probe.getBoundingClientRect().width / 10; probe.remove();
+  print.querySelectorAll(".sep").forEach((e) => { e.textContent = "-".repeat(Math.floor((RW - 60) * s / chw)); });
+  const rb = MV.rand(41); let bw = 0; const maxBW = (RW - 60) * s * 0.75;
+  while (bw < maxBW) { const w = (1 + Math.floor(rb() * 3)) * fs * 0.09, g = (1 + Math.floor(rb() * 2)) * fs * 0.09; const b = document.createElement("i"); b.style.width = w + "px"; b.style.marginRight = g + "px"; bars.appendChild(b); bw += w + g; }
+  const RH = print.getBoundingClientRect().height / s + 80;
+  rc.style.height = S(RH);
+  const zz = [], zn = 30, za = 8 * s, rwp = RW * s, rhp = RH * s;
+  for (let i = 0; i <= zn; i++) zz.push(`${(i / zn * rwp).toFixed(1)}px ${(i % 2 ? 0 : za).toFixed(1)}px`);
+  for (let i = zn; i >= 0; i--) zz.push(`${(i / zn * rwp).toFixed(1)}px ${(rhp - (i % 2 ? 0 : za)).toFixed(1)}px`);
+  rp.style.clipPath = `polygon(${zz.join(",")})`;
+  // where the three fields sit, in scene design units
+  const scB = scene.getBoundingClientRect();
+  const at = (e) => { const r = e.getBoundingClientRect(); return { x: (r.left - scB.left) / s, y: (r.top - scB.top) / s, w: r.width / s, h: r.height / s }; };
+  const fM = at(mRow), fD = at(dRow.lastChild), fT = at(tRow.lastChild);
+  fM.x = rX + 22; fM.w = RW - 44;
+
+  // ---- the phone over it
+  const ph = mk("", null, phX, phY, PHW, PHH, scene, "phone");
+  const scr = mk("", null, 26, 26, PHW - 52, PHH - 52, ph, "scr");
+  const isl = mk("", null, PHW / 2 - 70, 46, 140, 40, ph, "island");
+  mk("btn-side", null, -9, 260, 7, 90, ph); mk("btn-side", null, -9, 370, 7, 90, ph); mk("btn-side", null, PHW + 2, 300, 7, 140, ph);
+  const tb = mk("", v.scanLabel || "", 0, 0, PHW - 52, 104, scr, "topbar"); tb.style.paddingTop = S(36); tb.style.fontSize = S(32); MV.fitText(tb, 300 * s, 12);
+  const shut = mk("", null, (PHW - 52) / 2 - 52, PHH - 52 - 150, 104, 104, scr, "shut"); shut.innerHTML = "<i></i>";
+  // camera UI in screen coords: brackets round the receipt, a scan line, field boxes
+  const ox = 26, oy = 26;
+  const rx0 = rX - phX - ox, ry0 = rY - phY - oy;
+  const br = [["b1", rx0 - 16, ry0 - 16], ["b2", rx0 + RW - 38, ry0 - 16], ["b3", rx0 - 16, ry0 + RH - 38], ["b4", rx0 + RW - 38, ry0 + RH - 38]].map(([id, x, y]) => mk("br", null, x, y, 54, 54, scr, id));
+  const sl = mk("", null, rx0 - 10, ry0, RW + 20, 6, scr, "sline");
+  const sg = mk("", null, rx0, ry0, RW, 0, scr, "sglow");
+  const fbs = [fM, fD, fT].map((f) => mk("fb", null, f.x - phX - ox - 10, f.y - phY - oy - 6, f.w + 20, f.h + 12, scr));
+  const flash = mk("", null, 0, 0, PHW - 52, PHH - 52, scr, "flash");
+
+  // ---- the expense card
+  const card = mk("", null, cX, cY, CW, CH, scene, "card");
+  const pad = 46, iw = CW - pad * 2;
+  const tile = mk("", null, pad, pad, 92, 92, card, "tile");
+  tile.innerHTML = `<svg viewBox="0 0 24 24"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21z M9 8h6 M9 11.5h6 M9 15h4" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+  const ct = mk("ct", v.cardTitle || "", pad + 118, pad + 2, iw - 118, 56, card), cs = mk("cs", v.cardSub || "", pad + 118, pad + 58, iw - 118, 44, card);
+  MV.fitText(ct, (iw - 120) * s, 16); MV.fitText(cs, (iw - 120) * s, 14);
+  mk("hr", null, pad, pad + 120, iw, 1.5, card);
+  const rowY = [pad + 150, pad + 222, pad + 294];
+  const labs = [v.merchantLabel, v.dateLabel, v.categoryLabel].map((t, i) => { const e = mk("rl", t || "", pad, rowY[i] + 8, iw * 0.4, 48, card); MV.fitText(e, iw * 0.36 * s, 14); return e; });
+  const slots = [0, 1].map((i) => mk("slot", null, pad + iw * 0.42, rowY[i] + 10, iw * 0.58, 46, card));
+  const vals = [v.merchant, v.date].map((t, i) => { const e = mk("rv", t || "", pad + iw * 0.4, rowY[i] + 6, iw * 0.6, 54, card); MV.fitText(e, iw * 0.58 * s, 14); e.style.width = S(iw * 0.6); return e; });
+  const cat = mk("", null, 0, rowY[2] + 2, 10, 62, card, "cat");
+  cat.innerHTML = `<svg viewBox="0 0 24 24"><path d="M3.5 12.5V4h8.5l8.5 8.5-8 8z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="8" cy="8.5" r="1.6" fill="currentColor"/></svg><span></span>`;
+  cat.querySelector("span").textContent = v.category || ""; MV.fitText(cat.querySelector("span"), (iw * 0.5) * s, 14);
+  Object.assign(cat.style, { width: "auto", left: "auto", right: S(pad) });
+  if (!v.category) cat.style.display = "none";
+  const catSlot = mk("slot", null, pad + iw * 0.42, rowY[2] + 10, iw * 0.58, 46, card);
+  mk("hr", null, pad, pad + 372, iw, 1.5, card);
+  const al = mk("rl", v.amountLabel || "", pad, pad + 412, iw * 0.4, 48, card); MV.fitText(al, iw * 0.38 * s, 14);
+  const amt = mk("", totalS, pad + iw * 0.3, pad + 396, iw * 0.7, 92, card, "amt"); MV.fitText(amt, iw * 0.68 * s, 20); amt.style.width = S(iw * 0.7);
+  const amtSlot = mk("slot", null, pad + iw * 0.55, pad + 404, iw * 0.45, 76, card);
+  const stat = mk("", null, pad, CH - pad - 66 + 30, 10, 66, card, "stat");
+  stat.innerHTML = `<svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.8" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span>`;
+  stat.querySelector("span").textContent = v.status || ""; MV.fitText(stat.querySelector("span"), (iw * 0.6) * s, 14);
+  Object.assign(stat.style, { width: "auto", left: S(pad + 118), top: S(pad + 62), height: S(56) });
+  if (!v.status) stat.style.display = "none";
+
+  // ---- the flying chips: from each field on the receipt to its row on the card
+  const cardPt = (e) => { const r = e.getBoundingClientRect(); return { x: (r.right - scB.left) / s, y: (r.top - scB.top + r.height / 2) / s }; };
+  const chips = [[v.merchant, fM, vals[0]], [v.date, fD, vals[1]], [totalS, fT, amt]].map(([t, f, dst]) => {
+    const c = mk("chip", t || "", 0, 0, 10, 64, scene); c.style.width = "auto"; c.setAttribute("data-layered", "");
+    MV.fitText(c, (iw * 0.6) * s, 14);
+    const cw = c.getBoundingClientRect().width / s;
+    const sx0 = f.x + f.w / 2 - cw / 2, sy0 = f.y + f.h / 2 - 32;
+    const d = cardPt(dst);
+    c.style.left = S(sx0); c.style.top = S(sy0);
+    return { c, dx: (d.x - cw) - sx0, dy: (d.y - 32) - sy0, dst };
+  });
+
+  // ---- timeline
+  const TPH = 0.35, TLK = 1.15, TSC = 1.35, TBX = 2.05, TSH = 2.45, TCD = 2.4, TFL = 2.75, TOK = 3.95;
+  gsap.set("#cam", { transformOrigin: `${sL + DW * s / 2}px ${sT + DH * s / 2}px` });
+  tl.fromTo("#cam", { rotationX: 14, rotationZ: -2, scale: 0.97 }, { rotationX: 6, rotationZ: 0.5, scale: 1.03, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -24 * u, y: -30 * u, duration: D, ease: "sine.inOut" }, 0);
+  // the receipt is laid down on the counter
+  tl.fromTo(rc, { x: -60 * s, y: 40 * s, rotation: -8, opacity: 0 }, { x: 0, y: 0, rotation: 0, opacity: 1, duration: 0.7, ease: "expo.out" }, 0);
+  // the phone comes in over it and settles
+  tl.fromTo(ph, { x: 260 * s, y: 700 * s, rotation: 14, scale: 1.08 }, { x: 0, y: 0, rotation: 0, scale: 1, duration: 0.85, ease: "expo.out" }, TPH);
+  tl.fromTo([tb, shut], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, TPH + 0.4);
+  // brackets snap to the corners
+  const bo = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+  br.forEach((b, i) => tl.fromTo(b, { opacity: 0, x: bo[i][0] * 50 * s, y: bo[i][1] * 50 * s }, { opacity: 1, x: 0, y: 0, duration: 0.45, ease: "back.out(2.2)" }, TLK + i * 0.03));
+  // the scan line runs down the receipt
+  tl.fromTo(sl, { opacity: 0, y: 0 }, { opacity: 1, duration: 0.12 }, TSC);
+  tl.fromTo(sl, { y: 0 }, { y: RH * s, duration: 0.75, ease: "power1.inOut" }, TSC);
+  tl.fromTo(sg, { opacity: 1, height: 0 }, { height: RH * s, duration: 0.75, ease: "power1.inOut" }, TSC);
+  tl.to([sl, sg], { opacity: 0, duration: 0.25, ease: "power2.in" }, TSC + 0.72);
+  // the three fields are found
+  fbs.forEach((b, i) => tl.fromTo(b, { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.4)", transformOrigin: "50% 50%" }, TBX + i * 0.1));
+  // capture: the shutter blinks
+  tl.to(shut, { scale: 0.86, duration: 0.07, ease: "power2.out", transformOrigin: "50% 50%" }, TSH); tl.to(shut, { scale: 1, duration: 0.3, ease: "back.out(3)" }, TSH + 0.08);
+  tl.fromTo(flash, { opacity: 0 }, { opacity: 0.75, duration: 0.05, ease: "none" }, TSH + 0.04); tl.to(flash, { opacity: 0, duration: 0.35, ease: "power2.out" }, TSH + 0.09);
+  // the phone is framed alone first, then the frame makes room for the card
+  const offX = P ? 0 : (DW / 2 - (phX + PHW / 2)) * s, offY = P ? (DH / 2 - PHH / 2) * s : 0;
+  tl.fromTo(scene, { x: offX, y: offY }, { x: 0, y: 0, duration: 0.9, ease: "power3.inOut" }, TCD - 0.2);
+  // the expense card rises in front, its rows empty
+  tl.fromTo(card, { opacity: 0, y: 160 * s, rotationX: 24, scale: 0.94, z: 160 }, { opacity: 1, y: 0, rotationX: 0, scale: 1, z: 160, duration: 0.8, ease: "expo.out", transformOrigin: "50% 100%" }, TCD);
+  tl.set([...vals, amt], { opacity: 0 }, 0); tl.set(cat, { opacity: 0 }, 0); tl.set(stat, { opacity: 0 }, 0);
+  // each field lifts off the receipt and flies into its row
+  chips.forEach((ch, i) => {
+    const t = TFL + i * 0.24;
+    gsap.set(ch.c, { z: 170 });
+    tl.fromTo(ch.c, { opacity: 0, scale: 0.7, x: 0, y: 0 }, { opacity: 1, scale: 1.08, y: -30 * s, duration: 0.22, ease: "power2.out" }, t);
+    tl.to(ch.c, { x: ch.dx * s, y: ch.dy * s, scale: 1, duration: 0.5, ease: "expo.inOut" }, t + 0.18);
+    tl.to(ch.c, { opacity: 0, scale: 0.9, duration: 0.1, ease: "power2.in" }, t + 0.6);
+    tl.fromTo(ch.dst, { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.4)", transformOrigin: "100% 50%" }, t + 0.58);
+    tl.to(fbs[i], { opacity: 0.35, duration: 0.3 }, t + 0.1);
+  });
+  tl.to([...slots, amtSlot], { opacity: 0, duration: 0.25, stagger: 0.24 }, TFL + 0.58);
+  tl.to(catSlot, { opacity: 0, duration: 0.25 }, TFL + 0.85);
+  tl.fromTo(cat, { opacity: 0, x: 30 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, TFL + 0.85);
+  // filed: the green status lands, the card gives a small lift
+  tl.to(cs, { opacity: 0, y: -10 * s, duration: 0.15, ease: "power2.in" }, TOK - 0.05);
+  tl.fromTo(stat, { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)", transformOrigin: "0% 50%" }, TOK + 0.12);
+  tl.to(card, { y: -12 * s, duration: 0.5, ease: "back.out(2)" }, TOK);
+  tl.fromTo(card, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TOK + 0.1);
+  tl.to(br, { borderColor: "#2BD67B", duration: 0.3 }, TOK);
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "cart-checkout", "name": "Cart checkout", "oneLiner": "a glass cart card turns in, product tiles drop into it one by one and the subtotal and total add each price as it lands, a pointer presses Checkout, a progress fill runs across the button and it turns green to Order confirmed with a ring, the heading becoming the order number and a green Paid chip",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["cart", "checkout", "order", "shop", "store", "ecommerce", "purchase", "buy", "sale", "total", "basket", "confirmed", "paid", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says people bought the bundle or walks through what goes in the basket ('they add the kit, the templates, the call, and check out'): items land as they are named, the button goes green on 'bought'" }

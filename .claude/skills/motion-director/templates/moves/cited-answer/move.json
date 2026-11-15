@@ -1,0 +1,5 @@
+{ "id": "cited-answer", "name": "Cited AI answer", "oneLiner": "a glass AI answer writes itself with numbered citation chips popping in after each claim, the source list stacks underneath, then a pointer hovers one chip: it lights, the rest of the answer steps back and that source card lifts out in 3D with its cited passage highlighting",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "answer", "citations", "sources", "research", "search", "proof", "fact check", "reference", "assistant", "llm", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": true,
+  "say": "when the speaker says the AI shows where it got the answer ('and it cites every source', 'you can check exactly where that came from'): the answer writes on 'asked', the source card lifts on 'source' or 'check'" }

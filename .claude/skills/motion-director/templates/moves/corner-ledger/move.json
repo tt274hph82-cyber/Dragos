@@ -1,0 +1,5 @@
+{ "id": "corner-ledger", "name": "Corner ledger", "oneLiner": "running notes in the top corners while the speaker weighs two options: a glass slab drops into the left corner with an underlined heading and grows a line per beat, the right corner follows, then a green check lands on the chosen side and the other steps back",
+  "category": "explain", "kind": "effect", "uses": ["overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["options", "choice", "notes", "points", "list", "corner", "ledger", "compare", "decision", "pros", "bullets", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 6.0, "alpha": true,
+  "say": "when the speaker walks through two options and their points in turn ('you can buy outright: you own it, it's cheaper long term; or you finance...'): one line lands per point as it's said; pick lands the check on the one they recommend, empty pick just lists; b empty for a single running list" }

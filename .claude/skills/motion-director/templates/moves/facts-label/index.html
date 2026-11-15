@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Label heading","default":"Content Facts"},
+  {"id":"serving","type":"string","label":"Serving size","default":"1 video"},
+  {"id":"servings","type":"string","label":"Servings line value","default":"1 watch"},
+  {"id":"bigLabel","type":"string","label":"The big row label","default":"Minutes"},
+  {"id":"bigValue","type":"number","label":"The big row number","default":12},
+  {"id":"items","type":"string","label":"Rows: label:amount:percent, split with | (2 to 5; percent optional)","default":"Hooks:3:100%|Steps:5:100%|Tools:4:80%|Examples:6:90%"},
+  {"id":"last","type":"string","label":"Final row (green): label:amount:percent","default":"Fluff:0g:0%"},
+  {"id":"note","type":"string","label":"Footnote","default":"* Percent of a well spent afternoon"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Cond"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #111; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --tx: #111; --ok: #2BD67B; --okd: #129150; }
+  #ground { position: absolute; inset: -8%; background: #151515 url(assets/leather.jpg) center / calc(var(--u) * 820); }
+  #ground::after { content: ""; position: absolute; inset: 0;
+    background: radial-gradient(55% 45% at 40% 30%, rgba(255,226,180,.22), transparent 70%), radial-gradient(40% 35% at 85% 90%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+      radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.7)); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); perspective-origin: 50% 40%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #card { position: absolute; }
+  #shadow { position: absolute; inset: 0; border-radius: calc(var(--s) * 6); box-shadow: 0 calc(var(--s) * 4) calc(var(--s) * 6) rgba(0,0,0,.5), calc(var(--s) * 18) calc(var(--s) * 40) calc(var(--s) * 60) rgba(0,0,0,.55); }
+  #paper { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--s) * 5); background: #F8F7F3 url(assets/paper.jpg) center / calc(var(--s) * 700); }
+  #light { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(90% 70% at 18% 8%, rgba(255,240,215,.26), transparent 65%), linear-gradient(160deg, transparent 50%, rgba(40,30,20,.14)); }
+  #sheen { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: soft-light;
+    background: linear-gradient(118deg, transparent calc(var(--sh, -40%) - 14%), rgba(255,255,255,.9) var(--sh, -40%), transparent calc(var(--sh, -40%) + 14%)); }
+  /* the printed label: black box, black rules, a condensed heading */
+  #lab { position: absolute; box-sizing: border-box; border: calc(var(--s) * 4) solid var(--tx); mix-blend-mode: multiply; color: var(--tx); }
+  .ab { position: absolute; white-space: nowrap; line-height: 1; }
+  .bar { position: absolute; background: var(--tx); }
+  #ttl { font-family: "MV Cond", sans-serif; letter-spacing: .005em; line-height: .9; }
+  .b { font-weight: 900; }
+  .r { font-weight: 500; }
+  .num { font-variant-numeric: tabular-nums; }
+  #bigv { font-family: "MV Cond", sans-serif; }
+  .okrow { position: absolute; background: var(--ok); opacity: 0; mix-blend-mode: multiply; }
+  .pct.ok { color: var(--okd); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="card"><div id="shadow"></div><div id="paper"><div id="lab"></div><div id="light"></div><div id="sheen"></div></div></div>
+  </div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await document.fonts.load('80px "MV Cond"');
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait;
+  const parse = (x) => { const p = String(x).split(":").map((s) => s.trim()); return { l: p[0] || "", a: p[1] || "", c: p[2] || "" }; };
+  const items = String(v.items || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 5).map(parse);
+  const last = v.last ? parse(v.last) : null;
+  // ---- design units: a 640 wide label
+  const LW = 640, pd = 22, M = 26;
+  const rowH = 62;
+  // the heading fills the label width (a short title sets bigger), and the layout below makes room for it
+  const probe = document.createElement("span"); probe.style.cssText = 'position:absolute;visibility:hidden;white-space:nowrap;font-family:"MV Cond";font-size:100px;letter-spacing:.005em'; probe.textContent = v.title || ""; document.body.appendChild(probe);
+  const w100 = probe.getBoundingClientRect().width || 1; probe.remove();
+  const tFs = Math.max(40, Math.min(130, (LW - M * 2 - 6) * 100 / w100));
+  let y = M;
+  const Y = {}; Y.ttl = y; y += Math.round(tFs * 1.02) + 4; Y.r0 = y; y += 8;
+  y += 8; Y.sv1 = y; y += 52; Y.sv2 = y; y += 52; Y.bar1 = y; y += 22;
+  Y.aps = y; y += 42; Y.big = y; y += 92; Y.bar2 = y; y += 12; Y.dv = y; y += 48;
+  Y.rows = y; y += items.length * rowH; Y.bar3 = y; y += 16;
+  Y.last = y; y += last ? rowH + 6 : 0; Y.bar4 = y; y += 8; Y.note = y + 12; y += 60;
+  const LH = y + M - 10, CW = LW + pd * 2, CH = LH + pd * 2;
+  let zW, zH;
+  if (P) { zW = W - safe.left - safe.right; zH = H - safe.top - safe.bottom; } else { zW = W * 0.5; zH = H * 0.86; }
+  const s = Math.min(zW / CW, zH / CH, P ? 1.35 : 1.2);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px";
+  Object.assign($("#card").style, { left: (W - CW * s) / 2 + "px", top: (H - CH * s) / 2 + "px", width: CW * s + "px", height: CH * s + "px" });
+  const lab = $("#lab"); Object.assign(lab.style, { left: S(pd), top: S(pd), width: S(LW), height: S(LH) });
+  const IW = LW - M * 2;
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  const T = (cls, txt, x, yy, fs, right) => { const d = document.createElement("div"); d.className = "ab " + cls; d.textContent = txt; Object.assign(d.style, { top: S(yy), fontSize: S(fs) }); lab.appendChild(d); if (right) { d.style.left = "auto"; d.style.right = S(LW - 8 - x); } else d.style.left = S(x); return d; };
+  const B = (yy, h, x0 = M, w = IW) => { const d = document.createElement("div"); d.className = "bar"; Object.assign(d.style, { left: S(x0 - 4), top: S(yy), width: S(w), height: S(h) }); lab.appendChild(d); return d; };
+  const R = M + IW - 4; // right edge for right aligned columns
+  // heading, fitted to the width
+  const ttl = T("", v.title || "", M - 4, Y.ttl, tFs); ttl.id = "ttl"; MV.fitText(ttl, IW * s, 20);
+  const r0 = B(Y.r0, 2);
+  const sv1a = T("r", "Serving size", M - 4, Y.sv1 + 8, 38), sv1b = T("b", v.serving || "", R, Y.sv1 + 8, 38, true);
+  const sv2a = T("r", "Servings", M - 4, Y.sv2 + 8, 38), sv2b = T("b", v.servings || "", R, Y.sv2 + 8, 38, true);
+  MV.fitText(sv1b, IW * 0.55 * s, 12); MV.fitText(sv2b, IW * 0.55 * s, 12);
+  const bar1 = B(Y.bar1, 14);
+  const aps = T("b", "Amount per serving", M - 4, Y.aps + 2, 34);
+  const bigl = T("b", v.bigLabel || "", M - 4, Y.big + 12, 64); MV.fitText(bigl, IW * 0.62 * s, 14);
+  const bigN = +v.bigValue || 0;
+  const bigv = T("num", String(bigN), R, Y.big - 2, 92, true); bigv.id = "bigv";
+  const bar2 = B(Y.bar2, 7);
+  const dv = T("b", "% Daily Value*", R, Y.dv + 8, 34, true);
+  // the rows: a hairline over each, label bold, amount regular, percent bold on the right
+  const rows = items.map((it, i) => {
+    const yy = Y.rows + i * rowH, hl = B(yy, 2);
+    const nm = T("b", it.l, M - 4, yy + 14, 38); MV.fitText(nm, IW * 0.42 * s, 12);
+    const am = T("r num", it.a, M - 4 + tw(nm) / s + 14, yy + 14, 38); MV.fitText(am, IW * 0.28 * s, 12);
+    const pc = T("b num pct", it.c, R, yy + 14, 38, true);
+    return { hl, nm, am, pc, it };
+  });
+  const bar3 = B(Y.bar3, 12);
+  let lr = null;
+  if (last) {
+    const yy = Y.last; const okb = document.createElement("div"); okb.className = "okrow"; Object.assign(okb.style, { left: S(M - 10), top: S(yy + 2), width: S(IW + 12), height: S(rowH) }); lab.appendChild(okb);
+    const nm = T("b", last.l, M - 4, yy + 14, 40); MV.fitText(nm, IW * 0.42 * s, 12);
+    const am = T("r num", last.a, M - 4 + tw(nm) / s + 14, yy + 14, 40);
+    const pc = T("b num pct", last.c, R, yy + 14, 40, true);
+    lr = { okb, nm, am, pc };
+  }
+  const bar4 = B(Y.bar4, 4);
+  const note = T("r", v.note || "", M - 4, Y.note - 4, 32); MV.fitText(note, IW * s, 10);
+
+  // ---- timeline
+  // 0 the label is slid onto the pad; 0.5 the heading and serving print; 1.0 the big row counts; 1.35 the rows print down,
+  // each amount counting with the playhead; 3.2 the last row lands and goes green (the moment), the sheet gives, the light runs
+  const TL = 3.2;
+  tl.fromTo("#cam", { rotationX: 20, rotationZ: -5, scale: 0.95, y: 30 * u }, { rotationX: 9, rotationZ: -1.5, scale: 1.04, y: -10 * u, duration: D, ease: "sine.inOut", transformOrigin: "50% 55%" }, 0);
+  tl.fromTo("#ground", { x: 0, y: 0 }, { x: -30 * u, y: -24 * u, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#card", { x: -240 * u, y: 520 * u, rotation: -13 }, { x: 0, y: 0, rotation: 2, duration: 1.0, ease: "expo.out" }, 0);
+  tl.to("#card", { rotation: 0, duration: 1.4, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#shadow", { opacity: 0.4 }, { opacity: 1, duration: 0.9, ease: "power2.out" }, 0);
+  const pr = (els, t) => tl.fromTo(els, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out" }, t);
+  const bars = (els, t) => tl.fromTo(els, { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "expo.out", transformOrigin: "0% 50%" }, t);
+  tl.fromTo(ttl, { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.45);
+  bars([r0], 0.6); pr([sv1a, sv1b], 0.7); pr([sv2a, sv2b], 0.8); bars([bar1], 0.88); pr([aps], 0.98);
+  pr([bigl, bigv], 1.05);
+  const ob = { n: 0 }; tl.fromTo(ob, { n: 0 }, { n: bigN, duration: 0.6, ease: "power3.out", onUpdate: () => { bigv.textContent = String(Math.round(ob.n)); } }, 1.05);
+  bars([bar2], 1.2); pr([dv], 1.28);
+  // amounts and percents count up from zero; text around the number stays
+  const counter = (el, txt, t, d) => { const m = String(txt).match(/^(\D*)(\d+(?:\.\d+)?)(.*)$/); if (!m) return; const n = +m[2], dp = (m[2].split(".")[1] || "").length, o = { n: 0 };
+    tl.fromTo(o, { n: 0 }, { n, duration: d, ease: "power2.out", onUpdate: () => { el.textContent = m[1] + o.n.toFixed(dp) + m[3]; } }, t); };
+  rows.forEach((r, i) => { const t = 1.38 + i * 0.32; bars([r.hl], t); pr([r.nm, r.am, r.pc], t + 0.06); counter(r.am, r.it.a, t + 0.06, 0.4); counter(r.pc, r.it.c, t + 0.06, 0.5); });
+  const tB = 1.38 + rows.length * 0.32;
+  bars([bar3], tB);
+  if (lr) {
+    tl.fromTo([lr.nm, lr.am, lr.pc], { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power3.in", transformOrigin: "0% 50%" }, TL);
+    tl.to("#card", { scale: 0.985, duration: 0.07, ease: "power2.out" }, TL + 0.22); tl.to("#card", { scale: 1, duration: 0.6, ease: "expo.out" }, TL + 0.29);
+    tl.to("#stage", { scale: 1.012, duration: 0.07, ease: "power2.out" }, TL + 0.22); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, TL + 0.29);
+    tl.fromTo(lr.okb, { opacity: 0, scaleX: 0 }, { opacity: 0.55, scaleX: 1, duration: 0.45, ease: "expo.out", transformOrigin: "0% 50%" }, TL + 0.3);
+    tl.fromTo(lr.pc, { color: "#111111" }, { color: "#0E7A40", duration: 0.3, ease: "power2.out" }, TL + 0.3);
+  }
+  bars([bar4], TL + 0.1); pr([note], TL + 0.5);
+  tl.fromTo("#sheen", { "--sh": "-40%" }, { "--sh": "150%", duration: 1.2, ease: "power2.inOut" }, TL + 0.4);
+  MV.done();
+})();
+</script>
+</body>
+</html>

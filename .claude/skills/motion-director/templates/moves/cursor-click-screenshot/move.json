@@ -1,0 +1,5 @@
+{ "id": "cursor-click-screenshot", "name": "Cursor click on a screenshot", "oneLiner": "a screenshot floats in a window with slow 3D drift, the camera pushes toward one button while a big glossy pointer glides in on a long curve, hovers, and clicks: the button presses in, two rings ripple out, the page bumps, and a tag pops above it",
+  "category": "productivity", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["cursor", "click", "pointer", "button", "cta", "screenshot", "website", "sign up", "subscribe", "checkout", "press", "demo", "screen"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.8, "alpha": true,
+  "say": "when the speaker says what to click ('just hit subscribe', 'click get started', 'then you press this'): cut in on the sentence, the click lands on the button's name. Set button to the real button in % of the screenshot (x,y,w,h); label is the tag that pops above it" }

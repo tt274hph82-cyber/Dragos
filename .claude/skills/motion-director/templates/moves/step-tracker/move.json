@@ -1,0 +1,5 @@
+{ "id": "step-tracker", "name": "Step tracker", "oneLiner": "a glass stepper rail drops in with numbered nodes, the steps already done tick off in green as the groove fills behind them, then the accent runs on to the current step, it lands with a ring and (full frame) its name rises as a big title under the bar",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["steps", "stepper", "progress", "chapter", "where we are", "process", "tutorial", "part", "roadmap", "recurring", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.8, "alpha": true,
+  "say": "when the speaker moves to the next stage of a process ('step two: the script'): cut it in each time with current set to that step, so the viewer always knows where they are. As an overlay it sits at the top of the frame above the speaker" }

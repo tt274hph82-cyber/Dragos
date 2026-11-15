@@ -1,0 +1,14 @@
+{
+  "id": "glass-folder",
+  "name": "Glass folder",
+  "oneLiner": "one brand-colour glass folder on a dark lit stage: a glass cursor clicks it, it turns to three-quarter and real cards fan out of it, a live player of the brand's own video in the centre",
+  "bestFor": "vertical openers and teasers for creators, founders, agencies and media brands with their own video and faces; a hero shot inside a longer film",
+  "motion": "a cursor glide and click, one power3.inOut turn from frontal to three-quarter, cards fanning on back.out, one sheen across the glass, a slow sine turn in the hold",
+  "ground": "dark",
+  "format": "9:16",
+  "length": "7.5s (one continuous shot; 4.5s as an opener)",
+  "stills": [0.5, 2.0, 5.0],
+  "sound": { "vibe": "warm", "bpm": [105, 115], "ui": "click on the cursor and each player press, whoosh on the turn, pop as the cards rise and the title lands, shimmer on the sheen, tick on each small word" },
+  "recipe": "RECIPE.md",
+  "preview": "preview.jpg"
+}

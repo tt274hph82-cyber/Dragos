@@ -1,0 +1,5 @@
+{ "id": "code-diff", "name": "Glass code diff", "oneLiner": "a code editor on a glass pane: the old lines flush red and fold away, the new lines open in green and type themselves in, then the +12 -4 change chip stamps onto the tab with its diffstat squares",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["code", "diff", "commit", "pull request", "developer", "refactor", "fix", "ai coding", "agent", "editor", "programming", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says the code changed or an agent rewrote something ('it rewrote the function', 'one small change'): the red folds away on 'removed', the green types in on 'added', the chip stamps on the size of the change" }

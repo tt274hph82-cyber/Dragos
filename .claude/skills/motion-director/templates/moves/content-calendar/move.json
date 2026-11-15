@@ -1,0 +1,5 @@
+{ "id": "content-calendar", "name": "Content calendar month", "oneLiner": "a glass month grid turns in slow 3D, colour-coded post chips (video, short, post) drop onto days faster and faster while the scheduled count climbs, today's week fills in one sweep under a glowing band, then today lights with a ring and a pulse",
+  "category": "creator", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["calendar", "month", "content plan", "schedule", "posting", "consistency", "batching", "social media", "planning", "creator", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker talks about planning or batching content ('I plan the whole month in one sitting', 'I post every single day'): the month fills under the setup, today lights on 'today' or 'every day'" }

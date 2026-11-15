@@ -1,0 +1,5 @@
+{ "id": "invoice-paid", "name": "Paper invoice paid", "oneLiner": "a real printed invoice is slid onto a black leather desk pad under a warm lamp, the camera drifting in as the line items read down and the total counts up, then a green satin PAID ribbon slides over the top corner, the sheet gives a little and the amber due pill turns into a green Paid in full",
+  "category": "business", "kind": "effect", "uses": ["broll"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["invoice", "paid", "client", "freelance", "agency", "billing", "money", "payment", "income", "services", "paper", "desk", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker says the client paid or what one job billed ('they paid the invoice the same day', 'that one project was 2,400'): cut in on the amount, the ribbon lands on 'paid'" }

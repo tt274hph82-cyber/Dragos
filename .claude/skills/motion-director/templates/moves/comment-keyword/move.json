@@ -1,0 +1,5 @@
+{ "id": "comment-keyword", "name": "Comment keyword to DM", "oneLiner": "a glass comment box springs in, the keyword types in caps letter by letter, send is pressed with a ring and a paper plane flies off, then a DM pops back from the creator carrying a link card to the resource",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["cta", "comment", "keyword", "dm", "message", "link", "lead magnet", "funnel", "call to action", "typing", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "on the call to action, 'comment GUIDE and I'll send it to you': the keyword types as they say it, the DM with the link lands on 'send it to you'" }

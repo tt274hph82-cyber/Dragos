@@ -1,0 +1,5 @@
+{ "id": "timer-stopwatch", "name": "Stopwatch laps", "oneLiner": "a glass stopwatch dial turns toward camera, its accent hand whips round with a motion trail while the readout races, each lap press pulses the dial and drops a lap row onto the stack, then the hand brakes on a long tail and the final time stamps with a ring of light",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["timer", "stopwatch", "time", "speed", "fast", "minutes", "laps", "workflow", "how long", "time saved", "race", "benchmark", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says how long something took ('it did it in under five minutes', 'each step took a minute'): the laps drop on each step, the time stamps on the number" }

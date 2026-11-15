@@ -1,0 +1,5 @@
+{ "id": "sql-query", "name": "Glass SQL query run", "oneLiner": "a query editor on glass: a SQL query types itself line by line behind a caret, Run is clicked, a results panel opens below and rows stream into the table while the row count ticks up, then the count chip lands green with the time it took",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["sql", "query", "database", "data", "table", "results", "analytics", "developer", "rows", "ai coding", "agent", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.8, "alpha": true,
+  "say": "when the speaker says they asked the data a question and got the answer back ('one query and I had every customer who upgraded', 'it pulls the numbers straight from the database'): the query types under the question, the rows stream in on 'and there it is'" }

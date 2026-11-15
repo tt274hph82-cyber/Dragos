@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"The domain that types (empty: the brand domain)","default":""},
+  {"id":"price","type":"string","label":"Price of the domain","default":"$12"},
+  {"id":"per","type":"string","label":"Price period","default":"/yr"},
+  {"id":"alts","type":"string","label":"Other endings under it, ending:price or ending:taken, comma separated (0 to 2)","default":"co:$18,io:taken"},
+  {"id":"status","type":"string","label":"The green status","default":"Available"},
+  {"id":"cta","type":"string","label":"The button","default":"Add to cart"},
+  {"id":"added","type":"string","label":"The button once pressed","default":"In cart"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --mono: "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace; --ok: #2BD67B; --okl: #8BF0B4; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .l3 { width: 56%; height: 30%; left: 22%; top: 40%; background: rgba(43,214,123,.32); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45) 12%, rgba(255,255,255,.45) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, rgba(36,33,42,.66), rgba(12,11,16,.78));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--s) * 44) calc(var(--s) * 100) calc(var(--s) * -26) rgba(0,0,0,.72); }
+  .is-alpha #win { background: linear-gradient(170deg, rgba(30,28,36,.96), rgba(13,12,17,.96)); }
+  .is-key #win { background: #15141A; -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.16) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--s) * 1.5); pointer-events: none; z-index: 31;
+    background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.05) 38%, transparent 55%, color-mix(in srgb, var(--accent) 60%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.08); background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.015)); }
+  .dots { position: absolute; display: flex; gap: calc(var(--s) * 12); }
+  .dots i { width: calc(var(--s) * 19); height: calc(var(--s) * 19); border-radius: 50%; box-shadow: inset 0 calc(var(--s) * 1) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1) rgba(0,0,0,.2); }
+  .dots i:nth-child(1) { background: #FF5F57; } .dots i:nth-child(2) { background: #FEBC2E; } .dots i:nth-child(3) { background: #28C840; }
+  #ttl { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 12); font-weight: 700; color: rgba(255,255,255,.72); white-space: nowrap; }
+  #cart { position: absolute; }
+  #cart svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #badge { position: absolute; display: grid; place-items: center; border-radius: 99px; background: radial-gradient(circle at 35% 25%, #6FF0A6, var(--ok) 60%, #1FA45C); color: #06210F; font-weight: 800; opacity: 0;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 0 0 calc(var(--s) * 4) rgba(13,12,17,.9); }
+
+  #field { border-radius: calc(var(--s) * 26); background: rgba(0,0,0,.32); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.13), inset 0 calc(var(--s) * 3) calc(var(--s) * 10) rgba(0,0,0,.35); }
+  .is-key #field { background: #0D0C11; }
+  #focus { position: absolute; inset: calc(var(--s) * -3); border-radius: calc(var(--s) * 29); box-shadow: 0 0 0 calc(var(--s) * 3) var(--al), 0 0 calc(var(--s) * 28) color-mix(in srgb, var(--accent) 55%, transparent); opacity: 0; pointer-events: none; }
+  .is-key #focus { box-shadow: 0 0 0 calc(var(--s) * 3) var(--al); }
+  #globe { position: absolute; }
+  #typed { position: absolute; display: flex; align-items: center; font-weight: 700; color: #fff; white-space: pre; letter-spacing: -0.01em; }
+  #typed .tld { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+  #caret { display: inline-block; width: .07em; height: 1.05em; margin-left: .06em; background: var(--al); border-radius: 2px; opacity: 0; }
+  #go { border-radius: calc(var(--s) * 18); background: var(--accent); display: grid; place-items: center; color: #fff; font-weight: 800; white-space: nowrap;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35), 0 calc(var(--s) * 10) calc(var(--s) * 22) calc(var(--s) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #go { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35); }
+
+  #hero { border-radius: calc(var(--s) * 26); background: linear-gradient(160deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.22), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  .is-key #hero { background: #201E26; }
+  #okedge { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 0 0 calc(var(--s) * 2.5) var(--ok), 0 0 calc(var(--s) * 40) calc(var(--s) * -4) rgba(43,214,123,.55), inset 0 0 calc(var(--s) * 60) calc(var(--s) * -20) rgba(43,214,123,.4); }
+  .is-key #okedge { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--ok); }
+  #hd { position: absolute; font-family: var(--font-display); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #chip { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 18) 0 calc(var(--s) * 12); border-radius: 99px; white-space: nowrap; font-weight: 800;
+    background: rgba(255,255,255,.08); color: rgba(255,255,255,.6); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  #chip .ic { position: relative; flex: none; width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  #chip .sp { position: absolute; inset: 8%; border-radius: 50%; border: calc(var(--s) * 4) solid rgba(255,255,255,.16); border-top-color: rgba(255,255,255,.75); box-sizing: border-box; }
+  #chip .ck { position: absolute; inset: 0; border-radius: 50%; background: var(--ok); opacity: 0; }
+  #chip .ck svg { position: absolute; inset: 18%; width: 64%; height: 64%; }
+  #chip .t2 { display: none; }
+  #pr { position: absolute; display: flex; align-items: baseline; white-space: nowrap; }
+  #pr b { font-family: var(--font-display); color: var(--ink); }
+  #pr span { color: color-mix(in srgb, var(--ink) 50%, transparent); font-weight: 600; margin-left: .15em; }
+  #add { border-radius: 99px; overflow: hidden; background: var(--accent); white-space: nowrap;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35), 0 calc(var(--s) * 10) calc(var(--s) * 22) calc(var(--s) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #add { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35); }
+  #add .lb { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 10); font-weight: 800; color: #fff; }
+  #add .l2 { color: #06210F; opacity: 0; }
+  #add .l2 svg { width: calc(var(--s) * 30); height: calc(var(--s) * 30); flex: none; }
+
+  .alt { border-radius: calc(var(--s) * 20); background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.06); }
+  .is-key .alt { background: #1A1920; }
+  .alt .d { position: absolute; display: flex; align-items: center; font-weight: 700; color: rgba(255,255,255,.82); white-space: pre; }
+  .alt .p { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-weight: 700; color: rgba(255,255,255,.62); white-space: nowrap; }
+  .alt.taken .d { color: rgba(255,255,255,.34); text-decoration: line-through; text-decoration-thickness: .06em; }
+  .alt.taken .p { color: rgba(255,255,255,.34); }
+  #fly { position: absolute; display: flex; align-items: center; padding: 0 calc(var(--s) * 20); border-radius: 99px; white-space: nowrap; opacity: 0; z-index: 20;
+    background: linear-gradient(160deg, #6FF0A6, var(--ok)); color: #06210F; font-weight: 800; box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--s) * 14) calc(var(--s) * 30) rgba(0,0,0,.5); }
+  #bring { position: absolute; border-radius: 50%; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; box-sizing: border-box; }
+  .is-key #bring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="bar" class="ab"><div class="dots"><i></i><i></i><i></i></div>
+        <div id="ttl"><span>Domains</span></div>
+        <div id="cart"><svg viewBox="0 0 24 24"><path d="M2.5 3.5h3l2.2 11.2a1.6 1.6 0 0 0 1.6 1.3h8.6a1.6 1.6 0 0 0 1.6-1.2L21 7.5H6.4" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="20" r="1.5" fill="rgba(255,255,255,.8)"/><circle cx="17.5" cy="20" r="1.5" fill="rgba(255,255,255,.8)"/></svg><div id="bring"></div><div id="badge">1</div></div>
+      </div>
+      <div id="field" class="ab">
+        <svg id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="rgba(255,255,255,.62)" stroke-width="1.8"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z" fill="none" stroke="rgba(255,255,255,.62)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        <div id="typed"><span id="tb"></span><span class="tld" id="tt"></span><i id="caret"></i></div>
+        <div id="focus"></div>
+      </div>
+      <div id="go" class="ab">Search</div>
+      <div id="hero" class="ab"><div id="hd"></div>
+        <div id="chip"><span class="ic"><i class="sp"></i><i class="ck"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#06210F" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></i></span><span class="t1">Checking</span><span class="t2"></span></div>
+        <div id="pr"><b></b><span></span></div>
+        <div id="add" class="ab"><div class="lb l1"></div><div class="lb l2"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#06210F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span></span></div></div>
+        <div id="okedge"></div>
+      </div>
+      <div id="alts"></div>
+      <div id="fly"></div>
+      <div id="rim"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const DOM = String(v.name || v.domain || "yourbrand.com").replace(/^https?:\/\//, "").replace(/^www\./, "").replace(/\/.*$/, "").toLowerCase();
+  const dot = DOM.indexOf("."), BASE = dot > 0 ? DOM.slice(0, dot) : DOM, TLD = dot > 0 ? DOM.slice(dot) : ".com";
+  const alts = String(v.alts || "").split(",").map((t) => t.trim()).filter(Boolean).slice(0, 2).map((t) => { const [e, p] = t.split(":"); return { d: BASE + "." + String(e || "").replace(/^\./, ""), p: (p || "").trim() }; });
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.22; cR = W * 0.78; zT = H * 0.08; zB = H * 0.92; }
+  const DW = 900, pad = 28, barH = 82, fT = barH + 30, fH = 112, hT = fT + fH + 28, hH = 236, aH = 88;
+  const aT = hT + hH + 18, DH = aT + alts.length * (aH + 14) + (alts.length ? 18 : 14);
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const cw = DW * s, ch = DH * s;
+  const left0 = cL + ((cR - cL) - cw) / 2, top0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: left0 + "px", top: top0 + "px", width: cw + "px", height: ch + "px" });
+
+  // ---- chrome: the cart lives in the bar
+  box($("#bar"), 0, 0, DW, barH);
+  Object.assign($(".dots").style, { left: S(pad + 4), top: S((barH - 19) / 2) });
+  const ttl = $("#ttl"); ttl.style.fontSize = S(30); box(ttl, pad + 4 + 81 + 30, 0, 400, barH);
+  const CA = 48, cartX = DW - pad - 34 - CA, cartY = (barH - CA) / 2;
+  box($("#cart"), cartX, cartY, CA, CA);
+  const bd = $("#badge"); bd.style.fontSize = S(24); box(bd, CA - 16, -6, 34, 34);
+  box($("#bring"), -10, -10, CA + 20, CA + 20);
+
+  // ---- search field and button
+  const GOW = 190;
+  box($("#field"), pad, fT, DW - pad * 2 - GOW - 16, fH);
+  box($("#globe"), 26, (fH - 40) / 2, 40, 40);
+  const typed = $("#typed"); box(typed, 86, 0, DW - pad * 2 - GOW - 16 - 86 - 20, fH); typed.style.fontSize = S(48);
+  $("#tb").textContent = BASE; $("#tt").textContent = TLD; MV.fitText(typed, (DW - pad * 2 - GOW - 16 - 86 - 50) * s, 18);
+  $("#tb").textContent = ""; $("#tt").textContent = "";
+  const go = $("#go"); box(go, DW - pad - GOW, fT, GOW, fH); go.style.fontSize = S(36);
+
+  // ---- the result card
+  const hero = $("#hero"); box(hero, pad, hT, DW - pad * 2, hH);
+  const HW = DW - pad * 2, ip = 32;
+  const hd = $("#hd"); hd.textContent = DOM; hd.style.fontSize = S(56); Object.assign(hd.style, { left: S(ip), top: S(28) });
+  MV.fitText(hd, (HW - ip * 2) * s, 20);
+  const chip = $("#chip"); chip.style.height = S(56); chip.style.fontSize = S(32); Object.assign(chip.style, { left: S(ip), top: S(hH - 56 - 34) });
+  chip.querySelector(".t2").textContent = v.status || "Available";
+  const pr = $("#pr"); pr.querySelector("b").textContent = v.price || ""; pr.querySelector("span").textContent = v.per || "";
+  pr.querySelector("b").style.fontSize = S(46); pr.querySelector("span").style.fontSize = S(30);
+  const ADW = 270, ADH = 76;
+  const add = $("#add"); box(add, HW - ip - ADW, hH - ADH - 24, ADW, ADH);
+  add.querySelector(".l1").textContent = v.cta || "Add to cart"; add.querySelector(".l2 span").textContent = v.added || "In cart";
+  add.querySelectorAll(".lb").forEach((l) => { l.style.fontSize = S(34); MV.fitText(l, (ADW - 40) * s, 14); });
+  // the price sits left of the button, on its baseline
+  const prW = pr.getBoundingClientRect().width / s;
+  Object.assign(pr.style, { left: S(HW - ip - ADW - 26 - prW), top: S(hH - ADH - 24 + (ADH - 56) / 2) });
+  // the chip (in its widest state) must clear the price
+  { chip.querySelector(".t1").style.display = "none"; chip.querySelector(".t2").style.display = "inline"; const cwid = chip.getBoundingClientRect().width / s;
+    chip.querySelector(".t1").style.display = ""; chip.querySelector(".t2").style.display = "";
+    if (ip + cwid > HW - ip - ADW - 26 - prW - 16) { pr.style.top = S(30); pr.style.left = S(HW - ip - prW); hd.style.maxWidth = ""; MV.fitText(hd, (HW - ip * 2 - prW - 30) * s, 18); } }
+
+  // ---- other endings
+  const altEl = alts.map((a, i) => {
+    const el = document.createElement("div"); el.className = "alt ab" + (/^taken$/i.test(a.p) ? " taken" : ""); box(el, pad, aT + i * (aH + 14), DW - pad * 2, aH);
+    el.innerHTML = `<div class="d"></div><div class="p"></div>`;
+    const d = el.querySelector(".d"), p = el.querySelector(".p");
+    d.textContent = a.d; p.textContent = /^taken$/i.test(a.p) ? "Taken" : a.p + (v.per || "");
+    box(d, 32, 0, 560, aH); box(p, DW - pad * 2 - 32 - 240, 0, 240, aH); d.style.fontSize = p.style.fontSize = S(36);
+    MV.fitText(d, 540 * s, 16); MV.fitText(p, 230 * s, 14);
+    $("#alts").appendChild(el); return el;
+  });
+
+  // ---- the flying domain pill
+  const fly = $("#fly"); fly.textContent = DOM; fly.style.fontSize = S(34); fly.style.height = S(64);
+  const flyW = fly.getBoundingClientRect().width / s;
+  Object.assign(fly.style, { left: S(pad + ip), top: S(hT + 28) });
+  Object.assign($("#base").style, { left: left0 - 40 * u + "px", width: cw + 80 * u + "px", top: top0 + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TT = 0.6, CPS = Math.min(0.06, 0.8 / Math.max(1, DOM.length)), TQ = TT + DOM.length * CPS;
+  const TG = TQ + 0.2, TH = TG + 0.25, TA = TH + 0.55, TB = TA + 0.85, TF = TB + 0.2, TC = TF + 0.6;
+
+  gsap.set("#rig", { transformOrigin: `${left0 + cw / 2}px ${top0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 8, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 24, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+
+  // the field takes focus, the domain types (the ending dims)
+  tl.fromTo("#focus", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, TT - 0.2);
+  tl.set("#caret", { opacity: 1 }, TT - 0.15);
+  for (let i = 1; i <= DOM.length; i++) tl.set("#tb", { textContent: DOM.slice(0, Math.min(i, BASE.length)) }, TT + i * CPS);
+  for (let i = BASE.length + 1; i <= DOM.length; i++) tl.set("#tt", { textContent: DOM.slice(BASE.length, i) }, TT + i * CPS);
+  tl.set("#caret", { opacity: 0 }, TQ + 0.1);
+  // search pressed
+  tl.to("#go", { scale: 0.9, duration: 0.08, ease: "power2.out" }, TG); tl.to("#go", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TG + 0.09);
+  tl.to("#focus", { opacity: 0, duration: 0.3, ease: "power2.out" }, TG + 0.1);
+  // the result rises, checking
+  tl.fromTo(hero, { opacity: 0, y: 40 * s, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out" }, TH);
+  tl.fromTo(["#hd", "#chip"], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out", stagger: 0.06 }, TH + 0.08);
+  tl.fromTo(["#pr", "#add"], { opacity: 0 }, { opacity: 0.35, duration: 0.4, ease: "power2.out" }, TH + 0.15);
+  tl.fromTo("#chip .sp", { rotation: 0 }, { rotation: 540, duration: TA - TH, ease: "none" }, TH);
+  tl.fromTo(altEl, { opacity: 0, y: 26 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, TA + 0.15);
+
+  // moment one: Available flips green
+  tl.set("#chip .sp", { opacity: 0 }, TA);
+  tl.set("#chip .t1", { display: "none" }, TA); tl.set("#chip .t2", { display: "inline" }, TA);
+  tl.to("#chip", { background: "rgba(43,214,123,.16)", color: "#8BF0B4", boxShadow: `inset 0 0 0 ${1.5 * s}px rgba(43,214,123,.6)`, duration: 0.2, ease: "power2.out" }, TA);
+  tl.fromTo("#chip .ck", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(3)" }, TA);
+  tl.to("#chip", { scale: 1.1, duration: 0.07, ease: "power2.out", transformOrigin: "0% 50%" }, TA); tl.to("#chip", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TA + 0.08);
+  tl.fromTo("#okedge", { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, TA);
+  tl.to("#okedge", { opacity: 0.45, duration: 0.8, ease: "power2.out" }, TA + 0.15);
+  tl.to(["#pr", "#add"], { opacity: 1, duration: 0.3, ease: "power2.out" }, TA + 0.05);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TA);
+  if (!A) { tl.to("#ground .l3", { opacity: 1, duration: 0.15 }, TA); tl.to("#ground .l3", { opacity: 0.4, duration: 1.0, ease: "power2.out" }, TA + 0.15); }
+
+  // moment two: added; the domain flies up into the cart, the badge pops
+  tl.to("#add", { scale: 0.92, duration: 0.08, ease: "power2.out" }, TB); tl.to("#add", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TB + 0.09);
+  tl.to("#add", { background: "#2BD67B", boxShadow: `inset 0 ${2 * s}px 0 rgba(255,255,255,.5), 0 ${10 * s}px ${24 * s}px ${-6 * s}px rgba(43,214,123,.55)`, duration: 0.25, ease: "power2.out" }, TB + 0.06);
+  tl.to("#add .l1", { opacity: 0, y: -16 * s, duration: 0.12, ease: "power2.in" }, TB + 0.04);
+  tl.fromTo("#add .l2", { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.35, ease: "back.out(2.5)" }, TB + 0.18);
+  const dx = (cartX + CA / 2) - (pad + ip + flyW / 2), dy = (cartY + CA / 2) - (hT + 28 + 32);
+  // the name lifts off the card (the card shows it again once it has gone)
+  tl.set("#hd", { opacity: 0 }, TF);
+  tl.fromTo("#hd", { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, TC);
+  tl.fromTo(fly, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1.05, duration: 0.1, ease: "power2.out" }, TF);
+  tl.fromTo(fly, { x: 0 }, { x: dx * s, duration: 0.6, ease: "power2.in" }, TF);
+  tl.fromTo(fly, { y: 0 }, { y: dy * s, duration: 0.6, ease: "back.in(1.4)" }, TF);
+  tl.to(fly, { scale: 0.3, duration: 0.6, ease: "power3.in" }, TF + 0.02);
+  tl.to(fly, { opacity: 0, duration: 0.12, ease: "power2.in" }, TC - 0.2);
+  tl.to("#cart", { scale: 1.25, rotation: -8, duration: 0.08, ease: "power2.out", transformOrigin: "50% 60%" }, TC); tl.to("#cart", { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)" }, TC + 0.08);
+  tl.fromTo("#badge", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(3.5)" }, TC + 0.02);
+  tl.fromTo("#bring", { scale: 0.6, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TC + 0.02);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Rule name","default":"New lead flow"},
+  {"id":"trigger","type":"string","label":"The trigger (When)","default":"A form is submitted"},
+  {"id":"action1","type":"string","label":"First action (Then)","default":"Add a row to the sheet"},
+  {"id":"action2","type":"string","label":"Second action, empty for one","default":"Send the welcome email"},
+  {"id":"whenLabel","type":"string","label":"Trigger label","default":"When"},
+  {"id":"thenLabel","type":"string","label":"Action label","default":"Then"},
+  {"id":"runs","type":"number","label":"Run count before it fires","default":1246},
+  {"id":"runsLabel","type":"string","label":"Counter label","default":"Runs"},
+  {"id":"fires","type":"number","label":"Times it fires in the shot (1 to 3)","default":3},
+  {"id":"lastRun","type":"string","label":"Text next to the counter after a run","default":"Last run just now"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 46%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.42)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #card { position: absolute; left: 0; top: 0; box-sizing: border-box; border-radius: calc(var(--u) * 44); transform-style: preserve-3d;
+    background: linear-gradient(165deg, rgba(255,255,255,.15), rgba(255,255,255,.05) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  #card .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .ab { position: absolute; box-sizing: border-box; }
+
+  .ic { width: calc(var(--u) * 72); height: calc(var(--u) * 72); border-radius: calc(var(--u) * 20); display: grid; place-items: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.14)), color-mix(in srgb, var(--accent) 18%, rgba(0,0,0,.2)));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), 0 0 calc(var(--u) * 26) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .ic svg { width: 56%; height: 56%; } .ic svg * { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  #tt { font-size: calc(var(--u) * 42); font-weight: 800; color: var(--ink); white-space: nowrap; }
+  #tog { width: calc(var(--u) * 116); height: calc(var(--u) * 66); border-radius: 99px; background: rgba(255,255,255,.14); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 4) rgba(0,0,0,.35); }
+  #tog .on { position: absolute; inset: 0; border-radius: inherit; background: var(--ok); opacity: 0; box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 4) rgba(0,0,0,.2), 0 0 calc(var(--u) * 22) color-mix(in srgb, var(--ok) 50%, transparent); }
+  .is-key #tog .on { box-shadow: none; }
+  #tog .k { position: absolute; left: calc(var(--u) * 6); top: calc(var(--u) * 6); width: calc(var(--u) * 54); height: calc(var(--u) * 54); border-radius: 50%; background: linear-gradient(180deg, #fff, #E8E6E2); box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.35); }
+
+  .blk { border-radius: calc(var(--u) * 28); background: rgba(255,255,255,.065); display: flex; align-items: center; gap: calc(var(--u) * 24); padding: 0 calc(var(--u) * 26) 0 calc(var(--u) * 22);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.16), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.08); }
+  .is-key .blk { background: color-mix(in srgb, var(--surface) 84%, #fff); }
+  .blk .gt { flex: none; width: calc(var(--u) * 76); height: calc(var(--u) * 76); border-radius: calc(var(--u) * 20); display: grid; place-items: center; background: rgba(255,255,255,.1);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25); }
+  .blk.w .gt { background: linear-gradient(150deg, color-mix(in srgb, var(--accent2) 60%, rgba(255,255,255,.1)), color-mix(in srgb, var(--accent2) 22%, rgba(0,0,0,.3))); }
+  .blk .gt svg { width: 54%; height: 54%; } .blk .gt svg * { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .blk .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 4); }
+  .blk .lb { font-size: calc(var(--u) * 27); font-weight: 800; letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; color: color-mix(in srgb, var(--ink) 50%, transparent); }
+  .blk.w .lb { color: color-mix(in srgb, var(--accent2) 70%, #fff); }
+  .blk .t { font-size: calc(var(--u) * 40); font-weight: 700; color: var(--ink); white-space: nowrap; }
+  .blk .flash { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--accent2) 80%, #fff), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent2) 45%, transparent);
+    background: color-mix(in srgb, var(--accent2) 12%, transparent); }
+  .blk.a .flash { box-shadow: inset 0 0 0 calc(var(--u) * 2.5) var(--ok), 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--ok) 35%, transparent); background: color-mix(in srgb, var(--ok) 9%, transparent); }
+  .is-key .blk .flash { box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--accent2) 80%, #fff); }
+  .is-key .blk.a .flash { box-shadow: inset 0 0 0 calc(var(--u) * 2.5) var(--ok); }
+  .stw { flex: none; position: relative; width: calc(var(--u) * 54); height: calc(var(--u) * 54); }
+  .stw .idle { position: absolute; inset: calc(var(--u) * 6); border-radius: 50%; border: calc(var(--u) * 3) solid rgba(255,255,255,.22); box-sizing: border-box; }
+  .spin { position: absolute; inset: 0; opacity: 0; } .spin svg { width: 100%; height: 100%; } .spin circle { fill: none; stroke-width: 3; }
+  .spin .bg { stroke: rgba(255,255,255,.14); } .spin .fg { stroke: color-mix(in srgb, var(--accent) 60%, #fff); stroke-dasharray: 22 100; stroke-linecap: round; }
+  .okc { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; transform: scale(0);
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--ok) 60%, #fff), var(--ok) 60%, color-mix(in srgb, var(--ok) 70%, #000));
+    box-shadow: 0 0 calc(var(--u) * 16) color-mix(in srgb, var(--ok) 60%, transparent); }
+  .is-key .okc { box-shadow: none; }
+  .okc svg { width: 64%; height: 64%; overflow: visible; } .okc path { fill: none; stroke: #04210F; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 20; }
+
+  .wire { width: calc(var(--u) * 4); border-radius: 99px; background: rgba(255,255,255,.16); transform-origin: 50% 0; }
+  .dot { width: calc(var(--u) * 22); height: calc(var(--u) * 22); border-radius: 50%; opacity: 0; background: #fff;
+    box-shadow: 0 0 0 calc(var(--u) * 5) color-mix(in srgb, var(--accent2) 45%, transparent), 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent2) 90%, transparent); }
+  .is-key .dot { box-shadow: 0 0 0 calc(var(--u) * 5) color-mix(in srgb, var(--accent2) 45%, transparent); }
+
+  #ft { border-top: calc(var(--u) * 1.5) solid rgba(255,255,255,.1); display: flex; align-items: center; gap: calc(var(--u) * 20); }
+  #ft .lb { font-size: calc(var(--u) * 30); font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
+  #cnt { position: relative; display: inline-block; overflow: hidden; height: calc(var(--u) * 80); }
+  #cnt span { display: block; font-family: var(--font-display); font-size: calc(var(--u) * 66); line-height: calc(var(--u) * 80); color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #last { margin-left: auto; font-size: calc(var(--u) * 32); font-weight: 600; color: color-mix(in srgb, var(--ok) 80%, #fff); white-space: nowrap; }
+  #cring { position: absolute; border-radius: 99px; border: calc(var(--u) * 3) solid var(--ok); opacity: 0; pointer-events: none; }
+  .is-key #cring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="card">
+    <div class="ab ic" id="hic"><svg viewBox="0 0 24 24"><path d="M13.5 2.5L5 13.5h6l-1 8 8.5-11h-6z"/></svg></div>
+    <div class="ab" id="tt"></div>
+    <div class="ab" id="tog"><i class="on"></i><i class="k"></i></div>
+    <i class="ab wire" id="w1"></i><i class="ab wire" id="w2"></i><i class="ab dot" id="d1"></i><i class="ab dot" id="d2"></i>
+    <div class="ab blk w" id="b0"><i class="flash"></i><div class="gt"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M7.5 8.5h9M7.5 12h9"/><rect x="7.5" y="15" width="5" height="2.5" rx="1"/></svg></div><div class="tx"><span class="lb"></span><span class="t"></span></div></div>
+    <div class="ab blk a" id="b1"><i class="flash"></i><div class="gt"><svg viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M3.5 14.5h17M10 4.5v15"/></svg></div><div class="tx"><span class="lb"></span><span class="t"></span></div>
+      <div class="stw"><i class="idle"></i><div class="spin"><svg viewBox="0 0 24 24"><circle class="bg" cx="12" cy="12" r="9"/><circle class="fg" cx="12" cy="12" r="9"/></svg></div><div class="okc"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-8.6"/></svg></div></div></div>
+    <div class="ab blk a" id="b2"><i class="flash"></i><div class="gt"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg></div><div class="tx"><span class="lb"></span><span class="t"></span></div>
+      <div class="stw"><i class="idle"></i><div class="spin"><svg viewBox="0 0 24 24"><circle class="bg" cx="12" cy="12" r="9"/><circle class="fg" cx="12" cy="12" r="9"/></svg></div><div class="okc"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-8.6"/></svg></div></div></div>
+    <div class="ab" id="ft"><span class="lb"></span><span id="cnt"><span id="cn"></span></span><span id="last"></span><i class="ab" id="cring"></i></div>
+    <div class="sh"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, u = MV.u;
+  const two = String(v.action2 || "").trim() !== "";
+  const NF = Math.max(1, Math.min(3, Math.round(+v.fires || 1)));
+  const base = Math.max(0, Math.round(+v.runs || 0));
+  const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // ---- layout (unscaled card px)
+  const CW = 940 * u, PAD = 34 * u, IN = CW - 2 * PAD, HH = 84 * u, BH = 124 * u, WG = 58 * u, FH = 106 * u;
+  const B0Y = PAD + HH + 28 * u, B1Y = B0Y + BH + WG, B2Y = B1Y + BH + WG;
+  const FY = (two ? B2Y : B1Y) + BH + 26 * u, CH = FY + FH + 30 * u;
+  const card = $("#card"); Object.assign(card.style, { width: CW + "px", height: CH + "px" });
+  const S_ = (el, x, y, w, h) => Object.assign(el.style, { left: x + "px", top: y + "px", width: w == null ? "auto" : w + "px", height: h == null ? "auto" : h + "px" });
+  S_($("#hic"), PAD, PAD + (HH - 72 * u) / 2, 72 * u, 72 * u);
+  $("#tt").textContent = v.title || ""; S_($("#tt"), PAD + 94 * u, PAD + (HH - 58 * u) / 2, null, 58 * u);
+  S_($("#tog"), CW - PAD - 116 * u, PAD + (HH - 66 * u) / 2, 116 * u, 66 * u);
+  MV.fitText($("#tt"), IN - 94 * u - 140 * u, 16);
+  const B = [$("#b0"), $("#b1"), $("#b2")];
+  [[v.whenLabel, v.trigger], [v.thenLabel, v.action1], [v.thenLabel, v.action2]].forEach(([lb, t], i) => { $(".lb", B[i]).textContent = lb || ""; $(".t", B[i]).textContent = t || ""; });
+  S_(B[0], PAD, B0Y, IN, BH); S_(B[1], PAD, B1Y, IN, BH); S_(B[2], PAD, B2Y, IN, BH);
+  if (!two) B[2].style.display = "none", $("#w2").style.display = "none", $("#d2").style.display = "none";
+  B.forEach((b, i) => MV.fitText($(".t", b), IN - 48 * u - 76 * u - 24 * u - (i ? 54 * u + 24 * u : 0), 16));
+  const WX = PAD + 22 * u + 38 * u - 2 * u;
+  S_($("#w1"), WX, B0Y + BH, 4 * u, WG); S_($("#w2"), WX, B1Y + BH, 4 * u, WG);
+  S_($("#d1"), WX + 2 * u - 11 * u, B0Y + BH - 11 * u, 22 * u, 22 * u); S_($("#d2"), WX + 2 * u - 11 * u, B1Y + BH - 11 * u, 22 * u, 22 * u);
+  S_($("#ft"), PAD, FY, IN, FH);
+  $("#ft .lb").textContent = v.runsLabel || ""; $("#last").textContent = v.lastRun || "";
+  const cn = $("#cn"); cn.textContent = fmt(base + NF);
+  const cntW = cn.getBoundingClientRect().width + 4 * u; $("#cnt").style.width = cntW + "px";
+  MV.fitText($("#last"), IN - $("#ft .lb").getBoundingClientRect().width - cntW - 60 * u, 14);
+  cn.textContent = fmt(base);
+  { const r = $("#cnt"); const x = $("#ft .lb").getBoundingClientRect().width + 20 * u; S_($("#cring"), x - 14 * u, (FH - 96 * u) / 2, cntW + 28 * u, 96 * u); }
+
+  // ---- place the card
+  let bx, by, bw, bh;
+  if (P && MV.alpha) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H * 0.6 - safe.top; }
+  else if (P) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H - safe.top - safe.bottom; }
+  else if (W > H && MV.alpha) { bw = W * 0.46; bx = W - safe.right - bw; by = safe.top; bh = H - safe.top - safe.bottom; }
+  else { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H - safe.top - safe.bottom; }
+  const S = Math.min(W > H && !MV.alpha ? 1.15 : 1, bw / CW, bh / CH);
+  const X = bx + (bw - CW * S) / 2, Y = by + (bh - CH * S) / 2;
+  const X0 = X - CW * (1 - S) / 2, Y0 = Y - CH * (1 - S) / 2;
+  gsap.set(card, { x: X0, y: Y0, scale: S, transformOrigin: `${CW / 2}px ${CH / 2}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${X + CW * S / 2}px ${Y + CH * S / 2}px` });
+
+  // ---- camera drift and arrival
+  tl.fromTo(card, { rotationY: P ? -8 : -11, rotationX: 8, z: -40 * u }, { rotationY: P ? 5 : 7, rotationX: 2, z: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(card, { y: Y0 + 90 * u, scale: S * 0.94 }, { y: Y0, scale: S, duration: 0.8, ease: "back.out(1.4)" }, 0.03);
+  tl.fromTo(card, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.03);
+  tl.fromTo("#hic", { scale: 0.4, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)", transformOrigin: "50% 50%" }, 0.1);
+  tl.fromTo(["#tt", "#tog"], { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.06, ease: "expo.out" }, 0.15);
+  const vis = two ? B : B.slice(0, 2);
+  vis.forEach((b, i) => tl.fromTo(b, { opacity: 0, x: -28 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 0.22 + i * 0.08));
+  tl.fromTo(two ? ["#w1", "#w2"] : ["#w1"], { scaleY: 0 }, { scaleY: 1, duration: 0.4, stagger: 0.08, ease: "expo.out" }, 0.4);
+  tl.fromTo("#ft", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.45);
+  tl.fromTo(card, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, 0.25);
+  gsap.set("#last", { opacity: 0 });
+
+  // ---- the switch goes on
+  const TON = 0.7;
+  tl.to("#tog", { scale: 0.92, duration: 0.07, ease: "power2.out", transformOrigin: "50% 50%" }, TON);
+  tl.to("#tog", { scale: 1, duration: 0.4, ease: "back.out(3)" }, TON + 0.07);
+  tl.to("#tog .k", { x: 50 * u, duration: 0.35, ease: "back.out(2)" }, TON + 0.03);
+  tl.to("#tog .on", { opacity: 1, duration: 0.2, ease: "power2.out" }, TON + 0.05);
+
+  // ---- fires: the trigger flashes, light runs down each wire, each action spins then ticks, the counter rolls
+  const acts = two ? [B[1], B[2]] : [B[1]], dots = ["#d1", "#d2"], wires = [B0Y + BH, B1Y + BH];
+  let t = TON + 0.4, n = base;
+  for (let f = 0; f < NF; f++) {
+    const k = f === 0 ? 1 : f === 1 ? 0.55 : 0.45;           // each run is quicker than the last
+    tl.fromTo($(".flash", B[0]), { opacity: 1 }, { opacity: 0, duration: 0.6 * k + 0.2, ease: "power2.out", immediateRender: false }, t);
+    tl.fromTo($(".gt", B[0]), { scale: 1 }, { scale: 1.14, duration: 0.09, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false, transformOrigin: "50% 50%" }, t);
+    tl.fromTo(B[0], { scale: 1 }, { scale: 1.02, duration: 0.09, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false, transformOrigin: "50% 50%" }, t);
+    let ta = t + 0.12 * k;
+    acts.forEach((b, i) => {
+      const travel = 0.28 * k;
+      tl.fromTo(dots[i], { y: 0, opacity: 1, scale: 0.6 }, { y: WG, scale: 1, duration: travel, ease: "power2.inOut", immediateRender: false }, ta);
+      tl.to(dots[i], { opacity: 0, duration: 0.1 }, ta + travel);
+      const tb = ta + travel;
+      if (f === 0) {
+        tl.to($(".idle", b), { opacity: 0, duration: 0.1 }, tb);
+        tl.fromTo($(".spin", b), { opacity: 0, rotation: 0 }, { opacity: 1, rotation: 480, duration: 0.36, ease: "none", transformOrigin: "50% 50%" }, tb);
+        tl.to($(".spin", b), { opacity: 0, duration: 0.08 }, tb + 0.32);
+        tl.fromTo($(".okc", b), { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.42, ease: "back.out(3)", transformOrigin: "50% 50%" }, tb + 0.32);
+        tl.fromTo($(".okc path", b), { strokeDashoffset: 20 }, { strokeDashoffset: 0, duration: 0.2, ease: "power2.out" }, tb + 0.4);
+        ta = tb + 0.36;
+      } else {
+        tl.fromTo($(".okc", b), { scale: 1 }, { scale: 1.25, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false, transformOrigin: "50% 50%" }, tb);
+        ta = tb + 0.04;
+      }
+      tl.fromTo($(".flash", b), { opacity: 1 }, { opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, ta - 0.04);
+    });
+    // the count rolls: the old number slides up and out, the new one rises in
+    n++;
+    const tc = ta + 0.04;
+    tl.to(cn, { yPercent: -100, opacity: 0, duration: 0.1, ease: "power2.in" }, tc);
+    tl.set(cn, { textContent: fmt(n) }, tc + 0.1);
+    tl.fromTo(cn, { yPercent: 60 }, { yPercent: 0, duration: 0.3, ease: "expo.out", immediateRender: false }, tc + 0.1);
+    tl.fromTo(cn, { opacity: 0 }, { opacity: 1, duration: 0.16, ease: "power2.out", immediateRender: false }, tc + 0.15);
+    if (f === 0) tl.fromTo("#last", { opacity: 0, x: 16 * u }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out" }, tc + 0.1);
+    if (f === NF - 1) {
+      if (!KEY) tl.fromTo("#cring", { scale: 1, opacity: 0.9 }, { scale: 1.3, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false, transformOrigin: "50% 50%" }, tc + 0.14);
+      tl.to(cn, { color: "#2BD67B", duration: 0.25, ease: "power2.out" }, tc + 0.12);
+      tl.fromTo(card, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, tc + 0.15);
+    }
+    t = tc + 0.32 * k + 0.12;
+  }
+  gsap.set(acts.map((b) => $(".okc path", b)), { strokeDashoffset: 0 });
+  tl.set(cn, { textContent: fmt(base) }, 0);
+
+  // ---- out
+  if (MV.alpha) tl.to(card, { y: Y0 - 80 * u, opacity: 0, filter: "blur(14px)", duration: 0.36, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

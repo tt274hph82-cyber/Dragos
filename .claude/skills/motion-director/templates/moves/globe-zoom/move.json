@@ -1,0 +1,5 @@
+{ "id": "globe-zoom", "name": "Globe zoom", "oneLiner": "a real NASA Earth under a glass shell turns in the dark, lit by a low sun with city lights on the night side, then the camera dives in log space through the glass to one city where a glossy accent pin drops and sticks, rings run out over the lights and a glass label card lands with the place, a short label and its coordinates",
+  "category": "data", "kind": "effect", "uses": ["broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["globe", "earth", "world", "map", "location", "city", "where", "travel", "global", "zoom", "dive", "pin", "place", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": false,
+  "say": "when the speaker names a place ('I moved to Lisbon', 'our first customer was in Tokyo', 'it all started in a flat in London'): cut in as the sentence starts, the pin lands on the city's name. Set place, lat and lon to the real city; depth 2 to 2.5 for a country, 3.5 to 4.5 for a city" }

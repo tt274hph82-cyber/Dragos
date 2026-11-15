@@ -1,0 +1,9 @@
+{ "sources": [
+  { "file": "assets/board.jpg, assets/clip-front.png", "from": "Poly Haven clipboard (CC0 scanned model), rendered top-down with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0); the maker's name on the clip painted out; the clip cut out as its own layer over the sheet", "license": "CC0", "page": "https://polyhaven.com/a/clipboard" },
+  { "file": "assets/stamp.png", "from": "A rubber stamp (turned handle, block, rubber pad) modelled as glTF for this move, textured with ambientCG Wood051 (CC0) and rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0)", "license": "Original render, free to use; texture and HDRI CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the form", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; the desk (look mode only)", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the typing and the imprint", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/fonts/SpecialElite-Regular.ttf", "from": "Special Elite by Astigmatic, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Special+Elite" },
+  { "file": "assets/fonts/Anton-Regular.ttf", "from": "Anton by Vernon Adams, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Anton" }
+] }

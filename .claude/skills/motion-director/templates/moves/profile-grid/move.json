@@ -1,0 +1,5 @@
+{ "id": "profile-grid", "name": "Profile grid fill", "oneLiner": "a light profile page (face in a brand ring, name, handle, grid and reel tabs) swings up out of depth; its 3 x 3 grid of portrait posts fills tile by tile from crops of the brand's own screens, photo and mark, each dropping onto the glass with a loading flash, then the pinned post lifts off the grid toward camera as the rest dims and a pin pill stamps into its corner",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["profile", "grid", "feed", "posts", "pinned", "pin", "portfolio", "body of work", "content", "creator", "account", "social", "consistency", "light", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker talks about their page or body of work ('this is what my page looks like now', 'I posted every day for a year') and lands on one post ('and this one is pinned for a reason', 'this is the one that started it'): the grid fills under the first line, the pinned post lifts on the second" }

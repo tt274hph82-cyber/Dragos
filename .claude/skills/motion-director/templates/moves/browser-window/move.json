@@ -1,0 +1,5 @@
+{ "id": "browser-window", "name": "Browser window", "oneLiner": "a floating browser window tilts in out of depth, the brand's domain types into the address bar, a progress line runs and the page loads as the brand's real screen, then the window drifts in 3D while a cursor glides over and clicks the call to action",
+  "category": "dev", "kind": "effect", "uses": ["broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["website", "browser", "url", "domain", "landing page", "product", "screen", "demo", "click", "cta", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker says where to go or names the site ('just go to...', 'it's at...'): the address types under the name, the page loads as they describe it, the click lands on 'sign up' or 'try it'" }

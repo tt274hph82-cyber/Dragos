@@ -1,0 +1,5 @@
+{ "id": "price-drop-alert", "name": "Glass price drop alert", "oneLiner": "a price history card on glass: a month of prices draws across with a glowing tip, holds flat at the dashed old price, then dives; the end dot turns green with rings, a percent-off chip pops, the price counts down and turns green over the struck old one, and a price drop notification springs in above the card",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["price drop", "price alert", "discount", "sale", "deal", "notification", "price history", "chart", "ecommerce", "shopping", "watchlist", "save money", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says the price fell or to wait for a deal ('then it dropped to 89', 'set an alert and wait'): cut in on the set-up, the line dives on 'dropped', the notification lands on the new price; set was and now to their numbers" }

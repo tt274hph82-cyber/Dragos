@@ -1,0 +1,15 @@
+{
+  "id": "glass",
+  "name": "Glass",
+  "oneLiner": "the brand's colours as moving silk light under frosted glass panes, one 3D camera per shot, depth of field, the real numbers on glass plates and the real site on a 3D laptop and phone",
+  "bestFor": "SaaS and AI launches, services with real proof numbers and client logos, channel intros, dark or premium brands; the default when nothing else fits",
+  "motion": "panes fly in from depth on expo.out and catch one light sweep, beat punches, a tracked camera with rack focus, dives and whips between whole-bar shots, the mark landing on the hit",
+  "ground": "dark",
+  "format": "16:9 or 9:16",
+  "length": "20-25s",
+  "stills": [1.5, 10.0, 18.0],
+  "sound": { "vibe": "driving", "bpm": [120, 128], "ui": "tick on the counts, whoosh on every fly-in and dive, pop on each burst, stamp and row, one hit on the mark, shimmer on the wordmark and CTA" },
+  "recipe": "RECIPE.md",
+  "preview": "preview.jpg",
+  "previewTall": "preview-9x16.jpg"
+}

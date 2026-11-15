@@ -1,0 +1,5 @@
+{ "id": "toast-undo", "name": "Toast undo", "oneLiner": "a glass list sits in slow 3D, a fingertip swipes one item away and the rows close the gap, a dark toast rises with an Undo button and a draining countdown ring, the tap lands on Undo, the toast rolls over to a green Restored and the item flies back into its slot on a spring",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["undo", "toast", "snackbar", "delete", "restore", "mistake", "oops", "second chance", "recover", "list", "app", "ui", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says you can take it back or nothing is lost ('deleted it by accident, one tap and it is back', 'you can always undo'): the swipe lands on 'deleted', the tap on 'undo', the item flies back on 'it is back'" }

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"items","type":"string","label":"Product cut-outs, paths separated by commas, the first is the hero (2 to 5; empty: the bundled camera, headphones, mic, keyboard)","default":""},
+  {"id":"labels","type":"string","label":"A label per product, separated by commas (empty: no labels)","default":"Camera,Headphones,Mic,Keyboard"},
+  {"id":"heroTag","type":"string","label":"Small tag on the hero tile (empty: none)","default":"Main pick"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #e8e7e4; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* the ground: a light studio table, real paper fibre under a soft key from the top left */
+  #ground { position: absolute; inset: -4%; background:
+    radial-gradient(70% 55% at 28% 18%, rgba(255,255,255,.9), transparent 70%),
+    linear-gradient(180deg, #efeeeb, #e2e0dc); }
+  #ground::before { content: ""; position: absolute; inset: 0; background: url(assets/paper-white.jpg) 0 0 / calc(var(--u) * 900); mix-blend-mode: multiply; opacity: .45; }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(130% 100% at 50% 45%, transparent 45%, rgba(40,32,24,.22)); }
+  .is-alpha #ground { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #grp { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+  .tile { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .tb { position: absolute; inset: 0; border-radius: var(--r); overflow: hidden; background: linear-gradient(170deg, #ffffff, #f6f5f2 70%, #efeeea);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, inset 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.07),
+      0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(30,24,16,.12), 0 calc(var(--u) * 26) calc(var(--u) * 44) calc(var(--u) * -14) rgba(30,24,16,.32); }
+  .tb::before { content: ""; position: absolute; inset: 0; background: url(assets/paper-white.jpg) 0 0 / calc(var(--u) * 700); mix-blend-mode: multiply; opacity: .35; }
+  .is-alpha .tb { box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, inset 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.07),
+      0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(0,0,0,.25), 0 calc(var(--u) * 30) calc(var(--u) * 50) calc(var(--u) * -14) rgba(0,0,0,.55); }
+  .is-key .tb { box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, inset 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.12); }
+  .tb .sh { position: absolute; left: 50%; border-radius: 50%; background: radial-gradient(closest-side, rgba(30,24,16,.42), rgba(30,24,16,0)); }
+  .tb .gl { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.7) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .pw { position: absolute; }
+  .pw img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 6) rgba(20,16,10,.28)); }
+  .lab { position: absolute; left: 50%; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 9) calc(var(--u) * 20) calc(var(--u) * 9) calc(var(--u) * 16);
+    border-radius: 999px; background: #fff; color: #1b1a1f; font-weight: 750; letter-spacing: -0.005em; white-space: nowrap;
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.08), 0 calc(var(--u) * 10) calc(var(--u) * 20) calc(var(--u) * -8) rgba(30,24,16,.45); }
+  .lab b { width: calc(var(--u) * 12); height: calc(var(--u) * 12); border-radius: 50%; background: var(--accent); flex: none; }
+  .is-key .lab { box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.12); }
+  .tag { position: absolute; left: 0; top: 0; padding: calc(var(--u) * 8) calc(var(--u) * 18); border-radius: 999px; background: var(--accent); color: #fff; font-weight: 800;
+    letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), 0 calc(var(--u) * 8) calc(var(--u) * 16) calc(var(--u) * -6) color-mix(in srgb, var(--accent) 70%, #000); }
+  .is-key .tag { box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4); }
+  #grain { position: absolute; inset: 0; opacity: .25; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #grain { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="grp"></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const DEF = ["assets/gear-camera.png", "assets/gear-headphones.png", "assets/gear-mic.png", "assets/gear-keyboard.png"];
+  const list = (s) => String(s || "").split(",").map((x) => x.trim());
+  let items = list(v.items).filter(Boolean); if (items.length < 2) items = DEF;
+  items = items.slice(0, 5);
+  const labels = list(v.labels);
+  const N = items.length;
+
+  // ---- layout: the hero in the middle, the rest at the corners of a loose diamond (offsets in u, at scale 1)
+  // per aspect: hero tile size, satellite size, satellite centres relative to the hero
+  // satellite centres relative to the hero, by how many satellites there are (a loose scatter, never a grid)
+  const NS = Math.min(4, N - 1);
+  const POS = P ? { 1: [[0, -520]], 2: [[-245, -500], [245, 500]], 3: [[-250, -520], [255, -500], [215, 510]], 4: [[-245, -520], [250, -470], [-250, 480], [245, 525]] }
+        : SQ ? { 1: [[0, -330]], 2: [[-330, -230], [330, 240]], 3: [[-330, -250], [335, -215], [-305, 265]], 4: [[-330, -260], [335, -230], [-335, 245], [330, 265]] }
+        : { 1: [[-560, 0]], 2: [[-545, -60], [545, 70]], 3: [[-555, 10], [540, -215], [565, 215]], 4: [[-560, -185], [-520, 215], [545, -205], [560, 200]] };
+  // overlays use a compact cluster that fits the upper band (9:16), the right side (16:9) or the top (1:1)
+  const C = { 1: [[-250, 0]], 2: [[-255, -60], [255, 70]], 3: [[-260, -120], [255, -150], [250, 150]], 4: [[-260, -140], [255, -150], [-255, 150], [260, 140]] };
+  const L = MV.alpha ? { hs: 280, ss: 170, pos: C[Math.max(1, NS)] } : Object.assign(P ? { hs: 460, ss: 300 } : SQ ? { hs: 390, ss: 250 } : { hs: 440, ss: 280 }, { pos: POS[Math.max(1, NS)] });
+  let K = 1, cx = W / 2, cy = H / 2;
+  if (MV.alpha) {
+    if (P) { K = 1.15; cx = (safe.left + W - safe.right) / 2; cy = safe.top + 250 * u * K; }
+    else if (SQ) { K = 0.8; cx = W / 2; cy = safe.top + 210 * u; }
+    else { K = 0.95; cx = W - safe.right - 350 * u * K; cy = H * 0.44; }
+  } else if (P) cy = H * 0.47;
+  const z = (n) => n * u * K;
+  gsap.set("#grp", { x: cx, y: cy });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+  const ry = MV.rand(11);
+  const grp = document.getElementById("grp");
+  const T = items.map((src, i) => {
+    const hero = i === 0, s = z(hero ? L.hs : L.ss), p = hero ? [0, 0] : L.pos[(i - 1) % 4].map(z);
+    const el = document.createElement("div"); el.className = "tile";
+    el.style.setProperty("--r", (hero ? 40 : 30) * u * K + "px");
+    Object.assign(el.style, { width: s + "px", height: s + "px", marginLeft: -s / 2 + "px", marginTop: -s / 2 + "px" });
+    el.innerHTML = `<div class="tb"><div class="sh"></div><div class="pw"><img src="${src}" alt=""></div><div class="gl"></div></div>`;
+    grp.appendChild(el);
+    const pw = el.querySelector(".pw"), sh = el.querySelector(".sh");
+    let lab = null;
+    if (labels[i]) {
+      lab = document.createElement("div"); lab.className = "lab"; lab.innerHTML = `<b></b><span></span>`; lab.querySelector("span").textContent = labels[i];
+      lab.style.fontSize = (hero ? 30 : 26) * u * K + "px"; el.appendChild(lab);
+      MV.fitText(lab.querySelector("span"), s * 1.05, 10);
+      const lw = lab.getBoundingClientRect().width; lab.style.marginLeft = -lw / 2 + "px"; lab.style.top = s + 18 * u * K + "px";
+    }
+    let tag = null;
+    if (hero && v.heroTag) {
+      tag = document.createElement("div"); tag.className = "tag"; tag.textContent = v.heroTag; tag.style.fontSize = 22 * u * K + "px"; el.appendChild(tag);
+      MV.fitText(tag, s * 0.7, 10);
+      tag.style.left = 22 * u * K + "px"; tag.style.top = 22 * u * K + "px";
+    }
+    const rz = hero ? 0 : (ry() - 0.5) * 7, zd = hero ? 30 : -20 - ry() * 50;
+    gsap.set(el, { x: p[0], y: p[1], z: zd * u * K, rotation: rz });
+    return { el, pw, sh, lab, tag, hero, rz, s, img: el.querySelector("img") };
+  });
+  await Promise.all([...document.images].map((im) => im.decode().catch(() => {})));
+  // each product sized to its own shape inside the tile, its contact shadow right under its feet
+  T.forEach((t) => {
+    const a = (t.img.naturalWidth || 1) / (t.img.naturalHeight || 1), mw = t.s * 0.8, mh = t.s * 0.64;
+    let w = mw, h = w / a; if (h > mh) { h = mh; w = h * a; }
+    const top = t.s * 0.5 - h / 2 - t.s * 0.035;
+    Object.assign(t.pw.style, { width: w + "px", height: h + "px", left: (t.s - w) / 2 + "px", top: top + "px", marginLeft: 0, marginTop: 0 });
+    const sw = Math.max(w * 0.85, t.s * 0.4);
+    Object.assign(t.sh.style, { width: sw + "px", height: t.s * 0.09 + "px", marginLeft: -sw / 2 + "px", top: top + h - t.s * 0.035 + "px" });
+  });
+
+  // ---- the camera: the whole spread drifts in slow 3D, a gentle push
+  tl.fromTo(grp, { rotationX: 16, rotationY: P ? -6 : -12, scale: 0.94 }, { rotationX: 7, rotationY: P ? 6 : 10, scale: 1.03, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- each tile pops onto the table, its product drops into it a beat later and lands with a squash
+  const T0 = 0.12, GAP = N > 4 ? 0.27 : 0.32, START = (i) => i === 0 ? T0 : T0 + 0.55 + (i - 1) * GAP;
+  T.forEach((t, i) => {
+    const t0 = START(i), dropY = -(t.s * 1.1 + 160 * u * K);
+    tl.fromTo(t.el, { scale: 0.35, opacity: 0, rotation: t.rz + (i % 2 ? 9 : -9) }, { scale: 1, rotation: t.rz, duration: 0.6, ease: "back.out(1.7)" }, t0);
+    tl.to(t.el, { opacity: 1, duration: 0.16, ease: "power2.out" }, t0);
+    const tp = t0 + 0.12, land = tp + 0.42;
+    tl.fromTo(t.pw, { y: dropY, rotation: (i % 2 ? 14 : -14), scale: 1.18 }, { y: 0, rotation: 0, scale: 1, duration: 0.42, ease: "power3.in" }, tp);
+    tl.fromTo(t.pw, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, tp);
+    tl.fromTo(t.sh, { opacity: 0, scaleX: 0.35 }, { opacity: 1, scaleX: 1, duration: 0.42, ease: "power3.in" }, tp);
+    // the landing: the product squashes, the tile dips, then both settle on a long tail
+    tl.to(t.pw, { scaleY: 0.9, scaleX: 1.06, duration: 0.07, ease: "power2.out" }, land);
+    tl.to(t.pw, { scaleY: 1, scaleX: 1, duration: 0.55, ease: "elastic.out(1, 0.45)" }, land + 0.07);
+    tl.to(t.el, { scale: t.hero ? 0.95 : 0.94, duration: 0.07, ease: "power2.out" }, land);
+    tl.to(t.el, { scale: 1, duration: 0.6, ease: "back.out(2.2)" }, land + 0.07);
+    tl.fromTo(t.el, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.7, ease: "power2.inOut" }, land);
+    // idle: the product breathes above its tile until the end
+    tl.to(t.pw, { y: -7 * u * K, duration: Math.max(0.5, D - land - 0.7), ease: "sine.inOut" }, land + 0.62);
+    if (t.lab) tl.fromTo(t.lab, { y: -14 * u * K, opacity: 0, scale: 0.7 }, { y: 0, opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, land + 0.08);
+    if (t.tag) tl.fromTo(t.tag, { scale: 0, rotation: -12, transformOrigin: "0% 50%" }, { scale: 1, rotation: -4, duration: 0.5, ease: "back.out(2.6)" }, START(N - 1) + 0.75);
+  });
+
+  // ---- overlay exit: the tiles lift off the table, outer ones first, accelerating
+  if (MV.alpha) {
+    const X = D - 0.42;
+    T.slice().reverse().forEach((t, k) => {
+      tl.to(t.el, { scale: 0.6, y: "-=" + 60 * u * K, duration: 0.3, ease: "power2.in" }, X + k * 0.025);
+      tl.to(t.el, { opacity: 0, duration: 0.24, ease: "power2.in" }, X + 0.06 + k * 0.025);
+    });
+  }
+  MV.done();
+})();
+</script>
+</body>
+</html>

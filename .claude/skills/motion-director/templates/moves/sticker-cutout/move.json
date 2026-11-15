@@ -1,0 +1,5 @@
+{ "id": "sticker-cutout", "name": "Sticker cut-out", "oneLiner": "a person cut-out slaps on as a paper sticker with a torn white rim, two strips of real masking tape, and a marker arrow drawing on to a label on a torn scrap, all boiling on twos",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["paper"], "from": "new",
+  "tags": ["collage", "sticker", "person", "callout", "label", "arrow", "tape", "paper", "on twos", "handmade"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.2, "alpha": true,
+  "say": "when the speaker introduces someone or points at who did it ('this is the founder', 'meet my editor'): the sticker lands on the name" }

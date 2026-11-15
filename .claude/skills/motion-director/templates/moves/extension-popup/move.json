@@ -1,0 +1,5 @@
+{ "id": "extension-popup", "name": "Extension popup", "oneLiner": "a glass browser on an ordinary page: the cursor clicks the brand's extension icon in the toolbar, its popup springs open under it while the page dims, the one action button is pressed, runs with a spinner and fill, and turns green with a result line",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["browser extension", "chrome extension", "plugin", "toolbar", "popup", "one click", "ai tool", "product", "button", "automation", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker introduces a browser extension or a one-click tool ('install the extension and hit this button', 'it works on any page'): the icon is clicked as they name it, the green done lands on 'and that's it' or 'done'" }

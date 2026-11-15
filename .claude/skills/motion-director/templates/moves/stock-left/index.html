@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"store","type":"string","label":"Store name in the header (empty: the brand name)","default":""},
+  {"id":"product","type":"string","label":"Product name","default":"Brass vase"},
+  {"id":"price","type":"string","label":"Price, digits only","default":"89"},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"units","type":"string","label":"Units left at the start (counts down to 0)","default":"12"},
+  {"id":"leftWord","type":"string","label":"Word after the count","default":"left"},
+  {"id":"hot","type":"string","label":"Amber chip in the header","default":"Selling fast"},
+  {"id":"soldOut","type":"string","label":"The stamp and the dead button","default":"Sold out"},
+  {"id":"cta","type":"string","label":"Button before it sells out","default":"Add to cart"},
+  {"id":"img","type":"string","label":"Your own product cut-out (transparent PNG under assets/brand/); empty = the bundled brass vase","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --amb: #FFB23F; --low: #FF4B3E; --ink2: #E5322D; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.2) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #tile { border-radius: calc(var(--s) * 20); display: grid; place-items: center; overflow: hidden;
+    background: linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--s) * 1) rgba(255,255,255,.14); }
+  #tile img { width: 74%; height: 74%; object-fit: contain; }
+  #sname { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1; display: flex; align-items: center; }
+  #chip { height: calc(var(--s) * 60); border-radius: 99px; display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22);
+    font-weight: 750; font-size: calc(var(--s) * 32); color: #FFC56B; white-space: nowrap; background: rgba(255,170,40,.14); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,180,60,.35); }
+  .is-key #chip { background: color-mix(in srgb, var(--surface) 70%, #FFB23F 18%); }
+  #chip i { width: calc(var(--s) * 14); height: calc(var(--s) * 14); border-radius: 50%; background: var(--amb); box-shadow: 0 0 calc(var(--s) * 12) var(--amb); flex: none; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+
+  #bay { border-radius: calc(var(--s) * 32); overflow: hidden;
+    background: radial-gradient(60% 70% at 50% 30%, color-mix(in srgb, var(--surface) 50%, #9a8f86), color-mix(in srgb, var(--surface) 70%, #2b2826) 62%, color-mix(in srgb, var(--surface) 85%, black));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.22), inset 0 0 0 calc(var(--s) * 1.2) rgba(255,255,255,.1); }
+  #bay .sh { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.65), transparent); }
+  #bay .rim { position: absolute; inset: 0; background: radial-gradient(50% 40% at 50% 0%, rgba(255,255,255,.22), transparent 70%); }
+  #bay .dim { position: absolute; inset: 0; background: rgba(8,6,6,.55); opacity: 0; }
+  #pimg { position: absolute; object-fit: contain; }
+  #pname { font-weight: 800; font-size: calc(var(--s) * 44); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #pprice { font-family: var(--font-display); font-size: calc(var(--s) * 60); color: var(--ink); white-space: nowrap; line-height: 1; text-align: right; }
+  #cnt { display: flex; align-items: baseline; gap: calc(var(--s) * 16); white-space: nowrap; }
+  #num { font-family: var(--font-display); font-size: calc(var(--s) * 120); color: var(--amb); white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; display: inline-block; }
+  #lw { font-weight: 800; font-size: calc(var(--s) * 44); color: var(--ink); white-space: nowrap; line-height: 1; }
+  #bar { display: flex; gap: calc(var(--s) * 7); }
+  #bar b { flex: 1; border-radius: calc(var(--s) * 6); background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 calc(var(--s) * 1) rgba(255,255,255,.08); }
+  #bar b.on { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 70%, white), var(--c)); box-shadow: 0 0 calc(var(--s) * 14) color-mix(in srgb, var(--c) 60%, transparent); }
+  .is-key #bar b.on { box-shadow: none; }
+
+  #btn { border-radius: calc(var(--s) * 28); overflow: hidden;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, white 20%), var(--accent) 55%, color-mix(in srgb, var(--accent) 80%, black));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45); }
+  #bdis { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 70%, #fff 16%), color-mix(in srgb, var(--surface) 80%, #fff 8%)); }
+  .bl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: calc(var(--s) * 44); color: #fff; white-space: nowrap; }
+  #bl2 { color: color-mix(in srgb, var(--ink) 50%, transparent); opacity: 0; }
+
+  #stmp { display: grid; place-items: center; color: var(--ink2); border: calc(var(--s) * 9) solid var(--ink2); border-radius: calc(var(--s) * 22);
+    font-family: var(--font-display); text-transform: uppercase; letter-spacing: .04em; line-height: 1; white-space: nowrap; opacity: 0;
+    -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--s) * 260); mask: url(assets/inkmask.png) 0 0 / calc(var(--s) * 260); z-index: 20; }
+  #stmp::before { content: ""; position: absolute; inset: calc(var(--s) * 9); border: calc(var(--s) * 3.5) solid var(--ink2); border-radius: calc(var(--s) * 12); }
+  #stmp span { font-size: calc(var(--s) * 104); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="tile" class="ab"></div><div id="sname" class="ab"></div><div id="chip" class="ab"><i></i><span id="chipt"></span></div>
+      <div id="hr" class="ab"></div>
+      <div id="bay" class="ab"><i class="rim"></i><i class="sh"></i></div>
+      <div id="pname" class="ab"></div><div id="pprice" class="ab"></div>
+      <div id="cnt" class="ab"><span id="num"></span><span id="lw"></span></div>
+      <div id="bar" class="ab"></div>
+      <div id="btn" class="ab"><div id="bdis"></div><div class="bl" id="bl1"><span id="blt1"></span></div><div class="bl" id="bl2"><span id="blt2"></span></div></div>
+      <div id="stmp" class="ab"><span id="stt"></span></div>
+    </div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const own = String(v.img || "").trim(), src = own || "assets/vase-brass.png", AR = own ? 1 : 302 / 742;
+  const N = Math.max(1, Math.round(+v.units || 12));
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.06; zB = H * 0.94; }
+  else if (SQ) { cL = 150 * u; cR = W - 150 * u; zT = 46 * u; zB = H - 46 * u; }
+  else { cL = W * 0.3; cR = W * 0.7; zT = H * 0.06; zB = H * 0.94; }
+  const pad = 40, DW = 760, inner = DW - pad * 2;
+  const hdY = pad, hdH = 84, hrY = hdY + hdH + 24, bayY = hrY + 26, bayH = P ? 460 : 330;
+  const nmY = bayY + bayH + 28, stY = nmY + 74, stH = 120, brY = stY + stH + 20, brH = 26, btY = brY + brH + 34, btH = 110;
+  const DH = btY + btH + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.2 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- header: store, a Selling fast chip
+  box($("#tile"), pad, hdY, 84, 84); if (v.mark) $("#tile").appendChild(MV.img(v.mark));
+  $("#chipt").textContent = v.hot || ""; MV.fitText($("#chipt"), 250 * s, 14);
+  if (!v.hot) $("#chip").style.display = "none";
+  Object.assign($("#chip").style, { right: S(pad), top: S(hdY + 12) });
+  const chipW = v.hot ? $("#chip").getBoundingClientRect().width / s : 0;
+  box($("#sname"), pad + 84 + 22, hdY, inner - 84 - 22 - chipW - 20, 84); $("#sname").textContent = v.store || v.brandName || "";
+  MV.fitText($("#sname"), (inner - 84 - 22 - chipW - 30) * s, 18);
+  box($("#hr"), pad, hrY, inner, 1.5);
+
+  // ---- the product under its spot
+  box($("#bay"), pad, bayY, inner, bayH);
+  const ih = bayH * 0.84, iw = Math.min(inner * 0.8, ih * AR), ix = pad + (inner - iw) / 2, iy = bayY + bayH * 0.06;
+  const pimg = MV.img(src); pimg.id = "pimg"; $("#card").insertBefore(pimg, $("#pname")); box(pimg, ix, iy, iw, ih);
+  const sh = $("#bay .sh"); Object.assign(sh.style, { left: S(inner / 2 - Math.max(iw, 120) * 0.7), width: S(Math.max(iw, 120) * 1.4), top: S(bayH * 0.84), height: S(bayH * 0.1) });
+  const dim = document.createElement("i"); dim.className = "dim"; $("#card").insertBefore(dim, $("#pname")); box(dim, pad, bayY, inner, bayH);
+  Object.assign(dim.style, { position: "absolute", borderRadius: S(32) });
+
+  // ---- name and price
+  const priceS = (v.currency || "") + String(v.price || "").trim();
+  $("#pprice").textContent = priceS; Object.assign($("#pprice").style, { right: S(pad), top: S(nmY + 2) });
+  MV.fitText($("#pprice"), inner * 0.4 * s, 20);
+  const pw = $("#pprice").getBoundingClientRect().width / s;
+  Object.assign($("#pname").style, { left: S(pad + 2), top: S(nmY) }); $("#pname").textContent = v.product || "";
+  MV.fitText($("#pname"), (inner - pw - 30) * s, 18);
+
+  // ---- the count: a fixed-width number, the word after it, the segmented bar
+  $("#num").textContent = String(N).replace(/\d/g, "8");
+  Object.assign($("#cnt").style, { left: S(pad - 2), top: S(stY - 6), height: S(stH + 12) }); $("#lw").textContent = v.leftWord || "";
+  const numW = $("#num").getBoundingClientRect().width / s;
+  MV.fitText($("#lw"), (inner - numW - 30) * s, 18);
+  box($("#bar"), pad, brY, inner, brH);
+  const SEG = Math.min(N, 12); const segs = [];
+  for (let i = 0; i < SEG; i++) { const b = document.createElement("b"); $("#bar").appendChild(b); segs.push(b); }
+  const paint = (n) => {
+    const k = Math.ceil(n - 1e-6), low = k <= Math.max(1, Math.round(N * 0.25));
+    $("#num").textContent = String(Math.max(0, k));
+    const c = low ? "var(--low)" : "var(--amb)";
+    $("#num").style.color = c; $("#bar").style.setProperty("--c", c);
+    const lit = Math.round((Math.max(0, k) / N) * SEG);
+    segs.forEach((b, i) => b.classList.toggle("on", i < lit));
+    const f = k - n; // 1 right after a tick, falls to 0
+    gsap.set("#num", { scale: 1 + 0.12 * Math.max(0, (f - 0.55) / 0.45), transformOrigin: "0% 85%" });
+  };
+  paint(N);
+
+  // ---- button and stamp
+  box($("#btn"), pad, btY, inner, btH);
+  $("#blt1").textContent = v.cta || ""; $("#blt2").textContent = v.soldOut || "";
+  MV.fitText($("#blt1"), (inner - 80) * s, 18); MV.fitText($("#blt2"), (inner - 80) * s, 18);
+  $("#stt").textContent = v.soldOut || "";
+  MV.fitText($("#stt"), (inner - 160) * s, 30);
+  const stw = $("#stt").getBoundingClientRect().width / s + 100, sth = 170;
+  box($("#stmp"), pad + (inner - stw) / 2, bayY + (bayH - sth) / 2, stw, sth);
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TC = 1.0, TS = 3.05;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#tile", { scale: 0.5, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 0.2);
+  tl.fromTo(["#sname", "#chip"], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, 0.25);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+  tl.fromTo("#bay", { opacity: 0, y: 24 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 0.32);
+  tl.fromTo(pimg, { opacity: 0, y: 40 * s, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "expo.out", transformOrigin: "50% 90%" }, 0.42);
+  tl.fromTo(sh, { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 0.8, ease: "expo.out" }, 0.5);
+  tl.fromTo(["#pname", "#pprice", "#cnt", "#bar", "#btn"], { opacity: 0, y: 22 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.5);
+  tl.fromTo(segs, { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.025 }, 0.75);
+  tl.fromTo("#chip i", { opacity: 1 }, { keyframes: [{ opacity: 0.25, duration: 0.35 }, { opacity: 1, duration: 0.35 }, { opacity: 0.25, duration: 0.35 }, { opacity: 1, duration: 0.35 }, { opacity: 0.25, duration: 0.35 }, { opacity: 1, duration: 0.35 }], ease: "sine.inOut", immediateRender: false }, 0.8);
+
+  // the count runs down, faster and faster, the bar drains and turns red near the end
+  const o = { n: N };
+  tl.fromTo(o, { n: N }, { n: 0, duration: TS - TC - 0.02, ease: "power1.in", immediateRender: false, onUpdate: () => paint(o.n) }, TC);
+  tl.to("#chip", { scale: 1.06, duration: 0.15, ease: "power2.out", transformOrigin: "100% 50%" }, TS - 0.9); tl.to("#chip", { scale: 1, duration: 0.4, ease: "back.out(3)" }, TS - 0.75);
+
+  // sold out: the stamp slams over the product, the product goes dark, the button dies
+  tl.fromTo("#stmp", { opacity: 0, scale: 2.3, rotation: -4 }, { opacity: 0.95, scale: 1, rotation: -11, duration: 0.24, ease: "power4.in", immediateRender: false, transformOrigin: "50% 50%" }, TS);
+  tl.to("#stmp", { scale: 1.04, duration: 0.05, ease: "power1.out" }, TS + 0.24); tl.to("#stmp", { scale: 1, duration: 0.4, ease: "back.out(3)" }, TS + 0.29);
+  tl.to(pimg, { filter: "grayscale(1) brightness(0.55)", duration: 0.35, ease: "power2.out" }, TS + 0.2);
+  tl.to(dim, { opacity: 1, duration: 0.35, ease: "power2.out" }, TS + 0.2);
+  tl.to("#chip", { opacity: 0.35, duration: 0.3, ease: "power2.out" }, TS + 0.2);
+  tl.to("#bdis", { opacity: 1, duration: 0.3, ease: "power2.out" }, TS + 0.24);
+  tl.to("#bl1", { opacity: 0, duration: 0.15, ease: "power2.in" }, TS + 0.2);
+  tl.to("#bl2", { opacity: 1, duration: 0.3, ease: "power2.out" }, TS + 0.32);
+  tl.to(["#pprice", "#lw"], { opacity: 0.45, duration: 0.3, ease: "power2.out" }, TS + 0.24);
+  tl.to("#cam", { keyframes: [{ x: 7 * u, y: 5 * u, duration: 0.04 }, { x: -6 * u, y: -3 * u, duration: 0.05 }, { x: 3 * u, y: 2 * u, duration: 0.05 }, { x: 0, y: 0, duration: 0.08 }], ease: "none" }, TS + 0.24);
+  tl.to("#stage", { scale: 1.02, duration: 0.06, ease: "power2.out" }, TS + 0.24); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TS + 0.3);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

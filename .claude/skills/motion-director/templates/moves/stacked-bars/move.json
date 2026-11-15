@@ -1,0 +1,5 @@
+{ "id": "stacked-bars", "name": "Stacked glass bars", "oneLiner": "glass blocks drop onto 3 to 5 stacks and land with a squash, one tint per series and the chosen series in the accent, totals ride the top of each stack while the camera tracks the build; the last accent block slams down, rings out and its total pops",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["chart", "stacked", "bars", "breakdown", "composition", "growth", "series", "segments", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker breaks a total into parts that grow over time ('ideas, drafts and published posts, month by month'): cut in on the breakdown, the last accent block lands on the word that names the result" }

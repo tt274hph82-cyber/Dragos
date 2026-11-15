@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"pick","type":"number","label":"Which brand screen freezes in the gate and lifts out (1-based)","default":1},
+  {"id":"label","type":"string","label":"Caption under the lifted frame (two to four words; empty: none)","default":"Frame 24"},
+  {"id":"images","type":"string","label":"Frame images, comma separated paths (empty: the brand screens, then the brand people)","default":""},
+  {"id":"edge","type":"string","label":"Edge print numbers on the film: yes or no","default":"yes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #070505; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); background: #070505; }
+  /* a dark room with a warm lamp behind the gate and the brand accent at the edges */
+  #room { position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 50%, #1c1410, #070505 75%); }
+  #room i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 160)); }
+  #room .l1 { width: 70%; height: 40%; left: -25%; top: -5%; background: color-mix(in srgb, var(--accent) 28%, transparent); }
+  #room .l2 { width: 70%; height: 40%; right: -25%; bottom: -5%; background: color-mix(in srgb, var(--accent2) 18%, transparent); }
+  #beam { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(calc(var(--u) * 90));
+    background: radial-gradient(closest-side, rgba(255,214,160,.55), rgba(255,170,90,.18) 55%, transparent); }
+  /* the gate: a lit aperture behind the film */
+  #gate { position: absolute; border-radius: calc(var(--u) * 10);
+    background: radial-gradient(90% 90% at 50% 50%, #fff6e6, #ffd9a0 55%, #e8a35e);
+    box-shadow: 0 0 calc(var(--u) * 60) calc(var(--u) * 16) rgba(255,190,110,.55), 0 0 calc(var(--u) * 180) calc(var(--u) * 60) rgba(255,150,70,.25); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #sw { position: absolute; inset: 0; }
+  #strip { position: absolute; left: 0; top: 0; }
+  #strip .base { position: absolute; inset: 0; background-color: rgba(13,10,9,.95); background-image: url("assets/grain.jpg"); background-size: calc(var(--u) * 260); background-blend-mode: overlay; }
+  #strip .band { position: absolute; }
+  .h .band { left: 0; right: 0; background-image: url("assets/sprocket-band.png"); background-repeat: repeat-x; }
+  .h .band.b2 { transform: scaleY(-1); }
+  .v .band { top: 0; bottom: 0; background-image: url("assets/sprocket-band-v.png"); background-repeat: repeat-y; }
+  .v .band.b2 { transform: scaleX(-1); }
+  .fr { position: absolute; overflow: hidden; border-radius: calc(var(--u) * 7); background: #000; box-shadow: 0 0 0 calc(var(--u) * 2) rgba(0,0,0,.6); }
+  .fr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; display: block; }
+  .fr::after { content: ""; position: absolute; inset: 0; box-shadow: inset 0 0 calc(var(--u) * 26) rgba(0,0,0,.65); background: linear-gradient(180deg, rgba(255,200,140,.06), rgba(0,0,0,.12)); }
+  .fr.empty img { opacity: 0; }
+  .ed { position: absolute; white-space: nowrap; font-family: "Inter", sans-serif; font-weight: 700; letter-spacing: .12em; color: rgba(255,178,92,.8); text-shadow: 0 0 calc(var(--u) * 6) rgba(255,140,60,.5); }
+  #lift { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  #lift .pr { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--u) * 16); background: #000;
+    box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.5), 0 calc(var(--u) * 60) calc(var(--u) * 110) calc(var(--u) * -30) rgba(0,0,0,.9), 0 0 calc(var(--u) * 80) rgba(255,180,100,.25); }
+  #lift .pr img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  #lift .pr::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, rgba(255,255,255,.14), transparent 30%), linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.4) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  #cap { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 16); padding: calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * 14) calc(var(--u) * 20);
+    border-radius: 999px; background: linear-gradient(160deg, #2f2a28, #171312); color: #fff; font-weight: 800; white-space: nowrap;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.28), 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.12), 0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -12) rgba(0,0,0,.7); }
+  #cap b { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 12) var(--accent); flex: none; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 50%, transparent 50%, rgba(0,0,0,.6)); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="room"><i class="l1"></i><i class="l2"></i></div>
+  <div id="beam"></div>
+  <div id="gate"></div>
+  <div id="stage">
+    <div id="sw"><div id="strip"><div class="base"></div><div class="band b1"></div><div class="band b2"></div></div></div>
+    <div id="lift"><div class="pr"></div></div>
+  </div>
+  <div id="cap"><b></b><span></span></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const VERT = P;                                              // 9:16 runs the film top to bottom, like a projector
+  const imgs = String(v.images || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const pool = imgs.length ? imgs : (v.screens || []).length >= 2 ? [...v.screens] : [...(v.screens || []), ...(v.people || [])];
+  const PICK = Math.max(0, Math.min(Math.max(0, pool.length - 1), Math.round(+v.pick || 1) - 1));
+  const EDGE = !/^(no|false|0|off)$/i.test(String(v.edge || "yes").trim());
+
+  // ---- the strip's geometry: S across, a band of sprockets on each side, landscape frames between
+  const S = VERT ? W * 0.8 : SQ ? H * 0.5 : H * 0.5;
+  const B = S * 0.17;                                          // band (the scan tile is 212 x 116, two perforations)
+  const FA = VERT ? 16 / 10 : 3 / 2;
+  const fAcross = (S - 2 * B) * 0.9, fAlong = VERT ? fAcross / FA : fAcross * FA;   // across = frame height (h) or width (v)
+  const GAP = fAcross * 0.1, PITCH = fAlong + GAP;
+  const N = 15, K = 8;                                         // frames on the strip; K stops in the gate
+  const LEN = N * PITCH;
+  const strip = $("#strip"); strip.classList.add(VERT ? "v" : "h");
+  const gx = W / 2, gy = VERT ? safe.top + (H - safe.top - safe.bottom) * 0.5 + 40 * u : H * 0.5;
+  if (VERT) Object.assign(strip.style, { width: S + "px", height: LEN + "px", left: gx - S / 2 + "px" });
+  else Object.assign(strip.style, { width: LEN + "px", height: S + "px", top: gy - S / 2 + "px" });
+  const tileL = 212 * (B / 116);
+  // the film base sits between the bands only, so the perforations are real holes the lamp shines through
+  Object.assign($(".base", strip).style, VERT ? { left: B * 0.97 + "px", right: B * 0.97 + "px" } : { top: B * 0.97 + "px", bottom: B * 0.97 + "px" });
+  strip.dataset.bleed = "1";
+  $(".b1", strip).style[VERT ? "left" : "top"] = 0; $(".b2", strip).style[VERT ? "right" : "bottom"] = 0;
+  [".b1", ".b2"].forEach((c) => { const e = $(c, strip); e.style[VERT ? "width" : "height"] = B + "px"; e.style.backgroundSize = VERT ? `${B}px ${tileL}px` : `${tileL}px ${B}px`; });
+
+  const FR = [];
+  for (let i = 0; i < N; i++) {
+    const f = document.createElement("div"); f.className = "fr";
+    const a0 = i * PITCH + GAP / 2, c0 = B + (S - 2 * B - fAcross) / 2;
+    if (VERT) Object.assign(f.style, { left: c0 + "px", top: a0 + "px", width: fAcross + "px", height: fAlong + "px" });
+    else Object.assign(f.style, { left: a0 + "px", top: c0 + "px", width: fAlong + "px", height: fAcross + "px" });
+    const src = i === K ? pool[PICK] : pool[(i + PICK + pool.length * 4 - K) % Math.max(1, pool.length)];
+    if (src) f.appendChild(MV.img(src));
+    strip.appendChild(f); FR.push(f);
+    if (EDGE) {
+      // edge print: frame numbers in the margin outside the sprockets, as on real stock
+      const e = document.createElement("div"); e.className = "ed"; e.textContent = `${i + 12}  ▸ ${i + 12}A`;
+      e.style.fontSize = B * 0.2 + "px"; strip.appendChild(e);
+      const ew = e.getBoundingClientRect().width;
+      if (VERT) Object.assign(e.style, { left: S - B * 0.17 + "px", top: a0 + fAlong / 2 + "px", transformOrigin: "0 0", transform: "rotate(90deg) translate(-50%, 0)" });
+      else Object.assign(e.style, { left: a0 + fAlong / 2 - ew / 2 + "px", top: B * 0.01 + "px" });
+    }
+  }
+
+  // ---- the gate and its light
+  const gw = (VERT ? fAcross : fAlong) * 1.04, gh = (VERT ? fAlong : fAcross) * 1.04;
+  Object.assign($("#gate").style, { width: gw + "px", height: gh + "px", left: gx - gw / 2 + "px", top: gy - gh / 2 + "px" });
+  const BR = Math.max(gw, gh) * 1.5; Object.assign($("#beam").style, { width: BR * 2 + "px", height: BR * 1.4 + "px", left: gx - BR + "px", top: gy - BR * 0.7 + "px" });
+
+  // ---- the run: fast through the gate, slowing on a long tail, the chosen frame lands in register
+  const target = -(K * PITCH + PITCH / 2);                     // strip offset that centres frame K on the gate
+  const RUN = PITCH * 7.5, T_STOP = 1.55;
+  const ePos = gsap.parseEase("expo.out");
+  const st = { t: 0, reg: 0, lit: 1 };
+  const A0 = VERT ? gy : gx;
+  const drive = () => {
+    const t = st.t, k = Math.min(1, t / T_STOP);
+    const off = target - RUN * (1 - ePos(k)) + st.reg;
+    if (VERT) strip.style.transform = `translateY(${A0 + off}px)`; else strip.style.transform = `translateX(${A0 + off}px)`;
+    // each frame is backlit by how close it sits to the gate
+    FR.forEach((f, i) => { const c = A0 + off + i * PITCH + PITCH / 2, d = (c - A0) / (PITCH * 0.9);
+      const lit = 0.38 + 0.75 * Math.exp(-d * d) * st.lit; f.style.filter = `brightness(${lit.toFixed(3)})`; });
+  };
+  drive();
+  tl.fromTo(st, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: drive }, 0);
+  // motion blur on the run, gone by the stop
+  tl.fromTo(strip, { filter: `blur(${9 * u}px)` }, { filter: "blur(0px)", duration: T_STOP * 0.85, ease: "power3.out" }, 0);
+  tl.fromTo("#room", { opacity: 0.4 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0);
+  tl.fromTo(["#gate", "#beam"], { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, 0);
+
+  // ---- the moment: the registration pin catches, a hard little clack, the lamp flares
+  tl.fromTo(st, { reg: 0 }, { reg: 7 * u, duration: 0.05, ease: "power2.out", immediateRender: false, onUpdate: drive }, T_STOP - 0.02);
+  tl.to(st, { reg: 0, duration: 0.3, ease: "back.out(4)", onUpdate: drive }, T_STOP + 0.03);
+  tl.fromTo("#gate", { filter: "brightness(1)" }, { filter: "brightness(1.35)", duration: 0.06, ease: "power2.out", immediateRender: false }, T_STOP);
+  tl.to("#gate", { filter: "brightness(1)", duration: 0.6, ease: "expo.out" }, T_STOP + 0.06);
+  tl.fromTo("#beam", { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, T_STOP);
+  tl.to("#beam", { scale: 1, duration: 0.7, ease: "expo.out" }, T_STOP + 0.08);
+
+  // ---- the lift: the frame comes off the film toward the lens and becomes a print; the strip falls back
+  const lift = $("#lift"), pr = $(".pr", lift);
+  if (pool[PICK]) pr.appendChild(MV.img(pool[PICK]));
+  const fw0 = VERT ? fAcross : fAlong, fh0 = VERT ? fAlong : fAcross;
+  Object.assign(lift.style, { width: fw0 + "px", height: fh0 + "px", left: gx - fw0 / 2 + "px", top: gy - fh0 / 2 + "px" });
+  const capEl = $("#cap"), capTxt = String(v.label || "").trim();
+  $("span", capEl).textContent = capTxt; capEl.style.fontSize = (P ? 42 : 36) * u + "px"; if (!capTxt) capEl.style.display = "none";
+  MV.fitText($("span", capEl), W * (P ? 0.66 : 0.4), 16);
+  const cb = capEl.getBoundingClientRect();
+  // the print's final size: as big as the frame allows with room for the caption
+  const maxW = P ? W - safe.left - safe.right * 0.5 : W * (SQ ? 0.74 : 0.56);
+  const maxH = P ? (H - safe.top - safe.bottom) * 0.62 : H * (SQ ? 0.6 : 0.62);
+  const SC = Math.min(maxW / fw0, maxH / fh0);
+  const ly = P ? safe.top + 40 * u + (fh0 * SC) / 2 : H * 0.44 - (capTxt ? cb.height * 0.6 : 0);
+  const TL = T_STOP + 0.35;
+  gsap.set(lift, { opacity: 0, transformOrigin: "50% 50%" });
+  tl.set(lift, { opacity: 1 }, TL);
+  tl.fromTo(lift, { x: 0, y: 0, scale: 1, rotationX: 0, rotationY: 0, z: 0 },
+    { y: ly - gy, scale: SC, rotationX: 6, rotationY: P ? -6 : -10, duration: 0.85, ease: "expo.out" }, TL);
+  tl.to(lift, { rotationX: 2, rotationY: P ? 5 : 8, duration: D - TL - 0.85, ease: "sine.inOut" }, TL + 0.85);
+  tl.fromTo(pr, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, TL + 0.25);
+  // the empty gate behind: the slot it left shows pure lamp light
+  tl.to(FR[K].querySelector("img"), { opacity: 0, duration: 0.12 }, TL + 0.02);
+  tl.to(st, { lit: 0.55, duration: 0.6, ease: "power2.out", onUpdate: drive }, TL);
+  tl.to("#sw", { opacity: 0.75, duration: 0.6, ease: "power2.out" }, TL);
+  gsap.set("#sw", { transformOrigin: `${gx}px ${gy}px` });
+  tl.fromTo("#sw", { scale: 1 }, { scale: 0.96, duration: 1.2, ease: "expo.out", immediateRender: false }, TL);
+  // the caption lands under the print
+  const capY = ly + (fh0 * SC) / 2 + 36 * u;
+  Object.assign(capEl.style, { left: W / 2 - cb.width / 2 + "px", top: capY + "px" });
+  tl.fromTo(capEl, { opacity: 0, y: 24 * u, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(2)" }, TL + 0.55);
+  MV.done();
+</script>
+</body>
+</html>

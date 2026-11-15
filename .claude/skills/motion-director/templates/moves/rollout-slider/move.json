@@ -1,0 +1,5 @@
+{ "id": "rollout-slider", "name": "Rollout slider", "oneLiner": "a dark glass feature-flag panel: a big percent and a people count roll as a glossy knob is grabbed and dragged from Off to each rollout step, then at 100 the track, the numbers and the status pill flip to green with a stamp and a ring",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["rollout", "launch", "feature", "feature flag", "release", "users", "percent", "slider", "ship", "everyone", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says they released something slowly and then to everyone ('one percent first, then ten, then everyone'): the knob steps on each number and the panel goes green on 'everyone'" }

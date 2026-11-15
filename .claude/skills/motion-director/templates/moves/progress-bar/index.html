@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"milestones","type":"string","label":"Milestone labels along the bar, comma separated, 2 to 5","default":"Idea,First draft,Beta,Launch"},
+  {"id":"at","type":"string","label":"Where each milestone sits, 0 to 100, same order (empty = evenly spaced)","default":""},
+  {"id":"value","type":"number","label":"Where the fill stops, 0 to 100 (100 = the last milestone gets the check)","default":100},
+  {"id":"suffix","type":"string","label":"After the riding number","default":"%"},
+  {"id":"layout","type":"string","label":"auto (standing column on 9:16), horizontal or vertical","default":"auto"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 70%; height: 50%; left: 40%; top: 0%; background: color-mix(in srgb, var(--accent) 42%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base, .is-alpha .refl { display: none; }
+
+  #cam { position: absolute; inset: 0; transform-origin: 0 0; }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 60%; background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; transform-origin: 50% 50%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.55) 10%, rgba(255,255,255,.55) 90%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.35); }
+
+  /* the channel: a thick recessed glass tube */
+  #tube { position: absolute; border-radius: 999px; box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(0,0,0,.34), rgba(255,255,255,.1));
+    -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+    box-shadow: inset 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.55), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.14), 0 calc(var(--u) * 2) 0 rgba(255,255,255,.14),
+      0 calc(var(--u) * 50) calc(var(--u) * 70) calc(var(--u) * -40) rgba(0,0,0,.75); }
+  .is-alpha #tube { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 80%, #000), color-mix(in srgb, var(--surface) 88%, #fff)); }
+  .is-key #tube { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); box-shadow: inset 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.55), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.14); }
+  #clip { position: absolute; border-radius: 999px; overflow: hidden; }
+  .notch { position: absolute; background: rgba(255,255,255,.16); }
+  #liq { position: absolute; border-radius: 999px; overflow: hidden;
+    background: linear-gradient(var(--ldir, 180deg), color-mix(in srgb, var(--accent) 52%, white 48%), var(--accent) 40%, color-mix(in srgb, var(--accent) 72%, black 28%));
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.55); }
+  #liq::before { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--gloss); }
+  #liq .sh { position: absolute; inset: 0; mix-blend-mode: screen;
+    background: linear-gradient(var(--shdir, 105deg), transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.6) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  #edge { position: absolute; border-radius: 999px; background: radial-gradient(50% 50% at 50% 50%, rgba(255,255,255,.95), rgba(255,255,255,0) 70%); }
+  #bloom { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 46)); background: color-mix(in srgb, var(--accent) 85%, transparent); opacity: 0; }
+  .is-key #bloom, .is-key #edge, .is-key #ring { display: none; }
+  /* the floor shows the lit liquid as light, never text */
+  .refl { position: absolute; filter: blur(calc(var(--u) * 6)); border-radius: calc(var(--u) * 40); }
+
+  #num { position: absolute; left: 0; top: 0; white-space: nowrap; font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: #fff; font-variant-numeric: tabular-nums;
+    text-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 14) rgba(0,0,0,.45); }
+  #num .fx { font-size: .6em; opacity: .8; margin-left: .04em; }
+
+  /* milestones: a glass node on the tube edge, a stem, a label */
+  .ms { position: absolute; left: 0; top: 0; }
+  .ms .stem { position: absolute; background: rgba(255,255,255,.28); }
+  .ms .dot { position: absolute; border-radius: 50%; box-sizing: border-box;
+    background: radial-gradient(60% 60% at 38% 32%, rgba(255,255,255,.5), rgba(255,255,255,.08)); box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.4), 0 calc(var(--u) * 8) calc(var(--u) * 16) rgba(0,0,0,.4); }
+  .is-alpha .ms .dot { background: radial-gradient(60% 60% at 38% 32%, color-mix(in srgb, var(--surface) 60%, #fff), var(--surface)); }
+  .ms .dot.on { background: radial-gradient(60% 60% at 38% 32%, color-mix(in srgb, var(--accent) 40%, white), var(--accent)); box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.7), 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key .ms .dot.on { box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.7); }
+  .ms .lab { position: absolute; white-space: nowrap; font-weight: 700; line-height: 1.1; color: var(--ink); letter-spacing: .005em;
+    text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(0,0,0,.55); }
+  .is-alpha .ms .lab { padding: calc(var(--u) * 10) calc(var(--u) * 20); border-radius: calc(var(--u) * 18); background: color-mix(in srgb, var(--surface) 90%, transparent); text-shadow: none; }
+  .is-key .ms .lab { background: var(--surface); }
+
+  /* the check seal, pressed into the end */
+  #seal { position: absolute; border-radius: 50%; display: grid; place-items: center; opacity: 0;
+    border: calc(var(--u) * 4) solid rgba(255,255,255,.95);
+    box-shadow: inset 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 60%, black 40%), inset 0 0 0 calc(var(--u) * 8) rgba(255,255,255,.55), 0 calc(var(--u) * 16) calc(var(--u) * 34) rgba(0,0,0,.45);
+    background: radial-gradient(60% 60% at 40% 35%, color-mix(in srgb, var(--accent) 70%, white 30%), color-mix(in srgb, var(--accent) 85%, black 15%)); }
+  #seal svg { width: 52%; height: 52%; fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 50%, white 50%); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="cam"><div id="stage"><div id="rig">
+    <div id="floor"></div>
+    <div id="reflT" class="refl"></div><div id="reflL" class="refl"></div>
+    <div id="base"></div>
+    <div id="bloom"></div>
+    <div id="tube"></div>
+    <div id="clip"><div id="liq"><div class="sh"></div></div><div id="edge"></div></div>
+    <div id="mss"></div>
+    <div id="num"><span class="n"></span><span class="fx"></span></div>
+    <div id="ring"></div>
+    <div id="seal"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" /></svg></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H;
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim()).filter((s) => s.length);
+  const lay = String(v.layout || "auto").toLowerCase();
+  const VERT = lay === "vertical" ? true : lay === "horizontal" ? false : P && !MV.alpha;
+
+  // ---- milestones: labels and where they sit
+  let labs = list(v.milestones).slice(0, 5);
+  let at = list(v.at).map(Number).filter((n) => isFinite(n));
+  if (at.length !== labs.length) at = labs.map((_, i) => (labs.length === 1 ? 100 : (i / (labs.length - 1)) * 100));
+  let M = labs.map((l, i) => ({ l, a: Math.max(0, Math.min(100, at[i])) / 100 })).sort((a, b) => a.a - b.a);
+  const F = Math.max(0.02, Math.min(100, isFinite(+v.value) ? +v.value : 100) / 100);
+  const DONE = F >= 0.999;
+
+  // ---- geometry: the tube along an axis; pos(f) is the point at fraction f on the centre line
+  let T, A0, A1, C;   // thickness, axis start / end (x for horizontal, y for vertical), cross-axis centre
+  if (VERT) { T = 240 * u; C = W - safe.right - 40 * u - T / 2; A0 = H - safe.bottom - 30 * u; A1 = safe.top + 70 * u; }
+  else if (P) { T = 112 * u; A0 = safe.left + 10 * u; A1 = W - safe.right - 10 * u; C = safe.top + 300 * u; }
+  else if (SQ) { T = 140 * u; A0 = 100 * u; A1 = W - 100 * u; C = H * 0.6; }
+  else { T = 150 * u; A0 = W * 0.12; A1 = W * 0.88; C = H * 0.6; }
+  if (MV.alpha && !P) { C = H - safe.bottom - T / 2 - 40 * u; }
+  const LEN = Math.abs(A1 - A0), pad = 10 * u, IT = T - 2 * pad, IL = LEN - 2 * pad;
+  const at2 = (f) => (VERT ? A0 - pad - IL * f : A0 + pad + IL * f);
+
+  const tube = $("#tube"), clip = $("#clip"), liq = $("#liq"), edge = $("#edge"), bloom = $("#bloom");
+  if (VERT) {
+    Object.assign(tube.style, { left: C - T / 2 + "px", top: A1 + "px", width: T + "px", height: LEN + "px" });
+    Object.assign(clip.style, { left: C - IT / 2 + "px", top: A1 + pad + "px", width: IT + "px", height: IL + "px" });
+    Object.assign(liq.style, { left: 0, bottom: 0, width: IT + "px", height: 0 });
+    root.style.setProperty("--ldir", "90deg"); root.style.setProperty("--shdir", "15deg");
+    liq.style.setProperty("--gloss", "linear-gradient(90deg, rgba(255,255,255,.4), rgba(255,255,255,.06) 32%, transparent 60%, rgba(0,0,0,.22))");
+    Object.assign(edge.style, { left: -IT * 0.1 + "px", width: IT * 1.2 + "px", height: 70 * u + "px" });
+  } else {
+    Object.assign(tube.style, { left: A0 + "px", top: C - T / 2 + "px", width: LEN + "px", height: T + "px" });
+    Object.assign(clip.style, { left: A0 + pad + "px", top: C - IT / 2 + "px", width: IL + "px", height: IT + "px" });
+    Object.assign(liq.style, { left: 0, top: 0, height: IT + "px", width: 0 });
+    liq.style.setProperty("--gloss", "linear-gradient(180deg, rgba(255,255,255,.45), rgba(255,255,255,.06) 36%, transparent 58%, rgba(0,0,0,.22))");
+    Object.assign(edge.style, { top: -IT * 0.1 + "px", height: IT * 1.2 + "px", width: 70 * u + "px" });
+  }
+  const BS = Math.min(IT * 2.6, 420 * u);
+  Object.assign(bloom.style, { width: BS + "px", height: BS + "px" });
+
+  // ---- the floor: a lit baseline the tube stands (or lies) on, the liquid mirrored as light
+  const floorY = VERT ? A0 + 4 * u : C + T / 2 + 4 * u;
+  $("#floor").style.top = floorY + "px";
+  const base = $("#base");
+  if (VERT) Object.assign(base.style, { left: C - 300 * u + "px", width: 600 * u + "px", top: floorY - 1.5 * u + "px" });
+  else Object.assign(base.style, { left: A0 - 60 * u + "px", width: LEN + 120 * u + "px", top: floorY - 1.5 * u + "px" });
+  const reflT = $("#reflT"), reflL = $("#reflL");
+  if (VERT) {
+    Object.assign(reflT.style, { left: C - T / 2 + "px", width: T + "px", top: floorY + 6 * u + "px", height: 400 * u + "px", background: "linear-gradient(180deg, rgba(255,255,255,.1), transparent 80%)" });
+    Object.assign(reflL.style, { left: C - IT / 2 + "px", width: IT + "px", top: floorY + 10 * u + "px", height: 0, background: "linear-gradient(180deg, color-mix(in srgb, var(--accent) 60%, transparent), transparent 85%)" });
+  } else {
+    Object.assign(reflT.style, { left: A0 + "px", width: LEN + "px", top: floorY + 6 * u + "px", height: T * 0.9 + "px", background: "linear-gradient(180deg, rgba(255,255,255,.09), transparent 85%)" });
+    Object.assign(reflL.style, { left: A0 + pad + "px", width: 0, top: floorY + 8 * u + "px", height: IT * 0.85 + "px", background: "linear-gradient(180deg, color-mix(in srgb, var(--accent) 55%, transparent), transparent 85%)" });
+  }
+
+  // ---- milestones
+  const mss = $("#mss"), DOT = (VERT ? 40 : P ? 30 : 36) * u, LFS = (VERT ? 46 : P ? 38 : 42) * u;
+  const MS = M.map((m, i) => {
+    const el = document.createElement("div"); el.className = "ms";
+    el.innerHTML = `<div class="stem"></div><div class="dot"></div><div class="lab"></div>`;
+    el.querySelector(".lab").textContent = m.l; el.querySelector(".lab").style.fontSize = LFS + "px";
+    mss.appendChild(el);
+    const n = document.createElement("i"); n.className = "notch"; clip.insertBefore(n, liq.nextSibling);
+    return { ...m, el, dot: el.querySelector(".dot"), stem: el.querySelector(".stem"), lab: el.querySelector(".lab"), notch: n, i };
+  });
+  // a standing column: centre the labels + stems + tube as one group in the safe area
+  if (VERT) {
+    const ST0 = 70 * u, avail = W - safe.left - safe.right, room = avail - T - ST0 - 16 * u - 20 * u;
+    MS.forEach((m) => MV.fitText(m.lab, room, 20));
+    const lw = Math.max(0, ...MS.map((m) => m.lab.getBoundingClientRect().width));
+    const gw = lw + 16 * u + ST0 + T;
+    C = safe.left + (avail - gw) / 2 + lw + 16 * u + ST0 + T / 2;
+    Object.assign(tube.style, { left: C - T / 2 + "px" }); Object.assign(clip.style, { left: C - IT / 2 + "px" });
+    Object.assign(base.style, { left: C - 300 * u + "px" });
+    Object.assign(reflT.style, { left: C - T / 2 + "px" }); Object.assign(reflL.style, { left: C - IT / 2 + "px" });
+  }
+  // room for each label: half the gap to each neighbour
+  MS.forEach((m, i) => {
+    const p = at2(m.a), prev = i ? at2(MS[i - 1].a) : null, next = i < MS.length - 1 ? at2(MS[i + 1].a) : null;
+    const ST = (P && !VERT ? 54 : 70) * u;      // stem length
+    if (VERT) {
+      // nodes on the tube's left edge, labels to the left, right-aligned on the node
+      const x = C - T / 2;
+      Object.assign(m.dot.style, { width: DOT + "px", height: DOT + "px", left: x - DOT / 2 + "px", top: p - DOT / 2 + "px" });
+      Object.assign(m.stem.style, { left: x - ST + "px", width: ST - DOT / 2 + "px", top: p - 1.5 * u + "px", height: 3 * u + "px" });
+      const maxW = x - ST - 16 * u - safe.left;
+      MV.fitText(m.lab, maxW, 20);
+      const r = m.lab.getBoundingClientRect();
+      Object.assign(m.lab.style, { left: x - ST - 16 * u - r.width + "px", top: p - r.height / 2 + "px" });
+      Object.assign(m.notch.style, { left: 0, width: IT + "px", top: p - (A1 + pad) - 1.5 * u + "px", height: 3 * u + "px" });
+    } else {
+      const y = C - T / 2;
+      Object.assign(m.dot.style, { width: DOT + "px", height: DOT + "px", left: p - DOT / 2 + "px", top: y - DOT / 2 + "px" });
+      Object.assign(m.stem.style, { left: p - 1.5 * u + "px", width: 3 * u + "px", top: y - ST + "px", height: ST - DOT / 2 + "px" });
+      const roomL = prev === null ? p - (P ? safe.left : 40 * u) : (p - prev) / 2 - 12 * u;
+      const roomR = next === null ? (P ? W - safe.right : W - 40 * u) - p : (next - p) / 2 - 12 * u;
+      // the first label hangs right of its node, the last hangs left, the rest centre
+      const mode = prev === null && m.a < 0.12 ? "L" : next === null && m.a > 0.88 ? "R" : "C";
+      const maxW = mode === "L" ? roomR + Math.min(roomL, 0) + (next === null ? 0 : (next - p) / 2) : mode === "R" ? roomL + (prev === null ? 0 : (p - prev) / 2) : 2 * Math.min(roomL, roomR);
+      MV.fitText(m.lab, Math.max(80 * u, maxW), 20);
+      const r = m.lab.getBoundingClientRect();
+      const lx = mode === "L" ? p - DOT / 2 : mode === "R" ? p + DOT / 2 - r.width : p - r.width / 2;
+      Object.assign(m.lab.style, { left: lx + "px", top: y - ST - 12 * u - r.height + "px" });
+      Object.assign(m.notch.style, { top: 0, height: IT + "px", left: p - (A0 + pad) - 1.5 * u + "px", width: 3 * u + "px" });
+    }
+    if (m.a <= 0.001 || m.a >= 0.999) m.notch.style.display = "none";
+  });
+
+  // ---- the riding number
+  const num = $("#num"), nn = num.querySelector(".n");
+  num.querySelector(".fx").textContent = v.suffix || "";
+  num.style.fontSize = (VERT ? 76 : P ? 62 : 80) * u + "px";
+  nn.textContent = String(Math.round(F * 100));
+  MV.fitText(num, VERT ? IT - 30 * u : 360 * u, 24);
+  nn.textContent = String(Math.round(F * 100)).replace(/\d/g, "8");
+  const nr = num.getBoundingClientRect(), NW = nr.width, NH = nr.height;
+
+  // ---- the seal: on the end of the tube when the bar completes
+  const seal = $("#seal"), ring = $("#ring");
+  const SD = Math.round(T * 1.32);
+  const endP = at2(1);
+  const SC = VERT ? [C, A1 + T / 2] : [A1 - T / 2, C];
+  Object.assign(seal.style, { width: SD + "px", height: SD + "px", left: SC[0] - SD / 2 + "px", top: SC[1] - SD / 2 + "px" });
+  seal.querySelector("svg").style.strokeWidth = 3.2;
+  Object.assign(ring.style, { width: SD + "px", height: SD + "px", left: SC[0] - SD / 2 + "px", top: SC[1] - SD / 2 + "px" });
+  if (!DONE) seal.style.display = "none";
+
+  // ---- the state, painted every frame: fill, edge, bloom, number, reflection, camera
+  const S = { p: 0, room: 0, k: 0 };
+  const lastMS = MS.length ? MS[MS.length - 1] : null;
+  const paint = () => {
+    const f = F * S.p, len = IL * f, head = at2(f);
+    if (VERT) {
+      liq.style.height = (len > 1 ? Math.max(len, IT * 0.5) : 0) + "px";
+      edge.style.top = IL - len - 35 * u + "px"; edge.style.opacity = len > 4 ? 1 : 0;
+      bloom.style.left = C - BS / 2 + "px"; bloom.style.top = head - BS / 2 + "px";
+      reflL.style.height = Math.min(len * 0.7, 380 * u) + "px";
+      const ny = Math.min(head + 22 * u + S.room, A0 - pad - 18 * u - NH);
+      num.style.transform = `translate(${C - NW / 2}px, ${ny}px)`;
+    } else {
+      liq.style.width = (len > 1 ? Math.max(len, IT * 0.5) : 0) + "px";
+      edge.style.left = len - 35 * u + "px"; edge.style.opacity = len > 4 ? 1 : 0;
+      bloom.style.left = head - BS / 2 + "px"; bloom.style.top = C - BS / 2 + "px";
+      reflL.style.width = len + "px";
+      const nx = Math.max(head - 28 * u - NW - S.room, A0 + pad + 22 * u);
+      num.style.transform = `translate(${nx}px, ${C - NH / 2}px)`;
+    }
+    nn.textContent = String(Math.round(F * 100 * S.p));
+    // the camera follows the head along the axis, then settles on the whole bar
+    const mid = (A0 + A1) / 2, follow = (head - mid) * (VERT ? 0.12 : 0.3) * (1 - S.k), z0 = VERT ? 1.07 : SQ || P ? 1.06 : 1.14, z = z0 - (z0 - 1) * S.k;
+    const tx = VERT ? (W / 2) * (1 - z) : -follow * z + (W / 2) * (1 - z), ty = VERT ? -follow * z + (H / 2) * (1 - z) : (H / 2) * (1 - z);
+    // keep every label inside the frame (and the platform safe zones) while it moves
+    let cx = tx, cy = ty;
+    if (VERT) { const lo = A1 - 50 * u, hi = A0 + 40 * u, a = safe.top, b = H - safe.bottom + 60 * u; cy = Math.min(Math.max(ty, b - hi * z), a - lo * z); if (b - a < (hi - lo) * z) cy = (a + b) / 2 - ((lo + hi) / 2) * z; }
+    else { const lo = A0 - 20 * u, hi = A1 + 40 * u, a = P ? safe.left : 76 * u, b = W - (P ? safe.right : 76 * u); cx = Math.min(Math.max(tx, b - hi * z), a - lo * z); if (b - a < (hi - lo) * z) cx = (a + b) / 2 - ((lo + hi) / 2) * z; }
+    $("#cam").style.transform = `translate(${cx}px, ${cy}px) scale(${z})`;
+  };
+  paint();
+
+  // ---- timing: the fill eases in, runs, and lands on a long tail
+  const T0 = 0.45, TD = 2.5, EASE = gsap.parseEase("power2.inOut");
+  const tAt = (frac) => { const e = frac / F; for (let i = 0; i <= 400; i++) if (EASE(i / 400) >= e) return T0 + (i / 400) * TD; return T0 + TD; };
+  const cx = VERT ? C : (A0 + A1) / 2, cy = VERT ? (A0 + A1) / 2 : C;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: VERT ? -10 : P ? 8 : 12, rotationX: VERT ? 6 : 10, z: -40 * u }, { rotationY: VERT ? 7 : P ? -5 : -8, rotationX: 3, z: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // the tube and the floor arrive
+  tl.fromTo(base, { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.02);
+  tl.fromTo("#tube, #clip, #reflT", VERT ? { scaleY: 0.6, opacity: 0, transformOrigin: "50% 100%" } : { scaleX: 0.6, opacity: 0, transformOrigin: "0% 50%" },
+    { scaleY: 1, scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.06);
+  MS.forEach((m, i) => {
+    tl.fromTo(m.dot, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.2)" }, 0.2 + i * 0.07);
+    tl.fromTo(m.stem, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.25 + i * 0.07);
+    tl.fromTo(m.lab, { opacity: 0, filter: "blur(8px)", [VERT ? "x" : "y"]: 14 * u }, { opacity: 0.42, filter: "blur(0px)", [VERT ? "x" : "y"]: 0, duration: 0.55, ease: "power3.out" }, 0.25 + i * 0.07);
+  });
+  tl.fromTo(num, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, T0 - 0.05);
+  tl.fromTo(bloom, { opacity: 0 }, { opacity: 0.5, duration: 0.5, ease: "power2.out" }, T0);
+  tl.to(S, { p: 1, duration: TD, ease: "power2.inOut", onUpdate: paint }, T0);
+
+  // each milestone lights as the head passes it
+  MS.forEach((m) => {
+    if (m.a > F + 1e-6) return;
+    const t = m.a <= 0.001 ? T0 + 0.02 : tAt(m.a);
+    const isEnd = DONE && m === lastMS && m.a >= 0.999;
+    tl.set(m.dot, { attr: { class: "dot on" } }, t);
+    tl.fromTo(m.dot, { scale: 1 }, { scale: 1.55, duration: 0.09, ease: "power2.out", immediateRender: false }, t);
+    tl.to(m.dot, { scale: 1, duration: 0.5, ease: "back.out(3)" }, t + 0.09);
+    tl.to(m.lab, { opacity: 1, duration: 0.3, ease: "power2.out" }, t);
+    tl.fromTo(m.lab, { scale: 1 }, { scale: 1.08, duration: 0.1, ease: "power2.out", immediateRender: false, transformOrigin: VERT ? "100% 50%" : "50% 100%" }, t);
+    tl.to(m.lab, { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, t + 0.1);
+    tl.to(m.stem, { backgroundColor: "rgba(255,255,255,.7)", duration: 0.3, ease: "power2.out" }, t);
+    if (!isEnd && m.a > 0.001) tl.to("#tube", { [VERT ? "x" : "y"]: 4 * u, duration: 0.05, ease: "power2.out" }, t), tl.to("#tube", { [VERT ? "x" : "y"]: 0, duration: 0.35, ease: "back.out(3)" }, t + 0.05);
+  });
+  const E = T0 + TD - 0.05;
+  tl.to(S, { k: 1, duration: 1.1, ease: "power3.inOut", onUpdate: paint }, T0 + TD - 0.7);
+
+  // ---- the moment: the check is pressed into the end, a ring goes out, light runs the liquid
+  if (DONE) {
+    tl.to(S, { room: VERT ? T / 2 + SD / 2 - pad + 4 * u : SD * 0.7, duration: 0.45, ease: "expo.out", onUpdate: paint }, E - 0.25);
+    tl.fromTo(seal, { scale: 2.6, rotation: -30, opacity: 0, filter: "blur(10px)" }, { scale: 1, rotation: -8, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.in" }, E);
+    tl.to(seal, { scale: 1.08, duration: 0.06, ease: "power1.out" }, E + 0.3); tl.to(seal, { scale: 1, duration: 0.4, ease: "back.out(3)" }, E + 0.36);
+    tl.fromTo(ring, { scale: 1, opacity: 0.9 }, { scale: 2.6, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, E + 0.3);
+    tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out", transformOrigin: `${SC[0]}px ${SC[1]}px` }, E + 0.3); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, E + 0.37);
+    tl.to(bloom, { opacity: 0.95, duration: 0.12, ease: "power2.out" }, E + 0.3); tl.to(bloom, { opacity: 0.55, duration: 0.8, ease: "power2.out" }, E + 0.42);
+  } else {
+    tl.fromTo(num, { scale: 1 }, { scale: 1.18, duration: 0.1, ease: "power2.out", immediateRender: false, transformOrigin: "50% 50%" }, E);
+    tl.to(num, { scale: 1, duration: 0.5, ease: "back.out(3)" }, E + 0.1);
+    tl.to(bloom, { opacity: 0.95, duration: 0.12, ease: "power2.out" }, E); tl.to(bloom, { opacity: 0.55, duration: 0.8, ease: "power2.out" }, E + 0.12);
+  }
+  tl.fromTo(liq, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, E + 0.4);
+
+  // ---- out: an overlay leaves clean; a cutaway holds to the cut
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "context-menu", "name": "Context menu", "oneLiner": "files sit on a desktop in slow 3D, the pointer glides onto a video file and right-clicks: it selects, a glass menu opens from the pointer, the hover walks down Open, Rename, Duplicate, Share to the accent action item whose glyph spins, the click closes the menu, a progress ring runs on the file and a toast lands with a green check and the result",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["right click", "context menu", "menu", "file", "desktop", "action", "one click", "integration", "ai", "workflow", "os", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says it is built right into the computer or one right-click away ('just right-click the file and hit summarise', 'it shows up in the menu'): the menu opens on 'right-click', the pick lands on the action's name, the toast on the result" }

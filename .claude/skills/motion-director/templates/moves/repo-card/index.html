@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Repository name (empty: the brand name as a lowercase slug)","default":""},
+  {"id":"owner","type":"string","label":"Owner before the slash (empty: none)","default":""},
+  {"id":"text","type":"string","label":"Description (empty: the brand tagline)","default":""},
+  {"id":"language","type":"string","label":"Language next to the dot","default":"TypeScript"},
+  {"id":"stars","type":"number","label":"Stars it lands on","default":24800},
+  {"id":"starsFrom","type":"number","label":"Stars it starts from","default":3100},
+  {"id":"forks","type":"number","label":"Forks","default":1460},
+  {"id":"contributors","type":"string","label":"Contributors label (empty: hide the faces)","default":"+128"},
+  {"id":"pill","type":"string","label":"The pill that springs in","default":"Trending today"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); --gold: #F7C548; --goldl: #FFE39A; --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 32%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 20% 95%, color-mix(in srgb, var(--accent2) 26%, transparent), transparent 70%), var(--ground); }
+  #flash { position: absolute; left: 0; top: 0; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(247,197,72,.35), transparent 70%); opacity: 0; pointer-events: none; }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #flash { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1700); }
+  #card { position: relative; box-sizing: border-box; padding: calc(var(--u) * 40) calc(var(--u) * 44) calc(var(--u) * 36); border-radius: calc(var(--u) * 40);
+    transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 82%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.24) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  .hd { display: flex; align-items: center; gap: calc(var(--u) * 18); }
+  .ic { flex: none; width: calc(var(--u) * 44); height: calc(var(--u) * 44); opacity: .7; }
+  #nm { flex: 1; min-width: 0; font-family: var(--mono); font-size: calc(var(--u) * 42); font-weight: 700; letter-spacing: -0.01em; color: var(--al); white-space: nowrap; overflow: hidden; }
+  #nm .ow { color: color-mix(in srgb, var(--ink) 62%, transparent); font-weight: 500; }
+  #pub { flex: none; font-size: calc(var(--u) * 22); font-weight: 600; color: color-mix(in srgb, var(--ink) 65%, transparent); padding: calc(var(--u) * 6) calc(var(--u) * 16); border-radius: calc(var(--u) * 30);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.22); white-space: nowrap; }
+  #desc { margin-top: calc(var(--u) * 22); font-size: calc(var(--u) * 40); line-height: 1.28; font-weight: 500; color: color-mix(in srgb, var(--ink) 90%, transparent); text-wrap: balance; letter-spacing: -0.008em; }
+  .act { display: flex; align-items: flex-end; gap: calc(var(--u) * 6); height: calc(var(--u) * 74); margin-top: calc(var(--u) * 26); }
+  .act i { flex: 1; border-radius: calc(var(--u) * 4); transform-origin: 50% 100%;
+    background: linear-gradient(180deg, var(--al), color-mix(in srgb, var(--accent) 55%, transparent)); box-shadow: 0 0 calc(var(--u) * 10) color-mix(in srgb, var(--accent) 35%, transparent); }
+  .act i.lo { background: rgba(255,255,255,.14); box-shadow: none; }
+  .meta { display: flex; align-items: center; gap: calc(var(--u) * 28); margin-top: calc(var(--u) * 30); padding-top: calc(var(--u) * 26); border-top: calc(var(--u) * 1.5) solid rgba(255,255,255,.1);
+    font-size: calc(var(--u) * 29); font-weight: 600; color: color-mix(in srgb, var(--ink) 70%, transparent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .meta .it { display: flex; align-items: center; gap: calc(var(--u) * 12); flex: none; }
+  .dot { width: calc(var(--u) * 22); height: calc(var(--u) * 22); border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--al), var(--accent) 65%); box-shadow: 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .meta svg { width: calc(var(--u) * 36); height: calc(var(--u) * 36); overflow: visible; flex: none; }
+  #star { position: relative; }
+  #star .sw { position: relative; width: calc(var(--u) * 36); height: calc(var(--u) * 36); flex: none; }
+  #star .sw svg { position: absolute; left: 0; top: 0; }
+  #sfill { filter: drop-shadow(0 0 calc(var(--u) * 12) var(--gold)); opacity: 0; }
+  #cnt { display: inline-block; color: var(--ink); font-weight: 750; }
+  #ring { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 160); height: calc(var(--u) * 160); margin: calc(var(--u) * -80); border-radius: 50%; border: calc(var(--u) * 5) solid var(--goldl); box-sizing: border-box; opacity: 0; }
+  .pt { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 26); height: calc(var(--u) * 26); margin: calc(var(--u) * -13); opacity: 0; }
+  .avs { display: flex; align-items: center; margin-left: auto; flex: none; }
+  .avs i { width: calc(var(--u) * 44); height: calc(var(--u) * 44); border-radius: 50%; margin-left: calc(var(--u) * -14); box-sizing: border-box; border: calc(var(--u) * 3) solid var(--surface);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 180% auto; background-position: 50% 8%; }
+  .avs i:first-child { margin-left: 0; }
+  .avs span { margin-left: calc(var(--u) * 8); font-size: calc(var(--u) * 25); color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  #pill { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 10); padding: calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * 12) calc(var(--u) * 16); border-radius: calc(var(--u) * 40);
+    font-size: calc(var(--u) * 28); font-weight: 750; color: #fff; white-space: nowrap; transform-origin: 80% 100%;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 70%, #fff), var(--accent) 55%, color-mix(in srgb, var(--accent) 75%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--u) * 16) calc(var(--u) * 30) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 85%, transparent), 0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -14) rgba(0,0,0,.5); }
+  #pill svg { width: calc(var(--u) * 30); height: calc(var(--u) * 30); flex: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="flash"></div>
+  <div id="stage"><div id="card">
+    <div class="hd">
+      <svg class="ic" viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5zM5 19.5A1.5 1.5 0 0 0 6.5 21H19M9 3v8l2-1.5L13 11V3" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <div id="nm"></div><div id="pub">Public</div>
+    </div>
+    <div id="desc"></div>
+    <div class="act" id="act"></div>
+    <div class="meta">
+      <div class="it" id="lang"><i class="dot"></i><span id="lng"></span></div>
+      <div class="it" id="star"><div class="sw">
+          <svg id="sline" viewBox="0 0 24 24"><path d="M12 3.2l2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6-4.4-4.2 6-.9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <svg id="sfill" viewBox="0 0 24 24"><path d="M12 3.2l2.7 5.5 6 .9-4.4 4.2 1 6-5.3-2.8-5.3 2.8 1-6-4.4-4.2 6-.9z" fill="var(--gold)" stroke="var(--goldl)" stroke-width="1" stroke-linejoin="round"/></svg>
+          <div id="ring"></div><div id="pts"></div></div><span id="cnt"></span></div>
+      <div class="it" id="fork"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="19" r="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 7.2v1.3a2.5 2.5 0 0 0 2.5 2.5h6a2.5 2.5 0 0 0 2.5-2.5V7.2M12 11v5.8" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span id="fk"></span></div>
+      <div class="avs" id="avs"></div>
+    </div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div><div id="pill"><svg viewBox="0 0 24 24"><path d="M4 16.5l5.5-5.5 3.5 3.5L20 7.5M14.5 7.5H20V13" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pillt"></span></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait;
+  const u = P ? MV.u * 1.04 : MV.u * (MV.alpha ? 1 : W === H ? 1.12 : 1.3);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const slug = String(v.name || v.brandName || "project").toLowerCase().trim().replace(/[^a-z0-9._-]+/g, "-").replace(/^-|-$/g, "");
+  $("#nm").innerHTML = (v.owner ? `<span class="ow">${esc(v.owner)} / </span>` : "") + esc(slug);
+  $("#desc").textContent = v.text || v.tagline || v.headline || "";
+  $("#lng").textContent = v.language || ""; if (!v.language) $("#lang").style.display = "none";
+  const kf = (x) => (x < 1000 ? String(Math.round(x)) : (x / 1000).toFixed(x < 100000 ? 1 : 0).replace(/\.0$/, "") + "k");
+  $("#fk").textContent = kf(+v.forks || 0); if (!+v.forks) $("#fork").style.display = "none";
+  const to = Math.round(+v.stars || 0), from = Math.min(to, Math.round(+v.starsFrom || 0));
+  $("#pillt").textContent = v.pill || ""; if (!v.pill) $("#pill").style.display = "none";
+  // contributor faces: the brand's people, or nothing
+  const ppl = (v.people || []).slice(0, 3);
+  if (v.contributors && ppl.length) { ppl.forEach((p) => { const i = document.createElement("i"); i.style.backgroundImage = `url("${p}")`; $("#avs").appendChild(i); });
+    const s = document.createElement("span"); s.textContent = v.contributors; $("#avs").appendChild(s); } else $("#avs").style.display = "none";
+
+  // a year of commit activity: quiet, then climbing
+  { const ar = MV.rand(5), act = $("#act"); for (let i = 0; i < 30; i++) { const t = i / 29, h = Math.min(1, 0.12 + Math.pow(t, 2.2) * 0.85 + ar() * 0.22 * (0.4 + t)); const b = document.createElement("i"); b.style.height = (h * 100).toFixed(1) + "%"; if (h < 0.3) b.className = "lo"; act.appendChild(b); } }
+  // ---- size
+  const CW = P ? W - safe.left - safe.right : Math.min(800 * u, W - safe.left - safe.right);
+  $("#card").style.width = CW + "px";
+  const cnt = $("#cnt"); cnt.textContent = kf(to); cnt.style.minWidth = cnt.getBoundingClientRect().width + 4 * u + "px"; cnt.textContent = kf(from);
+  // the description wraps to 3 lines at most
+  const desc = $("#desc"); let fs = 40 * u; while (desc.getBoundingClientRect().height > fs * 1.28 * 3 + 2 && fs > 20) { fs -= 2; desc.style.fontSize = fs + "px"; }
+  // the meta row must fit: drop the faces first, then shrink
+  const meta = $(".meta"), metaRoom = CW - 88 * u;
+  const need = () => { const k = [...meta.children].filter((c) => getComputedStyle(c).display !== "none"); return k.reduce((a, c) => a + c.getBoundingClientRect().width, 0) + (k.length - 1) * 28 * u; };
+  // shrink a little first, then drop the faces, then shrink the rest
+  { let mf = 29 * u; while (need() > metaRoom && mf > 29 * u * 0.86) { mf -= 1; meta.style.fontSize = mf + "px"; }
+    if (need() > metaRoom) { $("#avs").style.display = "none"; mf = 29 * u; meta.style.fontSize = mf + "px"; }
+    while (need() > metaRoom && mf > 16) { mf -= 1; meta.style.fontSize = mf + "px"; } }
+  { const nm = $("#nm"); let nf = 42 * u; while (nm.scrollWidth > nm.clientWidth + 1 && nf > 18) { nf -= 1; nm.style.fontSize = nf + "px"; } }
+  const CH = $("#card").getBoundingClientRect().height;
+
+  // ---- place: an overlay sits where a talking head leaves room; B-roll is centred
+  const pillH = 64 * u;
+  let x = (W - CW) / 2, y = (H - CH - pillH * 0.5) / 2;
+  if (MV.alpha) {
+    if (P) { x = safe.left; y = safe.top + 100 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = H * 0.17; }
+    else y = safe.top + 100 * u;
+  } else if (P) y = (H - CH) / 2 - 120 * u;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+  // the pill hangs off the card's top right corner
+  const pr = $("#pill").getBoundingClientRect();
+  const PY = -pr.height - 18 * u;
+  gsap.set("#pill", { x: CW - pr.width - 10 * u, y: PY });
+
+  // star burst: little gold stars and sparks, seeded
+  const pts = $("#pts"), PT = [], rnd = MV.rand(29);
+  const STAR = `<svg viewBox="0 0 24 24" width="100%" height="100%"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.8-6.3 3.8 1.7-7L2 9.2l7.1-.6z" fill="COL"/></svg>`;
+  for (let i = 0; i < 12; i++) { const d = document.createElement("i"); d.className = "pt"; const col = ["var(--gold)", "var(--goldl)", "#fff", "var(--al)"][i % 4];
+    d.innerHTML = i % 2 ? STAR.replace("COL", col) : `<b style="display:block;width:46%;height:46%;margin:27%;border-radius:50%;background:${col};box-shadow:0 0 ${10 * u}px ${col}"></b>`; pts.appendChild(d);
+    const a = (i / 12) * Math.PI * 2 + rnd() * 0.3, r = (130 + rnd() * 110) * u; PT.push([d, Math.cos(a) * r, Math.sin(a) * r, 0.55 + rnd() * 0.7, (rnd() - 0.5) * 240]); }
+
+  // 0.05: the card pops in out of depth, tilted, landing on a spring
+  tl.fromTo("#card", { z: -700 * u, rotationX: 34, rotationY: 30, rotationZ: 6, scale: 0.72 },
+    { z: 0, rotationX: 9, rotationY: 12, rotationZ: 2, scale: 1, duration: 0.95, ease: "back.out(1.35)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.to("#card", { rotationX: 3, rotationY: -9, rotationZ: -1, duration: D - 1.45, ease: "sine.inOut" }, 1.0);
+  tl.fromTo(".hd > *", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.06, ease: "expo.out" }, 0.3);
+  tl.fromTo(".ic", { rotation: -30, scale: 0.5 }, { rotation: 0, scale: 1, duration: 0.6, ease: "back.out(2.4)" }, 0.3);
+  const dw = MV.words("#desc");
+  tl.fromTo(dw, { opacity: 0, y: 20 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: Math.min(0.035, 0.55 / dw.length), ease: "expo.out" }, 0.48);
+  tl.fromTo(".act i", { scaleY: 0 }, { scaleY: 1, duration: 0.6, stagger: 0.022, ease: "back.out(1.8)" }, 0.7);
+  tl.fromTo(".meta > *", { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.06, ease: "expo.out" }, 0.82);
+  tl.fromTo(".avs i", { scale: 0.3 }, { scale: 1, duration: 0.5, stagger: 0.05, ease: "back.out(2.4)" }, 1.0);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.95);
+  // the stars race: slow off the mark, then flying, it STOPS on the burst
+  const o = { n: from }, HIT = 2.35;
+  tl.to(o, { n: to, duration: HIT - 1.0, ease: "power2.in", onUpdate: () => { cnt.textContent = kf(o.n); } }, 1.0);
+  tl.to("#star", { color: "var(--goldl)", duration: 0.6, ease: "power1.in" }, HIT - 0.6);
+  // the burst: the star fills gold, a ring goes out, stars fly, the number stamps, the room flashes warm
+  tl.to("#sline", { opacity: 0, duration: 0.06 }, HIT);
+  tl.fromTo("#sfill", { scale: 0, opacity: 1, rotation: -72, transformOrigin: "50% 52%" }, { scale: 1, opacity: 1, rotation: 0, duration: 0.55, ease: "back.out(3.5)", immediateRender: false }, HIT);
+  tl.fromTo("#ring", { scale: 0.25, opacity: 1 }, { scale: 1.3, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, HIT);
+  PT.forEach(([d, dx, dy, s, r], i) => tl.fromTo(d, { x: 0, y: 0, scale: s, rotation: 0, opacity: 1 }, { x: dx, y: dy, scale: 0, rotation: r, opacity: 1, duration: 0.7, ease: "expo.out", immediateRender: false }, HIT + 0.03 + (i % 3) * 0.02));
+  tl.set("#cnt", { color: "var(--goldl)" }, HIT);
+  tl.fromTo("#cnt", { scale: 1 }, { scale: 1.3, duration: 0.08, ease: "power2.out", immediateRender: false, transformOrigin: "0% 60%" }, HIT);
+  tl.to("#cnt", { scale: 1, duration: 0.45, ease: "back.out(3)" }, HIT + 0.08);
+  tl.to("#card", { scale: 1.03, duration: 0.08, ease: "power2.out" }, HIT); tl.to("#card", { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, HIT + 0.08);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, HIT + 0.1);
+  if (!MV.alpha) { const sr = $("#star .sw").getBoundingClientRect(), FR = 900 * u;
+    gsap.set("#flash", { x: sr.left + sr.width / 2 - FR / 2, y: sr.top + sr.height / 2 - FR / 2, width: FR, height: FR });
+    tl.to("#flash", { opacity: 1, duration: 0.1, ease: "power2.out" }, HIT); tl.to("#flash", { opacity: 0, duration: 1.0, ease: "power2.out" }, HIT + 0.12); }
+  // the pill springs off the corner after the burst
+  tl.fromTo("#pill", { opacity: 0, scale: 0.3, rotation: -18, y: PY + 30 * u }, { opacity: 1, scale: 1, rotation: 3, y: PY, duration: 0.7, ease: "back.out(2.2)" }, HIT + 0.3);
+  tl.fromTo("#pill svg", { x: -10 * u, opacity: 0 }, { x: 0, opacity: 1, duration: 0.45, ease: "expo.out" }, HIT + 0.42);
+  tl.to("#pill", { rotation: 1, y: "-=" + 6 * u, duration: D - HIT - 1.2, ease: "sine.inOut" }, HIT + 1.0);
+  // exit: card and pill tip back and fly up into blur, accelerating
+  if (MV.alpha) {
+  tl.to("#pill", { y: "-=" + 140 * u, opacity: 0, filter: "blur(14px)", duration: 0.36, ease: "power3.in" }, D - 0.44);
+  tl.to("#card", { y: -140 * u, z: -300 * u, rotationX: -18, opacity: 0, filter: "blur(16px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  }
+  MV.done();
+</script>
+</body>
+</html>

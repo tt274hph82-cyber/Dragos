@@ -1,0 +1,5 @@
+{ "id": "envelope-letter", "name": "Envelope letter", "oneLiner": "a real kraft envelope on a leather desk opens its flap on twos, a folded letter slides out, the envelope drops away while the letter comes to the lens and unfolds, and the key words of a typed line get one brand-colour marker swipe",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["letter", "message", "note", "mail", "reveal", "announcement", "personal", "typewriter", "envelope", "underline", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker shares a message, a lesson or a reply they got ('someone wrote to me', 'here is what I would tell you'): the letter comes out as they start and the underline lands on the words they lean on" }

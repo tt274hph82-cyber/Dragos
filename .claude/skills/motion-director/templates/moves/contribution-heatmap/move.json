@@ -1,0 +1,5 @@
+{ "id": "contribution-heatmap", "name": "Contribution heatmap", "oneLiner": "a glass panel of week-by-day squares stands on a lit floor and fills column by column in green (or the brand accent), busier toward today, while the camera rides the sweep and the running count rides above it on a glass pill; today lands brightest with a ring and a wave of light runs the year",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["heatmap", "contributions", "streak", "consistency", "habit", "calendar", "github", "commits", "every day", "year", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker talks about showing up every day, a streak or a year of shipping ('I committed code every day for a year'): cut in on the habit, today's square lands on the number. color accent puts it in the brand colour" }

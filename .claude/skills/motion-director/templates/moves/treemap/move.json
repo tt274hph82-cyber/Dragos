@@ -1,0 +1,5 @@
+{ "id": "treemap", "name": "Treemap", "oneLiner": "one glass slab stands up off a lit floor and is cut by lines of light into blocks sized by share, biggest first; each block names its part and counts its value up, then the biggest floods with the accent and lifts toward the camera while the rest dim",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["treemap", "share", "breakdown", "split", "proportion", "where the time goes", "biggest part", "budget", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says where the time, money or effort really goes ('almost half of it is editing'): cut in on the breakdown, the biggest block lifts on the word that names it" }

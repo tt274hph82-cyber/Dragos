@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"lines","type":"string","label":"Notifications, comma separated (4 to 7; the last one arrives after focus is on)","default":"New comment on your post,3 new messages in the group,Your order has shipped,Meeting starts in 5 minutes,You were mentioned in a thread,Flash sale ends tonight"},
+  {"id":"apps","type":"string","label":"App name on each notification, comma separated","default":"Social,Messages,Shop,Calendar,Team chat,Deals"},
+  {"id":"mode","type":"string","label":"Mode name on the toggle","default":"Focus"},
+  {"id":"off","type":"string","label":"Toggle state before","default":"Off"},
+  {"id":"on","type":"string","label":"Toggle state after","default":"On"},
+  {"id":"quiet","type":"string","label":"Word after the count in the quiet pill","default":"silenced"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 34% at var(--gx, 50%) var(--gy, 40%), color-mix(in srgb, var(--accent) 32%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 20%, transparent), transparent 70%), var(--ground); }
+  #hush { position: absolute; inset: 0; opacity: 0; background: radial-gradient(80% 60% at 50% 45%, rgba(0,0,0,.25), rgba(0,0,0,.72)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #hush { display: none; }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+  .glass { background: linear-gradient(160deg, rgba(255,255,255,.19), rgba(255,255,255,.07) 60%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(26px) saturate(170%); backdrop-filter: blur(26px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13),
+      0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -24) rgba(0,0,0,.65); }
+  .is-alpha .glass { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .glass { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13); }
+
+  #stack { position: absolute; left: 0; top: 0; }
+  .nc { position: absolute; left: 0; top: 0; width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: calc(var(--u) * 24);
+    padding: 0 calc(var(--u) * 30) 0 calc(var(--u) * 24); border-radius: calc(var(--u) * 38); transform-origin: 50% 0%; }
+  .tile { flex: none; width: calc(var(--u) * 80); height: calc(var(--u) * 80); border-radius: calc(var(--u) * 22); display: grid; place-items: center;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 70%, #fff), var(--c) 50%, color-mix(in srgb, var(--c) 62%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 1) rgba(255,255,255,.45), 0 calc(var(--u) * 8) calc(var(--u) * 16) calc(var(--u) * -6) rgba(0,0,0,.6); }
+  .tile svg { width: 56%; height: 56%; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .tx { flex: 1; min-width: 0; }
+  .hd { display: flex; align-items: baseline; justify-content: space-between; gap: calc(var(--u) * 16); }
+  .app { font-size: calc(var(--u) * 30); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 58%, transparent); white-space: nowrap; }
+  .tm { flex: none; font-size: calc(var(--u) * 30); font-weight: 500; color: color-mix(in srgb, var(--ink) 48%, transparent); white-space: nowrap; }
+  .ln { margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 39); font-weight: 650; color: var(--ink); white-space: nowrap; letter-spacing: -0.005em; }
+
+  #pill { position: absolute; left: 0; top: 0; box-sizing: border-box; border-radius: calc(var(--u) * 60); display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 18); overflow: hidden; opacity: 0;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 70%, #2a2a2e), color-mix(in srgb, var(--surface) 92%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.2), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -18) rgba(0,0,0,.8),
+      0 0 calc(var(--u) * 60) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-key #pill { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.2), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  #pill .in { display: flex; align-items: center; gap: calc(var(--u) * 16); white-space: nowrap; opacity: 0; }
+  #pill .mo { flex: none; width: calc(var(--u) * 70); height: calc(var(--u) * 70); border-radius: 50%; display: grid; place-items: center; background: linear-gradient(160deg, var(--al), var(--accent) 55%, var(--ad)); }
+  #pill .mo svg { width: 58%; height: 58%; fill: #fff; }
+  #pill .ct { position: relative; display: inline-grid; font-size: calc(var(--u) * 46); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; }
+  #pill .ct span { grid-area: 1 / 1; }
+  #pill .qw { font-size: calc(var(--u) * 46); font-weight: 600; color: color-mix(in srgb, var(--ink) 62%, transparent); }
+
+  #ctl { position: absolute; left: 0; top: 0; box-sizing: border-box; display: flex; align-items: center; gap: calc(var(--u) * 26); padding: 0 calc(var(--u) * 30) 0 calc(var(--u) * 26); border-radius: calc(var(--u) * 46); }
+  #ctl .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  #moon { position: relative; flex: none; width: calc(var(--u) * 100); height: calc(var(--u) * 100); border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  #moon .fill { position: absolute; inset: 0; border-radius: 50%; opacity: 0; background: linear-gradient(160deg, var(--al), var(--accent) 55%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), 0 0 calc(var(--u) * 40) calc(var(--u) * -4) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #moon .fill { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  #moon svg { position: relative; width: 52%; height: 52%; fill: color-mix(in srgb, var(--ink) 70%, transparent); }
+  #ctl .tx2 { flex: 1; min-width: 0; }
+  #mname { font-family: var(--font-display); font-size: calc(var(--u) * 52); color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; }
+  #mstate { position: relative; display: grid; margin-top: calc(var(--u) * 4); height: calc(var(--u) * 48); }
+  #mstate span { grid-area: 1 / 1; font-size: calc(var(--u) * 38); font-weight: 650; white-space: nowrap; color: color-mix(in srgb, var(--ink) 55%, transparent); line-height: calc(var(--u) * 48); }
+  #mstate span.y { color: var(--al); opacity: 0; }
+  #sw { position: relative; flex: none; width: calc(var(--u) * 132); height: calc(var(--u) * 78); border-radius: calc(var(--u) * 39); background: rgba(255,255,255,.16); box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 4) rgba(0,0,0,.35); }
+  #sw .on { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(160deg, var(--al), var(--accent)); opacity: 0; }
+  #sw .kn { position: absolute; left: calc(var(--u) * 6); top: calc(var(--u) * 6); width: calc(var(--u) * 66); height: calc(var(--u) * 66); border-radius: 50%;
+    background: linear-gradient(180deg, #fff, #E6E6EA); box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.4); }
+  #touch { position: absolute; left: 0; top: 0; width: calc(var(--u) * 90); height: calc(var(--u) * 90); margin: calc(var(--u) * -45) 0 0 calc(var(--u) * -45); border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle, rgba(255,255,255,.7), rgba(255,255,255,.35) 60%, rgba(255,255,255,.18)); box-shadow: 0 0 0 calc(var(--u) * 3) rgba(255,255,255,.7), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.4); }
+  .is-key #touch { background: rgba(255,255,255,.75); box-shadow: 0 0 0 calc(var(--u) * 3) #fff; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="hush"></div>
+  <div id="persp"><div id="cam">
+    <div id="stack"></div>
+    <div id="pill"><div class="in"><div class="mo"><svg viewBox="0 0 24 24"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg></div><span class="ct"></span><span class="qw"></span></div></div>
+    <div id="ctl" class="glass">
+      <div id="moon"><div class="fill"></div><svg viewBox="0 0 24 24"><path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z"/></svg></div>
+      <div class="tx2"><div id="mname"></div><div id="mstate"><span class="n"></span><span class="y"></span></div></div>
+      <div id="sw"><div class="on"></div><div class="kn"></div></div>
+      <div class="sh"></div>
+    </div>
+    <div id="touch"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(() => {
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration;
+  const split = (s) => String(s || "").split(",").map((x) => x.trim());
+  let LN = split(v.lines).filter(Boolean).slice(0, 7);
+  if (LN.length < 4) LN = ["New comment on your post", "3 new messages", "Your order has shipped", "Meeting in 5 minutes", "You were mentioned"];
+  const AP = split(v.apps);
+  const N = LN.length, NS = N - 1;           // NS stream in before focus, the last one arrives after
+  const VIS = 4;                              // banners visible at once
+
+  // ---- size
+  const BH0 = 132, G0 = 16, CTL0 = 164, GAP0 = 44;
+  const needH = VIS * (BH0 + G0) - G0 + GAP0 + CTL0;
+  const availH = H - safe.top - safe.bottom - (MV.portrait ? 20 : 0) * MV.u;
+  const u = Math.min(MV.u * (MV.portrait ? 1 : 0.95), availH / needH);
+  root.style.setProperty("--u", u + "px");
+  const regionW = W - safe.left - safe.right;
+  const CW = Math.min(regionW, (MV.portrait ? 920 : 900) * u);
+  const BH = BH0 * u, G = G0 * u, STEP = BH + G, CTL = CTL0 * u, GAP = GAP0 * u;
+  const SH = VIS * STEP - G, TOT = SH + GAP + CTL;
+
+  // generic app glyphs and tones
+  const GL = [['<path d="M4.5 6.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H10l-4 3.5v-3.5h0a2 2 0 0 1-1.5-2z"/>', "#3D7BFD"],
+    ['<path d="M4 7.5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4.5 7l7.5 5.5L19.5 7"/>', "#14B8A6"],
+    ['<path d="M5 8h14l-1.2 10.5a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>', "#F59E0B"],
+    ['<rect x="4" y="5.5" width="16" height="14" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>', "#EF4444"],
+    ['<path d="M12 4.5a5 5 0 0 1 5 5v3.5l1.5 2.5h-13L7 13V9.5a5 5 0 0 1 5-5z"/><path d="M10 18.5a2 2 0 0 0 4 0"/>', "#8B5CF6"],
+    ['<path d="M12.5 4.5l7 7-8 8-7-7V4.5z"/><circle cx="8.5" cy="8.5" r="1.3"/>', "#EC4899"],
+    ['<path d="M12 20s-7-4.3-7-9.5A4 4 0 0 1 12 8a4 4 0 0 1 7 2.5C19 15.7 12 20 12 20z"/>', "#F43F5E"]];
+  const stack = $("#stack"); stack.style.width = CW + "px";
+  const cards = LN.map((t, i) => {
+    const c = document.createElement("div"); c.className = "nc glass"; c.style.height = BH + "px"; c.style.zIndex = 10 + i;
+    const g = GL[i % GL.length];
+    c.innerHTML = `<div class="tile" style="--c:${g[1]}"><svg viewBox="0 0 24 24">${g[0]}</svg></div><div class="tx"><div class="hd"><span class="app"></span><span class="tm">now</span></div><div class="ln"></div></div>`;
+    $(".app", c).textContent = AP[i] || AP[i % Math.max(1, AP.filter(Boolean).length)] || ""; $(".ln", c).textContent = t;
+    stack.appendChild(c); return c;
+  });
+  const inner = CW - (24 + 80 + 24 + 30) * u;
+  cards.forEach((c) => { MV.fitText($(".ln", c), inner, 16); MV.fitText($(".app", c), inner - 90 * u, 12); });
+
+  // the control
+  const ctl = $("#ctl"); Object.assign(ctl.style, { width: CW + "px", height: CTL + "px" });
+  $("#mname").textContent = v.mode || ""; $("#mstate .n").textContent = v.off || ""; $("#mstate .y").textContent = v.on || "";
+  const tw = CW - (26 + 100 + 26 + 26 + 132 + 30) * u;
+  MV.fitText($("#mname"), tw, 18); MV.fitText($("#mstate .n"), tw, 14); MV.fitText($("#mstate .y"), tw, 14);
+
+  // the quiet pill: count + word
+  const pill = $("#pill"), ct = $("#pill .ct");
+  const cA = document.createElement("span"); cA.textContent = String(NS); const cB = document.createElement("span"); cB.textContent = String(N);
+  ct.append(cA, cB); gsap.set(cB, { opacity: 0 });
+  $("#pill .qw").textContent = v.quiet || ""; if (!v.quiet) $("#pill .qw").remove();
+  MV.fitText($("#pill .in"), CW * 0.8, 14);
+  const PH = 116 * u, PW = Math.min(CW, $("#pill .in").getBoundingClientRect().width + 80 * u);
+
+  // ---- place: the stack on top, the control under it
+  let cx = W / 2, y0;
+  if (MV.portrait) { cx = MV.alpha ? safe.left + regionW / 2 : W / 2; y0 = MV.alpha ? safe.top + 10 * u : (H - TOT) / 2; }
+  else { if (MV.alpha && W > H) cx = W - safe.right - CW / 2; y0 = MV.alpha ? safe.top + Math.max(0, (H - safe.top - safe.bottom - TOT) / 2) : (H - TOT) / 2; }
+  const x0 = cx - CW / 2, cy0 = y0 + SH + GAP;
+  gsap.set(stack, { x: x0, y: y0 });
+  gsap.set(ctl, { x: x0, y: cy0 });
+  root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", ((y0 + TOT * 0.45) / H * 100) + "%");
+  gsap.set("#cam", { transformOrigin: `${cx}px ${y0 + TOT / 2}px` });
+  // after the fold the group closes up: pill on top, control right under it, re-centred
+  const after = PH + GAP + CTL, ay0 = MV.alpha ? y0 + Math.min(BH * 1.3, TOT - after) : y0 + (TOT - after) / 2;
+  const py = ay0, pcy = ay0 + PH + GAP;
+  gsap.set(pill, { x: x0, y: y0, width: CW, height: BH });
+
+  // ---- timeline
+  tl.fromTo(ctl, { opacity: 0, y: cy0 + 80 * u, scale: 0.92, rotationX: 18 }, { opacity: 1, y: cy0, scale: 1, rotationX: 0, duration: 0.8, ease: "back.out(1.5)" }, 0.05);
+  tl.fromTo(ctl, { filter: "blur(12px)" }, { filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.05);
+  // 1. the pile: each lands on top and shoves the others down, faster and faster, a little crooked
+  const R = MV.rand(17);
+  let t = 0.28, gap = 0.34;
+  const TS = [];
+  for (let i = 0; i < NS; i++) { TS.push(t); t += gap; gap = Math.max(0.16, gap * 0.8); }
+  cards.slice(0, NS).forEach((c, i) => {
+    const s = TS[i], rz = (R() - 0.5) * 2.4;
+    tl.fromTo(c, { y: -BH * 0.8, scale: 0.9, rotationX: -30, rotation: rz * 2 }, { y: 0, scale: 1, rotationX: 0, rotation: rz, duration: 0.6, ease: "back.out(1.7)" }, s);
+    tl.fromTo(c, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, s);
+    tl.fromTo($(".tile", c), { scale: 0.5, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.4)" }, s + 0.06);
+    for (let j = 0; j < i; j++) {
+      const k = i - j, o = cards[j];
+      if (k < VIS) tl.to(o, { y: k * STEP, scale: 1 - k * 0.012, duration: 0.5, ease: "back.out(1.4)" }, s + 0.02);
+      else { tl.to(o, { y: k * STEP - STEP * 0.5, scale: 0.9, duration: 0.3, ease: "power2.in" }, s + 0.02); tl.to(o, { opacity: 0, duration: 0.1, ease: "power2.in" }, s); }
+      if (k === 1) tl.set($(".tm", o), { textContent: "1m" }, s + 0.12);
+    }
+  });
+  // the whole pile jitters a hair while it is loud
+  tl.fromTo(stack, { x: x0 }, { x: x0 + 3 * u, duration: 0.06, ease: "none", repeat: Math.round((TS[NS - 1] - TS[0] + 0.4) / 0.06), yoyo: true, immediateRender: false }, TS[0] + 0.1);
+  tl.set(stack, { x: x0 }, TS[NS - 1] + 0.55);
+
+  // 2. the fingertip flips the toggle on
+  const swr = $("#sw").getBoundingClientRect();
+  const K = TS[NS - 1] + 0.7, tx = swr.left + swr.width * 0.62, ty = swr.top + swr.height * 0.55;
+  gsap.set("#touch", { x: tx + 150 * u, y: ty + 190 * u });
+  tl.fromTo("#touch", { opacity: 0, scale: 1.3 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }, K - 0.45);
+  tl.to("#touch", { x: tx, y: ty, duration: 0.42, ease: "power3.inOut" }, K - 0.45);
+  tl.to("#touch", { scale: 0.78, duration: 0.08, ease: "power2.out" }, K);
+  tl.to("#sw .kn", { x: (132 - 12 - 66) * u, duration: 0.42, ease: "back.out(2)" }, K + 0.02);
+  tl.to("#sw .on", { opacity: 1, duration: 0.22, ease: "power2.out" }, K + 0.02);
+  tl.to("#touch", { scale: 1.15, opacity: 0, duration: 0.3, ease: "power2.out" }, K + 0.14);
+  tl.to("#moon .fill", { opacity: 1, duration: 0.3, ease: "power2.out" }, K + 0.06);
+  tl.to("#moon svg", { fill: "#fff", rotation: -360, duration: 0.7, ease: "back.out(1.6)" }, K + 0.06);
+  tl.fromTo("#moon", { scale: 1 }, { scale: 1.14, duration: 0.1, ease: "power2.out", immediateRender: false }, K + 0.06);
+  tl.to("#moon", { scale: 1, duration: 0.5, ease: "back.out(3)" }, K + 0.16);
+  tl.to("#mstate .n", { opacity: 0, y: -14 * u, duration: 0.14, ease: "power2.in" }, K + 0.04);
+  tl.fromTo("#mstate .y", { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(2)", immediateRender: false }, K + 0.18);
+  tl.fromTo("#ctl .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, K + 0.1);
+  tl.to("#hush", { opacity: 0.7, duration: 1.2, ease: "power2.out" }, K + 0.1);
+
+  // 3. the fold: the pile collapses into its top card, which shrinks into the quiet pill
+  const F = K + 0.3;
+  const live = cards.slice(Math.max(0, NS - VIS), NS);
+  const topC = cards[NS - 1];
+  live.slice().reverse().forEach((c, i) => { if (c === topC) return;
+    tl.to(c, { y: 0, scale: 0.94, rotation: 0, duration: 0.34, ease: "power3.in" }, F + i * 0.05);
+    tl.to(c, { opacity: 0, duration: 0.14, ease: "power1.in" }, F + i * 0.05 + 0.1);
+  });
+  const FL = F + 0.24 + live.length * 0.05;
+  tl.to(topC, { rotation: 0, duration: 0.3, ease: "power2.out" }, F);
+  tl.to([$(".tx", topC), $(".tile", topC)], { opacity: 0, duration: 0.12, ease: "power2.in" }, FL - 0.1);
+  tl.to(topC, { opacity: 0, duration: 0.1, ease: "power2.in" }, FL - 0.04);
+  tl.fromTo(pill, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, FL - 0.06);
+  tl.to(pill, { x: cx - PW / 2, y: py, width: PW, height: PH, duration: 0.6, ease: "expo.out" }, FL);
+  tl.to(stack, { y: py, duration: 0.6, ease: "expo.out" }, FL);
+  tl.fromTo("#pill .in", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, FL + 0.22);
+  tl.fromTo("#pill .mo", { rotation: -90 }, { rotation: 0, duration: 0.6, ease: "back.out(2)" }, FL + 0.22);
+  tl.to(ctl, { y: pcy, duration: 0.7, ease: "expo.inOut" }, FL + 0.05);
+  // the camera leans in on the calm
+  gsap.set("#persp", { transformOrigin: `${cx}px ${ay0 + after / 2}px` });
+  tl.fromTo("#persp", { scale: 1 }, { scale: MV.alpha ? 1 : 1.12, duration: D - FL - 0.4, ease: "power2.inOut", immediateRender: false }, FL + 0.1);
+
+  // 4. a late ping drops in and is swallowed by the pill, no banner, just the count
+  const lt = cards[N - 1], LT = Math.min(D - 1.1, FL + 1.0);
+  tl.set(lt, { x: 0, y: -BH * 1.4, scale: 0.9, transformOrigin: "50% 50%" }, 0);
+  tl.set(stack, { zIndex: 3 }, 0); tl.set(pill, { zIndex: 4 }, 0);
+  tl.fromTo(lt, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power2.out" }, LT);
+  tl.fromTo(lt, { y: -BH * 1.4, scale: 0.9 }, { y: -(BH - PH) / 2, scale: 0.5, duration: 0.5, ease: "power3.in" }, LT);
+  tl.to(lt, { opacity: 0, duration: 0.14, ease: "power2.in" }, LT + 0.3);
+  tl.to(lt, { filter: "blur(8px)", duration: 0.14, ease: "power2.in" }, LT + 0.3);
+  tl.fromTo(pill, { scale: 1 }, { scale: 1.07, duration: 0.1, ease: "power2.out", immediateRender: false }, LT + 0.46);
+  tl.to(pill, { scale: 1, duration: 0.5, ease: "back.out(3)" }, LT + 0.56);
+  tl.to(cA, { opacity: 0, scale: 0.5, duration: 0.12, ease: "power2.in" }, LT + 0.42);
+  tl.fromTo(cB, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.6)", immediateRender: false }, LT + 0.54);
+
+  // the camera drifts
+  tl.fromTo("#cam", { rotationX: 7, rotationY: -7, scale: 1.03 }, { rotationX: 2, rotationY: 6, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  // exit
+  const X = D - 0.42;
+  tl.to(pill, { y: "-=" + 80 * u, opacity: 0, duration: 0.32, ease: "power3.in" }, X);
+  tl.to(ctl, { y: "-=" + 80 * u, opacity: 0, filter: "blur(12px)", duration: 0.36, ease: "power3.in" }, X + 0.04);
+  MV.done();
+})();
+</script>
+</body>
+</html>

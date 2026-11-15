@@ -1,0 +1,5 @@
+{ "id": "domain-search", "name": "Domain search", "oneLiner": "a dark glass domain search types the brand domain, Search is pressed, the result card rises with a spinner that flips to a green Available chip, Add to cart is pressed and turns green, and the domain flies up into the cart as the badge pops",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["domain", "website", "launch", "name", "brand", "search", "available", "cart", "buy", "start", "business", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says they grabbed the name or bought the domain ('first thing I did was buy the domain'): the domain types on the name, Available goes green and it drops into the cart on 'bought it'" }

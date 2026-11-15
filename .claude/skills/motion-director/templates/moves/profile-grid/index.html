@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Display name (empty: the brand name)","default":""},
+  {"id":"sub","type":"string","label":"Line under the name (empty: the brand handle)","default":""},
+  {"id":"pin","type":"number","label":"Which tile is the pinned post that lifts (1 to 3, the top row)","default":1},
+  {"id":"pinLabel","type":"string","label":"Label next to the pin glyph (empty: glyph only)","default":"Pinned"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(48% 36% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 15%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 2400); }
+  #card { position: relative; box-sizing: border-box; border-radius: calc(var(--u) * 40); background: #fff; transform-style: preserve-3d;
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(20,16,30,.06), 0 calc(var(--u) * 60) calc(var(--u) * 110) calc(var(--u) * -30) rgba(0,0,0,.75),
+      0 0 calc(var(--u) * 140) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-alpha #card { box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(20,16,30,.06), 0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(0,0,0,.6); }
+  .is-key #card { box-shadow: none; }
+  #head { position: relative; display: flex; align-items: center; }
+  #av { flex: none; border-radius: 50%; background: color-mix(in srgb, var(--accent) 22%, #fff) no-repeat; background-size: 165% auto; background-position: 50% 8%;
+    box-shadow: 0 0 0 calc(var(--u) * 4) #fff, 0 0 0 calc(var(--u) * 7.5) var(--accent); }
+  #who { display: flex; flex-direction: column; min-width: 0; }
+  #nm { font-weight: 800; color: #15131a; letter-spacing: -0.02em; white-space: nowrap; line-height: 1.1; }
+  #sb { color: #77737f; font-weight: 500; white-space: nowrap; line-height: 1.2; }
+  #main { position: relative; transform-style: preserve-3d; }
+  #tabs { position: relative; display: flex; border-top: calc(var(--u) * 1.5) solid rgba(20,16,30,.08); }
+  .is-landscape #tabs, .is-square #tabs { border-top: none; }
+  #tabs .t { flex: 1; display: grid; place-items: center; }
+  #tabs svg { fill: none; stroke: #b3b0b9; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  #tabs .t.on svg { stroke: #15131a; }
+  #bar { position: absolute; bottom: 0; height: calc(var(--u) * 4); background: #15131a; border-radius: 2px; }
+
+  #grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); transform-style: preserve-3d; }
+  .tile { position: relative; overflow: visible; transform-style: preserve-3d; }
+  .tile .im { position: absolute; inset: 0; background-color: #222; background-repeat: no-repeat; overflow: hidden; }
+  .tile .im img { position: absolute; }
+  .tile .fl { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  .tile .dm { position: absolute; inset: 0; background: #0b0a0e; opacity: 0; }
+  .tile .gl { position: absolute; top: 6%; right: 7%; width: 15%; height: 12%; }
+  .tile .gl svg { width: 100%; height: 100%; fill: #fff; filter: drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+  .tile.hero .im { box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.4); }
+  .tile .sh { position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.4) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); mix-blend-mode: soft-light; }
+  #pin { position: absolute; display: flex; align-items: center; border-radius: 999px; white-space: nowrap; color: #fff; font-weight: 700;
+    background: rgba(12,10,16,.72); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.45); }
+  .is-key #pin { background: #16131b; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  #pin svg { flex: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="head"><div id="av"></div><div id="who"><div id="nm"></div><div id="sb"></div></div></div>
+    <div id="main"><div id="tabs">
+      <div class="t on"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2.5"/><path d="M9.3 4v16M14.7 4v16M4 9.3h16M4 14.7h16"/></svg></div>
+      <div class="t"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M4 8.8h16M9 4l2.6 4.8M14.4 4 17 8.8"/><path d="M10.4 11.6v5l4.2-2.5z" fill="#b3b0b9" stroke="none"/></svg></div>
+      <div class="t"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><circle cx="12" cy="10.6" r="2.8"/><path d="M7 19.6c.9-2.6 2.8-3.9 5-3.9s4.1 1.3 5 3.9"/></svg></div>
+      <div id="bar"></div>
+    </div>
+    <div id="grid"></div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, safe, u } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, SQ = W === H, $ = (s) => document.querySelector(s);
+
+  // ---- geometry: header + tabs + a 3 x 3 grid of 4:5 tiles
+  const availH = MV.alpha ? H - safe.top - safe.bottom : P ? H - 2 * 220 * (W / 1080) : H * 0.86;
+  const availW = MV.alpha ? (P ? W - safe.left - safe.right : W * 0.42) : P ? W - 100 * u : W * 0.5;
+  // 9:16: the header sits above the grid; 16:9 and 1:1: it stands as a column on the left, so its text stays big
+  const SIDE = !P, HEADK = 0.62, TABK = 0.3, SIDEK = 1.55;   // header, tab bar and side column, in tile widths
+  const tw = SIDE ? Math.min(availW / (3 + SIDEK), availH / (3 * 1.25 + TABK)) : Math.min(availW / 3, availH / (3 * 1.25 + HEADK + TABK));
+  const GW = tw * 3, CW = SIDE ? tw * (3 + SIDEK) : GW, th = tw * 1.25, HH = tw * HEADK, TB = tw * TABK, k = tw / 330;
+  const card = $("#card"); card.style.width = CW + "px";
+  const head = $("#head"), av = $("#av");
+  $("#main").style.width = GW + "px";
+  if (SIDE) { card.style.display = "flex"; Object.assign(head.style, { width: tw * SIDEK + "px", flexDirection: "column", justifyContent: "center", padding: `0 ${40 * k}px`, gap: 40 * k + "px", boxSizing: "border-box",
+      borderRight: `${1.5 * u}px solid rgba(20,16,30,.08)` });
+    $("#who").style.alignItems = "center"; $("#who").style.maxWidth = "100%";
+    Object.assign(av.style, { width: 230 * k + "px", height: 230 * k + "px" }); }
+  else { Object.assign(head.style, { height: HH + "px", padding: `0 ${44 * k}px`, gap: 30 * k + "px" }); Object.assign(av.style, { width: 120 * k + "px", height: 120 * k + "px" }); }
+  if (v.people && v.people[0]) av.style.backgroundImage = `url("${v.people[0]}")`;
+  else if (v.mark) { av.style.backgroundImage = `url("${v.mark}")`; av.style.backgroundSize = "62%"; av.style.backgroundPosition = "50% 50%"; }
+  const brand = v.brandName || "";
+  $("#nm").textContent = v.name || brand; $("#sb").textContent = v.sub || v.handle || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  $("#nm").style.fontSize = (SIDE ? 78 : 58) * k + "px"; $("#sb").style.fontSize = (SIDE ? 54 : 40) * k + "px";
+  const tmax = SIDE ? tw * SIDEK - 80 * k : CW - 88 * k - 120 * k - 30 * k;
+  MV.fitText($("#nm"), tmax, 12); MV.fitText($("#sb"), tmax, 10);
+  $("#tabs").style.height = TB + "px";
+  document.querySelectorAll("#tabs svg").forEach((s) => { s.style.width = s.style.height = 50 * k + "px"; });
+  Object.assign($("#bar").style, { left: GW / 6 - 70 * k + "px", width: 140 * k + "px" });
+  const grid = $("#grid"); grid.style.gridAutoRows = th + "px"; grid.style.gap = 3 * k + "px";
+
+  // ---- tiles: crops of the brand screens, the brand photo on its colour, the mark on dark
+  const S = v.screens || [], N = S.length, sc = (i) => S[i % Math.max(1, N)];
+  const R = 40 * u, pinI = Math.max(1, Math.min(3, Math.round(+v.pin) || 1)) - 1;
+  // [kind, screen index, zoom (x the tile height), x %, y %, reel glyph]
+  const RECIPES = [["s", 0, 1, 26, 50, 0], ["p", 0], ["s", 1, 1.7, 6, 42, 1], ["s", 2, 1.45, 8, 50, 0], ["m"], ["s", 3, 1.35, 12, 40, 1],
+    ["s", 1, 1.25, 88, 38, 0], ["s", 0, 1.9, 74, 82, 1], ["s", 2, 1.6, 36, 46, 0]];
+  const REEL = '<svg viewBox="0 0 24 24"><path d="M4 7.2A3.2 3.2 0 0 1 7.2 4h9.6A3.2 3.2 0 0 1 20 7.2v9.6a3.2 3.2 0 0 1-3.2 3.2H7.2A3.2 3.2 0 0 1 4 16.8zM6 8.6h12V7.2c0-.7-.5-1.2-1.2-1.2h-1.4l1.6 2.6zm4.6-2.6 1.6 2.6h2.4L13 6zm-2.4 0 1.6 2.6h-.3L8 6zM10.2 11v6l4.8-3z" fill-rule="evenodd"/></svg>';
+  const tiles = RECIPES.map((r, i) => {
+    const t = document.createElement("div"); t.className = "tile" + (i === pinI ? " hero" : "");
+    const im = document.createElement("div"); im.className = "im"; t.appendChild(im);
+    if (r[0] === "s" && sc(r[1])) { im.style.backgroundImage = `url("${sc(r[1])}")`; im.style.backgroundSize = `auto ${r[2] * 100}%`; im.style.backgroundPosition = `${r[3]}% ${r[4]}%`; }
+    else if (r[0] === "p" && v.people && v.people[0]) { im.style.background = "radial-gradient(70% 55% at 50% 35%, var(--al), transparent 72%), linear-gradient(170deg, var(--accent), var(--ad))";
+      const p = MV.img(v.people[0]); Object.assign(p.style, { left: "-20%", width: "140%", top: "auto", bottom: 0, height: "auto" }); im.appendChild(p); }
+    else { im.style.background = "radial-gradient(60% 50% at 50% 50%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%), #121014";
+      const src = v.mark || v.logo; if (src) { const m = MV.img(src); Object.assign(m.style, { left: "19%", top: "24.8%", width: "62%", height: "50.4%", objectFit: "cover", borderRadius: "22%", boxShadow: `0 ${18 * u}px ${36 * u}px rgba(0,0,0,.6), 0 0 0 ${2 * u}px rgba(255,255,255,.12)` }); im.appendChild(m); } }
+    if (r[5]) t.insertAdjacentHTML("beforeend", `<div class="gl">${REEL}</div>`);
+    t.insertAdjacentHTML("beforeend", '<div class="dm"></div><div class="fl"></div><div class="sh"></div>');
+    // the card's bottom corners round the corner tiles
+    if (i === 6 && !SIDE) im.style.borderBottomLeftRadius = R + "px"; if (i === 8) im.style.borderBottomRightRadius = R + "px";
+    grid.appendChild(t); return t;
+  });
+
+  // the pin: a pushpin glyph in a dark glass pill on the pinned tile
+  const hero = tiles[pinI];
+  const pin = document.createElement("div"); pin.id = "pin";
+  pin.innerHTML = `<svg viewBox="0 0 24 24"><path d="M14.6 3.6l5.8 5.8-1.6 1.1-1.7-.3-3.2 3.2.4 3.6-1.6 1.6-3.5-3.5L5 19.3 4.7 19l4.2-4.2-3.5-3.5L7 9.7l3.6.4 3.2-3.2-.3-1.7z" fill="#fff"/></svg><span></span>`;
+  hero.appendChild(pin);
+  const pl = String(v.pinLabel || "");
+  pin.querySelector("span").textContent = pl;
+  const ps = 46 * k, pfs = 36 * k;
+  Object.assign(pin.style, { top: 18 * k + "px", right: 18 * k + "px", height: 70 * k + "px", padding: pl ? `0 ${24 * k}px 0 ${16 * k}px` : `0 ${12 * k}px`, gap: 8 * k + "px", fontSize: pfs + "px" });
+  Object.assign(pin.querySelector("svg").style, { width: ps + "px", height: ps + "px" });
+  if (!pl) pin.querySelector("span").remove(); else MV.fitText(pin.querySelector("span"), tw - 36 * k - ps - 48 * k, 10);
+  const hg = hero.querySelector(".gl"); if (hg) hg.remove();
+
+  // ---- place
+  const CH = card.getBoundingClientRect().height;
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) { if (P) { x = safe.left + (W - safe.left - safe.right - CW) / 2; y = safe.top; } else { x = W - safe.right - CW - 40 * u; y = (H - CH) / 2; } }
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  // ---- in: the profile swings up out of depth, then a slow drift
+  gsap.set(card, { transformOrigin: "50% 55%" });
+  tl.fromTo(card, { z: -700 * u, rotationX: 30, rotationY: -16, y: 140 * u, opacity: 0 }, { z: 0, rotationX: 10, rotationY: -8, y: 0, opacity: 1, duration: 1.05, ease: "expo.out" }, 0.04);
+  tl.to(card, { rotationX: 4, rotationY: 7, duration: D - 1.1, ease: "sine.inOut" }, 1.09);
+  tl.fromTo(["#av", "#who", "#tabs .t"], { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.06, ease: "expo.out" }, 0.3);
+  tl.fromTo("#bar", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "expo.out" }, 0.55);
+  // ---- the grid fills tile by tile, in reading order: each one drops in from above the glass with a loading flash
+  const F0 = 0.55, ST = 0.11;
+  gsap.set(tiles.map((t) => t.querySelector(".im")), { opacity: 0 });
+  tiles.forEach((t, i) => {
+    const at = F0 + i * ST, im = t.querySelector(".im");
+    tl.fromTo(t, { z: 160 * u, scale: 1.12, rotationX: -14 }, { z: 0, scale: 1, rotationX: 0, duration: 0.6, ease: "back.out(1.6)" }, at);
+    tl.fromTo(im, { opacity: 0 }, { opacity: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, at);
+    tl.fromTo(t.querySelector(".fl"), { opacity: 0.85 }, { opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, at + 0.04);
+    const gl = t.querySelector(".gl"); if (gl) tl.fromTo(gl, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)" }, at + 0.2);
+  });
+  gsap.set(pin, { opacity: 0 });
+
+  // ---- the lift (the moment that lands): the pinned post rises off the grid toward camera, the rest dims, the pin stamps in
+  const LF = F0 + 9 * ST + 0.45;
+  hero.style.zIndex = 5;
+  tl.to(hero, { z: 150 * u, scale: 1.1, rotationX: -4, duration: 0.7, ease: "back.out(1.6)" }, LF);
+  tl.fromTo(hero.querySelector(".im"), { boxShadow: "0 0 0 rgba(0,0,0,0)" }, { boxShadow: `0 ${40 * u}px ${70 * u}px ${-14 * u}px rgba(0,0,0,.7)`, duration: 0.7, ease: "expo.out", immediateRender: false }, LF);
+  tl.to(tiles.filter((t) => t !== hero).map((t) => t.querySelector(".dm")), { opacity: 0.5, duration: 0.6, ease: "power2.out" }, LF);
+  tl.fromTo(pin, { opacity: 0, scale: 1.8, rotation: -24 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.4)", transformOrigin: "100% 0%", immediateRender: false }, LF + 0.22);
+  tl.fromTo(hero.querySelector(".sh"), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut" }, LF + 0.3);
+
+  if (MV.alpha) tl.to(card, { y: -160 * u, z: -300 * u, rotationX: -18, opacity: 0, duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

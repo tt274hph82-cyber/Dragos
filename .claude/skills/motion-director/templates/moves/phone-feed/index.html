@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Name on the post it stops on (empty: the brand name)","default":""},
+  {"id":"handle","type":"string","label":"Line under the name (empty: the brand handle)","default":""},
+  {"id":"screen","type":"number","label":"Which brand screen is the post image (1 = the first)","default":1},
+  {"id":"likes","type":"number","label":"Likes before the tap (0: no count)","default":1204}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 34% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 32%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  #shadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.65), transparent 70%); }
+  .is-key #shadow { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #phone { position: absolute; transform-style: preserve-3d; }
+  /* the body: brushed metal edge, slabs behind for its thickness */
+  .slab { position: absolute; inset: 0; border-radius: var(--R); }
+  #frame { position: absolute; inset: 0; border-radius: var(--R); transform: translateZ(0.5px);
+    background: linear-gradient(135deg, #b9bcc2, #3a3c41 18%, #8c8f95 38%, #24262a 62%, #9da0a6 85%, #4a4c51);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.35), inset 0 0 calc(var(--u) * 6) rgba(0,0,0,.6); }
+  #bezel { position: absolute; transform: translateZ(1.5px); border-radius: var(--R2); background: #050506; box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.08); }
+  #screen { position: absolute; border-radius: var(--R3); overflow: hidden; background: #0c0c0f; }
+  #ui { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--font-body); color: #fff; }
+  #glare { position: absolute; inset: 0; border-radius: var(--R3); pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(118deg, transparent calc(var(--gl, 30%) - 22%), rgba(255,255,255,.13) var(--gl, 30%), transparent calc(var(--gl, 30%) + 2%), transparent calc(var(--gl, 30%) + 16%), rgba(255,255,255,.05) calc(var(--gl, 30%) + 24%), transparent calc(var(--gl, 30%) + 34%)); }
+  .btn { position: absolute; border-radius: 3px; background: linear-gradient(90deg, #2a2c30, #9a9da3 50%, #2a2c30); }
+
+  /* the feed (laid out at 300 px wide, scaled to the screen) */
+  #bar { position: absolute; left: 0; right: 0; top: 0; height: 74px; z-index: 3; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 16px 10px; box-sizing: border-box;
+    background: linear-gradient(180deg, #0c0c0f 70%, rgba(12,12,15,0)); }
+  #bar .wm { width: 86px; height: 14px; border-radius: 7px; background: rgba(255,255,255,.85); }
+  #bar .ic { display: flex; gap: 14px; }
+  #bar svg, .act svg { width: 24px; height: 24px; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  #cam { position: absolute; top: 12px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: #000; box-shadow: 0 0 0 2px #1a1a1d; z-index: 4; }
+  #list { position: absolute; left: 0; right: 0; top: 74px; }
+  .post { padding-bottom: 16px; }
+  .ph { display: flex; align-items: center; gap: 10px; padding: 10px 14px; height: 56px; box-sizing: border-box; }
+  .av { width: 36px; height: 36px; border-radius: 50%; flex: none; background-size: cover; background-position: 50% 30%; box-shadow: 0 0 0 2px #0c0c0f, 0 0 0 3.5px var(--rc, rgba(255,255,255,.3)); }
+  .sk { height: 10px; border-radius: 5px; background: rgba(255,255,255,.28); }
+  .sk.d { background: rgba(255,255,255,.14); }
+  .img { position: relative; width: 300px; overflow: hidden; }
+  .img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .act { display: flex; align-items: center; gap: 14px; padding: 10px 14px 4px; }
+  .act .sp { flex: 1; }
+  .cap { padding: 6px 14px 0; display: flex; flex-direction: column; gap: 7px; }
+  .nm { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; line-height: 1.1; }
+  .hd { font-size: 15px; font-weight: 500; color: rgba(255,255,255,.6); white-space: nowrap; line-height: 1.2; }
+  .lk { font-size: 19px; font-weight: 700; padding: 6px 14px 0; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #hfill { fill: var(--accent); stroke: var(--accent); opacity: 0; }
+  #big { position: absolute; left: 50%; top: 50%; width: 130px; height: 130px; margin: -65px 0 0 -65px; opacity: 0; filter: drop-shadow(0 6px 22px rgba(0,0,0,.6)); }
+  #big path { fill: #fff; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="shadow"></div>
+  <div id="persp"><div id="phone">
+    <div id="frame"></div>
+    <div id="bezel"><div id="screen"><div id="ui"><div id="list" data-bleed></div><div id="bar"><div class="wm"></div><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3.5 10 14M21 3.5l-6.5 17-4.5-6.5-6.5-4.5z"/></svg></div></div><div id="cam"></div></div><div id="glare"></div></div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.u; root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const R = MV.rand(7);
+
+  // ---- the phone: as tall as the frame allows, a little past the safe box on 9:16 (the body, never the text)
+  const PH = MV.portrait ? 1260 * u : H * 0.9, PW = PH * 0.485;
+  const pcx = MV.portrait ? (MV.alpha ? safe.left + (W - safe.left - safe.right) / 2 : W / 2) : MV.alpha && W > H ? W - safe.right - PW / 2 - 60 * u : W / 2;
+  const pcy = MV.portrait ? safe.top + (H - safe.top - safe.bottom) / 2 + 20 * u : H / 2;
+  const phone = $("#phone"); gsap.set(phone, { left: pcx - PW / 2, top: pcy - PH / 2, width: PW, height: PH });
+  const Rr = PW * 0.155, fr = PW * 0.018, bz = PW * 0.03;
+  root.style.setProperty("--R", Rr + "px"); root.style.setProperty("--R2", (Rr - fr) + "px"); root.style.setProperty("--R3", (Rr - fr - bz) + "px");
+  gsap.set("#bezel", { left: fr, top: fr, width: PW - 2 * fr, height: PH - 2 * fr });
+  const SW = PW - 2 * fr - 2 * bz, SH = PH - 2 * fr - 2 * bz;
+  gsap.set("#screen", { left: bz, top: bz, width: SW, height: SH });
+  const k = SW / 300, LH = SH / k;
+  gsap.set("#ui", { width: 300, height: LH, scale: k });
+  for (let i = 14; i >= 1; i--) { const s = document.createElement("div"); s.className = "slab"; s.style.transform = `translateZ(${-i * PW * 0.0045}px)`;
+    s.style.background = `linear-gradient(90deg, #1d1e21, ${i % 3 ? "#5d6066" : "#8a8d93"} 50%, #1d1e21)`; phone.insertBefore(s, phone.firstChild); }
+  [[-1, 0.2, 0.06], [-1, 0.29, 0.1], [1, 0.25, 0.13]].forEach(([side, y0, h]) => { const b = document.createElement("div"); b.className = "btn";
+    gsap.set(b, { left: side < 0 ? -PW * 0.008 : PW - PW * 0.002, top: PH * y0, width: PW * 0.01, height: PH * h, z: -PW * 0.03 }); phone.insertBefore(b, phone.firstChild); });
+  gsap.set("#shadow", { left: pcx - PW * 0.7, top: pcy + PH * 0.44, width: PW * 1.4, height: PH * 0.12 });
+  root.style.setProperty("--gx", (pcx / W * 100) + "%"); root.style.setProperty("--gy", (pcy / H * 100) + "%");
+
+  // ---- the feed: ordinary posts (abstract photos, placeholder text), then the brand's
+  const HEART = '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>';
+  const ACTS = `<svg viewBox="0 0 24 24">${HEART}</svg><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7 0 1 1 3.4 5.9L4.5 19.5l1-3.3A7 7 0 0 1 4.5 12z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3.5 10 14M21 3.5l-6.5 17-4.5-6.5-6.5-4.5z"/></svg><span class="sp"></span><svg viewBox="0 0 24 24"><path d="M7 3.5h10v17l-5-4-5 4z"/></svg>`;
+  const HUES = [[210, 30], [28, 45], [160, 25], [265, 25], [195, 20], [12, 35], [45, 40]];
+  const list = $("#list");
+  const NP = 6;
+  for (let i = 0; i < NP; i++) {
+    const [h, s] = HUES[i % HUES.length], r = R, ih = [300, 375, 300, 240, 375, 300][i];
+    const p = document.createElement("div"); p.className = "post";
+    const bx = 20 + r() * 60, by = 20 + r() * 60;
+    p.innerHTML = `<div class="ph"><div class="av" style="background:linear-gradient(140deg,hsl(${h + 30} ${s + 20}% 62%),hsl(${h} ${s}% 34%))"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="sk" style="width:${90 + r() * 50}px"></div><div class="sk d" style="width:${50 + r() * 30}px;height:8px"></div></div></div>
+      <div class="img" style="height:${ih}px;background:radial-gradient(60% 55% at ${bx}% ${by}%,hsl(${h + 20} ${s + 25}% 66%),transparent 70%),radial-gradient(70% 60% at ${100 - bx}% ${100 - by}%,hsl(${h - 30} ${s + 10}% 40%),transparent 75%),linear-gradient(160deg,hsl(${h} ${s}% 30%),hsl(${h + 40} ${s}% 14%))"></div>
+      <div class="act">${ACTS}</div><div class="cap"><div class="sk" style="width:${180 + r() * 80}px"></div><div class="sk d" style="width:${120 + r() * 60}px"></div></div>`;
+    list.appendChild(p);
+  }
+  const bp = document.createElement("div"); bp.className = "post"; bp.id = "bp";
+  const scr = (v.screens || [])[Math.max(0, (+v.screen || 1) - 1)] || (v.screens || [])[0];
+  bp.innerHTML = `<div class="ph" style="height:64px"><div class="av" style="width:42px;height:42px;--rc:var(--accent)"></div><div style="flex:1;min-width:0"><div class="nm"></div><div class="hd"></div></div></div>
+    <div class="img" style="height:236px"></div>
+    <div class="act"><svg viewBox="0 0 24 24" id="hs">${HEART}<path id="hfill" d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><svg viewBox="0 0 24 24"><path d="M4.5 12a7.5 7 0 1 1 3.4 5.9L4.5 19.5l1-3.3A7 7 0 0 1 4.5 12z"/></svg><svg viewBox="0 0 24 24"><path d="M21 3.5 10 14M21 3.5l-6.5 17-4.5-6.5-6.5-4.5z"/></svg><span class="sp"></span><svg viewBox="0 0 24 24"><path d="M7 3.5h10v17l-5-4-5 4z"/></svg></div>
+    <div class="lk" id="lk"></div><div class="cap"><div class="sk" style="width:230px"></div><div class="sk d" style="width:150px"></div></div>`;
+  list.appendChild(bp);
+  // a few more below so the feed never runs out
+  for (let i = 0; i < 2; i++) { const p = document.createElement("div"); p.className = "post"; p.innerHTML = `<div class="ph"><div class="av" style="background:#444"></div><div class="sk" style="width:110px"></div></div><div class="img" style="height:300px;background:linear-gradient(160deg,#3a3f4a,#15171c)"></div>`; list.appendChild(p); }
+  const av = bp.querySelector(".av"), img = bp.querySelector(".img");
+  if (v.mark) av.style.backgroundImage = `url("${v.mark}")`; else av.style.background = "var(--accent)";
+  if (scr) img.appendChild(MV.img(scr)); else img.style.background = "linear-gradient(150deg, var(--al), var(--ad))";
+  img.insertAdjacentHTML("beforeend", `<svg id="big" viewBox="0 0 24 24">${HEART}</svg>`);
+  bp.querySelector(".nm").textContent = v.name || v.brandName || "";
+  bp.querySelector(".hd").textContent = (v.handle || (v.brandName ? "@" + String(v.brandName).toLowerCase().replace(/[^a-z0-9]+/g, "") : ""));
+  MV.fitText(bp.querySelector(".nm"), (300 - 28 - 52) * k, 12); MV.fitText(bp.querySelector(".hd"), (300 - 28 - 52) * k, 10);
+  const likes = Math.max(0, Math.round(+v.likes || 0)), fmt = (n) => n.toLocaleString("en-US") + " likes";
+  if (likes) $("#lk").textContent = fmt(likes); else $("#lk").remove();
+
+  // ---- where the feed stops: the brand post centred under the top bar
+  const bpTop = bp.offsetTop, bpH = bp.offsetHeight;
+  const stopY = -(bpTop - Math.max(0, (LH - 74 - bpH) / 2) + 6);
+
+  // ---- timeline
+  // 1. the phone rises into frame, turning toward camera
+  tl.fromTo(phone, { y: PH * 0.5, rotationX: 28, rotationY: -30, rotationZ: 6, opacity: 0 }, { y: 0, rotationX: 8, rotationY: -14, rotationZ: 0, opacity: 1, duration: 0.9, ease: "expo.out" }, 0.03);
+  tl.fromTo("#shadow", { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 0.9, ease: "expo.out" }, 0.03);
+  // 2. a flick: the feed rushes up, blurred, then decelerates on a long tail onto the brand post
+  const F0 = 0.35, F1 = 2.05;
+  tl.fromTo(list, { y: 0 }, { y: stopY - 26, duration: F1 - F0, ease: "power4.inOut" }, F0);
+  tl.to(list, { y: stopY, duration: 0.45, ease: "back.out(2)" }, F1);
+  tl.fromTo(list, { filter: "blur(0px)" }, { filter: "blur(3.5px)", duration: 0.35, ease: "power2.in" }, F0 + 0.15);
+  tl.to(list, { filter: "blur(0px)", duration: 0.45, ease: "power2.out" }, F1 - 0.55);
+  // 3. the double tap: a big heart blooms on the image, the small one fills, the count ticks (the moment that lands)
+  const L = F1 + 0.35;
+  tl.fromTo("#big", { opacity: 0, scale: 0.2 }, { opacity: 1, scale: 1.15, duration: 0.22, ease: "back.out(2.5)" }, L);
+  tl.to("#big", { scale: 1, duration: 0.2, ease: "power2.out" }, L + 0.22);
+  tl.to("#big", { opacity: 0, scale: 1.25, y: -20, duration: 0.35, ease: "power2.in" }, L + 0.65);
+  tl.fromTo("#hfill", { opacity: 0 }, { opacity: 1, duration: 0.05 }, L + 0.12);
+  tl.fromTo("#hs", { scale: 1 }, { scale: 1.5, duration: 0.12, ease: "power2.out", transformOrigin: "50% 50%" }, L + 0.12);
+  tl.to("#hs", { scale: 1, duration: 0.45, ease: "back.out(3)" }, L + 0.24);
+  if (likes) { tl.set("#lk", { textContent: fmt(likes) }, 0); tl.set("#lk", { textContent: fmt(likes + 1) }, L + 0.14);
+    tl.fromTo("#lk", { y: -6 }, { y: 0, duration: 0.3, ease: "back.out(3)", immediateRender: false }, L + 0.14); }
+  // the camera: a slow turn the other way through the hold, the glare slides across the glass
+  tl.to(phone, { rotationX: 3, rotationY: 10, scale: 1.05, duration: D - 0.95 - 0.4, ease: "sine.inOut" }, 0.93);
+  tl.fromTo("#glare", { "--gl": "-10%" }, { "--gl": "90%", duration: D, ease: "sine.inOut" }, 0);
+  // exit: the phone drops away, accelerating
+  const X = D - 0.42;
+  tl.to(phone, { y: PH * 0.35, rotationX: 20, opacity: 0, duration: 0.4, ease: "power3.in" }, X);
+  tl.to("#shadow", { opacity: 0, duration: 0.3, ease: "power2.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

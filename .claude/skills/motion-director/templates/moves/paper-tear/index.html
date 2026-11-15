@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"tone","type":"string","label":"Lead sheet colour: accent, accent2 or paper","default":"accent"},
+  {"id":"direction","type":"string","label":"Sweep direction: left or right","default":"left"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* preview only: the outgoing and incoming shots the sheet wipes between */
+  .shot { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  #shotA { background: var(--ground); }
+  #shotB { background: var(--paper); visibility: hidden; }
+  .shot img { width: 78%; border-radius: calc(var(--u) * 18); box-shadow: 0 calc(var(--u) * 30) calc(var(--u) * 70) rgba(0,0,0,.45); }
+  .is-portrait .shot img { width: 86%; }
+  .is-alpha .shot { display: none; }
+  /* a sheet: the fibrous white rim (torn paper core) under the coloured face */
+  .sheet { position: absolute; top: 0; left: 0; will-change: transform; }
+  .fx { position: absolute; inset: 0; filter: url(#fiber) drop-shadow(0 calc(var(--u) * 14) calc(var(--u) * 22) rgba(20,14,8,.42)); }
+  .is-key .fx { filter: url(#fiber); }
+  .rim, .face { position: absolute; inset: 0; }
+  .rim { background: #FBFAF6 url(assets/paper-white.jpg) center / calc(var(--u) * 700); }
+  .face { isolation: isolate; }
+  .face::before { content: ""; position: absolute; inset: 0; background: url(assets/paper-crumpled.jpg) center / calc(var(--u) * 1100); mix-blend-mode: multiply; opacity: var(--crumple, .85); }
+  .face::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(255,255,255,.16), transparent 35%, rgba(0,0,0,.10) 70%, rgba(255,255,255,.08)); }
+  .is-key .face::after { display: none; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="fiber" x="-3%" y="-3%" width="106%" height="106%">
+    <feTurbulence type="fractalNoise" baseFrequency=".11" numOctaves="3" seed="4" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div class="shot" id="shotA"></div>
+  <div class="shot" id="shotB"></div>
+  <div class="sheet" id="sB"><div class="fx"><div class="rim"></div><div class="face"></div></div></div>
+  <div class="sheet" id="sA"><div class="fx"><div class="rim"></div><div class="face"></div></div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration;
+  const dir = v.direction === "right" ? -1 : 1;   // 1: enters from the right, leaves to the left
+
+  // preview shots (look mode only): the brand's real screens
+  if (!MV.alpha) {
+    if (v.screens && v.screens[0]) document.getElementById("shotA").appendChild(MV.img(v.screens[0]));
+    if (v.screens && (v.screens[1] || v.screens[0])) document.getElementById("shotB").appendChild(MV.img(v.screens[1] || v.screens[0]));
+  }
+
+  // sheet size: wide enough that its torn edges sit far outside the frame at the hold
+  const ROT = -4 * dir;
+  const SW = Math.round(W * 1.16 + H * 0.1 + 120 * u), SH = Math.round(H * 1.3 + W * 0.25);
+  const colours = { accent: "var(--accent)", accent2: "var(--accent2)", paper: "var(--paper)" };
+  const lead = colours[v.tone] || colours.accent;
+  const second = v.tone === "paper" ? "var(--accent)" : "var(--paper)";
+
+  // torn edge profile: a slow wobble, a mid tear and a fine jag, seeded per sheet
+  function edge(seed, len, amp) {
+    const r = MV.rand(seed), pts = [], step = 9 * u;
+    const a1 = r() * 6, a2 = r() * 6;
+    for (let y = -step; y <= len + step; y += step) {
+      const wob = Math.sin(y / (210 * u) + a1) * 0.55 + Math.sin(y / (77 * u) + a2) * 0.3;
+      pts.push([amp * (0.5 + 0.5 * wob) + r() * 10 * u, y]);
+    }
+    return pts;
+  }
+  function build(id, seed, face) {
+    const el = document.getElementById(id);
+    el.style.width = SW + "px"; el.style.height = SH + "px";
+    el.querySelector(".face").style.backgroundColor = face; el.querySelector(".face").style.setProperty("--crumple", face === "var(--paper)" ? .45 : .85);
+    const L = edge(seed, SH, 34 * u), R = edge(seed + 7, SH, 34 * u);
+    const poly = (inset) => {
+      const r = MV.rand(seed * 3 + (inset ? 1 : 0));
+      const left = L.map(([x, y]) => [x + (inset ? 9 * u + r() * 16 * u : 0), y]);
+      const right = R.map(([x, y]) => [SW - x - (inset ? 9 * u + r() * 16 * u : 0), y]);
+      const p = [...left, ...right.reverse()];
+      return `polygon(${p.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(",")})`;
+    };
+    el.querySelector(".rim").style.clipPath = poly(false);
+    el.querySelector(".face").style.clipPath = poly(true);
+  }
+  build("sA", 11, lead);
+  build("sB", 23, second);
+
+  // three positions of the sheet's left edge: off one side, centred (frame fully covered), off the other
+  const y0 = (H - SH) / 2;
+  // rotated, a tall sheet's corners swing sideways: clear them too
+  const swing = (deg) => (SH / 2) * Math.abs(Math.sin(deg * Math.PI / 180)) + 60 * u;
+  const xIn = dir > 0 ? W + swing(ROT * 2.2) : -SW - swing(ROT * 2.2);
+  const xMid = (W - SW) / 2;
+  const xOut = dir > 0 ? -SW - swing(ROT * 2.6) : W + swing(ROT * 2.6);
+  // on twos, with an ease: quantise the eased value to 12 drawings a second
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  [["#sB", 0.0, 0.42, 1], ["#sA", 0.06, 0.36, -1]].forEach(([s, tIn, tOut, k]) => {
+    const dIn = 0.32, dOut = Math.min(0.55, D - 0.12 - tOut);
+    tl.set(s, { x: xIn, y: y0, rotation: ROT }, 0);
+    tl.fromTo(s, { x: xIn, rotation: ROT * 2.2 }, { x: xMid + 18 * u * dir, rotation: ROT, duration: dIn, ease: twos("power2.out", dIn), immediateRender: true }, tIn);
+    // the hold: the sheet settles, drifting on twos (it is paper, it never sits dead still)
+    const hd = tOut - (tIn + dIn);
+    tl.to(s, { x: xMid - 6 * u * dir, rotation: ROT + 0.4 * k, duration: hd, ease: `steps(${Math.max(1, Math.round(hd * 12))})` }, tIn + dIn);
+    tl.to(s, { x: xOut, rotation: ROT * 2.6, duration: dOut, ease: twos("power2.in", dOut) }, tOut);
+  });
+  // the cut happens under the paper
+  tl.set("#shotA", { visibility: "hidden" }, 0.4);
+  tl.set("#shotB", { visibility: "visible" }, 0.4);
+  // the fibre boils on twos
+  const turb = document.querySelector("#fiber feTurbulence");
+  for (let t = 0, k = 0; t < D; t += 1 / 6, k++) tl.set(turb, { attr: { seed: 4 + (k % 5) } }, t);
+  MV.done();
+</script>
+</body>
+</html>

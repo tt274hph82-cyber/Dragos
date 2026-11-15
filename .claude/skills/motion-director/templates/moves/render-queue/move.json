@@ -1,0 +1,5 @@
+{ "id": "render-queue", "name": "Render queue", "oneLiner": "a glass export queue of four jobs cut from the brand's screens and photo: two render at once, each thumbnail fills from grey to colour behind a scan line as its bar and percent climb, each finish flips the bar green and pops a green tick, the counter climbs, and when the last lands the header pill turns green and reads all done",
+  "category": "creator", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["export", "render", "queue", "progress", "batch", "clips", "shorts", "repurpose", "editing", "done", "creator tools", "workflow", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says everything gets exported or made in one go ('it renders the full video and every short at once', 'hit export and walk away'): the jobs render while they explain, all done lands on 'done' or 'ready'" }

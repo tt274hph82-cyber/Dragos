@@ -1,0 +1,5 @@
+{ "id": "follower-ticker-chip", "name": "Follower ticker chip", "oneLiner": "a glass profile chip with a story-ring avatar: the follower count rolls on real odometer drums from the start number to the landing one while a Day tag flips over, then the number punches and a green gain chip pops",
+  "category": "social", "kind": "effect", "uses": ["overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["followers", "subscribers", "growth", "count", "counter", "odometer", "audience", "milestone", "day 1", "journey", "profile", "social proof", "chip", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.5, "alpha": true,
+  "say": "when the speaker tells a growth story with two numbers ('I started at 10,000 followers and 78 days later I was at 600,000'): cut in on the first number, the drum lands on the second; start/end are the two moments (Day 1 / Day 78, January / June), unit what grew (subscribers, readers, customers)" }

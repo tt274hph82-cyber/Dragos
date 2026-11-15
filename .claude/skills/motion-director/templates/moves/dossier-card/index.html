@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Name typed on the file","default":"The new hire"},
+  {"id":"role","type":"string","label":"Role typed under the name","default":"Head of growth"},
+  {"id":"fact1","type":"string","label":"First fact","default":"Joined in the first week"},
+  {"id":"fact2","type":"string","label":"Second fact","default":"Shipped fourteen launches"},
+  {"id":"fact3","type":"string","label":"Third fact","default":"Answers every email"},
+  {"id":"stamp","type":"string","label":"The stamp","default":"Verified"},
+  {"id":"file","type":"string","label":"Typed on the folder tab","default":"File 042"},
+  {"id":"image","type":"string","label":"Photo cut-out (path); empty uses the brand person cut-out","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Type"; src: url("assets/fonts/SpecialElite-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Stamp"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1a120d; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: a real brown leather desk top under a green-shade lamp's warm pool */
+  #ground { position: absolute; inset: -6%; background: #2a1d16 url(assets/leather.jpg) center / calc(var(--u) * 760); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 48% at 46% 40%, rgba(255,214,150,.22), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 38%, rgba(0,0,0,.66)); }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  .abs { position: absolute; }
+  #folder { transform-origin: 50% 60%; }
+  #folder-b { position: absolute; inset: 0; }
+  #ffx { position: absolute; inset: 0; filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 3) rgba(0,0,0,.4)) drop-shadow(calc(var(--u) * 10) calc(var(--u) * 24) calc(var(--u) * 30) rgba(0,0,0,.55)); }
+  /* the folder: real scanned kraft card, a back cover peeking out under the front, a tab */
+  .card { position: absolute; background: #C9A97C url(assets/manila.jpg) center / calc(var(--u) * 720); }
+  #fback { filter: brightness(.86) saturate(1.05); }
+  #ffront { filter: brightness(1.1); }
+  #ffront::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255,245,220,.16), transparent 45%, rgba(60,40,10,.10)); }
+  .typed { font-family: "MV Type", monospace; color: #2a2420; white-space: nowrap; filter: url(#ink); line-height: 1.1; }
+  .lab { font-family: "MV Type", monospace; color: #5b4a36; white-space: nowrap; letter-spacing: .12em; text-transform: uppercase; }
+  .line { position: absolute; height: calc(var(--u) * 2); background: #6d5a42; opacity: .55; }
+  /* the photo: a real person cut-out printed on a photo with a white border, over a studio backdrop scan */
+  #print { transform-origin: 40% 30%; }
+  #pfx { position: relative; filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 3) rgba(0,0,0,.35)) drop-shadow(calc(var(--u) * 6) calc(var(--u) * 14) calc(var(--u) * 16) rgba(0,0,0,.4)); }
+  #ppaper { position: absolute; inset: 0; background: #F5F3EE url(assets/paper-white.jpg) center / calc(var(--u) * 500); }
+  #photo { position: absolute; overflow: hidden; background: #b9b6b0 url(assets/backdrop.jpg) center / cover; }
+  #photo img { position: absolute; left: 50%; top: 5%; transform: translateX(-50%); }
+  #photo::after { content: ""; position: absolute; inset: 0; background: radial-gradient(90% 80% at 50% 35%, transparent 55%, rgba(0,0,0,.28)), linear-gradient(rgba(255,250,235,.06), rgba(40,30,20,.08)); }
+  .clipimg { position: absolute; filter: drop-shadow(calc(var(--u) * 2) calc(var(--u) * 3) calc(var(--u) * 2) rgba(0,0,0,.45)); }
+  /* the stamp: brand-colour rubber stamp ink, pressed into the card, scanned grit */
+  #stamp { font-family: "MV Stamp"; color: var(--accent); border: solid var(--accent); text-align: center; line-height: 1; text-transform: uppercase; letter-spacing: .06em; mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 240); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 240); white-space: nowrap; }
+  #stamp::before { content: ""; position: absolute; inset: calc(var(--u) * 7); border: solid calc(var(--u) * 3) var(--accent); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="ink" x="-3%" y="-20%" width="106%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" scale="1.8"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="folder" class="abs" style="visibility:hidden"><div class="boil" id="folder-b">
+      <div id="ffx"><div class="card" id="fback"></div><div class="card" id="ffront"></div></div>
+      <div id="tabt" class="typed abs"></div>
+      <div id="form" class="abs"></div>
+      <img class="clipimg" id="clipB" src="assets/clip.png" alt="" style="visibility:hidden" />
+      <div id="print" class="abs" style="visibility:hidden"><div id="pfx"><div id="ppaper"></div><div id="photo"></div></div></div>
+      <img class="clipimg" id="clipF" src="assets/clip-front.png" alt="" style="visibility:hidden" />
+      <div id="stamp" class="abs" data-layered style="visibility:hidden"></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('40px "MV Type"'), document.fonts.load('80px "MV Stamp"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const wide = W >= H;   // square and landscape lay the file out sideways
+
+  // ---- the folder: sized to the zone; a wide frame lays the file out sideways
+  const zTop = safe.top + 20 * u, zBot = H - (MV.portrait ? 330 * (W / 1080) : safe.bottom);
+  const tabH = Math.round(64 * u);
+  let FW, FH;
+  if (MV.portrait) { FW = Math.min(W - safe.left - safe.right * 0.4, 900 * u); FH = Math.min(FW * 1.08, zBot - zTop - tabH - 30 * u); }
+  else if (W > H) { FH = Math.min(H * 0.7, 760 * u); FW = Math.min(W * 0.66, FH * 1.6); }
+  else { FW = 930 * u; FH = Math.min(640 * u, zBot - zTop - tabH - 80 * u); }
+  const folder = document.getElementById("folder");
+  const cx = W / 2, cy = (zTop + zBot) / 2 + tabH / 2;
+  Object.assign(folder.style, { width: FW + "px", height: (FH + tabH) + "px", left: (cx - FW / 2) + "px", top: (cy - (FH + tabH) / 2) + "px" });
+  const fb = document.getElementById("fback"), ff = document.getElementById("ffront");
+  // back cover: full height with the tab; front cover: a little shorter, so the tab and the back's edge show
+  const tx0 = FW * 0.6, tx1 = FW * 0.93, sl = tabH * 0.5;
+  Object.assign(fb.style, { left: (8 * u) + "px", top: "0px", width: FW + "px", height: (FH + tabH + 6 * u) + "px" });
+  fb.style.clipPath = `polygon(0 ${tabH}px, ${tx0}px ${tabH}px, ${tx0 + sl}px 0, ${tx1 - sl}px 0, ${tx1}px ${tabH}px, 100% ${tabH}px, 100% 100%, 0 100%)`;
+  fb.style.borderRadius = `0 0 ${8 * u}px ${8 * u}px`;
+  Object.assign(ff.style, { left: "0px", top: (tabH + 14 * u) + "px", width: FW + "px", height: (FH - 8 * u) + "px", borderRadius: `${4 * u}px` });
+  const tabt = document.getElementById("tabt");
+  tabt.textContent = (v.file || "").toUpperCase(); tabt.style.fontSize = (tabH * 0.42) + "px";
+  MV.fit(tabt, (tx1 - tx0) - sl * 2 - 16 * u, 12 * u);
+  const tbb = tabt.getBoundingClientRect();
+  tabt.style.left = (8 * u + (tx0 + tx1) / 2 - tbb.width / 2) + "px"; tabt.style.top = (tabH * 0.52 - tbb.height / 2) + "px";
+
+  // ---- inside the front cover: photo, then the typed form
+  const fx0 = 0, fy0 = tabH + 14 * u, pad = Math.round(Math.min(FW, FH) * 0.075);
+  const PWp = Math.round(wide ? FH * 0.42 : FW * 0.38), PHp = Math.round(PWp * 1.26), bord = Math.round(PWp * 0.06);
+  const pr = document.getElementById("print"), pfx = document.getElementById("pfx"), photo = document.getElementById("photo");
+  const px = fx0 + pad, py = fy0 + pad * 1.15;
+  Object.assign(pr.style, { left: px + "px", top: py + "px", width: PWp + "px", height: PHp + "px" });
+  pfx.style.width = PWp + "px"; pfx.style.height = PHp + "px";
+  Object.assign(photo.style, { left: bord + "px", top: bord + "px", width: (PWp - bord * 2) + "px", height: (PHp - bord * 2.6) + "px" });
+  const src = v.image || (v.people && v.people[0]) || v.mark || "";
+  const pic = MV.img(src); pic.style.width = ((PWp - bord * 2) * 1.3) + "px"; photo.appendChild(pic);
+  pr.style.transform = "rotate(-3deg)";
+
+  // the form: labels printed on the card, values typed on the lines
+  const form = document.getElementById("form");
+  const colX = wide ? px + PWp + pad * 1.1 : px + PWp + pad * 0.9, colW = FW - colX - pad;
+  const fs = Math.round(Math.min(FW, FH * 1.25) * (wide ? 0.038 : 0.044));
+  const typedEls = [];
+  const field = (label, value, x, y, w, size) => {
+    const l = document.createElement("div"); l.className = "lab abs"; l.textContent = label; l.style.fontSize = (fs * 0.62) + "px"; l.style.left = x + "px"; l.style.top = y + "px"; form.appendChild(l);
+    const t = document.createElement("div"); t.className = "typed abs"; t.textContent = value; t.style.fontSize = size + "px"; t.style.left = (x + fs * 0.1) + "px"; t.style.top = (y + fs * 0.85) + "px"; form.appendChild(t);
+    MV.fit(t, w - fs * 0.3, 12 * u);
+    const lh = t.getBoundingClientRect().height;
+    const ln = document.createElement("div"); ln.className = "line"; ln.style.left = x + "px"; ln.style.width = w + "px"; ln.style.top = (y + fs * 0.85 + lh * 0.92) + "px"; form.appendChild(ln);
+    typedEls.push(t); return y + fs * 0.85 + lh + fs * 0.75; };
+  let y = py + fs * 0.1;
+  y = field("Name", v.name || "", colX, y, colW, fs * 1.55);
+  y = field("Role", v.role || "", colX, y, colW, fs * 1.1);
+  const facts = [v.fact1, v.fact2, v.fact3].filter((s) => s && String(s).trim());
+  // notes: beside the photo on a wide file, under it on a tall one
+  let nx = wide ? colX : px, ny = wide ? y + fs * 0.2 : Math.max(y, py + PHp + pad * 0.7), nw = wide ? colW : FW - pad * 2;
+  const nl = document.createElement("div"); nl.className = "lab abs"; nl.textContent = "Notes"; nl.style.fontSize = (fs * 0.62) + "px"; nl.style.left = nx + "px"; nl.style.top = ny + "px"; form.appendChild(nl);
+  ny += fs * 1.0;
+  facts.forEach((f, i) => { const t = document.createElement("div"); t.className = "typed abs"; t.textContent = `${i + 1}. ${f}`; t.style.fontSize = (fs * 1.0) + "px"; t.style.left = (nx + fs * 0.1) + "px"; t.style.top = ny + "px"; form.appendChild(t);
+    MV.fit(t, nw - fs * 0.3, 12 * u); const lh = t.getBoundingClientRect().height;
+    const ln = document.createElement("div"); ln.className = "line"; ln.style.left = nx + "px"; ln.style.width = nw + "px"; ln.style.top = (ny + lh * 0.92) + "px"; form.appendChild(ln);
+    typedEls.push(t); ny += lh + fs * 0.55; });
+  typedEls.forEach((t) => { t.style.clipPath = "inset(-30% 106% -30% -3%)"; });
+
+  // ---- the paper clip over the print's top edge: the back wire under the print, the front loop over it
+  const CLH = Math.round(PHp * 0.62), CLW = Math.round(CLH * 186 / 666);
+  const clx = px + PWp * 0.7, cly = py - CLH * 0.2;
+  ["clipB", "clipF"].forEach((id) => { const c = document.getElementById(id); Object.assign(c.style, { width: CLW + "px", height: CLH + "px", left: clx + "px", top: cly + "px", transform: "rotate(-3deg)", transformOrigin: `50% ${CLH * 0.2}px` }); });
+
+  // ---- the stamp
+  const stamp = document.getElementById("stamp"); stamp.textContent = (v.stamp || "").toUpperCase();
+  const ss = Math.round(fs * (wide ? 2.4 : 2.7)); stamp.style.fontSize = ss + "px"; stamp.style.borderWidth = Math.max(3, ss * 0.07) + "px";
+  stamp.style.padding = `${ss * 0.22}px ${ss * 0.36}px ${ss * 0.16}px`; stamp.style.borderRadius = (ss * 0.08) + "px";
+  MV.fit(stamp, wide ? FW * 0.4 : colW * 1.08, 14 * u);
+  const sb = stamp.getBoundingClientRect();
+  // a wide file takes it under the notes; a tall one in the open space beside the photo
+  const sxC = wide ? FW * 0.68 : colX + colW * 0.5, syC = wide ? fy0 + FH * 0.74 : py + PHp * 0.74;
+  stamp.style.left = (sxC - sb.width / 2) + "px"; stamp.style.top = (syC - sb.height / 2) + "px"; stamp.style.transform = "rotate(-11deg)";
+
+  // ---- timeline
+  // 0.1 the file slides onto the desk (on twos); 0.5 the photo drops; 0.7 the clip goes on; 0.9 the fields type; 2.75 the stamp thumps
+  tl.set(folder, { visibility: "visible" }, 0.1);
+  tl.fromTo(folder, { y: H * 0.55, rotation: 7 }, { y: 0, rotation: -1.4, duration: 0.42, ease: twos("power3.out", 0.42), immediateRender: true }, 0.1);
+  tl.fromTo(folder, { rotation: -1.4 }, { rotation: -0.8, duration: 0.25, ease: twos("back.out(3)", 0.25) }, 0.52);
+  tl.set(pr, { visibility: "visible" }, 0.48);
+  tl.fromTo(pr, { scale: 1.3, rotation: -12, opacity: 0 }, { scale: 1, rotation: -3, opacity: 1, duration: 0.25, ease: twos("back.out(1.5)", 0.25), immediateRender: true }, 0.48);
+  tl.set(["#clipB", "#clipF"], { visibility: "visible" }, 0.78);
+  tl.fromTo(["#clipB", "#clipF"], { y: -CLH * 0.45 }, { y: 0, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, 0.78);
+  // typing: about six characters per drawing, a short carriage return between lines
+  let t = 0.95;
+  typedEls.forEach((el) => { const n = Math.max(1, Math.ceil(el.textContent.length / 6));
+    tl.fromTo(el, { clipPath: "inset(-30% 106% -30% -3%)" }, { clipPath: "inset(-30% -3% -30% -3%)", duration: n * STEP, ease: `steps(${n})`, immediateRender: true }, t); t += n * STEP + STEP; });
+  const TS = Math.max(t + 0.15, 2.6);
+  tl.set(stamp, { visibility: "visible" }, TS);
+  tl.fromTo(stamp, { scale: 1.9, opacity: 0, rotation: -18 }, { scale: 1, opacity: 1, rotation: -11, duration: 0.13, ease: twos("power4.in", 0.13), immediateRender: true }, TS);
+  tl.fromTo("#cam", { y: 0 }, { y: 6 * u, duration: STEP, ease: "steps(1)", immediateRender: false }, TS + 0.13);
+  tl.to("#cam", { y: -2 * u, duration: STEP, ease: "steps(1)" }, TS + 0.13 + STEP);
+  tl.to("#cam", { y: 0, duration: STEP, ease: "steps(1)" }, TS + 0.13 + STEP * 2);
+  // camera: one slow push
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  // boil on twos: the card breathes, the typed ink crawls
+  const rb = MV.rand(9); for (let tt = 0.7; tt < D; tt += STEP * 2) tl.set("#folder-b", { "--bx": `${((rb() - .5) * 1.8 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 1.8 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.3).toFixed(2)}deg` }, tt);
+  const it = document.querySelector("#ink feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(it, { attr: { seed: 4 + (k % 5) } }, tt);
+  MV.done();
+})();
+</script>
+</body>
+</html>

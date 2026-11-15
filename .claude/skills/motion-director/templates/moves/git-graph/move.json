@@ -1,0 +1,5 @@
+{ "id": "git-graph", "name": "Glass commit graph", "oneLiner": "a commit history on glass: the main line draws up with its commits, then each branch forks out and merges back in its own colour with the messages sliding in beside their dots, and a version tag stamps onto the newest commit",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["git", "commits", "branches", "history", "version", "release", "ship", "developer", "code", "open source", "progress", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker talks about the work that went into a release ('weeks of commits', 'two branches, merged, and we shipped v1'): the branches draw while the speaker describes the work, the tag stamps on 'shipped' or the version name" }

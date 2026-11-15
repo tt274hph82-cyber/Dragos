@@ -1,0 +1,5 @@
+{ "id": "ask-bar", "name": "Ask bar to answer", "oneLiner": "a prompt bar grows out of the brand mark, a question types with a blinking caret, send is pressed with a ring, the bar lifts and the answer lands as the brand's real screen on a glass card turning in 3D",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "glass"], "from": "logo-build",
+  "tags": ["prompt", "ai", "search", "ask", "query", "typing", "product", "screen", "demo", "3d", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says what you can ask the product, or 'you just type...': the typing runs under the question, the screen lands as they say what it gives back" }

@@ -1,0 +1,5 @@
+{ "id": "compare-table", "name": "Compare table", "oneLiner": "a glass comparison board stands up off a lit floor, ticks and crosses drop in row by row while each column's tally counts up and the camera leans down the rows; the brand column lifts out of the board, floods with the accent and its full tally rings out",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["comparison", "table", "features", "checklist", "ticks", "versus", "alternatives", "why us", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker compares options feature by feature ('the others are fast or cheap, this does all four'): cut in on the comparison, the brand column lifts on the word that says it does everything" }

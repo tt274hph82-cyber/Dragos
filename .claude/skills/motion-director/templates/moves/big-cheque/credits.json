@@ -1,0 +1,6 @@
+{ "sources": [
+  { "file": "assets/paper.jpg", "from": "ambientCG Paper001 (scanned white paper); the printed face of the board", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/fg-bokeh.jpg", "from": "Christmas Lights Bokeh Effect (Unsplash) by thr3 eyes, Wikimedia Commons, resized, blurred and darkened; the event room behind (look mode only), warmed in the composition", "license": "CC0", "page": "https://commons.wikimedia.org/wiki/File:Christmas_Lights_Bokeh_Effect_(Unsplash).jpg" },
+  { "file": "assets/fonts/PermanentMarker-Regular.ttf", "from": "Permanent Marker by Font Diner, Google Fonts; the handwritten fields", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Permanent+Marker" },
+  { "file": "assets/fonts/GreatVibes-latin.ttf", "from": "Great Vibes by TypeSETit, Google Fonts, subset to Latin; the signature", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Great+Vibes" }
+] }

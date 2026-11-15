@@ -1,0 +1,5 @@
+{ "id": "step-bracket-label", "name": "Step bracket label", "oneLiner": "2 to 5 glass step cards (glyph tile, label, number) stack in one per beat; a glowing accent bracket then draws around them and a pill naming the whole group springs onto it, and the steps light up together",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["steps", "system", "framework", "group", "bracket", "process", "method", "stack", "recap", "name it", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker lists a few steps and then names them as one thing (\"post, track, improve: that's the whole system\"): cut in on the first step; the pill lands on the name. Good as a recap near the end of a video" }

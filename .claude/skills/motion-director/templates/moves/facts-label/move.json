@@ -1,0 +1,5 @@
+{ "id": "facts-label", "name": "Facts label", "oneLiner": "a printed nutrition-facts style label for a piece of content is slid onto a black leather pad under a warm lamp: the condensed heading and serving size print, the big row counts up, the rows rule in one by one with their amounts and percents counting, then the last row thumps on and lights green as the sheet gives",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["facts", "label", "nutrition", "ingredients", "what is inside", "breakdown", "summary", "no fluff", "recap", "list", "paper", "desk"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": false,
+  "say": "when the speaker sums up what is inside a video, guide or offer ('here is everything in it: three hooks, five steps, zero fluff'): the rows fill as they list them and the last row goes green on the punchline" }

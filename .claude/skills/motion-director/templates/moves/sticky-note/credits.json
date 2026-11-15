@@ -1,0 +1,6 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; tinted to the note colour in the composition", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/wall.jpg", "from": "ambientCG Plaster002 (scanned painted plaster), resized; preview ground only", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster002" },
+  { "file": "assets/tape-a.png", "from": "ambientCG Paper004 (scanned ribbed kraft paper), recoloured to masking-tape crepe with torn ends", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper004" },
+  { "file": "assets/fonts/GochiHand-Regular.ttf", "from": "Gochi Hand by Huerta Tipografica, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Gochi+Hand" }
+] }

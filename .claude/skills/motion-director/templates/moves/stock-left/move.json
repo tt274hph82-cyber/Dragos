@@ -1,0 +1,5 @@
+{ "id": "stock-left", "name": "Glass stock left", "oneLiner": "a product card on glass with a real cut-out under a spotlight and a Selling fast chip: the units-left number ticks down faster and faster as a segmented stock bar drains from amber to red, then an inked Sold out stamp slams over the product, the product goes dark and the button dies",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["stock", "scarcity", "sold out", "limited", "drop", "inventory", "urgency", "demand", "ecommerce", "shop", "product", "launch", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says something sold out or went fast ('it sold out in a day', 'there were only a few left'): cut in as they set it up, the count runs down under the line and the stamp lands on 'sold out'; set units to the number they say and img to their own product" }

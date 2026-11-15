@@ -1,0 +1,5 @@
+{ "id": "model-picker", "name": "Model picker", "oneLiner": "a glass chat composer: the model pill is pressed, a menu of models with generic glyph tiles opens up out of it, a lit hover plate glides down to the pick, it presses with a ring and takes the check, the menu folds away and the pill rolls to the new name and flips its glyph while the placeholder updates",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "model", "llm", "switch", "choose", "dropdown", "settings", "chat", "assistant", "menu", "select", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.1, "alpha": true,
+  "say": "when the speaker says which model to use or to switch ('switch it to the bigger model', 'pick the one that thinks longer'): the menu opens on 'switch', the pick presses on the model they name, the pill updates as they say why" }

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The screenshot (path; empty: a brand screen)","default":""},
+  {"id":"rings","type":"string","label":"The numbers that get ringed, in % of the image: x,y,w,h (up to 2, separated by ;)","default":"9.2,63.9,6.8,3.9;19.7,63.9,12.9,3.9"},
+  {"id":"title","type":"string","label":"Card title: what the number means (a few words)","default":"The number to watch"},
+  {"id":"sub","type":"string","label":"Small line under it (empty: none)","default":"Why it matters"},
+  {"id":"zoom","type":"number","label":"Push-in toward the rings (1 to 2.2)","default":1.6}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 85% 8%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 8% 95%, color-mix(in srgb, var(--accent2) 60%, transparent), transparent 72%),
+    linear-gradient(150deg, color-mix(in srgb, var(--accent2) 26%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 35%, var(--ground))); }
+  #bd2 { position: absolute; width: 70%; height: 50%; left: 30%; top: 30%; border-radius: 50%; filter: blur(calc(var(--u) * 120)); background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #bd2, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; border-radius: calc(var(--u) * 26); overflow: hidden; background: #141317;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.75); }
+  .is-key #win { box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 6) calc(var(--u) * 26); border-radius: calc(var(--u) * 10);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 23); font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #scr { position: relative; overflow: hidden; }
+  #cam { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .lay { position: absolute; left: 0; top: 0; display: block; max-width: none; }
+  #cam svg { position: absolute; left: 0; top: 0; overflow: visible; }
+  #cam path { fill: none; stroke: var(--accent2); stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent2) 80%, transparent)); }
+  .is-key #cam path { filter: none; }
+  .mk { position: absolute; width: 2px; height: 2px; margin: -1px; }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  /* the leader lines live in frame space, so they can leave the window and reach the card */
+  #links { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  #links path { fill: none; stroke: var(--accent2); stroke-linecap: round; filter: drop-shadow(0 0 calc(var(--u) * 5) color-mix(in srgb, var(--accent2) 70%, transparent)) drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(0,0,0,.5)); }
+  #links circle { fill: var(--accent2); stroke: #fff; }
+  .is-key #links path { filter: none; }
+
+  #card { position: absolute; left: 0; top: 0; display: flex; align-items: center; box-sizing: border-box; border-radius: calc(var(--u) * 30); opacity: 0;
+    background: linear-gradient(160deg, rgba(48,46,56,.92), rgba(22,21,27,.94));
+    -webkit-backdrop-filter: blur(18px) saturate(140%); backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.22), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent2) 70%, transparent),
+      0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.75), 0 0 calc(var(--u) * 60) color-mix(in srgb, var(--accent2) 25%, transparent); }
+  .is-key #card { background: #1f1e25; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent2); }
+  #card .ic { flex: none; border-radius: 28%; display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 25%, color-mix(in srgb, var(--accent) 65%, #fff), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 70%, #000); }
+  #card .ic svg { width: 56%; height: 56%; overflow: visible; }
+  #card .tx { min-width: 0; display: flex; flex-direction: column; }
+  #card .t { color: #fff; font-weight: 800; letter-spacing: -0.01em; line-height: 1.05; white-space: nowrap; }
+  #card .s { color: rgba(255,255,255,.6); font-weight: 600; white-space: nowrap; margin-top: calc(var(--u) * 8); }
+  #card .t .w { opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div><div id="bd2"></div>
+  <div id="stage">
+    <div id="plate">
+      <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span></div><div id="scr"><div id="cam"><svg id="rsvg"></svg></div></div><div class="sh"></div></div>
+    </div>
+  </div>
+  <svg id="links"></svg>
+  <div id="card"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 17 L9 11 L13 15 L21 7" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 7 H21 V13" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="tx"><div class="t"></div><div class="s"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s), NS = "http://www.w3.org/2000/svg";
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, LS = W > H;
+  const scr0 = v.screens || [], ppl = v.people || [];
+  const src = v.image || scr0[1] || scr0[0] || ppl[0];
+  const isPhoto = !v.image ? !scr0.length : ppl.includes(v.image);
+  const probe = new Image(); probe.src = src; try { await probe.decode(); } catch (e) {}
+  const IW = probe.naturalWidth || 1920, IH = probe.naturalHeight || 1080, IA = IW / IH;
+  let RG = String(v.rings || "").split(";").map((s) => s.split(",").map(parseFloat)).filter((r) => r.length === 4 && r.every(isFinite) && r[2] > 0 && r[3] > 0).slice(0, 2);
+  if (!RG.length) RG = [[40, 45, 20, 8]];
+  const Z = Math.max(1, Math.min(2.2, +v.zoom || 1.6));
+  // the rings' union: the crop and the push centre on it
+  const ux0 = Math.min(...RG.map((r) => r[0])), ux1 = Math.max(...RG.map((r) => r[0] + r[2])), uy0 = Math.min(...RG.map((r) => r[1])), uy1 = Math.max(...RG.map((r) => r[1] + r[3]));
+  const ucx = (ux0 + ux1) / 2, ucy = (uy0 + uy1) / 2;
+
+  // ---- zones: the window, and beside it (16:9) or under it (9:16, 1:1) the card
+  const BAR = isPhoto ? 0 : 54 * u;
+  let zx, zy, zw, zh;
+  if (LS) { zx = W * 0.05; zw = W * 0.6; zy = H * 0.1; zh = H * 0.8; }
+  else if (P) { zx = 40 * u; zw = W - 80 * u; zy = safe.top; zh = H - safe.top - safe.bottom; }
+  else { zx = W * 0.05; zw = W * 0.8; zy = H * 0.06; zh = H * 0.6; }
+  const WA = Math.min(IA, zw / (zh - BAR));
+  let ww = zw, SH = ww / WA;
+  if (SH + BAR > zh) { SH = zh - BAR; ww = SH * WA; }
+  const SW = ww, wh = SH + BAR, wx = LS || SQ ? zx : zx + (zw - ww) / 2, wy = zy + (zh - wh) / 2;
+  let imgW, imgH; if (WA < IA) { imgH = SH; imgW = SH * IA; } else { imgW = SW; imgH = SW / IA; }
+  const offX = Math.max(0, Math.min(imgW - SW, (ucx / 100) * imgW - SW / 2)), offY = Math.max(0, Math.min(imgH - SH, (ucy / 100) * imgH - SH * (P ? 0.4 : 0.5)));
+  const PX = (x) => (x / 100) * imgW - offX, PY = (y) => (y / 100) * imgH - offY;
+
+  const plate = $("#plate"), win = $("#win"), scr = $("#scr"), cam = $("#cam");
+  Object.assign(plate.style, { width: ww + "px", height: wh + "px" });
+  $("#bar").style.height = BAR + "px"; if (!BAR) $("#bar").style.display = "none";
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  const base = MV.img(src, "lay"); Object.assign(base.style, { width: imgW + "px", height: imgH + "px", left: -offX + "px", top: -offY + "px" }); cam.insertBefore(base, cam.firstChild);
+  $("#bar .url").textContent = v.domain || ""; if (!v.domain) $("#bar .url").style.display = "none";
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 50%" });
+  // the push about the rings' centre
+  let ox = Math.max(0, Math.min(SW, PX(ucx))), oy = Math.max(0, Math.min(SH, PY(ucy)));
+  // keep every ring (with its loop) inside the screen at the deepest push
+  { const sm = Z * 1.04, m = 24 * u, ex = (ux1 - ux0) / 200 * 0 , L0 = PX(ux0) - (RG.length ? 30 * u : 0), R0 = PX(ux1) + 30 * u, T0 = PY(uy0) - 24 * u, B0 = PY(uy1) + 40 * u;
+    if (sm > 1) { const hiX = (L0 * sm - m) / (sm - 1), loX = (R0 * sm - SW + m) / (sm - 1), hiY = (T0 * sm - m) / (sm - 1), loY = (B0 * sm - SH + m) / (sm - 1);
+      if (loX <= hiX) ox = Math.min(hiX, Math.max(loX, ox)); if (loY <= hiY) oy = Math.min(hiY, Math.max(loY, oy)); } }
+  cam.style.transformOrigin = `${ox}px ${oy}px`;
+
+  // ---- the rings: a hand-drawn loop that runs a little past where it started, and a marker under each for its leader
+  const rsvg = $("#rsvg"); rsvg.setAttribute("width", SW); rsvg.setAttribute("height", SH);
+  const rings = RG.map((r, i) => {
+    const cx = PX(r[0] + r[2] / 2), cy = PY(r[1] + r[3] / 2), rx = (r[2] / 200) * imgW * 1.1 + 8 * u, ry = (r[3] / 200) * imgH * 1.25 + 8 * u;
+    const pts = [], a0 = -2.5 + i * 0.4, N = 90, turn = Math.PI * 2 + 0.55;
+    for (let k = 0; k <= N; k++) { const f = k / N, a = a0 + turn * f, g = 1 + 0.07 * f + 0.025 * Math.sin(a * 3 + i);
+      pts.push(`${(cx + Math.cos(a) * rx * g).toFixed(1)} ${(cy + Math.sin(a) * ry * g - 0.08 * ry * Math.sin(a * 2)).toFixed(1)}`); }
+    const p = document.createElementNS(NS, "path"); p.setAttribute("d", "M " + pts.join(" L ")); p.setAttribute("pathLength", "1");
+    p.setAttribute("vector-effect", "non-scaling-stroke"); p.setAttribute("stroke-width", 5 * u); p.style.strokeDasharray = "1 1"; p.style.strokeDashoffset = "1"; rsvg.appendChild(p);
+    const m = document.createElement("div"); m.className = "mk"; m.style.left = cx + "px"; m.style.top = cy + ry * 1.04 + "px"; cam.appendChild(m);
+    return { p, m, cx };
+  });
+
+  // ---- the card
+  const card = $("#card"), ic = $(".ic", card), tt = $(".t", card), ss = $(".s", card);
+  const CW = LS ? Math.min(W * 0.27, 540 * u) : P ? Math.min(W - safe.left - safe.right + 40 * u, 820 * u) : W * 0.56;
+  const ICS = (P ? 120 : 104) * u, PADc = (P ? 34 : 28) * u;
+  Object.assign(card.style, { width: CW + "px", padding: PADc + "px", gap: PADc * 0.8 + "px" });
+  Object.assign(ic.style, { width: ICS + "px", height: ICS + "px" });
+  tt.textContent = String(v.title || "").trim(); ss.textContent = String(v.sub || "").trim(); if (!ss.textContent) ss.style.display = "none";
+  tt.style.fontSize = (P ? 54 : LS ? 42 : 46) * u + "px"; ss.style.fontSize = (P ? 32 : 26) * u + "px";
+  const room = CW - 2 * PADc - ICS - PADc * 0.8;
+  // a title that does not fit on one line wraps to two before it shrinks
+  { tt.style.whiteSpace = "nowrap"; const r = document.createRange(); r.selectNodeContents(tt);
+    if (r.getBoundingClientRect().width > room) { const words = tt.textContent.split(" "); let best = 1, bw = 1e9;
+      for (let k = 1; k < words.length; k++) { const a = words.slice(0, k).join(" "), b = words.slice(k).join(" "); tt.textContent = a.length > b.length ? a : b; r.selectNodeContents(tt); const w = r.getBoundingClientRect().width; if (w < bw) { bw = w; best = k; } }
+      tt.innerHTML = ""; const l1 = document.createElement("div"), l2 = document.createElement("div"); l1.textContent = words.slice(0, best).join(" "); l2.textContent = words.slice(best).join(" "); tt.append(l1, l2);
+      MV.fitText(l1, room, 14); MV.fitText(l2, room, 14); const f = Math.min(parseFloat(l1.style.fontSize || tt.style.fontSize), parseFloat(l2.style.fontSize || tt.style.fontSize)); l1.style.fontSize = l2.style.fontSize = f + "px"; } }
+  MV.fitText(ss, room, 12);
+  const words = MV.words(tt);
+  const ch = card.getBoundingClientRect().height;
+  // where the rings sit in the frame once the window has landed and pushed in (approximate: the leaders track them live)
+  const rowY = wy + BAR + oy + (PY(uy1) - oy) * Z;
+  let cxp, cyp, entry;
+  if (LS) { cxp = W * 0.95 - CW; cyp = Math.max(H * 0.12, Math.min(H * 0.88 - ch, rowY + 90 * u)); entry = "left"; }
+  else if (P) { cxp = (W - CW) / 2 - (safe.right - safe.left) / 2; cyp = H - safe.bottom - ch + 30 * u; entry = "top"; }
+  else { cxp = W * 0.95 - CW; cyp = Math.min(H * 0.95 - ch, Math.max(wy + wh + 60 * u, H * 0.72)); entry = "left"; }
+  gsap.set(card, { x: cxp, y: cyp });
+
+  // ---- the leaders: from under each ring, down, then across into the card; one clock places them every frame
+  const links = $("#links"); links.setAttribute("width", W); links.setAttribute("height", H); links.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const L = rings.map((r, i) => {
+    const p = document.createElementNS(NS, "path"); p.setAttribute("stroke-width", 4 * u); p.setAttribute("pathLength", "1"); p.style.strokeDasharray = "1 1"; p.style.strokeDashoffset = "1"; links.appendChild(p);
+    const c0 = document.createElementNS(NS, "circle"); c0.setAttribute("r", 7 * u); c0.setAttribute("stroke-width", 2.5 * u); links.appendChild(c0);
+    const c1 = document.createElementNS(NS, "circle"); c1.setAttribute("r", 8 * u); c1.setAttribute("stroke-width", 2.5 * u); links.appendChild(c1);
+    return { p, c0, c1, k: rings.length > 1 ? (i ? 1 : -1) : 0, s0: 0, s1: 0 };
+  });
+  const order = rings.map((r, i) => i).sort((a, b) => rings[a].cx - rings[b].cx);
+  const pos = (el) => { const b = el.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; };
+  const place = () => {
+    const cb = card.getBoundingClientRect();
+    L.forEach((l, i) => {
+      const [sx, sy] = pos(rings[i].m), k = rings.length > 1 ? (order.indexOf(i) ? 1 : -1) : 0;
+      let ex, ey, d;
+      if (entry === "left") { ex = cb.left + 2 * u; ey = cb.top + cb.height / 2 + k * 18 * u; const dy = Math.max(60 * u, (ey - sy) * 0.9);
+        d = `M ${sx} ${sy} C ${sx} ${sy + dy} ${ex - Math.max(80 * u, (ex - sx) * 0.45)} ${ey} ${ex} ${ey}`; }
+      else { ex = cb.left + cb.width / 2 + k * 60 * u; ey = cb.top + 2 * u; const dy = Math.max(40 * u, (ey - sy) * 0.5);
+        d = `M ${sx} ${sy} C ${sx} ${sy + dy} ${ex} ${ey - dy} ${ex} ${ey}`; }
+      l.p.setAttribute("d", d);
+      l.c0.setAttribute("cx", sx); l.c0.setAttribute("cy", sy); l.c0.setAttribute("transform", `translate(${sx} ${sy}) scale(${l.s0}) translate(${-sx} ${-sy})`);
+      l.c1.setAttribute("cx", ex); l.c1.setAttribute("cy", ey); l.c1.setAttribute("transform", `translate(${ex} ${ey}) scale(${l.s1}) translate(${-ex} ${-ey})`);
+    });
+  };
+
+  // ---- the page: rises in, drifts slowly in 3D; the camera eases in toward the rings
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.05, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#bd2", { x: 0, y: 0 }, { x: -W * 0.25, y: H * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+  tl.fromTo(plate, { y: wy + 140 * u, rotationX: 20, rotationY: -12, scale: 0.92 }, { y: wy, rotationX: 6, rotationY: -6, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(plate, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(plate, { rotationX: 2, rotationY: 3, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.35);
+  tl.fromTo(cam, { scale: 1 }, { scale: Z, duration: 1.1, ease: "power3.inOut" }, 0.4);
+  tl.to(cam, { scale: Z * 1.04, duration: D - 1.5, ease: "sine.inOut" }, 1.5);
+
+  // ---- the rings draw, the leaders run out, the card lands where they meet
+  const R0 = 1.25;
+  rings.forEach((r, i) => tl.fromTo(r.p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, R0 + i * 0.28));
+  const K0 = R0 + 0.35 + (rings.length - 1) * 0.28;
+  L.forEach((l, i) => {
+    tl.fromTo(l, { s0: 0 }, { s0: 1, duration: 0.3, ease: "back.out(3)" }, K0 + i * 0.1);
+    tl.fromTo(l.p, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, K0 + 0.05 + i * 0.1);
+    tl.fromTo(l, { s1: 0 }, { s1: 1, duration: 0.3, ease: "back.out(3)" }, K0 + 0.55 + i * 0.1);
+  });
+  const C0 = K0 + 0.45;
+  tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, C0);
+  tl.fromTo(card, { scale: 0.7, rotation: -4, transformOrigin: entry === "left" ? "0% 50%" : "50% 0%" }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.8)" }, C0);
+  tl.fromTo(ic, { scale: 0.3, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.6)" }, C0 + 0.1);
+  tl.fromTo(words, { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.06, ease: "power3.out" }, C0 + 0.18);
+  if (ss.textContent) tl.fromTo(ss, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, C0 + 0.4);
+  tl.fromTo(card, { y: cyp }, { y: cyp - 10 * u, duration: D - C0 - 0.6, ease: "sine.inOut", immediateRender: false }, C0 + 0.6);
+  // every frame: the leaders follow the drifting page and the card
+  const clock = { t: 0 };
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: place }, 0);
+  if (MV.alpha) {
+    tl.to(plate, { y: wy + 120 * u, opacity: 0, scale: 0.94, duration: 0.38, ease: "power2.in" }, D - 0.42);
+    tl.to(card, { opacity: 0, scale: 0.9, duration: 0.34, ease: "power2.in" }, D - 0.4);
+    tl.to(links, { opacity: 0, duration: 0.3, ease: "power2.in" }, D - 0.42);
+  }
+  MV.done();
+  place();
+})();
+</script>
+</body>
+</html>

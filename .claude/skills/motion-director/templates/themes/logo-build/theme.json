@@ -1,0 +1,18 @@
+{
+  "id": "logo-build",
+  "name": "Logo build",
+  "oneLiner": "one continuous shot: dots whip into the real logo, real pages fly past in 3D, a real query is typed and sent, a 3D carousel of real pages turns, accent strokes resolve back into the logo",
+  "bestFor": "software and AI products with a strong mark and a real input (search, ask, prompt, command bar); feature launches and app intros; short 9:16 teasers",
+  "motion": "dots pop and slide into a row, bend onto an arc and whip 3 turns into the mark (back.out(2.2)); cards fly through z with tumbling rotation (power1.in); a bar grows from a pill (back.out(1.6)); carousel turns on the beat (power3.inOut); strokes draw on and off with getTotalLength",
+  "ground": "warm paper #F4F3EF with two soft brand-accent light pools and one warm pool, slowly drifting, multiply grain",
+  "format": "9:16 1080x1920, 30fps",
+  "length": "12s (7 beats, no hard cuts)",
+  "stills": [2.5, 6.9, 9.6],
+  "sound": {
+    "vibe": "minimal",
+    "bpm": [108, 116],
+    "ui": "one tick per dot, a whoosh on the whip and the fly-past, a pop as the mark and the bar land, typing under the query, a click on the press, a tick per carousel turn, one hit on the final mark"
+  },
+  "recipe": "RECIPE.md",
+  "preview": "preview.jpg"
+}

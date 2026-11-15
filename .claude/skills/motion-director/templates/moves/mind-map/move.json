@@ -1,0 +1,5 @@
+{ "id": "mind-map", "name": "Mind map", "oneLiner": "a glass hub with a lit accent orb lands, 3 to 6 curved wires grow out of it one after another with a spark on each tip, glass glyph nodes pop where they land; then the hub fires and light runs out along every wire at once, flashing each node",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["mind map", "map", "branches", "ideas", "repurpose", "one to many", "network", "hub", "structure", "overview", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker turns one thing into many ('one video becomes clips, a newsletter, a blog post...'): cut in on the one thing, a branch grows per item named, the hub fires on the payoff line. Set hero to keep one branch lit" }

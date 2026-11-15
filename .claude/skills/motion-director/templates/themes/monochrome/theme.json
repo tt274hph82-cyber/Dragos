@@ -1,0 +1,18 @@
+{
+  "id": "monochrome",
+  "name": "Monochrome",
+  "oneLiner": "a designer's grey canvas: dot grid, giant soft black asterisks, a cursor dragging dashed selection boxes, and real photographic 3D props as the only colour",
+  "bestFor": "founder-led brands, agencies, services and personal brands with a sharp one-sentence pitch; anything that should feel editorial, confident and crafted; 9:16 social",
+  "motion": "cursor-drawn selection boxes with words popping inside (back.out(2) with a blur-in), asterisk and dark-band wipes, props that drop and swing, a type run, curtains closing at an angle; the asterisks turn the whole film",
+  "ground": "light grey #E8E8E8 to #D9D9D9 with a 30px dot grid and multiply grain",
+  "format": "9:16 1080x1920, 30fps",
+  "length": "18s (8 scenes, 1.6-3.2s each)",
+  "stills": [1.4, 5.6, 15.3],
+  "sound": {
+    "vibe": "minimal",
+    "bpm": [96, 104],
+    "ui": "a click as the cursor starts each box, a pop on each headline and prop, a whoosh on every wipe, one tick per word in the type run, one hit when the curtains close"
+  },
+  "recipe": "RECIPE.md",
+  "preview": "preview.jpg"
+}

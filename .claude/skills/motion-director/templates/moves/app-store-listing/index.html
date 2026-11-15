@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"App name (empty: the brand name)","default":""},
+  {"id":"sub","type":"string","label":"Subtitle under the name (empty: the brand tagline)","default":""},
+  {"id":"rating","type":"number","label":"Star rating (0 to 5)","default":4.8},
+  {"id":"ratings","type":"string","label":"How many ratings (short, like 12K)","default":"12K"},
+  {"id":"category","type":"string","label":"Category","default":"Productivity"},
+  {"id":"age","type":"string","label":"Age rating","default":"4+"},
+  {"id":"cta","type":"string","label":"Button before the press","default":"Get"},
+  {"id":"done","type":"string","label":"Button once installed","default":"Open"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .l3 { width: 50%; height: 30%; left: 30%; top: 22%; background: rgba(43,214,123,.32); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45) 12%, rgba(255,255,255,.45) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(170deg, rgba(36,33,42,.66), rgba(12,11,16,.78));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--s) * 44) calc(var(--s) * 100) calc(var(--s) * -26) rgba(0,0,0,.72); }
+  .is-alpha #win { background: linear-gradient(170deg, rgba(30,28,36,.96), rgba(13,12,17,.96)); }
+  .is-key #win { background: #15141A; -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.34), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.11); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.16) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--s) * 1.5); pointer-events: none; z-index: 31;
+    background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.05) 38%, transparent 55%, color-mix(in srgb, var(--accent) 60%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  /* the icon: a squircle with gloss, bevel, rim and a sweep */
+  #icon { border-radius: 23%; overflow: hidden; background: linear-gradient(150deg, var(--al), var(--accent) 52%, var(--ad));
+    box-shadow: 0 calc(var(--s) * 22) calc(var(--s) * 40) calc(var(--s) * -12) rgba(0,0,0,.7), 0 0 calc(var(--s) * 60) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key #icon { box-shadow: none; }
+  #icon img { position: absolute; display: block; }
+  #icon.full img { inset: -1%; width: 102%; height: 102%; object-fit: cover; }
+  #icon.glyph img { left: 21%; top: 21%; width: 58%; height: 58%; object-fit: contain; }
+  #icon .gloss { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(130% 75% at 30% -12%, rgba(255,255,255,.4), rgba(255,255,255,.06) 48%, transparent 62%), linear-gradient(180deg, transparent 62%, rgba(0,0,0,.2)); }
+  #icon .bevel { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; box-shadow: inset 0 calc(var(--s) * 3) calc(var(--s) * 2) rgba(255,255,255,.5), inset 0 calc(var(--s) * -6) calc(var(--s) * 14) rgba(0,0,0,.3), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.18); }
+  #icon .spec { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.5) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); }
+
+  #nm { font-family: var(--font-display); color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; }
+  #sb { color: color-mix(in srgb, var(--ink) 58%, transparent); line-height: 1.25; font-weight: 500; overflow: hidden; }
+  #get { border-radius: 999px; overflow: hidden; background: var(--accent); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35), 0 calc(var(--s) * 10) calc(var(--s) * 24) calc(var(--s) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #get { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35); }
+  #get .lb { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; white-space: nowrap; letter-spacing: .01em; }
+  #get .dn { color: #06210F; opacity: 0; }
+  #prog { position: absolute; opacity: 0; }
+  #burst { position: absolute; border-radius: 999px; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; box-sizing: border-box; }
+  .is-key #burst { display: none; }
+
+  #stats { border-top: calc(var(--s) * 1.5) solid rgba(255,255,255,.09); border-bottom: calc(var(--s) * 1.5) solid rgba(255,255,255,.09); }
+  .col { position: absolute; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--s) * 6); }
+  .col + .col::before { content: ""; position: absolute; left: 0; top: 24%; bottom: 24%; width: calc(var(--s) * 1.5); background: rgba(255,255,255,.1); }
+  .col .k { font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 46%, transparent); white-space: nowrap; }
+  .col .vl { font-family: var(--font-display); color: var(--ink); white-space: nowrap; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .col .ft { color: color-mix(in srgb, var(--ink) 46%, transparent); white-space: nowrap; font-weight: 600; }
+  .stars { position: relative; display: flex; gap: calc(var(--s) * 4); }
+  .stars svg { flex: none; }
+  .stars .on { position: absolute; left: 0; top: 0; display: flex; gap: calc(var(--s) * 4); clip-path: inset(0 100% 0 0); }
+
+  .shot { position: absolute; border-radius: calc(var(--s) * 22); overflow: hidden; background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 40%, #222), #111);
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14), 0 calc(var(--s) * 22) calc(var(--s) * 40) calc(var(--s) * -16) rgba(0,0,0,.75); }
+  .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; }
+  .shot::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(160deg, rgba(255,255,255,.16), transparent 40%); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.3); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="icon" class="ab glyph"><div class="gloss"></div><div class="bevel"></div><div class="spec"></div></div>
+      <div id="nm" class="ab"></div>
+      <div id="sb" class="ab"></div>
+      <div id="get" class="ab"><div class="lb up"></div><div class="lb dn"></div>
+        <svg id="prog" viewBox="0 0 66 66"><circle cx="33" cy="33" r="27" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="5"/><circle id="arc" cx="33" cy="33" r="27" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" transform="rotate(-90 33 33)" stroke-dasharray="169.6" stroke-dashoffset="169.6"/><rect x="26" y="26" width="14" height="14" rx="3" fill="#fff"/></svg>
+      </div>
+      <div id="burst"></div>
+      <div id="stats" class="ab"></div>
+      <div id="shots" class="ab"></div>
+      <div id="rim"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const WIDE = !P && !SQ && !A;               // 16:9 cutaway: a desktop store page, three shots in a row
+  const BIG2 = P && !A;                       // 9:16 cutaway: a big shot and two under it
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.12; cR = W * 0.88; zT = H * 0.08; zB = H * 0.92; }
+  const DW = WIDE ? 1300 : 900, pad = 28, IC = 210, hdH = 300, stT = hdH, stH = 150, shT = stT + stH + 30;
+  const sw1 = DW - pad * 2, sh1 = Math.round(sw1 * 9 / 16);
+  const sw3 = (DW - pad * 2 - 48) / 3, sh3 = Math.round(sw3 * 9 / 16), sw2 = (DW - pad * 2 - 24) / 2, sh2 = Math.round(sw2 * 9 / 16);
+  const shH = WIDE ? sh3 : BIG2 ? sh1 + 24 + sh2 : sh1;
+  const DH = shT + shH + pad + 4;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const cw = DW * s, ch = DH * s;
+  const left0 = cL + ((cR - cL) - cw) / 2, top0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: left0 + "px", top: top0 + "px", width: cw + "px", height: ch + "px" });
+
+  // ---- header: icon, name, subtitle, the button
+  const icon = $("#icon"); box(icon, pad + 6, 40, IC, IC);
+  if (v.mark) { icon.insertBefore(MV.img(v.mark), icon.firstChild);
+    const p = new Image(); p.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); g.drawImage(p, 0, 0, 64, 64);
+      const a = (x, y) => g.getImageData(x, y, 1, 1).data[3]; if (a(32, 3) > 200 && a(3, 32) > 200 && a(60, 32) > 200 && a(32, 60) > 200) icon.classList.replace("glyph", "full"); } catch (e) {} }; p.src = v.mark; }
+  const tx = pad + 6 + IC + 34, tw = DW - tx - pad - 10;
+  const nm = $("#nm"); nm.textContent = v.name || v.brandName || "App"; nm.style.fontSize = S(60); box(nm, tx, 44, tw, 70); nm.style.width = "auto";
+  MV.fitText(nm, tw * s, 20);
+  const sb = $("#sb"); sb.textContent = v.sub || v.tagline || ""; box(sb, tx, 122, tw, 84);
+  { let f = 32; sb.style.fontSize = S(f); while (sb.scrollHeight > 84 * s + 1 && f > 20) { f -= 1; sb.style.fontSize = S(f); } }
+  const GW = 176, GH = 70, gx = tx, gy = 40 + IC - GH;
+  const get = $("#get"); box(get, gx, gy, GW, GH);
+  get.querySelector(".up").textContent = v.cta || "Get"; get.querySelector(".dn").textContent = v.done || "Open";
+  get.querySelectorAll(".lb").forEach((l) => { l.style.fontSize = S(36); MV.fitText(l, (GW - 30) * s, 16); });
+  box($("#prog"), 2, 2, GH - 4, GH - 4);
+  box($("#burst"), gx, gy, GW, GH);
+  // the subtitle must clear the button
+  if (sb.scrollHeight > (gy - 122 - 8) * s) { sb.style.height = S(gy - 122 - 8); let f = parseFloat(sb.style.fontSize) / s; while (sb.scrollHeight > (gy - 122 - 8) * s + 1 && f > 18) { f -= 1; sb.style.fontSize = S(f); } }
+
+  // ---- stats row
+  const stats = $("#stats"); box(stats, pad, stT, DW - pad * 2, stH);
+  const rating = Math.max(0, Math.min(5, +v.rating || 0));
+  const STAR = (c) => `<svg viewBox="0 0 24 24" style="width:${S(30)};height:${S(30)}"><path d="M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z" fill="${c}"/></svg>`;
+  const cols = [
+    { k: (v.ratings || "") + " ratings", vl: rating.toFixed(1), ft: `<div class="stars">${STAR("rgba(255,255,255,.18)").repeat(5)}<div class="on">${STAR("#fff").repeat(5)}</div></div>` },
+    { k: "Category", vl: v.category || "", ft: "" },
+    { k: "Age", vl: v.age || "", ft: "Years old" },
+  ];
+  const colW = (DW - pad * 2) / cols.length;
+  const colEls = cols.map((c, i) => {
+    const el = document.createElement("div"); el.className = "col"; Object.assign(el.style, { left: S(i * colW), width: S(colW) });
+    el.innerHTML = `<div class="k"></div><div class="vl"></div>` + (c.ft.startsWith("<") ? c.ft : `<div class="ft"></div>`);
+    el.querySelector(".k").textContent = c.k; el.querySelector(".k").style.fontSize = S(26);
+    el.querySelector(".vl").textContent = c.vl; el.querySelector(".vl").style.fontSize = S(i === 1 ? 40 : 54);
+    const ft = el.querySelector(".ft"); if (ft) { ft.textContent = c.ft; ft.style.fontSize = S(28); }
+    stats.appendChild(el);
+    [".k", ".vl", ".ft"].forEach((q) => { const t = el.querySelector(q); if (t) MV.fitText(t, (colW - 30) * s, 12); });
+    return el;
+  });
+  // the category line sits at the same height as the numbers
+  colEls[1].querySelector(".vl").style.lineHeight = (54 * 1.05 * s) + "px";
+
+  // ---- screenshots, from the brand's screens
+  const shotsEl = $("#shots"); box(shotsEl, 0, shT, DW, shH);
+  const rects = WIDE ? [0, 1, 2].map((i) => [pad + i * (sw3 + 24), 0, sw3, sh3])
+    : BIG2 ? [[pad, 0, sw1, sh1], [pad, sh1 + 24, sw2, sh2], [pad + sw2 + 24, sh1 + 24, sw2, sh2]] : [[pad, 0, sw1, sh1]];
+  const scr = (v.screens || []).filter(Boolean);
+  const shots = rects.map((r, i) => { const el = document.createElement("div"); el.className = "shot"; box(el, ...r); if (scr.length) el.appendChild(MV.img(scr[i % scr.length])); shotsEl.appendChild(el); return el; });
+
+  Object.assign($("#base").style, { left: left0 - 40 * u + "px", width: cw + 80 * u + "px", top: top0 + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TP = 2.35, TR = TP + 0.42, TRD = 1.25, TD = TR + TRD + 0.05;   // press, ring, installed
+
+  gsap.set("#rig", { transformOrigin: `${left0 + cw / 2}px ${top0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 8, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 24, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+
+  // the page assembles: icon on a spring, then the words, the button, the numbers, the shots
+  tl.fromTo(icon, { scale: 0.3, rotation: -14, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: "back.out(1.9)", transformOrigin: "50% 60%" }, 0.25);
+  tl.fromTo("#icon .spec", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, 0.7);
+  tl.fromTo([nm, sb], { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out", stagger: 0.08 }, 0.42);
+  tl.fromTo(get, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.4)", transformOrigin: "50% 50%" }, 0.62);
+  tl.fromTo(colEls, { opacity: 0, y: 22 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, 0.75);
+  const rv = colEls[0].querySelector(".vl"), ro = { r: 0 };
+  tl.fromTo(ro, { r: 0 }, { r: rating, duration: 0.8, ease: "power2.out", onUpdate: () => { rv.textContent = ro.r.toFixed(1); } }, 0.8);
+  tl.fromTo(colEls[0].querySelector(".stars .on"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: `inset(0 ${100 - rating / 5 * 100}% 0 0)`, duration: 0.8, ease: "power2.out" }, 0.85);
+  shots.forEach((el, i) => {
+    tl.fromTo(el, { opacity: 0, x: 120 * s, rotationY: -24, scale: 0.94 }, { opacity: 1, x: 0, rotationY: 0, scale: 1, duration: 0.85, ease: "expo.out", transformOrigin: "0% 50%" }, 1.0 + i * 0.12);
+  });
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut" }, 1.3);
+
+  // the press: the button sinks, its word goes, it folds into a progress ring that fills
+  tl.to(get, { scale: 0.9, duration: 0.09, ease: "power2.out" }, TP); tl.to(get, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TP + 0.1);
+  tl.to(get.querySelector(".up"), { opacity: 0, duration: 0.15, ease: "power2.out" }, TP + 0.08);
+  tl.to(get, { width: GH * s, background: "rgba(255,255,255,.08)", boxShadow: "inset 0 0 0 0 rgba(0,0,0,0)", duration: 0.34, ease: "expo.inOut" }, TP + 0.12);
+  tl.fromTo("#prog", { opacity: 0, scale: 0.6, rotation: -90 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.3, ease: "back.out(2)", transformOrigin: "50% 50%" }, TR - 0.08);
+  const C = 169.6;
+  tl.to("#arc", { attr: { "stroke-dashoffset": C * 0.62 }, duration: TRD * 0.38, ease: "power2.inOut" }, TR);
+  tl.to("#arc", { attr: { "stroke-dashoffset": C * 0.22 }, duration: TRD * 0.37, ease: "power1.inOut" }, TR + TRD * 0.4);
+  tl.to("#arc", { attr: { "stroke-dashoffset": 0 }, duration: TRD * 0.2, ease: "power2.in" }, TR + TRD * 0.8);
+  tl.fromTo("#prog", { rotation: 0 }, { rotation: 360, duration: TRD, ease: "none", transformOrigin: "50% 50%", immediateRender: false }, TR);
+
+  // the moment: the ring closes, the button springs open in green with the new word
+  tl.to("#prog", { opacity: 0, scale: 1.3, duration: 0.18, ease: "power2.in", transformOrigin: "50% 50%" }, TD);
+  tl.to(get, { width: GW * s, background: "#2BD67B", boxShadow: `inset 0 ${2 * s}px 0 rgba(255,255,255,.5), 0 ${10 * s}px ${26 * s}px ${-6 * s}px rgba(43,214,123,.6)`, duration: 0.5, ease: "back.out(1.8)" }, TD + 0.08);
+  tl.fromTo(get.querySelector(".dn"), { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.5)" }, TD + 0.18);
+  tl.fromTo("#burst", { scale: 1, opacity: 0.9 }, { scale: 1.55, opacity: 0, duration: 0.75, ease: "expo.out", immediateRender: false }, TD + 0.2);
+  if (!A) { tl.to("#ground .l3", { opacity: 1, duration: 0.15 }, TD + 0.2); tl.to("#ground .l3", { opacity: 0.4, duration: 1.0, ease: "power2.out" }, TD + 0.35); }
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, TD + 0.2); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TD + 0.27);
+  tl.fromTo("#icon .spec", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TD + 0.25);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

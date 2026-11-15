@@ -1,0 +1,5 @@
+{ "id": "story-frame", "name": "Story poll frame", "oneLiner": "a metal-and-glass phone swings in on a vertical story (the brand screen over its own blurred copy, segmented progress, avatar and time); a poll sticker drops onto the glass and lands with a spring, a tap on the first option splits the votes as the bars fill and the percents count, then the progress segment completes and the story cube-turns to the next one",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["story", "stories", "poll", "vote", "sticker", "audience", "question", "social", "phone", "vertical", "engagement", "feedback", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says they asked their audience ('I put up a poll on my story', 'I asked my followers and 78% said yes'): the sticker lands on the question, the votes split as they say the number, the story turns on 'so I made it'. Set question, optionA, optionB and split to the real poll" }

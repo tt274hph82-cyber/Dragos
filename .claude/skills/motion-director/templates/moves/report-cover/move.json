@@ -1,0 +1,5 @@
+{ "id": "report-cover", "name": "Report cover", "oneLiner": "a bound printed report is slid onto a black leather desk pad under a warm lamp, its cover title and big bar chart printed in the brand colour, then the cover lifts on its binding and swings open as the camera slides onto the key page, where one big number counts up and presses in while a printed trend line draws to its last point",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["report", "results", "data", "study", "research", "findings", "annual", "key number", "growth", "case study", "paper", "desk", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker cites a finding or a result from a report or their own numbers ('the report found one thing', 'here is what actually moved the needle'): the cover opens on the setup and the number lands on the figure" }

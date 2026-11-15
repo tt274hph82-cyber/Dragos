@@ -1,0 +1,5 @@
+{ "id": "battery-charge", "name": "Battery charge", "oneLiner": "a big glass battery drifts in 3D, a metal plug slides into its terminal with a click and a spark, the liquid fill climbs from red through amber to green with a sheen running across it while the bolt pulses and the percent counts, then it hits 100: the battery bounces, a green ring of light pulses off it and the label flips to Fully charged",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["battery", "charge", "energy", "recharge", "power", "full", "boost", "rest", "burnout", "motivation", "100", "level up", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker talks about energy or being recharged ('this gives me my energy back', 'it fully charges your week'): the plug clicks on the setup, 100 lands on the payoff" }

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"topic","type":"string","label":"The topic that climbs (empty: the brand name)","default":""},
+  {"id":"category","type":"string","label":"Its category line","default":"Trending now"},
+  {"id":"countFrom","type":"number","label":"Its post count before (thousands)","default":12.4},
+  {"id":"count","type":"number","label":"Its post count at number one (thousands)","default":98.1},
+  {"id":"topics","type":"string","label":"The other four topics, comma separated","default":"AI agents,Product launch,Morning routine,Remote work"},
+  {"id":"categories","type":"string","label":"Their category lines, comma separated","default":"Technology,Business,Lifestyle,Careers"},
+  {"id":"counts","type":"string","label":"Their post counts, comma separated","default":"86.1K,54.3K,31.9K,22.7K"},
+  {"id":"postsLabel","type":"string","label":"Word after a count","default":"posts"},
+  {"id":"search","type":"string","label":"Search field placeholder","default":"Search"},
+  {"id":"tabs","type":"string","label":"Tabs, comma separated (the second is active)","default":"For you,Trending,News"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ok: #2BD67B; --okg: rgba(43,214,123,.45); --s: 1px; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 46%; left: 42%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 60%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #sheen { position: absolute; inset: 0; border-radius: calc(var(--s) * 44); overflow: hidden; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #srch { display: flex; align-items: center; gap: calc(var(--s) * 18); padding: 0 calc(var(--s) * 30); border-radius: 999px; background: rgba(0,0,0,.28);
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12), inset 0 calc(var(--s) * 2) calc(var(--s) * 6) rgba(0,0,0,.3);
+    color: color-mix(in srgb, var(--ink) 50%, transparent); font-size: calc(var(--s) * 36); white-space: nowrap; }
+  .is-key #srch { background: color-mix(in srgb, var(--surface) 70%, black); }
+  #srch svg { width: calc(var(--s) * 40); height: calc(var(--s) * 40); flex: none; }
+  #tabs { display: flex; justify-content: space-around; }
+  #tabs span { position: relative; font-size: calc(var(--s) * 38); font-weight: 700; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; line-height: 1.6; }
+  #tabs span.on { color: var(--ink); }
+  #uline { height: calc(var(--s) * 7); border-radius: 99px; background: var(--accent); box-shadow: 0 0 calc(var(--s) * 16) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #uline { box-shadow: none; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  .rk { font-family: var(--font-display); font-size: calc(var(--s) * 48); color: color-mix(in srgb, var(--ink) 38%, transparent); text-align: center; line-height: 1; z-index: 12; }
+  .row { border-radius: calc(var(--s) * 28); transform-origin: 50% 50%; }
+  .row .bg { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 34%, rgba(255,255,255,.08)), rgba(255,255,255,.07) 70%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 50%, rgba(255,255,255,.2)),
+      0 calc(var(--s) * 26) calc(var(--s) * 50) calc(var(--s) * -16) rgba(0,0,0,.7); }
+  .is-key .row .bg { background: color-mix(in srgb, var(--accent) 30%, var(--surface)); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.35); }
+  .row .glow { position: absolute; inset: 0; border-radius: inherit; opacity: 0; box-shadow: 0 0 calc(var(--s) * 60) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key .row .glow { display: none; }
+  .row .bar { position: absolute; left: 0; top: 18%; bottom: 18%; width: calc(var(--s) * 8); border-radius: 99px; background: var(--al); opacity: 0; }
+  .cat { display: flex; align-items: center; gap: calc(var(--s) * 12); font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: nowrap; line-height: 1.2; }
+  .tp { font-size: calc(var(--s) * 46); font-weight: 800; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; line-height: 1.2; }
+  .ct { font-size: calc(var(--s) * 36); font-weight: 600; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; line-height: 1.2; }
+  #me .ct { color: var(--ink); }
+  #chip { display: inline-flex; align-items: center; gap: calc(var(--s) * 6); padding: 0 calc(var(--s) * 14); height: calc(var(--s) * 46); border-radius: 99px; font-weight: 800; font-size: calc(var(--s) * 32);
+    color: #06210F; background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 70%, #fff), var(--ok)); box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 0 calc(var(--s) * 20) var(--okg); }
+  .is-key #chip { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5); }
+  #chip svg { width: calc(var(--s) * 24); height: calc(var(--s) * 24); }
+  #flame { width: calc(var(--s) * 40); height: calc(var(--s) * 40); flex: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="card"></div>
+      <div id="srch" class="ab"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5l5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span id="srt"></span></div>
+      <div id="tabs" class="ab"></div>
+      <i id="uline" class="ab"></i>
+      <div id="hr" class="ab"></div>
+      <div id="rows"></div>
+      <div id="sheen"></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const list = (x) => String(x || "").split(",").map((t) => t.trim()).filter(Boolean);
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 110 * u; cR = W - 110 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.29; cR = W * 0.71; zT = H * 0.05; zB = H * 0.95; }
+  const DW = 820, pad = 40, inner = DW - pad * 2;
+  const sY = 36, sH = 84, tY = sY + sH + 20, tH = 66, hrY = tY + tH + 12, r0 = hrY + 18, RH = 130, N = 5;
+  const DH = r0 + RH * N + 26;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.22);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  const x0 = cL + ((cR - cL) - cw) / 2, y0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: x0 + "px", top: y0 + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: x0 - 40 * u + "px", width: cw + 80 * u + "px", top: y0 + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- search and tabs
+  box($("#srch"), pad, sY, inner, sH); $("#srt").textContent = v.search || "";
+  box($("#tabs"), pad, tY, inner, tH);
+  const tabs = list(v.tabs); tabs.forEach((t, i) => { const sp = document.createElement("span"); sp.textContent = t; if (i === 1) sp.className = "on"; $("#tabs").appendChild(sp); });
+  [...$("#tabs").children].forEach((sp) => MV.fitText(sp, inner * s / Math.max(1, tabs.length) - 16 * s, 16));
+  box($("#hr"), pad, hrY, inner, 1.5);
+  { const on = $("#tabs .on"); if (on) { const a = on.getBoundingClientRect(), w = $("#wrap").getBoundingClientRect(); Object.assign($("#uline").style, { left: a.left - w.left + "px", width: a.width + "px", top: S(hrY - 6), height: S(7) }); } else $("#uline").style.display = "none"; }
+
+  // ---- the rows: four others in rank order, the brand topic last
+  const others = list(v.topics), cats = list(v.categories), cnts = list(v.counts), pl = v.postsLabel || "";
+  const brand = v.brandName || "";
+  const mine = v.topic || brand;
+  const rowsEl = $("#rows"), rows = [];
+  const RX = pad, RW = inner, rkW = 70, tx = rkW + 26;
+  for (let i = 0; i < N; i++) {
+    const rk = document.createElement("div"); rk.className = "rk ab"; rk.textContent = i + 1; box(rk, RX, r0 + RH * i + (RH - 52) / 2, rkW, 52); rowsEl.appendChild(rk);
+  }
+  const mk = (cat, tp, ct, id) => {
+    const r = document.createElement("div"); r.className = "row ab"; if (id) r.id = id;
+    r.innerHTML = `<i class="glow"></i><i class="bg"></i><i class="bar"></i><div class="cat ab"><span class="cl"></span></div><div class="tp ab"></div><div class="ct ab"></div>`;
+    r.querySelector(".cl").textContent = cat; r.querySelector(".tp").textContent = tp; r.querySelector(".ct").textContent = ct;
+    rowsEl.appendChild(r); return r;
+  };
+  for (let i = 0; i < 4; i++) rows.push(mk(cats[i] || "", others[i] || "", cnts[i] ? cnts[i] + " " + pl : "", null));
+  const me = mk(v.category || "", mine, "", "me"); rows.push(me);
+  // the brand row carries a flame and, at the end, a green rank-up chip
+  me.querySelector(".cat").insertAdjacentHTML("afterbegin", `<svg id="flame" viewBox="0 0 24 24"><path d="M12 22c-4.3 0-7.3-3-7.3-6.9 0-3.3 2.2-5.5 3.7-7.4.3 1.8 1.2 2.9 2.4 3.3-.6-3.6.8-6.4 3.4-8.2-.2 3 1.4 5 3 6.9 1.4 1.7 2.4 3.4 2.4 5.9 0 3.9-3.2 6.4-7.6 6.4z" fill="var(--al)"/></svg>`);
+  me.querySelector(".cat").insertAdjacentHTML("beforeend", `<span id="chip"><svg viewBox="0 0 24 24"><path d="M12 5l7 9H5z" fill="#06210F"/></svg><b>${N - 1}</b></span>`);
+  // the count reserves its widest
+  const fmtK = (n) => (+n).toFixed(1) + "K " + pl;
+  const from = +v.countFrom || 0, to = Math.max(from, +v.count || 0);
+  // layout per row (row-local, design units)
+  const ctW = 250;
+  rows.forEach((r) => {
+    box(r, RX, 0, RW, RH - 10);
+    box(r.querySelector(".cat"), tx, 16, RW - tx - ctW - 20, 46);
+    box(r.querySelector(".tp"), tx, 62, RW - tx - ctW - 20, 56);
+    box(r.querySelector(".ct"), RW - ctW - 22, 0, ctW, RH - 10);
+    Object.assign(r.querySelector(".ct").style, { display: "flex", alignItems: "center", justifyContent: "flex-end" });
+    MV.fitText(r.querySelector(".tp"), (RW - tx - ctW - 20) * s, 20);
+    MV.fitText(r.querySelector(".cl"), (RW - tx - ctW - 20 - (r === me ? 140 : 0)) * s, 16);
+  });
+  const ctEl = me.querySelector(".ct");
+  ctEl.textContent = fmtK(to); MV.fitText(ctEl, ctW * s, 18); ctEl.textContent = fmtK(from);
+  gsap.set("#chip", { opacity: 0, scale: 0.4, transformOrigin: "0% 50%" });
+
+  // positions by rank slot
+  const slotY = (k) => (r0 + RH * k + 5) * s;
+  const order = [0, 1, 2, 3, 4]; // order[k] = index of the row in slot k
+  rows.forEach((r, i) => gsap.set(r, { y: slotY(i) }));
+
+  // ---- timing
+  const H1 = 1.45, H2 = 2.32, LAND = 2.98;
+  gsap.set("#rig", { transformOrigin: `${x0 + cw / 2}px ${y0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#srch", "#tabs"], { opacity: 0, y: -18 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.07 }, 0.18);
+  tl.fromTo("#uline", { scaleX: 0, transformOrigin: "50% 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.4);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+  tl.fromTo(".rk", { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.05 }, 0.32);
+  tl.fromTo(rows, { opacity: 0, x: 30 * s }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out", stagger: 0.06 }, 0.36);
+  tl.fromTo("#sheen", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut" }, 0.8);
+
+  // the brand topic heats up: the flame flickers on, its count starts climbing
+  tl.fromTo("#flame", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)", transformOrigin: "50% 90%" }, 1.0);
+  tl.to("#flame", { scaleY: 1.15, duration: 0.18, ease: "sine.inOut", yoyo: true, repeat: 7, transformOrigin: "50% 90%" }, 1.5);
+  const o = { n: from };
+  tl.to(o, { n: to, duration: LAND - 1.15, ease: "power2.inOut", onUpdate: () => { ctEl.textContent = fmtK(o.n); } }, 1.15);
+
+  // a hop: the brand row lifts toward camera and slides up two slots, the passed rows sink and step down
+  const hop = (t, fromK, toK) => {
+    tl.to(me, { scale: 1.05, duration: 0.25, ease: "power2.out" }, t);
+    tl.to(me.querySelector(".bg"), { opacity: 1, duration: 0.25, ease: "power2.out" }, t);
+    tl.to(me.querySelector(".glow"), { opacity: 0.6, duration: 0.3, ease: "power2.out" }, t);
+    tl.to(me, { y: slotY(toK), duration: 0.62, ease: "expo.inOut" }, t + 0.06);
+    for (let k = toK; k < fromK; k++) {
+      const r = rows[order[k]];
+      tl.to(r, { opacity: 0.22, scale: 0.95, duration: 0.2, ease: "power2.out" }, t + 0.06);
+      tl.to(r, { y: slotY(k + 1), duration: 0.55, ease: "expo.inOut" }, t + 0.12 + (k - toK) * 0.05);
+      tl.to(r, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, t + 0.56 + (k - toK) * 0.05);
+    }
+    const moved = order.splice(fromK, 1)[0]; order.splice(toK, 0, moved);
+    tl.to(me, { scale: 1.02, duration: 0.3, ease: "back.out(2)" }, t + 0.66);
+  };
+  hop(H1, 4, 2);
+  hop(H2, 2, 0);
+  // the landing: the row settles into number one, lights in the brand colour, the rank pops, the green chip lands
+  const rk1 = document.querySelectorAll(".rk")[0];
+  tl.to(me, { scale: 0.985, duration: 0.08, ease: "power2.out" }, LAND); tl.to(me, { scale: 1, duration: 0.5, ease: "back.out(3)" }, LAND + 0.08);
+  tl.to(me.querySelector(".bar"), { opacity: 1, duration: 0.3, ease: "power2.out" }, LAND);
+  tl.fromTo(me.querySelector(".bar"), { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "back.out(2.4)", immediateRender: false }, LAND);
+  tl.to(me.querySelector(".glow"), { opacity: 1, duration: 0.15, ease: "power2.out" }, LAND); tl.to(me.querySelector(".glow"), { opacity: 0.45, duration: 0.8, ease: "expo.out" }, LAND + 0.15);
+  tl.set(rk1, { color: "var(--al)" }, LAND);
+  tl.fromTo(rk1, { scale: 1 }, { scale: 1.35, duration: 0.1, ease: "power2.out", immediateRender: false }, LAND); tl.to(rk1, { scale: 1, duration: 0.5, ease: "back.out(3)" }, LAND + 0.1);
+  tl.to("#chip", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.6)" }, LAND + 0.12);
+  tl.fromTo(ctEl, { scale: 1 }, { scale: 1.12, duration: 0.1, ease: "power2.out", transformOrigin: "100% 50%", immediateRender: false }, LAND); tl.to(ctEl, { scale: 1, duration: 0.45, ease: "back.out(3)" }, LAND + 0.1);
+  tl.to("#wrap", { scale: 1.015, duration: 0.08, ease: "power2.out" }, LAND); tl.to("#wrap", { scale: 1, duration: 0.5, ease: "back.out(2.5)" }, LAND + 0.08);
+  tl.fromTo("#sheen", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, LAND + 0.15);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"xAxis","type":"string","label":"The horizontal axis, low to high (left to right)","default":"Effort"},
+  {"id":"yAxis","type":"string","label":"The vertical axis, low to high (bottom to top)","default":"Impact"},
+  {"id":"quadrants","type":"string","label":"Quadrant names: top left, top right, bottom left, bottom right","default":"Quick wins,Big bets,Fill-ins,Time sinks"},
+  {"id":"items","type":"string","label":"The items that fly in, comma separated, 3 to 6 short labels ({brand} = the brand name)","default":"Templates,Hiring,Meetings,Cold DMs,AI agents"},
+  {"id":"positions","type":"string","label":"Where each item lands as x,y from 0 to 100 (y up), separated by ;","default":"30,66;72,72;74,28;26,30;22,82"},
+  {"id":"glyphs","type":"string","label":"Glyph per item (doc, user, calendar, chat, bolt, mail, chart, video...); empty = guessed from the label","default":"doc,user,calendar,send,bolt"},
+  {"id":"hero","type":"number","label":"The item that lands last and lights its quadrant, 1-based (0 = none)","default":5}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 60%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base, .is-alpha #refl { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 10%, rgba(255,255,255,.5) 90%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #refl { position: absolute; filter: blur(calc(var(--u) * 6)); }
+  #refl i { position: absolute; background: linear-gradient(180deg, rgba(255,255,255,.12), transparent 70%); }
+  #refl i.hot { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 45%, transparent), transparent 70%); opacity: 0; }
+
+  #board { position: absolute; box-sizing: border-box; transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.04) 60%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(24px) saturate(150%); backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.75); }
+  .is-alpha #board { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, white 12%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .q { position: absolute; box-sizing: border-box; background: rgba(255,255,255,.035); box-shadow: inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.06); overflow: hidden; }
+  .q .qw { position: absolute; inset: 0; opacity: 0; background: radial-gradient(90% 90% at 50% 50%, color-mix(in srgb, var(--accent) 40%, transparent), color-mix(in srgb, var(--accent) 12%, transparent)); box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--accent) 75%, white); }
+  .qn { position: absolute; white-space: nowrap; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; line-height: 1; color: color-mix(in srgb, var(--ink) 46%, transparent); }
+  .ax { position: absolute; white-space: nowrap; font-weight: 700; line-height: 1; color: color-mix(in srgb, var(--ink) 82%, transparent); display: flex; align-items: center; gap: .35em; }
+  .ax svg { width: .9em; height: .9em; flex: none; }
+  #axes { position: absolute; left: 0; top: 0; overflow: visible; }
+  #axes path { fill: none; stroke: rgba(255,255,255,.55); stroke-linecap: round; stroke-linejoin: round; }
+  .is-alpha #axes path { stroke: color-mix(in srgb, var(--ink) 70%, transparent); }
+
+  .chip { position: absolute; display: flex; align-items: center; box-sizing: border-box; white-space: nowrap;
+    background: linear-gradient(158deg, rgba(255,255,255,.26), rgba(255,255,255,.08) 60%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16), 0 calc(var(--u) * 22) calc(var(--u) * 36) calc(var(--u) * -14) rgba(0,0,0,.75); }
+  .is-alpha .chip { background: linear-gradient(158deg, color-mix(in srgb, var(--surface) 70%, white 30%), color-mix(in srgb, var(--surface) 90%, white 10%)); }
+  .chip .go { position: relative; flex: none; border-radius: 50%; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.26), rgba(255,255,255,.06)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5); }
+  .chip .go .acc { position: absolute; inset: 0; border-radius: 50%; opacity: 0;
+    background: radial-gradient(70% 70% at 36% 30%, color-mix(in srgb, var(--accent) 50%, white), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, black)); }
+  .chip .go .gl { position: relative; width: 54%; height: 54%; }
+  .chip .cl { font-weight: 700; color: var(--ink); line-height: 1; }
+  .ring { position: absolute; opacity: 0; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 50%, white); pointer-events: none; }
+
+  .is-key #board, .is-key .chip { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  .is-key .chip { background: color-mix(in srgb, var(--surface) 80%, white 20%); }
+  .is-key .q { background: color-mix(in srgb, var(--surface) 94%, white); }
+  .is-key .qn { color: color-mix(in srgb, var(--ink) 50%, var(--surface)); }
+  .is-key .ring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="floor"></div><div id="refl"></div><div id="base"></div>
+    <div id="board"></div>
+    <div id="chips"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, NS = "http://www.w3.org/2000/svg";
+  const list = (x, sep = ",") => (Array.isArray(x) ? x : String(x || "").split(sep)).map((s) => String(s).trim());
+  const brand = v.brandName || "";
+  let items = list(v.items).filter((s) => s.length).map((s) => s.split("{brand}").join(brand)).slice(0, 6);
+  while (items.length < 3) items.push(["One", "Two", "Three"][items.length]);
+  const N = items.length, gl = list(v.glyphs), USED = new Set();
+  const qn = list(v.quadrants); while (qn.length < 4) qn.push("");
+  const pos = list(v.positions, ";").map((p) => p.split(",").map(Number));
+  const DEF = [[28, 70], [72, 72], [72, 28], [28, 28], [24, 84], [76, 86]];
+  const HERO = Math.round(+v.hero || 0) - 1;
+
+  // ---- the board: a glass panel, margins top and bottom carry the axis names
+  let BX, BY, BW, BH;
+  if (P) { BX = safe.left; BW = W - safe.right - safe.left; BH = Math.min(BW * 1.06, H - safe.top - safe.bottom - 70 * u); BY = safe.top + (H - safe.top - safe.bottom - 50 * u - BH) / 2; }
+  else if (SQ) { BW = 900 * u; BH = 860 * u; BX = (W - BW) / 2; BY = 60 * u; }
+  else { BH = H * 0.8; BW = Math.min(W * 0.62, BH * 1.45); BX = (W - BW) / 2; BY = H * 0.07; }
+  const MT = 76 * u, MB = 76 * u, MS = 26 * u;           // margins: top (y axis name), bottom (x axis name), sides
+  const IX = BX + MS, IY = BY + MT, IW = BW - 2 * MS, IH = BH - MT - MB, QG = 12 * u;
+  const board = $("#board");
+  Object.assign(board.style, { left: BX + "px", top: BY + "px", width: BW + "px", height: BH + "px", borderRadius: 40 * u + "px" });
+  const qw = (IW - QG) / 2, qh = (IH - QG) / 2, QR = 24 * u;
+  const QS = [[0, 0], [1, 0], [0, 1], [1, 1]].map(([c, r], k) => {
+    const el = document.createElement("div"); el.className = "q"; el.innerHTML = `<div class="qw"></div>`;
+    const x = MS + c * (qw + QG), y = MT + r * (qh + QG);
+    Object.assign(el.style, { left: x + "px", top: y + "px", width: qw + "px", height: qh + "px", borderRadius: QR + "px" });
+    el.querySelector(".qw").style.borderRadius = QR + "px";
+    board.appendChild(el);
+    // the name in the outer corner
+    const n = document.createElement("div"); n.className = "qn"; n.textContent = qn[k]; n.style.fontSize = 36 * u + "px"; board.appendChild(n);
+    MV.fitText(n, qw - 50 * u, 20);
+    const nr = n.getBoundingClientRect(), pad = 24 * u;
+    Object.assign(n.style, { left: (c ? x + qw - pad - nr.width : x + pad) + "px", top: (r ? y + qh - pad - nr.height : y + pad) + "px" });
+    return { el, n, x, y, c, r, k, nh: nr.height, pad };
+  });
+  // the axes: a cross through the middle, arrow tips at the high ends
+  const ax = document.createElementNS(NS, "svg"); ax.id = "axes"; board.appendChild(ax);
+  Object.assign(ax.style, { width: BW + "px", height: BH + "px" }); ax.setAttribute("viewBox", `0 0 ${BW} ${BH}`);
+  const mx = MS + IW / 2, my = MT + IH / 2, ah = 16 * u;
+  const hx = document.createElementNS(NS, "path"), vy = document.createElementNS(NS, "path"), hxa = document.createElementNS(NS, "path"), vya = document.createElementNS(NS, "path");
+  hx.setAttribute("d", `M${MS + 6 * u},${my} L${MS + IW - 4 * u},${my}`); vy.setAttribute("d", `M${mx},${MT + IH - 6 * u} L${mx},${MT + 4 * u}`);
+  hxa.setAttribute("d", `M${MS + IW - 4 * u - ah},${my - ah * 0.8} L${MS + IW - 4 * u},${my} L${MS + IW - 4 * u - ah},${my + ah * 0.8}`);
+  vya.setAttribute("d", `M${mx - ah * 0.8},${MT + 4 * u + ah} L${mx},${MT + 4 * u} L${mx + ah * 0.8},${MT + 4 * u + ah}`);
+  for (const p of [hx, vy, hxa, vya]) { p.style.strokeWidth = 4 * u; ax.appendChild(p); }
+  const arrow = (dir) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${dir === "up" ? '<path d="M12 20V4M5 11l7-7 7 7"/>' : '<path d="M4 12h16M13 5l7 7-7 7"/>'}</svg>`;
+  const yl = document.createElement("div"); yl.className = "ax"; yl.innerHTML = `<span></span>${arrow("up")}`; yl.querySelector("span").textContent = v.yAxis || "";
+  const xl = document.createElement("div"); xl.className = "ax"; xl.innerHTML = `<span></span>${arrow("right")}`; xl.querySelector("span").textContent = v.xAxis || "";
+  for (const a of [yl, xl]) { a.style.fontSize = (P ? 38 : 36) * u + "px"; board.appendChild(a); MV.fitText(a.querySelector("span"), IW * 0.45, 22); }
+  const ylr = yl.getBoundingClientRect(), xlr = xl.getBoundingClientRect();
+  Object.assign(yl.style, { left: mx - ylr.width / 2 + "px", top: (MT - ylr.height) / 2 + "px" });
+  Object.assign(xl.style, { left: MS + IW - xlr.width - 4 * u + "px", top: MT + IH + (MB - xlr.height) / 2 + "px" });
+  if (!v.yAxis) yl.style.display = "none"; if (!v.xAxis) xl.style.display = "none";
+
+  // ---- the floor and the board's reflection (its panes as shapes, no text)
+  const floorY = BY + BH + 4 * u;
+  $("#floor").style.top = floorY + "px";
+  Object.assign($("#base").style, { left: BX - 60 * u + "px", width: BW + 120 * u + "px", top: floorY - 1.5 * u + "px" });
+  const refl = $("#refl"); Object.assign(refl.style, { left: BX + "px", top: floorY + 8 * u + "px", width: BW + "px", height: BH * 0.5 + "px" });
+  refl.innerHTML = `<i style="left:0;top:0;width:${BW}px;height:${BH * 0.5}px;border-radius:${40 * u}px"></i>`;
+  const RH = [];
+  [0, 1].forEach((c) => { const i = document.createElement("i"); i.className = "hot"; Object.assign(i.style, { left: MS + c * (qw + QG) + "px", top: MB + "px", width: qw + "px", height: qh * 0.7 + "px", borderRadius: QR + "px" }); refl.appendChild(i); RH.push(i); });
+
+  // ---- the items: chips, each kept inside its own quadrant, clear of the names and of each other
+  const chips = $("#chips"), CH = (P ? 104 : 92) * u, CF = (P ? 42 : 38) * u;
+  const C = items.map((lab, i) => {
+    let [px, py] = pos[i] && pos[i].length === 2 && pos[i].every(isFinite) ? pos[i] : DEF[i % DEF.length];
+    px = Math.max(1, Math.min(99, px)); py = Math.max(1, Math.min(99, py));
+    const q = QS[(py >= 50 ? 0 : 2) + (px >= 50 ? 1 : 0)];
+    const el = document.createElement("div"); el.className = "chip"; chips.appendChild(el);
+    el.innerHTML = `<div class="go"><div class="acc"></div>${GLYPH.svg(GLYPH.pick(lab, gl[i], i, USED))}</div><div class="cl"></div>`;
+    const go = el.querySelector(".go"), cl = el.querySelector(".cl");
+    Object.assign(go.style, { width: CH - 18 * u + "px", height: CH - 18 * u + "px", marginLeft: 9 * u + "px", marginRight: 16 * u + "px" });
+    cl.textContent = lab; cl.style.fontSize = CF + "px";
+    MV.fitText(cl, qw - 2 * 18 * u - CH - 40 * u, 22);
+    const cw = CH - 18 * u + 9 * u + 16 * u + cl.getBoundingClientRect().width + 30 * u;
+    Object.assign(el.style, { width: cw + "px", height: CH + "px", borderRadius: CH / 2 + "px" });
+    // the usable box inside the quadrant (board coords): clear of the axes and of the name strip
+    const m = 22 * u, top = q.r === 0, nameH = q.nh + q.pad + 22 * u;
+    const bx0 = q.x + m, bx1 = q.x + qw - m - cw, by0 = q.y + m + (top ? nameH : 0), by1 = q.y + qh - m - CH - (top ? 0 : nameH);
+    const tx = MS + (px / 100) * IW - cw / 2, ty = MT + (1 - py / 100) * IH - CH / 2;
+    return { i, el, go, cl, cw, q, bx0, bx1: Math.max(bx0, bx1), by0, by1: Math.max(by0, by1), x: tx, y: ty };
+  });
+  const clampC = (c) => { c.x = Math.min(c.bx1, Math.max(c.bx0, c.x)); c.y = Math.min(c.by1, Math.max(c.by0, c.y)); };
+  C.forEach(clampC);
+  for (let it = 0; it < 60; it++) for (let a = 0; a < N; a++) for (let b = a + 1; b < N; b++) {
+    const A = C[a], B = C[b]; if (A.q !== B.q) continue;
+    const ox = Math.min(A.x + A.cw, B.x + B.cw) - Math.max(A.x, B.x) + 28 * u, oy = Math.min(A.y + CH, B.y + CH) - Math.max(A.y, B.y) + 28 * u;
+    if (ox > 0 && oy > 0) { if (oy < ox) { const s = (A.y < B.y ? -1 : 1) * oy / 2; A.y += s; B.y -= s; } else { const s = (A.x < B.x ? -1 : 1) * ox / 2; A.x += s; B.x -= s; } clampC(A); clampC(B); }
+  }
+  C.forEach((c) => Object.assign(c.el.style, { left: BX + c.x + "px", top: BY + c.y + "px" }));
+  const HC = HERO >= 0 && HERO < N ? C[HERO] : null;
+  // the hero lands last
+  const order = C.filter((c) => c !== HC).concat(HC ? [HC] : []);
+  const ring = document.createElement("div"); ring.className = "ring"; chips.appendChild(ring);
+  const l1 = $("#ground .l1"), hq = HC ? HC.q : null;
+  Object.assign(l1.style, { left: (hq ? BX + hq.x + qw / 2 : W / 2) - W * 0.3 + "px", top: (hq ? BY + hq.y + qh / 2 : H / 2) - H * 0.2 + "px" });
+
+  // ---- the camera
+  const cx = BX + BW / 2, cy = BY + BH / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 12, scale: 0.93 }, { rotationY: -7, rotationX: 4, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(l1, { opacity: 0.35 }, { opacity: 1, duration: 1.4, ease: "power2.inOut" }, 1.6);
+
+  // ---- 1. the board stands up, the axes draw, the quadrants and names arrive
+  tl.fromTo("#base", { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.02);
+  tl.fromTo(board, { rotationX: -70, opacity: 0, transformOrigin: "50% 100%" }, { rotationX: 0, opacity: 1, duration: 0.9, ease: "expo.out" }, 0.04);
+  tl.fromTo(refl, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.3);
+  QS.forEach((q, k) => { tl.fromTo(q.el, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.8)" }, 0.28 + k * 0.06);
+    tl.fromTo(q.n, { opacity: 0, y: (q.r ? -1 : 1) * 10 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.62 + k * 0.06); });
+  [[hx, hxa, xl], [vy, vya, yl]].forEach(([ln, tip, lab], k) => {
+    const L = ln.getTotalLength(); ln.style.strokeDasharray = L;
+    tl.fromTo(ln, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.6, ease: "power3.inOut" }, 0.4 + k * 0.08);
+    tl.fromTo(tip, { opacity: 0, scale: 0.4, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.5)" }, 0.9 + k * 0.08);
+    tl.fromTo(lab, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, 0.85 + k * 0.08);
+  });
+
+  // ---- 2. the items fly in from the side they belong to and land with a squash
+  const F0 = 1.0, FS = Math.min(0.26, 1.2 / N);
+  order.forEach((c, j) => {
+    const isH = c === HC, at = F0 + j * FS + (isH ? 0.18 : 0), dur = isH ? 0.6 : 0.55;
+    const sx = c.q.c ? 1 : -1, sy = c.q.r ? 1 : -1;
+    // it drops out of the camera onto its spot: a fast fall that eases, then the touch-down
+    tl.fromTo(c.el, { scale: 1.4, y: -26 * u, rotation: sx * 12, rotationX: 28 }, { scale: 1.05, y: -6 * u, rotation: 0, rotationX: 0, duration: dur - 0.12, ease: "expo.out" }, at);
+    tl.to(c.el, { scale: 1, y: 0, duration: 0.12, ease: "power3.in" }, at + dur - 0.12);
+    tl.fromTo(c.el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power2.out" }, at);
+    const land = at + dur;
+    tl.to(c.el, { scaleX: 1.12, scaleY: 0.86, duration: 0.06, ease: "power2.out" }, land);
+    tl.to(c.el, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(3)" }, land + 0.06);
+    tl.fromTo(c.go, { rotation: -60 }, { rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, land - 0.1);
+    tl.fromTo(board, { y: 0 }, { y: (isH ? 7 : 3) * u, duration: 0.05, ease: "power2.out", immediateRender: false }, land);
+    tl.to(board, { y: 0, duration: 0.4, ease: "back.out(3)" }, land + 0.05);
+    c.land = land;
+  });
+
+  // ---- 3. the moment: the hero's quadrant lights, a ring goes out from the chip, the rest fall back
+  if (HC) {
+    const M = HC.land;
+    const qwash = HC.q.el.querySelector(".qw");
+    tl.to(qwash, { opacity: 1, duration: 0.18, ease: "power2.out" }, M);
+    tl.to(qwash, { opacity: 0.75, duration: 0.8, ease: "power2.out" }, M + 0.2);
+    tl.to(HC.q.n, { color: "#ffffff", duration: 0.3, ease: "power2.out" }, M);
+    if (HC.q.r === 1) tl.to(RH[HC.q.c], { opacity: 1, duration: 0.4, ease: "power2.out" }, M);
+    tl.to(HC.go.querySelector(".acc"), { opacity: 1, duration: 0.2, ease: "power2.out" }, M);
+    tl.to(HC.go, { color: "#ffffff", duration: 0.2, ease: "power2.out" }, M);
+    Object.assign(ring.style, { left: BX + HC.x + "px", top: BY + HC.y + "px", width: HC.cw + "px", height: CH + "px", borderRadius: CH / 2 + "px" });
+    tl.fromTo(ring, { scale: 1, opacity: 0.9 }, { scale: 1.35, opacity: 0, duration: 0.75, ease: "expo.out", immediateRender: false }, M + 0.03);
+    C.forEach((c) => { if (c !== HC) tl.to(c.el, MV.alpha ? { filter: "brightness(0.55)", duration: 0.6, ease: "power2.inOut" } : { opacity: 0.5, duration: 0.6, ease: "power2.inOut" }, M + 0.1); });
+    QS.forEach((q) => { if (q !== HC.q) tl.to(q.n, { opacity: 0.6, duration: 0.6, ease: "power2.inOut" }, M + 0.1); });
+    tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out" }, M); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, M + 0.07);
+  }
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

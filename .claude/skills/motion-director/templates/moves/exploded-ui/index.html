@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"screen","type":"string","label":"The screenshot to take apart (path; empty: the first brand screen)","default":""},
+  {"id":"layers","type":"string","label":"Up to 4 parts that lift out, in % of the screen: x,y,w,h,Label separated by ; (bottom layer first)","default":"0,0,100,9,Navigation;9,17,48,26,Headline;9,50,34,11,Sign-up;56,22,36,38,Media"},
+  {"id":"title","type":"string","label":"Text in the window bar (empty: the brand domain)","default":""},
+  {"id":"numbers","type":"string","label":"Number the labels 01, 02...: yes or no","default":"yes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 75%; height: 50%; left: 40%; top: -6%; background: color-mix(in srgb, var(--accent) 42%, transparent); }
+  #ground .l2 { width: 80%; height: 52%; left: -35%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .l3 { width: 50%; height: 30%; left: 25%; top: 40%; background: rgba(120,140,255,.10); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 5200); }
+  #tilt, #spin { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+  #win { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 22); overflow: hidden; background: #1b1a20;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.2), 0 calc(var(--u) * 60) calc(var(--u) * 110) calc(var(--u) * -40) rgba(0,0,0,.8); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 11); padding: 0 calc(var(--u) * 20); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 5) calc(var(--u) * 22); border-radius: calc(var(--u) * 9);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 20); font-weight: 600; color: rgba(255,255,255,.6); white-space: nowrap; }
+  #scr { position: relative; overflow: hidden; }
+  #scr img.s { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  #scr .dim { position: absolute; inset: 0; background: rgba(6,5,10,.55); opacity: 0; }
+  /* the empty slots a part leaves behind on the base */
+  .slot { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 8); opacity: 0;
+    background: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 calc(var(--u) * 6), transparent calc(var(--u) * 6) calc(var(--u) * 16)), rgba(4,3,8,.7);
+    border: calc(var(--u) * 2.5) dashed color-mix(in srgb, var(--accent) 70%, #fff 10%); }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.3) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  .shd { position: absolute; border-radius: calc(var(--u) * 10); background: rgba(0,0,0,.85); filter: blur(calc(var(--u) * 16)); opacity: 0; }
+  .ly { position: absolute; transform-style: flat; }
+  .ly .face { position: absolute; inset: 0; border-radius: calc(var(--u) * 10); background-repeat: no-repeat; overflow: hidden;
+    box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.55), 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .ly .face::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, rgba(255,255,255,.16), transparent 35%), linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.35) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .ly .edge { position: absolute; left: 0; right: 0; bottom: calc(var(--u) * -7); height: calc(var(--u) * 7); border-radius: 0 0 calc(var(--u) * 8) calc(var(--u) * 8);
+    background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.06)); }
+  .is-key .ly .face { box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.55); }
+  .is-key .shd { display: none; }
+
+  #ann { position: absolute; inset: 0; pointer-events: none; }
+  #lines { position: absolute; inset: 0; overflow: visible; }
+  #lines path { fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; }
+  .dot { position: absolute; left: 0; top: 0; border-radius: 50%; background: var(--accent); box-sizing: border-box; border: calc(var(--u) * 4) solid #fff;
+    box-shadow: 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 35%, transparent), 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.4); }
+  .pill { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 14); padding: calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * 12) calc(var(--u) * 14);
+    border-radius: 999px; background: linear-gradient(160deg, #2f2d35, #18171c); white-space: nowrap; color: #fff; font-weight: 750;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.28), 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.14), 0 calc(var(--u) * 16) calc(var(--u) * 30) calc(var(--u) * -10) rgba(0,0,0,.65); }
+  .pill .n { display: grid; place-items: center; border-radius: 999px; padding: 0 .5em; height: 1.5em; font-family: var(--font-display); font-size: .78em; color: #fff;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 65%, #fff 35%), var(--accent) 55%, color-mix(in srgb, var(--accent) 75%, #000)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.55); }
+  .pill .n.no { display: none; }
+  .pill .t { padding-left: calc(var(--u) * 2); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="tilt"><div id="spin">
+    <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span></div><div id="scr"><div class="dim"></div></div><div class="sh"></div></div>
+  </div></div></div>
+  <div id="ann"><svg id="lines"></svg></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, KEY = root.classList.contains("is-key");
+  const NS = "http://www.w3.org/2000/svg";
+  const src = v.screen || (v.screens || [])[0];
+  const NUM = !/^(no|false|0|off)$/i.test(String(v.numbers || "yes").trim());
+  const parts = String(v.layers || "").split(";").map((s) => s.split(",")).filter((p) => p.length >= 4 && p.slice(0, 4).every((x) => isFinite(+x)))
+    .slice(0, 4).map((p) => ({ x: +p[0], y: +p[1], w: +p[2], h: +p[3], label: p.slice(4).join(",").trim() }));
+
+  // ---- the window, as large as the frame allows at 16:10
+  const ASP = 16 / 10, BAR = 48 * u;
+  let ww = P ? W - 90 * u : SQ ? W * 0.78 : W * 0.62;
+  let wh = ww / ASP + BAR;
+  const SW = ww, SH = wh - BAR;
+  const win = $("#win"), scr = $("#scr");
+  Object.assign(win.style, { width: ww + "px", height: wh + "px", left: -ww / 2 + "px", top: -wh / 2 + "px" });
+  $("#bar").style.height = BAR + "px";
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  if (src) scr.insertBefore(MV.img(src, "s"), scr.firstChild);
+  $("#bar .url").textContent = v.title || v.domain || "";
+  if (!(v.title || v.domain)) $("#bar .url").style.display = "none";
+
+  // the rig sits in the clear zone
+  const cx = W / 2, cy = P ? safe.top + (H - safe.top - safe.bottom) * 0.55 : SQ ? H * 0.5 : H * 0.5;
+  gsap.set("#tilt", { x: cx, y: cy });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+
+  // ---- the parts: a slot on the base, a shadow on the base, the lifted slab with its crop of the screen
+  const spin = $("#spin"), X0 = -ww / 2, Y0 = -wh / 2 + BAR;
+  const L = parts.map((p, i) => {
+    const r = { x: X0 + (p.x / 100) * SW, y: Y0 + (p.y / 100) * SH, w: (p.w / 100) * SW, h: (p.h / 100) * SH };
+    const slot = document.createElement("div"); slot.className = "slot";
+    Object.assign(slot.style, { left: (p.x / 100) * SW + "px", top: (p.y / 100) * SH + "px", width: r.w + "px", height: r.h + "px" }); scr.appendChild(slot);
+    const shd = document.createElement("div"); shd.className = "shd";
+    Object.assign(shd.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" }); spin.appendChild(shd);
+    const ly = document.createElement("div"); ly.className = "ly";
+    Object.assign(ly.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" });
+    ly.innerHTML = `<div class="edge"></div><div class="face"></div>`;
+    const face = $(".face", ly);
+    if (src) Object.assign(face.style, { backgroundImage: `url("${src}")`, backgroundSize: `${SW}px ${SH}px`, backgroundPosition: `${-(p.x / 100) * SW}px ${-(p.y / 100) * SH}px` });
+    else face.style.background = "#2a2930";
+    spin.appendChild(ly);
+    // four corner probes: the label hangs off whichever corner ends up outermost on screen
+    const probes = [[0, 0], [1, 0], [1, 1], [0, 1]].map(([a, b]) => { const e = document.createElement("i"); Object.assign(e.style, { position: "absolute", left: a * 100 + "%", top: b * 100 + "%", width: "1px", height: "1px" }); ly.appendChild(e); return e; });
+    return { ...p, r, slot, shd, ly, face, probes, lift: 0 };
+  });
+
+  // ---- the labels: a numbered tag hangs in the clear gap above each lifted part, on a short stem from its top corner
+  const ann = $("#ann"), svg = $("#lines");
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`); svg.setAttribute("width", W); svg.setAttribute("height", H);
+  const PFS = (P ? 36 : SQ ? 34 : 32) * u, DOT = 22 * u, STEM = (P ? 34 : 28) * u;
+  L.forEach((p, i) => {
+    const el = document.createElement("div"); el.className = "pill"; el.style.fontSize = PFS + "px";
+    el.innerHTML = `<span class="n${NUM ? "" : " no"}">${String(i + 1).padStart(2, "0")}</span><span class="t"></span>`;
+    $(".t", el).textContent = p.label; ann.appendChild(el);
+    MV.fitText($(".t", el), (P ? W * 0.5 : W * 0.24), 16);
+    const dot = document.createElement("div"); dot.className = "dot"; Object.assign(dot.style, { width: DOT + "px", height: DOT + "px" }); ann.appendChild(dot);
+    const path = document.createElementNS(NS, "path"); path.setAttribute("stroke-width", 3.5 * u); path.setAttribute("pathLength", "1");
+    path.style.strokeDasharray = "1 1"; path.style.strokeDashoffset = "1"; svg.appendChild(path);
+    const b = el.getBoundingClientRect();
+    Object.assign(p, { el, dot, path, pw: b.width, ph: b.height, ds: 0, has: !!p.label });
+    if (!p.label) { el.style.display = "none"; dot.style.display = "none"; path.style.display = "none"; }
+  });
+  const rr = $("#root").getBoundingClientRect();
+  const corners = (p) => p.probes.map((e) => { const b = e.getBoundingClientRect(); return { x: b.left - rr.left, y: b.top - rr.top }; });
+  const placeAnn = () => {
+    if (SIDE) {
+      // a level leader from the part's outermost right corner to a tag in the column
+      L.forEach((p) => { if (!p.has) return; const pts = corners(p); p.A = pts.reduce((a, b) => (b.x > a.x ? b : a)); p.py = p.A.y - p.ph / 2; });
+      const S = L.filter((p) => p.has).sort((a, b) => a.py - b.py);
+      for (let i = 1; i < S.length; i++) if (S[i].py < S[i - 1].py + S[i - 1].ph + 12 * u) S[i].py = S[i - 1].py + S[i - 1].ph + 12 * u;
+      S.forEach((p) => {
+        const lx = Math.min((P ? W - safe.right * 0.3 : W * 0.96) - p.pw, Math.max(COLX, p.A.x + 40 * u));
+        p.el.style.left = lx + "px"; p.el.style.top = p.py + "px";
+        p.dot.style.transform = `translate(${p.A.x - DOT / 2}px, ${p.A.y - DOT / 2}px) scale(${p.ds})`;
+        const ey = p.py + p.ph / 2, kx = lx - 22 * u;
+        p.path.setAttribute("d", `M ${p.A.x} ${p.A.y} L ${kx} ${ey} L ${lx - 2 * u} ${ey}`);
+      });
+      return;
+    }
+    L.forEach((p) => {
+      if (!p.has) return;
+      const pts = corners(p);
+      const T = pts.reduce((a, b) => (b.y < a.y ? b : a));
+      const lx = Math.max(safe.left, Math.min(W - safe.right * 0.4 - p.pw, T.x - 30 * u));
+      const ly = T.y - STEM - p.ph;
+      p.el.style.left = lx + "px"; p.el.style.top = ly + "px";
+      p.dot.style.transform = `translate(${T.x - DOT / 2}px, ${T.y - DOT / 2}px) scale(${p.ds})`;
+      const sx = Math.max(lx + 26 * u, Math.min(lx + p.pw - 26 * u, T.x));
+      p.path.setAttribute("d", `M ${T.x} ${T.y} L ${sx} ${ly + p.ph - 2 * u}`);
+    });
+  };
+
+  // ---- the iso pose: solved once, so every part floats in its own band above the page with room for its tag
+  const RX = 58, RZ = P ? -12 : -16, RY = 0;
+  const pose = (o) => { gsap.set("#tilt", { rotationX: o.rx, rotationY: o.ry, y: o.y, scale: o.sc, scaleZ: o.sc }); if (o.x != null) gsap.set("#tilt", { x: o.x }); gsap.set("#spin", { rotationZ: o.rz }); };
+  const box = (el) => { const b = el.getBoundingClientRect(); return { l: b.left - rr.left, t: b.top - rr.top, r: b.right - rr.left, b: b.bottom - rr.top }; };
+  const slabBox = (p) => { const c = corners(p); return { l: Math.min(...c.map((q) => q.x)), r: Math.max(...c.map((q) => q.x)), t: Math.min(...c.map((q) => q.y)), b: Math.max(...c.map((q) => q.y)) }; };
+  pose({ rx: RX, ry: RY, rz: RZ, y: cy, sc: 1 });
+  L.forEach((p) => gsap.set(p.ly, { z: 0 }));
+  // SIDE (wide and square frames): tags in a column beside the stack, on level leaders; ABOVE (9:16): each tag hangs in the gap over its part
+  const SIDE = true, ANY = L.some((p) => p.has);
+  const PWMAX = ANY ? Math.max(...L.map((p) => (p.has ? p.pw : 0))) : 0, LEAD = 70 * u;
+  const MARG = SIDE ? Math.max(30 * u, ANY ? Math.max(...L.map((p) => p.ph)) * (P ? 1.5 : 0.55) : 0) : (ANY ? Math.max(...L.map((p) => p.ph)) + STEM + 22 * u : 40 * u);
+  // lift each part (bottom first) just far enough that it clears the one below it on screen, at the current pose
+  const solveZ = () => {
+    L.forEach((p) => gsap.set(p.ly, { z: 0 }));
+    let prevTop = box(win).t;
+    L.forEach((p, i) => {
+      let z = 0;
+      const goal = prevTop - (i === 0 ? MARG * 0.75 : MARG);
+      for (let it = 0; it < 12; it++) {
+        gsap.set(p.ly, { z }); const b0 = slabBox(p).b; if (Math.abs(b0 - goal) < 1) break;
+        gsap.set(p.ly, { z: z + 20 }); const k = Math.max(0.05, (b0 - slabBox(p).b) / 20);
+        z = Math.max(0, z + (b0 - goal) / k);
+      }
+      gsap.set(p.ly, { z }); p.zMax = z; prevTop = Math.min(prevTop, slabBox(p).t);
+    });
+  };
+  // fit: the stack (and the tags) inside the clear zone, re-solved at each scale because the tags do not scale
+  const zone = P ? { t: safe.top + 10 * u, b: H - safe.bottom + 40 * u, l: 24 * u, r: W - safe.right * 0.3 - (ANY ? PWMAX + LEAD * 0.6 : 0) }
+    : { t: H * 0.08, b: H * 0.93, l: W * 0.05, r: W * 0.95 - (ANY ? PWMAX + LEAD : 0) };
+  const measure = () => { const U = box(win); L.forEach((p) => { const b = slabBox(p); U.l = Math.min(U.l, b.l); U.r = Math.max(U.r, b.r); U.t = Math.min(U.t, b.t - (!SIDE && p.has ? p.ph + STEM : 0)); U.b = Math.max(U.b, b.b); }); return U; };
+  let ISO = 1, yIso = cy, xIso = cx;
+  for (let it = 0; it < 7; it++) {
+    pose({ rx: RX, ry: RY, rz: RZ, y: yIso, sc: ISO }); gsap.set("#tilt", { x: xIso });
+    solveZ();
+    const U = measure();
+    const f = Math.min((zone.b - zone.t) / (U.b - U.t), (zone.r - zone.l) / (U.r - U.l));
+    if (it < 6) ISO = Math.min(1.15, ISO * Math.min(1.15, Math.max(0.6, f)));
+    pose({ rx: RX, ry: RY, rz: RZ, y: yIso, sc: ISO }); solveZ();
+    const V = measure(); yIso += (zone.t + zone.b) / 2 - (V.t + V.b) / 2; xIso += (zone.l + zone.r) / 2 - (V.l + V.r) / 2;
+  }
+  pose({ rx: RX, ry: RY, rz: RZ, y: yIso, sc: ISO }); gsap.set("#tilt", { x: xIso }); solveZ();
+  const COLX = measure().r + (P ? LEAD * 0.6 : LEAD);
+  gsap.set("#tilt", { x: cx });
+  pose({ rx: 10, ry: 0, rz: 0, y: cy, sc: 1 }); L.forEach((p) => gsap.set(p.ly, { z: 0 }));
+
+  // ---- the camera and the explode, as one driver so every seek is exact
+  const E = (n) => gsap.parseEase(n), eIn = E("expo.out"), eTilt = E("power3.inOut"), eLift = E("expo.out"), eDrop = E("power4.in"), eBack = E("expo.out"), eS = E("sine.inOut");
+  const cl = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+  const T_TILT = 0.7, T_LIFT = 1.05, T_DROP = D - 1.4, T_SNAP = T_DROP + 0.4, T_LAB = 1.75;
+  const clock = { t: 0 };
+  const drive = () => {
+    const t = clock.t;
+    const a = eIn(cl(t / 0.95));
+    const k = eTilt(cl((t - T_TILT) / 1.1));
+    const back = eBack(cl((t - T_SNAP) / 1.0));
+    const drift = eS(cl((t - T_TILT - 1.1) / (T_DROP - T_TILT - 1.1)));
+    const iso = k * (1 - back);
+    const flat = { rx: 14 * (1 - a) + 7, ry: (P ? -7 : -10) * (1 - a * 0.3), y: cy + 140 * u * (1 - a), sc: 0.9 + 0.1 * a };
+    const fin = { rx: 5, ry: P ? 5 : 7, y: cy, sc: 1 };
+    const base = back > 0 ? { rx: flat.rx + (fin.rx - flat.rx) * back, ry: flat.ry + (fin.ry - flat.ry) * back, y: flat.y, sc: flat.sc } : flat;
+    pose({
+      rx: base.rx + (RX - base.rx + 3 * drift * (1 - back)) * iso,
+      ry: base.ry * (1 - iso),
+      rz: (RZ + 4 * drift) * iso,
+      y: base.y + (yIso - base.y) * iso,
+      x: cx + (xIso - cx) * iso,
+      sc: base.sc + (ISO - base.sc) * iso,
+    });
+    L.forEach((p, i) => {
+      const up = eLift(cl((t - T_LIFT - i * 0.12) / 1.05));
+      const lag = (L.length - 1 - i) * 0.04;
+      const down = eDrop(cl((t - T_DROP - lag) / (T_SNAP - T_DROP - lag)));
+      const lift = up * (1 - down);
+      gsap.set(p.ly, { z: lift * p.zMax });
+      p.shd.style.opacity = Math.min(1, lift * 1.5) * 0.7;
+      gsap.set(p.shd, { x: lift * 30 * u, y: lift * 40 * u, scale: 1 + lift * 0.05 });
+      p.slot.style.opacity = Math.min(1, up * 1.6) * (1 - cl((t - T_SNAP + 0.02) / 0.04));
+    });
+    $("#scr .dim").style.opacity = 0.5 * cl((t - T_LIFT) / 0.8) * (1 - cl((t - T_SNAP + 0.02) / 0.04));
+    win.style.opacity = a;
+    placeAnn();
+  };
+  drive();
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: drive }, 0);
+  tl.fromTo(win, { filter: "blur(14px)" }, { filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.3);
+  L.forEach((p, i) => tl.fromTo(p.face, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, T_LIFT + 0.35 + i * 0.12));
+
+  // ---- the tags, one per beat (bottom part first); they clear just before the parts fall
+  L.forEach((p, i) => {
+    if (!p.has) return;
+    const t = T_LAB + i * 0.24;
+    tl.fromTo(p, { ds: 0 }, { ds: 1, duration: 0.35, ease: "back.out(3)", onUpdate: placeAnn }, t);
+    tl.fromTo(p.path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" }, t + 0.05);
+    tl.fromTo(p.el, { scale: 0.5, opacity: 0, transformOrigin: SIDE ? "0% 50%" : "0% 100%" }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.2)" }, t + 0.18);
+    tl.to([p.el, p.dot, p.path], { opacity: 0, duration: 0.2, ease: "power2.in" }, T_DROP - 0.28 + i * 0.03);
+  });
+
+  // ---- the moment: every part lands in its slot at once, the window kicks and a light sweeps it
+  tl.fromTo("#stage", { scale: 1 }, { scale: 1.03, duration: 0.06, ease: "power2.out", immediateRender: false }, T_SNAP);
+  tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, T_SNAP + 0.06);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.75, ease: "power2.out", immediateRender: false }, T_SNAP);
+  L.forEach((p) => tl.fromTo(p.face, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.75, ease: "power2.out", immediateRender: false }, T_SNAP));
+  // once seated, the slabs lose their glow so the page reads whole again
+  L.forEach((p) => tl.to(p.face, { boxShadow: "0 0 0 0px rgba(255,255,255,0), 0 0 0px rgba(0,0,0,0)", duration: 0.25, ease: "power2.out" }, T_SNAP));
+  L.forEach((p) => tl.to($(".edge", p.ly), { opacity: 0, duration: 0.1 }, T_SNAP));
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

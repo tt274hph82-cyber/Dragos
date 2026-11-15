@@ -1,0 +1,5 @@
+{ "id": "testimonial-wall", "name": "Testimonial wall", "oneLiner": "a wall of glass review cards tilted in 3D cascades in around one card, the camera drifting across it; that card lights up and lifts off the wall to face the camera as the rest fall out of focus, its five stars fill one by one and the quote lands",
+  "category": "social", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["testimonials", "reviews", "wall of love", "customers", "social proof", "stars", "feedback", "trust", "quote", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": false,
+  "say": "when the speaker says how many people love it, or 'here is what people are saying': the wall fills on the number, the card lifts as they read one review out" }

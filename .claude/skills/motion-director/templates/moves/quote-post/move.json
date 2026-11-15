@@ -1,0 +1,5 @@
+{ "id": "quote-post", "name": "Glass quote post", "oneLiner": "someone else's post sits alone on glass; a finger taps repost, a menu opens and Quote is picked, then the post shrinks into a nested card while the composer grows around it (real face, name), the new line types itself above the quote with a filling character ring, and Post is pressed, draining to a green Posted",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["social", "post", "quote", "repost", "reply", "react", "commentary", "share", "compose", "typing", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker reacts to something someone else posted ('so I quoted it and said...', 'someone asked this and I had to answer'): cut in on the question, the new line types as they say their take and Posted lands on the end of it" }

@@ -1,0 +1,5 @@
+{ "id": "job-post", "name": "Job post applicants", "oneLiner": "a white job post card lands on a warm lit desk: the company mark, the role set big, its chips and a live Hiring dot; the applicants counter climbs fast while applicant avatars drop onto a stack one by one, a +N disc closes the stack and a green today chip stamps on",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["hiring", "job", "recruiting", "applicants", "team", "role", "careers", "demand", "counter", "avatars", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says they posted a role and people flooded in ('I posted one job and 400 people applied', 'we are hiring'): cut in on the role, the counter lands on the number they say" }

@@ -1,0 +1,5 @@
+{ "id": "subscribe-button", "name": "Glass subscribe button", "oneLiner": "a watch page on glass (the playing video, its title, the channel row): the white Subscribe pill is pressed, it morphs into the quiet Subscribed pill with a bell, the bell rings with its waves and a count badge while the subscriber number ticks up and bumps",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["subscribe", "bell", "notifications", "channel", "creator", "cta", "youtube", "outro", "end screen", "subscribers", "video", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker asks people to subscribe or turn on notifications ('subscribe so you catch the next one', 'hit the bell'): the button is pressed on 'subscribe', the bell rings on 'bell' or 'notified'" }

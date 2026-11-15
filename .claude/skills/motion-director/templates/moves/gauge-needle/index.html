@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"label","type":"string","label":"What the gauge measures (a word or two)","default":"Pressure"},
+  {"id":"value","type":"number","label":"Where the needle lands","default":92},
+  {"id":"max","type":"number","label":"The top of the dial","default":100},
+  {"id":"unit","type":"string","label":"After the number","default":"%"},
+  {"id":"red","type":"number","label":"Where the red zone starts, in % of the dial","default":75},
+  {"id":"minLabel","type":"string","label":"Label at the low end (empty = 0)","default":""},
+  {"id":"maxLabel","type":"string","label":"Label at the high end (empty = the max)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --hot: #FF3B30; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 0%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #ground .l3 { width: 80%; height: 46%; left: 10%; top: 18%; background: var(--hot); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base, .is-alpha #refl { display: none; }
+
+  #cam { position: absolute; inset: 0; transform-origin: 0 0; }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 60%; background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.55) 12%, rgba(255,255,255,.55) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.35); }
+
+  /* the instrument: a glass bezel, a dark face, the tick band, the needle */
+  .dial { position: absolute; }
+  .face { position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(70% 70% at 50% 38%, color-mix(in srgb, var(--surface) 70%, #000) , #000 100%);
+    box-shadow: inset 0 0 0 calc(var(--u) * 26) rgba(255,255,255,.06), inset 0 0 0 calc(var(--u) * 28) rgba(255,255,255,.12), inset 0 calc(var(--u) * 30) calc(var(--u) * 60) rgba(0,0,0,.6),
+      0 0 0 calc(var(--u) * 2) rgba(255,255,255,.2), 0 calc(var(--u) * 60) calc(var(--u) * 90) calc(var(--u) * -40) rgba(0,0,0,.85); }
+  .bezel { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    background: conic-gradient(from 250deg, rgba(255,255,255,.08), rgba(255,255,255,.85) 9%, rgba(255,255,255,.12) 22%, rgba(255,255,255,.04) 45%, rgba(255,255,255,.1) 62%, rgba(255,255,255,.5) 74%, rgba(255,255,255,.06) 86%, rgba(255,255,255,.08));
+    -webkit-mask: radial-gradient(closest-side, transparent calc(100% - var(--u) * 28), #000 calc(100% - var(--u) * 27)); mask: radial-gradient(closest-side, transparent calc(100% - var(--u) * 28), #000 calc(100% - var(--u) * 27)); }
+  .glass { position: absolute; inset: 3.5%; border-radius: 50%; pointer-events: none; overflow: hidden; }
+  .glass::before { content: ""; position: absolute; left: 8%; right: 8%; top: 2%; height: 46%; border-radius: 50% 50% 46% 46% / 60% 60% 40% 40%;
+    background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,0)); }
+  .glass::after { content: ""; position: absolute; inset: 0; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  .is-alpha .face { background: radial-gradient(70% 70% at 50% 38%, color-mix(in srgb, var(--surface) 85%, #fff), var(--surface) 100%); }
+  .is-key .face { box-shadow: inset 0 0 0 calc(var(--u) * 26) rgba(255,255,255,.07), inset 0 0 0 calc(var(--u) * 28) rgba(255,255,255,.28); }
+  .is-key .glass::after, .is-key #bloom, .is-key #hotglow { display: none; }
+  .dial svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #bloom { position: absolute; border-radius: 50%; background: var(--hot); filter: blur(calc(var(--u) * 80)); opacity: 0; }
+
+  #num { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums; color: var(--ink); text-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 20) rgba(0,0,0,.5); }
+  #num .fx { font-size: .55em; margin-left: .03em; opacity: .75; }
+  #lab { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 66%, transparent); }
+  .end { position: absolute; white-space: nowrap; font-weight: 700; color: color-mix(in srgb, var(--ink) 52%, transparent); transform: translate(-50%, -50%); }
+
+  #refl { position: absolute; transform: scaleY(-1); transform-origin: 50% 50%; filter: blur(calc(var(--u) * 4));
+    -webkit-mask: linear-gradient(0deg, rgba(0,0,0,.9), transparent 62%); mask: linear-gradient(0deg, rgba(0,0,0,.9), transparent 62%); }
+  #refl .rf { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(70% 70% at 50% 38%, #222, #000); box-shadow: inset 0 0 0 calc(var(--u) * 28) rgba(255,255,255,.22); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="cam"><div id="stage"><div id="rig">
+    <div id="floor"></div>
+    <div id="base"></div>
+    <div id="refl" class="dial"><div class="rf"></div><svg viewBox="0 0 1000 1000"><use href="#ticks" /><use href="#hotarc" /><use href="#needleG" /></svg></div>
+    <div id="bloom"></div>
+    <div id="dial" class="dial">
+      <div class="face"></div>
+      <svg viewBox="0 0 1000 1000">
+        <defs>
+          <linearGradient id="gNeedle" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" /><stop offset=".5" stop-color="#fff" /><stop offset=".5" class="na" /><stop offset="1" class="na" /></linearGradient>
+          <radialGradient id="gHub" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".9" /><stop offset=".35" stop-color="#9a9a9a" /><stop offset="1" stop-color="#1a1a1a" /></radialGradient>
+          <filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="10" /></filter>
+        </defs>
+        <path id="hotglow" fill="none" stroke-linecap="round" filter="url(#fGlow)" opacity="0" />
+        <g id="hotarc"><path id="hotband" fill="none" stroke-linecap="round" /></g>
+        <g id="ticks"></g>
+        <g id="needleG">
+          <path id="needleGlow" filter="url(#fGlow)" opacity=".7" />
+          <path id="needle" fill="url(#gNeedle)" />
+          <circle cx="500" cy="500" r="54" fill="url(#gHub)" stroke="rgba(255,255,255,.5)" stroke-width="2" />
+          <circle id="hubDot" cx="500" cy="500" r="18" />
+        </g>
+      </svg>
+      <div class="bezel"></div>
+      <div class="glass"></div>
+      <div id="num"><span class="n"></span><span class="fx"></span></div>
+      <div id="lab"></div>
+      <div class="end" id="e0"></div><div class="end" id="e1"></div>
+    </div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, NS = "http://www.w3.org/2000/svg";
+  const cs = getComputedStyle(root), ACC = cs.getPropertyValue("--accent").trim(), HOT = [255, 59, 48];
+  document.querySelectorAll(".na").forEach((s) => (s.style.stopColor = `color-mix(in srgb, ${ACC} 70%, white)`));
+
+  // ---- the numbers
+  const max = Math.max(1e-9, isFinite(+v.max) && +v.max > 0 ? +v.max : 100);
+  const val = Math.max(0, Math.min(max * 1.0, isFinite(+v.value) ? +v.value : 0)), F = val / max;
+  const RED = Math.max(0.3, Math.min(0.95, (isFinite(+v.red) ? +v.red : 75) / 100));
+  const dec = max < 10 && Math.round(val) !== val ? 1 : 0;
+  const fmt = (x) => (dec ? x.toFixed(1) : Math.round(x).toLocaleString("en-US"));
+
+  // ---- where the dial sits
+  let DS, cx, cy;
+  if (MV.alpha && P) { DS = 600 * u; cx = (safe.left + W - safe.right) / 2; cy = safe.top + 40 * u + DS / 2; }
+  else if (MV.alpha) { DS = 560 * u; cx = W - safe.right - DS / 2 - 40 * u; cy = H - safe.bottom - DS / 2 - 20 * u; }
+  else if (P) { DS = 820 * u; cx = (safe.left + W - safe.right) / 2; cy = safe.top + 60 * u + DS / 2; }
+  else if (SQ) { DS = 740 * u; cx = W / 2; cy = 84 * u + DS / 2; }
+  else { DS = 790 * u; cx = W / 2; cy = 76 * u + DS / 2; }
+  const k = DS / 1000;
+  for (const id of ["#dial", "#refl"]) Object.assign($(id).style, { width: DS + "px", height: DS + "px", left: cx - DS / 2 + "px", top: cy - DS / 2 + "px" });
+  const floorY = cy + DS / 2 + 14 * u;
+  $("#refl").style.top = floorY + 4 * u + "px";
+  $("#floor").style.top = floorY + "px";
+  Object.assign($("#base").style, { left: cx - DS * 0.85 + "px", width: DS * 1.7 + "px", top: floorY - 1.5 * u + "px" });
+  const BL = DS * 1.1; Object.assign($("#bloom").style, { width: BL + "px", height: BL * 0.8 + "px", left: cx - BL / 2 + "px", top: cy - BL * 0.5 + "px" });
+
+  // ---- the sweep: 240 degrees, 0 = straight up
+  const A0 = -120, A1 = 120, ang = (f) => A0 + (A1 - A0) * f;
+  const pt = (a, r) => [500 + r * Math.sin((a * Math.PI) / 180), 500 - r * Math.cos((a * Math.PI) / 180)];
+  const arc = (a, b, r) => { const [x0, y0] = pt(a, r), [x1, y1] = pt(b, r); return `M${x0},${y0} A${r},${r} 0 ${b - a > 180 ? 1 : 0} 1 ${x1},${y1}`; };
+  // the colour band: green to amber to the hot red, so "into the red" reads in any brand
+  const STOPS = [[0, [62, 224, 138]], [0.42, [160, 226, 90]], [Math.min(RED - 0.04, 0.68), [255, 176, 32]], [RED, [255, 112, 40]], [1, HOT]];
+  const colAt = (f) => { for (let i = 1; i < STOPS.length; i++) if (f <= STOPS[i][0]) { const [a, ca] = STOPS[i - 1], [b, cb] = STOPS[i]; const t = (f - a) / Math.max(1e-6, b - a); return ca.map((x, j) => Math.round(x + (cb[j] - x) * t)); } return HOT; };
+  const rgb = (c, o = 1) => `rgba(${c[0]},${c[1]},${c[2]},${o})`;
+  const NT = 49, ticks = [];
+  for (let i = 0; i < NT; i++) {
+    const f = i / (NT - 1), a = ang(f), major = i % 4 === 0;
+    const [x0, y0] = pt(a, major ? 352 : 372), [x1, y1] = pt(a, 428);
+    const l = document.createElementNS(NS, "line");
+    Object.entries({ x1: x0, y1: y0, x2: x1, y2: y1, "stroke-width": major ? 13 : 8, "stroke-linecap": "round", stroke: "rgba(255,255,255,.2)" }).forEach(([kk, vv]) => l.setAttribute(kk, vv));
+    $("#ticks").appendChild(l); ticks.push({ l, f, c: colAt(f) });
+  }
+  // the red zone: a band inside the ticks that flares when the needle gets there
+  for (const id of ["hotband", "hotglow"]) { const e = document.getElementById(id); e.setAttribute("d", arc(ang(RED), A1, 318)); e.setAttribute("stroke", rgb(HOT)); }
+  $("#hotband").setAttribute("stroke-width", 16); $("#hotband").setAttribute("opacity", 0.35);
+  $("#hotglow").setAttribute("stroke-width", 40);
+  // the needle: tapered, white on one side and the brand on the other, a short tail
+  $("#needle").setAttribute("d", "M500,92 L522,500 L512,580 L488,580 L478,500 Z");
+  $("#needleGlow").setAttribute("d", "M500,92 L522,500 L512,580 L488,580 L478,500 Z"); $("#needleGlow").setAttribute("fill", ACC);
+  $("#hubDot").setAttribute("fill", ACC);
+
+  // ---- text on the face
+  const num = $("#num"), nn = num.querySelector(".n");
+  num.querySelector(".fx").textContent = v.unit || "";
+  num.style.fontSize = 190 * k + "px"; num.style.top = 610 * k + "px";
+  nn.textContent = fmt(max); MV.fitText(num, 520 * k, 30);
+  const lab = $("#lab"); lab.textContent = v.label || ""; lab.style.fontSize = Math.max(36 * u, 46 * k) + "px"; lab.style.top = 820 * k + "px";
+  MV.fitText(lab, 520 * k, 20);
+  const ends = [[$("#e0"), v.minLabel || "0", A0], [$("#e1"), v.maxLabel || fmt(max), A1]];
+  ends.forEach(([e, t, a]) => { e.textContent = t; e.style.fontSize = Math.max(36 * u, 44 * k) + "px"; MV.fitText(e, 180 * k, 20); const [x, y] = pt(a, 300); e.style.left = x * k + "px"; e.style.top = y * k + 34 * k + "px"; });
+
+  // ---- the state, painted every frame: needle angle, lit ticks, count, colour
+  const S = { a: A0, jit: 0 };
+  const needleG = $("#needleG");
+  const paint = () => {
+    const a = S.a + S.jit, f = Math.max(0, Math.min(1, (a - A0) / (A1 - A0)));
+    needleG.setAttribute("transform", `rotate(${a} 500 500)`);
+    ticks.forEach((t) => { const on = t.f <= f + 1e-6; t.l.setAttribute("stroke", on ? rgb(t.c) : "rgba(255,255,255,.2)"); });
+    const c = colAt(f), shown = Math.min(val, max * Math.max(0, (S.a - A0) / (A1 - A0)));
+    nn.textContent = fmt(shown); num.style.color = f > 0.02 ? `color-mix(in srgb, ${rgb(c)} 70%, white)` : "";
+  };
+  paint();
+
+  // ---- the camera: a slow 3D drift, then a push toward the needle when it hits the red
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: P ? 12 : 16, rotationX: 8, z: -60 * u }, { rotationY: P ? -6 : -8, rotationX: 2, z: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the build: the dial lands on the floor, ticks sweep on, the needle wakes
+  tl.fromTo("#base", { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.02);
+  tl.fromTo("#dial", { scale: 0.86, y: 40 * u }, { scale: 1, y: 0, duration: 0.9, ease: "expo.out" }, 0.02);
+  tl.fromTo("#dial", { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.fromTo("#refl", { opacity: 0 }, { opacity: 0.4, duration: 0.6, ease: "power2.out" }, 0.1);
+  ticks.forEach((t, i) => tl.fromTo(t.l, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out" }, 0.15 + i * 0.008));
+  tl.fromTo("#lab, .end", { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.3);
+  tl.fromTo(num, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0.45);
+
+  // the swing: a hesitant first rise, then the run past the mark, a hit, two settles
+  const target = ang(F), over = Math.min(A1 + 6, target + 7), T0 = 0.55;
+  tl.to(S, { a: A0 + (target - A0) * 0.18, duration: 0.35, ease: "power2.out", onUpdate: paint }, T0);
+  tl.to(S, { a: A0 + (target - A0) * 0.12, duration: 0.18, ease: "sine.inOut", onUpdate: paint }, T0 + 0.35);
+  tl.to(S, { a: over, duration: 1.15, ease: "power3.inOut", onUpdate: paint }, T0 + 0.53);
+  const HIT = T0 + 0.53 + 1.15;
+  tl.to(S, { a: target - 2.4, duration: 0.22, ease: "sine.inOut", onUpdate: paint }, HIT);
+  tl.to(S, { a: target + 1, duration: 0.2, ease: "sine.inOut", onUpdate: paint }, HIT + 0.22);
+  tl.to(S, { a: target, duration: 0.35, ease: "sine.out", onUpdate: paint }, HIT + 0.42);
+  // in the red the needle never sits still: a fine shiver
+  if (F >= RED) { const o = { t: 0 }; tl.to(o, { t: 1, duration: D - HIT - 0.4, ease: "none", onUpdate: () => { S.jit = Math.sin(o.t * 90) * 0.5 * Math.min(1, o.t * 6); paint(); } }, HIT + 0.4); }
+
+  // ---- the moment: the needle crosses into the red, the zone flares, the room goes red, the camera kicks
+  let tRed = HIT;
+  { const e = gsap.parseEase("power3.inOut"), a0 = A0 + (target - A0) * 0.12, aR = ang(RED);
+    for (let i = 0; i <= 300; i++) { const a = a0 + (over - a0) * e(i / 300); if (a >= aR) { tRed = T0 + 0.53 + (i / 300) * 1.15; break; } } }
+  if (F >= RED) {
+    tl.to("#hotband", { opacity: 1, duration: 0.15, ease: "power2.out" }, tRed);
+    tl.fromTo("#hotglow", { opacity: 0 }, { opacity: 0.9, duration: 0.2, ease: "power2.out" }, tRed);
+    tl.to("#hotglow", { opacity: 0.55, duration: 0.8, ease: "power2.out" }, tRed + 0.4);
+    if (!KEY) tl.fromTo("#bloom", { opacity: 0 }, { opacity: 0.32, duration: 0.5, ease: "power2.out" }, tRed);
+    tl.to("#ground .l3", { opacity: 0.32, duration: 0.6, ease: "power2.out" }, tRed);
+    tl.fromTo(num, { scale: 1 }, { scale: 1.14, duration: 0.09, ease: "power2.out", immediateRender: false, transformOrigin: "50% 60%" }, HIT);
+    tl.to(num, { scale: 1, duration: 0.5, ease: "back.out(3)" }, HIT + 0.09);
+    tl.to("#lab", { color: rgb(HOT), duration: 0.3, ease: "power2.out" }, tRed);
+    // the kick: a short shake on the hit, then a slow push toward the needle tip
+    const sh = { t: 0 };
+    tl.to(sh, { t: 1, duration: 0.42, ease: "none", onUpdate: () => { const d = (1 - sh.t) * Math.min(1, sh.t * 20) * 9 * u; gsap.set("#stage", { x: Math.sin(sh.t * 40) * d, y: Math.cos(sh.t * 33) * d * 0.6 }); } }, HIT);
+  } else {
+    tl.fromTo(num, { scale: 1 }, { scale: 1.12, duration: 0.09, ease: "power2.out", immediateRender: false, transformOrigin: "50% 60%" }, HIT);
+    tl.to(num, { scale: 1, duration: 0.5, ease: "back.out(3)" }, HIT + 0.09);
+  }
+  const [tx, ty] = pt(target, 330), px = cx - DS / 2 + tx * k, py = cy - DS / 2 + ty * k;
+  const Z = 1.07;
+  tl.fromTo("#cam", { x: 0, y: 0, scale: 1 }, { x: (W / 2 - px) * 0.12 + (1 - Z) * (W / 2), y: (H / 2 - py) * 0.12 + (1 - Z) * (H / 2), scale: Z, duration: D - HIT + 0.2, ease: "sine.inOut" }, HIT - 0.2);
+  tl.fromTo(".glass", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, HIT + 0.3);
+
+  // ---- out
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

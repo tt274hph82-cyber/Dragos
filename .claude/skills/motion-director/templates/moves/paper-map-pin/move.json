@@ -1,0 +1,5 @@
+{ "id": "paper-map-pin", "name": "Paper map pin", "oneLiner": "a close shot of a folded paper map on scanned crumpled paper: a brand-colour marker route draws on twos from a ringed start to the goal, a real push pin in the brand colour drops out of the lens and sticks, and both ends get a handwritten label",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["map", "route", "roadmap", "journey", "destination", "goal", "plan", "where we are going", "pin", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.6, "alpha": false,
+  "say": "when the speaker lays out where something is heading ('here is the plan', 'from where you are to where you want to be'): the route draws while they explain and the pin sticks on the destination word" }

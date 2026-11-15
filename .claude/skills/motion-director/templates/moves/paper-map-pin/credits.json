@@ -1,0 +1,9 @@
+{ "sources": [
+  { "file": "assets/map-paper.jpg", "from": "ambientCG Paper003 (scanned crumpled white paper), resized; the map sheet", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper003" },
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the paper grain over the sheet", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the printed map", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; the desk", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/pin-base.png, assets/pin-mask.png, assets/pin-spec.png", "from": "A push pin (steel needle, plastic head) modelled as glTF for this move and rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0); split into the shaded pin, the head mask the brand colour is multiplied through, and its specular highlights", "license": "Original render, free to use; HDRI CC0", "page": "https://polyhaven.com/a/studio_small_09" },
+  { "file": "printed map", "from": "An abstract town by the water drawn for this move (coast, river, parks, contours, street grid, grid letters); no real place or name", "license": "Original, free to use", "page": "" },
+  { "file": "assets/fonts/PermanentMarker-Regular.ttf", "from": "Permanent Marker by Font Diner, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Permanent+Marker" }
+] }

@@ -1,0 +1,5 @@
+{ "id": "leaderboard", "name": "Glass leaderboard", "oneLiner": "4 or 5 glass rows count up live and re-order with smooth swaps while the brand's row climbs past each one to the top, floods with the accent and gets crowned",
+  "category": "data", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["chart", "leaderboard", "ranking", "race", "comparison", "data", "winner", "numbers", "camera", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": false,
+  "say": "when the speaker says the brand overtook the others or is now number one: cut in on the comparison, the crown lands on the word that says first or number one" }

@@ -1,0 +1,5 @@
+{ "id": "storage-bar", "name": "Storage cleanup", "oneLiner": "a glass storage settings card: the usage bar sweeps in solid red to nearly full with an Almost full warning, a pointer presses Clean up, the red drains to reveal the categories, which shrink one after another as the used number and every row roll down, and the space they give back fills the bar in green stripes as a freed chip lands",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["storage", "disk", "space", "full", "cleanup", "clean up", "declutter", "delete", "files", "memory", "settings", "os", "system", "freed", "phone", "laptop"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says their storage, drive or head was full and they cleared it out ('my laptop was completely full', 'it deleted 100 gigs of junk'): the bar sits red on 'full', the press lands on 'clean' and the green freed space on the number. Set cats, before, after and total" }

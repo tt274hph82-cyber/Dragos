@@ -1,0 +1,5 @@
+{ "id": "link-in-bio", "name": "Link in bio page", "oneLiner": "a link-in-bio page lit in the brand colour (face in a white ring, name, handle, a row of social glyphs) swings up out of depth and its link buttons stack in on springs; a finger comes in and taps one, the button presses with a ripple and a dark click counter springs out of its end and ticks up",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["link in bio", "links", "bio", "landing page", "cta", "click", "tap", "funnel", "creator", "profile", "free guide", "newsletter", "social", "mobile", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker sends people to the link in their bio ('it is the first link in my bio', 'grab the free guide from the link in bio'): cut in on 'link in bio', the tap lands on the name of the thing and the counter ticks as they say 'thousands of you already grabbed it'. Set links to the real buttons and pick to the one they name" }

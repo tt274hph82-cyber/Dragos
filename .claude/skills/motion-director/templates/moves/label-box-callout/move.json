@@ -1,0 +1,5 @@
+{ "id": "label-box-callout", "name": "Label box callout", "oneLiner": "the printed back label of a pack, real paper stuck on a real cardboard box, settles in close; the rest of the fine print dims, a marker box is drawn by hand around one line and the camera pushes in on it while a handwritten note lands beside it",
+  "category": "explain", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["paper"], "from": "new",
+  "tags": ["label", "ingredients", "fine print", "small print", "packaging", "back of pack", "read the label", "terms", "hidden", "proof", "callout", "marker", "highlight", "product"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker points at what is written on something ('look at the third ingredient', 'it says it right there on the label'): cut in on 'look', the box is drawn on the line they read, the note lands on their verdict. Set lines to the label's real lines, pick to the one they read, note to their one-word verdict" }

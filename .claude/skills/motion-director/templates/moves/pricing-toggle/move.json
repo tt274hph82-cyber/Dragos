@@ -1,0 +1,5 @@
+{ "id": "pricing-toggle", "name": "Pricing toggle", "oneLiner": "a three-plan glass pricing table rises in, a pointer flips the billing toggle from monthly to yearly, every price rolls down its digits like a counter, a green save chip pops beside the toggle, then the middle plan lifts forward with a lit ring and a Most popular badge while the others step back",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["pricing", "plans", "tiers", "yearly", "annual", "monthly", "discount", "subscription", "saas", "offer", "most popular", "toggle", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says go yearly, talks about plans or names the tier most people pick ('switch to annual and it drops to 23', 'most people go for Pro'): the toggle flips on 'yearly', the plan lifts on its name" }

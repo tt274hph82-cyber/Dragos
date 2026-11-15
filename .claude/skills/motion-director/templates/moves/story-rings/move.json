@@ -1,0 +1,5 @@
+{ "id": "story-rings", "name": "Story rings open", "oneLiner": "a row of avatar coins in story rings (brand gradient for new, grey for seen) pops in from the middle out; a finger taps the real face in the centre, its ring breaks into spinning dashes while it loads, then the face grows out of the ring into a full 9:16 story frame (segmented progress, header, a brand screen card, the headline) while the row falls away and the first segment runs",
+  "category": "social", "kind": "transition", "uses": ["broll", "transition"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["stories", "story", "social", "ring", "tap", "open", "profile", "behind the scenes", "daily", "creator", "vertical", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker says they posted it to their story or shows what they share day to day ('I put it on my story', 'every day I post a quick update'): the ring is tapped on 'story' and the frame opens on the update" }

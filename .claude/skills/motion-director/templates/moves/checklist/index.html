@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Card heading, a few words (empty = none)","default":"Before every meeting ends"},
+  {"id":"items","type":"string","label":"The items, comma separated, 3 to 5, short","default":"Notes written up,Decisions logged,Tasks assigned,Follow-up booked"},
+  {"id":"stamp","type":"string","label":"Stamp on the last tick (empty = none)","default":"Done"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 32%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,.045), transparent 60%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+
+  /* the card: one pane of frosted glass */
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(170deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 40) calc(var(--u) * 90) calc(var(--u) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 78%, white 12%), color-mix(in srgb, var(--surface) 90%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.3) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  #ttl { position: absolute; font-family: var(--font-display); color: var(--ink); line-height: 1.05; letter-spacing: -0.01em; white-space: nowrap; }
+  #cnt { position: absolute; font-family: var(--font-display); line-height: 1; color: color-mix(in srgb, var(--accent) 45%, white 55%); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  #cnt .of { color: color-mix(in srgb, var(--ink) 45%, transparent); }
+  #bar { position: absolute; border-radius: 99px; background: rgba(255,255,255,.1); box-shadow: inset 0 calc(var(--u) * 1) calc(var(--u) * 2) rgba(0,0,0,.35); }
+  #bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: 99px;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent2) 60%, var(--accent)), var(--accent) 70%, color-mix(in srgb, var(--accent) 50%, white));
+    box-shadow: 0 0 calc(var(--u) * 22) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #bar i { box-shadow: none; }
+
+  .it { position: absolute; display: flex; align-items: center; }
+  .box { flex: none; position: relative; box-sizing: border-box; }
+  .box .bg { position: absolute; inset: 0; border-radius: 28%; background: rgba(255,255,255,.08);
+    box-shadow: inset 0 0 0 calc(var(--u) * 2.5) rgba(255,255,255,.32), inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.2); }
+  .box .on { position: absolute; inset: 0; border-radius: 28%; transform: scale(0);
+    background: radial-gradient(70% 70% at 35% 30%, color-mix(in srgb, var(--accent) 55%, white), var(--accent) 60%, color-mix(in srgb, var(--accent) 75%, black));
+    box-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 75%, transparent), inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  .is-key .box .on { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  .box svg { position: absolute; inset: 0; overflow: visible; }
+  .lt { position: relative; min-width: 0; }
+  .lt span { display: inline-block; font-weight: 700; color: var(--ink); white-space: nowrap; line-height: 1.2; }
+  .lt b { position: absolute; left: -2%; width: 104%; top: 54%; border-radius: 99px; transform: scaleX(0); transform-origin: 0 50%; background: color-mix(in srgb, var(--ink) 75%, transparent); }
+
+  /* the stamp: a seal pressed onto the card's corner */
+  #stamp { position: absolute; border-radius: 50%; display: grid; place-items: center; opacity: 0;
+    border: calc(var(--u) * 4) solid rgba(255,255,255,.95);
+    box-shadow: inset 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 60%, black 40%), inset 0 0 0 calc(var(--u) * 8) rgba(255,255,255,.6), 0 calc(var(--u) * 14) calc(var(--u) * 30) rgba(0,0,0,.4);
+    background: radial-gradient(60% 60% at 40% 35%, color-mix(in srgb, var(--accent) 70%, white 30%), color-mix(in srgb, var(--accent) 85%, black 15%)); }
+  #stamp b { font-family: var(--font-display); font-weight: 400; color: #fff; line-height: 1; letter-spacing: -0.01em; text-shadow: 0 calc(var(--u) * 2) 0 rgba(0,0,0,.25); white-space: nowrap; }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 50%, white 50%); opacity: 0; box-sizing: border-box; }
+  .is-key #ring { display: none; }
+  .is-key #stamp { box-shadow: inset 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 60%, black 40%), inset 0 0 0 calc(var(--u) * 8) rgba(255,255,255,.6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="floor"></div>
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="card"><div id="ttl"></div><div id="cnt"></div><div id="bar"><i></i></div></div>
+      <div id="ring"></div>
+      <div id="stamp"><b></b></div>
+    </div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const D = +document.getElementById("root").dataset.duration;
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const items = String(v.items || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 5);
+  while (items.length < 3) items.push("");
+  const N = items.length;
+
+  // ---- layout
+  let cL, cR;
+  if (P) { cL = safe.left; cR = W - safe.right; }
+  else if (A && !SQ) { cL = W * 0.53; cR = W - W * 0.05; }
+  else if (SQ) { cL = 100 * u; cR = W - 100 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; }
+  const cw = cR - cL;
+  const k = P ? (N >= 5 ? 1.02 : 1.14) : A && !SQ ? 0.86 : 0.94;
+  const pad = Math.round(56 * u * k), rowH = Math.round((N >= 5 ? 112 : 128) * u * k), boxS = Math.round(66 * u * k);
+  const ttlFS = Math.round(52 * u * k), cntFS = Math.round(46 * u * k), barH = Math.round(14 * u * k), labFS = Math.round(46 * u * k);
+  const hasT = !!v.title;
+  const hdrH = Math.round(Math.max(ttlFS * 1.1, cntFS));
+  const barY = pad + hdrH + Math.round(30 * u * k), listY = barY + barH + Math.round(26 * u * k);
+  const ch = listY + N * rowH + Math.round(pad * 0.55);
+  const zoneTop = P ? safe.top : H * 0.08, zoneBot = P ? H - safe.bottom : H * 0.9;
+  const cT = Math.round(zoneTop + (zoneBot - zoneTop - ch) / 2);
+  const wrap = document.getElementById("wrap"), card = document.getElementById("card");
+  Object.assign(wrap.style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  card.style.borderRadius = Math.round(46 * u * k) + "px";
+
+  // header: the heading, the count, the bar
+  const ttl = document.getElementById("ttl"), cnt = document.getElementById("cnt"), bar = document.getElementById("bar"), fill = bar.querySelector("i");
+  cnt.style.fontSize = cntFS + "px"; cnt.innerHTML = `<span class="k">0</span><span class="of">/${N}</span>`;
+  const cntW = cnt.offsetWidth;
+  Object.assign(cnt.style, { right: pad + "px", top: pad + (hdrH - cntFS) / 2 + "px" });
+  ttl.textContent = v.title || ""; ttl.style.fontSize = ttlFS + "px";
+  Object.assign(ttl.style, { left: pad + "px", top: pad + (hdrH - ttlFS * 1.05) / 2 + "px" });
+  if (!hasT) ttl.style.display = "none";
+  Object.assign(bar.style, { left: pad + "px", right: pad + "px", top: barY + "px", height: barH + "px" });
+  const kEl = cnt.querySelector(".k");
+
+  // the items
+  const NS = "http://www.w3.org/2000/svg";
+  const rows = items.map((txt, i) => {
+    const it = document.createElement("div"); it.className = "it";
+    Object.assign(it.style, { left: pad + "px", right: pad + "px", top: listY + i * rowH + "px", height: rowH + "px" });
+    it.innerHTML = `<div class="box" style="width:${boxS}px;height:${boxS}px;margin-right:${Math.round(30 * u * k)}px"><div class="bg"></div><div class="on"></div>
+      <svg viewBox="0 0 100 100"><path d="M24 53 L43 71 L78 31" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" pathLength="100" stroke-dasharray="100 101" stroke-dashoffset="100"/></svg></div>
+      <div class="lt"><span></span><b></b></div>`;
+    card.append(it);
+    const sp = it.querySelector(".lt span"); sp.textContent = txt; sp.style.fontSize = labFS + "px";
+    MV.fit(sp, cw - pad * 2 - boxS - 30 * u * k - 8, 18);
+    const st = it.querySelector(".lt b"); st.style.height = Math.max(3, Math.round(labFS * 0.09)) + "px";
+    return { it, box: it.querySelector(".box"), on: it.querySelector(".on"), chk: it.querySelector("path"), sp, st };
+  });
+
+  // the floor (B-roll): a lit line under the card, the card mirrored in it
+  const floorY = cT + ch + 30 * u;
+  document.getElementById("floor").style.top = floorY + "px";
+  Object.assign(document.getElementById("base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: floorY - 1.5 * u + "px" });
+  // the floor mirrors the card's shapes only (no text), soft, fading out fast
+  let gW = null, gOn = [], gFill = null;
+  if (!A) {
+    const cref = document.createElement("div"); document.getElementById("cam").insertBefore(cref, wrap);
+    Object.assign(cref.style, { position: "absolute", left: 0, top: 0, width: W + "px", height: H + "px", transformOrigin: `0 ${floorY}px`, transform: "scaleY(-1)", opacity: 0.42, filter: `blur(${Math.round(10 * u)}px)` });
+    cref.style.webkitMask = cref.style.mask = `linear-gradient(180deg, transparent ${floorY - ch * 0.4}px, #000 ${floorY}px)`;
+    gW = document.createElement("div"); cref.append(gW);
+    Object.assign(gW.style, { position: "absolute", left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px", borderRadius: card.style.borderRadius, background: "linear-gradient(170deg, rgba(255,255,255,.2), rgba(255,255,255,.07))" });
+    const gb = document.createElement("div"); gW.append(gb); Object.assign(gb.style, { position: "absolute", left: pad + "px", right: pad + "px", top: barY + "px", height: barH + "px", borderRadius: "99px", background: "rgba(255,255,255,.1)" });
+    gFill = document.createElement("i"); gb.append(gFill); Object.assign(gFill.style, { position: "absolute", left: 0, top: 0, bottom: 0, width: 0, borderRadius: "99px", background: "var(--accent)" });
+    rows.forEach((r, i) => { const g = document.createElement("div"); gW.append(g); Object.assign(g.style, { position: "absolute", left: pad + "px", top: listY + i * rowH + (rowH - boxS) / 2 + "px", width: boxS + "px", height: boxS + "px", borderRadius: "28%", background: "var(--accent)", transform: "scale(0)" }); gOn.push(g); });
+  }
+
+  // the stamp sits over the card's top right corner, where the count was
+  const sd = Math.round(Math.max(hdrH * 2.2, 150 * u * k));
+  const stamp = document.getElementById("stamp"), ring = document.getElementById("ring");
+  const sx = cw - pad - sd * 0.42, sy = pad + hdrH / 2 + sd * 0.06;
+  for (const e of [stamp, ring]) Object.assign(e.style, { width: sd + "px", height: sd + "px", left: sx - sd / 2 + "px", top: sy - sd / 2 + "px" });
+  const sb = stamp.querySelector("b"); sb.textContent = v.stamp || ""; sb.style.fontSize = Math.round(sd * 0.27) + "px"; MV.fit(sb, sd * 0.72, 12);
+  if (!v.stamp) { stamp.style.display = "none"; ring.style.display = "none"; }
+  // the heading keeps clear of the count and of the seal that replaces it
+  MV.fit(ttl, cw - pad * 2 - Math.max(cntW + 40 * u, v.stamp ? sd * 0.95 : 0), 18);
+
+  // ---- timing: the ticks spread evenly, the stamp lands after the last
+  const T0 = 0.95, T1 = Math.min(3.1, D - 1.5), ticks = items.map((x, i) => (N > 1 ? T0 + (i / (N - 1)) * (T1 - T0) : T0));
+  const SL = ticks[N - 1] + 0.32;
+
+  // ---- the camera: a slow 3D drift, and it leans toward the item being ticked
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: P ? 12 : 14, rotationX: 8, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  const lean = gsap.parseEase("power3.inOut");
+  const cam = { t: 0 };
+  const camR = () => {
+    let a = 0; ticks.forEach((tk, i) => { if (i) a += lean(Math.max(0, Math.min(1, (cam.t - (ticks[i - 1] + 0.2)) / 0.55))); });
+    const settle = lean(Math.max(0, Math.min(1, (cam.t - SL + 0.1) / 0.8)));
+    const iy = cT + listY + a * rowH + rowH / 2, ty = (cT + ch / 2 - iy) * 0.35 * (1 - settle);
+    gsap.set("#cam", { y: ty, scale: 1 + 0.05 * (1 - settle) * Math.min(1, cam.t / 0.9), transformOrigin: `${cL + cw / 2}px ${iy}px` });
+    let n = 0; ticks.forEach((tk) => { if (cam.t >= tk + 0.08) n++; }); kEl.textContent = n;
+  };
+  tl.fromTo(cam, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: camR }, 0);
+
+  // ---- in: the card swings in, the header, the bar, the items rise on a stagger
+  const wraps = gW ? [wrap, gW] : [wrap];
+  tl.fromTo(wraps, { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo(wraps, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo([ttl, cnt], { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.2);
+  tl.fromTo(bar, { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.25);
+  rows.forEach((r, i) => tl.fromTo(r.it, { opacity: 0, x: 40 * u, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.3 + i * 0.07));
+
+  // ---- each tick: the box floods with the accent and pops, the check draws, the text dims and is struck, the bar steps on
+  rows.forEach((r, i) => {
+    const t = ticks[i];
+    tl.fromTo(gW ? [r.on, gOn[i]] : r.on, { scale: 0 }, { scale: 1, duration: 0.42, ease: "back.out(2.6)" }, t);
+    tl.fromTo(r.box, { scale: 1 }, { scale: 0.86, duration: 0.07, ease: "power2.out" }, t - 0.02);
+    tl.to(r.box, { scale: 1, duration: 0.45, ease: "back.out(3)" }, t + 0.05);
+    tl.to(r.chk, { strokeDashoffset: 0, duration: 0.32, ease: "power2.out" }, t + 0.1);
+    tl.to(r.st, { scaleX: 1, duration: 0.38, ease: "power3.inOut" }, t + 0.16);
+    tl.to(r.sp, { opacity: 0.45, duration: 0.4, ease: "power2.out" }, t + 0.2);
+    tl.to(gW ? [fill, gFill] : fill, { width: ((i + 1) / N) * 100 + "%", duration: 0.55, ease: "expo.out" }, t + 0.08);
+    tl.fromTo(cnt, { scale: 1 }, { scale: 1.22, duration: 0.07, ease: "power2.out", immediateRender: false }, t + 0.08);
+    tl.to(cnt, { scale: 1, duration: 0.4, ease: "back.out(3)" }, t + 0.15);
+  });
+  gsap.set(cnt, { transformOrigin: "100% 50%" });
+
+  // ---- the moment: the bar flashes full, the seal is pressed over the count, a ring goes out, light runs over the card
+  tl.fromTo(fill, { filter: "brightness(1)" }, { filter: "brightness(1.8)", duration: 0.1, ease: "power2.out" }, SL - 0.1);
+  tl.to(fill, { filter: "brightness(1)", duration: 0.6, ease: "power2.out" }, SL);
+  if (v.stamp) {
+    tl.to(cnt, { opacity: 0, duration: 0.15, ease: "power2.in" }, SL + 0.12);
+    tl.fromTo(stamp, { scale: 2.6, rotation: -40, opacity: 0, filter: "blur(10px)" }, { scale: 1, rotation: -12, opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.in" }, SL);
+    tl.to(stamp, { scale: 1.08, duration: 0.06, ease: "power1.out" }, SL + 0.3); tl.to(stamp, { scale: 1, duration: 0.4, ease: "back.out(3)" }, SL + 0.36);
+    tl.fromTo(ring, { scale: 1, opacity: 0.9 }, { scale: 2.4, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, SL + 0.3);
+  }
+  tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out" }, SL + 0.3); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, SL + 0.37);
+  tl.fromTo(card, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, SL + 0.4);
+
+  // ---- out: an overlay leaves clean; a cutaway holds to the cut
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

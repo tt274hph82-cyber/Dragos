@@ -1,0 +1,5 @@
+{ "id": "newspaper-front", "name": "Newspaper front page", "oneLiner": "a folded broadsheet is tossed onto a walnut table under a warm lamp with its masthead and a huge serif headline above the fold, then it is opened, the lower half swinging down from behind to reveal a halftone photo of the brand person and two more stories, and the camera drifts slowly down the columns",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["newspaper", "front page", "headline", "news", "press", "announcement", "big news", "story", "paper", "desk", "3d", "halftone"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": false,
+  "say": "when the speaker says something is big news or makes the headline ('this was front page news', 'imagine the headline', 'everyone was talking about it'): cut in on the claim, the page opens as they land it" }

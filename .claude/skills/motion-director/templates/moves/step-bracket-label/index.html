@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"steps","type":"string","label":"The steps, comma separated, 2 to 5 short labels","default":"Post,Track,Improve"},
+  {"id":"glyphs","type":"string","label":"Glyph per step, comma separated (send, chart, spark, pen, search, video, check...; empty = guessed from the label)","default":"send,chart,spark"},
+  {"id":"group","type":"string","label":"The name the bracket gives the steps together","default":"The system"},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 50%; height: 40%; background: color-mix(in srgb, var(--accent) 34%, transparent); opacity: .3; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 60%; top: -8%; background: color-mix(in srgb, var(--accent2) 14%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .step { position: absolute; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(165deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 24) calc(var(--u) * 48) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  .is-alpha .step { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .step::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -50%) - 12%), rgba(255,255,255,.32) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 12%)); }
+  .gt { position: absolute; top: 50%; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.12); }
+  .gt .acc { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 55%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  .gt .gl { position: relative; width: 52%; height: 52%; }
+  .step .lb { position: absolute; top: 50%; transform: translateY(-50%); font-weight: 700; color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.01em; }
+  .step .nm { position: absolute; top: 50%; transform: translateY(-50%); font-family: var(--font-display); color: color-mix(in srgb, var(--ink) 38%, transparent); line-height: 1; font-variant-numeric: tabular-nums; }
+  #br { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #br path { fill: none; stroke: color-mix(in srgb, var(--accent) 80%, white); stroke-linecap: round; stroke-linejoin: round; }
+  #br .glow { stroke: var(--accent); opacity: .55; filter: blur(calc(var(--u) * 8)); }
+  #pill { position: absolute; display: flex; align-items: center; justify-content: center; white-space: nowrap; box-sizing: border-box; color: #fff; font-weight: 800; letter-spacing: .01em; line-height: 1;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 55%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.2), 0 calc(var(--u) * 18) calc(var(--u) * 40) calc(var(--u) * -12) rgba(0,0,0,.6), 0 0 calc(var(--u) * 50) color-mix(in srgb, var(--accent) 55%, transparent); }
+  #pill .tx { position: relative; }
+  #pill::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.45) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  #ring { position: absolute; box-sizing: border-box; opacity: 0; pointer-events: none; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 55%, white); }
+
+  .is-key .step { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  .is-key .step .nm { color: color-mix(in srgb, var(--ink) 40%, var(--surface)); }
+  .is-key #br .glow { display: none; }
+  .is-key #pill { box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><svg id="br"><path class="glow"/><path class="ln"/></svg><div id="steps"></div><div id="ring"></div><div id="pill"><span class="tx"></span></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  let steps = list(v.steps).filter((s) => s.length).slice(0, 5);
+  while (steps.length < 2) steps.push(["Post", "Track"][steps.length]);
+  const N = steps.length, gl = list(v.glyphs), USED = new Set();
+  const GROUP = String(v.group || "").trim() || "The system";
+
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.07, x1: W * 0.93, y0: H * 0.12, y1: H * 0.88 } : { x0: W * 0.12, x1: W * 0.88, y0: H * 0.14, y1: H * 0.86 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0;
+
+  // ---- the pill first (its width sets the room left for the steps)
+  const pill = document.getElementById("pill"), tx = pill.querySelector(".tx");
+  const pfs = (P ? 40 : 44) * u, ph = pfs * 2.1;
+  tx.textContent = GROUP; tx.style.fontSize = pfs + "px";
+  const maxPill = RW * (P ? 0.36 : 0.32);
+  MV.fitText(tx, maxPill - pfs * 1.2, 30);
+  const pw = Math.min(maxPill, tx.getBoundingClientRect().width + pfs * 1.25);
+  const BG = (P ? 34 : 48) * u, TICK = (P ? 22 : 30) * u;            // pill to bracket, bracket tick length
+  // the steps column
+  const GAP = (TOP ? 16 : 26) * u;
+  const sh = Math.min((RH - GAP * (N - 1)) / N, (TOP ? 112 : P ? 176 : 140) * u);
+  const sx0 = R.x0 + pw + BG + TICK + 12 * u;
+  const sw = Math.min(R.x1 - sx0, (P ? 9999 : 820 * u));
+  const colW = pw + BG + TICK + 12 * u + sw, ox = R.x0 + (RW - colW) / 2;  // centre the whole group
+  const SX = ox + pw + BG + TICK + 12 * u;
+  const LH = N * sh + (N - 1) * GAP, y0 = R.y0 + (RH - LH) / 2;
+  const rad = sh * 0.26, gs = sh * 0.6, pad = sh * 0.2, lfs = Math.max(36 * u, Math.min((P ? 58 : 52) * u, sh * 0.34));
+  const host = document.getElementById("steps"), S = [];
+  steps.forEach((label, i) => {
+    const y = y0 + i * (sh + GAP);
+    const el = document.createElement("div"); el.className = "step"; host.appendChild(el);
+    Object.assign(el.style, { left: SX + "px", top: y + "px", width: sw + "px", height: sh + "px", borderRadius: rad + "px" });
+    el.innerHTML = `<div class="gt" style="left:${pad}px;width:${gs}px;height:${gs}px;margin-top:${-gs / 2}px;border-radius:${gs * 0.28}px"><div class="acc"></div>${GLYPH.svg(GLYPH.pick(label, gl[i], i, USED))}</div>
+      <div class="lb" style="left:${pad * 2 + gs}px;font-size:${lfs}px">${label}</div>${P ? "" : `<div class="nm" style="right:${pad * 1.1}px;font-size:${sh * 0.26}px">${String(i + 1).padStart(2, "0")}</div>`}`;
+    MV.fitText(el.querySelector(".lb"), sw - pad * 2.6 - gs - (P ? 0 : sh * 0.42), 20);
+    S.push({ el, y, gt: el.querySelector(".gt"), lb: el.querySelector(".lb") });
+  });
+
+  // one type size for every label (the smallest fit), so the column reads as a set
+  const lmin = Math.min(...S.map((s) => parseFloat(s.lb.style.fontSize) || lfs));
+  S.forEach((s) => { s.lb.style.fontSize = lmin + "px"; });
+
+  // ---- the bracket: a tick on each end step, the spine, a stub out to the pill
+  const bx = SX - 12 * u - TICK, yT = y0 + sh / 2, yB = y0 + LH - sh / 2, yM = y0 + LH / 2;
+  const sw2 = 4 * u, rr = Math.min(18 * u, TICK * 0.8);
+  const d = `M ${bx + TICK} ${yT} L ${bx + rr} ${yT} Q ${bx} ${yT} ${bx} ${yT + rr} L ${bx} ${yB - rr} Q ${bx} ${yB} ${bx + rr} ${yB} L ${bx + TICK} ${yB}`;
+  const stub = `M ${bx} ${yM} L ${bx - BG} ${yM}`;
+  const paths = document.querySelectorAll("#br path");
+  paths.forEach((p) => { p.setAttribute("d", d + " " + stub); p.setAttribute("stroke-width", p.classList.contains("glow") ? sw2 * 2.5 : sw2); });
+  // draw the two halves from the middle out: use the full path length with a dash that grows
+  const len = paths[1].getTotalLength();
+  paths.forEach((p) => { p.style.strokeDasharray = len; p.style.strokeDashoffset = len; });
+  Object.assign(pill.style, { left: bx - BG - pw + "px", top: yM - ph / 2 + "px", width: pw + "px", height: ph + "px", borderRadius: ph / 2 + "px" });
+  Object.assign(document.getElementById("ring").style, { left: bx - BG - pw + "px", top: yM - ph / 2 + "px", width: pw + "px", height: ph + "px", borderRadius: ph / 2 + "px" });
+  const cx = ox + colW / 2, cy = yM;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  const l1 = document.querySelector("#ground .l1"); Object.assign(l1.style, { left: bx - W * 0.25 + "px", top: yM - H * 0.2 + "px" });
+
+  // ---- camera: a slow 3D drift
+  tl.fromTo("#rig", { rotationY: -12, rotationX: 7, scale: 0.95, y: 20 * u }, { rotationY: 4, rotationX: 2, scale: 1.0, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the steps stack in, one per beat, swinging in from the right
+  S.forEach((s, k) => { const at = 0.08 + k * 0.28;
+    tl.fromTo(s.el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, at);
+    tl.fromTo(s.el, { x: 90 * u, rotationY: -28, scale: 0.92, transformOrigin: "100% 50%" }, { x: 0, rotationY: 0, scale: 1, duration: 0.85, ease: "expo.out" }, at);
+    tl.fromTo(s.gt, { scale: 0.4, rotation: -18 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, at + 0.1);
+    tl.fromTo(s.lb, { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, at + 0.16); });
+
+  // ---- 2. the bracket draws around them, then the name lands on it
+  const tB = 0.08 + N * 0.28 + 0.35;
+  paths.forEach((p) => tl.to(p, { strokeDashoffset: 0, duration: 0.75, ease: "power3.inOut" }, tB));
+  const tP = tB + 0.62;
+  tl.fromTo(pill, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power2.out" }, tP);
+  tl.fromTo(pill, { scale: 0.4, x: 40 * u }, { scale: 1, x: 0, duration: 0.7, ease: "back.out(2.2)" }, tP);
+  tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.3, opacity: 0, duration: 0.75, ease: "expo.out", immediateRender: false }, tP + 0.14);
+  tl.fromTo(pill, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut", immediateRender: false }, tP + 0.3);
+  tl.to(l1, { opacity: 1, duration: 1.0, ease: "power2.out" }, tP - 0.1);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, tP + 0.14); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, tP + 0.21);
+  // the group lights together: a light runs down the steps, each glyph takes the accent
+  S.forEach((s, k) => { const at = tP + 0.25 + k * 0.1;
+    tl.fromTo(s.el, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.6, ease: "power2.inOut", immediateRender: false }, at);
+    tl.to(s.gt.querySelector(".acc"), { opacity: 1, duration: 0.25, ease: "power2.out" }, at);
+    tl.to(s.gt, { color: "#ffffff", duration: 0.25, ease: "power2.out" }, at); });
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

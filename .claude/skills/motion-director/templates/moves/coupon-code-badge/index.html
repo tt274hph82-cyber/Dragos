@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"amount","type":"string","label":"The big number on the badge","default":"30%"},
+  {"id":"off","type":"string","label":"The word under it","default":"OFF"},
+  {"id":"detail","type":"string","label":"Small line on the badge (optional)","default":"first 3 months"},
+  {"id":"code","type":"string","label":"The code","default":"SAVE30"},
+  {"id":"caption","type":"string","label":"Small label on the ticket","default":"Use code"},
+  {"id":"copied","type":"string","label":"Word on the copy button once pressed (empty: no button)","default":"Copied"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --ok: #2BD67B; --okg: rgba(43,214,123,.5); --al: color-mix(in srgb, var(--accent) 55%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(45% 30% at 40% 55%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #grp { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1300); }
+  #fl { position: relative; transform-style: preserve-3d; }
+
+  /* the badge: an enamel disc with a pressed rim, a dome of light and a long contact shadow */
+  #badge { position: absolute; left: 0; top: 0; border-radius: 50%; }
+  #disc { position: absolute; inset: 0; border-radius: 50%;
+    background: radial-gradient(90% 90% at 32% 24%, var(--al), var(--accent) 48%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 4) calc(var(--u) * 2) rgba(255,255,255,.45), inset 0 calc(var(--u) * -10) calc(var(--u) * 24) rgba(0,0,0,.35),
+      0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -18) rgba(0,0,0,.7), 0 0 calc(var(--u) * 70) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #disc { box-shadow: inset 0 calc(var(--u) * 4) calc(var(--u) * 2) rgba(255,255,255,.45), inset 0 calc(var(--u) * -10) calc(var(--u) * 24) rgba(0,0,0,.35); }
+  #rim { position: absolute; inset: 7%; border-radius: 50%; border: calc(var(--u) * 3) dashed rgba(255,255,255,.5); }
+  #dome { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(48% 30% at 38% 20%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%); }
+  #shine { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 10%), rgba(255,255,255,.55) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 10%)); }
+  #bt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center;
+    text-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 8) rgba(0,0,0,.25); }
+  #amt { font-family: var(--font-display); line-height: 1.02; letter-spacing: -0.03em; white-space: nowrap; }
+  #off { font-family: var(--font-display); line-height: 1.02; letter-spacing: .02em; white-space: nowrap; }
+  #det { font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-top: .55em; white-space: nowrap; opacity: .92; }
+
+  /* the ticket: glass, a perforated stub, the code */
+  #ticket { position: absolute; left: 0; top: 0; display: flex; align-items: center; box-sizing: border-box; white-space: nowrap;
+    height: calc(var(--u) * 150); padding: 0 calc(var(--u) * 22) 0 calc(var(--u) * 44); border-radius: calc(var(--u) * 26);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 72%, #fff 13%), color-mix(in srgb, var(--surface) 93%, transparent));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    -webkit-mask: radial-gradient(circle calc(var(--u) * 16) at 0 50%, transparent 98%, #000 100%) left / 51% 100% no-repeat, radial-gradient(circle calc(var(--u) * 16) at 100% 50%, transparent 98%, #000 100%) right / 51% 100% no-repeat;
+    mask: radial-gradient(circle calc(var(--u) * 16) at 0 50%, transparent 98%, #000 100%) left / 51% 100% no-repeat, radial-gradient(circle calc(var(--u) * 16) at 100% 50%, transparent 98%, #000 100%) right / 51% 100% no-repeat;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  .is-key #ticket { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  #tshadow { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 26); pointer-events: none;
+    box-shadow: 0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -14) rgba(0,0,0,.65), 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.25); }
+  .is-key #tshadow { display: none; }
+  #ticket .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--tsheen, -40%) - 12%), rgba(255,255,255,.26) var(--tsheen, -40%), transparent calc(var(--tsheen, -40%) + 12%)); }
+  #cbox { position: relative; display: flex; flex-direction: column; justify-content: center; padding-right: calc(var(--u) * 30); }
+  #cap { font-size: calc(var(--u) * 24); font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 58%, transparent); }
+  #codew { position: relative; display: flex; align-items: center; margin-top: calc(var(--u) * 6); height: calc(var(--u) * 70); }
+  #code { font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace; font-weight: 800; font-size: calc(var(--u) * 62); letter-spacing: .08em; color: var(--ink); line-height: 1; }
+  #code .c { display: inline-block; }
+  #caret { width: calc(var(--u) * 5); height: calc(var(--u) * 58); border-radius: calc(var(--u) * 3); background: var(--accent); margin-left: calc(var(--u) * 4); flex: none; }
+  #code-frame { position: absolute; left: calc(var(--u) * -14); right: calc(var(--u) * -14); top: calc(var(--u) * -6); bottom: calc(var(--u) * -6);
+    border: calc(var(--u) * 3) dashed color-mix(in srgb, var(--ink) 34%, transparent); border-radius: calc(var(--u) * 14); }
+  #sep { width: 0; align-self: stretch; margin: calc(var(--u) * 22) calc(var(--u) * 22) calc(var(--u) * 22) 0; border-left: calc(var(--u) * 3) dashed color-mix(in srgb, var(--ink) 28%, transparent); }
+  #btn { position: relative; flex: none; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 10); height: calc(var(--u) * 92); min-width: calc(var(--u) * 92);
+    box-sizing: border-box; padding: 0 calc(var(--u) * 22); border-radius: calc(var(--u) * 22); color: var(--ink);
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 55%, #fff 22%), color-mix(in srgb, var(--surface) 85%, #fff 4%));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 8) calc(var(--u) * 16) calc(var(--u) * -6) rgba(0,0,0,.5); }
+  #btn.okb { color: #04210f; background: linear-gradient(170deg, #7CF2B0, var(--ok) 55%, #19a45b); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 calc(var(--u) * 10) calc(var(--u) * 26) calc(var(--u) * -6) var(--okg); }
+  .is-key #btn.okb { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  #btn svg { width: calc(var(--u) * 42); height: calc(var(--u) * 42); flex: none; }
+  #bword { font-weight: 800; font-size: calc(var(--u) * 32); letter-spacing: -0.01em; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="grp"><div id="fl">
+    <div id="tshadow"></div>
+    <div id="ticket">
+      <div id="cbox"><div id="cap"></div><div id="codew"><div id="code-frame"></div><div id="code"></div><div id="caret"></div></div></div>
+      <div id="sep"></div>
+      <div id="btn">
+        <svg id="gcopy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.5"/><path d="M15.5 8.5V6.5a2.5 2.5 0 0 0-2.5-2.5H6.5A2.5 2.5 0 0 0 4 6.5V13a2.5 2.5 0 0 0 2.5 2.5h2"/></svg>
+        <svg id="gok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path id="okp" d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        <span id="bword"></span>
+      </div>
+      <div class="sh"></div>
+    </div>
+    <div id="badge"><div id="disc"></div><div id="rim"></div><div id="dome"></div>
+      <div id="bt"><div id="amt"></div><div id="off"></div><div id="det"></div></div><div id="shine"></div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1 : SQ ? 0.82 : 1.1);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+
+  // ---- badge copy, sized to the disc
+  const BD = Math.round((P ? 330 : SQ ? 300 : 340) * u);
+  const badge = $("#badge"); Object.assign(badge.style, { width: BD + "px", height: BD + "px" });
+  const amt = $("#amt"), off = $("#off"), det = $("#det");
+  amt.textContent = v.amount || ""; off.textContent = v.off || ""; det.textContent = v.detail || "";
+  if (!v.off) off.style.display = "none"; if (!v.detail) det.style.display = "none";
+  amt.style.fontSize = BD * 0.27 + "px"; off.style.fontSize = BD * 0.18 + "px"; det.style.fontSize = BD * 0.068 + "px";
+  MV.fitText(amt, BD * 0.74, 20); MV.fitText(off, BD * 0.66, 16); MV.fitText(det, BD * 0.6, 10);
+  // a number in the amount counts up as the badge lands
+  const m = String(v.amount || "").match(/^(\D*)(\d+)(\D*)$/);
+
+  // ---- the ticket
+  const code = String(v.code || "").toUpperCase(), codeEl = $("#code");
+  [...code].forEach((ch) => { const s = document.createElement("span"); s.className = "c"; s.textContent = ch; codeEl.appendChild(s); });
+  $("#cap").textContent = v.caption || ""; if (!v.caption) $("#cap").style.display = "none";
+  const hasBtn = !!v.copied;
+  $("#bword").textContent = v.copied || "";
+  if (!hasBtn) { $("#btn").style.display = "none"; $("#sep").style.display = "none"; }
+  const maxT = P ? W - safe.left - safe.right - BD * 0.62 : SQ ? W * 0.9 - BD * 0.62 : W * 0.34;
+  // the button is laid out in its pressed (wider) state so nothing jumps
+  MV.fitText(codeEl, maxT - (hasBtn ? 260 * u : 0) - 120 * u, 20);
+  const ticket = $("#ticket"), btn = $("#btn"), bw = $("#bword");
+  if (P || SQ) ticket.style.paddingLeft = (BD * 0.38 + 30 * u) + "px";   // the code starts clear of the badge
+  // measured in the pressed state (check + word), the widest the button gets
+  $("#gcopy").style.display = "none";
+  const TW = ticket.offsetWidth, TH = ticket.offsetHeight;
+  ticket.style.width = TW + "px";
+  // before the press: the button is a square with the copy glyph
+  bw.style.display = "none"; $("#gok").style.display = "none"; $("#gcopy").style.display = "block";
+
+  // ---- layout: badge and ticket in a row (9:16 under the chin, 1:1 along the bottom); 16:9 badge top right, ticket under it
+  let bx, by, tx, ty;
+  if (P || SQ) {
+    const left = P ? safe.left : W * 0.05, bottom = P ? H * 0.645 : H * 0.93;
+    bx = left; by = bottom - BD;
+    tx = bx + BD * 0.62; ty = by + BD / 2 - TH / 2;
+  } else {
+    bx = W - safe.right - BD; by = safe.top;
+    tx = W - safe.right - TW; ty = by + BD + 26 * u;
+    if (tx + TW > W - safe.right) tx = W - safe.right - TW;
+  }
+  gsap.set(badge, { x: bx, y: by }); gsap.set(ticket, { x: tx, y: ty });
+  const ts = $("#tshadow"); Object.assign(ts.style, { width: TW + "px", height: TH + "px" }); gsap.set(ts, { x: tx, y: ty });
+  const TW2 = TW;
+
+  // ---- timeline
+  const LAND = 0.55;
+  // the badge spins in, flat to face, and lands with a squash; the number counts up under it
+  tl.fromTo(badge, { scale: 0.2, rotation: -200, rotationY: 50 }, { scale: 1, rotation: -8, rotationY: 0, duration: LAND, ease: "back.out(1.3)" }, 0.05);
+  tl.fromTo(badge, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power1.out" }, 0.05);
+  tl.to(badge, { scaleX: 1.07, scaleY: 0.93, duration: 0.07, ease: "power2.out" }, LAND);
+  tl.to(badge, { scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(3)" }, LAND + 0.07);
+  if (m) { const tgt = +m[2], o = { n: 0 }; amt.textContent = m[1] + "0" + m[3];
+    tl.to(o, { n: tgt, duration: 0.7, ease: "power3.out", onUpdate: () => { amt.textContent = m[1] + Math.round(o.n) + m[3]; } }, 0.15); }
+  tl.fromTo(["#off", "#det"], { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", stagger: 0.08 }, 0.4);
+  tl.fromTo(badge, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.7, ease: "power2.inOut" }, LAND + 0.05);
+  // the ticket slides out from behind the badge
+  const T0 = 0.75, fromX = P || SQ ? -TW2 * 0.45 : 0, fromY = P || SQ ? 0 : -TH * 0.8;
+  tl.fromTo([ticket, ts], { x: tx + fromX, y: ty + fromY, opacity: 0 }, { x: tx, y: ty, opacity: 1, duration: 0.6, ease: "expo.out" }, T0);
+  tl.fromTo("#cap", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, T0 + 0.2);
+  // the code types in, a caret riding its end, then the dashed frame draws round it
+  const chars = [...codeEl.children], TY = T0 + 0.35, per = Math.min(0.09, 0.8 / Math.max(1, chars.length));
+  gsap.set(chars, { opacity: 0 }); gsap.set("#caret", { opacity: 0 }); gsap.set("#code-frame", { opacity: 0 });
+  tl.set("#caret", { opacity: 1 }, TY - 0.05);
+  chars.forEach((c, i) => { tl.set(c, { opacity: 1 }, TY + i * per); tl.fromTo(c, { color: "var(--al)" }, { color: "var(--ink)", duration: 0.3, ease: "power2.out", immediateRender: false }, TY + i * per); });
+  const TE = TY + chars.length * per;
+  // the caret blinks a beat, then goes
+  tl.set("#caret", { opacity: 0 }, TE + 0.18); tl.set("#caret", { opacity: 1 }, TE + 0.36); tl.set("#caret", { opacity: 0 }, TE + 0.54);
+  tl.fromTo("#code-frame", { opacity: 0, scale: 1.12 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, TE + 0.05);
+  tl.fromTo(ticket, { "--tsheen": "-40%" }, { "--tsheen": "140%", duration: 0.8, ease: "power2.inOut" }, TE);
+  // THE MOMENT: the copy button is pressed, flips to green with a check and the word
+  if (hasBtn) {
+    const PR = TE + 0.55;
+    tl.to(btn, { scale: 0.86, duration: 0.08, ease: "power2.in" }, PR);
+    tl.set(btn, { className: "okb" }, PR + 0.08);
+    tl.set("#gcopy", { display: "none" }, PR + 0.08); tl.set(["#gok", "#bword"], { display: "block" }, PR + 0.08);
+    tl.to(btn, { scale: 1, duration: 0.5, ease: "back.out(3)" }, PR + 0.08);
+    const okp = $("#okp"); const L = 22;
+    tl.fromTo(okp, { strokeDasharray: L, strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.28, ease: "power2.out" }, PR + 0.1);
+    tl.fromTo("#bword", { opacity: 0, x: -10 * u }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out" }, PR + 0.14);
+  }
+  // hold: the pair hangs in depth and turns
+  tl.fromTo("#fl", { rotationY: P ? 9 : -9, rotationX: 4 }, { rotationY: P ? -4 : 4, rotationX: -2, duration: D, ease: "sine.inOut" }, 0);
+  tl.to(badge, { rotation: -3, duration: D - LAND - 0.5, ease: "sine.inOut" }, LAND + 0.5);
+  // out
+  const O = D - 0.42;
+  tl.to([ticket, ts], { x: tx + fromX * 0.6, y: ty + fromY * 0.6, opacity: 0, duration: 0.24, ease: "power3.in" }, O);
+  tl.to(badge, { scale: 0, rotation: 90, opacity: 0, duration: 0.26, ease: "back.in(1.6)" }, O + 0.06);
+  MV.done();
+</script>
+</body>
+</html>

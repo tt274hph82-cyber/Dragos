@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Title over the week","default":"This week"},
+  {"id":"days","type":"string","label":"The five day labels, comma separated","default":"Mon,Tue,Wed,Thu,Fri"},
+  {"id":"events","type":"string","label":"Labels on the ordinary blocks, comma separated (they cycle)","default":"Calls,Write,Edit,Film,Plan,Gym"},
+  {"id":"hero","type":"string","label":"The big block that lands last (empty: the brand name)","default":"Deep work"},
+  {"id":"start","type":"number","label":"First hour on the grid (24h)","default":9}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 34% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cal { position: absolute; border-radius: calc(var(--u) * 44); box-sizing: border-box; transform-style: preserve-3d;
+    background: linear-gradient(170deg, rgba(255,255,255,.17), rgba(255,255,255,.06) 60%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      inset 0 calc(var(--u) * -40) calc(var(--u) * 70) calc(var(--u) * -40) color-mix(in srgb, var(--accent) 40%, transparent),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -20) rgba(0,0,0,.8); }
+  #cal .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 30;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.16) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  #ttl { position: absolute; font-family: var(--font-display); color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; line-height: 1.1; }
+  #wk { position: absolute; display: flex; gap: calc(var(--u) * 10); align-items: center; }
+  #wk i { display: grid; place-items: center; width: calc(var(--u) * 58); height: calc(var(--u) * 58); border-radius: 50%; background: rgba(255,255,255,.1); }
+  #wk svg { width: 50%; height: 50%; fill: none; stroke: color-mix(in srgb, var(--ink) 70%, transparent); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .dl { position: absolute; text-align: center; font-size: calc(var(--u) * 36); font-weight: 650; color: color-mix(in srgb, var(--ink) 72%, transparent); white-space: nowrap; line-height: 1.2; }
+  .dl.today { color: var(--ink); }
+  .hr { position: absolute; font-size: calc(var(--u) * 30); font-weight: 600; color: color-mix(in srgb, var(--ink) 45%, transparent); white-space: nowrap; font-variant-numeric: tabular-nums; line-height: 1; }
+  .gl { position: absolute; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.09); }
+  .gv { position: absolute; width: calc(var(--u) * 1.5); background: rgba(255,255,255,.07); }
+  .ev { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 18); overflow: hidden; padding: calc(var(--u) * 12) calc(var(--u) * 10) 0 calc(var(--u) * 20);
+    background: linear-gradient(170deg, color-mix(in srgb, var(--c) 58%, #fff 6%), color-mix(in srgb, var(--c) 40%, #000));
+    box-shadow: inset calc(var(--u) * 7) 0 0 var(--c), inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.3), 0 calc(var(--u) * 12) calc(var(--u) * 22) calc(var(--u) * -10) rgba(0,0,0,.6); }
+  .ev span { display: block; font-size: calc(var(--u) * 36); font-weight: 650; color: #fff; white-space: nowrap; line-height: 1.15; letter-spacing: -0.01em; }
+  #hero { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 22); overflow: hidden; padding: calc(var(--u) * 16) calc(var(--u) * 8) 0 calc(var(--u) * 16); z-index: 20;
+    background: linear-gradient(165deg, var(--al), var(--accent) 50%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.25), 0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -10) rgba(0,0,0,.7), 0 0 calc(var(--u) * 70) color-mix(in srgb, var(--accent) 60%, transparent); }
+  #hero span { display: block; font-weight: 800; font-size: calc(var(--u) * 42); color: #fff; white-space: nowrap; line-height: 1.12; letter-spacing: -0.01em; }
+  #hero .hs { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--hs, -40%) - 14%), rgba(255,255,255,.4) var(--hs, -40%), transparent calc(var(--hs, -40%) + 14%)); }
+  #ghost { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 22); border: calc(var(--u) * 3) dashed color-mix(in srgb, var(--al) 80%, transparent); opacity: 0; }
+  #hshadow { position: absolute; border-radius: calc(var(--u) * 22); background: rgba(0,0,0,.55); filter: blur(calc(var(--u) * 18)); opacity: 0; z-index: 19; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="cam"><div id="cal">
+    <div id="ttl"></div>
+    <div id="wk"><i><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></i><i><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></i></div>
+    <div id="ghost"></div><div id="hshadow"></div>
+    <div id="hero"><span></span><div class="hs"></div></div>
+    <div class="sh"></div>
+  </div></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (W > H ? 1.05 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const cal = $("#cal");
+
+  // ---- the panel
+  const regionW = W - safe.left - safe.right, regionH = H - safe.top - safe.bottom;
+  const CW = MV.portrait ? regionW : W > H ? Math.min(1440 * u, regionW) : regionW;
+  const CH = MV.portrait ? Math.min(regionH, 940 * u) : regionH;
+  const cx0 = (W - CW) / 2, cy0 = safe.top + (regionH - CH) / 2;
+  gsap.set(cal, { left: cx0, top: cy0, width: CW, height: CH });
+  root.style.setProperty("--gx", "50%"); root.style.setProperty("--gy", ((cy0 + CH * 0.55) / H * 100) + "%");
+
+  const P = 36 * u, headH = 96 * u, dayH = 64 * u, gut = 92 * u;
+  const gx = P + gut, gy = P + headH + dayH, gw = CW - gx - P, gh = CH - gy - P;
+  const ND = 5, NS = 8, colW = gw / ND, rowH = gh / NS;
+  $("#ttl").textContent = v.title || "";
+  gsap.set("#ttl", { left: P + 6 * u, top: P, fontSize: 54 * u });
+  gsap.set("#wk", { right: P, top: P - 2 * u });
+  MV.fitText($("#ttl"), CW - 2 * P - 160 * u, 20);
+  const days = String(v.days || "").split(",").map((s) => s.trim()).slice(0, ND);
+  const els = [];
+  for (let d = 0; d < ND; d++) {
+    const l = document.createElement("div"); l.className = "dl" + (d === 2 ? " today" : ""); l.textContent = days[d] || "";
+    gsap.set(l, { left: gx + d * colW, top: P + headH + 8 * u, width: colW }); cal.insertBefore(l, $("#ghost")); MV.fitText(l, colW - 12 * u, 16); els.push(l);
+    if (d) { const g = document.createElement("div"); g.className = "gv"; gsap.set(g, { left: gx + d * colW, top: gy, height: gh }); cal.insertBefore(g, $("#ghost")); els.push(g); }
+  }
+  const h0 = Math.round(+v.start || 9);
+  for (let s = 0; s <= NS; s++) {
+    const g = document.createElement("div"); g.className = "gl"; gsap.set(g, { left: gx, top: gy + s * rowH, width: gw }); cal.insertBefore(g, $("#ghost")); els.push(g);
+    if (s < NS && s % 2 === 0) { const h = (h0 + s) % 24, t = document.createElement("div"); t.className = "hr"; t.textContent = (h % 12 || 12) + (h < 12 ? "a" : "p");
+      gsap.set(t, { left: P, top: gy + s * rowH + 6 * u, width: gut - 16 * u }); cal.insertBefore(t, $("#ghost")); els.push(t); }
+  }
+
+  // ---- the ordinary week: [day, slot, length]
+  const L = String(v.events || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const SPEC = [[0, 0, 2], [1, 1, 2], [3, 0, 2], [4, 1, 2], [2, 0, 1], [0, 4, 2], [3, 3, 2], [1, 5, 2], [4, 5, 2], [0, 7, 1], [3, 6, 1]];
+  const COL = ["#3E7BD8", "#2FA58A", "#7A5AE0", "#C98A2B", "#2CA6C9", "#5C6BC0"];
+  const inset = 5 * u;
+  const evs = SPEC.map(([d, s, n], i) => {
+    const e = document.createElement("div"); e.className = "ev"; e.style.setProperty("--c", COL[i % COL.length]);
+    e.innerHTML = "<span></span>"; e.firstChild.textContent = L.length ? L[i % L.length] : "";
+    gsap.set(e, { left: gx + d * colW + inset, top: gy + s * rowH + inset, width: colW - 2 * inset, height: n * rowH - 2 * inset });
+    cal.insertBefore(e, $("#ghost")); MV.fitText(e.firstChild, colW - 2 * inset - 30 * u, 16); return e;
+  });
+  // the hero: Wednesday, three hours from the second-hour line
+  const HD = 2, HS = 2, HN = 3;
+  const hb = { left: gx + HD * colW + inset, top: gy + HS * rowH + inset, width: colW - 2 * inset, height: HN * rowH - 2 * inset };
+  gsap.set(["#hero", "#ghost", "#hshadow"], hb);
+  $("#hero span").textContent = v.hero || v.brandName || "";
+  // a long label wraps onto two lines inside the tall block rather than shrinking to nothing
+  const hs = $("#hero span"); MV.fitText(hs, hb.width - 26 * u, 22);
+  if (parseFloat(getComputedStyle(hs).fontSize) < 34 * u && /\s/.test(hs.textContent)) { hs.style.fontSize = 42 * u + "px"; hs.style.whiteSpace = "normal"; hs.style.wordBreak = "keep-all";
+    hs.innerHTML = hs.textContent.split(/\s+/).map((w) => `<span style="display:block;white-space:nowrap">${w.replace(/[<&]/g, "")}</span>`).join("");
+    hs.querySelectorAll("span").forEach((s) => MV.fitText(s, hb.width - 26 * u, 18)); }
+
+  // ---- timeline
+  // 1. the panel turns in, the grid draws
+  tl.fromTo(cal, { opacity: 0, y: 90 * u, rotationX: 22, filter: "blur(14px)" }, { opacity: 1, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 0.02);
+  tl.fromTo(["#ttl", "#wk"], { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.2);
+  tl.fromTo(els, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out", stagger: 0.012 }, 0.25);
+  // 2. the week fills: blocks drop in and snap, faster and faster
+  const T0 = 0.55, T1 = 2.05;
+  evs.forEach((e, i) => {
+    const t = T0 + (T1 - T0) * Math.pow(i / (evs.length - 1), 0.7);
+    tl.fromTo(e, { y: -70 * u, scale: 1.12, rotationX: -30 }, { y: 0, scale: 1, rotationX: 0, duration: 0.5, ease: "back.out(2.2)" }, t);
+    tl.fromTo(e, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, t);
+  });
+  // 3. the hero is held above its slot, the slot is marked, then it slams in (the moment that lands)
+  const A = 2.15, S = 2.75;
+  tl.fromTo("#ghost", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, A);
+  tl.fromTo("#hero", { opacity: 0, y: -60 * u, x: 0, scale: 1.2, rotation: -3, rotationX: -18 }, { opacity: 1, y: -26 * u, x: 0, scale: 1.12, rotation: -2, rotationX: -8, duration: 0.4, ease: "expo.out" }, A);
+  tl.fromTo("#hshadow", { opacity: 0, scale: 1.18 }, { opacity: 0.55, scale: 1.14, duration: 0.4, ease: "power2.out" }, A);
+  tl.to("#hero", { y: 0, x: 0, scale: 1, rotation: 0, rotationX: 0, duration: S - A - 0.4, ease: "power3.in" }, A + 0.4);
+  tl.to("#hshadow", { opacity: 0.9, scale: 1, duration: S - A - 0.4, ease: "power3.in" }, A + 0.4);
+  tl.set("#ghost", { opacity: 0 }, S);
+  tl.to("#hero", { scaleY: 0.92, scaleX: 1.05, duration: 0.06, ease: "power2.out" }, S);
+  tl.to("#hero", { scaleY: 1, scaleX: 1, duration: 0.5, ease: "back.out(3)" }, S + 0.06);
+  tl.to("#hshadow", { opacity: 0.4, duration: 0.5, ease: "power2.out" }, S + 0.06);
+  tl.to(cal, { y: 10 * u, duration: 0.06, ease: "power2.out" }, S); tl.to(cal, { y: 0, duration: 0.55, ease: "back.out(2.5)" }, S + 0.06);
+  // the neighbours get nudged and settle
+  evs.forEach((e, i) => { const [d, s] = SPEC[i]; const dd = d - HD; if (Math.abs(dd) > 1) return;
+    const dir = dd === 0 ? (s < HS ? -1 : 1) : 0;
+    tl.to(e, { x: dd * 10 * u, y: dir * 10 * u, duration: 0.08, ease: "power2.out" }, S); tl.to(e, { x: 0, y: 0, duration: 0.5, ease: "back.out(3)" }, S + 0.08); });
+  tl.to(evs, { opacity: 0.6, duration: 0.5, ease: "power2.out" }, S + 0.1);
+  tl.fromTo("#hero", { "--hs": "-40%" }, { "--hs": "140%", duration: 0.8, ease: "power2.inOut" }, S + 0.15);
+  tl.fromTo("#cal .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.5);
+  // the camera: slow drift, a gentle push toward Wednesday after the slam
+  const hx = cx0 + hb.left + hb.width / 2, hy = cy0 + hb.top + hb.height / 2;
+  gsap.set("#cam", { transformOrigin: `${hx}px ${hy}px` });
+  tl.fromTo("#cam", { rotationX: 12, rotationY: -8 }, { rotationX: 4, rotationY: 6, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D - S, ease: "sine.inOut", immediateRender: false }, S);
+  // exit
+  const X = D - 0.42;
+  tl.to(cal, { y: -80 * u, opacity: 0, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

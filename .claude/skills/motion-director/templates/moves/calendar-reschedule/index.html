@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"stays","type":"string","label":"The event that stays","default":"Team sync"},
+  {"id":"moves","type":"string","label":"The event that moves","default":"Client call"},
+  {"id":"at","type":"number","label":"Hour both start at, 24h (the clash)","default":11},
+  {"id":"to","type":"number","label":"Free hour it moves to, 24h","default":14},
+  {"id":"weekday","type":"string","label":"Day name in the header","default":"Tuesday"},
+  {"id":"date","type":"string","label":"Date line in the header","default":"March 12"},
+  {"id":"clash","type":"string","label":"Chip while they clash","default":"Conflict"},
+  {"id":"clear","type":"string","label":"Chip once it is fixed","default":"Cleared"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 64%, #000); --rd: #E5484D; --go: #2BD67B; --god: #17985A; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 36% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 85% 100%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+
+  #card { position: absolute; box-sizing: border-box; padding: calc(var(--u) * 32) calc(var(--u) * 32) calc(var(--u) * 28); border-radius: calc(var(--u) * 48);
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 82%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .sh { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  .hd { display: flex; align-items: center; gap: calc(var(--u) * 22); padding-bottom: calc(var(--u) * 24); border-bottom: calc(var(--u) * 1.5) solid rgba(255,255,255,.1); }
+  #dt { flex: none; width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: calc(var(--u) * 24); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden;
+    background: linear-gradient(180deg, #fff, #ECEBEF); box-shadow: inset 0 calc(var(--u) * -3) 0 rgba(0,0,0,.08), 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -10) rgba(0,0,0,.5); }
+  #dt .m { width: 100%; height: 28%; background: var(--accent); }
+  #dt svg { width: 52%; height: 52%; margin-top: 6%; fill: none; stroke: #2A2830; stroke-width: 2; stroke-linecap: round; }
+  .ht { flex: 1; min-width: 0; }
+  #wd { width: max-content; font-family: var(--font-display); font-size: calc(var(--u) * 46); color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; line-height: 1.1; }
+  #da { width: max-content; margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 32); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  #chip { position: relative; flex: none; display: grid; height: calc(var(--u) * 66); border-radius: calc(var(--u) * 33); overflow: hidden; opacity: 0;
+    background: rgba(229,72,77,.18); box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(229,72,77,.75); }
+  .is-key #chip { background: color-mix(in srgb, #E5484D 25%, var(--surface)); }
+  #chip .gn { position: absolute; inset: 0; background: linear-gradient(160deg, #5BE59C, var(--go) 50%, var(--god)); opacity: 0; }
+  #chip .f { grid-area: 1 / 1; position: relative; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 10); padding: 0 calc(var(--u) * 24) 0 calc(var(--u) * 18); white-space: nowrap;
+    font-size: calc(var(--u) * 34); font-weight: 800; }
+  #chip .a { color: #FF8A8E; } #chip .b { color: #fff; opacity: 0; }
+  #chip svg { flex: none; width: calc(var(--u) * 36); height: calc(var(--u) * 36); fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  #grid { position: relative; margin-top: calc(var(--u) * 26); }
+  .hr { position: absolute; left: 0; right: 0; height: 0; }
+  .hr .t { position: absolute; left: 0; top: calc(var(--u) * -17); width: calc(var(--u) * 96); font-size: calc(var(--u) * 30); font-weight: 600; color: color-mix(in srgb, var(--ink) 45%, transparent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .hr .ln { position: absolute; left: calc(var(--u) * 108); right: 0; top: 0; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.1); transform-origin: 0 50%; }
+  .ghost { position: absolute; border-radius: calc(var(--u) * 18); background: rgba(255,255,255,.06); box-shadow: inset calc(var(--u) * 6) 0 0 rgba(255,255,255,.14); padding: calc(var(--u) * 22) calc(var(--u) * 26); box-sizing: border-box; }
+  .is-key .ghost { background: color-mix(in srgb, var(--surface) 90%, #fff); }
+  .ghost b { display: block; height: calc(var(--u) * 16); border-radius: calc(var(--u) * 8); background: rgba(255,255,255,.14); }
+  .ghost b + b { margin-top: calc(var(--u) * 12); background: rgba(255,255,255,.08); }
+  #slot { position: absolute; border-radius: calc(var(--u) * 18); border: calc(var(--u) * 3) dashed color-mix(in srgb, var(--go) 80%, transparent); box-sizing: border-box; background: rgba(43,214,123,.08); opacity: 0; }
+
+  .ev { position: absolute; border-radius: calc(var(--u) * 18); box-sizing: border-box; padding: 0 calc(var(--u) * 20) 0 calc(var(--u) * 30); display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+  .ev .bar { position: absolute; left: calc(var(--u) * 10); top: calc(var(--u) * 12); bottom: calc(var(--u) * 12); width: calc(var(--u) * 7); border-radius: calc(var(--u) * 4); }
+  .ev .ti { font-size: calc(var(--u) * 38); font-weight: 800; white-space: nowrap; letter-spacing: -0.01em; line-height: 1.15; }
+  .ev .tm { display: grid; margin-top: calc(var(--u) * 2); }
+  .ev .tm span { grid-area: 1 / 1; font-size: calc(var(--u) * 30); font-weight: 600; white-space: nowrap; }
+  .ev .rd { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; box-shadow: inset 0 0 0 calc(var(--u) * 4) var(--rd), 0 0 calc(var(--u) * 30) rgba(229,72,77,.6); }
+  .is-key .ev .rd { box-shadow: inset 0 0 0 calc(var(--u) * 4) var(--rd); }
+  .ev .lift { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; box-shadow: 0 calc(var(--u) * 36) calc(var(--u) * 50) calc(var(--u) * -16) rgba(0,0,0,.75); }
+  .is-key .ev .lift { display: none; }
+  #evA { background: linear-gradient(160deg, var(--al), var(--accent) 50%, var(--ad)); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * -10) rgba(0,0,0,.55); }
+  #evA .bar { background: rgba(255,255,255,.85); } #evA .ti { color: #fff; } #evA .tm span { color: rgba(255,255,255,.85); }
+  #evB { background: linear-gradient(165deg, #FFFFFF, #E9E8EE); box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, 0 calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * -10) rgba(0,0,0,.55); }
+  #evB .bar { background: var(--accent2); } #evB .ti { color: #17161B; } #evB .tm span { color: rgba(23,22,27,.6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="cam">
+    <div id="card">
+      <div class="hd">
+        <div id="dt"><div class="m"></div><svg viewBox="0 0 24 24"><path d="M6 9h12M6 13h12M6 17h7"/></svg></div>
+        <div class="ht"><div id="wd"></div><div id="da"></div></div>
+        <div id="chip"><div class="gn"></div>
+          <div class="f a"><svg viewBox="0 0 24 24"><path d="M12 4.5l8.5 15h-17z"/><path d="M12 10.5v4M12 17.3v.2"/></svg><span></span></div>
+          <div class="f b"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4L18 8"/></svg><span></span></div></div>
+      </div>
+      <div id="grid"><div id="slot"></div></div>
+      <div class="sh"></div>
+    </div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(() => {
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration;
+  let AT = Math.round(+v.at), TO = Math.round(+v.to);
+  if (!(AT >= 0 && AT <= 23)) AT = 11; if (!(TO >= 0 && TO <= 23) || TO === AT) TO = AT + 3 <= 23 ? AT + 3 : AT - 3;
+  const H0 = Math.max(0, Math.min(AT, TO) - 1), H1 = Math.min(23, Math.max(AT, TO) + 1);
+  const hours = []; for (let h = H0; h <= H1; h++) hours.push(h);
+  const NR = hours.length;
+  const lab = (h) => String(h).padStart(2, "0") + ":00";
+
+  // ---- size
+  const HR0 = 118, HEAD0 = 32 + 92 + 24 + 26 + 28;
+  const needH = HEAD0 + NR * HR0 + 10;
+  const availH = H - safe.top - safe.bottom - (MV.portrait ? 20 : 0) * MV.u;
+  const u = Math.min(MV.u * (MV.portrait ? 1 : 0.95), availH / needH);
+  root.style.setProperty("--u", u + "px");
+  const regionW = W - safe.left - safe.right;
+  const CW = Math.min(regionW, (MV.portrait ? 940 : 980) * u);
+  const HR = HR0 * u, IW = CW - 64 * u, EX = 108 * u + 10 * u, EW = IW - EX, INS = 6 * u, GH = NR * HR;
+  const card = $("#card"), grid = $("#grid"); card.style.width = CW + "px"; grid.style.height = GH + "px";
+  $("#wd").textContent = v.weekday || ""; $("#da").textContent = v.date || "";
+  $("#chip .a span").textContent = v.clash || ""; $("#chip .b span").textContent = v.clear || "";
+
+  // hour lines
+  const lines = hours.map((h, i) => { const r = document.createElement("div"); r.className = "hr"; r.style.top = (i * HR + 17 * u) + "px";
+    r.innerHTML = `<span class="t">${lab(h)}</span><i class="ln"></i>`; grid.appendChild(r); return r; });
+  const yOf = (h) => (h - H0) * HR + 17 * u + INS;
+  const EH = HR - INS * 2;
+  // the other hours are taken by grey placeholders, so the free one reads as the only gap
+  const ghosts = hours.filter((h) => h !== AT && h !== TO).map((h, i) => { const g = document.createElement("div"); g.className = "ghost";
+    Object.assign(g.style, { left: EX + "px", top: yOf(h) + "px", width: (EW * (i % 2 ? 0.86 : 1)) + "px", height: EH + "px" });
+    g.innerHTML = `<b style="width:${40 + (i * 23) % 30}%"></b><b style="width:${22 + (i * 17) % 20}%"></b>`; grid.appendChild(g); return g; });
+  const slot = $("#slot"); Object.assign(slot.style, { left: EX + "px", top: yOf(TO) + "px", width: EW + "px", height: EH + "px" });
+
+  const mk = (id, title, h) => { const e = document.createElement("div"); e.className = "ev"; e.id = id;
+    e.innerHTML = `<i class="bar"></i><div class="ti"></div><div class="tm"><span class="o"></span><span class="n"></span></div><div class="rd"></div><div class="lift"></div>`;
+    $(".ti", e).textContent = title; $(".tm .o", e).textContent = `${lab(h)} to ${lab(h + 1 > 23 ? 0 : h + 1)}`;
+    Object.assign(e.style, { left: EX + "px", top: yOf(h) + "px", width: EW + "px", height: EH + "px" }); grid.appendChild(e); return e; };
+  const A = mk("evA", v.stays || "", AT), B = mk("evB", v.moves || "", AT);
+  $(".tm .n", B).textContent = `${lab(TO)} to ${lab(TO + 1 > 23 ? 0 : TO + 1)}`; gsap.set($(".tm .n", B), { opacity: 0 }); gsap.set($(".tm .n", A), { display: "none" });
+  // text fits the half width it has while they clash
+  const HW = (EW - 12 * u) / 2;
+  [A, B].forEach((e) => { MV.fitText($(".ti", e), HW - 56 * u, 16); $(".tm span", e) && [...e.querySelectorAll(".tm span")].forEach((s) => MV.fitText(s, HW - 56 * u, 14)); });
+  const chw = Math.max($("#chip .a").getBoundingClientRect().width, $("#chip .b").getBoundingClientRect().width);
+  $("#chip").style.width = chw + "px";
+  MV.fitText($("#wd"), IW - (92 + 22 + 22) * u - chw, 18); MV.fitText($("#da"), IW - (92 + 22 + 22) * u - chw, 14);
+
+  // ---- place
+  const CH = card.offsetHeight;
+  let cx = W / 2, y0;
+  if (MV.portrait) { cx = MV.alpha ? safe.left + regionW / 2 : W / 2; y0 = MV.alpha ? safe.top + 10 * u : (H - CH) / 2; }
+  else { if (MV.alpha && W > H) cx = W - safe.right - CW / 2; y0 = MV.alpha ? safe.top + Math.max(0, (H - safe.top - safe.bottom - CH) / 2) : (H - CH) / 2; }
+  gsap.set(card, { left: cx - CW / 2, top: y0 });
+  root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", ((y0 + CH * 0.55) / H * 100) + "%");
+  gsap.set("#cam", { transformOrigin: `${cx}px ${y0 + CH / 2}px` });
+
+  // ---- timeline
+  tl.fromTo(card, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.05);
+  tl.fromTo(card, { y: 90 * u, scale: 0.92, rotationX: 18 }, { y: 0, scale: 1, rotationX: 0, duration: 0.85, ease: "back.out(1.4)" }, 0.05);
+  tl.fromTo(".hd", { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.15);
+  lines.forEach((r, i) => { tl.fromTo($(".ln", r), { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.2 + i * 0.04); tl.fromTo($(".t", r), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.22 + i * 0.04); });
+  ghosts.forEach((g, i) => tl.fromTo(g, { opacity: 0, x: 30 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.34 + i * 0.05));
+  tl.fromTo($(".sh", card), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.35);
+
+  // 1. the first event drops into its hour, then the second lands on the same hour
+  const T1 = 0.55, T2 = 0.95;
+  tl.fromTo(A, { opacity: 0, y: -60 * u, scale: 1.06 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.8)" }, T1);
+  tl.fromTo(B, { opacity: 0, y: -60 * u, scale: 1.06, left: EX + HW + 12 * u, width: HW }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, T2);
+  // they squeeze side by side, outlined red, the chip pops with a shake
+  tl.to(A, { width: HW, duration: 0.4, ease: "back.out(1.6)" }, T2 + 0.02);
+  const CL = T2 + 0.3;
+  tl.to([$(".rd", A), $(".rd", B)], { opacity: 1, duration: 0.2, ease: "power2.out" }, CL);
+  tl.to([$(".rd", A), $(".rd", B)], { opacity: 0.55, duration: 0.25, ease: "power2.inOut", repeat: 2, yoyo: true }, CL + 0.2);
+  tl.fromTo([A, B], { x: 0 }, { x: 5 * u, duration: 0.05, ease: "none", repeat: 5, yoyo: true, immediateRender: false }, CL + 0.02);
+  tl.fromTo("#chip", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, CL);
+  tl.fromTo("#chip", { x: 0 }, { x: 6 * u, duration: 0.05, ease: "none", repeat: 5, yoyo: true, immediateRender: false }, CL + 0.3);
+
+  // 2. the free slot shows, the second event lifts and glides down into it
+  const S = CL + 0.85;
+  tl.fromTo(slot, { opacity: 0, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, S - 0.15);
+  B.style.zIndex = 5;
+  tl.to(B, { scale: 1.06, rotation: 1.2, duration: 0.3, ease: "back.out(2)" }, S);
+  tl.to($(".lift", B), { opacity: 1, duration: 0.3, ease: "power2.out" }, S);
+  tl.to($(".rd", B), { opacity: 0, duration: 0.2, ease: "power2.out" }, S);
+  const MV2 = S + 0.22, dy = yOf(TO) - yOf(AT);
+  tl.to(B, { top: yOf(TO), left: EX, width: EW, duration: 0.75, ease: "expo.inOut" }, MV2);
+  tl.to($(".tm .o", B), { opacity: 0, duration: 0.15, ease: "power2.in" }, MV2 + 0.3);
+  tl.to($(".tm .n", B), { opacity: 1, duration: 0.25, ease: "power2.out" }, MV2 + 0.45);
+  // it lands: a squash, the slot fills, the first event widens back, red is gone
+  const LD = MV2 + 0.72;
+  tl.to(B, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, LD);
+  tl.to($(".lift", B), { opacity: 0, duration: 0.3, ease: "power2.out" }, LD);
+  tl.to(slot, { opacity: 0, scale: 1.04, duration: 0.3, ease: "power2.out" }, LD);
+  tl.to(A, { width: EW, duration: 0.55, ease: "back.out(1.6)" }, LD - 0.1);
+  tl.to($(".rd", A), { opacity: 0, duration: 0.25, ease: "power2.out" }, LD - 0.1);
+  // the chip flips green
+  tl.to("#chip .gn", { opacity: 1, duration: 0.25, ease: "power2.out" }, LD + 0.05);
+  tl.to("#chip", { boxShadow: `inset 0 0 0 ${2 * u}px rgba(43,214,123,0)`, duration: 0.25, ease: "power2.out" }, LD + 0.05);
+  tl.to("#chip .a", { opacity: 0, y: -18 * u, duration: 0.15, ease: "power2.in" }, LD);
+  tl.fromTo("#chip .b", { opacity: 0, y: 18 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(2)", immediateRender: false }, LD + 0.14);
+  tl.fromTo("#chip", { scale: 1 }, { scale: 1.12, duration: 0.1, ease: "power2.out", immediateRender: false }, LD + 0.1);
+  tl.to("#chip", { scale: 1, duration: 0.45, ease: "back.out(3)" }, LD + 0.2);
+  tl.fromTo($(".sh", card), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, LD + 0.1);
+
+  // the camera
+  tl.fromTo("#cam", { rotationX: 9, rotationY: 8, scale: 1.03 }, { rotationX: 2, rotationY: -6, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.to(card, { y: -90 * u, opacity: 0, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

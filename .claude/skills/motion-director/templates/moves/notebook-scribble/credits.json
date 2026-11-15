@@ -1,0 +1,6 @@
+{ "sources": [
+  { "file": "assets/legal.jpg", "from": "Poly Haven office_notepads (CC0 scanned stationery model): the yellow legal sheet's 4K diffuse map, rendered flat top-down with prop-render.mjs under the studio_small_09 HDRI and cropped", "license": "CC0", "page": "https://polyhaven.com/a/office_notepads" },
+  { "file": "assets/pen.png", "from": "Poly Haven stationery_supplies (CC0 model), the black and green ballpoint alone, rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0)", "license": "CC0", "page": "https://polyhaven.com/a/stationery_supplies" },
+  { "file": "assets/leather.jpg", "from": "ambientCG Leather032 (scanned black leather), resized; the desk blotter", "license": "CC0", "page": "https://ambientcg.com/view?id=Leather032" },
+  { "file": "assets/fonts/CoveredByYourGrace.ttf", "from": "Covered By Your Grace by Kimberly Geswein, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Covered+By+Your+Grace" }
+] }

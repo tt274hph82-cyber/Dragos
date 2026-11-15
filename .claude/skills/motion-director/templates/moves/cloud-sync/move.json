@@ -1,0 +1,5 @@
+{ "id": "cloud-sync", "name": "Cloud sync", "oneLiner": "a glass cloud floats over a file window; each file row spins and ticks green in turn while the cloud fills with the brand colour like a tank, and when the last one lands the cloud turns green, its arrow becomes a check and the window reads All synced",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["cloud", "sync", "backup", "upload", "files", "storage", "drive", "saved", "everywhere", "devices", "automation", "safe", "progress", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says their files are backed up or available everywhere ('it all syncs to the cloud', 'every file is saved automatically'): the rows tick under the setup and the cloud turns green on 'synced' or 'backed up'. Set files, sizes and the title" }

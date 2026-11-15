@@ -1,0 +1,5 @@
+{ "id": "growing-coin-row", "name": "Growing coin row", "oneLiner": "solid 3D metal coins (bronze, silver, gold) spin in one after another, each bigger than the last, climbing a slow staircase while the camera pulls back in log space; the last gold coin lands with a glint across its face and a ring of light",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["money", "coins", "growth", "compound", "income", "revenue", "savings", "levels", "milestones", "scale", "10x", "finance", "3d", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker counts money up in steps ('first a dollar, then ten, then a hundred, then a thousand'): cut in on the first amount, each coin lands on its number, the gold one on the last" }

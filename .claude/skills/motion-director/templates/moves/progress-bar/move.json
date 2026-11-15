@@ -1,0 +1,5 @@
+{ "id": "progress-bar", "name": "Glass progress bar", "oneLiner": "a thick glass tube fills with lit accent liquid while the camera rides its head, the percent rides inside the fill, milestone nodes light as it passes them and a check seal is pressed into the end",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["progress", "bar", "milestones", "roadmap", "journey", "percent", "loading", "goal", "complete", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker walks through stages toward a goal ('from idea to launch in 30 days'): each milestone lights as it is named, the check lands on the word that says it is done. Set value below 100 for 'we are 70% there'. On 9:16 the bar stands as a column; as an overlay it lies flat in the upper third" }

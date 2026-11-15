@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"method","type":"string","label":"Request method","default":"POST"},
+  {"id":"endpoint","type":"string","label":"Endpoint path","default":"/v1/generate"},
+  {"id":"body","type":"string","label":"Request body as key:value","default":"prompt:Write the intro"},
+  {"id":"host","type":"string","label":"Server name (empty: api. plus the brand domain)","default":""},
+  {"id":"status","type":"string","label":"Response status","default":"200 OK"},
+  {"id":"ms","type":"number","label":"Response time in ms","default":142},
+  {"id":"fields","type":"string","label":"Response fields key:value, separated by |","default":"id:gen_8f2k|status:done|tokens:512|output:Intro ready"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B8; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  .ab { position: absolute; box-sizing: border-box; }
+  .glass { overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha .glass { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key .glass { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  .glass::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+
+  /* request bar */
+  #meth { display: flex; align-items: center; justify-content: center; border-radius: calc(var(--s) * 14); font-family: var(--mono); font-weight: 800; font-size: calc(var(--s) * 32); color: #fff; letter-spacing: .02em;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 75%, #fff), var(--accent) 60%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.45); white-space: nowrap; }
+  #url { display: flex; align-items: center; border-radius: calc(var(--s) * 14); background: rgba(0,0,0,.25); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); padding: 0 calc(var(--s) * 20); }
+  .is-key #url { background: color-mix(in srgb, var(--surface) 70%, black); }
+  #urlt { font-family: var(--mono); font-size: calc(var(--s) * 36); color: var(--ink); white-space: nowrap; }
+  #send { display: flex; align-items: center; justify-content: center; border-radius: calc(var(--s) * 14); color: var(--ink);
+    background: rgba(255,255,255,.12); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.16); }
+  .is-key #send { background: color-mix(in srgb, var(--surface) 75%, white); }
+  #send svg { width: 46%; height: 46%; }
+  #bodyl { display: flex; align-items: center; white-space: pre; font-family: var(--mono); font-size: calc(var(--s) * 32); white-space: nowrap; color: color-mix(in srgb, var(--ink) 75%, transparent); }
+  .lbl { font-size: calc(var(--s) * 26); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 45%, transparent); white-space: nowrap; }
+  #hr { background: rgba(255,255,255,.1); }
+  /* response */
+  #resp { overflow: hidden; }
+  #stat { display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 18); border-radius: 99px; font-family: var(--mono); font-weight: 800; font-size: calc(var(--s) * 30); white-space: nowrap; color: #04150B;
+    background: linear-gradient(180deg, var(--okl), var(--ok) 60%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--s) * 8) calc(var(--s) * 22) rgba(43,214,123,.4); }
+  .is-key #stat { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+  #stat i { width: calc(var(--s) * 14); height: calc(var(--s) * 14); border-radius: 50%; background: #04150B; }
+  #msv { display: flex; align-items: center; font-family: var(--mono); font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #json { border-radius: calc(var(--s) * 20); background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); overflow: hidden; }
+  .is-key #json { background: color-mix(in srgb, var(--surface) 70%, black); }
+  .jl { position: absolute; left: 0; right: 0; display: flex; align-items: center; font-family: var(--mono); white-space: pre; }
+  .jl .hb { position: absolute; inset: 0; transform-origin: 0 50%; background: linear-gradient(90deg, rgba(255,255,255,.13), rgba(255,255,255,0) 85%); box-shadow: inset calc(var(--s) * 5) 0 0 var(--al); opacity: 0; }
+  .jl .t { position: relative; }
+  .sk { position: absolute; border-radius: 99px; overflow: hidden; background: rgba(255,255,255,.07); }
+  .sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent); transform: translateX(var(--sx, -100%)); }
+  .jk { color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  .js { color: #9FE6B8; } .jn { color: color-mix(in srgb, var(--accent2) 85%, white); } .jp { color: color-mix(in srgb, var(--ink) 45%, transparent); }
+
+  /* server */
+  #srv { border-radius: calc(var(--s) * 34); }
+  .rk { position: absolute; border-radius: calc(var(--s) * 12); background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.04)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.25), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  .is-key .rk { background: color-mix(in srgb, var(--surface) 80%, white); }
+  .rk .led { position: absolute; border-radius: 50%; background: rgba(255,255,255,.18); }
+  .rk .vt { position: absolute; border-radius: 99px; background: rgba(0,0,0,.35); }
+  #host { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 30); white-space: nowrap; color: color-mix(in srgb, var(--ink) 80%, transparent); }
+  #halo { position: absolute; border-radius: calc(var(--s) * 44); box-shadow: 0 0 calc(var(--s) * 70) calc(var(--s) * 10) color-mix(in srgb, var(--accent) 60%, transparent); opacity: 0; }
+  .is-key #halo { display: none; }
+  /* wire + packets */
+  #wire { position: absolute; left: 0; top: 0; overflow: visible; }
+  .pk { position: absolute; left: 0; top: 0; border-radius: 99px; z-index: 20; opacity: 0; }
+  #pk1 { background: radial-gradient(circle at 40% 35%, #fff, var(--al) 45%, var(--accent) 80%); box-shadow: 0 0 calc(var(--s) * 30) calc(var(--s) * 6) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #pk2 { background: radial-gradient(circle at 40% 35%, #fff, var(--okl) 45%, var(--ok) 80%); box-shadow: 0 0 calc(var(--s) * 30) calc(var(--s) * 6) rgba(43,214,123,.7); }
+  .is-key .pk { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <svg id="wire"><path id="wl" fill="none" stroke="rgba(255,255,255,.22)" stroke-linecap="round"/><path id="wg" fill="none" stroke-linecap="round"/></svg>
+      <div id="halo"></div>
+      <div id="srv" class="ab glass"><div id="racks"></div><div id="host" class="ab"></div></div>
+      <div id="win" class="ab glass">
+        <div id="meth" class="ab"></div>
+        <div id="url" class="ab"><span id="urlt"></span></div>
+        <div id="send" class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M3.5 11.2 20.5 3.5l-6.8 17-3-7.2z"/><path d="M10.7 13.3 20.5 3.5"/></svg></div>
+        <div id="l1" class="ab lbl">Body</div>
+        <div id="bodyl" class="ab"></div>
+        <div id="hr" class="ab"></div>
+        <div id="resp" class="ab">
+          <div id="l2" class="ab lbl">Response</div>
+          <div id="stat" class="ab"><i></i><span id="statt"></span></div>
+          <div id="msv" class="ab"></div>
+          <div id="json" class="ab"></div>
+        </div>
+      </div>
+      <div id="pk1" class="pk"></div><div id="pk2" class="pk"></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const kv = (x) => { const i = x.indexOf(":"); return i < 0 ? [x.trim(), ""] : [x.slice(0, i).trim(), x.slice(i + 1).trim()]; };
+  const fields = String(v.fields || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 5).map(kv);
+  const host = v.host || (v.domain ? "api." + v.domain : "api.server");
+
+  // ---- zone
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.12; cR = W * 0.88; zT = H * 0.08; zB = H * 0.9; }
+  // ---- the window in design units (820 wide)
+  const WW = 820, pad = 40, inner = WW - pad * 2;
+  const side0 = (cR - cL) / (zB - zT) > 1.25;
+  const SW = side0 ? 290 : 220, SH = SW;                    // server tile
+  const LH = 60, NJ = fields.length + 2, JH = NJ * LH + 24, RHt = 76, RY = 36;
+  const lay = (body) => {
+    const LY = RY + RHt + 26, BLY = LY + 36, BLH = 56, HRY = body ? BLY + BLH + 22 : RY + RHt + 26;
+    const RSY = HRY + 24, RSH = 70 + JH, WH = RSY + RSH + pad;
+    let DW, DH, wx, wy, sx, sy;
+    if (side0) { const gap = 220; DW = WW + gap + SW; DH = WH; wx = 0; wy = 0; sx = WW + gap; sy = (WH - SH) / 2; }
+    else { const gap = 70; DW = WW; DH = SH + gap + WH; sx = WW - pad - SW - 30; sy = 0; wx = 0; wy = SH + gap; }
+    const sc = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.2);
+    return { LY, BLY, BLH, HRY, RSY, RSH, WH, DW, DH, wx, wy, sx, sy, sc };
+  };
+  let L = lay(!!v.body); if (v.body && L.sc < 1.02) L = lay(false);
+  const BODY = L.HRY !== RY + RHt + 26;
+  const { LY, BLY, BLH, HRY, RSY, RSH, WH, DW, DH, wx, wy, sx, sy } = L;
+  if (!BODY) { $("#l1").style.display = "none"; $("#bodyl").style.display = "none"; }
+  const side = side0;
+  const s = L.sc;
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- window
+  const win = $("#win"); box(win, wx, wy, WW, WH);
+  const meth = $("#meth"); meth.textContent = String(v.method || "GET").toUpperCase();
+  meth.style.height = S(RHt); meth.style.padding = "0 " + S(20);
+  const mW = Math.max(110, meth.getBoundingClientRect().width / s);
+  box(meth, pad, RY, mW, RHt);
+  const SB = RHt; box($("#send"), WW - pad - SB, RY, SB, SB);
+  box($("#url"), pad + mW + 14, RY, inner - mW - 14 - SB - 14, RHt);
+  $("#urlt").textContent = v.endpoint || "/";
+  MV.fitText($("#urlt"), (inner - mW - 28 - SB - 40) * s, 20 * s);
+  box($("#l1"), pad, LY);
+  const [bk, bv] = kv(String(v.body || ""));
+  const fmtV = (x) => /^-?\d+(\.\d+)?$/.test(x) || /^(true|false|null)$/.test(x) ? `<span class="jn">${esc(x)}</span>` : `<span class="js">"${esc(x)}"</span>`;
+  const bl = $("#bodyl"); bl.innerHTML = bk ? `<span style="white-space:pre"><span class="jp">{ </span><span class="jk">"${esc(bk)}"</span><span class="jp">: </span>${fmtV(bv)}<span class="jp"> }</span></span>` : "";
+  box(bl, pad, BLY, null, BLH); MV.fitText(bl, inner * s, 20 * s);
+  box($("#hr"), pad, HRY, inner, 1.5);
+  // response block (inside the window, revealed when the window unfolds)
+  const resp = $("#resp"); box(resp, 0, RSY, WW, RSH);
+  box($("#l2"), pad, 14);
+  const stat = $("#stat"); $("#statt").textContent = v.status || "200 OK"; stat.style.height = S(52);
+  const stW = stat.getBoundingClientRect().width / s; box(stat, WW - pad - stW, 4);
+  const msv = $("#msv"); msv.textContent = "0 ms"; box(msv, WW - pad - stW - 24 - 200, 4, 200, 52); msv.style.justifyContent = "flex-end";
+  const json = $("#json"); box(json, pad, 70, inner, JH);
+  const lines = [{ h: `<span class="jp">{</span>` }, ...fields.map(([k, x], i) => ({ k: true, h: `  <span class="jk">"${esc(k)}"</span><span class="jp">: </span>${fmtV(x)}${i < fields.length - 1 ? '<span class="jp">,</span>' : ""}` })), { h: `<span class="jp">}</span>` }];
+  let jfs = 36;
+  const JL = lines.map((l, i) => { const d = document.createElement("div"); d.className = "jl"; d.innerHTML = `<i class="hb"></i><span class="t">${l.h}</span>`; json.appendChild(d);
+    Object.assign(d.style, { top: S(12 + i * LH), height: S(LH), paddingLeft: S(26) }); d.querySelector(".t").style.fontSize = S(jfs); return { d, k: l.k, t: d.querySelector(".t"), hb: d.querySelector(".hb"), key: d.querySelector(".jk") }; });
+  const SK = fields.map((_, i) => { const k = document.createElement("i"); k.className = "sk"; json.appendChild(k); box(k, 26 + 36, 12 + (i + 1) * LH + LH * 0.3, [420, 300, 360, 470, 330][i % 5], LH * 0.4); return k; });
+  const widest = () => Math.max(...JL.map((j) => j.t.getBoundingClientRect().width / s));
+  while (widest() > inner - 60 && jfs > 22) { jfs -= 1; JL.forEach((j) => j.t.style.fontSize = S(jfs)); }
+
+  // ---- server tile: three rack units with lights, the host under it
+  const srv = $("#srv"); box(srv, sx, sy, SW, SH); gsap.set(srv, { transformPerspective: 1400 });
+  const racks = $("#racks"), LEDS = [];
+  const RKH = (SH - 26 - 64) / 3;
+  for (let i = 0; i < 3; i++) { const r = document.createElement("div"); r.className = "rk"; box(r, 28, 26 + i * RKH, SW - 56, RKH - 10);
+    for (let j = 0; j < 2; j++) { const l = document.createElement("i"); l.className = "led"; box(l, 16 + j * 24, (RKH - 10 - 14) / 2, 14, 14); r.appendChild(l); LEDS.push(l); }
+    for (let j = 0; j < 3; j++) { const t = document.createElement("i"); t.className = "vt"; box(t, SW - 56 - 30 - j * 22, (RKH - 30) / 2, 8, 20); r.appendChild(t); }
+    racks.appendChild(r); }
+  const hostEl = $("#host"); hostEl.textContent = host; box(hostEl, 14, SH - 54, SW - 28, 40); MV.fitText(hostEl, (SW - 36) * s, 18 * s);
+  box($("#halo"), sx, sy, SW, SH);
+
+  // ---- the wire: from Send to the server
+  const sendC = [wx + WW - pad - SB / 2, wy + RY + SB / 2];
+  let p0, p1, c0, c1;
+  if (side) { p0 = [wx + WW - pad + 8, sendC[1]]; p1 = [sx - 8, sy + SH / 2]; c0 = [p0[0] + 150, p0[1]]; c1 = [p1[0] - 150, p1[1]]; }
+  else { p0 = [sendC[0], wy + RY - 8 - 0]; p1 = [sx + SW / 2, sy + SH + 8]; c0 = [p0[0], p0[1] - 90]; c1 = [p1[0], p1[1] + 90]; }
+  const wire = $("#wire"); wire.setAttribute("width", cw); wire.setAttribute("height", ch); wire.setAttribute("viewBox", `0 0 ${DW} ${DH}`);
+  wire.style.width = cw + "px"; wire.style.height = ch + "px";
+  const d = `M${p0[0]} ${p0[1]}C${c0[0]} ${c0[1]} ${c1[0]} ${c1[1]} ${p1[0]} ${p1[1]}`;
+  const wl = $("#wl"), wg = $("#wg");
+  wl.setAttribute("d", d); wl.setAttribute("stroke-width", 6); wl.setAttribute("stroke-dasharray", "0.1 14"); wl.setAttribute("stroke", "rgba(255,255,255,.4)");
+  wg.setAttribute("d", d); wg.setAttribute("stroke-width", 8); wg.setAttribute("pathLength", 1); wg.setAttribute("stroke-dasharray", "0.22 1.5"); wg.setAttribute("stroke-dashoffset", 0.22); wg.setAttribute("stroke", "var(--accent)");
+  const bez = (t) => { const m = 1 - t; return [0, 1].map((k) => m * m * m * p0[k] + 3 * m * m * t * c0[k] + 3 * m * t * t * c1[k] + t * t * t * p1[k]); };
+  const PK = 44; [$("#pk1"), $("#pk2")].forEach((p) => { p.style.width = S(PK); p.style.height = S(PK); });
+  const place = (el, t) => { const [x, y] = bez(t); gsap.set(el, { x: (x - PK / 2) * s, y: (y - PK / 2) * s }); };
+
+  // ---- timing
+  const TS = 1.0, TA = TS + 0.5, TB = TA + 0.6, TR = TB + 0.45, TK = TR + 0.42;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  // in: the window rises, the server tile drops in on its own depth
+  tl.fromTo("#win", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#win", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#srv", { z: -400, rotationY: side ? -30 : 0, rotationX: side ? 0 : 30, scale: 0.7 }, { z: 0, rotationY: 0, rotationX: 0, scale: 1, duration: 0.9, ease: "back.out(1.5)" }, 0.18);
+  tl.fromTo("#srv", { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.18);
+  tl.fromTo(".rk", { opacity: 0, x: -14 * s }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out", stagger: 0.06 }, 0.35);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#meth", "#url", "#send"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", stagger: 0.06 }, 0.25);
+  tl.fromTo(["#l1", "#bodyl"], { opacity: 0, x: -18 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.06 }, 0.4);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.45);
+  tl.fromTo("#wl", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.55);
+  tl.fromTo("#wl", { attr: { "stroke-dashoffset": 0 } }, { attr: { "stroke-dashoffset": -140 }, duration: D, ease: "none" }, 0);
+  tl.fromTo(["#l2", "#json"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", stagger: 0.06 }, 0.5);
+  tl.fromTo(SK, { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.4, ease: "expo.out", stagger: 0.05 }, 0.6);
+  tl.fromTo(SK, { "--sx": "-100%" }, { "--sx": "100%", duration: 0.9, ease: "power1.inOut", repeat: 2, stagger: 0.06 }, 0.7);
+  // send: the button presses, the packet runs the wire
+  tl.to("#send", { scale: 0.86, duration: 0.07, ease: "power2.in" }, TS); tl.to("#send", { scale: 1, duration: 0.4, ease: "back.out(3)" }, TS + 0.07);
+  tl.to("#send", { backgroundColor: "color-mix(in srgb, var(--accent) 70%, transparent)", duration: 0.1, ease: "power2.out" }, TS);
+  tl.to("#send", { backgroundColor: "rgba(255,255,255,.12)", duration: 0.6, ease: "power2.out" }, TS + 0.2);
+  const run = (el, t0, dur, rev, col) => {
+    const o = { t: 0 };
+    tl.set(el, { opacity: 1 }, t0);
+    tl.fromTo(o, { t: 0 }, { t: 1, duration: dur, ease: "power2.inOut", onUpdate: () => place(el, rev ? 1 - o.t : o.t), immediateRender: false }, t0);
+    tl.set(el, { opacity: 0 }, t0 + dur);
+    tl.set(wg, { attr: { stroke: col } }, t0);
+    tl.fromTo(wg, { attr: { "stroke-dashoffset": rev ? -1.22 : 0.22 } }, { attr: { "stroke-dashoffset": rev ? 0.22 : -1.22 }, duration: dur, ease: "power2.inOut", immediateRender: false }, t0);
+  };
+  place($("#pk1"), 0); place($("#pk2"), 1);
+  run($("#pk1"), TS + 0.05, TA - TS - 0.05, false, "var(--accent)");
+  // the server works: halo, lights chase
+  tl.to("#halo", { opacity: 1, duration: 0.12, ease: "power2.out" }, TA); tl.to("#halo", { opacity: 0, duration: 0.7, ease: "power2.out" }, TA + 0.2);
+  tl.to("#srv", { scale: 1.06, duration: 0.08, ease: "power2.out" }, TA); tl.to("#srv", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TA + 0.08);
+  LEDS.forEach((l, i) => {
+    const k = [0, 2, 4, 1, 3, 5].indexOf(i);
+    for (let n = 0; n < 3; n++) { const t = TA + 0.04 + n * 0.18 + k * 0.03;
+      tl.to(l, { backgroundColor: i % 2 ? "#F5B83D" : "#2BD67B", boxShadow: `0 0 ${10 * s}px ${i % 2 ? "#F5B83D" : "#2BD67B"}`, duration: 0.04, ease: "none" }, t);
+      tl.to(l, { backgroundColor: "rgba(255,255,255,.18)", boxShadow: "0 0 0px rgba(0,0,0,0)", duration: 0.08, ease: "none" }, t + 0.08); }
+    if (i % 2 === 0) tl.to(l, { backgroundColor: "#2BD67B", boxShadow: `0 0 ${10 * s}px #2BD67B`, duration: 0.1, ease: "none" }, TB);
+  });
+  run($("#pk2"), TB, TR - TB, true, "var(--ok)");
+  // the answer: 200 OK stamps, the window unfolds, the ms count lands, keys light in order
+  tl.to(SK, { opacity: 0, x: 16 * s, duration: 0.2, ease: "power2.in", stagger: 0.04 }, TR);
+  tl.fromTo("#stat", { opacity: 0, scale: 2.2, rotation: -10, filter: "blur(6px)" }, { opacity: 1, scale: 1, rotation: -2, filter: "blur(0px)", duration: 0.26, ease: "power4.in" }, TR);
+  tl.to("#stat", { rotation: 0, duration: 0.45, ease: "back.out(3)" }, TR + 0.26);
+  tl.fromTo("#msv", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, TR + 0.2);
+  const msO = { n: 0 }; tl.to(msO, { n: +v.ms || 0, duration: 0.5, ease: "expo.out", onUpdate: () => { msv.textContent = Math.round(msO.n) + " ms"; } }, TR + 0.2);
+  JL.forEach((j, i) => tl.fromTo(j.d, { opacity: 0, x: -18 * s }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out", immediateRender: true }, TR + 0.12 + i * 0.05));
+  tl.fromTo("#json", { boxShadow: `inset 0 0 0 ${1.5 * s}px rgba(43,214,123,.7)` }, { boxShadow: `inset 0 0 0 ${1.5 * s}px rgba(255,255,255,.08)`, duration: 0.8, ease: "power2.out", immediateRender: false }, TR);
+  JL.filter((j) => j.k).forEach((j, i) => {
+    const t = TK + i * 0.26;
+    tl.fromTo(j.hb, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.35, ease: "expo.out", immediateRender: false }, t);
+    tl.to(j.key, { color: "var(--al)", duration: 0.2, ease: "power2.out" }, t);
+    tl.to(j.hb, { opacity: 0, duration: 0.6, ease: "power2.out" }, t + 0.3);
+  });
+  const TE = TK + fields.length * 0.26;
+  tl.fromTo(".glass", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TE);
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

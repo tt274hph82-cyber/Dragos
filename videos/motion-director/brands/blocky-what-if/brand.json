@@ -1,0 +1,13 @@
+{
+  "name": "Blocky What If",
+  "domain": "youtube.com/@BlockyWhatIf",
+  "handle": "@BlockyWhatIf",
+  "tagline": "One crazy question, one fast animated story.",
+  "headline": "What if?",
+  "colors": { "ground": "#14110b", "ink": "#FFFFFF", "accent": "#FFC21A", "accent2": "#E5262E", "surface": "#221d14", "muted": "#9a927f", "paper": "#F3E6CF" },
+  "fonts": { "display": "Montserrat", "body": "Montserrat" },
+  "mark": "mark.png",
+  "screens": ["screens/s1.png"],
+  "people": [],
+  "examples": { "subscribe-button": { "title": "What if your PET swallowed your MOM?" } }
+}

@@ -1,0 +1,5 @@
+{ "id": "calendar-event", "name": "Calendar event booked", "oneLiner": "a glass calendar day view turns in 3D, an event block is held above it then drops into its hour slot and snaps on a spring, the invitees pop in on it and a Booked check stamps onto its corner",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["calendar", "meeting", "booked", "call", "schedule", "appointment", "event", "sales call", "booking", "invite", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker talks about booking calls or meetings ('my calendar filled up', 'they book a call'): the block drops on the booking word, the check stamps on 'booked'" }

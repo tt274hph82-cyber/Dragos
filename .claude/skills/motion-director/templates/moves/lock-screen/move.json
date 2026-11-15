@@ -1,0 +1,5 @@
+{ "id": "lock-screen", "name": "Lock screen", "oneLiner": "a metal-edged phone rises in slow 3D and its screen wakes: a brand-lit wallpaper settles back, the date with small weather and battery widgets and a huge clock come up, the brand photo stands in front so the clock tucks behind the head, then glass notifications carrying the brand mark land under it one per beat, the phone buzzing as each pushes the last down",
+  "category": "system", "kind": "effect", "uses": ["broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["phone", "lock screen", "notifications", "wake up", "morning", "alerts", "clock", "time", "messages", "results", "buzz", "mobile", "os", "system"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": false,
+  "say": "when the speaker says what was waiting on their phone ('I woke up to this', 'by the time I checked my phone...'): the screen wakes on 'woke up' or 'checked', then each notification lands on one thing they list. Set time, date, line1 to line3 and photo" }

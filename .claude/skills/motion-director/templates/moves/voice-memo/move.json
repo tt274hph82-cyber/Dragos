@@ -1,0 +1,5 @@
+{ "id": "voice-memo", "name": "Glass voice memo", "oneLiner": "a voice recorder on a glass pane: a red playhead sweeps and the waveform springs up bar by bar while the timer runs, the live transcript writes itself underneath, a marker sweeps the key phrase, then stop is pressed and a green Saved chip lands",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["voice", "voice memo", "recording", "audio", "transcript", "dictation", "speech to text", "podcast", "notes", "idea", "waveform", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker talks about recording a quick voice note or the AI transcribing them ('I just talk into my phone', 'it writes down everything I say'): the wave runs while they talk, the marker lands on the phrase they stress" }

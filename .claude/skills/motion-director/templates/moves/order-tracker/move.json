@@ -1,0 +1,5 @@
+{ "id": "order-tracker", "name": "Glass order tracker", "oneLiner": "an order tracking card on glass: a little delivery van drives the rail stop by stop (ordered, packed, shipped, delivered), each stop lights as it pulls up, the arrival day rolls from Friday to Today, then the last stop pops green with a double ring and the day becomes Delivered",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["order", "shipping", "delivery", "tracking", "ecommerce", "store", "fulfilment", "package", "eta", "shop", "logistics", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says an order shipped or arrived ('it was at my door two days later', 'the order goes out automatically'): cut in on 'ordered', the green stop lands on 'delivered' or 'arrived'" }

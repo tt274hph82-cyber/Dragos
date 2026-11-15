@@ -1,0 +1,5 @@
+{ "id": "color-grade", "name": "Color grade panel", "oneLiner": "a glass grading panel: a flat cool log frame of the brand's person on a lamp-lit set sits above three hue wheels and a vectorscope, a cursor drags the lift, gamma and gain pucks one by one, the frame warms and gains contrast with each, the scope cloud swings onto the skin line, the temperature readout climbs and the look chip flips to the new look",
+  "category": "creator", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["color grading", "colour", "grade", "look", "lut", "warm", "cinematic", "editing", "footage", "scope", "creator tools", "workflow", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says they grade or colour their footage or give it a look ('I warm it up so it feels cinematic', 'one grade and the footage looks expensive'): the wheels move while they explain, the look lands on 'cinematic' or 'look'" }

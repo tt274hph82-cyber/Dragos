@@ -1,0 +1,5 @@
+{ "id": "line-cross", "name": "Line cross", "oneLiner": "two glowing lines draw over time while the camera rides their heads with live values beside them; the heads meet, hold a beat, the crossing point pops with a ring and a glass pill names when it happened, then the brand line runs on above and the camera pulls back",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["chart", "line", "crossover", "overtake", "trend", "growth", "comparison", "tipping point", "data", "numbers", "camera", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says one thing overtook another over time ('by month eight we passed them', 'that is when AI got cheaper than hiring'): cut in on the comparison, the crossing pops on the word that names the moment" }

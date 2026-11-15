@@ -1,0 +1,5 @@
+{ "id": "issue-close", "name": "Glass issue closed by a commit", "oneLiner": "an issue card on glass with its comment: a commit lands on the timeline, its closes #42 reference lights up, the rail runs green into a check node and the status pill flips from Open to Closed as the icon turns green",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["issue", "bug", "fix", "commit", "closed", "git", "developer", "ticket", "resolved", "ai coding", "agent", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says a bug or a request got fixed ('someone reported it on Monday and the agent closed it by lunch', 'that issue is closed'): the commit lands on 'fixed it', the pill flips on 'closed'" }

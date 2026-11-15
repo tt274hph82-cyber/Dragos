@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The screenshot (path; empty: a brand screen)","default":""},
+  {"id":"stops","type":"string","label":"2 or 3 real regions the ring hops between, in % of the image: x,y,w,h separated by ;","default":"9.4,21,44.6,18.4;9.4,51.3,31.4,8.2;57.3,24.7,33.2,33.2"},
+  {"id":"labels","type":"string","label":"One short label per stop, comma separated","default":"The hook,The offer,The proof"},
+  {"id":"zoom","type":"number","label":"Largest push-in toward a stop (1 to 1.9)","default":1.6}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --fr: var(--accent2); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 12% 6%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 92% 96%, color-mix(in srgb, var(--accent2) 55%, transparent), transparent 72%),
+    linear-gradient(200deg, color-mix(in srgb, var(--accent2) 22%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 30%, var(--ground))); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; border-radius: calc(var(--u) * 26); overflow: hidden; background: #141317;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.75),
+      0 calc(var(--u) * 30) calc(var(--u) * 160) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 35%, transparent); }
+  .is-key #win { box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 6) calc(var(--u) * 26); border-radius: calc(var(--u) * 10);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 23); font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #scr { position: relative; overflow: hidden; }
+  #cam { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #cam img { position: absolute; left: 0; top: 0; display: block; max-width: none; }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  /* the page outside the ring dims: a hole the shape of the ring, a huge shadow around it */
+  #dim { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 18); opacity: 0; pointer-events: none; box-shadow: 0 0 0 calc(var(--u) * 4000) rgba(4,4,8,.5); }
+
+  #over { position: absolute; left: 0; overflow: visible; pointer-events: none; }
+  /* the focus ring: a lit rounded frame with an inner and an outer glow; the pulse leaves it on every landing */
+  .ring { position: absolute; left: 0; top: 0; box-sizing: border-box; border-radius: calc(var(--u) * 18); }
+  #ring { border: calc(var(--u) * 5) solid var(--fr); opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--fr) 65%, transparent), inset 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--fr) 40%, transparent),
+      0 calc(var(--u) * 18) calc(var(--u) * 30) calc(var(--u) * -10) rgba(0,0,0,.5); }
+  #ring::after { content: ""; position: absolute; inset: calc(var(--u) * -12); border-radius: calc(var(--u) * 28); border: calc(var(--u) * 1.5) solid color-mix(in srgb, var(--fr) 45%, transparent); }
+  #pulse { border: calc(var(--u) * 4) solid var(--fr); opacity: 0; }
+  .is-key #ring { box-shadow: none; } .is-key #ring::after { display: none; }
+  /* one chip per stop, tethered under (or over) the ring */
+  .chip { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 14); padding: calc(var(--u) * 10) calc(var(--u) * 28) calc(var(--u) * 10) calc(var(--u) * 10);
+    border-radius: 999px; background: linear-gradient(160deg, #2d2b33, #17161b); white-space: nowrap; opacity: 0;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--fr) 75%, transparent), 0 calc(var(--u) * 16) calc(var(--u) * 28) calc(var(--u) * -8) rgba(0,0,0,.65); }
+  .chip b { flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--fr); color: #111; font-weight: 900; }
+  .chip span { font-weight: 750; color: #fff; letter-spacing: -0.01em; }
+  .is-key .chip { background: #1d1c21; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div>
+  <div id="stage">
+    <div id="plate">
+      <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span></div>
+        <div id="scr"><div id="cam"></div><div id="dim"></div></div><div class="sh"></div></div>
+      <div id="over"><div class="ring" id="pulse"></div><div class="ring" id="ring"></div></div>
+    </div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const scr0 = v.screens || [];
+  const src = v.image || scr0[1] || scr0[0] || (v.people || [])[0];
+  const probe = new Image(); probe.src = src; try { await probe.decode(); } catch (e) {}
+  const IW = probe.naturalWidth || 1920, IH = probe.naturalHeight || 1080, IA = IW / IH;
+
+  // ---- the stops (2 or 3), each a real region of the image in %
+  let S = String(v.stops || "").split(";").map((s) => s.split(",").map(parseFloat)).filter((b) => b.length === 4 && b.every(isFinite) && b[2] > 0 && b[3] > 0).slice(0, 3);
+  if (S.length < 2) S = [[10, 20, 40, 18], [10, 52, 30, 8], [57, 25, 33, 33]];
+  const LB = String(v.labels || "").split(",").map((s) => s.trim());
+  const N = S.length, ZC = Math.max(1, Math.min(1.9, +v.zoom || 1.6));
+
+  // ---- the window: as big as the zone allows; narrow frames show a crop the camera moves over
+  const BAR = 54 * u;
+  let zx, zy, zw, zh;
+  if (P) { zx = 40 * u; zw = W - 80 * u; zy = safe.top; zh = H - safe.top - safe.bottom; }
+  else { zx = W * 0.07; zw = W * 0.86; zy = H * 0.07; zh = H * 0.86; }
+  const WA = P ? Math.min(IA, 0.92) : SQ ? Math.min(IA, 1.25) : IA;
+  let ww = zw, SH = ww / WA;
+  if (SH + BAR > zh) { SH = zh - BAR; ww = SH * WA; }
+  const SW = ww, wh = SH + BAR, wx = zx + (zw - ww) / 2, wy = zy + (zh - wh) / 2;
+  // the image at "cover" scale: z = 1 fills the screen, larger z pushes in
+  const c0 = Math.max(SW / IW, SH / IH), imgW = IW * c0, imgH = IH * c0;
+
+  const plate = $("#plate"), win = $("#win"), scr = $("#scr"), cam = $("#cam"), over = $("#over");
+  Object.assign(plate.style, { width: ww + "px", height: wh + "px" });
+  $("#bar").style.height = BAR + "px";
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  Object.assign(over.style, { top: BAR + "px", width: SW + "px", height: SH + "px" });
+  Object.assign(cam.style, { width: imgW + "px", height: imgH + "px" });
+  const im = MV.img(src); Object.assign(im.style, { width: imgW + "px", height: imgH + "px" }); cam.appendChild(im);
+  $("#bar .url").textContent = v.domain || ""; if (!v.domain) $("#bar .url").style.display = "none";
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 50%" });
+
+  // ---- chips: one per stop, measured once
+  const CHF = (P ? 40 : SQ ? 36 : 32) * u;
+  const chips = S.map((s, i) => {
+    const c = document.createElement("div"); c.className = "chip";
+    c.innerHTML = `<b>${i + 1}</b><span></span>`; over.appendChild(c);
+    c.style.fontSize = CHF + "px"; const b = $("b", c); b.style.width = b.style.height = CHF * 1.5 + "px"; b.style.fontSize = CHF * 0.8 + "px";
+    const t = LB[i] || ""; $("span", c).textContent = t; if (!t) { $("span", c).style.display = "none"; c.style.paddingRight = 10 * u + "px"; }
+    MV.fitText($("span", c), SW * 0.62, 14);
+    const r = c.getBoundingClientRect(); return { el: c, w: r.width, h: r.height };
+  });
+  const CHH = Math.max(...chips.map((c) => c.h)), GAP = 26 * u;
+
+  // ---- a view per stop: the region framed with room for its chip, clamped so the image never leaves the screen
+  const R = S.map((b) => { const p = 1.2 * u; return [(b[0] / 100) * imgW - p * 6, (b[1] / 100) * imgH - p * 6, (b[2] / 100) * imgW + p * 12, (b[3] / 100) * imgH + p * 12]; });
+  const clampView = (cx, cy, z) => { const hx = SW / (2 * z), hy = SH / (2 * z); return [Math.max(hx, Math.min(imgW - hx, cx)), Math.max(hy, Math.min(imgH - hy, cy)), z]; };
+  const viewFor = (r) => {
+    const z = Math.max(1, Math.min(P || SQ ? ZC : Math.min(ZC, 1.3), (SW * 0.72) / r[2], (SH - 2 * (CHH + GAP) - 40 * u) / r[3]));
+    return clampView(r[0] + r[2] / 2, r[1] + r[3] / 2 + (CHH + GAP) / (2 * z), z);
+  };
+  const VS = R.map(viewFor);
+  const V0 = clampView(VS[0][0], VS[0][1], 1);   // opens wide on the first stop's side of the page
+
+  // ---- timing: the window lands, the ring locks onto stop 1, then hops
+  const L = [], HP = [];   // landing time of each stop, start of each hop
+  L[0] = 1.08; const HOP = 0.62, HOLD = N === 2 ? 1.25 : 0.9;
+  for (let i = 1; i < N; i++) { HP[i - 1] = L[i - 1] + HOLD; L[i] = HP[i - 1] + HOP; }
+  const C0 = 0.3, C1 = L[0] + 0.05;   // the first push
+  const ePu = gsap.parseEase("power3.inOut"), eH = gsap.parseEase("expo.inOut"), eS = gsap.parseEase("sine.inOut"), cl = (a) => Math.max(0, Math.min(1, a));
+  const lerp = (a, b, k) => a + (b - a) * k, lerpA = (A, B, k) => A.map((x, i) => lerp(x, B[i], k));
+
+  const state = (t) => {
+    // which segment: before the first landing, holding a stop, or hopping between two
+    let view, rect, lift = 0;
+    if (t < C1) { const k = ePu(cl((t - C0) / (C1 - C0))); view = lerpA(V0, VS[0], k); rect = R[0]; }
+    else {
+      view = VS[0]; rect = R[0];
+      for (let i = 0; i < N - 1; i++) {
+        if (t >= HP[i]) {
+          const raw = cl((t - HP[i]) / HOP), k = eH(raw), kc = ePu(cl((t - HP[i] + 0.06) / (HOP + 0.12)));
+          view = lerpA(VS[i], VS[i + 1], kc); rect = lerpA(R[i], R[i + 1], k); lift = Math.sin(raw * Math.PI);
+        }
+      }
+    }
+    // after the last landing the camera keeps creeping in, a breath of life
+    const last = L[N - 1], k2 = eS(cl((t - last - 0.1) / (D - last)));
+    if (t > last) view = clampView(view[0], view[1], view[2] * (1 + 0.05 * k2));
+    return { view, rect, lift };
+  };
+  const toS = (x, y, V) => [(x - V[0]) * V[2] + SW / 2, (y - V[1]) * V[2] + SH / 2];
+  const ring = $("#ring"), pulse = $("#pulse"), dim = $("#dim");
+  const place = (el, x, y, w, h) => { el.style.left = x + "px"; el.style.top = y + "px"; el.style.width = w + "px"; el.style.height = h + "px"; };
+  const drive = (t) => {
+    const { view, rect, lift } = state(t);
+    cam.style.transform = `translate(${SW / 2 - view[0] * view[2]}px, ${SH / 2 - view[1] * view[2]}px) scale(${view[2]})`;
+    const [x0, y0] = toS(rect[0], rect[1], view), [x1, y1] = toS(rect[0] + rect[2], rect[1] + rect[3], view);
+    // the hop lifts the ring off the page: it swells and floats up a touch mid-flight
+    const sw = 1 + lift * 0.07, cx = (x0 + x1) / 2, cy = (y0 + y1) / 2 - lift * 26 * u, rw = (x1 - x0) * sw, rh = (y1 - y0) * sw;
+    place(ring, cx - rw / 2, cy - rh / 2, rw, rh);
+    place(pulse, x0, y0, x1 - x0, y1 - y0);
+    place(dim, x0, y0, x1 - x0, y1 - y0);
+    // each chip rides its ring: under it, or over it when the screen has no room below
+    chips.forEach((c) => {
+      let py = y1 + GAP; if (py + c.h > SH - 12 * u) py = y0 - GAP - c.h;
+      c.el.style.left = Math.max(14 * u, Math.min(SW - c.w - 14 * u, cx - c.w / 2)) + "px";
+      c.el.style.top = Math.max(12 * u, Math.min(SH - c.h - 12 * u, py)) + "px";
+    });
+  };
+  const clock = { t: 0 }; drive(0);
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: () => drive(clock.t) }, 0);
+
+  // ---- the lock-on: the ring closes in from wide and snaps; the page around it dims
+  tl.fromTo(ring, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, L[0] - 0.3);
+  tl.fromTo(ring, { scale: 1.35 }, { scale: 1, duration: 0.42, ease: "back.out(1.8)" }, L[0] - 0.3);
+  tl.fromTo(dim, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, L[0] - 0.25);
+  // every landing: a pulse leaves the ring and its chip pops; the chip before it tucks away as the ring lifts
+  L.forEach((t, i) => {
+    tl.fromTo(pulse, { opacity: 0.85, scale: 1 }, { opacity: 0, scale: 1.14, duration: 0.6, ease: "expo.out", immediateRender: false }, t);
+    tl.fromTo(chips[i].el, { opacity: 0, scale: 0.6, y: -16 * u }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(2)", immediateRender: false }, t + 0.04);
+    if (i < N - 1) tl.to(chips[i].el, { opacity: 0, scale: 0.8, duration: 0.18, ease: "power2.in" }, HP[i]);
+  });
+
+  // ---- the page: rises in tipped back, drifts slowly in 3D, sheen passes once
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: W * 0.04, y: -H * 0.03, rotation: -4, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+  tl.fromTo(plate, { y: wy + 140 * u, rotationX: 22, rotationY: 12, scale: 0.92 }, { y: wy, rotationX: 7, rotationY: 6, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(plate, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(plate, { rotationX: 3, rotationY: -4, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.3);
+  if (MV.alpha) tl.to(plate, { y: wy + 120 * u, opacity: 0, scale: 0.94, duration: 0.38, ease: "power2.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "context-meter", "name": "Context meter", "oneLiner": "a thick glass gauge fills green to orange to red while the value counts up toward its max, glyph groups (files, tools) drop in above it as it fills; split mode shows a thin first segment, then a big second segment floods in and fills with labelled blocks",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["context", "tokens", "usage", "gauge", "meter", "limit", "capacity", "progress", "percent", "split", "ai", "memory", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.0, "alpha": true,
+  "say": "when the speaker says something fills up or eats a budget ('it loads every file and you've burned 140k tokens before you ask'), or, in split mode, says a small part versus the big rest ('the prompt is 10%, the other 90% is the harness'): the count lands on the number they say. 9:16 also takes layout top" }

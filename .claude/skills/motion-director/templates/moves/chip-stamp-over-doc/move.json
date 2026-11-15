@@ -1,0 +1,5 @@
+{ "id": "chip-stamp-over-doc", "name": "Chip stamp over documents", "oneLiner": "a tilted table of real paper documents (testimonials with faces, stars and quotes) drifts up the frame in columns at their own speeds; a thick glossy green chip stamps down onto it from above the lens, the paper flinches, the count runs up from 1 with a long tail and the brand's badge pops in under it",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["social proof", "testimonials", "reviews", "clients", "customers", "count", "number", "trust", "wall", "stamp", "growth", "100+", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": false,
+  "say": "when the speaker claims how many people it has worked for ('we've done this for over a hundred brands'): cut in on the sentence, the chip stamps on the number word and counts to it as they finish. Set count, label, suffix and, for real proof, quotes from real reviews" }

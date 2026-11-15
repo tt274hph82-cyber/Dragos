@@ -1,0 +1,5 @@
+{ "id": "certificate", "name": "Certificate", "oneLiner": "a rolled certificate of heavy cream paper drops onto a black leather blotter and unrolls down the frame on twos, its engraved border printed in the brand colour, a name in script, then a wax seal in the brand colour is pressed on with the brand mark in it",
+  "category": "paper", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper"], "from": "new",
+  "tags": ["certificate", "award", "achievement", "graduated", "completed", "official", "milestone", "proof", "seal", "credential", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.8, "alpha": true,
+  "say": "when the speaker names an achievement or a finished milestone ('you have officially completed it', 'that is the proof'): the certificate unrolls as they say it and the seal presses on the payoff word" }

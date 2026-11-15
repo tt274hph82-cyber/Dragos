@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"topLabel","type":"string","label":"Small word over the tip (what people see)","default":"What you see"},
+  {"id":"topValue","type":"string","label":"The tip number or word (short)","default":"$20/mo"},
+  {"id":"bottomLabel","type":"string","label":"Small word for the hidden mass (what it really is)","default":"What it really costs"},
+  {"id":"bottomValue","type":"string","label":"The hidden number or word (short), lands as the moment","default":"$4,800"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 40%; left: 30%; top: -4%; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  #ground .l2 { width: 80%; height: 40%; left: -30%; top: 2%; background: color-mix(in srgb, var(--accent2) 16%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+  #scene { position: absolute; left: 0; top: 0; overflow: visible; }
+  .lab { position: absolute; white-space: nowrap; line-height: 1; }
+  .lab small { display: block; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+  .lab b { display: block; font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: var(--ink); text-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 16) rgba(0,0,0,.5); }
+  #labB b { color: #fff; text-shadow: 0 0 calc(var(--u) * 36) color-mix(in srgb, var(--accent) 90%, transparent), 0 calc(var(--u) * 4) calc(var(--u) * 16) rgba(0,0,0,.5); }
+  .is-alpha .lab small { color: #fff; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.85); }
+  .is-key .lab b, .is-key .lab small { text-shadow: none; }
+  .lead { position: absolute; height: calc(var(--u) * 3); transform-origin: 0 50%; border-radius: 9px; background: color-mix(in srgb, var(--ink) 55%, transparent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <svg id="scene">
+    <defs>
+      <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#1C6A8C" stop-opacity=".42"/><stop offset=".35" stop-color="#0D3550" stop-opacity=".55"/><stop offset="1" stop-color="#050C14" stop-opacity=".9"/>
+      </linearGradient>
+      <linearGradient id="gMurk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0A2233" stop-opacity=".96"/><stop offset="1" stop-color="#03070C" stop-opacity="1"/></linearGradient>
+      <linearGradient id="gSurf" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9FE3FF" stop-opacity="0"/><stop offset=".2" stop-color="#CFF3FF" stop-opacity=".8"/><stop offset=".5" stop-color="#fff" stop-opacity="1"/><stop offset=".8" stop-color="#CFF3FF" stop-opacity=".8"/><stop offset="1" stop-color="#9FE3FF" stop-opacity="0"/></linearGradient>
+      <linearGradient id="gSurfL" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="100" y2="0"><stop offset="0" stop-color="#9FE3FF" stop-opacity="0"/><stop offset=".2" stop-color="#CFF3FF" stop-opacity=".8"/><stop offset=".5" stop-color="#fff" stop-opacity="1"/><stop offset=".8" stop-color="#CFF3FF" stop-opacity=".8"/><stop offset="1" stop-color="#9FE3FF" stop-opacity="0"/></linearGradient>
+      <linearGradient id="gShaft" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BDEBFF" stop-opacity=".22"/><stop offset="1" stop-color="#BDEBFF" stop-opacity="0"/></linearGradient>
+      <filter id="fSoft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>
+      <clipPath id="cAbove"><rect id="caRect" x="0" y="0" width="10" height="10"/></clipPath>
+      <clipPath id="cBelow"><rect id="cbRect" x="0" y="0" width="10" height="10"/></clipPath>
+    </defs>
+    <g id="cam">
+      <g id="below" clip-path="url(#cBelow)"><g id="meshB"></g></g>
+      <rect id="water" fill="url(#gWater)"/>
+      <g id="shafts"></g>
+      <rect id="murk" fill="url(#gMurk)"/>
+      <g clip-path="url(#cAbove)"><g id="meshA"></g></g>
+      <line id="surf" stroke="url(#gSurfL)" vector-effect="non-scaling-stroke"/>
+      <rect id="surfGlow" fill="url(#gSurf)" filter="url(#fSoft)" opacity=".7"/>
+    </g>
+  </svg>
+  <div class="lead" id="leadA"></div><div class="lead" id="leadB"></div>
+  <div class="lab" id="labA"><small></small><b></b></div>
+  <div class="lab" id="labB"><small></small><b></b></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, LAND = !P && !SQ, A = MV.alpha;
+  const NS = "http://www.w3.org/2000/svg", $ = (id) => document.getElementById(id);
+  const svg = $("scene"); svg.setAttribute("width", W); svg.setAttribute("height", H);
+
+  // ---- the mesh: a faceted ice body, split exactly at the waterline (ring 0), small above and huge below
+  const rnd = MV.rand(41), SEG = 10;
+  const RA = [[1.0, 0.0], [0.8, 0.09], [0.55, 0.17], [0.3, 0.24], [0.08, 0.3]];             // [radius x rW, height] above water
+  const RB = [[1.0, 0], [1.9, -0.1], [2.45, -0.24], [2.6, -0.4], [2.4, -0.56], [1.95, -0.72], [1.3, -0.86], [0.55, -0.96], [0.0, -1.0]]; // below
+  const rW = 0.21;
+  const ring = (r, y, j) => [...Array(SEG)].map((_, s) => { const a = (s / SEG) * Math.PI * 2 + (rnd() - 0.5) * 0.35, rr = r * rW * (0.78 + rnd() * 0.44);
+    return [Math.cos(a) * rr, y + (j ? (rnd() - 0.5) * 0.035 : 0), Math.sin(a) * rr]; });
+  const r0 = ring(1, 0, 0);
+  const above = [r0, ...RA.slice(1).map(([r, y], k) => ring(r, y, 1))], peak = [0.035, 0.36, -0.02];
+  const below = [r0, ...RB.slice(1, -1).map(([r, y]) => ring(r, y, 1))], keel = [0.02, -1.0, 0.01];
+  const tris = (rings, cap, up) => { const T = []; for (let k = 0; k < rings.length - 1; k++) for (let s = 0; s < SEG; s++) { const a = rings[k][s], b = rings[k][(s + 1) % SEG], c = rings[k + 1][(s + 1) % SEG], d = rings[k + 1][s];
+      T.push(up ? [a, b, c] : [a, c, b], up ? [a, c, d] : [a, d, c]); }
+    const L = rings[rings.length - 1]; for (let s = 0; s < SEG; s++) T.push(up ? [L[s], L[(s + 1) % SEG], cap] : [L[s], cap, L[(s + 1) % SEG]]); return T; };
+  const TA = tris(above, peak, true), TB = tris(below, keel, false);
+
+  // ---- the frame: the waterline, the scale, where the labels go
+  let S, cx, WL, bx0, bx1, by0, by1;
+  if (P) { bx0 = safe.left; bx1 = W - safe.right; by0 = safe.top + (A ? 120 : 190) * u; by1 = A ? H * 0.5 : H - safe.bottom - 20 * u; }
+  else if (SQ) { bx0 = W * 0.1; bx1 = W * 0.9; by0 = H * (A ? 0.17 : 0.2); by1 = A ? H * 0.62 : H * 0.95; }
+  else { bx0 = A ? W * 0.56 : W * 0.12; bx1 = A ? W * 0.78 : W * 0.52; by0 = H * 0.12; by1 = H * 0.9; }
+  // the body spans 2 x 2.6 x rW wide and 1.36 tall
+  S = Math.min((bx1 - bx0) / (2 * 2.6 * rW * 1.2), (by1 - by0) / 1.36);
+  cx = (bx0 + bx1) / 2; WL = by0 + 0.36 * S;
+  const F = 5.0; // perspective distance in body units
+
+  const gA = $("meshA"), gB = $("meshB");
+  const pool = (g, n) => [...Array(n)].map(() => { const p = document.createElementNS(NS, "polygon"); p.setAttribute("stroke-linejoin", "round"); g.append(p); return p; });
+  const PA = pool(gA, TA.length), PB = pool(gB, TB.length);
+  const L = (() => { const l = [-0.55, 0.7, 0.55], n = Math.hypot(...l); return l.map((x) => x / n); })();
+  const lerp = (a, b, t) => a.map((x, i) => x + (b[i] - x) * t);
+  const ICE_D = [92, 128, 168], ICE_L = [244, 251, 255], SUB_D = [6, 30, 52], SUB_L = [86, 168, 204], DEEP = [4, 12, 20];
+  const cam = { th: -20, rise: 0, s: 1, fy: 0 };
+  const project = (p) => { const t = cam.th * Math.PI / 180, ph = 10 * Math.PI / 180;
+    const x = p[0] * Math.cos(t) + p[2] * Math.sin(t), z = -p[0] * Math.sin(t) + p[2] * Math.cos(t);
+    const y = p[1] * Math.cos(ph) - z * Math.sin(ph), zz = p[1] * Math.sin(ph) + z * Math.cos(ph), k = F / (F - zz);
+    return [cx + x * k * S, WL - (y + cam.rise) * k * S, x, y, zz]; };
+  const shade = (T, PS, sub) => {
+    const items = T.map((tri, i) => { const q = tri.map(project);
+      const ax = q[1][2] - q[0][2], ay = q[1][3] - q[0][3], az = q[1][4] - q[0][4], bx = q[2][2] - q[0][2], by = q[2][3] - q[0][3], bz = q[2][4] - q[0][4];
+      let n = [ay * bz - az * by, az * bx - ax * bz, ax * by - ay * bx]; const m = Math.hypot(...n) || 1; n = n.map((x) => x / m);
+      return { i, q, n, z: (q[0][4] + q[1][4] + q[2][4]) / 3, y: (tri[0][1] + tri[1][1] + tri[2][1]) / 3 }; });
+    items.sort((a, b) => a.z - b.z);
+    items.forEach((it, k) => { const p = PS[k];
+      if (it.n[2] <= 0) { p.setAttribute("points", ""); return; }
+      const lam = Math.max(0, it.n[0] * L[0] + it.n[1] * L[1] + it.n[2] * L[2]), spec = Math.pow(Math.max(0, lam), 18);
+      let c = sub ? lerp(SUB_D, SUB_L, lam * 0.85) : lerp(ICE_D, ICE_L, 0.25 + lam * 0.75);
+      if (sub) c = lerp(c, DEEP, Math.min(0.85, -it.y * 0.8));
+      c = lerp(c, [255, 255, 255], spec * (sub ? 0.25 : 0.6));
+      const col = `rgb(${c.map((x) => Math.round(x)).join(",")})`;
+      p.setAttribute("points", it.q.map((x) => x[0].toFixed(1) + "," + x[1].toFixed(1)).join(" "));
+      p.setAttribute("fill", col); p.setAttribute("stroke", col); p.setAttribute("stroke-width", 0.8); });
+  };
+  // water, murk, the surface and light shafts sized to the frame (the camera may pull back, so overscan)
+  const OV = 1.5;
+  for (const id of ["water", "murk"]) Object.assign($(id).attributes, {}), $(id).setAttribute("x", -W * OV), $(id).setAttribute("width", W * (1 + 2 * OV)), $(id).setAttribute("y", WL), $(id).setAttribute("height", H * 3);
+  for (const [k, val] of [["x1", cx - W * 0.9], ["x2", cx + W * 0.9], ["y1", WL], ["y2", WL], ["stroke-width", 3 * u]]) $("surf").setAttribute(k, val);
+  $("gSurfL").setAttribute("x1", cx - W * 0.9); $("gSurfL").setAttribute("x2", cx + W * 0.9);
+  $("surfGlow").setAttribute("x", cx - W * 0.7); $("surfGlow").setAttribute("width", W * 1.4); $("surfGlow").setAttribute("y", WL - 10 * u); $("surfGlow").setAttribute("height", 20 * u);
+  $("cbRect").setAttribute("x", -W * OV); $("cbRect").setAttribute("width", W * (1 + 2 * OV)); $("cbRect").setAttribute("y", WL); $("cbRect").setAttribute("height", 0);
+  $("caRect").setAttribute("x", -W * OV); $("caRect").setAttribute("width", W * (1 + 2 * OV)); $("caRect").setAttribute("y", WL - H * 2); $("caRect").setAttribute("height", H * 2);
+  const shafts = $("shafts"), SH = [];
+  for (let k = 0; k < 5; k++) { const p = document.createElementNS(NS, "polygon"); p.setAttribute("fill", "url(#gShaft)"); shafts.append(p); SH.push({ p, x: cx + (k - 2) * S * 0.22, w: S * (0.05 + 0.03 * (k % 2)) }); }
+  const paintShafts = (o) => SH.forEach((s, k) => { const x = s.x + o * S * 0.06 * (k % 2 ? 1 : -1), d = S * 1.1; s.p.setAttribute("points", `${x},${WL} ${x + s.w},${WL} ${x + s.w + d * 0.25},${WL + d} ${x + d * 0.25 - s.w},${WL + d}`); });
+  if (A) { $("water").style.display = "none"; $("murk").style.display = "none"; shafts.style.display = "none"; $("surfGlow").style.display = "none"; }
+  if (KEY) { $("surf").setAttribute("stroke", "#DDF5FF"); $("surf").setAttribute("x1", cx - S * 1.0); $("surf").setAttribute("x2", cx + S * 1.0); }
+
+  // ---- labels: the tip's over it (beside it on 16:9), the hidden one under the mass (beside it on 16:9)
+  const labA = $("labA"), labB = $("labB");
+  labA.querySelector("small").textContent = v.topLabel || ""; labA.querySelector("b").textContent = v.topValue || "";
+  labB.querySelector("small").textContent = v.bottomLabel || ""; labB.querySelector("b").textContent = v.bottomValue || "";
+  const sfs = Math.round((P ? 38 : 34) * u * (A && P ? 0.95 : 1)), afs = Math.round((P ? 92 : 84) * u * (A ? 0.75 : 1)), bfs = Math.round((P ? 150 : 130) * u * (A ? 0.7 : 1));
+  for (const [l, f] of [[labA, afs], [labB, bfs]]) { l.querySelector("small").style.fontSize = sfs + "px"; l.querySelector("small").style.marginBottom = Math.round(sfs * 0.42) + "px"; l.querySelector("b").style.fontSize = f + "px"; }
+  const maxLW = LAND ? W - (bx1 + 120 * u) - W * 0.05 : (P ? W - safe.left - safe.right : W * 0.8);
+  for (const l of [labA, labB]) { MV.fitText(l.querySelector("small"), maxLW, 24); MV.fitText(l.querySelector("b"), maxLW, 30); }
+  const tipY = WL - 0.36 * S, keelY = WL + 1.0 * S;
+  if (LAND) {
+    const lx = bx1 + 120 * u;
+    labA.style.left = lx + "px"; labA.style.top = tipY + 0.06 * S - labA.offsetHeight / 2 + "px";
+    labB.style.left = lx + "px"; labB.style.top = WL + 0.42 * S - labB.offsetHeight / 2 + "px";
+    const la = $("leadA"), lb = $("leadB");
+    Object.assign(la.style, { left: cx + 0.12 * S + "px", top: tipY + 0.06 * S + "px", width: lx - 24 * u - (cx + 0.12 * S) + "px" });
+    Object.assign(lb.style, { left: cx + 0.62 * S + "px", top: WL + 0.42 * S + "px", width: lx - 24 * u - (cx + 0.62 * S) + "px" });
+  } else {
+    $("leadA").style.display = $("leadB").style.display = "none";
+    for (const l of [labA, labB]) { l.style.textAlign = "center"; l.style.width = W + "px"; l.style.left = (P ? (safe.left - safe.right) / 2 : 0) + "px"; }
+    labA.style.top = tipY - 34 * u - labA.offsetHeight + "px";
+    labB.style.top = WL + 0.46 * S - labB.offsetHeight / 2 + "px"; // printed over the hidden mass itself
+  }
+  // the tip label's bottom must clear the tip, the hidden label stays in the frame
+
+  // ---- the camera: on the tip at first (the water hides the rest), then it pulls back as the mass is revealed
+  const RV = 1.55, LANDB = RV + 1.25;
+  const zIn = P ? 2.0 : SQ ? 1.4 : 1.7, fx = cx, fyIn = WL - 0.12 * S;
+  const camState = { k: 0 };
+  const g = $("cam");
+  // the tip label rides the camera: place it relative to the zoom
+  const placeA = () => { const s = Math.exp(Math.log(zIn) * (1 - camState.k)), fy = fyIn + ((by0 + by1) / 2 - fyIn) * camState.k, sy = (1 - camState.k) * (H * (P ? 0.36 : 0.4)) + camState.k * ((by0 + by1) / 2);
+    const map = (y) => sy + (y - fy) * s, mapx = (x) => fx + (x - fx) * s;
+    if (LAND) { const tY = map(tipY + 0.06 * S); labA.style.transform = `translateY(${tY - (tipY + 0.06 * S)}px)`; $("leadA").style.transform = `translate(${mapx(cx + 0.12 * S) - (cx + 0.12 * S)}px, ${tY - (tipY + 0.06 * S)}px)`; }
+    else { const tY = map(tipY); labA.style.transform = `translateY(${tY - tipY}px)`; } };
+  const render = () => { shade(TA, PA, false); shade(TB, PB, true); };
+  const all = () => { const s = Math.exp(Math.log(zIn) * (1 - camState.k)), fy = fyIn + ((by0 + by1) / 2 - fyIn) * camState.k, sy = (1 - camState.k) * (H * (P ? 0.36 : 0.4)) + camState.k * ((by0 + by1) / 2);
+    g.setAttribute("transform", `translate(${fx - fx * s} ${sy - fy * s}) scale(${s})`); placeA(); };
+  render(); all(); paintShafts(0);
+
+  // ---- time
+  tl.fromTo(cam, { th: -34 }, { th: -6, duration: D, ease: "sine.inOut", onUpdate: render }, 0);
+  // the tip breaks the surface and bobs
+  tl.fromTo(cam, { rise: -0.36 }, { rise: 0.012, duration: 1.0, ease: "expo.out", onUpdate: render }, 0.1);
+  tl.to(cam, { rise: -0.004, duration: 0.6, ease: "sine.inOut", onUpdate: render }, 1.1);
+  tl.fromTo(labA, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.55);
+  tl.fromTo(labA.querySelector("b"), { y: 30 * u }, { y: 0, duration: 0.6, ease: "expo.out" }, 0.55);
+  if (LAND) tl.fromTo("#leadA", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "expo.out" }, 0.5);
+  // the reveal: the murk clears top down, light shafts fall, the camera pulls back to show the whole body
+  const clip = { h: 0 };
+  const paintClip = () => $("cbRect").setAttribute("height", clip.h);
+  if (A) tl.fromTo(clip, { h: 0 }, { h: S * 1.1, duration: 1.1, ease: "power2.inOut", onUpdate: paintClip }, RV);
+  else { tl.fromTo(clip, { h: S * 1.1 }, { h: S * 1.1, duration: 0.01, onUpdate: paintClip }, 0); tl.fromTo("#murk", { opacity: 1 }, { opacity: 0, duration: 1.1, ease: "power2.inOut" }, RV); }
+  tl.fromTo("#shafts", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power2.out" }, RV + 0.2);
+  const so = { o: 0 }; tl.fromTo(so, { o: 0 }, { o: 1, duration: D - RV, ease: "sine.inOut", onUpdate: () => paintShafts(so.o) }, RV);
+  tl.fromTo(camState, { k: 0 }, { k: 1, duration: 1.3, ease: "expo.inOut", onUpdate: all }, RV - 0.1);
+  // the moment: the hidden number lands under the mass
+  tl.fromTo(labB.querySelector("small"), { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, LANDB - 0.25);
+  tl.fromTo(labB.querySelector("b"), { opacity: 0, scale: 1.6, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.32, ease: "power4.in" }, LANDB - 0.1);
+  tl.to(labB.querySelector("b"), { scale: 1.05, duration: 0.06, ease: "power1.out" }, LANDB + 0.22); tl.to(labB.querySelector("b"), { scale: 1, duration: 0.4, ease: "back.out(3)" }, LANDB + 0.28);
+  if (LAND) tl.fromTo("#leadB", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "expo.out" }, LANDB - 0.35);
+  tl.to("#scene", { scale: 1.015, transformOrigin: "50% 50%", duration: 0.07, ease: "power2.out" }, LANDB + 0.22); tl.to("#scene", { scale: 1, duration: 0.5, ease: "expo.out" }, LANDB + 0.29);
+  tl.fromTo("#ground .l1", { x: 0 }, { x: -W * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.to(["#scene", ".lab", ".lead"], { opacity: 0, y: -40 * u, duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

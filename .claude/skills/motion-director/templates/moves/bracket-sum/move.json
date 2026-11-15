@@ -1,0 +1,5 @@
+{ "id": "bracket-sum", "name": "Bracket sum", "oneLiner": "2 to 4 glass tiles (glyph, label, a value that counts up) build in a row; a bracket draws under them into a big glass total pill, a glowing dot runs from each tile down the bracket and the total ticks up as each one arrives, then fills with the accent and punches",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["sum", "total", "add up", "revenue streams", "income", "combined", "math", "stack", "bracket", "money", "results", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker adds a few numbers into one (\"ads, sponsors and products: together that's $10,200 a month\"): cut in on the first source; the total lands on the number they say. Set values, prefix and suffix to the real figures" }

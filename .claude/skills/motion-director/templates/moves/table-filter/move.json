@@ -1,0 +1,5 @@
+{ "id": "table-filter", "name": "Glass table filter", "oneLiner": "a database table on a glass pane: a cursor presses Filter, a filter chip grows out of the button, the rows that miss squash away, the matching few glide up and light, and the result count rolls over to the new number",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["table", "database", "filter", "crm", "leads", "list", "records", "search", "narrow down", "segment", "data", "productivity", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says they narrowed a big list down to the few that matter ('I filtered it to just the hot leads', 'only three of them were worth it'): the chip lands as they name the filter, the count rolls to the few" }

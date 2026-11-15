@@ -1,0 +1,5 @@
+{ "id": "connector-toggle", "name": "Connector toggles", "oneLiner": "a glass connectors panel of generic app glyphs (mail, calendar, files, chat, tasks): a pointer runs down the list flipping switches green one by one, each glyph wakes from grey as the count ticks, then the count pill lands green with a check and a sheen",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "connectors", "integrations", "connect", "tools", "apps", "settings", "toggle", "switch", "agent access", "mcp", "setup", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says they plugged their tools into the AI ('I connected my mail, my calendar, my files...', 'flip these on and it can see everything'): each switch flips on a named tool, the count lands on the payoff" }

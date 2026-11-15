@@ -1,0 +1,5 @@
+{ "id": "inbox-zero", "name": "Inbox zero", "oneLiner": "a glass inbox card full of unread mail; the rows swipe away one by one, faster each time, each revealing a green archive backing, the count ticks down to zero and a green check empty state springs into the cleared list",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["email", "inbox", "mail", "archive", "inbox zero", "cleared", "productivity", "automation", "agent", "triage", "caught up", "swipe", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says their inbox handles itself or got cleared ('it triaged every email', 'I hit inbox zero by nine'): the rows archive under the setup and the empty state lands on 'zero' or 'done'. Set senders, subjects and the empty-state lines" }

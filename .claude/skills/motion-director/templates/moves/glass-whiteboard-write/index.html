@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The heading, written first and underlined","default":"The system"},
+  {"id":"lines","type":"string","label":"The lines under it, split with | (2 to 4)","default":"Find the pain|Build the fix|Charge for it"},
+  {"id":"circle","type":"string","label":"A word in the lines to loop in red marker (empty: none)","default":"Charge"},
+  {"id":"side","type":"string","label":"16:9 and 1:1: right or left","default":"right"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Hand"; src: url("assets/fonts/CoveredByYourGrace.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --inkw: #F6F7F2; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(40% 45% at 72% 40%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 72%),
+    radial-gradient(35% 35% at 85% 85%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 70%),
+    radial-gradient(60% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 12%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #grp { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1500); }
+  #pane { position: relative; transform-style: preserve-3d; }
+  /* the glass: a faint cool body, a thick bright edge, the room reflected in it, two specular streaks, four steel standoffs */
+  #glass { position: absolute; inset: 0; border-radius: calc(var(--u) * 14); overflow: hidden;
+    background: linear-gradient(160deg, rgba(225,245,242,.16), rgba(200,230,226,.07) 45%, rgba(225,245,242,.12));
+    -webkit-backdrop-filter: blur(1.5px) brightness(1.06) saturate(110%); backdrop-filter: blur(1.5px) brightness(1.06) saturate(110%);
+    box-shadow: inset 0 0 0 calc(var(--u) * 3) rgba(214,240,236,.55), inset calc(var(--u) * 5) calc(var(--u) * 5) 0 calc(var(--u) * 1) rgba(255,255,255,.18),
+      inset calc(var(--u) * -4) calc(var(--u) * -4) calc(var(--u) * 8) rgba(120,170,165,.25),
+      0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.45); }
+  .is-key #glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, #9cc 20%), color-mix(in srgb, var(--surface) 92%, #9cc 8%));
+    box-shadow: inset 0 0 0 calc(var(--u) * 3) rgba(214,240,236,.55); }
+  #refl { position: absolute; left: -30%; top: -20%; width: 160%; height: 140%; background: url("assets/reflection.jpg") center / cover; opacity: .2; mix-blend-mode: screen; filter: blur(5px) contrast(1.2); }
+  .streak { position: absolute; top: -40%; height: 180%; transform: rotate(24deg); mix-blend-mode: screen; pointer-events: none;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.22) 50%, rgba(255,255,255,0)); }
+  #edge { position: absolute; inset: 0; border-radius: calc(var(--u) * 14); pointer-events: none;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 8%), rgba(255,255,255,.35) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 8%)); mix-blend-mode: screen; }
+  .bolt { position: absolute; width: calc(var(--u) * 34); height: calc(var(--u) * 34); border-radius: 50%;
+    background: radial-gradient(60% 60% at 35% 30%, #fff, #c9ced3 35%, #6d747b 75%, #3a3f44);
+    box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 6) rgba(0,0,0,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.4); }
+  /* the writing sits on the glass: white marker, a hair of glow, its shadow on whatever is behind */
+  #ink { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+  #ttl { position: absolute; font-family: "MV Marker", var(--font-display); color: var(--inkw); white-space: nowrap; line-height: 1.1;
+    text-shadow: 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.7), 0 calc(var(--u) * 3) calc(var(--u) * 4) rgba(0,0,0,.35); }
+  .row { position: absolute; display: flex; align-items: baseline; white-space: nowrap; font-family: "MV Hand", var(--font-body); color: var(--inkw); line-height: 1.1;
+    text-shadow: 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.7), 0 calc(var(--u) * 3) calc(var(--u) * 4) rgba(0,0,0,.35); }
+  .row .w { margin-right: .28em; }
+  svg.pen { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  svg.pen path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  #marker { position: absolute; left: 0; top: 0; pointer-events: none; transform-origin: 0% 53%;
+    filter: drop-shadow(calc(var(--u) * 10) calc(var(--u) * 16) calc(var(--u) * 10) rgba(0,0,0,.4)); }
+  .is-key #marker { filter: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="grp"><div id="pane">
+    <div id="glass"><div id="refl"></div><div class="streak" id="s1"></div><div class="streak" id="s2"></div></div>
+    <div id="ink"><div id="ttl"></div></div>
+    <div id="edge"></div>
+    <div class="bolt"></div><div class="bolt"></div><div class="bolt"></div><div class="bolt"></div>
+    <img id="marker" src="assets/marker.png" alt="" />
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  await document.fonts.load('60px "MV Marker"'); await document.fonts.load('60px "MV Hand"');
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1 : SQ ? 0.82 : 1.05);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const RIGHT = String(v.side || "right").toLowerCase() !== "left";
+  const STEP = 1 / 12;   // the hand moves on twos
+
+  // ---- the pane: 16:9 / 1:1 a tall board at one side, turned toward the speaker; 9:16 a wide board under the chin
+  let PW, PH, x, y;
+  if (P) { PW = W - safe.left - safe.right; PH = Math.round(H * 0.645 - H * 0.46); x = safe.left; y = H * 0.645 - PH; }
+  else if (SQ) { PW = Math.round(W * 0.31); PH = Math.round(H * 0.74); x = RIGHT ? W * 0.975 - PW : W * 0.025; y = (H - PH) / 2; }
+  else { PW = Math.round(W * 0.34); PH = Math.round(H * 0.78); x = RIGHT ? W - safe.right - PW : safe.left; y = (H - PH) / 2; }
+  const pane = $("#pane"); Object.assign(pane.style, { width: PW + "px", height: PH + "px" });
+  gsap.set("#grp", { x, y });
+  const S1 = $("#s1"), S2 = $("#s2"); Object.assign(S1.style, { left: PW * 0.18 + "px", width: PW * 0.16 + "px" }); Object.assign(S2.style, { left: PW * 0.42 + "px", width: PW * 0.05 + "px" });
+  const BI = 26 * u; [...document.querySelectorAll(".bolt")].forEach((b, i) => { const bx = i % 2 ? PW - BI - 34 * u : BI, by = i < 2 ? BI : PH - BI - 34 * u; Object.assign(b.style, { left: bx + "px", top: by + "px" }); });
+
+  // ---- the writing, laid out inside the glass
+  const PAD = (P ? 70 : 64) * u, inner = PW - PAD * 2;
+  const ink = $("#ink"), ttl = $("#ttl");
+  ttl.textContent = v.title || "";
+  const lines = String(v.lines || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 4);
+  const TF = (P ? 64 : SQ ? 62 : 72) * u, LF = (P ? 64 : SQ ? 66 : 80) * u;
+  ttl.style.fontSize = TF + "px"; MV.fitText(ttl, inner, 20);
+  const rows = lines.map((t) => { const r = document.createElement("div"); r.className = "row"; r.style.fontSize = LF + "px";
+    const dash = document.createElement("span"); dash.className = "w"; dash.textContent = "-"; r.appendChild(dash);
+    t.split(/\s+/).forEach((w) => { const s = document.createElement("span"); s.className = "w"; s.textContent = w; r.appendChild(s); }); ink.appendChild(r); MV.fitText(r, inner - 10 * u, 18); return r; });
+  // vertical rhythm: title, a gap for its underline, then the lines (9:16 packs two columns when four lines will not fit)
+  const th = ttl.offsetHeight, rh = rows.length ? rows[0].offsetHeight : 0;
+  let gapT = (P ? 18 : 34) * u, gapL = (P ? 0 : 14) * u;
+  let total = th + gapT + rows.length * rh + (rows.length - 1) * gapL;
+  let k = Math.min(1, (PH - PAD * (P ? 0.7 : 1.4)) / total);
+  if (k < 1) { ttl.style.fontSize = parseFloat(ttl.style.fontSize) * k + "px"; rows.forEach((r) => { r.style.fontSize = parseFloat(getComputedStyle(r).fontSize) * k + "px"; }); }
+  const th2 = ttl.offsetHeight, rh2 = rows.length ? rows[0].offsetHeight : 0;
+  total = th2 + gapT + rows.length * rh2 + (rows.length - 1) * gapL;
+  let cy = P ? (PH - total) / 2 : PAD * 1.1;
+  // a slightly uneven hand: each line sits a hair off the grid and tilts a touch
+  const rj = MV.rand(17);
+  gsap.set(ttl, { x: PAD, y: cy, rotation: -1.5 }); cy += th2 + gapT;
+  rows.forEach((r) => { gsap.set(r, { x: PAD + 8 * u + (rj() - 0.5) * 14 * u, y: cy, rotation: (rj() - 0.5) * 2.2 }); cy += rh2 + gapL; });
+
+  // ---- pen strokes: the title underline and the red loop round a word
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg"); svg.setAttribute("class", "pen"); svg.setAttribute("width", PW); svg.setAttribute("height", PH); ink.appendChild(svg);
+  const mkPath = (d, col, w) => { const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("stroke", col); p.setAttribute("stroke-width", w); svg.appendChild(p); return p; };
+  const paneR = () => pane.getBoundingClientRect();
+  const loc0 = (r) => { const b = paneR(); return { l: r.left - b.left, r: r.right - b.left, t: r.top - b.top, b: r.bottom - b.top }; };
+  // every rect is taken once, flat, before any tween moves the pane
+  const RC = new Map(); const loc = (r, el) => loc0(r);
+  const rect = (el) => { if (!RC.has(el)) RC.set(el, loc0(el.getBoundingClientRect())); return RC.get(el); };
+  [ttl, ...ink.querySelectorAll('.row .w')].forEach(rect);
+  const tr = rect(ttl);
+  const uy = tr.b - (tr.b - tr.t) * 0.06, ux0 = tr.l - 4 * u, ux1 = tr.r + 8 * u;
+  const under = mkPath(`M ${ux0} ${uy + 4 * u} C ${ux0 + (ux1 - ux0) * 0.3} ${uy - 3 * u}, ${ux0 + (ux1 - ux0) * 0.7} ${uy + 6 * u}, ${ux1} ${uy - 2 * u}`, "#F6F7F2", Math.max(4, 7 * u));
+  under.style.filter = `drop-shadow(0 ${3 * u}px ${3 * u}px rgba(0,0,0,.35))`;
+  let loop = null, loopPts = [];
+  const target = String(v.circle || "").trim().toLowerCase();
+  const tw = target ? [...ink.querySelectorAll(".row .w")].find((w) => w.textContent.toLowerCase().replace(/[^\w]/g, "") === target.replace(/[^\w]/g, "")) : null;
+  if (tw) {
+    const b = rect(tw), ecx = (b.l + b.r) / 2, ecy = (b.t + b.b) / 2 + (b.b - b.t) * 0.04, rx = (b.r - b.l) / 2 + 22 * u, ry = (b.b - b.t) / 2 + 2 * u;
+    const rr = MV.rand(41);
+    for (let i = 0; i <= 28; i++) { const a = -0.6 - (i / 26) * Math.PI * 2.1, wob = 1 + (rr() - 0.5) * 0.05 + i * 0.003; loopPts.push([ecx + Math.cos(a) * rx * wob, ecy - Math.sin(a) * ry * wob - (i / 28) * 8 * u]); }
+    loop = mkPath("M " + loopPts.map((p) => p.map((n) => n.toFixed(1)).join(" ")).join(" L "), "var(--accent)", Math.max(5, 8 * u));
+    loop.style.filter = `drop-shadow(0 0 ${2 * u}px color-mix(in srgb, var(--accent) 60%, transparent)) drop-shadow(0 ${3 * u}px ${3 * u}px rgba(0,0,0,.35))`;
+  }
+
+  // ---- the marker: a real render, tip at the image's left end; it rides the writing on twos
+  const mk = $("#marker"), ML = (P ? 0.3 : SQ ? 0.32 : 0.27) * W, MH = ML * 150 / 1153;
+  mk.style.width = ML + "px";
+  const ANG = P ? 36 : SQ ? (RIGHT ? -58 : -122) : RIGHT ? -38 : -142;   // held away from the face: up and out at the side, down under the chin on 9:16
+  const flipY = !P && !RIGHT;
+  const at = (px, py, lift = 0) => ({ x: px, y: py - MH * 0.53 - lift * 30 * u, rotation: ANG, scaleY: flipY ? -1 : 1, scale: 1 + lift * 0.05 });
+
+  // ---- timeline
+  // the pane swings in from its side (or rises on 9:16), its reflections sliding as it turns
+  const dir = P ? 0 : RIGHT ? 1 : -1;
+  tl.fromTo(pane, { opacity: 0, x: dir * 160 * u, y: P ? 80 * u : 0, rotationY: dir * -38, rotationX: P ? 24 : 0, transformOrigin: dir > 0 ? "100% 50%" : dir < 0 ? "0% 50%" : "50% 100%" },
+    { opacity: 1, x: 0, y: 0, rotationY: dir * -10, rotationX: P ? 4 : 0, duration: 0.9, ease: "expo.out" }, 0.04);
+  tl.fromTo("#refl", { x: dir * -90 * u - (P ? 0 : 0), y: P ? -40 * u : 0 }, { x: dir * 30 * u, y: P ? 10 * u : 0, duration: D, ease: "sine.out" }, 0.04);
+  tl.fromTo(".streak", { xPercent: -260 }, { xPercent: 120, duration: 1.6, ease: "power2.out", stagger: 0.12 }, 0.1);
+  tl.fromTo(pane, { "--sheen": "-30%" }, { "--sheen": "130%", duration: 1.0, ease: "power2.inOut" }, 0.3);
+  tl.fromTo(".bolt", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(2.5)", stagger: 0.05 }, 0.45);
+  // the writing
+  const words = [ttl, ...rows.flatMap((r) => [...r.children])];
+  const tChars = [...ttl.textContent].length;
+  ttl.style.clipPath = "inset(-40% 108% -40% -8%)"; rows.forEach((r) => [...r.children].forEach((w) => { w.style.clipPath = "inset(-40% 108% -40% -8%)"; }));
+  under.style.strokeDasharray = `${under.getTotalLength()} ${under.getTotalLength() * 2}`; under.style.strokeDashoffset = under.getTotalLength();
+  if (loop) { const L = loop.getTotalLength(); loop.style.strokeDasharray = `${L} ${L * 2}`; loop.style.strokeDashoffset = L * 1.02; }
+  const totalChars = words.reduce((s, w) => s + [...w.textContent].length, 0);
+  // the writing ends early enough for the loop, the marker's exit and a beat of hold before the board leaves
+  const T0 = 0.7, budget = Math.max(1.2, D - T0 - (loop ? 0.2 + 7 * STEP : 0) - 0.55 - 0.95);
+  const hops = (words.length - 1) + 6, halves = words.reduce((s, w) => s + Math.ceil([...w.textContent].length / 2), 0);
+  const per = Math.max(0.2, Math.min(1, (budget / STEP - hops) / Math.max(1, halves)));
+  const rp = MV.rand(5);
+  // the marker comes in from outside the glass
+  const f0 = rect(ttl);
+  tl.fromTo(mk, { opacity: 0, ...at(PW * 0.9, PH * 1.05, 1) }, { opacity: 1, ...at(f0.l, f0.b - (f0.b - f0.t) * 0.3, 0.4), duration: 0.35, ease: "power3.out" }, T0 - 0.35);
+  let t = T0;
+  const writeWord = (w) => {
+    const b = rect(w), n = Math.max(1, Math.round(Math.ceil([...w.textContent].length / 2) * per)), d = n * STEP;
+    tl.fromTo(w, { clipPath: "inset(-40% 108% -40% -8%)" }, { clipPath: "inset(-40% -8% -40% -8%)", duration: d, ease: `steps(${n})`, immediateRender: true }, t);
+    for (let k = 1; k <= n; k++) tl.set(mk, at(b.l + (b.r - b.l) * (k / n), b.b - (b.b - b.t) * (0.25 + rp() * 0.25)), t + (k - 1) * STEP + 0.001);
+    t += d;
+  };
+  writeWord(ttl);
+  // the underline, in one stroke
+  const UN = 4; tl.set(mk, at(ux0, uy + 4 * u, 0.3), t + 0.001); t += STEP;
+  tl.to(under, { strokeDashoffset: 0, duration: UN * STEP, ease: `steps(${UN})` }, t);
+  for (let k = 1; k <= UN; k++) { const p = under.getPointAtLength(under.getTotalLength() * k / UN); tl.set(mk, at(p.x, p.y), t + (k - 1) * STEP + 0.001); }
+  t += UN * STEP + STEP;
+  rows.forEach((r) => { [...r.children].forEach((w, i) => { const nb = rect(w); tl.set(mk, at(nb.l, nb.b - (nb.b - nb.t) * 0.3, i ? 0.25 : 0.5), t + 0.001); t += STEP; writeWord(w); }); });
+  // THE MOMENT: the red loop round the word that matters, the board catches the light
+  if (loop) {
+    const TR = t + 0.2, RN = 7, L = loop.getTotalLength();
+    tl.set(mk, at(loopPts[0][0], loopPts[0][1], 0.4), t + 0.05);
+    tl.to(loop, { strokeDashoffset: 0, duration: RN * STEP, ease: `steps(${RN})` }, TR);
+    for (let k = 1; k <= RN; k++) { const p = loop.getPointAtLength(L * k / RN); tl.set(mk, at(p.x, p.y), TR + (k - 1) * STEP + 0.001); }
+    tl.fromTo(pane, { "--sheen": "-30%" }, { "--sheen": "130%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TR + RN * STEP);
+    t = TR + RN * STEP;
+  }
+  // the marker lifts away off the board
+  tl.to(mk, { ...at(PW * (dir < 0 ? 0.1 : 0.95), PH * 1.1, 1), opacity: 0, duration: 0.4, ease: "power2.in" }, t + 0.15);
+  // the hold: the board breathes in depth
+  tl.to(pane, { rotationY: dir * -6, rotationX: P ? 2 : 0, duration: Math.max(0.5, D - 1.4), ease: "sine.inOut" }, 0.95);
+  // out: the board swings back out, the writing with it
+  const O = D - 0.42;
+  tl.to(pane, { opacity: 0, x: dir * 120 * u, y: P ? 60 * u : 0, rotationY: dir * -34, duration: 0.36, ease: "power3.in" }, O);
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"nodes","type":"string","label":"The nodes in order, comma separated, 3 to 6: the first is the input, the last the output (tree: the ones between run in parallel)","default":"Brief,Research,Draft,Edit,Publish"},
+  {"id":"glyphs","type":"string","label":"Glyph per node, comma separated (mail, calendar, doc, chat, code, chart, search, cart, video, phone, pen, send, spark, check...; empty = guessed from the label)","default":""},
+  {"id":"shape","type":"string","label":"chain (one after another) or tree (input fans out to the middle nodes, they merge into the output)","default":"chain"},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: -10%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 55%; top: 70%; background: color-mix(in srgb, var(--accent2) 16%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2000px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #fit { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform-style: preserve-3d; }
+  #wires { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  .tile { position: absolute; box-sizing: border-box; display: grid; place-items: center;
+    background: linear-gradient(155deg, rgba(255,255,255,.18), rgba(255,255,255,.05) 62%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 28) calc(var(--u) * 56) calc(var(--u) * -22) rgba(0,0,0,.65); }
+  .is-alpha .tile { background: linear-gradient(155deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 95%, transparent)); }
+  .tile .gl { position: relative; width: 46%; height: 46%; z-index: 2; }
+  .tile .fill { position: absolute; inset: 0; border-radius: inherit; opacity: 0; z-index: 1;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 52%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.7); }
+  .tile .rim { position: absolute; inset: calc(var(--u) * -2); border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 80%, white), 0 0 calc(var(--u) * 46) calc(var(--u) * 2) color-mix(in srgb, var(--accent) 55%, transparent); }
+  .tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 3;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.34) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .bloom { position: absolute; border-radius: 50%; opacity: 0; pointer-events: none; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 75%, transparent), transparent 70%); filter: blur(calc(var(--u) * 30)); }
+  .ring { position: absolute; border-radius: 28%; pointer-events: none; opacity: 0; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 55%, white); }
+  .lab { position: absolute; white-space: nowrap; font-weight: 650; letter-spacing: .005em; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(0,0,0,.6); }
+  .lab.out { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; }
+
+  .is-key .tile { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .is-key .bloom { display: none; }
+  .is-key .lab { text-shadow: none; }
+  .is-key .tile .rim { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><div id="fit">
+    <div id="blooms"></div>
+    <svg id="wires">
+      <defs><filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="7" /></filter></defs>
+      <g id="base"></g><g id="lit"></g><g id="dots"></g>
+    </svg>
+    <div id="nodes"></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const cs = getComputedStyle(root), CV = (n) => cs.getPropertyValue(n).trim();
+  const ACC = CV("--accent"), INK = CV("--ink"), GND = CV("--ground") || "#0E0D12";
+  const hex = (h) => { h = String(h).replace("#", ""); if (h.length === 3) h = h.split("").map((c) => c + c).join(""); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const mix = (a, b, t) => { const A = hex(a), B = hex(b); return `rgb(${A.map((x, i) => Math.round(x + (B[i] - x) * t)).join(",")})`; };
+  const DIM_INK = mix(INK, GND, 0.58), DIM_LAB = mix(INK, GND, 0.45), LIT = mix(INK, "#ffffff", 0.3);
+
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  let names = list(v.nodes).filter((s) => s.length).slice(0, 6);
+  const FILL = ["Input", "Step", "Output"];
+  while (names.length < 3) names.splice(names.length - (names.length ? 1 : 0), 0, FILL[names.length]);
+  const N = names.length, gl = list(v.glyphs), USED = new Set();
+  const TREE = String(v.shape || "").toLowerCase() === "tree" && N >= 3;
+
+  // ---- region and orientation: 9:16 full runs top to bottom, everything else left to right
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const VERT = P && !TOP;
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.07, x1: W * 0.93, y0: H * 0.08, y1: H * 0.92 } : { x0: W * 0.06, x1: W * 0.94, y0: H * 0.1, y1: H * 0.9 };
+
+  // ---- build the nodes
+  // 9:16 full is the big one: 170px nodes, 44px labels (a phone screen, shapes BIG)
+  const T = (VERT ? 172 : 144) * u, TO = (VERT ? 204 : 178) * u, LF = (VERT ? 44 : 32) * u, LFO = (VERT ? 54 : 40) * u, PAD = 16 * u;
+  const nodesEl = document.getElementById("nodes"), blooms = document.getElementById("blooms");
+  const NOD = names.map((txt, i) => {
+    const last = i === N - 1, size = last ? TO : T;
+    const t = document.createElement("div"); t.className = "tile";
+    t.innerHTML = '<div class="fill"></div>' + GLYPH.svg(GLYPH.pick(txt, gl[i], i, USED)) + '<div class="rim"></div>';
+    Object.assign(t.style, { width: size + "px", height: size + "px", borderRadius: size * 0.27 + "px", color: DIM_INK });
+    const l = document.createElement("div"); l.className = "lab" + (last ? " out" : ""); l.textContent = txt;
+    l.style.fontSize = (last ? LFO : LF) + "px"; l.style.color = DIM_LAB;
+    const b = document.createElement("div"); b.className = "bloom";
+    const r = document.createElement("div"); r.className = "ring"; Object.assign(r.style, { width: size + "px", height: size + "px" });
+    blooms.appendChild(b); nodesEl.append(r, t, l);
+    return { i, txt, last, size, t, l, b, r, level: TREE ? (i === 0 ? 0 : last ? 2 : 1) : i };
+  });
+
+  // ---- the design (px at scale 1): positions, and where each label sits (the side away from the wires)
+  const mid = NOD.slice(1, -1);
+  if (TREE && VERT) {
+    const SP = (mid.length >= 4 ? 212 : 268) * u, Y1 = 330 * u, Y2 = 660 * u;
+    NOD[0].x = 0; NOD[0].y = 0; NOD[0].side = "above";
+    mid.forEach((n, k) => { n.x = (k - (mid.length - 1) / 2) * SP; n.y = Y1; n.side = "below"; });
+    NOD[N - 1].x = 0; NOD[N - 1].y = Y2; NOD[N - 1].side = "below";
+  } else if (TREE) {
+    const SP = 250 * u, X1 = (TOP ? 400 : 430) * u;
+    NOD[0].x = 0; NOD[0].y = 0; NOD[0].side = "below";
+    mid.forEach((n, k) => { n.x = X1; n.y = (k - (mid.length - 1) / 2) * SP; n.side = "below"; });
+    NOD[N - 1].x = X1 * 2; NOD[N - 1].y = 0; NOD[N - 1].side = "below";
+  } else if (VERT) {
+    // a wide zig-zag across the safe width, labels under the tiles, the output centred at the foot
+    const GY = (N >= 6 ? 150 : 172) * u, B = 300 * u;
+    NOD.forEach((n, i) => { n.y = i * GY; n.x = n.last ? 0 : (i % 2 ? B : -B); n.side = "below"; });
+    NOD[N - 1].y += 70 * u;
+  } else {
+    const GX = (SQ || TOP ? 214 : 340) * u, A = (SQ || TOP ? 108 : 70) * u;
+    NOD.forEach((n, i) => { n.x = i * GX; n.y = n.last ? 0 : (i % 2 ? A : -A); n.side = n.y < 0 ? "above" : "below"; });
+  }
+  const box = (x, y, w, h) => ({ l: x, t: y, r: x + w, b: y + h });
+  const placeLab = (n, maxW) => {
+    n.l.style.fontSize = (n.last ? LFO : LF) + "px"; MV.fitText(n.l, maxW, 16);
+    const w = n.l.offsetWidth, h = n.l.offsetHeight, s = n.size, g = 14 * u;
+    n.tb = box(n.x - s / 2, n.y - s / 2, s, s);
+    n.lb = n.side === "above" ? box(n.x - w / 2, n.tb.t - g - h, w, h) : n.side === "below" ? box(n.x - w / 2, n.tb.b + g, w, h)
+         : n.side === "left" ? box(n.tb.l - 22 * u - w, n.y - h / 2, w, h) : box(n.tb.r + 22 * u, n.y - h / 2, w, h);
+  };
+  const hit = (a, b, m) => a.l < b.r + m && a.r > b.l - m && a.t < b.b + m && a.b > b.t - m;
+  NOD.forEach((n) => placeLab(n, (n.side === "left" || n.side === "right" ? 250 : 300) * u));
+  for (let pass = 0; pass < 2; pass++) NOD.forEach((n) => { let mw = 300 * u;
+    while (mw > 100 * u && NOD.some((o) => o !== n && (hit(n.lb, o.tb, 12 * u) || hit(n.lb, o.lb, 16 * u)))) { mw -= 16 * u; placeLab(n, mw); } });
+  NOD.forEach((n) => { n.bb = { l: Math.min(n.tb.l, n.lb.l), r: Math.max(n.tb.r, n.lb.r), t: Math.min(n.tb.t, n.lb.t), b: Math.max(n.tb.b, n.lb.b) }; });
+
+  // ---- edges: where each leaves and lands, as a smooth cubic, never through a tile or a label
+  const E = [];
+  const edge = (a, b) => {
+    let p0, p3, c1, c2;
+    if (TREE && VERT) {
+      p0 = [a.x, (a.side === "below" ? a.lb.b : a.tb.b) + PAD]; p3 = [b.x, (b.side === "above" ? b.lb.t : b.tb.t) - PAD];
+      const k = (p3[1] - p0[1]) * 0.55; c1 = [p0[0], p0[1] + k]; c2 = [p3[0], p3[1] - k];
+    } else if (VERT) {
+      const dir = Math.sign(b.x - a.x) || 1;
+      if (Math.abs(b.x - a.x) < 1) { p0 = [a.x, a.tb.b + PAD]; p3 = [b.x, b.tb.t - PAD]; const k = (p3[1] - p0[1]) * 0.5; c1 = [p0[0], p0[1] + k]; c2 = [p3[0], p3[1] - k]; }
+      else { p0 = [dir > 0 ? a.tb.r + PAD : a.tb.l - PAD, a.y + a.size * 0.22]; p3 = [b.x, b.tb.t - PAD]; /* out low on the side: clear of the label above */ c1 = [p0[0] + (p3[0] - p0[0]) * 0.62, p0[1]]; c2 = [p3[0], p3[1] - (p3[1] - p0[1]) * 0.62]; }
+    } else {
+      p0 = [a.tb.r + PAD, a.y]; p3 = [b.tb.l - PAD, b.y];
+      const k = (p3[0] - p0[0]) * 0.55; c1 = [p0[0] + k, p0[1]]; c2 = [p3[0] - k, p3[1]];
+    }
+    E.push({ a, b, pts: [p0, c1, c2, p3] });
+  };
+  if (TREE) { mid.forEach((n) => edge(NOD[0], n)); mid.forEach((n) => edge(n, NOD[N - 1])); }
+  else for (let i = 0; i < N - 1; i++) edge(NOD[i], NOD[i + 1]);
+
+  // ---- lay it into the frame
+  const all = NOD.map((n) => n.bb);
+  const bb = { l: Math.min(...all.map((b) => b.l)), t: Math.min(...all.map((b) => b.t)), r: Math.max(...all.map((b) => b.r)), b: Math.max(...all.map((b) => b.b)) };
+  const ox = -bb.l, oy = -bb.t, BW = bb.r - bb.l, BH = bb.b - bb.t;
+  const pos = (el, b) => Object.assign(el.style, { left: b.l + ox + "px", top: b.t + oy + "px" });
+  NOD.forEach((n) => { pos(n.t, n.tb); pos(n.l, n.lb); pos(n.r, n.tb);
+    const bs = n.size * (n.last ? 3 : 2.2); Object.assign(n.b.style, { width: bs + "px", height: bs + "px" }); pos(n.b, box(n.x - bs / 2, n.y - bs / 2, bs, bs)); });
+  const svg = document.getElementById("wires"); svg.setAttribute("width", BW); svg.setAttribute("height", BH); svg.setAttribute("viewBox", `0 0 ${BW} ${BH}`);
+  const NS = "http://www.w3.org/2000/svg";
+  const mk = (tag, a, parent) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (parent) parent.appendChild(e); return e; };
+  const SW = 4 * u;
+  E.forEach((e) => {
+    const [p0, c1, c2, p3] = e.pts.map(([x, y]) => [x + ox, y + oy]);
+    const d = `M${p0} C${c1} ${c2} ${p3}`;
+    e.base = mk("path", { d, fill: "none", stroke: KEY ? mix(INK, "#000000", 0.6) : INK, "stroke-opacity": KEY ? 1 : 0.16, "stroke-width": SW, "stroke-linecap": "round" }, document.getElementById("base"));
+    const g = mk("g", {}, document.getElementById("lit"));
+    e.glow = KEY ? null : mk("path", { d, fill: "none", stroke: ACC, "stroke-opacity": 0.6, "stroke-width": SW * 3.2, "stroke-linecap": "round", filter: "url(#fGlow)" }, g);
+    e.line = mk("path", { d, fill: "none", stroke: mix(ACC, "#ffffff", 0.3), "stroke-width": SW, "stroke-linecap": "round" }, g);
+    e.L = e.line.getTotalLength();
+    [e.line, e.glow, e.base].forEach((p) => { if (p) { p.style.strokeDasharray = `${e.L} ${e.L + 20}`; p.style.strokeDashoffset = e.L; } });
+  });
+
+  const sc = Math.min(1.3, (R.x1 - R.x0) / BW, (R.y1 - R.y0) / BH);
+  const fx = R.x0 + ((R.x1 - R.x0) - BW * sc) / 2, fy = R.y0 + ((R.y1 - R.y0) - BH * sc) / 2;
+  gsap.set("#fit", { x: fx, y: fy, scale: sc });
+  const outN = NOD[N - 1], ocx = fx + (outN.x + ox) * sc, ocy = fy + (outN.y + oy) * sc;
+  const l1 = document.querySelector("#ground .l1"); Object.assign(l1.style, { left: ocx - W * 0.3 + "px", top: ocy - H * 0.2 + "px" });
+  gsap.set("#rig", { transformOrigin: `${fx + BW * sc / 2}px ${fy + BH * sc / 2}px` });
+
+  // ---- motion
+  const dot = () => { const g = mk("g", { opacity: 0 }, document.getElementById("dots"));
+    if (!KEY) mk("circle", { r: 20 * u, fill: ACC, opacity: 0.55, filter: "url(#fGlow)" }, g);
+    mk("circle", { r: 9 * u, fill: mix(ACC, "#ffffff", 0.5) }, g); mk("circle", { r: 4.5 * u, fill: "#fff" }, g); return g; };
+  const ride = (e, at, dur, ease, fade) => { const p = dot(), o = { k: 0 };
+    tl.to(o, { k: 1, duration: dur, ease, onUpdate: () => { const q = e.line.getPointAtLength(o.k * e.L); p.setAttribute("transform", `translate(${q.x} ${q.y})`);
+      p.setAttribute("opacity", fade ? Math.min(1, o.k * 6, (1 - o.k) * 6) : (o.k > 0 && o.k < 1 ? 1 : 0)); } }, at); };
+  // the camera: one slow 3D drift; on 9:16 it also travels down the chain a little
+  tl.fromTo("#rig", { rotationY: 8, rotationX: 9, scale: 0.94, y: (VERT ? 40 : 20) * u }, { rotationY: -6, rotationX: 3, scale: 1.0, y: VERT ? -20 * u : 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(l1, { opacity: 0.3, scale: 0.8 }, { opacity: 1, scale: 1.1, duration: D, ease: "sine.inOut" }, 0);
+
+  // 1. the skeleton: dim tiles pop in, faint wires draw (about a third of a second, as in the references)
+  NOD.forEach((n, i) => { const at = 0.04 + (VERT || TREE ? n.level : i) * 0.06 + (TREE && n.level === 1 ? (n.i - 1) * 0.04 : 0);
+    tl.fromTo(n.t, { scale: 0.5, y: 20 * u }, { scale: 1, y: 0, duration: 0.6, ease: "back.out(1.8)" }, at);
+    tl.fromTo([n.t, n.l], { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, at); });
+  E.forEach((e, k) => tl.to(e.base, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" }, 0.16 + k * 0.03));
+
+  // 2. lighting, in order: a node lights, its wires draw hot with a dot riding the head, the next lights on arrival
+  const light = (n, at) => {
+    const big = n.last;
+    tl.to(n.t, { color: big ? "#ffffff" : LIT, duration: 0.25, ease: "power2.out" }, at);
+    tl.to(n.l, { color: INK, duration: 0.3, ease: "power2.out" }, at);
+    tl.fromTo(n.t.querySelector(".rim"), { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out" }, at);
+    if (!big) tl.to(n.t.querySelector(".rim"), { opacity: KEY ? 1 : 0.5, duration: 0.6, ease: "power2.inOut" }, at + 0.2);
+    tl.fromTo(n.t, { scale: big ? 1.16 : 1.08 }, { scale: 1, duration: big ? 0.7 : 0.5, ease: "back.out(2.6)", immediateRender: false }, at);
+    tl.fromTo(n.r, { scale: 1, opacity: 0.9 }, { scale: big ? 2.1 : 1.45, opacity: 0, duration: big ? 0.9 : 0.6, ease: "expo.out", immediateRender: false }, at);
+    tl.fromTo(n.b, { opacity: 0, scale: 0.6 }, { opacity: big ? 1 : 0.45, scale: 1, duration: big ? 0.8 : 0.5, ease: "power2.out" }, at);
+    tl.fromTo(n.t, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut" }, at + 0.05);
+    if (big) {
+      tl.to(n.t.querySelector(".fill"), { opacity: 1, duration: 0.3, ease: "power2.out" }, at);
+      tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out" }, at); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, at + 0.07);
+    }
+  };
+  const hot = (e, at, dur) => {
+    tl.to([e.line, e.glow].filter(Boolean), { strokeDashoffset: 0, duration: dur, ease: "power1.inOut" }, at);
+    if (e.glow) tl.to(e.glow, { strokeOpacity: 0.25, duration: 0.6, ease: "power2.out" }, at + dur);
+    ride(e, at, dur, "power1.inOut", false);
+  };
+  const T0 = 0.68, HOP = TREE ? 0.62 : Math.min(0.56, 2.3 / (N - 1)), GAPH = TREE ? 0.14 : 0.05;
+  light(NOD[0], T0);
+  let lastAt;
+  if (TREE) {
+    mid.forEach((n, k) => { const at = T0 + 0.12 + k * 0.07; hot(E[k], at, HOP); light(n, at + HOP); });
+    const t2 = T0 + 0.12 + (mid.length - 1) * 0.07 + HOP + GAPH;
+    mid.forEach((n, k) => hot(E[mid.length + k], t2 + k * 0.05, HOP));
+    lastAt = t2 + (mid.length - 1) * 0.05 + HOP;
+  } else {
+    E.forEach((e, k) => { const at = T0 + 0.12 + k * (HOP + GAPH); hot(e, at, HOP); if (k < E.length - 1) light(e.b, at + HOP); lastAt = at + HOP; });
+  }
+  light(NOD[N - 1], lastAt);
+  // 3. the work keeps flowing: dots run every wire, in order, until the cut
+  for (let t = lastAt + 0.35; t < D - 0.5; t += 0.95) E.forEach((e) => ride(e, t + (TREE ? (e.b.last ? 0.42 : 0) : e.a.i * 0.12), 0.6, "power1.inOut", true));
+  tl.to(outN.b, { scale: 1.12, duration: Math.max(0.4, D - lastAt - 0.8), ease: "sine.inOut" }, lastAt + 0.8);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

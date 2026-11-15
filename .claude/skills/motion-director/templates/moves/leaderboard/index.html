@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"Row labels, comma separated, 4 or 5 ({brand} = the brand name; that row climbs)","default":"Notebooks,Spreadsheets,A recorder,Typing it up,{brand}"},
+  {"id":"values","type":"string","label":"Final values, comma separated, same order (give the brand the top one)","default":"6200,5400,4700,3900,8800"},
+  {"id":"prefix","type":"string","label":"Before each value","default":""},
+  {"id":"suffix","type":"string","label":"After each value","default":""},
+  {"id":"decimals","type":"number","label":"Decimals","default":0},
+  {"id":"title","type":"string","label":"Small heading over the board (empty = none)","default":"Hours saved per team"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 42%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 32%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 50%; background: linear-gradient(180deg, rgba(255,255,255,.045), transparent 60%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; transform-origin: 50% 50%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #cam { position: absolute; inset: 0; }
+  #board { position: absolute; }
+  #title { position: absolute; left: 0; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 62%, transparent); white-space: nowrap; }
+
+  /* the rank column: fixed slots, the rows move past them */
+  .rk { position: absolute; font-family: var(--font-display); line-height: 1; color: color-mix(in srgb, var(--ink) 34%, transparent); text-align: center; font-variant-numeric: tabular-nums; }
+  .rk.one { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+
+  /* a row: a pane of frosted glass */
+  .row { position: absolute; left: 0; top: 0; will-change: transform; }
+  .pane { position: absolute; inset: 0; overflow: hidden; display: flex; align-items: center; box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13),
+      0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -18) rgba(0,0,0,.6); }
+  .pane::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -60%) - 16%), rgba(255,255,255,.4) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 16%)); mix-blend-mode: screen; }
+  .me .pane { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 70%, var(--accent) 30%), color-mix(in srgb, var(--surface) 82%, var(--accent) 18%));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), inset 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 80%, white 20%),
+      0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -16) rgba(0,0,0,.7), 0 0 calc(var(--u) * 60) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 70%, transparent); }
+  /* the flood: the accent fills the brand's pane when it takes the top */
+  .flood { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 60%, white 40%), var(--accent) 45%, color-mix(in srgb, var(--accent) 72%, black 28%)); }
+  .cnt { position: relative; display: flex; align-items: center; width: 100%; height: 100%; box-sizing: border-box; }
+  .av { flex: none; border-radius: 50%; display: grid; place-items: center; font-family: var(--font-display); color: color-mix(in srgb, var(--ink) 80%, transparent);
+    background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.05)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.14); overflow: hidden; }
+  .me .av { background: var(--paper); box-shadow: 0 calc(var(--u) * 6) calc(var(--u) * 16) rgba(0,0,0,.35); }
+  .av img { width: 100%; height: 100%; object-fit: cover; }
+  .txt { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+  .lab { display: inline-block; align-self: flex-start; font-weight: 700; color: color-mix(in srgb, var(--ink) 86%, transparent); white-space: nowrap; line-height: 1.15; }
+  .me .lab { color: #fff; }
+  .trk { position: relative; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+  .trk i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,.7)); }
+  .me .trk { background: rgba(255,255,255,.18); }
+  .me .trk i { background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 70%, white 30%), #fff); box-shadow: 0 0 calc(var(--u) * 12) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .val { flex: none; text-align: right; font-family: var(--font-display); line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .val .fx { font-size: .62em; color: color-mix(in srgb, var(--ink) 60%, transparent); margin: 0 .04em; }
+  .me .val { color: #fff; text-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 80%, transparent); }
+
+  /* the crown, drawn, set on the winner's corner */
+  #crown { position: absolute; opacity: 0; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 14) rgba(0,0,0,.45)); }
+  #burst { position: absolute; border-radius: calc(var(--u) * 30); border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 45%, white 55%); opacity: 0; box-sizing: border-box; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="cam">
+      <div id="floor"></div>
+      <div id="base"></div>
+      <div id="board"><div id="title"></div></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const D = +document.getElementById("root").dataset.duration;
+  const P = MV.portrait, SQ = W === H;
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim()).filter((s) => s.length);
+  const brand = v.brandName || "";
+  const rawL = list(v.labels);
+  let me = rawL.findIndex((s) => s.includes("{brand}"));
+  let labels = rawL.map((s) => s.split("{brand}").join(brand));
+  let values = list(v.values).map(Number).filter((n) => isFinite(n));
+  const N = Math.max(4, Math.min(5, Math.min(labels.length, values.length)));
+  while (labels.length < N) labels.push(""); while (values.length < N) values.push(0);
+  labels = labels.slice(0, N); values = values.slice(0, N);
+  if (me < 0 || me >= N) me = N - 1;
+  const dec = +v.decimals || 0;
+  const fmt = (x) => (dec ? x.toFixed(dec) : Math.round(x).toLocaleString("en-US"));
+  const vmax = Math.max(...values, 1e-9);
+
+  // ---- the race, as pure functions of time (every frame can be rendered on its own)
+  const others = values.map((x, i) => i).filter((i) => i !== me);
+  const OA = 0.32, OB = 2.5, A0 = 0.46;                       // the others count from 46% of their final, and settle by OB
+  const oease = gsap.parseEase("power3.out");
+  const vo = (i, t) => values[i] * (A0 + (1 - A0) * oease(Math.max(0, Math.min(1, (t - OA) / (OB - OA)))));
+  // the brand starts under everyone and passes the rows below its final, one by one, at evenly spaced beats
+  const passed = others.filter((i) => values[i] < values[me]).sort((a, b) => values[a] - values[b]);
+  const sb = Math.min(...others.map((i) => values[i] * A0)) * 0.72;
+  const C0 = 1.25, C1 = 3.3, BE = 3.75;
+  const knots = [[OA, sb]];
+  passed.forEach((i, k) => { const c = passed.length > 1 ? C0 + (k / (passed.length - 1)) * (C1 - C0) : (C0 + C1) / 2; knots.push([c, vo(i, c)]); });
+  knots.push([BE, Math.max(values[me], knots[knots.length - 1][1] * 1.0001)]);
+  // monotone cubic (Fritsch-Carlson) through the knots
+  const kx = knots.map((k) => k[0]), ky = knots.map((k) => k[1]), kn = knots.length, ks = [], km = [];
+  for (let i = 0; i < kn - 1; i++) ks[i] = (ky[i + 1] - ky[i]) / (kx[i + 1] - kx[i]);
+  km[0] = 0; km[kn - 1] = 0;
+  for (let i = 1; i < kn - 1; i++) km[i] = ks[i - 1] * ks[i] <= 0 ? 0 : (3 * (kx[i + 1] - kx[i - 1])) / ((2 * kx[i + 1] - kx[i] - kx[i - 1]) / ks[i - 1] + (kx[i + 1] + kx[i] - 2 * kx[i - 1]) / ks[i]);
+  const vb = (t) => {
+    if (t <= kx[0]) return ky[0]; if (t >= kx[kn - 1]) return ky[kn - 1];
+    let i = 0; while (t > kx[i + 1]) i++;
+    const h = kx[i + 1] - kx[i], s = (t - kx[i]) / h, s2 = s * s, s3 = s2 * s;
+    return (2 * s3 - 3 * s2 + 1) * ky[i] + (s3 - 2 * s2 + s) * h * km[i] + (-2 * s3 + 3 * s2) * ky[i + 1] + (s3 - s2) * h * km[i + 1];
+  };
+  const val = (i, t) => (i === me ? vb(t) : vo(i, t));
+  // each pass: the last moment the brand's value crosses that row's, then an eased swap around it
+  const cross = {};
+  for (const i of others) { let last = null, prev = Math.sign(val(me, 0) - val(i, 0)); for (let t = 0.01; t <= D; t += 0.01) { const s = Math.sign(val(me, t) - val(i, t)); if (s !== prev && s !== 0) { last = t; prev = s; } } if (last !== null && val(me, D) > val(i, D)) cross[i] = last; }
+  const SW = 0.6, sease = gsap.parseEase("power3.inOut");
+  const swap = (i, t) => (cross[i] === undefined ? 0 : sease(Math.max(0, Math.min(1, (t - cross[i] + SW * 0.35) / SW))));
+  const start = values.map((x, i) => i).sort((a, b) => val(b, 0) - val(a, 0));
+  const r0 = []; start.forEach((i, k) => (r0[i] = k));
+  const rank = (i, t) => (i === me ? r0[me] - others.reduce((s, j) => s + swap(j, t), 0) : r0[i] + swap(i, t));
+  const endsTop = Math.round(rank(me, D)) === 0;
+
+  // ---- layout
+  const left = P ? safe.left : SQ ? 90 * u : W * 0.2, right = P ? W - safe.right : SQ ? W - 90 * u : W * 0.8;
+  const rowH = Math.round((P ? 132 : SQ ? 112 : 122) * u), gap = Math.round((P ? 22 : 16) * u);
+  const numW = Math.round((P ? 70 : 74) * u), paneL = left + numW + 10 * u, paneW = right - paneL;
+  const titleH = v.title ? Math.round((P ? 34 : 28) * u) : 0, titleGap = v.title ? Math.round(34 * u) : 0;
+  const blockH = titleH + titleGap + N * rowH + (N - 1) * gap;
+  const zoneTop = P ? safe.top : SQ ? 60 * u : 70 * u, zoneBot = P ? H - safe.bottom : SQ ? H - 120 * u : H - 110 * u;
+  const bTop = Math.round(zoneTop + (zoneBot - zoneTop - blockH) / 2), rowsTop = bTop + titleH + titleGap;
+  const board = document.getElementById("board");
+  Object.assign(board.style, { left: 0, top: 0, width: W + "px", height: rowsTop + N * rowH + (N - 1) * gap + "px" });
+  const ttl = document.getElementById("title"); ttl.textContent = v.title || "";
+  Object.assign(ttl.style, { left: paneL + "px", top: bTop + "px", fontSize: titleH + "px" }); MV.fit(ttl, paneW, 14);
+  const slotY = (k) => rowsTop + k * (rowH + gap);
+  const boardBot = slotY(N - 1) + rowH, floorY = boardBot + 30 * u;
+  document.getElementById("floor").style.top = floorY + "px";
+  Object.assign(document.getElementById("base").style, { left: left - 40 * u + "px", width: right - left + 80 * u + "px", top: floorY - 1.5 * u + "px" });
+  // the floor mirrors the panes only (no text), soft, fading out fast
+  const lref = document.createElement("div"); lref.id = "lref"; document.getElementById("cam").insertBefore(lref, board);
+  const objH = boardBot - rowsTop;
+  Object.assign(lref.style, { position: "absolute", left: 0, top: 0, width: W + "px", height: H + "px", transformOrigin: `0 ${floorY}px`, transform: "scaleY(-1)", opacity: 0.45, filter: `blur(${Math.round(10 * u)}px)` });
+  lref.style.webkitMask = lref.style.mask = `linear-gradient(180deg, transparent ${floorY - objH * 0.42}px, #000 ${floorY}px)`;
+
+  // the rank numerals, fixed in their slots
+  const rks = [];
+  for (let k = 0; k < N; k++) { const e = document.createElement("div"); e.className = "rk" + (k === 0 ? " one" : ""); e.textContent = String(k + 1);
+    Object.assign(e.style, { left: left + "px", width: numW + "px", top: slotY(k) + rowH / 2 - rowH * 0.24 + "px", fontSize: Math.round(rowH * 0.48) + "px" }); board.append(e); rks.push(e); }
+
+  // the rows
+  const avS = Math.round(rowH * 0.6), pad = Math.round(rowH * 0.2), labFS = Math.round(rowH * 0.29), valFS = Math.round(rowH * 0.42);
+  const R = labels.map((L, i) => {
+    const row = document.createElement("div"); row.className = "row" + (i === me ? " me" : "");
+    Object.assign(row.style, { left: paneL + "px", width: paneW + "px", height: rowH + "px", top: 0 });
+    row.innerHTML = `<div class="pane" style="border-radius:${Math.round(rowH * 0.26)}px"><div class="flood"></div><div class="cnt" style="padding:0 ${pad}px 0 ${Math.round(pad * 0.8)}px"><div class="av"></div><div class="txt"><div class="lab"></div><div class="trk"><i></i></div></div><div class="val"></div></div></div>`;
+    board.append(row);
+    const av = row.querySelector(".av"); Object.assign(av.style, { width: avS + "px", height: avS + "px", marginRight: Math.round(pad * 0.8) + "px", fontSize: Math.round(avS * 0.46) + "px" });
+    if (i === me && v.mark) { const im = MV.img(v.mark); im.style.objectFit = "contain"; im.style.width = im.style.height = "78%"; av.append(im); } else av.textContent = (L.replace(/[^A-Za-z0-9]/g, "")[0] || "").toUpperCase();
+    const lab = row.querySelector(".lab"); lab.textContent = L; lab.style.fontSize = labFS + "px";
+    const trk = row.querySelector(".trk"); Object.assign(trk.style, { height: Math.round(rowH * 0.07) + "px", marginTop: Math.round(rowH * 0.1) + "px" });
+    const vEl = row.querySelector(".val"); vEl.style.fontSize = valFS + "px"; vEl.style.marginLeft = Math.round(pad * 0.9) + "px";
+    vEl.innerHTML = (v.prefix ? `<span class="fx">${v.prefix}</span>` : "") + `<span class="n">${fmt(values[i])}</span>` + (v.suffix ? `<span class="fx">${v.suffix}</span>` : "");
+    const gr = document.createElement("div"); gr.className = "row" + (i === me ? " me" : ""); Object.assign(gr.style, { left: paneL + "px", width: paneW + "px", height: rowH + "px", top: 0 });
+    gr.innerHTML = `<div class="pane" style="border-radius:${Math.round(rowH * 0.26)}px"><div class="flood"></div></div>`; lref.append(gr);
+    return { i, row, gr, gpane: gr.querySelector(".pane"), gflood: gr.querySelector(".flood"), pane: row.querySelector(".pane"), cnt: row.querySelector(".cnt"), flood: row.querySelector(".flood"), lab, fill: trk.querySelector("i"), vEl, n: vEl.querySelector(".n") };
+  });
+  // fit: every value to one shared width (tabular, right aligned), every label to what is left
+  let vw = Math.max(...R.map((r) => r.vEl.scrollWidth)); const vwMax = paneW * 0.36;
+  if (vw > vwMax) { let fs = valFS; while (Math.max(...R.map((r) => r.vEl.scrollWidth)) > vwMax && fs > 20) { fs -= 2; R.forEach((r) => (r.vEl.style.fontSize = fs + "px")); } vw = Math.max(...R.map((r) => r.vEl.scrollWidth)); }
+  R.forEach((r) => { r.vEl.style.width = Math.ceil(vw) + 2 + "px"; });
+  const labMax = paneW - pad * 1.8 - avS - pad * 0.8 - vw - pad * 0.9 - 4;
+  // a long label shrinks a little, then takes a second line
+  R.forEach((r) => { const f = MV.fit(r.lab, labMax, Math.round(labFS * 0.74));
+    if (r.lab.scrollWidth > labMax) { Object.assign(r.lab.style, { whiteSpace: "normal", width: labMax + "px", lineHeight: "1.05", textWrap: "balance" }); let lf = f; while (r.lab.scrollHeight > lf * 1.05 * 2 + 2 && lf > 14) { lf -= 2; r.lab.style.fontSize = lf + "px"; } } });
+
+  // ---- one render of the whole board at time t
+  const st = { t: 0, z: 0 };
+  const yRow = (i, t) => slotY(0) + rank(i, t) * (rowH + gap);
+  const render = () => {
+    const t = st.t, yb = yRow(me, t);
+    for (const r of R) {
+      const y = yRow(r.i, t);
+      let sc = 1, x = 0, o = 1;
+      if (r.i === me) { const b = others.reduce((m, j) => Math.max(m, Math.sin(Math.PI * swap(j, t))), 0); sc = 1 + 0.045 * b; x = -8 * u * b; }
+      else { const s = swap(r.i, t), b = Math.sin(Math.PI * s); sc = 1 - 0.04 * b; x = 22 * u * b;
+        const d = Math.abs(y - yb) / rowH; o = 1 - 0.88 * Math.max(0, Math.min(1, (1.15 - d) / 0.55)); }
+      r.row.style.transform = r.gr.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${sc})`;
+      r.row.style.zIndex = r.gr.style.zIndex = r.i === me ? 10 : 5 - Math.round(rank(r.i, t));
+      r.cnt.style.opacity = o.toFixed(3);
+      const vv = val(r.i, t); r.n.textContent = fmt(vv); r.fill.style.width = Math.max(0, Math.min(100, (vv / vmax) * 100)).toFixed(2) + "%";
+    }
+    // the camera rides the brand's row, then settles on the whole board
+    const cy = H * 0.5, ty = (cy - (yb + rowH / 2)) * 0.32 * (1 - st.z);
+    gsap.set("#cam", { y: ty, scale: 1 + 0.06 * (1 - st.z), transformOrigin: `${(left + right) / 2}px ${yb + rowH / 2}px` });
+  };
+  render();
+
+  // ---- the camera: a slow 3D drift across the shot
+  gsap.set("#rig", { transformOrigin: `${(left + right) / 2}px ${H / 2}px` });
+  tl.fromTo("#rig", { rotationY: P ? 10 : 12, rotationX: 7, scale: 0.95 }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- in: the baseline draws, the title, the rows arrive by slot from the right on long tails
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.02);
+  if (v.title) tl.fromTo(ttl, { opacity: 0, y: 14 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.05);
+  start.forEach((i, k) => {
+    const r = R[i];
+    tl.fromTo([r.pane, r.gpane], { x: 140 * u, rotationY: -24 }, { x: 0, rotationY: 0, duration: 0.85, ease: "expo.out" }, 0.08 + k * 0.07);
+    tl.fromTo(r.gpane, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.08 + k * 0.07);
+    tl.fromTo(r.pane, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.out" }, 0.08 + k * 0.07);
+    tl.fromTo(rks[k], { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 0.1 + k * 0.07);
+  });
+  // the race runs on one clock; the camera lets go after the last pass
+  tl.fromTo(st, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: render }, 0);
+  tl.to(st, { z: 1, duration: 0.9, ease: "power2.inOut", onUpdate: render }, BE - 0.1);
+  // each overtaken row gets a glint as the brand goes by
+  Object.entries(cross).forEach(([i, c]) => tl.fromTo(R[me].pane, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.55, ease: "power2.inOut", immediateRender: false }, c - 0.1));
+
+  // ---- the moment: the brand takes the top, floods with the accent, the crown is set on it, the 1 lights
+  const M = BE + 0.05, rme = R[me];
+  if (endsTop) {
+    tl.to([rme.flood, rme.gflood], { opacity: 1, duration: 0.35, ease: "power2.out" }, M);
+    tl.to(rks[0], { color: "#fff", textShadow: `0 0 ${30 * u}px var(--accent)`, duration: 0.3, ease: "power2.out" }, M);
+    tl.fromTo(rks[0], { scale: 1 }, { scale: 1.35, duration: 0.1, ease: "power2.out" }, M); tl.to(rks[0], { scale: 1, duration: 0.5, ease: "back.out(3)" }, M + 0.1);
+    const crown = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    crown.id = "crown"; crown.setAttribute("viewBox", "0 0 100 82");
+    crown.innerHTML = `<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".45" style="stop-color:color-mix(in srgb, var(--accent) 35%, #FFD27A)"/><stop offset="1" style="stop-color:color-mix(in srgb, var(--accent) 70%, #B8741A)"/></linearGradient></defs>
+      <path d="M12 60 L6 20 L31 41 L50 9 L69 41 L94 20 L88 60 Z" fill="url(#cg)" stroke="rgba(255,255,255,.9)" stroke-width="2.5" stroke-linejoin="round"/>
+      <rect x="11" y="60" width="78" height="15" rx="5" fill="url(#cg)" stroke="rgba(255,255,255,.9)" stroke-width="2.5"/>
+      <circle cx="6" cy="20" r="6" fill="#fff"/><circle cx="50" cy="9" r="7" fill="#fff"/><circle cx="94" cy="20" r="6" fill="#fff"/>
+      <path d="M22 54 L50 24 L78 54" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="3" stroke-linecap="round"/>`;
+    const cw = Math.round(numW * 1.2), ch = Math.round(cw * 0.82);
+    Object.assign(crown.style, { width: cw + "px", height: ch + "px", left: Math.round(left + numW / 2 - cw / 2) + "px", top: Math.round(slotY(0) + rowH / 2 - rowH * 0.24 - ch * 0.98) + "px" });
+    board.append(crown);
+    tl.fromTo(crown, { y: -120 * u, rotation: -50, scale: 1.6 }, { y: 0, rotation: -10, scale: 1, duration: 0.32, ease: "power4.in" }, M + 0.12);
+    tl.fromTo(crown, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out" }, M + 0.12);
+    tl.to(crown, { scale: 1.12, duration: 0.06, ease: "power1.out" }, M + 0.44); tl.to(crown, { scale: 1, duration: 0.45, ease: "back.out(3)" }, M + 0.5);
+    const burst = document.createElement("div"); burst.id = "burst"; rme.row.append(burst);
+    Object.assign(burst.style, { left: 0, top: 0, width: paneW + "px", height: rowH + "px", borderRadius: Math.round(rowH * 0.26) + "px" });
+    tl.fromTo(burst, { scale: 1, opacity: 0.9 }, { scale: 1.12, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, M + 0.44);
+    tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out" }, M + 0.44); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, M + 0.51);
+    tl.fromTo(rme.pane, { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, M + 0.5);
+    // the others step back
+    R.forEach((r) => { if (r.i !== me) tl.to([r.pane, r.gpane], { opacity: 0.62, duration: 0.6, ease: "power2.inOut" }, M + 0.2); });
+  }
+  MV.done();
+</script>
+</body>
+</html>

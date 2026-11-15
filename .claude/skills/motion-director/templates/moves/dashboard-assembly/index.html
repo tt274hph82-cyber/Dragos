@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Dashboard title in the top bar","default":"Overview"},
+  {"id":"labels","type":"string","label":"Three KPI labels, comma separated ({brand} = the brand name)","default":"Visitors,Sign-ups,Conversion"},
+  {"id":"values","type":"string","label":"Three KPI values, same order; prefix and suffix are kept","default":"24.8K,1,240,5.2%"},
+  {"id":"deltas","type":"string","label":"Change chip per KPI (+18%, -3%); empty = no chip","default":"+18%,+24%,+0.8%"},
+  {"id":"glyphs","type":"string","label":"Glyph per KPI (user, chart, target, cart, mail, bolt, video, search...); empty = guessed from the label","default":"user,bolt,target"},
+  {"id":"chart","type":"string","label":"The big chart: label|value|change","default":"Revenue|$48.2K|+32%"},
+  {"id":"bars","type":"string","label":"Label over the weekly bars","default":"This week"},
+  {"id":"list","type":"string","label":"Title of the list of top items (rows use the brand screens)","default":"Top pages"},
+  {"id":"live","type":"string","label":"The status pill that lights when the board is complete","default":"Live"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); color: var(--ink); --ok: #2BD67B; --bad: #FF5A5F; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2600); }
+  #rig { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  /* the dashboard plate: dark glass with a lit top edge */
+  #plate { position: absolute; inset: 0; border-radius: calc(var(--u) * 34); box-sizing: border-box;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 92%, #fff 8%), color-mix(in srgb, var(--surface) 70%, #000) 70%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.22), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.85); }
+  #plate::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 14%), rgba(255,255,255,.16) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 14%)); }
+  #top { position: absolute; display: flex; align-items: center; box-sizing: border-box; }
+  #top .mk { flex: none; border-radius: 28%; overflow: hidden; background: #000; box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.15); }
+  #top .mk img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #top .tt { font-family: var(--font-display); white-space: nowrap; letter-spacing: -0.01em; }
+  #top .fill { flex: 1; }
+  #top .lv { display: flex; align-items: center; gap: .45em; padding: .38em .8em .38em .6em; border-radius: 999px; font-weight: 800; white-space: nowrap;
+    background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); color: color-mix(in srgb, var(--ink) 55%, transparent); }
+  #top .lv i { width: .6em; height: .6em; border-radius: 50%; background: color-mix(in srgb, var(--ink) 35%, transparent); position: relative; }
+  #top .lv i b { position: absolute; inset: -.1em; border-radius: 50%; border: calc(var(--u) * 3) solid var(--ok); opacity: 0; }
+  #top .av { flex: none; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 calc(var(--u) * 2.5) rgba(255,255,255,.7);
+    background: radial-gradient(80% 70% at 50% 30%, color-mix(in srgb, var(--accent) 70%, #fff 10%), color-mix(in srgb, var(--accent2) 70%, #000)); position: relative; }
+  #top .av img { position: absolute; left: 50%; bottom: -8%; height: 112%; transform: translateX(-50%); }
+  #side { position: absolute; display: flex; flex-direction: column; align-items: center; }
+  #side .ic { display: grid; place-items: center; border-radius: 30%; color: color-mix(in srgb, var(--ink) 45%, transparent); }
+  #side .ic svg { width: 50%; height: 50%; }
+  #side .ic.on { color: #fff; background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 65%, #fff 35%), var(--accent) 55%, color-mix(in srgb, var(--accent) 75%, #000)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), 0 0 calc(var(--u) * 20) color-mix(in srgb, var(--accent) 50%, transparent); }
+
+  .slot { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 22); border: calc(var(--u) * 2) dashed rgba(255,255,255,.16); background: rgba(255,255,255,.02); }
+  .flash { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 24); border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 55%, #fff); opacity: 0; pointer-events: none; }
+  .wd { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 22); overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.04) 60%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(20px) saturate(150%); backdrop-filter: blur(20px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.1), 0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  .wd::after { content: ""; position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.26) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .is-alpha .wd { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, white 20%), color-mix(in srgb, var(--surface) 92%, white 8%)); }
+  .lb { position: absolute; white-space: nowrap; font-weight: 700; color: color-mix(in srgb, var(--ink) 62%, transparent); line-height: 1.1; }
+  .num { position: absolute; white-space: nowrap; font-family: var(--font-display); line-height: 1; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+  .gt { position: absolute; display: grid; place-items: center; color: var(--ink); border-radius: 28%;
+    background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(255,255,255,.05)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.12); }
+  .gt svg { width: 52%; height: 52%; }
+  .dl { position: absolute; display: flex; align-items: center; gap: .22em; white-space: nowrap; font-weight: 800; line-height: 1; border-radius: 999px; padding: .32em .55em .32em .45em; font-variant-numeric: tabular-nums; }
+  .dl svg { width: .78em; height: .78em; flex: none; }
+  .dl.up { color: var(--ok); background: rgba(43,214,123,.15); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(43,214,123,.35); }
+  .dl.dn { color: var(--bad); background: rgba(255,90,95,.15); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,90,95,.35); }
+  .sp, .ch { position: absolute; overflow: visible; }
+  .ln { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .grid line { stroke: rgba(255,255,255,.07); }
+  .bar { position: absolute; bottom: 0; border-radius: calc(var(--u) * 8) calc(var(--u) * 8) calc(var(--u) * 3) calc(var(--u) * 3); transform-origin: 50% 100%;
+    background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.1)); }
+  .bar.hot { background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 60%, #fff 40%), var(--accent)); box-shadow: 0 0 calc(var(--u) * 22) color-mix(in srgb, var(--accent) 50%, transparent); }
+  .day { position: absolute; text-align: center; font-weight: 700; color: color-mix(in srgb, var(--ink) 40%, transparent); }
+  .row { position: absolute; left: 0; right: 0; display: flex; align-items: center; box-sizing: border-box; }
+  .row .th { flex: none; border-radius: calc(var(--u) * 10); overflow: hidden; background: #222; box-shadow: 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.14); }
+  .row .th img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  .row .sk { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .row .sk i { display: block; border-radius: 999px; background: rgba(255,255,255,.16); }
+  .row .sk i + i { background: rgba(255,255,255,.08); }
+  .row .rv { flex: none; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .row .rk { flex: none; font-family: var(--font-display); color: color-mix(in srgb, var(--ink) 35%, transparent); }
+
+  .is-key .wd { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .is-key .bar.hot { box-shadow: none; }
+  .is-key .dl.up { background: color-mix(in srgb, #2BD67B 15%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="plate"></div>
+    <div id="top"><div class="mk"></div><div class="tt"></div><div class="fill"></div><div class="lv"><i><b></b></i><span></span></div><div class="av"></div></div>
+    <div id="side"></div>
+    <div id="slots"></div>
+    <div id="board"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, KEY = root.classList.contains("is-key"), NS = "http://www.w3.org/2000/svg";
+  const brand = v.brandName || "";
+  // "1,240" is one value: split on commas that are not between digits
+  const list = (x) => String(x || "").split(/,(?!\d{3}(?:\D|$))/).map((s) => s.trim());
+  const labels = list(v.labels).map((s) => s.split("{brand}").join(brand)); while (labels.length < 3) labels.push(["Visitors", "Sign-ups", "Conversion"][labels.length]);
+  const vals = list(v.values), dels = list(v.deltas), gls = String(v.glyphs || "").split(",").map((s) => s.trim());
+  const CH = String(v.chart || "").split("|").map((s) => s.trim());
+  const parse = (s) => {
+    const m = String(s || "0").match(/^([^\d-]*)(-?[\d,]*\.?\d+)(.*)$/);
+    if (!m) return { pre: "", n: 0, dec: 0, grp: false, post: String(s || "") };
+    const raw = m[2], dec = (raw.split(".")[1] || "").length, n = parseFloat(raw.replace(/,/g, ""));
+    return { pre: m[1], n, dec, grp: raw.includes(",") || (Math.abs(n) >= 10000 && !dec), post: m[3] };
+  };
+  const fmt = (p, x) => p.pre + (p.grp ? x.toLocaleString("en-US", { minimumFractionDigits: p.dec, maximumFractionDigits: p.dec }) : x.toFixed(p.dec)) + p.post;
+  const chip = (txt, fs) => { const down = /^-/.test(txt); const d = document.createElement("div"); d.className = "dl " + (down ? "dn" : "up");
+    d.innerHTML = `<svg viewBox="0 0 12 12"><path d="${down ? "M6 10.5 1.5 3.5h9Z" : "M6 1.5l4.5 7h-9Z"}" fill="currentColor"/></svg><span></span>`; $("span", d).textContent = txt.replace(/^[+-]/, ""); d.style.fontSize = fs + "px"; return d; };
+
+  // ---- the window: as large as the clear zone allows
+  let zx, zy, zw, zh;
+  if (P) { zx = 36 * u; zw = W - 72 * u; zy = safe.top - 20 * u; zh = H - safe.top - safe.bottom + 110 * u; }
+  else if (SQ) { zx = 60 * u; zw = W - 120 * u; zy = 70 * u; zh = H - 140 * u; }
+  else { zx = W * 0.06; zw = W * 0.88; zy = H * 0.08; zh = H * 0.84; }
+  const WW = zw, WH = zh;
+  const rig = $("#rig"); Object.assign(rig.style, { width: WW + "px", height: WH + "px" });
+  gsap.set(rig, { x: zx, y: zy, transformOrigin: "50% 50%" });
+  const PAD = (P ? 30 : 30) * u, TOPH = (P ? 96 : 84) * u, SIDEW = P ? 0 : 92 * u;
+  // top bar
+  const topBar = $("#top"); Object.assign(topBar.style, { left: SIDEW + PAD + "px", top: 0, width: WW - SIDEW - PAD * 2 + "px", height: TOPH + "px", gap: 18 * u + "px" });
+  const MK = TOPH * 0.5; Object.assign($(".mk", topBar).style, { width: MK + "px", height: MK + "px" });
+  if (v.mark || v.logo) $(".mk", topBar).appendChild(MV.img(v.mark || v.logo)); else $(".mk", topBar).style.display = "none";
+  if (!SIDEW) {} else $(".mk", topBar).style.display = "none";
+  $(".tt", topBar).textContent = v.title || ""; $(".tt", topBar).style.fontSize = (P ? 40 : 34) * u + "px";
+  $(".lv span", topBar).textContent = v.live || ""; $(".lv", topBar).style.fontSize = (P ? 26 : 22) * u + "px"; if (!v.live) $(".lv", topBar).style.display = "none";
+  const AV = TOPH * 0.52; Object.assign($(".av", topBar).style, { width: AV + "px", height: AV + "px" });
+  if ((v.people || [])[0]) $(".av", topBar).appendChild(MV.img(v.people[0])); else $(".av", topBar).style.display = "none";
+  MV.fitText($(".tt", topBar), WW * 0.45, 18);
+  // side rail (wide and square)
+  const side = $("#side");
+  if (SIDEW) {
+    Object.assign(side.style, { left: 0, top: 0, width: SIDEW + "px", height: WH + "px", paddingTop: 22 * u + "px", gap: 16 * u + "px", boxSizing: "border-box" });
+    const IC = 54 * u;
+    if (v.mark || v.logo) { const m = document.createElement("div"); m.className = "ic"; Object.assign(m.style, { width: IC + "px", height: IC + "px", overflow: "hidden", marginBottom: 14 * u + "px", borderRadius: "28%" }); const im = MV.img(v.mark || v.logo); Object.assign(im.style, { width: "100%", height: "100%", objectFit: "cover" }); m.appendChild(im); side.appendChild(m); }
+    ["chart", "user", "doc", "mail", "layers"].forEach((g, i) => { const d = document.createElement("div"); d.className = "ic" + (i === 0 ? " on" : ""); Object.assign(d.style, { width: IC + "px", height: IC + "px" }); d.innerHTML = GLYPH.svg(g); side.appendChild(d); });
+  }
+
+  // ---- the grid: cells in (col,row,colspan,rowspan) on a weighted grid, per aspect
+  let COLS, ROWS, CELLS;
+  if (P) { COLS = [1, 1]; ROWS = [1, 1.05, 1.05, 1.35]; CELLS = { k1: [0, 0, 1, 1], k2: [1, 0, 1, 1], chart: [0, 1, 2, 2], list: [0, 3, 2, 1] }; }
+  else if (SQ) { COLS = [1, 1, 1]; ROWS = [0.9, 1.1, 1.1]; CELLS = { k1: [0, 0, 1, 1], k2: [1, 0, 1, 1], k3: [2, 0, 1, 1], chart: [0, 1, 2, 2], list: [2, 1, 1, 2] }; }
+  else { COLS = [1, 1, 1, 1.15]; ROWS = [0.95, 1.1, 1.1]; CELLS = { k1: [0, 0, 1, 1], k2: [1, 0, 1, 1], k3: [2, 0, 1, 1], bars: [3, 0, 1, 1], chart: [0, 1, 3, 2], list: [3, 1, 1, 2] }; }
+  const GAP = (P ? 20 : 20) * u, GX = SIDEW + PAD, GY = TOPH + 4 * u, GW = WW - GX - PAD, GH = WH - GY - PAD;
+  const cw = (GW - GAP * (COLS.length - 1)) / COLS.reduce((a, b) => a + b), rh = (GH - GAP * (ROWS.length - 1)) / ROWS.reduce((a, b) => a + b);
+  const cx0 = [], ry0 = []; { let x = GX; COLS.forEach((c) => { cx0.push(x); x += c * cw + GAP; }); let y = GY; ROWS.forEach((r) => { ry0.push(y); y += r * rh + GAP; }); }
+  const rect = (c) => { const [ci, ri, cs, rs] = c; let w = 0, h = 0; for (let k = 0; k < cs; k++) w += COLS[ci + k] * cw; for (let k = 0; k < rs; k++) h += ROWS[ri + k] * rh; return { x: cx0[ci], y: ry0[ri], w: w + GAP * (cs - 1), h: h + GAP * (rs - 1) }; };
+
+  const board = $("#board"), slots = $("#slots"), Wd = [];
+  const mk = (id) => { if (!CELLS[id]) return null; const r = rect(CELLS[id]);
+    const s = document.createElement("div"); s.className = "slot"; Object.assign(s.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" }); slots.appendChild(s);
+    const f = document.createElement("div"); f.className = "flash"; Object.assign(f.style, { left: r.x - 4 * u + "px", top: r.y - 4 * u + "px", width: r.w + 8 * u + "px", height: r.h + 8 * u + "px" }); slots.appendChild(f);
+    const el = document.createElement("div"); el.className = "wd"; Object.assign(el.style, { left: r.x + "px", top: r.y + "px", width: r.w + "px", height: r.h + "px" }); board.appendChild(el);
+    const w = { id, r, el, slot: s, flash: f, counters: [], draws: [], pops: [] }; Wd.push(w); return w; };
+  const wp = (r) => Math.min(30 * u, r.w * 0.08);       // inner padding
+
+  // a sparkline / area path through seeded points rising to the end
+  const curve = (seed, K, w, h, down, top0) => { const rnd = MV.rand(seed), pts = []; for (let k = 0; k < K; k++) pts.push((k / (K - 1)) * (down ? -1 : 1) + (rnd() - 0.5) * 0.55); pts[K - 1] = down ? -1.1 : 1.1;
+    const lo = Math.min(...pts), hi = Math.max(...pts), XY = pts.map((q, k) => [(k / (K - 1)) * w, top0 + (1 - (q - lo) / (hi - lo || 1)) * (h - top0)]);
+    let d = `M${XY[0][0]},${XY[0][1]}`; for (let k = 0; k < K - 1; k++) { const p0 = XY[Math.max(0, k - 1)], p1 = XY[k], p2 = XY[k + 1], p3 = XY[Math.min(K - 1, k + 2)];
+      d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`; } return { d, XY }; };
+
+  // ---- KPI widgets
+  const USED = new Set();
+  ["k1", "k2", "k3"].forEach((id, i) => {
+    const w = mk(id); if (!w) return; const r = w.r, pd = wp(r), el = w.el;
+    const gs = Math.min(r.h * 0.26, 64 * u);
+    const g = document.createElement("div"); g.className = "gt"; Object.assign(g.style, { left: pd + "px", top: pd + "px", width: gs + "px", height: gs + "px" });
+    g.innerHTML = GLYPH.svg(GLYPH.pick(labels[i], gls[i], i, USED)); el.appendChild(g); w.pops.push(g);
+    const lb = document.createElement("div"); lb.className = "lb"; lb.textContent = labels[i]; lb.style.fontSize = (P ? 30 : 25) * u + "px"; el.appendChild(lb);
+    MV.fitText(lb, r.w - pd * 2.5 - gs, 14); Object.assign(lb.style, { left: pd * 1.5 + gs + "px", top: pd + (gs - lb.getBoundingClientRect().height) / 2 + "px" });
+    const p = parse(vals[i] || "0");
+    const num = document.createElement("div"); num.className = "num"; num.textContent = fmt(p, p.n); num.style.fontSize = Math.min(r.h * 0.3, (P ? 78 : 66) * u) + "px"; el.appendChild(num);
+    let cwid = 0, c = null;
+    if (dels[i]) { c = chip(dels[i], (P ? 26 : 22) * u); el.appendChild(c); cwid = c.getBoundingClientRect().width + 14 * u; w.pops.push(c); }
+    MV.fitText(num, r.w - pd * 2 - cwid, 20);
+    const ny = pd + gs + r.h * 0.07; Object.assign(num.style, { left: pd + "px", top: ny + "px" });
+    if (c) { const nb = num.getBoundingClientRect(); Object.assign(c.style, { right: pd + "px", top: ny + (nb.height - c.getBoundingClientRect().height) / 2 + "px" }); }
+    w.counters.push({ el: num, p });
+    const sy = ny + num.getBoundingClientRect().height + r.h * 0.08, sh = r.h - sy - pd * 0.6;
+    num.textContent = fmt(p, 0);
+    if (sh > 24 * u) { const s = document.createElementNS(NS, "svg"); s.setAttribute("class", "sp"); Object.assign(s.style, { left: pd + "px", top: sy + "px", width: r.w - pd * 2 + "px", height: sh + "px" });
+      s.setAttribute("viewBox", `0 0 ${r.w - pd * 2} ${sh}`); const c = curve(17 + i * 311, 10, r.w - pd * 2, sh, /^-/.test(dels[i] || ""), 4 * u);
+      const ln = document.createElementNS(NS, "path"); ln.setAttribute("class", "ln"); ln.setAttribute("d", c.d); ln.setAttribute("stroke", "rgba(255,255,255,.75)"); ln.setAttribute("stroke-width", 4 * u); s.appendChild(ln); el.appendChild(s);
+      w.draws.push(ln); }
+  });
+
+  // ---- weekly bars
+  { const w = mk("bars"); if (w) { const r = w.r, pd = wp(r), el = w.el;
+    const lb = document.createElement("div"); lb.className = "lb"; lb.textContent = v.bars || ""; lb.style.fontSize = (P ? 30 : 25) * u + "px"; el.appendChild(lb);
+    MV.fitText(lb, r.w - pd * 2, 14); Object.assign(lb.style, { left: pd + "px", top: pd + "px" });
+    const DAYS = ["M", "T", "W", "T", "F", "S", "S"], HV = [0.45, 0.62, 0.5, 0.78, 0.66, 1, 0.84], hot = 5;
+    const top0 = pd + lb.getBoundingClientRect().height + r.h * 0.09, dayH = (P ? 26 : 22) * u, bh = r.h - top0 - pd * 0.7 - dayH - 8 * u;
+    const bw = (r.w - pd * 2) / 7;
+    DAYS.forEach((d, k) => { const b = document.createElement("div"); b.className = "bar" + (k === hot ? " hot" : "");
+      Object.assign(b.style, { left: pd + k * bw + bw * 0.18 + "px", width: bw * 0.64 + "px", height: bh * HV[k] + "px", bottom: pd * 0.7 + dayH + 8 * u + "px" }); el.appendChild(b); w.draws.push(b);
+      const t = document.createElement("div"); t.className = "day"; t.textContent = d; Object.assign(t.style, { left: pd + k * bw + "px", width: bw + "px", bottom: pd * 0.7 + "px", fontSize: dayH * 0.95 + "px" }); el.appendChild(t); });
+  } }
+
+  // ---- the hero chart
+  let HERO = null;
+  { const w = mk("chart"); if (w) { HERO = w; const r = w.r, pd = wp(r) * 1.1, el = w.el;
+    const lb = document.createElement("div"); lb.className = "lb"; lb.textContent = CH[0] || ""; lb.style.fontSize = (P ? 32 : 27) * u + "px"; el.appendChild(lb);
+    MV.fitText(lb, r.w * 0.5, 14); Object.assign(lb.style, { left: pd + "px", top: pd + "px" });
+    const p = parse(CH[1] || "0"); const num = document.createElement("div"); num.className = "num"; num.textContent = fmt(p, p.n);
+    num.style.fontSize = Math.min(r.h * 0.2, (P ? 104 : 92) * u) + "px"; el.appendChild(num); MV.fitText(num, r.w * 0.6, 24);
+    const ny = pd + lb.getBoundingClientRect().height + 10 * u; Object.assign(num.style, { left: pd + "px", top: ny + "px" }); w.counters.push({ el: num, p });
+    if (CH[2]) { const c = chip(CH[2], (P ? 30 : 26) * u); el.appendChild(c); const nb = num.getBoundingClientRect();
+      Object.assign(c.style, { left: pd + nb.width + 22 * u + "px", top: ny + (nb.height - c.getBoundingClientRect().height) / 2 + "px" }); w.pops.push(c); w.chip = c; }
+    const nh0 = num.getBoundingClientRect().height; num.textContent = fmt(p, 0);
+    const cy0 = ny + nh0 + r.h * 0.06, chh = r.h - cy0 - pd * 0.8, cww = r.w - pd * 2;
+    const s = document.createElementNS(NS, "svg"); s.setAttribute("class", "ch"); Object.assign(s.style, { left: pd + "px", top: cy0 + "px", width: cww + "px", height: chh + "px" }); s.setAttribute("viewBox", `0 0 ${cww} ${chh}`);
+    const gg = document.createElementNS(NS, "g"); gg.setAttribute("class", "grid"); for (let k = 0; k <= 3; k++) { const l = document.createElementNS(NS, "line"); const y = (k / 3) * chh; l.setAttribute("x1", 0); l.setAttribute("x2", cww); l.setAttribute("y1", y); l.setAttribute("y2", y); l.setAttribute("stroke-width", 1.5 * u); gg.appendChild(l); } s.appendChild(gg);
+    const c = curve(911, 14, cww - 16 * u, chh, /^-/.test(CH[2] || ""), 14 * u);
+    s.innerHTML += `<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${v.accent || "#FF6A3D"}" stop-opacity=".45"/><stop offset="1" stop-color="${v.accent || "#FF6A3D"}" stop-opacity="0"/></linearGradient></defs>`;
+    const ar = document.createElementNS(NS, "path"); ar.setAttribute("d", c.d + ` L${c.XY.at(-1)[0]},${chh} L0,${chh} Z`); ar.setAttribute("fill", "url(#ag)"); ar.style.opacity = 0; s.appendChild(ar);
+    const ln = document.createElementNS(NS, "path"); ln.setAttribute("class", "ln"); ln.setAttribute("d", c.d); ln.setAttribute("stroke", "var(--accent)"); ln.setAttribute("stroke-width", 6 * u);
+    ln.style.filter = KEY ? "none" : `drop-shadow(0 0 ${8 * u}px var(--accent))`; s.appendChild(ln);
+    const dt = document.createElementNS(NS, "circle"); dt.setAttribute("r", 10 * u); dt.setAttribute("fill", "#fff"); s.appendChild(dt);
+    const rg = document.createElementNS(NS, "circle"); rg.setAttribute("r", 10 * u); rg.setAttribute("fill", "none"); rg.setAttribute("stroke", "#fff"); rg.setAttribute("stroke-width", 3 * u); rg.style.opacity = 0; s.appendChild(rg);
+    el.appendChild(s); Object.assign(w, { ln, ar, dt, rg });
+    const L = ln.getTotalLength(); ln.style.strokeDasharray = L; ln.style.strokeDashoffset = L; w.L = L; dt.setAttribute("cx", c.XY[0][0]); dt.setAttribute("cy", c.XY[0][1]);
+  } }
+
+  // ---- the list: the brand's screens as thumbnails, skeleton titles, a value each
+  { const w = mk("list"); if (w) { const r = w.r, pd = wp(r), el = w.el;
+    const lb = document.createElement("div"); lb.className = "lb"; lb.textContent = v.list || ""; lb.style.fontSize = (P ? 30 : 25) * u + "px"; el.appendChild(lb);
+    MV.fitText(lb, r.w - pd * 2, 14); Object.assign(lb.style, { left: pd + "px", top: pd + "px" });
+    const scr = (v.screens || []).length ? v.screens : [];
+    const y0 = pd + lb.getBoundingClientRect().height + r.h * 0.05, thW = (r.w - pd * 2) * 0.34 / 1.6;
+    const N = Math.max(3, Math.min(5, Math.floor((r.h - y0 - pd * 0.6) / Math.min(96 * u * 1.5, thW * 1.5)))), rh2 = (r.h - y0 - pd * 0.6) / N;
+    const VALS = ["12.4K", "8.1K", "5.6K", "3.9K", "2.2K"];
+    for (let k = 0; k < N; k++) {
+      const row = document.createElement("div"); row.className = "row"; Object.assign(row.style, { top: y0 + k * rh2 + "px", height: rh2 + "px", padding: `0 ${pd}px`, gap: 16 * u + "px" });
+      const th = Math.min(rh2 * 0.74, 96 * u, (r.w - pd * 2) * 0.34 / 1.6);
+      row.innerHTML = `<span class="rk"></span><div class="th"></div><div class="sk"><i></i><i></i></div><span class="rv"></span>`;
+      $(".rk", row).textContent = k + 1; $(".rk", row).style.fontSize = Math.min(th * 0.42, 30 * u) + "px";
+      Object.assign($(".th", row).style, { width: th * 1.6 + "px", height: th + "px" });
+      if (scr.length) $(".th", row).appendChild(MV.img(scr[k % scr.length]));
+      const sk = $(".sk", row); sk.style.gap = th * 0.14 + "px"; const [a, b] = sk.querySelectorAll("i"); Object.assign(a.style, { height: th * 0.15 + "px", width: [82, 70, 76][k] + "%" }); Object.assign(b.style, { height: th * 0.12 + "px", width: [52, 44, 58][k] + "%" });
+      $(".rv", row).textContent = VALS[k]; $(".rv", row).style.fontSize = Math.min(th * 0.38, (P ? 30 : 26) * u) + "px";
+      el.appendChild(row); w.draws.push(row);
+    }
+  } }
+
+  // ---- the camera: the plate rises, then a slow 3D drift
+  gsap.set("#stage", { perspectiveOrigin: `${zx + WW / 2}px ${zy + WH / 2}px` });
+  tl.fromTo(rig, { y: zy + 150 * u, rotationX: 22, rotationY: P ? -8 : -12, scale: 0.92 }, { y: zy, rotationX: 7, rotationY: P ? -5 : -7, scale: 1, duration: 1.0, ease: "expo.out" }, 0);
+  tl.fromTo(rig, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0);
+  tl.to(rig, { rotationX: 2, rotationY: P ? 4 : 6, duration: D - 1.0, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo([topBar, side], { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.25);
+  tl.fromTo(".slot", { opacity: 0, scale: 0.96 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out", stagger: 0.05 }, 0.3);
+
+  // ---- the widgets fly in from their own sides and snap into their slots; each fills as it lands
+  const order = ["k1", "k2", "k3", "bars", "list", "chart"].map((id) => Wd.find((w) => w.id === id)).filter(Boolean);
+  const T0 = 0.55, STEP = 0.17, FLY = 0.62;
+  order.forEach((w, k) => {
+    const at = T0 + k * STEP, land = at + FLY, r = w.r, sx = r.x + r.w / 2 < WW / 2 ? -1 : 1, sy = r.y + r.h / 2 < WH / 2 ? -1 : 1;
+    const big = w === HERO;
+    tl.fromTo(w.el, { x: sx * (big ? 0.2 : 0.55) * W, y: sy * 0.35 * H + (big ? 0.5 * H : 0), z: big ? 900 : 400, rotationY: -sx * 38, rotationX: sy * 30, rotationZ: sx * 6 },
+      { x: 0, y: 0, z: 0, rotationY: 0, rotationX: 0, rotationZ: 0, duration: FLY, ease: "power3.out" }, at);
+    tl.fromTo(w.el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, at);
+    // the snap: a squash into the slot, the slot frame flashes and fades
+    tl.fromTo(w.el, { scale: 1 }, { scale: 0.975, duration: 0.06, ease: "power2.out", immediateRender: false }, land - 0.02);
+    tl.to(w.el, { scale: 1, duration: 0.4, ease: "back.out(3)" }, land + 0.04);
+    tl.fromTo(w.flash, { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.05, duration: 0.5, ease: "expo.out", immediateRender: false }, land);
+    tl.to(w.slot, { opacity: 0, duration: 0.15 }, land);
+    tl.fromTo(w.el, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut" }, land - 0.1);
+    // contents populate: the text arrives with the snap, never while the cards cross each other in flight
+    tl.fromTo(w.el.querySelectorAll(".lb, .num, .day"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, land - 0.04);
+    w.counters.forEach((c) => { const o = { p: 0 }; tl.to(o, { p: 1, duration: big ? 1.5 : 1.1, ease: "expo.out", onUpdate: () => { c.el.textContent = fmt(c.p, c.p.n * o.p); } }, land); });
+    w.pops.forEach((e, j) => tl.fromTo(e, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)" }, land + 0.1 + j * 0.25));
+    w.draws.forEach((e, j) => {
+      if (e.classList && e.classList.contains("bar")) tl.fromTo(e, { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "back.out(1.6)" }, land + j * 0.05);
+      else if (e.classList && e.classList.contains("row")) tl.fromTo(e, { opacity: 0, x: 24 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, land + j * 0.09);
+      else { const Lz = e.getTotalLength(); e.style.strokeDasharray = Lz; tl.fromTo(e, { strokeDashoffset: Lz }, { strokeDashoffset: 0, duration: 0.9, ease: "power3.inOut" }, land + 0.05); }
+    });
+    w.land = land;
+  });
+
+  // ---- the moment: the hero chart lands last, its line draws with a riding dot, the board goes live
+  if (HERO) {
+    const t = HERO.land, s = { p: 0 };
+    tl.to(s, { p: 1, duration: 1.3, ease: "power3.inOut", onUpdate: () => { const len = HERO.L * s.p; HERO.ln.style.strokeDashoffset = HERO.L - len;
+      const pt = HERO.ln.getPointAtLength(len); HERO.dt.setAttribute("cx", pt.x); HERO.dt.setAttribute("cy", pt.y); HERO.rg.setAttribute("cx", pt.x); HERO.rg.setAttribute("cy", pt.y); } }, t + 0.1);
+    tl.to(HERO.ar, { opacity: 1, duration: 0.9, ease: "power2.out" }, t + 0.6);
+    tl.fromTo(HERO.rg, { attr: { r: 10 * u }, opacity: 0.9 }, { attr: { r: 44 * u }, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, t + 1.35);
+    tl.fromTo("#stage", { scale: 1 }, { scale: 1.018, duration: 0.07, ease: "power2.out", immediateRender: false }, t);
+    tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, t + 0.07);
+    const lv = $(".lv", topBar);
+    tl.to(lv, { color: "#2BD67B", backgroundColor: KEY ? "#173a28" : "rgba(43,214,123,.14)", boxShadow: `inset 0 0 0 ${1.5 * u}px rgba(43,214,123,.45)`, duration: 0.25, ease: "power2.out" }, t + 0.15);
+    tl.to($(".lv i", topBar), { backgroundColor: "#2BD67B", boxShadow: KEY ? "none" : `0 0 ${10 * u}px #2BD67B`, duration: 0.2 }, t + 0.15);
+    tl.fromTo($(".lv i b", topBar), { scale: 1, opacity: 0.9 }, { scale: 3.2, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, t + 0.18);
+    tl.fromTo($(".lv i b", topBar), { scale: 1, opacity: 0.7 }, { scale: 3.2, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, t + 0.9);
+    tl.fromTo("#plate", { "--sheen": "-50%" }, { "--sheen": "150%", duration: 1.0, ease: "power2.inOut" }, t + 0.15);
+  }
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

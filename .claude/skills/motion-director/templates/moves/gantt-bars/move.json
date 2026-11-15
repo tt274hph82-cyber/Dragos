@@ -1,0 +1,5 @@
+{ "id": "gantt-bars", "name": "Gantt bars", "oneLiner": "a glass project board stands up off a lit floor, task bars slide out along their rows, a today line sweeps across filling every bar behind it while the camera leans with it; the hero task counts to 100%, floods green and a check lands",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["gantt", "timeline", "project", "schedule", "roadmap", "plan", "deadline", "progress", "shipped", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker walks through a project schedule or says one part is finally done ('research, script, film, and the edit wrapped this week'): cut in on the plan, the check lands on the word that says done" }

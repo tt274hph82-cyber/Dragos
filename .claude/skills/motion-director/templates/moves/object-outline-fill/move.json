@@ -1,0 +1,5 @@
+{ "id": "object-outline-fill", "name": "Object outline fill", "oneLiner": "a clean pen drawing of a laptop, phone or camera draws itself on a drafting grid, then fills left to right in colour bands, one per cost part, each with a bracket and a label landing over it, and a dimension line runs out under it to stamp the real total",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "editorial"], "from": "new",
+  "tags": ["cost", "price", "breakdown", "what it costs", "budget", "parts", "split", "instalments", "pricing", "explainer", "money", "line drawing", "blueprint", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker breaks one price into its parts ('the laptop is $700 up front, then $1,000 in subscriptions, then fees'): cut in on the object, each band fills as its part is named, the total stamps on 'so it really costs...'" }

@@ -1,0 +1,5 @@
+{ "id": "keynote-stage-screen", "name": "Keynote stage screen", "oneLiner": "a dark auditorium, a giant stage screen flickers on with the brand's real screen and floods the hall with its own light: haze glows, the rows of a real silhouetted crowd catch a rim of the screen's colour, the camera dollies in slowly and the slide cuts once to the next screen like a live keynote",
+  "category": "creator", "kind": "effect", "uses": ["broll"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["keynote", "stage", "launch", "event", "conference", "presentation", "announcement", "big screen", "audience", "crowd", "reveal", "product", "screen", "hype"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker frames something as a big launch or a reveal ('this is the moment it went public', 'imagine showing this on stage'): cut in on the build-up, the screen powers on on the word that names it, the slide cuts on the next beat. Set screen and screen2 to the two screens they show" }

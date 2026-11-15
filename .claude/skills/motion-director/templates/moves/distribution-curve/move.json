@@ -1,0 +1,5 @@
+{ "id": "distribution-curve", "name": "Distribution curve", "oneLiner": "a glowing bell curve draws on a glass floor, a scan line sweeps across it shading most of the area grey while a frosted readout above it counts the share left down, then a lit brand disc drops onto the far right tail, the tail floods with the accent and the readout lands on Top x percent",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["bell curve", "distribution", "percentile", "top percent", "outlier", "rare", "statistics", "average", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says something puts you in a rare few ('only 3 percent of people ever do this', 'that is the top 1 percent'): cut in on the comparison, the marker drops on the tail on the word that names the share" }

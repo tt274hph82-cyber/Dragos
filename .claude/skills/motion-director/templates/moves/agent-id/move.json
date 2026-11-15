@@ -1,0 +1,5 @@
+{ "id": "agent-id", "name": "Agent ID badge", "oneLiner": "a round portrait pops in above the head on a glass rim, then shrinks into a small role pill while the agent's big name sets in over a tiny italic 'is my'; roster variant stacks three agents with their last message",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass", "editorial"], "from": "new",
+  "tags": ["agent", "persona", "bot", "assistant", "name", "intro", "team", "avatar", "role", "roster", "who", "overlay"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.6, "alpha": true,
+  "say": "when the speaker introduces an agent, bot or teammate by name ('his name is Jamie, he's my chief of staff'): cut in on the name; use mode roster when they list the whole team of bots" }

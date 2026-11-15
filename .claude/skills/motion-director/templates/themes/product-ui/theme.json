@@ -1,0 +1,18 @@
+{
+  "id": "product-ui",
+  "name": "Product UI",
+  "oneLiner": "a grey dot-grid canvas with soft black asterisks: the real logo strokes on, a cursor boxes the tagline, the real input bar is typed and pressed, a dark disc wipes to the real product turning in 3D and its video playing",
+  "bestFor": "software products with a recognisable screen and a product video; launch teasers, feature drops, app intros that should feel designed and quiet; 9:16 social",
+  "motion": "logo stroke-draw with getTotalLength then fill and pulse; cursor-dragged dashed boxes (power3.out); springy pops (back.out(1.9-2.2)); a typed query and a pressed button with an expanding ring; a giant disc wipe (power2.inOut); a card turning in perspective; a frame-stack video with a crop-in",
+  "ground": "flat light grey #E8E8E8 with a 30px dot grid, no grain",
+  "format": "9:16 1080x1920, 30fps",
+  "length": "11s (4 scenes)",
+  "stills": [0.6, 3.7, 8.8],
+  "sound": {
+    "vibe": "minimal",
+    "bpm": [116, 124],
+    "ui": "a pop as the logo fills, a tick per selection box, a pop as the bar springs, typing under the query, a click on the press, a whoosh on the wipe, a shimmer as the video lands, one hit on the final mark"
+  },
+  "recipe": "RECIPE.md",
+  "preview": "preview.jpg"
+}

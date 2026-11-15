@@ -1,0 +1,5 @@
+{ "id": "rate-dial-knob", "name": "Rate dial knob", "oneLiner": "a machined aluminium knob on a smoked-glass dial turns with weight from one setting to another, the tick ring and light track follow it, the big readout counts and lands, then up to three knock-on effects pop out with their arrows swinging up or down",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["dial", "knob", "rate", "interest", "setting", "temperature", "turn up", "volume", "control", "adjust", "finance", "cause and effect", "3d", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker turns one setting up or down and explains what it changes ('raise the rate to 7% and payments go up, savings go down', 'turn the temperature up'): cut in on the setting, the knob lands on the number, the effects pop as they are named. The 9:16 overlay drops the effect chips to stay out of the face zone" }

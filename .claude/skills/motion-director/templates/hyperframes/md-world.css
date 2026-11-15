@@ -1,0 +1,87 @@
+/* motion-director: the WORLD layer. One continuous 3D space the camera flies
+   through, glass panes with real light, an ambient field that never stops
+   moving, and kinetic type. Everything takes brand tokens from brand.css.
+
+   Numbers, not adjectives (each value below was chosen, not defaulted):
+     perspective 1600px            a ~35mm feel at 1080p
+     glass fill 14% -> 4% white    readable over any ground, never milky
+     rim 1px at 45% white, top      the edge that sells "glass"
+     inner hairline 1px at 12%      the body of the pane
+     drop 0 40px 90px -30px 45%     the pane floats; no flat box-shadow
+     glow 0 0 80px -10px accent 35% the brand colour as light, not paint
+     grain 3.5%, vignette 22%       film, not flat web
+*/
+
+:root, #root {
+  --glass-fill-a: rgba(255, 255, 255, 0.16);
+  --glass-fill-b: rgba(255, 255, 255, 0.04);
+  --glass-rim: rgba(255, 255, 255, 0.45);
+  --glass-line: rgba(255, 255, 255, 0.12);
+  --glass-blur: 22px;
+  --glow: var(--accent);
+}
+
+/* ------------------------------------------------------------- the world */
+
+/* a perspective stage; the RIG is the camera (tween its x/y/z/rotation) */
+.md-world { position: absolute; inset: 0; perspective: 1600px; perspective-origin: 50% 46%; overflow: hidden; }
+.md-rig { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.md-obj { position: absolute; transform-style: preserve-3d; will-change: transform, opacity, filter; }
+
+/* the ambient field: big soft light of the brand's own colours, always
+   drifting as ONE body (never per-item wobble) */
+.md-ambient { position: absolute; inset: -20%; pointer-events: none; }
+.md-ambient i { position: absolute; display: block; border-radius: 50%; filter: blur(60px); opacity: var(--a, 0.55);
+  background: radial-gradient(circle, var(--c, var(--accent)) 0%, transparent 68%); }
+.md-floor { position: absolute; left: -10%; right: -10%; bottom: -38%; height: 70%; border-radius: 50%;
+  background: radial-gradient(50% 50% at 50% 0%, color-mix(in srgb, var(--accent) 38%, transparent) 0%, transparent 70%); pointer-events: none; }
+.md-vignette { position: absolute; inset: 0; pointer-events: none; z-index: 89;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0, 0, 0, var(--vig, 0.22)) 100%); }
+
+/* ------------------------------------------------------------------ glass */
+
+.md-glass {
+  position: absolute; border-radius: var(--glass-r, 28px); overflow: hidden;
+  background: linear-gradient(150deg, var(--glass-fill-a) 0%, var(--glass-fill-b) 100%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 var(--glass-rim),
+    inset 0 0 0 1px var(--glass-line),
+    0 40px 90px -30px rgba(0, 0, 0, 0.45),
+    0 0 80px -10px color-mix(in srgb, var(--glow) 35%, transparent);
+}
+/* a light pane for light grounds: frosted white, ink hairline */
+.md-glass.is-light {
+  --glass-fill-a: rgba(255, 255, 255, 0.78); --glass-fill-b: rgba(255, 255, 255, 0.52);
+  --glass-rim: rgba(255, 255, 255, 0.95); --glass-line: rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 1px 0 var(--glass-rim), inset 0 0 0 1px var(--glass-line),
+    0 30px 70px -28px rgba(20, 20, 40, 0.28), 0 0 70px -20px color-mix(in srgb, var(--glow) 30%, transparent);
+}
+/* the specular sweep: GSAP tweens --sheen from -40% to 140% (MD.sweep) */
+.md-glass::after, .md-sheen::after {
+  content: ""; position: absolute; inset: -2px; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 18%), rgba(255, 255, 255, 0.28) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 18%));
+  mix-blend-mode: screen;
+}
+.md-sheen { position: relative; }
+
+/* a real screenshot set INTO glass: the pane is the frame */
+.md-glass > img.md-fill, .md-glass > video.md-fill { position: absolute; inset: 10px; width: calc(100% - 20px); height: calc(100% - 20px); object-fit: cover; object-position: top left; border-radius: calc(var(--glass-r, 28px) - 10px); }
+
+/* ----------------------------------------------------------- kinetic type */
+
+.md-kinetic { font-family: var(--font-display); font-weight: var(--display-weight, 800); letter-spacing: -0.025em; line-height: 0.92; color: var(--ink); }
+.md-kinetic .md-w { will-change: transform, opacity, filter; }
+/* a word lit by light rather than painted: the accent as a glow */
+.md-lit { color: var(--accent); text-shadow: 0 0 28px color-mix(in srgb, var(--accent) 55%, transparent); }
+/* a mask that a word rises out of. Its floor sits BELOW the descenders and the
+   glow: padding gives the box room for a "g" and a 28px text-shadow, the
+   negative margin gives the room back so the line does not move. A floor at
+   the line box (inset 0) slices both flat at tight line-heights. */
+.md-mask { display: inline-block; padding: 0.12em 0.2em 0.42em; margin: -0.12em -0.2em -0.42em; clip-path: inset(-30% -10% 0% -10%); }
+
+/* chips and UI bits built from brand tokens, never stock icons */
+.md-chip { display: inline-flex; align-items: center; gap: 0.45em; padding: 0.42em 0.9em; border-radius: 999px; font-family: var(--font-body); font-weight: 600;
+  background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
+.md-dot { width: 0.6em; height: 0.6em; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px var(--accent); display: inline-block; }

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"query","type":"string","label":"What gets typed (empty: the brand name)","default":""},
+  {"id":"name","type":"string","label":"Name on the top hit (empty: the brand name)","default":""},
+  {"id":"kind","type":"string","label":"Label under the top hit","default":"App"},
+  {"id":"hint","type":"string","label":"Placeholder in the empty bar","default":"Search"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 32% at var(--gx, 50%) var(--gy, 40%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 1800); }
+  #panel { position: absolute; border-radius: calc(var(--u) * 40); overflow: hidden; transform-style: preserve-3d;
+    background: linear-gradient(170deg, rgba(255,255,255,.17), rgba(255,255,255,.07) 55%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(30px) saturate(170%); backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13),
+      inset 0 calc(var(--u) * -40) calc(var(--u) * 80) calc(var(--u) * -40) color-mix(in srgb, var(--accent) 35%, transparent),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.75); }
+  .is-alpha #panel { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .is-key #panel { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.13); }
+  #panel > .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  #field { position: absolute; left: 0; right: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 24); padding: 0 calc(var(--u) * 40); box-sizing: border-box; }
+  #field svg.mg { flex: none; width: calc(var(--u) * 56); height: calc(var(--u) * 56); fill: none; stroke: color-mix(in srgb, var(--ink) 70%, transparent); stroke-width: 2.2; stroke-linecap: round; }
+  #qwrap { position: relative; flex: 1; min-width: 0; height: 100%; display: flex; align-items: center; }
+  #q, #ph { font-size: calc(var(--u) * 58); font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; }
+  #q { color: var(--ink); }
+  #ph { position: absolute; left: 0; color: color-mix(in srgb, var(--ink) 38%, transparent); }
+  #caret { display: inline-block; width: calc(var(--u) * 4); height: calc(var(--u) * 64); margin-left: calc(var(--u) * 4); border-radius: 2px; background: var(--accent); vertical-align: middle; }
+  #rule { position: absolute; left: 0; right: 0; height: calc(var(--u) * 1.5); background: rgba(255,255,255,.12); }
+
+  #list { position: absolute; left: 0; right: 0; padding: 0 calc(var(--u) * 22); box-sizing: border-box; }
+  .sec { font-size: calc(var(--u) * 32); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 50%, transparent);
+    padding: calc(var(--u) * 22) calc(var(--u) * 20) calc(var(--u) * 10); white-space: nowrap; }
+  .row { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 26); padding: calc(var(--u) * 16) calc(var(--u) * 20); border-radius: calc(var(--u) * 24); }
+  .row .hl { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4), 0 calc(var(--u) * 14) calc(var(--u) * 34) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key .row .hl { box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.4); }
+  .tile { position: relative; flex: none; width: calc(var(--u) * 88); height: calc(var(--u) * 88); border-radius: 23%; overflow: hidden; display: grid; place-items: center;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c) 72%, #fff), var(--c) 46%, color-mix(in srgb, var(--c) 62%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) calc(var(--u) * 1) rgba(255,255,255,.45), inset 0 calc(var(--u) * -5) calc(var(--u) * 10) rgba(0,0,0,.25), 0 calc(var(--u) * 8) calc(var(--u) * 16) calc(var(--u) * -6) rgba(0,0,0,.6); }
+  .tile svg { width: 56%; height: 56%; fill: none; stroke: #fff; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .tile .gl { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(120% 70% at 30% -10%, rgba(255,255,255,.4), rgba(255,255,255,.06) 50%, transparent 62%); }
+  .tile.brand { background: linear-gradient(150deg, var(--al), var(--accent) 52%, var(--ad)); }
+  .tile.brand img { position: absolute; }
+  .tile.brand.full img { inset: -1%; width: 102%; height: 102%; object-fit: cover; }
+  .tile.brand.glyph img { left: 20%; top: 20%; width: 60%; height: 60%; object-fit: contain; }
+  .tx { position: relative; flex: 1; min-width: 0; }
+  .t1 { font-size: calc(var(--u) * 44); font-weight: 650; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; }
+  .t2 { margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 30); font-weight: 500; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  .row.sel { padding: calc(var(--u) * 20) calc(var(--u) * 24); }
+  .row.sel .tile { width: calc(var(--u) * 124); height: calc(var(--u) * 124); }
+  .row.sel .t1 { font-size: calc(var(--u) * 56); }
+  .row.sel .t2 { font-size: calc(var(--u) * 34); }
+  .row.sel .t2 { color: color-mix(in srgb, var(--ink) 80%, transparent); }
+  .key { position: relative; flex: none; display: grid; place-items: center; width: calc(var(--u) * 76); height: calc(var(--u) * 60); border-radius: calc(var(--u) * 14);
+    background: rgba(255,255,255,.22); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 4) 0 rgba(0,0,0,.25); opacity: 0; }
+  .key svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  #ring { position: absolute; border-radius: 23%; border: calc(var(--u) * 4) solid var(--al); box-sizing: border-box; opacity: 0; pointer-events: none; }
+  #flare { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
+    background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--al) 70%, transparent), transparent 70%); }
+  .is-key #flare { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp">
+    <div id="panel">
+      <div id="field"><svg class="mg" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.4 15.4 20.5 20.5"/></svg>
+        <div id="qwrap"><span id="ph"></span><span id="q"></span><span id="caret"></span></div></div>
+      <div id="rule"></div>
+      <div id="list"></div>
+      <div class="sh"></div>
+    </div>
+  </div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (W > H ? 1.05 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const query = String(v.query || v.brandName || "").trim();
+  const name = v.name || v.brandName || query;
+
+  const G = {
+    globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.8 2.6 2.8 14.4 0 17M12 3.5c-2.8 2.6-2.8 14.4 0 17"/>',
+    doc: '<path d="M6.5 3.5h7.5l4 4v13h-11.5z"/><path d="M14 3.5v4h4M9.5 12h5M9.5 15.5h5"/>',
+    folder: '<path d="M3 7.5a2 2 0 0 1 2-2h4l2 2.2h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+    ret: '<path d="M19 5v6a2 2 0 0 1-2 2H6"/><path d="M9.5 9.5 6 13l3.5 3.5"/>',
+  };
+
+  // ---- size and place the panel
+  const PW = MV.portrait ? W - safe.left - safe.right : W > H ? 1080 * u : 900 * u;
+  const FH = 140 * u;
+  const panel = $("#panel"); panel.style.width = PW + "px";
+  $("#field").style.height = FH + "px"; $("#rule").style.top = FH + "px"; $("#list").style.top = FH + "px";
+  $("#ph").textContent = v.hint || "";
+  $("#q").textContent = query;
+
+  // ---- results: the brand on top, then three ordinary results for the same words
+  const list = $("#list");
+  const sec = document.createElement("div"); sec.className = "sec"; sec.textContent = "Top hit"; list.appendChild(sec);
+  const rowsDef = [
+    { brand: true, t1: name, t2: v.kind || "" },
+    { g: "globe", c: "#2CA6C9", t1: query, t2: "Search the web" },
+    { g: "doc", c: "#4C6FE0", t1: query + " notes", t2: "Document" },
+    { g: "folder", c: "#6B7385", t1: query, t2: "Folder" },
+  ];
+  const rows = rowsDef.map((r, i) => {
+    const el = document.createElement("div"); el.className = "row" + (i === 0 ? " sel" : "");
+    el.innerHTML = `<div class="hl"></div><div class="tile"></div><div class="tx"><div class="t1"></div><div class="t2"></div></div>` + (i === 0 ? `<div class="key"><svg viewBox="0 0 24 24">${G.ret}</svg></div>` : "");
+    const t = el.querySelector(".tile");
+    if (r.brand) { t.classList.add("brand", "glyph"); if (v.mark) t.appendChild(MV.img(v.mark)); }
+    else { t.style.setProperty("--c", r.c); t.innerHTML = `<svg viewBox="0 0 24 24">${G[r.g]}</svg>`; }
+    t.insertAdjacentHTML("beforeend", '<div class="gl"></div>');
+    el.querySelector(".t1").textContent = r.t1; el.querySelector(".t2").textContent = r.t2;
+    if (!r.t2) el.querySelector(".t2").remove();
+    list.appendChild(el);
+    if (i === 0) { const s2 = document.createElement("div"); s2.className = "sec"; s2.textContent = "More"; list.appendChild(s2); }
+    return el;
+  });
+  const bTile = rows[0].querySelector(".tile");
+  bTile.insertAdjacentHTML("beforebegin", '<div id="flare"></div>'); bTile.insertAdjacentHTML("afterend", '<div id="ring"></div>');
+  { const s = 124 * u, l = 24 * u, tp = (rows[0].offsetHeight - s) / 2; gsap.set("#ring", { left: l, top: tp, width: s, height: s }); gsap.set("#flare", { left: l - s, top: tp - s, width: s * 3, height: s * 3 }); }
+  if (v.mark) { const p = new Image(); p.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); g.drawImage(p, 0, 0, 64, 64);
+      const a = (x, y) => g.getImageData(x, y, 1, 1).data[3];
+      if (a(32, 3) > 200 && a(3, 32) > 200 && a(60, 32) > 200 && a(32, 60) > 200) bTile.classList.replace("glyph", "full"); } catch (e) {} }; p.src = v.mark; }
+  // fit every line to its row
+  const txW = PW - (22 + 20) * 2 * u - 88 * u - 26 * u;
+  rows.forEach((r, i) => { r.querySelectorAll(".t1,.t2").forEach((e) => MV.fitText(e, txW - (i === 0 ? 102 * u + 44 * u : 0), 16)); });
+  MV.fitText($("#q"), PW - (40 * 2 + 56 + 24 + 20) * u, 20);
+  const listH = list.getBoundingClientRect().height + 22 * u;
+  const PH = FH + listH; panel.style.height = PH + "px";
+
+  let px = (W - PW) / 2, py;
+  if (MV.portrait) { px = MV.alpha ? safe.left : (W - PW) / 2; py = MV.alpha ? safe.top + 10 * u : safe.top + Math.max(0, (H - safe.top - safe.bottom - PH) / 2 - 20 * u); }
+  else py = MV.alpha ? safe.top + 10 * u : (H - PH) / 2;
+  gsap.set(panel, { left: px, top: py });
+  root.style.setProperty("--gx", ((px + PW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((py + PH * 0.35) / H * 100) + "%");
+
+  // ---- timeline
+  // 1. the bar drops in empty, the caret blinks
+  const T0 = 0.05;
+  tl.fromTo(panel, { opacity: 0, y: -50 * u, scale: 0.94, filter: "blur(14px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, T0);
+  const listClip = (k) => `inset(0 0 ${Math.round((1 - k) * listH)}px 0)`;
+  gsap.set(panel, { height: FH });
+  // 2. the query types, a letter a frame or two at a time
+  const T1 = 0.45, per = Math.min(0.075, 0.95 / Math.max(1, query.length));
+  const q = $("#q");
+  tl.set(q, { textContent: "" }, 0);
+  tl.set("#ph", { opacity: 1 }, 0); tl.set("#ph", { opacity: 0 }, T1);
+  for (let i = 1; i <= query.length; i++) tl.set(q, { textContent: query.slice(0, i) }, T1 + i * per);
+  const TE = T1 + query.length * per;
+  // the caret: on, off, on through the typing, then blinks
+  for (let b = 0; b < 3; b++) { tl.set("#caret", { opacity: 0 }, 0.05 + b * 0.5 + 0.25); tl.set("#caret", { opacity: 1 }, 0.05 + b * 0.5 + 0.5); }
+  tl.set("#caret", { opacity: 1 }, T1);
+  // 3. the panel grows down and the results arrive, top hit first
+  const TR = T1 + Math.min(2, query.length) * per + 0.12;
+  tl.to(panel, { height: PH, duration: 0.6, ease: "expo.out" }, TR);
+  rows.forEach((r, i) => {
+    tl.fromTo(r, { opacity: 0, y: 24 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, TR + 0.05 + i * 0.07);
+    tl.fromTo(r.querySelector(".tile"), { scale: 0.6 }, { scale: 1, duration: 0.5, ease: "back.out(2.2)" }, TR + 0.05 + i * 0.07);
+  });
+  tl.fromTo(list.querySelectorAll(".sec"), { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", stagger: 0.1 }, TR + 0.05);
+  // the top hit is selected: the accent bar slides in under it
+  const hl = rows[0].querySelector(".hl"), key = rows[0].querySelector(".key");
+  tl.fromTo(hl, { opacity: 0, scaleX: 0.92 }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "expo.out" }, TR + 0.3);
+  tl.fromTo(key, { opacity: 0, x: 20 * u }, { opacity: 1, x: 0, duration: 0.35, ease: "expo.out" }, Math.max(TE, TR + 0.45) + 0.1);
+  // 4. Return: the key presses, the bar flashes, the icon pops with a ring of light (the moment that lands)
+  const K = Math.max(TE + 0.55, TR + 1.0);
+  tl.to(key, { y: 4 * u, scale: 0.9, duration: 0.07, ease: "power2.out" }, K); tl.to(key, { y: 0, scale: 1, duration: 0.3, ease: "back.out(3)" }, K + 0.07);
+  tl.to(hl, { filter: "brightness(1.5)", duration: 0.08, ease: "power2.out" }, K + 0.04); tl.to(hl, { filter: "brightness(1)", duration: 0.5, ease: "power2.out" }, K + 0.12);
+  tl.to(bTile, { scale: 1.4, rotation: -6, duration: 0.12, ease: "power2.out" }, K + 0.04); tl.to(bTile, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(3)" }, K + 0.16);
+  tl.fromTo("#ring", { scale: 1, opacity: 0.95 }, { scale: 1.9, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, K + 0.06);
+  tl.set("#ring", { opacity: 0 }, 0);
+  tl.fromTo("#flare", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.18, ease: "power2.out", immediateRender: false }, K + 0.04);
+  tl.set("#flare", { opacity: 0 }, 0);
+  tl.to("#flare", { opacity: 0, duration: 0.6, ease: "power2.out" }, K + 0.22);
+  tl.set("#caret", { opacity: 0 }, K);
+  // sheen and camera drift
+  tl.fromTo("#panel > .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, K + 0.1);
+  tl.fromTo(panel, { rotationX: 10, rotationY: -7 }, { rotationX: 2, rotationY: 6, duration: D, ease: "sine.inOut" }, 0);
+  // exit: the panel lifts away into blur
+  const X = D - 0.42;
+  tl.to(panel, { y: -70 * u, opacity: 0, scale: 0.96, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

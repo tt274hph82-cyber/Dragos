@@ -1,0 +1,5 @@
+{ "id": "incoming-call", "name": "Incoming call", "oneLiner": "a phone call screen rises and turns toward camera, lit from behind by the caller's own blurred photo; rings of light ripple off the avatar while it rings, then the green knob slides across, snaps, a green ring locks round the face and the label becomes a running call timer",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["call", "phone", "incoming", "ring", "answer", "contact", "client", "lead", "sales call", "mobile", "avatar", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says 'then they called me' or 'my phone started ringing': it rings through the setup, the slide lands on 'I picked up'" }

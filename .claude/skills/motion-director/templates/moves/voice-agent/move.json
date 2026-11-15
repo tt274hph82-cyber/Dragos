@@ -1,0 +1,5 @@
+{ "id": "voice-agent", "name": "Voice agent call", "oneLiner": "a glass call card for an AI voice agent: a live waveform talks in the caller's grey then in the brand colour as the agent answers with halos rippling off its orb, each side's words write in under it, and the action the agent took spins then completes with a green check and ring",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "voice", "voice agent", "phone", "call", "receptionist", "support", "booking", "speech", "conversation", "transcript", "automation", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says an AI answers the phone or talks to customers for them ('it picks up every call', 'the agent booked it while I slept'): the wave runs while the call plays out, the green check lands on what it got done" }

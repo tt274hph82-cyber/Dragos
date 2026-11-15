@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The screenshot (path; empty: a brand screen)","default":""},
+  {"id":"rect","type":"string","label":"The panel that lifts out, in % of the image: x,y,w,h","default":"9.5,51.5,31,11.5"},
+  {"id":"label","type":"string","label":"The chip under the lifted panel (a few words; empty: none)","default":"Your input"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 85% 8%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 8% 95%, color-mix(in srgb, var(--accent2) 60%, transparent), transparent 72%),
+    linear-gradient(150deg, color-mix(in srgb, var(--accent2) 26%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 35%, var(--ground))); }
+  #bd2 { position: absolute; width: 70%; height: 50%; left: 30%; top: 30%; border-radius: 50%; filter: blur(calc(var(--u) * 120)); background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  #bdim { position: absolute; inset: 0; background: #050407; opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none; z-index: 50;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #bd2, .is-alpha #bdim, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; border-radius: calc(var(--u) * 26); overflow: hidden; background: #141317;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.75); }
+  .is-key #win { box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 6) calc(var(--u) * 26); border-radius: calc(var(--u) * 10);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 23); font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #scr { position: relative; overflow: hidden; }
+  .lay { position: absolute; left: 0; top: 0; display: block; max-width: none; }
+  /* the page dims under one sheet; the panel's empty socket stays as a dark recess */
+  #wdim { position: absolute; inset: 0; background: #06050a; opacity: 0; pointer-events: none; z-index: 5; }
+  #socket { position: absolute; border-radius: calc(var(--u) * 12); opacity: 0; z-index: 6; background: #09080c;
+    box-shadow: inset 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.9), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  #mk { position: absolute; pointer-events: none; }
+
+  /* the lifted panel: the same pixels, on a card with a glowing edge and a deep shadow */
+  #lift { position: absolute; left: 0; top: 0; overflow: hidden; border-radius: calc(var(--u) * 18); opacity: 0; background: #111; }
+  #lift .rim { position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.2); }
+  #lift .glint { position: absolute; inset: 0; mix-blend-mode: screen; pointer-events: none;
+    background: linear-gradient(115deg, transparent calc(var(--g, -40%) - 14%), rgba(255,255,255,.3) var(--g, -40%), transparent calc(var(--g, -40%) + 14%)); }
+  #edge { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 22); pointer-events: none; opacity: 0; box-sizing: border-box;
+    border: calc(var(--u) * 4) solid var(--accent2);
+    box-shadow: 0 0 calc(var(--u) * 30) calc(var(--u) * 4) color-mix(in srgb, var(--accent2) 55%, transparent), inset 0 0 calc(var(--u) * 16) color-mix(in srgb, var(--accent2) 40%, transparent); }
+  .is-key #edge { box-shadow: none; }
+  #lsh { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 30); background: rgba(0,0,0,.8); filter: blur(calc(var(--u) * 36)); opacity: 0; }
+  .is-key #lsh { display: none; }
+
+  #stem { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  #stem path { fill: none; stroke: var(--accent2); stroke-linecap: round; }
+  #chip { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 14); border-radius: calc(var(--u) * 16); opacity: 0; transform-origin: 50% 0;
+    background: #fff; color: #111; font-weight: 700; white-space: nowrap; box-sizing: border-box;
+    box-shadow: 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent2) 80%, transparent), 0 calc(var(--u) * 20) calc(var(--u) * 40) calc(var(--u) * -12) rgba(0,0,0,.6); }
+  .is-key #chip { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent2); }
+  #chip b { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--accent); flex: none; }
+  #chip .caret { display: inline-block; width: calc(var(--u) * 3); height: 1em; background: #111; vertical-align: -0.12em; margin-left: calc(var(--u) * 2); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div><div id="bd2"></div><div id="bdim"></div>
+  <div id="stage">
+    <div id="plate">
+      <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span></div><div id="scr"><div id="wdim"></div><div id="socket"></div><div id="mk"></div></div></div>
+    </div>
+  </div>
+  <div id="vig"></div>
+  <div id="lsh"></div>
+  <svg id="stem"><path id="sp"/></svg>
+  <div id="lift"><div class="rim"></div><div class="glint"></div></div>
+  <div id="edge"></div>
+  <div id="chip"><b></b><span><span id="ct"></span><i class="caret" id="caret"></i></span></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, LS = W > H;
+  const scr0 = v.screens || [], ppl = v.people || [];
+  const src = v.image || scr0[1] || scr0[0] || ppl[0];
+  const isPhoto = !v.image ? !scr0.length : ppl.includes(v.image);
+  const probe = new Image(); probe.src = src; try { await probe.decode(); } catch (e) {}
+  const IW = probe.naturalWidth || 1920, IH = probe.naturalHeight || 1080, IA = IW / IH;
+  const RR = String(v.rect || "").split(",").map(parseFloat), R = RR.length === 4 && RR.every(isFinite) && RR[2] > 0 && RR[3] > 0 ? RR : [30, 35, 40, 20];
+
+  // ---- the window (9:16 and 1:1 show a crop of a wide image, kept around the panel)
+  const BAR = isPhoto ? 0 : 54 * u;
+  let zx, zy, zw, zh;
+  if (P) { zx = W * 0.1; zw = W * 0.8; zy = safe.top + 40 * u; zh = H - safe.top - safe.bottom - 80 * u; }
+  else { zx = W * 0.07; zw = W * 0.86; zy = H * 0.08; zh = H * 0.84; }
+  const WA = P ? Math.min(IA, 1.1) : SQ ? Math.min(IA, 1.3) : IA;
+  let ww = zw, SH = ww / WA;
+  if (SH + BAR > zh) { SH = zh - BAR; ww = SH * WA; }
+  const SW = ww, wh = SH + BAR, wx = zx + (zw - ww) / 2, wy = zy + (zh - wh) / 2;
+  let imgW, imgH; if (WA < IA) { imgH = SH; imgW = SH * IA; } else { imgW = SW; imgH = SW / IA; }
+  const rcx = R[0] + R[2] / 2, rcy = R[1] + R[3] / 2;
+  const offX = Math.max(0, Math.min(imgW - SW, (rcx / 100) * imgW - SW / 2)), offY = Math.max(0, Math.min(imgH - SH, (rcy / 100) * imgH - SH / 2));
+  const PX = (x) => (x / 100) * imgW - offX, PY = (y) => (y / 100) * imgH - offY;
+  const plate = $("#plate"), win = $("#win"), scr = $("#scr");
+  Object.assign(plate.style, { width: ww + "px", height: wh + "px" });
+  $("#bar").style.height = BAR + "px"; if (!BAR) $("#bar").style.display = "none";
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  const base = MV.img(src, "lay"); Object.assign(base.style, { width: imgW + "px", height: imgH + "px", left: -offX + "px", top: -offY + "px" }); scr.insertBefore(base, scr.firstChild);
+  $("#bar .url").textContent = v.domain || ""; if (!v.domain) $("#bar .url").style.display = "none";
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 50%" });
+
+  // ---- the panel in the page: its socket, and a marker the lift starts from every frame
+  const pad = 8 * u, rx = PX(R[0]) - pad, ry = PY(R[1]) - pad, rw = (R[2] / 100) * imgW + 2 * pad, rh = (R[3] / 100) * imgH + 2 * pad;
+  for (const id of ["#socket", "#mk"]) Object.assign($(id).style, { left: rx + "px", top: ry + "px", width: rw + "px", height: rh + "px" });
+
+  // ---- where it lands: big, in the middle, room for the chip under it
+  const lab = String(v.label || "").trim();
+  const chip = $("#chip"), ct = $("#ct");
+  const CF = (P ? 42 : 34) * u;
+  Object.assign(chip.style, { fontSize: CF + "px", padding: `${CF * 0.5}px ${CF * 0.8}px ${CF * 0.5}px ${CF * 0.62}px` });
+  ct.textContent = lab; const maxChip = (P ? W - safe.left - safe.right : W * 0.6);
+  MV.fitText(ct, maxChip - CF * 2, 14);
+  const cw0 = chip.getBoundingClientRect().width, ch0 = chip.getBoundingClientRect().height;
+  if (!lab) chip.style.display = "none";
+  const STEM = 56 * u, below = lab ? STEM + ch0 : 0;
+  const maxW = LS ? W * 0.62 : P ? W - 2 * Math.max(80 * u, safe.left) : W * 0.82;
+  const zoneTop = P ? safe.top : H * 0.08, zoneBot = P ? H - safe.bottom : H * 0.92;
+  const maxH = Math.min((zoneBot - zoneTop - below) * 0.8, H * 0.5);
+  let TW = maxW, TH = TW * rh / rw; if (TH > maxH) { TH = maxH; TW = TH * rw / rh; }
+  const TX = (W - TW) / 2, TY = zoneTop + (zoneBot - zoneTop - TH - below) / 2;
+
+  // the lifted pixels: the same crop of the image, scaled to whatever size the card has this frame
+  const lift = $("#lift"), li = MV.img(src, "lay"); lift.insertBefore(li, lift.firstChild);
+  const edge = $("#edge"), lsh = $("#lsh"), EP = 10 * u;
+
+  // the stem and chip, centred under the landed card
+  const stem = $("#stem"), sp = $("#sp"); stem.setAttribute("width", W); stem.setAttribute("height", H); stem.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  sp.setAttribute("stroke-width", 4 * u); sp.setAttribute("pathLength", "1"); sp.style.strokeDasharray = "1 1"; sp.style.strokeDashoffset = "1";
+  const chipX = Math.max(P ? safe.left : 30 * u, Math.min((P ? W - safe.right : W - 30 * u) - cw0, TX + TW / 2 - cw0 / 2));
+  gsap.set(chip, { x: chipX, y: TY + TH + EP + STEM });
+
+  // ---- one clock: the lift travels from the panel's live place in the page to its landing place
+  const L0 = 1.15, L1 = 2.15, eL = gsap.parseEase("expo.inOut"), eS = gsap.parseEase("sine.inOut"), cl = (a) => Math.max(0, Math.min(1, a));
+  const clock = { t: 0 };
+  const drive = (t) => {
+    const k = eL(cl((t - L0) / (L1 - L0)));
+    const m = $("#mk").getBoundingClientRect();
+    const fl = Math.sin(cl((t - L1) / (D - L1)) * Math.PI) * -10 * u;          // a slow float once it has landed
+    const x = m.left + (TX - m.left) * k, y = m.top + (TY + fl - m.top) * k, w = m.width + (TW - m.width) * k, h = m.height + (TH - m.height) * k;
+    Object.assign(lift.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+    const s = w / rw; Object.assign(li.style, { width: imgW * s + "px", height: imgH * s + "px", left: -(rx + offX) * s + "px", top: -(ry + offY) * s + "px" });
+    Object.assign(edge.style, { left: x - EP + "px", top: y - EP + "px", width: w + 2 * EP + "px", height: h + 2 * EP + "px" });
+    Object.assign(lsh.style, { left: x + w * 0.06 + "px", top: y + h * 0.25 + k * 60 * u + "px", width: w * 0.88 + "px", height: h * 0.9 + "px" });
+    lsh.style.opacity = (k * 0.85).toFixed(3);
+    // a little tilt while it flies, flat once it lands
+    const tilt = Math.sin(k * Math.PI);
+    lift.style.transform = edge.style.transform = `perspective(${2000 * u}px) rotateX(${(tilt * 10).toFixed(2)}deg) rotateY(${(tilt * -8).toFixed(2)}deg)`;
+    const cx = TX + TW / 2, sy = TY + fl + TH + EP;
+    sp.setAttribute("d", `M ${cx} ${sy} L ${cx} ${sy + STEM - 2 * u}`);
+    gsap.set(chip, { y: sy + STEM });
+  };
+  drive(0);
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: () => drive(clock.t) }, 0);
+
+  // ---- the page: rises in, drifts; then the lights go down and the panel leaves its socket
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.05, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#bd2", { x: 0, y: 0 }, { x: -W * 0.25, y: H * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+  tl.fromTo(plate, { y: wy + 140 * u, rotationX: 22, rotationY: -12, scale: 0.92 }, { y: wy, rotationX: 7, rotationY: -6, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(plate, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(plate, { rotationX: 3, rotationY: 4, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  // the page sinks back and softens while the panel comes forward
+  tl.to(plate, { scale: 0.94, filter: "blur(3px)", duration: 1.0, ease: "power2.inOut" }, L0 + 0.1);
+  tl.fromTo("#wdim", { opacity: 0 }, { opacity: 0.62, duration: 0.5, ease: "power2.out" }, L0 - 0.15);
+  tl.fromTo("#bdim", { opacity: 0 }, { opacity: 0.5, duration: 0.6, ease: "power2.out" }, L0 - 0.15);
+  tl.set(lift, { opacity: 1 }, L0);
+  tl.fromTo("#socket", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, L0 + 0.02);
+  tl.fromTo(edge, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, L1 - 0.35);
+  tl.fromTo(lift, { "--g": "-40%" }, { "--g": "140%", duration: 0.8, ease: "power2.inOut" }, L1 - 0.1);
+  // the chip hangs from the card and types its label
+  if (lab) {
+    const C0 = L1 + 0.05;
+    tl.fromTo(sp, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" }, C0);
+    tl.fromTo(chip, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.2)" }, C0 + 0.15);
+    const CPS = Math.min(0.05, 0.75 / Math.max(1, lab.length));
+    tl.set(ct, { textContent: "" }, 0);
+    for (let i = 1; i <= lab.length; i++) tl.set(ct, { textContent: lab.slice(0, i) }, C0 + 0.25 + i * CPS);
+    const Td = C0 + 0.25 + lab.length * CPS;
+    [Td + 0.15, Td + 0.5, Td + 0.85].forEach((t) => { if (t < D - 0.5) { tl.set("#caret", { opacity: 0 }, t); tl.set("#caret", { opacity: 1 }, t + 0.17); } });
+  }
+  if (MV.alpha) {
+    tl.to(plate, { opacity: 0, duration: 0.36, ease: "power2.in" }, D - 0.42);
+    tl.to([lift, edge, lsh, chip, stem], { opacity: 0, duration: 0.34, ease: "power2.in" }, D - 0.4);
+  }
+  MV.done();
+})();
+</script>
+</body>
+</html>

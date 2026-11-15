@@ -1,0 +1,5 @@
+{ "id": "cancel-flow", "name": "Glass cancel flow", "oneLiner": "a cancel subscription screen on glass lists what you lose; the pointer drifts to Cancel anyway, then a retention offer card rises over it as the screen dims, the big offer slams in, and the pointer presses Keep my plan: the button floods green with a check and a ring",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["cancel", "churn", "retention", "subscription", "save offer", "win back", "discount", "saas", "membership", "downsell", "keep", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker talks about stopping people from cancelling or churn ('right before they cancel, they get an offer', 'half of them stay'): cut in on 'cancel', the offer lands on the deal, the green press on 'they stay'; set offer and offerSub to the deal they describe" }

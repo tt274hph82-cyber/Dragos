@@ -1,0 +1,5 @@
+{ "id": "doc-comments", "name": "Paper doc comments", "oneLiner": "a paper doc page lands, two phrases get a highlighter sweep and comment cards swing in from the margin beside them, then a cursor presses the check on one, it fills green, reads Resolved and settles back as its highlight lifts off the text",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["paper"], "from": "new",
+  "tags": ["doc", "document", "comments", "feedback", "review", "edit", "collaboration", "notes", "resolved", "team", "writing", "paper", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker talks about feedback on a draft ('my editor left two notes', 'I fixed what they flagged'): the comments land as they name the notes, the green resolve hits on 'fixed' or 'done'" }

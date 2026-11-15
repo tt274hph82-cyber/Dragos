@@ -1,0 +1,5 @@
+{ "id": "big-cheque", "name": "Big cheque", "oneLiner": "an oversized foam-board presentation cheque is raised into a spotlight in front of a blurred event room: the payee, the amount, the amount spelled out in words and the memo are written on in marker on twos, a script signature signs it, then it is held up high as two camera flashes pop and a flare catches the gloss",
+  "category": "paper", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["cheque", "check", "prize", "won", "winner", "payout", "grant", "award", "money", "sponsor", "deal", "celebration", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says what they won, got paid or were handed ('they handed me a cheque for ten thousand', 'that is the prize'): the amount writes in on the number and the flashes pop on the payoff" }

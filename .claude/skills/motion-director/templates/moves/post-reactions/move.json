@@ -1,0 +1,5 @@
+{ "id": "post-reactions", "name": "Glass post reactions", "oneLiner": "a social post on glass (real face, name, the line, a brand screenshot) drifts in slow 3D; a finger holds Like, a tray of five reaction coins pops out of the button, the heart swells under the finger and drops into the button, then a burst of reaction coins springs off the bar and floats up while the count rolls like an odometer",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["social", "post", "reactions", "likes", "engagement", "viral", "love", "audience", "proof", "odometer", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says people loved a post or it blew up ('people went crazy for this one', 'the reactions kept coming'): cut in on the post, the heart drops in and the reactions burst as they say how many. Set countFrom and count to the real before and after" }

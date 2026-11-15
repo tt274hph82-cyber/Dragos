@@ -1,0 +1,5 @@
+{ "id": "report-card", "name": "Report card", "oneLiner": "a cream card-stock report card is laid on an open manila folder on a leather desk, its rules and crest printed in the brand colour; grades are written in blue pen ink row by row, the pen lying beside it, the final grade lands big, then a green double ring is stamped round it and the card gives under the stamp as the camera drifts",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial"], "from": "new",
+  "tags": ["report card", "grades", "score", "review", "rating", "verdict", "results", "school", "test", "pass", "paper", "desk", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": false,
+  "say": "when the speaker grades or scores something ('I gave each tool a grade', 'here is how it scored', 'it gets an A from me'): the grades write in as they go through them and the ring lands on the final verdict" }

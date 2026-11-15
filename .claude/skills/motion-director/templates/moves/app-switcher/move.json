@@ -1,0 +1,5 @@
+{ "id": "app-switcher", "name": "App switcher", "oneLiner": "the app on screen shrinks out of full frame into a card while the other open apps fan out from behind it, each with its glyph and name above, the row slides until the brand's card is centred, a tap ripples on it and it grows back to fill the whole frame with the brand's screen in a slow push",
+  "category": "system", "kind": "transition", "uses": ["broll", "transition"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["app switcher", "multitasking", "switch apps", "open apps", "phone", "desktop", "os", "jump to", "tabs", "the one app", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": false,
+  "say": "when the speaker says they jump between apps all day or that one tool replaced the rest ('I used to switch between five apps, now I just open this one'): the cards fan out on 'five apps', the tap lands on 'this one' and the cut back sits on the full screen" }

@@ -1,0 +1,5 @@
+{ "id": "channel-analytics", "name": "Glass channel analytics", "oneLiner": "a studio analytics card on glass: the realtime views number races up while a bar chart ticks in left to right, the series slides one bar as a hot new bar grows at Now, then the top video row lifts out of the list with its count ticking up and a green delta chip",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["analytics", "views", "realtime", "channel", "creator", "studio", "dashboard", "youtube", "growth", "top video", "proof", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker opens their analytics or says a video is taking off right now ('look at the realtime views', 'this one is still climbing'): the new bar lands on 'right now', the top row lifts as they name the video" }

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"count","type":"number","label":"The milestone","default":100000},
+  {"id":"label","type":"string","label":"What was counted","default":"subscribers"},
+  {"id":"name","type":"string","label":"Name on the nameplate (empty: the brand name)","default":""},
+  {"id":"metal","type":"string","label":"silver, gold or auto (gold from 1,000,000)","default":"auto"},
+  {"id":"emblem","type":"string","label":"Medallion: initial (the brand initial) or mark (the brand mark as a relief)","default":"initial"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --m0: #c3cad2; --ml: #f6f9fb; --md: #5a636d; --me: #343c46; }
+  #root.gold { --m0: #dcaa40; --ml: #fff0b5; --md: #7a520f; --me: #4f3406; }
+  /* a dark wall, a gallery spot from above, a pool of light behind the plaque */
+  #wall { position: absolute; inset: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--ground) 80%, #1a1816), var(--ground)); }
+  #spot { position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(42% 52% at 50% var(--py, 45%), color-mix(in srgb, var(--accent) 22%, rgba(255,236,210,.34)), transparent 70%),
+      conic-gradient(from 180deg at 50% -8%, transparent 160deg, rgba(255,244,225,.10) 170deg, rgba(255,244,225,.17) 180deg, rgba(255,244,225,.10) 190deg, transparent 200deg); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none; z-index: 20;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(100% 75% at 50% 45%, transparent 50%, rgba(0,0,0,.65)); }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 2200); }
+  #shadow { position: absolute; border-radius: calc(var(--u) * 40); background: rgba(0,0,0,.8); filter: blur(calc(var(--u) * 40)); }
+  #plaque { position: relative; box-sizing: border-box; border-radius: calc(var(--u) * 34); padding: calc(var(--u) * 40); transform-style: preserve-3d;
+    background: linear-gradient(145deg, #3a3a3e, #121214 30%, #0a0a0b 60%, #26262a);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.28), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.06), inset 0 calc(var(--u) * -3) calc(var(--u) * 6) rgba(0,0,0,.8),
+      0 calc(var(--u) * 60) calc(var(--u) * 110) calc(var(--u) * -30) rgba(0,0,0,.9); }
+  /* the plate: brushed metal, its bands of light shift as the plaque turns */
+  #plate { position: relative; height: 100%; box-sizing: border-box; border-radius: calc(var(--u) * 14); overflow: hidden; display: flex; flex-direction: column; align-items: center;
+    padding: calc(var(--u) * 54) calc(var(--u) * 40) calc(var(--u) * 40);
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 calc(var(--u) * 1), rgba(0,0,0,.045) calc(var(--u) * 1) calc(var(--u) * 3)),
+      linear-gradient(calc(118deg + var(--ang, 0deg)), var(--md) 0%, var(--ml) 15%, var(--m0) 28%, color-mix(in srgb, var(--md) 78%, #000) 44%, var(--m0) 58%, var(--ml) 70%, var(--m0) 84%, var(--md) 100%);
+    box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(0,0,0,.35), inset 0 calc(var(--u) * 3) calc(var(--u) * 4) rgba(255,255,255,.4); }
+  #plate::before { content: ""; position: absolute; inset: calc(var(--u) * 20); border-radius: calc(var(--u) * 8); pointer-events: none;
+    box-shadow: inset 0 0 0 calc(var(--u) * 2.5) rgba(0,0,0,.2), 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.45); }
+  #sheen { position: absolute; inset: -20%; pointer-events: none; mix-blend-mode: screen; z-index: 3;
+    background: linear-gradient(105deg, transparent calc(var(--sh, 30%) - 16%), rgba(255,255,255,.55) var(--sh, 30%), transparent calc(var(--sh, 30%) + 16%)); }
+  #glint { position: absolute; inset: -20%; pointer-events: none; mix-blend-mode: screen; z-index: 4;
+    background: linear-gradient(105deg, transparent calc(var(--gl, -30%) - 5%), rgba(255,255,255,.95) var(--gl, -30%), transparent calc(var(--gl, -30%) + 5%)); }
+  #med { position: relative; flex: none; border-radius: 50%; display: grid; place-items: center; z-index: 1;
+    background: radial-gradient(circle at 35% 28%, var(--ml), var(--m0) 45%, var(--md) 100%);
+    box-shadow: 0 calc(var(--u) * 16) calc(var(--u) * 26) rgba(0,0,0,.35), inset 0 calc(var(--u) * 4) 0 rgba(255,255,255,.75), inset 0 calc(var(--u) * -6) calc(var(--u) * 10) rgba(0,0,0,.3); }
+  #med::before { content: ""; position: absolute; inset: 9%; border-radius: 50%; box-shadow: inset 0 calc(var(--u) * 3) calc(var(--u) * 4) rgba(0,0,0,.3), 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  #ini { position: relative; font-family: var(--font-display); color: var(--m0); line-height: 1;
+    text-shadow: calc(var(--u) * -2) calc(var(--u) * -2) 0 rgba(255,255,255,.75), calc(var(--u) * 3) calc(var(--u) * 4) calc(var(--u) * 5) rgba(0,0,0,.4); }
+  #relief { position: absolute; inset: 14%; border-radius: 50%; background-size: cover; background-position: 50% 30%; mix-blend-mode: multiply;
+    filter: grayscale(1) contrast(1.35) brightness(1.15); box-shadow: inset 0 calc(var(--u) * 4) calc(var(--u) * 8) rgba(0,0,0,.45); }
+  #cnt { position: relative; z-index: 1; margin-top: calc(var(--u) * 50); font-family: var(--font-display); line-height: 1; color: var(--me); letter-spacing: -0.01em; white-space: nowrap; font-variant-numeric: tabular-nums;
+    text-shadow: 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.7), 0 calc(var(--u) * -2) 0 rgba(0,0,0,.45); }
+  #lab { position: relative; z-index: 1; margin-top: calc(var(--u) * 18); font-size: calc(var(--u) * 38); font-weight: 800; letter-spacing: .32em; text-transform: uppercase; color: var(--me); white-space: nowrap; padding-left: .32em;
+    text-shadow: 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.55); }
+  #np { position: relative; z-index: 1; margin-top: auto; padding: calc(var(--u) * 16) calc(var(--u) * 40); border-radius: calc(var(--u) * 10);
+    background: linear-gradient(160deg, #26262a, #0b0b0c); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.35); }
+  #nm { font-family: var(--font-display); font-size: calc(var(--u) * 40); color: var(--m0); white-space: nowrap; letter-spacing: .02em;
+    background: linear-gradient(180deg, var(--ml), var(--m0) 55%, var(--md)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+  /* the glass over the plate */
+  #glass { position: absolute; inset: calc(var(--u) * 40); border-radius: calc(var(--u) * 14); pointer-events: none; z-index: 5;
+    background: linear-gradient(125deg, transparent 30%, rgba(255,255,255,.14) 38%, rgba(255,255,255,.04) 46%, transparent 52%, transparent 70%, rgba(255,255,255,.08) 76%, transparent 82%);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18); }
+  #flare { position: absolute; z-index: 6; width: calc(var(--u) * 260); height: calc(var(--u) * 260); margin: calc(var(--u) * -130); pointer-events: none; opacity: 0; mix-blend-mode: screen; }
+  #flare i { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); }
+  #flare .h { width: 100%; height: calc(var(--u) * 6); background: radial-gradient(closest-side, #fff, rgba(255,255,255,0)); }
+  #flare .v { width: calc(var(--u) * 6); height: 70%; background: radial-gradient(closest-side, #fff, rgba(255,255,255,0)); }
+  #flare .c { width: calc(var(--u) * 60); height: calc(var(--u) * 60); background: radial-gradient(closest-side, #fff, rgba(255,250,230,.5) 40%, transparent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="wall"></div><div id="spot"></div>
+  <div id="stage"><div id="shadow"></div><div id="plaque">
+    <div id="plate">
+      <div id="med"><span id="ini"></span></div>
+      <div id="cnt"></div>
+      <div id="lab"></div>
+      <div id="np"><div id="nm"></div></div>
+      <div id="sheen"></div><div id="glint"></div>
+    </div>
+    <div id="glass"></div>
+    <div id="flare"><i class="h"></i><i class="v"></i><i class="c"></i></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration;
+  const N = Math.max(1, Math.round(+v.count || 100000)), brand = v.brandName || "";
+  const metal = String(v.metal || "auto").toLowerCase();
+  if (metal === "gold" || (metal === "auto" && N >= 1000000)) root.classList.add("gold");
+  const fmt = (x) => Math.round(x).toLocaleString("en-US");
+
+  // size: the plaque fills the safe zone's height (4:5 like a real award)
+  const AH = P ? H - safe.top - safe.bottom : H - safe.top - safe.bottom;
+  const PH = AH * (P ? 0.97 : 0.92), PW = Math.min(PH * 0.8, P ? W - safe.left - safe.right : W * 0.6);
+  const u = PW / 760; // the plaque is designed 760 units wide
+  root.style.setProperty("--u", u + "px");
+  const pl = $("#plaque"); Object.assign(pl.style, { width: PW + "px", height: PH + "px" });
+  const MD = PW * 0.4; Object.assign($("#med").style, { width: MD + "px", height: MD + "px" });
+  $("#ini").style.fontSize = MD * 0.55 + "px";
+  if (String(v.emblem).toLowerCase() === "mark" && v.mark) { const r = document.createElement("div"); r.id = "relief"; r.style.backgroundImage = `url("${v.mark}")`; $("#med").appendChild(r); $("#ini").style.display = "none"; }
+  else $("#ini").textContent = (brand.trim()[0] || "★").toUpperCase();
+  $("#lab").textContent = v.label || "";
+  $("#nm").textContent = v.name || brand; if (!(v.name || brand)) $("#np").style.display = "none";
+  const inner = PW - 80 * u - 80 * u;
+  const cnt = $("#cnt"); cnt.style.fontSize = 150 * u + "px"; cnt.textContent = fmt(N); MV.fitText(cnt, inner, 30);
+  cnt.style.minWidth = cnt.getBoundingClientRect().width + "px"; cnt.style.textAlign = "center";
+  MV.fitText("#lab", inner, 14); MV.fitText("#nm", inner - 80 * u, 14);
+
+  const x = (W - PW) / 2, y = P ? safe.top + (AH - PH) / 2 : (H - PH) / 2;
+  gsap.set("#stage", { x, y, width: PW, height: PH });
+  Object.assign($("#shadow").style, { left: PW * 0.08 + "px", top: PH * 0.12 + "px", width: PW * 0.84 + "px", height: PH * 0.92 + "px" });
+  root.style.setProperty("--py", ((y + PH * 0.45) / H * 100) + "%");
+  const fr = $("#flare"), mr = $("#med");
+  // the flare sits on the medallion's upper right edge
+  const flx = PW / 2 + MD * 0.36, fly = 40 * u + 54 * u + MD * 0.16;
+  Object.assign(fr.style, { left: flx + "px", top: fly + "px" });
+
+  // ---- motion: the spot comes on, the plaque swings round out of the dark and turns slowly under the light
+  tl.fromTo("#spot", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "steps(3)" }, 0.05);
+  tl.fromTo(pl, { rotationY: -62, rotationX: 12, rotationZ: -3, z: -700 * u, y: 60 * u },
+    { rotationY: -16, rotationX: 5, rotationZ: -1, z: 0, y: 0, duration: 1.2, ease: "expo.out" }, 0.1);
+  tl.fromTo(pl, { opacity: 0, filter: "blur(16px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.1);
+  tl.to(pl, { rotationY: 12, rotationX: 2, rotationZ: 0.5, duration: D - 1.3, ease: "sine.inOut" }, 1.3);
+  tl.fromTo("#shadow", { opacity: 0, x: -40 * u }, { opacity: 0.85, x: 20 * u, duration: D, ease: "sine.inOut" }, 0.1);
+  // the reflections follow the turn: the bands of the brushed metal slide, the hot sheen tracks the angle
+  const follow = () => { const ry = +gsap.getProperty(pl, "rotationY") || 0; root.style.setProperty("--ang", (ry * 0.9).toFixed(2) + "deg"); root.style.setProperty("--sh", (40 + ry * 2.4).toFixed(1) + "%"); };
+  const clk = { t: 0 }; tl.fromTo(clk, { t: 0 }, { t: 1, duration: D, ease: "none", onUpdate: follow }, 0);
+  tl.fromTo("#med", { scale: 0.6, rotation: -60 }, { scale: 1, rotation: 0, duration: 0.9, ease: "back.out(1.8)" }, 0.45);
+  tl.fromTo("#np", { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 0.7);
+  tl.fromTo("#lab", { opacity: 0, letterSpacing: "0.7em" }, { opacity: 1, letterSpacing: "0.32em", duration: 0.9, ease: "expo.out" }, 0.75);
+  // the number rolls up and lands
+  const HIT = 2.25, o = { n: 0 };
+  tl.fromTo(o, { n: 0 }, { n: N, duration: HIT - 0.7, ease: "power3.out", onUpdate: () => { cnt.textContent = fmt(o.n); } }, 0.7);
+  tl.fromTo(cnt, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.7);
+  tl.fromTo(cnt, { scale: 1 }, { scale: 1.08, duration: 0.08, ease: "power2.out", immediateRender: false }, HIT);
+  tl.to(cnt, { scale: 1, duration: 0.5, ease: "back.out(3)" }, HIT + 0.08);
+  tl.to(pl, { scale: 1.025, duration: 0.08, ease: "power2.out" }, HIT); tl.to(pl, { scale: 1, duration: 0.5, ease: "back.out(2.5)" }, HIT + 0.08);
+  // the moment: a hard glint races across the metal and a star flares on the medallion
+  tl.fromTo("#glint", { "--gl": "-30%" }, { "--gl": "130%", duration: 0.55, ease: "power2.inOut" }, HIT - 0.05);
+  tl.fromTo(fr, { opacity: 0, scale: 0.2, rotation: -20 }, { opacity: 1, scale: 1, rotation: 10, duration: 0.22, ease: "power2.out" }, HIT + 0.12);
+  tl.to(fr, { opacity: 0, scale: 0.6, rotation: 30, duration: 0.5, ease: "power2.in" }, HIT + 0.34);
+  // exit: the spot goes off and the plaque falls back into the dark
+  tl.to(pl, { opacity: 0, z: -300 * u, filter: "blur(12px)", duration: 0.42, ease: "power3.in" }, D - 0.44);
+  tl.to(["#spot", "#shadow"], { opacity: 0, duration: 0.4, ease: "power2.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "milestone-plaque", "name": "Milestone plaque", "oneLiner": "a gallery spot clicks on and a framed brushed-metal award plaque swings round out of the dark: the medallion turns in, the engraved count rolls up to the milestone and stamps, a hard glint races across the metal and a star flares, its reflections sliding as it turns slowly under the light",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["studio"], "from": "new",
+  "tags": ["milestone", "award", "plaque", "subscribers", "followers", "celebration", "achievement", "trophy", "100k", "1m", "metal", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": false,
+  "say": "when the speaker hits or mentions a milestone ('we just crossed 100,000', 'a million of you'): the count stamps and the glint flares on the number. silver below a million, gold from a million (metal: auto)" }

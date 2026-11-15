@@ -1,0 +1,5 @@
+{ "id": "ai-image-grid", "name": "Glass AI image grid", "oneLiner": "an image generator on glass: the prompt types, Generate is pressed, four tiles boil out of live noise into the brand's own screens and photo in stepped denoise passes with their percent ticking, then the cursor picks one and it lifts out of the grid on a ring",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["ai image", "image generation", "prompt", "generate", "diffusion", "thumbnail", "design", "creative", "pick", "variations", "ai tools", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says they had AI make the images ('I typed one prompt and it gave me four options', 'it made the thumbnail for me'): the tiles resolve while the speaker explains, the pick lifts on 'this one'" }

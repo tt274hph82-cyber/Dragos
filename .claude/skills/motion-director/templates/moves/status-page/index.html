@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Page title beside the brand name","default":"Status"},
+  {"id":"services","type":"string","label":"Services, comma separated (up to 4)","default":"Website,API,Database,Payments"},
+  {"id":"hit","type":"number","label":"Which service has the incident (1 = first)","default":2},
+  {"id":"issue","type":"string","label":"Banner during the incident","default":"Partial outage"},
+  {"id":"fixed","type":"string","label":"Banner once resolved","default":"All systems operational"},
+  {"id":"degraded","type":"string","label":"Status of the hit service","default":"Degraded"},
+  {"id":"healthy","type":"string","label":"Status of a healthy service","default":"Operational"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; --del: #FF6B6B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #glow { position: absolute; border-radius: calc(var(--s) * 30); box-shadow: 0 0 calc(var(--s) * 60) calc(var(--s) * 6) rgba(43,214,123,.55); opacity: 0; }
+  .is-key #glow { display: none; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+
+  #ico { display: flex; align-items: center; justify-content: center; border-radius: calc(var(--s) * 20); overflow: hidden;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 40%, transparent), color-mix(in srgb, var(--accent) 14%, transparent));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #ico img { width: 70%; height: 70%; object-fit: contain; }
+  #ico.ph img { width: 100%; height: 100%; object-fit: cover; }
+  #ttl { display: flex; align-items: baseline; gap: calc(var(--s) * 14); font-size: calc(var(--s) * 46); line-height: 1.1; white-space: nowrap; letter-spacing: -0.01em; }
+  #ttl b { font-weight: 750; color: var(--ink); }
+  #ttl span { font-weight: 500; color: color-mix(in srgb, var(--ink) 50%, transparent); }
+
+  /* banner: amber, flips to green */
+  #ban { perspective: 900px; }
+  #ban .in { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #ban .f { position: absolute; inset: 0; display: flex; align-items: center; gap: calc(var(--s) * 20); padding: 0 calc(var(--s) * 30); border-radius: calc(var(--s) * 24); backface-visibility: hidden; box-sizing: border-box;
+    font-weight: 750; font-size: calc(var(--s) * 40); white-space: nowrap; }
+  #ban .f svg { width: calc(var(--s) * 48); height: calc(var(--s) * 48); flex: none; }
+  #ban .a { color: #2A1A00; background: linear-gradient(180deg, #FFD27A, var(--amb) 65%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--s) * 10) calc(var(--s) * 30) rgba(245,184,61,.35); }
+  #ban .g { color: #04150B; background: linear-gradient(180deg, var(--okl), var(--ok) 65%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--s) * 10) calc(var(--s) * 34) rgba(43,214,123,.45); visibility: hidden; }
+  .is-key #ban .a, .is-key #ban .g { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+
+  /* services */
+  #list { border-radius: calc(var(--s) * 24); background: rgba(0,0,0,.22); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  .is-key #list { background: color-mix(in srgb, var(--surface) 70%, black); }
+  .row { position: absolute; left: 0; right: 0; }
+  .row + .row::before { content: ""; position: absolute; left: calc(var(--s) * 28); right: calc(var(--s) * 28); top: 0; height: calc(var(--s) * 1.5); background: rgba(255,255,255,.07); }
+  .row .tint { position: absolute; inset: 0; opacity: 0; }
+  .nm { position: absolute; display: flex; align-items: center; font-weight: 650; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; }
+  .stt { position: absolute; perspective: 500px; }
+  .stt .in { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .stt .f { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; gap: calc(var(--s) * 12); backface-visibility: hidden; font-weight: 650; font-size: calc(var(--s) * 34); white-space: nowrap; }
+  .stt .f i { width: calc(var(--s) * 16); height: calc(var(--s) * 16); border-radius: 50%; flex: none; }
+  .stt .g { color: var(--okl); } .stt .g i { background: var(--ok); box-shadow: 0 0 calc(var(--s) * 10) rgba(43,214,123,.7); }
+  .stt .a { color: var(--amb); } .stt .a i { background: var(--amb); box-shadow: 0 0 calc(var(--s) * 10) rgba(245,184,61,.8); }
+  .bars { position: absolute; display: flex; justify-content: space-between; }
+  .bars i { display: block; height: 100%; border-radius: calc(var(--s) * 4); background: var(--ok); opacity: .82; transform-origin: 50% 100%; }
+  .bars i.am { background: var(--amb); opacity: 1; }
+  .bars i.lo { background: color-mix(in srgb, var(--ok) 55%, var(--amb)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="glow"></div>
+      <div id="win">
+        <div id="ico" class="ab"></div>
+        <div id="ttl" class="ab"><b></b><span></span></div>
+        <div id="ban" class="ab"><div class="in">
+          <div class="f a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 1.9 20.4h20.2z"/><path d="M12 9.6v5"/><circle cx="12" cy="17.6" r=".6" fill="currentColor"/></svg><span class="t0"></span></div>
+          <div class="f g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.6"/><path d="M7.6 12.4l3 3 5.8-6.2"/></svg><span class="t1"></span></div>
+        </div></div>
+        <div id="list" class="ab"></div>
+      </div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q), $$ = (q) => [...document.querySelectorAll(q)];
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const svc = String(v.services || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 4);
+  const NR = Math.max(1, svc.length), HIT = Math.min(NR, Math.max(1, Math.round(+v.hit || 1))) - 1;
+
+  // ---- zone and scale (an 820-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.07; zB = H * 0.9; }
+  const DW = 820, pad = 40, inner = DW - pad * 2;
+  const HY = 36, HH = 76, BY = HY + HH + 26, BH = 108, LY = BY + BH + 24, RH = 128, LH = NR * RH;
+  const DH = LY + LH + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- header: the brand mark, the brand name and the page title
+  const ico = $("#ico"); box(ico, pad, HY, HH, HH);
+  if (v.mark) ico.appendChild(MV.img(v.mark)); else if (v.logo) ico.appendChild(MV.img(v.logo));
+  const ttl = $("#ttl"); ttl.querySelector("b").textContent = v.brandName || ""; ttl.querySelector("span").textContent = v.title || "";
+  MV.fitText(ttl, (inner - HH - 22) * s, 24 * s);
+  box(ttl, pad + HH + 22, HY + (HH - ttl.getBoundingClientRect().height / s) / 2);
+
+  // ---- banner
+  box($("#ban"), pad, BY, inner, BH);
+  $(".t0").textContent = v.issue || ""; $(".t1").textContent = v.fixed || "";
+  [".t0", ".t1"].forEach((q) => MV.fitText($(q), (inner - 60 - 48 - 20) * s, 22 * s));
+
+  // ---- services: name and status, then 30 days of uptime bars
+  const list = $("#list"); box(list, pad, LY, inner, LH);
+  const NB = 30, BW = inner - 56, BAR_H = 40;
+  const rnd = MV.rand(7);
+  const rows = svc.map((name, i) => {
+    const r = document.createElement("div"); r.className = "row"; r.style.top = S(i * RH); r.style.height = S(RH);
+    const hit = i === HIT;
+    r.innerHTML = `<div class="tint"></div><div class="nm"></div><div class="stt"><div class="in">${hit ? `<div class="f a"><i></i><span></span></div>` : ""}<div class="f g"><i></i><span></span></div></div></div><div class="bars"></div>`;
+    list.appendChild(r);
+    const nm = r.querySelector(".nm"); nm.textContent = name;
+    r.querySelectorAll(".g span").forEach((x) => (x.textContent = v.healthy || ""));
+    if (hit) r.querySelector(".a span").textContent = v.degraded || "";
+    const stW = Math.max(...[...r.querySelectorAll(".stt .f")].map((f) => { f.style.position = "absolute"; f.style.inset = "auto"; const w = f.getBoundingClientRect().width / s; f.style.inset = ""; return w; }));
+    const stt = r.querySelector(".stt"); box(stt, inner - 28 - stW, 16, stW, 54);
+    if (hit) { r.querySelector(".stt .g").style.visibility = "hidden"; }
+    box(nm, 28, 16, null, 54); MV.fitText(nm, (inner - 56 - stW - 30) * s, 22 * s);
+    const bars = r.querySelector(".bars"); box(bars, 28, 80, BW, BAR_H);
+    const bw = (BW - (NB - 1) * 5) / NB;
+    const bs = [];
+    for (let k = 0; k < NB; k++) { const b = document.createElement("i"); b.style.width = S(bw); if (k === NB - 1 && hit) b.className = "am"; else if (rnd() < 0.05) b.className = "lo"; bars.appendChild(b); bs.push(b); }
+    return { r, hit, nm, stt, sin: r.querySelector(".stt .in"), sa: r.querySelector(".stt .a"), sg: r.querySelector(".stt .g"), tint: r.querySelector(".tint"), bs, last: bs[NB - 1] };
+  });
+  const H_ = rows[HIT];
+  H_.tint.style.background = "linear-gradient(90deg, rgba(245,184,61,.16), rgba(245,184,61,.04))";
+
+  // ---- timing
+  const TR = 2.45, TB = TR + 0.42;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#ico", { scale: 0.4, rotation: -25, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: "back.out(2.2)" }, 0.18);
+  tl.fromTo("#ttl", { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.24);
+  tl.fromTo("#ban", { opacity: 0, y: 18 * s, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "expo.out" }, 0.32);
+  tl.fromTo("#ban .a svg", { scale: 1 }, { scale: 1.18, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3, transformOrigin: "50% 60%" }, 0.85);
+  tl.fromTo("#list", { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.42);
+  rows.forEach((r, i) => {
+    const t = 0.5 + i * 0.09;
+    tl.fromTo([r.nm, r.stt], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.05 }, t);
+    tl.fromTo(r.bs, { scaleY: 0 }, { scaleY: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.012 }, t + 0.1);
+  });
+  // the incident: the row glows amber, its dot and last bar pulse
+  tl.fromTo(H_.tint, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, 0.9);
+  const pulses = 3;
+  tl.fromTo([H_.last, H_.sa.querySelector("i")], { opacity: 1 }, { opacity: 0.35, duration: 0.25, ease: "sine.inOut", yoyo: true, repeat: pulses * 2 - 1 }, 1.0);
+  // resolved: the bar and label flip green on the row
+  tl.to(H_.last, { scaleY: 0, duration: 0.12, ease: "power2.in" }, TR - 0.12);
+  tl.set(H_.last, { backgroundColor: "#2BD67B", opacity: 0.82 }, TR);
+  tl.to(H_.last, { scaleY: 1, duration: 0.45, ease: "back.out(3)" }, TR);
+  tl.to(H_.sin, { rotationX: 90, duration: 0.14, ease: "power2.in" }, TR - 0.12);
+  tl.set(H_.sa, { visibility: "hidden" }, TR + 0.02); tl.set(H_.sg, { visibility: "visible" }, TR + 0.02);
+  tl.fromTo(H_.sin, { rotationX: -90 }, { rotationX: 0, duration: 0.5, ease: "back.out(2)", immediateRender: false }, TR + 0.02);
+  tl.to(H_.tint, { opacity: 0, duration: 0.15, ease: "power2.in" }, TR);
+  tl.set(H_.tint, { background: "linear-gradient(90deg, rgba(43,214,123,.22), rgba(43,214,123,.04))" }, TR + 0.15);
+  tl.to(H_.tint, { opacity: 1, duration: 0.12, ease: "power2.out" }, TR + 0.15);
+  tl.to(H_.tint, { opacity: 0, duration: 0.9, ease: "power2.out" }, TR + 0.3);
+  // then the whole banner flips green
+  tl.to("#ban .in", { rotationX: 90, duration: 0.16, ease: "power2.in" }, TB - 0.12);
+  tl.set("#ban .a", { visibility: "hidden" }, TB + 0.04); tl.set("#ban .g", { visibility: "visible" }, TB + 0.04);
+  tl.fromTo("#ban .in", { rotationX: -90 }, { rotationX: 0, duration: 0.6, ease: "back.out(1.8)", immediateRender: false }, TB + 0.04);
+  tl.fromTo("#ban", { scale: 1 }, { scale: 1.05, duration: 0.1, ease: "power2.out", immediateRender: false }, TB + 0.04); tl.to("#ban", { scale: 1, duration: 0.55, ease: "back.out(3)" }, TB + 0.14);
+  tl.fromTo("#ban .g svg path", { attr: { "stroke-dashoffset": 1 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.3, ease: "power2.out", immediateRender: false }, TB + 0.2);
+  gsap.set("#ban .g svg path", { attr: { pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1 } });
+  // every row's bars ripple once, left to right, as the all-clear lands
+  rows.forEach((r, i) => tl.fromTo(r.bs, { scaleY: 1 }, { scaleY: 1.25, duration: 0.14, ease: "power2.out", yoyo: true, repeat: 1, stagger: 0.008, immediateRender: false }, TB + 0.12 + i * 0.05));
+  box($("#glow"), pad, BY, inner, BH);
+  tl.fromTo("#glow", { opacity: 0 }, { opacity: 0.85, duration: 0.12, ease: "power2.out" }, TB + 0.04); tl.to("#glow", { opacity: 0.3, duration: 0.9, ease: "power2.out" }, TB + 0.16);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TB + 0.04); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TB + 0.11);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TB + 0.1);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

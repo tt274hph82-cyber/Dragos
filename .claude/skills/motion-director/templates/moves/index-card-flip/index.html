@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"question","type":"string","label":"The question written on the front of the card (short)","default":"What actually moves the needle?"},
+  {"id":"answer","type":"string","label":"The answer on the back (one to three words)","default":"Consistency"},
+  {"id":"side","type":"string","label":"Overlay side: left or right","default":"left"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Hand"; src: url("assets/fonts/GochiHand-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground (look mode): a real walnut desk under a warm lamp */
+  #ground { position: absolute; inset: -6%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1100); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 46% 40%, rgba(255,214,160,.18), transparent 65%), radial-gradient(130% 100% at 50% 45%, transparent 42%, rgba(0,0,0,.62)); }
+  .is-alpha #ground, .is-alpha #pencil { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #pencil { position: absolute; transform-origin: 50% 50%; filter: drop-shadow(calc(var(--u) * 6) calc(var(--u) * 12) calc(var(--u) * 7) rgba(0,0,0,.55)); }
+  #card { position: absolute; }
+  #stack .sc { position: absolute; border-radius: calc(var(--u) * 5); background: #d9d8d4 url(assets/card.jpg) center / 100% 100%; filter: brightness(.86) drop-shadow(calc(var(--u) * 4) calc(var(--u) * 10) calc(var(--u) * 12) rgba(0,0,0,.45)); }
+  .is-alpha #stack { display: none; }
+  #card-b { position: absolute; inset: 0; }
+  /* the cast shadow follows the card; it spreads and softens while the card is lifted */
+  #cfx { position: absolute; inset: 0; --lift: 0; filter: drop-shadow(calc(var(--u) * (2 + var(--lift) * 10)) calc(var(--u) * (4 + var(--lift) * 26)) calc(var(--u) * (3 + var(--lift) * 10)) rgba(0,0,0,.38)) drop-shadow(calc(var(--u) * (8 + var(--lift) * 24)) calc(var(--u) * (18 + var(--lift) * 50)) calc(var(--u) * (22 + var(--lift) * 26)) rgba(0,0,0,.42)); }
+  .is-key #cfx { filter: drop-shadow(calc(var(--u) * 3) calc(var(--u) * 5) 0 #2a2218); }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 1800); }
+  #flip { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; border-radius: calc(var(--u) * 5); }
+  /* the front: a real ruled index card (Poly Haven office_notepads), lit warm from the lamp */
+  #front { background: #e6e6e4 url(assets/card.jpg) center / 100% 100%; }
+  #front::before { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, rgba(255,250,236,.22), rgba(255,250,236,.06) 55%, rgba(0,0,0,.04)); mix-blend-mode: screen; }
+  /* the back: blank card stock, a real paper scan */
+  #back { transform: rotateY(180deg); background: #f1eee6 url(assets/paper-white.jpg) center / calc(var(--u) * 700); }
+  #back::before { content: ""; position: absolute; inset: 0; background: linear-gradient(245deg, rgba(255,250,236,.20), transparent 60%, rgba(0,0,0,.05)); }
+  .shade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; }
+  #q { position: absolute; font-family: "MV Hand", cursive; color: #22306b; filter: url(#bleed); }
+  #ql, #al { position: absolute; font-family: "MV Hand", cursive; color: #6d6c72; filter: url(#bleed); white-space: nowrap; }
+  #a { position: absolute; left: 0; right: 0; text-align: center; font-family: "MV Marker", cursive; color: var(--accent); line-height: 1; white-space: nowrap; filter: url(#bleed); }
+  #ul { position: absolute; left: 0; top: 0; overflow: visible; filter: url(#bleed); }
+  #ul path { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.2"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <img id="pencil" src="assets/pencil.png" alt="" />
+    <div id="stack"><div class="sc"></div><div class="sc"></div></div>
+    <div id="card" style="visibility:hidden"><div class="boil" id="card-b"><div id="cfx"><div id="persp"><div id="flip">
+      <div class="face" id="front"><div id="ql">Q.</div><div id="q" data-block></div><div class="shade" id="fsh"></div></div>
+      <div class="face" id="back"><div id="al">A.</div><div id="a"></div><svg id="ul" style="visibility:hidden"><path id="ulp"/></svg><div class="shade" id="bsh"></div></div>
+    </div></div></div></div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('80px "MV Hand"'), document.fonts.load('80px "MV Marker"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- size and place: a 5x3 card (the scan is 1.744:1); B-roll centres it big, an overlay keeps to the upper side zone
+  const R = 1838 / 1054, right = v.side === "right";
+  const availW = W - safe.left - safe.right;
+  let CW, cx, cy;
+  if (!MV.alpha) { CW = MV.portrait ? W * 0.95 : W > H ? 1100 * u : 900 * u; cx = MV.portrait ? W / 2 : safe.left + availW / 2; cy = MV.portrait ? safe.top + (H - safe.top - safe.bottom) * 0.52 : H * 0.48; }
+  else { CW = MV.portrait ? 720 * u : W > H ? 700 * u : 600 * u; const CHh = CW / R;
+    cx = right ? W - safe.right - CW / 2 - 20 * u : safe.left + CW / 2 + 20 * u; cy = safe.top + CHh / 2 + (MV.portrait ? 40 : 30) * u; }
+  const CH = CW / R;
+  const card = document.getElementById("card");
+  Object.assign(card.style, { width: CW + "px", height: CH + "px", left: (cx - CW / 2) + "px", top: (cy - CH / 2) + "px" });
+  document.querySelectorAll("#stack .sc").forEach((e, i) => Object.assign(e.style, { width: CW + "px", height: CH + "px", left: (cx - CW / 2 + (i ? -14 : 10) * u) + "px", top: (cy - CH / 2 + (i ? 16 : 8) * u) + "px", transform: `rotate(${i ? -4.5 : 3}deg)` }));
+  // the pencil lies on the desk beside the card (B-roll only)
+  const pc = document.getElementById("pencil"), PW = CW * 0.9;
+  Object.assign(pc.style, { width: PW + "px", left: (cx - PW * 0.36) + "px", top: (cy + CH * 0.5 + (MV.portrait ? 120 : 40) * u) + "px", transform: `rotate(${MV.portrait ? -24 : -14}deg)` });
+  if (!MV.portrait && !MV.alpha) { pc.style.left = (cx + CW * 0.08) + "px"; pc.style.top = (cy + CH * 0.5 - 10 * u) + "px"; }
+
+  // ---- front: the question written on the ruled lines (blue rules every 6.84% of the card height, the first at 20.97%)
+  const pitch = CH * 0.0684, first = CH * 0.2097;
+  const q = document.getElementById("q"), padL = Math.max(CW * 0.07, safe.left - (cx - CW / 2) + 10 * u), qW = Math.min(CW * 0.86, W - safe.right - (cx - CW / 2) - padL - 10 * u);
+  q.style.left = padL + "px"; q.style.width = qW + "px";
+  q.textContent = (v.question || "").trim();
+  const ql = document.getElementById("ql"); ql.style.fontSize = (pitch * 1.3) + "px"; ql.style.lineHeight = "1"; ql.style.left = padL + "px"; ql.style.top = (CH * 0.035) + "px";
+  // each written line spans two rule gaps; shrink until it fits in three lines
+  let fs = pitch * 2.55, lh = pitch * 3;
+  const qWords = MV.words(q);
+  const setQ = () => { q.style.fontSize = fs + "px"; q.style.lineHeight = lh + "px"; };
+  setQ();
+  const nLines = () => Math.round(q.getBoundingClientRect().height / lh);
+  while ((nLines() > 3 || qWords.some((w) => w.getBoundingClientRect().width > qW)) && fs > 16 * u) { fs -= 2; if (fs < pitch * 1.75) lh = pitch * 2; if (fs < pitch * 1.3) lh = pitch * 1.5; setQ(); }
+  // put each text baseline on a blue rule: measure the baseline with a zero-height probe
+  const probe = document.createElement("span"); probe.style.cssText = "display:inline-block;width:0;height:0;vertical-align:baseline"; q.prepend(probe);
+  q.style.top = "0px"; const base0 = probe.getBoundingClientRect().top - q.getBoundingClientRect().top; probe.remove();
+  const lines = nLines(), rule = Math.round(lh / pitch);
+  // the block sits so its last line lands near the middle-low of the card
+  const startRule = Math.max(1, Math.min(rule, Math.round((CH * 0.66 - first) / pitch) - rule * (lines - 1)));
+  q.style.top = (first + startRule * pitch - base0 - pitch * 0.12) + "px";
+  q.style.transform = "rotate(-1.2deg)"; q.style.transformOrigin = "0 0";
+  qWords.forEach((w) => { w.style.clipPath = "inset(-30% 108% -30% -8%)"; });
+
+  // ---- back: the answer in a fat marker, big, with a double underline
+  const a = document.getElementById("a"), al = document.getElementById("al");
+  al.style.fontSize = (pitch * 1.5) + "px"; al.style.left = padL + "px"; al.style.top = (CH * 0.06) + "px";
+  a.textContent = (v.answer || "").trim();
+  a.style.fontSize = (CH * 0.33) + "px";
+  MV.fitText(a, Math.min(CW * 0.8, (W - safe.right - safe.left) * 0.92), 20 * u);
+  const afs = parseFloat(a.style.fontSize || getComputedStyle(a).fontSize);
+  a.style.top = (CH * 0.5 - afs * 0.62) + "px";
+  a.style.transform = "rotate(-3deg)";
+  // underline: under the answer's text, measured
+  const ul = document.getElementById("ul"), ulp = document.getElementById("ulp");
+  ul.setAttribute("width", CW); ul.setAttribute("height", CH);
+  const rr = document.createRange(); rr.selectNodeContents(a);
+  // measure in the card's own frame (the card is unrotated at build time)
+  const ab = rr.getBoundingClientRect(), bb = document.getElementById("back").getBoundingClientRect();
+  // the back face is mirrored by rotateY(180): mirror the x back
+  const mx = (x) => bb.right - x;
+  const x0 = Math.min(mx(ab.left), mx(ab.right)) + afs * 0.05, x1 = Math.max(mx(ab.left), mx(ab.right)) - afs * 0.02;
+  const y = ab.bottom - bb.top + afs * 0.02;
+  const rj = MV.rand(17), j = () => (rj() - 0.5) * afs * 0.05;
+  ulp.setAttribute("d", `M ${x0} ${y + afs * 0.04 + j()} C ${x0 + (x1 - x0) * 0.3} ${y + j()} ${x0 + (x1 - x0) * 0.7} ${y - afs * 0.03 + j()} ${x1} ${y - afs * 0.06} L ${x0 + (x1 - x0) * 0.12} ${y + afs * 0.14 + j()} C ${x0 + (x1 - x0) * 0.45} ${y + afs * 0.1 + j()} ${x0 + (x1 - x0) * 0.75} ${y + afs * 0.08} ${x1 - (x1 - x0) * 0.08} ${y + afs * 0.06}`);
+  ulp.setAttribute("stroke-width", Math.max(4, afs * 0.07));
+
+  // ---- timeline
+  // 0.08 the card is tossed onto the desk (on twos); 0.45 the question writes on; 1.95 the card lifts and flips; 2.55 it lands; 2.7 the answer is underlined
+  tl.set(card, { visibility: "visible" }, 0.08);
+  tl.fromTo(card, { scale: 1.28, rotation: -13, opacity: 0, y: -50 * u }, { scale: 1, rotation: -2.5, opacity: 1, y: 0, duration: 0.25, ease: twos("back.out(1.6)", 0.25), immediateRender: true }, 0.08);
+  tl.fromTo("#cfx", { "--lift": 1 }, { "--lift": 0, duration: 0.25, ease: twos("power2.out", 0.25), immediateRender: true }, 0.08);
+  // writing: about two letters per drawing, a short lift between words, squeezed to end by 1.7s
+  const chars = qWords.reduce((s, w) => s + [...w.textContent].length, 0);
+  const per = Math.min(1, 1.15 / Math.max(0.1, (Math.ceil(chars / 2) + qWords.length) * STEP));
+  let t = 0.45;
+  qWords.forEach((w) => { const n = Math.max(1, Math.ceil([...w.textContent].length / 2)), d = Math.max(STEP, Math.round(n * STEP * per * 12) / 12);
+    tl.fromTo(w, { clipPath: "inset(-30% 108% -30% -8%)" }, { clipPath: "inset(-30% -8% -30% -8%)", duration: d, ease: `steps(${Math.max(1, Math.round(d * 12))})`, immediateRender: true }, t); t += d + (per < 1 ? 0 : STEP); });
+  const TF = Math.max(1.95, t + 0.3);
+  // the flip: a lift off the desk, then half a turn on twos, the light falling off the face as it turns edge-on
+  tl.to(card, { scale: 1.08, y: -18 * u, rotation: 0, duration: 0.17, ease: twos("power2.out", 0.17) }, TF);
+  tl.to("#cfx", { "--lift": 1, duration: 0.17, ease: twos("power2.out", 0.17) }, TF);
+  tl.fromTo("#flip", { rotateY: 0, rotateX: 0 }, { rotateY: 180, duration: 0.42, ease: twos("power2.inOut", 0.42), immediateRender: true }, TF + 0.08);
+  tl.to("#flip", { rotateX: 10, duration: 0.25, ease: twos("power1.out", 0.25), yoyo: true, repeat: 1 }, TF + 0.08);
+  tl.fromTo("#fsh", { opacity: 0 }, { opacity: 0.3, duration: 0.25, ease: twos("power1.in", 0.25), immediateRender: true }, TF + 0.08);
+  tl.fromTo("#bsh", { opacity: 0.3 }, { opacity: 0, duration: 0.25, ease: twos("power1.out", 0.25), immediateRender: true }, TF + 0.33);
+  tl.set(["#a", "#al", "#back"], { visibility: "hidden" }, 0); tl.set("#back", { visibility: "visible" }, TF + 0.2475); tl.set("#front", { visibility: "hidden" }, TF + 0.2475); tl.set(["#a", "#al"], { visibility: "visible" }, TF + 0.2475); tl.set(["#q", "#ql"], { visibility: "hidden" }, TF + 0.2475);
+  // it lands: drops back to the desk with a small bounce, the shadow pressing flat
+  const TL = TF + 0.58;
+  tl.to(card, { scale: 1, y: 0, rotation: 2, duration: 0.25, ease: twos("back.out(2)", 0.25) }, TL);
+  tl.to("#cfx", { "--lift": 0, duration: 0.17, ease: twos("power2.in", 0.17) }, TL);
+  const L = ulp.getTotalLength();
+  tl.set(ul, { visibility: "visible" }, TL + 0.2);
+  tl.fromTo(ulp, { strokeDasharray: L, strokeDashoffset: L }, { strokeDashoffset: 0, duration: 0.33, ease: twos("power2.inOut", 0.33), immediateRender: true }, TL + 0.2);
+  // boil: card stock breathes, ink crawls (on twos)
+  const rb = MV.rand(9); for (let tt = 0.34; tt < D; tt += STEP * 2) tl.set("#card-b", { "--bx": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.4).toFixed(2)}deg` }, tt);
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, tt);
+  if (!MV.alpha) tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  // exit (overlay): flicked up out of frame, accelerating; B-roll holds
+  if (MV.alpha) { const X = D - 0.4; tl.to(card, { y: -(cy + CH), rotation: "+=10", scale: 0.85, duration: 0.33, ease: twos("power2.in", 0.33) }, X); tl.set(card, { opacity: 0 }, D - 0.04); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

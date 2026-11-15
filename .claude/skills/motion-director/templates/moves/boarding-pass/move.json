@@ -1,0 +1,5 @@
+{ "id": "boarding-pass", "name": "Boarding pass", "oneLiner": "a real card-stock boarding pass slides across a stone counter on twos, the route line draws from where you are to where you are going, a brand-colour rubber stamp thumps on, and the stub tears off along its punched perforation",
+  "category": "paper", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["paper"], "from": "new",
+  "tags": ["journey", "from to", "next step", "launch", "travel", "ticket", "boarding pass", "stamp", "tear", "milestone", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker names a move from one state to another ('from idea to launch', 'this is where we are going next'): the route draws as they say it and the stamp lands on the commitment" }

@@ -1,0 +1,5 @@
+{ "id": "deploy-live", "name": "Glass deploy goes live", "oneLiner": "a deploy card on glass: build, test and deploy nodes spin and land green one by one along a filling track, then the preview URL dot turns green with pulsing rings, the status flips from Deploying to Live and the brand site wipes into the preview frame",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["deploy", "live", "ship", "launch", "hosting", "website", "pipeline", "ci", "developer", "url", "production", "ai coding", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says the site or app went live ('I pushed it and two minutes later it was live', 'it deploys itself'): the steps tick green under the words and the URL turns live on 'live' or 'shipped'" }

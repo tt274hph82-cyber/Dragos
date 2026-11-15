@@ -1,0 +1,5 @@
+{ "id": "unit-dots", "name": "Unit dots", "oneLiner": "a glass board of 100 beads stands on a lit floor, N of them light up in the accent from the bottom row like a rising level while the big number counts with them and the camera rides the level, the last bead lands with a ring and the lit group pulses",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["dots", "unit chart", "out of 100", "percent", "proportion", "share", "statistic", "people", "survey", "data", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker gives a share as 'N out of 100' or a percent ('37 out of 100 creators never post twice'): cut in on the stat, the last bead lands on the number word" }

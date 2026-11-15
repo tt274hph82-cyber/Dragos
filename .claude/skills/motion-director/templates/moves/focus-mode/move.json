@@ -1,0 +1,5 @@
+{ "id": "focus-mode", "name": "Focus mode", "oneLiner": "glass notifications pile in faster and faster, a fingertip flips the Focus toggle on, the whole pile folds up silently into one small quiet pill with a count, and a late ping drops in and is swallowed by it without a sound",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["focus", "do not disturb", "notifications", "distraction", "deep work", "silence", "attention", "calm", "productivity", "phone", "mute", "toggle", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker talks about cutting out distractions ('I turn everything off', 'no pings while I work'): the pile builds under the problem, the toggle flips on 'focus' or 'off' and the pile folds away into the quiet pill. Set lines, apps and the mode label" }

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"label","type":"string","label":"The label on every matching tile (the crowd)","default":"Copy"},
+  {"id":"oddLabel","type":"string","label":"The label the odd tile flips to","default":"Original"},
+  {"id":"count","type":"number","label":"How many tiles, 4 to 8","default":6},
+  {"id":"odd","type":"number","label":"Which tile is the odd one, 1-based (0 = the one nearest the middle)","default":0},
+  {"id":"glyph","type":"string","label":"Glyph on the crowd tiles (copy, doc, image, video, user, chat, check...; empty = guessed from the label)","default":""},
+  {"id":"oddGlyph","type":"string","label":"Glyph on the odd tile (spark, star, alert, x, bolt...; empty = guessed from its label)","default":""},
+  {"id":"tone","type":"string","label":"Colour of the odd tile: accent (a brand moment), red (the problem) or green (the winner)","default":"accent"},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --oddtone: var(--accent); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; background: color-mix(in srgb, var(--oddtone) 34%, transparent); opacity: 0; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 60%; top: -8%; background: color-mix(in srgb, var(--accent2) 16%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .cell { position: absolute; transform-style: preserve-3d; }
+  .flip { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .face { position: absolute; inset: 0; box-sizing: border-box; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+  .front { background: linear-gradient(158deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 26) calc(var(--u) * 54) calc(var(--u) * -22) rgba(0,0,0,.65); }
+  .is-alpha .front { background: linear-gradient(158deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .back { transform: rotateY(180deg);
+    background: linear-gradient(150deg, color-mix(in srgb, var(--oddtone) 70%, white 30%), var(--oddtone) 46%, color-mix(in srgb, var(--oddtone) 70%, black));
+    box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.25),
+      0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.7); }
+  .face::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.32) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .gt { position: absolute; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.12); }
+  .back .gt { color: #fff; background: linear-gradient(150deg, rgba(255,255,255,.34), rgba(255,255,255,.1)); }
+  .gt .gl { width: 54%; height: 54%; }
+  .lb { position: absolute; left: 0; right: 0; text-align: center; font-weight: 700; color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.005em; }
+  .back .lb { color: #fff; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.25); }
+  .eq { position: absolute; font-weight: 800; color: color-mix(in srgb, var(--ink) 40%, transparent); font-size: calc(var(--u) * 30); line-height: 1; letter-spacing: .1em; }
+  .ring { position: absolute; inset: 0; opacity: 0; pointer-events: none; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--oddtone) 55%, white); }
+  .halo { position: absolute; inset: -18%; border-radius: 50%; opacity: 0; pointer-events: none; background: radial-gradient(closest-side, color-mix(in srgb, var(--oddtone) 55%, transparent), transparent); transform: translateZ(-2px); }
+  #floor { position: absolute; border-radius: 50%; opacity: 0; background: radial-gradient(closest-side, rgba(0,0,0,.55), transparent); }
+
+  .is-key .front { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  .is-key .back { background: var(--oddtone); box-shadow: inset 0 calc(var(--u) * 2.5) 0 rgba(255,255,255,.6); }
+  .is-key .halo, .is-key #floor { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><div id="floor"></div><div id="grid"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const TONES = { red: "#FF4D4F", green: "#2BD67B" };
+  const tone = String(v.tone || "accent").toLowerCase();
+  root.style.setProperty("--oddtone", TONES[tone] || v.accent || "#FF6A3D");
+  const N = Math.max(4, Math.min(8, Math.round(+v.count || 6)));
+  const crowd = String(v.label || "Copy").trim() || "Copy", oddL = String(v.oddLabel || "Original").trim() || "Original";
+  const O = +v.odd >= 1 && +v.odd <= N ? Math.round(+v.odd) - 1 : null;
+  const USED = new Set();
+  const g1 = GLYPH.pick(crowd, v.glyph, 0, USED), g2 = GLYPH.pick(oddL, v.oddGlyph, 1, USED);
+
+  // ---- the grid: 9:16 2 columns (or one row on top), 1:1 3 columns, 16:9 one row up to 6, two rows past that
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.08, x1: W * 0.92, y0: H * 0.1, y1: H * 0.9 } : { x0: W * 0.06, x1: W * 0.94, y0: H * 0.14, y1: H * 0.86 };
+  let cols;
+  if (TOP) cols = Math.ceil(N / 2);
+  else if (P) cols = 2;
+  else if (SQ) cols = N <= 4 ? 2 : N <= 6 ? 3 : 4;
+  else cols = N <= 6 ? N : Math.ceil(N / 2);
+  const rows = Math.ceil(N / cols);
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0, GAP = (TOP ? 20 : 30) * u;
+  let tw = (RW - GAP * (cols - 1)) / cols, th = (RH - GAP * (rows - 1)) / rows;
+  const side = Math.min(tw, th, (P && !TOP ? 360 : 330) * u);   // the square the glyph and label are sized on
+  tw = Math.min(tw, side * 1.3); th = side;                     // a little wider than tall where the column allows
+  const GW = cols * tw + (cols - 1) * GAP, GH = rows * th + (rows - 1) * GAP;
+  const gx0 = R.x0 + (RW - GW) / 2, gy0 = R.y0 + (RH - GH) / 2;
+  const cx = gx0 + GW / 2, cy = gy0 + GH / 2;
+  // the odd one: the one nearest the middle unless told
+  let odd = O;
+  if (odd === null) { let best = 1e9; for (let i = 0; i < N; i++) { const r = Math.floor(i / cols), c = i % cols; const x = gx0 + c * (tw + GAP) + tw / 2, y = gy0 + r * (th + GAP) + th / 2; const d = Math.hypot(x - cx, (y - cy) * 1.2) + i * 0.01; if (d < best) { best = d; odd = i; } } }
+
+  const grid = document.getElementById("grid"), C = [];
+  const rad = Math.min(40 * u, side * 0.16), gs = side * 0.44, lfs = Math.max(36 * u, Math.min(46 * u, side * 0.15));
+  const face = (cls, g, label) => `<div class="face ${cls}" style="border-radius:${rad}px"><div class="gt" style="left:${(tw - gs) / 2}px;top:${side * 0.15}px;width:${gs}px;height:${gs}px;border-radius:${gs * 0.28}px">${GLYPH.svg(g)}</div><div class="lb" style="bottom:${side * 0.12}px;font-size:${lfs}px">${label}</div></div>`;
+  for (let i = 0; i < N; i++) {
+    const r = Math.floor(i / cols), k = i % cols;
+    const inRow = Math.min(cols, N - r * cols), rowOff = (cols - inRow) * (tw + GAP) / 2;   // centre a short last row
+    const x = gx0 + rowOff + k * (tw + GAP), y = gy0 + r * (th + GAP);
+    const cell = document.createElement("div"); cell.className = "cell"; grid.appendChild(cell);
+    Object.assign(cell.style, { left: x + "px", top: y + "px", width: tw + "px", height: th + "px" });
+    cell.innerHTML = `<div class="halo"></div><div class="flip">${face("front", g1, crowd)}${i === odd ? face("back", g2, oddL) : ""}</div><div class="ring" style="border-radius:${rad}px"></div>`;
+    cell.querySelectorAll(".lb").forEach((lb) => MV.fitText(lb, tw - 28 * u, 20));
+    C.push({ i, cell, x, y, flip: cell.querySelector(".flip"), faces: cell.querySelectorAll(".face"), gt: cell.querySelector(".front .gt") });
+  }
+  const A = C[odd];
+  const ax = A.x + tw / 2, ay = A.y + th / 2;
+  const l1 = document.querySelector("#ground .l1");
+  Object.assign(l1.style, { left: ax - W * 0.3 + "px", top: ay - H * 0.2 + "px" });
+  const fl = document.getElementById("floor");
+  Object.assign(fl.style, { left: ax - tw * 0.7 + "px", top: A.y + th + 4 * u + "px", width: tw * 1.4 + "px", height: side * 0.24 + "px" });
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  A.cell.style.zIndex = 5;
+
+  // ---- camera: a slow 3D drift toward the odd one
+  tl.fromTo("#rig", { rotationY: -10, rotationX: 10, scale: 0.94, y: 24 * u }, { rotationY: 5, rotationX: 3, scale: 1.0, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the crowd builds in, identical, about two frames apart
+  C.forEach((c, k) => { const at = 0.06 + k * 0.075;
+    tl.fromTo(c.cell, { scale: 0.7, y: 34 * u, rotationX: -20 }, { scale: 1, y: 0, rotationX: 0, duration: 0.75, ease: "back.out(1.7)" }, at);
+    tl.fromTo(c.cell, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, at);
+    tl.fromTo(c.gt, { scale: 0.4, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, at + 0.08); });
+
+  // ---- 2. a light passes over them all: they read as the same
+  const tScan = 0.06 + N * 0.075 + 0.4;
+  C.forEach((c, k) => { const at = tScan + (c.x - gx0) / GW * 0.35 + Math.floor(k / cols) * 0.05;
+    tl.fromTo(c.faces[0], { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.6, ease: "power2.inOut" }, at); });
+
+  // ---- 3. the odd one lifts and flips to its other face; the crowd falls back
+  const L = tScan + 0.75;
+  tl.to(A.cell, { z: 120, y: -14 * u, duration: 0.5, ease: "power3.out" }, L);
+  tl.to(fl, { opacity: KEY ? 0 : 1, duration: 0.5, ease: "power2.out" }, L);
+  tl.to(A.flip, { rotationY: 180, duration: 0.85, ease: "back.out(1.5)" }, L + 0.12);
+  // the faces swap where the turn passes edge-on (back.out(1.5) crosses half way at ~18% of its time)
+  gsap.set(A.faces[1], { visibility: "hidden" });
+  tl.set(A.faces[0], { visibility: "hidden" }, L + 0.12 + 0.85 * 0.18); tl.set(A.faces[1], { visibility: "visible" }, L + 0.12 + 0.85 * 0.18);
+  tl.to(A.cell, { scale: 1.1, z: 160, duration: 0.85, ease: "back.out(1.6)" }, L + 0.12);
+  const land = L + 0.5;
+  tl.fromTo(A.cell.querySelector(".ring"), { scale: 1, opacity: 0.95 }, { scale: 1.3, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, land);
+  tl.to(A.cell.querySelector(".halo"), { opacity: KEY ? 0 : 1, duration: 0.6, ease: "power2.out" }, land - 0.1);
+  tl.to(l1, { opacity: 1, duration: 1.2, ease: "power2.out" }, land - 0.2);
+  tl.fromTo(A.faces[1], { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, land + 0.1);
+  C.forEach((c) => { if (c !== A) {
+    tl.to(c.cell, KEY ? { filter: "brightness(0.45)", scale: 0.95, duration: 0.6, ease: "power2.inOut" } : { opacity: 0.38, scale: 0.94, duration: 0.6, ease: "power2.inOut" }, land - 0.15); } });
+  tl.to("#stage", { scale: 1.025, duration: 0.07, ease: "power2.out" }, land); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, land + 0.07);
+  // the held lift breathes
+  tl.to(A.cell, { y: -22 * u, duration: D - land - 0.5, ease: "sine.inOut" }, land + 0.4);
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

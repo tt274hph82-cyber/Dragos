@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The screenshot or photo (path; empty: a brand screen)","default":""},
+  {"id":"rect","type":"string","label":"The region that stays lit, in % of the image: x,y,w,h","default":"57.4,21.4,33,36"},
+  {"id":"label","type":"string","label":"Optional tag on the lit region (empty: none)","default":""},
+  {"id":"dim","type":"number","label":"How dark the rest goes, % (40 to 90)","default":78}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 85% 8%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 8% 95%, color-mix(in srgb, var(--accent2) 70%, transparent), transparent 72%),
+    linear-gradient(150deg, color-mix(in srgb, var(--accent2) 30%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 35%, var(--ground))); }
+  #bd2 { position: absolute; width: 70%; height: 50%; left: 30%; top: 30%; border-radius: 50%; filter: blur(calc(var(--u) * 120)); background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  #bdim { position: absolute; inset: 0; background: #050407; opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #bd2, .is-alpha #bdim, .is-alpha #vig, .is-alpha #grain, .is-alpha #beam { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; border-radius: calc(var(--u) * 26); overflow: hidden; background: #141317;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.75); }
+  .is-key #win { box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 6) calc(var(--u) * 26); border-radius: calc(var(--u) * 10);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 23); font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #bdark { position: absolute; left: 0; top: 0; right: 0; background: #050407; opacity: 0; pointer-events: none; }
+  #scr { position: relative; overflow: hidden; }
+  .lay { position: absolute; left: 0; top: 0; display: block; max-width: none; }
+  #dimsvg { position: absolute; left: 0; top: 0; overflow: visible; }
+  #over { position: absolute; left: 0; overflow: visible; pointer-events: none; transform-style: preserve-3d; }
+  /* the lit region lifts off the page: a real card with a lit top edge and a deep contact shadow */
+  #lift { position: absolute; overflow: hidden; border-radius: calc(var(--u) * 16); opacity: 0; transform-origin: 50% 60%;
+    box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.0), 0 calc(var(--u) * 40) calc(var(--u) * 60) calc(var(--u) * -20) rgba(0,0,0,.0); }
+  #lift .rim { position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.28); }
+  #lift .glint { position: absolute; inset: 0; mix-blend-mode: screen; pointer-events: none;
+    background: linear-gradient(115deg, transparent calc(var(--g, -40%) - 14%), rgba(255,255,255,.3) var(--g, -40%), transparent calc(var(--g, -40%) + 14%)); }
+  /* the beam: a faint cone of light from above the frame into the pool */
+  #beam { position: absolute; left: 0; top: 0; pointer-events: none; mix-blend-mode: screen; opacity: 0;
+    background: linear-gradient(180deg, rgba(255,246,228,0) 0%, rgba(255,246,228,.08) 45%, rgba(255,246,228,.16) 100%); filter: blur(calc(var(--u) * 10)); }
+  .pill { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: calc(var(--u) * 12) calc(var(--u) * 26) calc(var(--u) * 12) calc(var(--u) * 20);
+    border-radius: 999px; background: linear-gradient(160deg, #2d2b33, #18171c); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 80%, transparent), 0 calc(var(--u) * 14) calc(var(--u) * 26) calc(var(--u) * -8) rgba(0,0,0,.6);
+    font-weight: 750; color: #fff; white-space: nowrap; transform-origin: 50% 100%; opacity: 0; }
+  .pill b { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--accent); flex: none; box-shadow: 0 0 calc(var(--u) * 10) var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div><div id="bd2"></div><div id="bdim"></div>
+  <div id="stage">
+    <div id="plate">
+      <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span><div id="bdark"></div></div>
+        <div id="scr"><svg id="dimsvg"><defs><filter id="feather" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur id="fb" stdDeviation="20"/></filter>
+          <mask id="hole" maskUnits="userSpaceOnUse"><rect id="mfull" fill="#fff"/><rect id="hr" fill="#000" filter="url(#feather)"/></mask></defs>
+          <rect id="shade" fill="#050407" mask="url(#hole)"/></svg></div></div>
+      <div id="over"><div id="lift"><div class="rim"></div><div class="glint"></div></div><div class="pill"><b></b><span></span></div></div>
+    </div>
+  </div>
+  <div id="beam"></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const scr0 = v.screens || [], ppl = v.people || [];
+  const src = v.image || scr0[1] || scr0[0] || ppl[0];
+  const isPhoto = !v.image ? !scr0.length : ppl.includes(v.image);
+  const probe = new Image(); probe.src = src; try { await probe.decode(); } catch (e) {}
+  const IW = probe.naturalWidth || 1920, IH = probe.naturalHeight || 1080, IA = IW / IH;
+  const RR = String(v.rect || "").split(",").map(parseFloat), R = RR.length === 4 && RR.every(isFinite) && RR[2] > 0 && RR[3] > 0 ? RR : [35, 35, 30, 30];
+  const DIM = Math.max(0.4, Math.min(0.9, (+v.dim || 78) / 100));
+
+  // ---- the window (9:16 and 1:1 show a crop of a wide image, kept around the region)
+  const BAR = isPhoto ? 0 : 54 * u;
+  let zx, zy, zw, zh;
+  if (P) { zx = 40 * u; zw = W - 80 * u; zy = safe.top; zh = H - safe.top - safe.bottom; }
+  else { zx = W * 0.07; zw = W * 0.86; zy = H * 0.08; zh = H * 0.84; }
+  const WA = P ? Math.min(IA, 1.15) : SQ ? Math.min(IA, 1.3) : IA;
+  let ww = zw, SH = ww / WA;
+  if (SH + BAR > zh) { SH = zh - BAR; ww = SH * WA; }
+  const SW = ww, wh = SH + BAR, wx = zx + (zw - ww) / 2, wy = zy + (zh - wh) / 2;
+  let imgW, imgH; if (WA < IA) { imgH = SH; imgW = SH * IA; } else { imgW = SW; imgH = SW / IA; }
+  const rcx = R[0] + R[2] / 2, rcy = R[1] + R[3] / 2;
+  const offX = Math.max(0, Math.min(imgW - SW, (rcx / 100) * imgW - SW / 2)), offY = Math.max(0, Math.min(imgH - SH, (rcy / 100) * imgH - SH / 2));
+  const PX = (x) => (x / 100) * imgW - offX, PY = (y) => (y / 100) * imgH - offY;
+  const plate = $("#plate"), win = $("#win"), scr = $("#scr"), over = $("#over");
+  Object.assign(plate.style, { width: ww + "px", height: wh + "px" });
+  $("#bar").style.height = BAR + "px"; if (!BAR) $("#bar").style.display = "none";
+  $("#bdark").style.height = BAR + "px";
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  Object.assign(over.style, { top: BAR + "px", width: SW + "px", height: SH + "px" });
+  const base = MV.img(src, "lay"); Object.assign(base.style, { width: imgW + "px", height: imgH + "px", left: -offX + "px", top: -offY + "px" }); scr.insertBefore(base, scr.firstChild);
+  $("#bar .url").textContent = v.domain || ""; if (!v.domain) $("#bar .url").style.display = "none";
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 50%" });
+
+  // ---- the shade: the whole screen under a dark sheet with a feathered hole the light makes
+  const svg = $("#dimsvg"); svg.setAttribute("width", SW); svg.setAttribute("height", SH);
+  for (const id of ["mfull", "shade"]) { const r = $("#" + id); r.setAttribute("x", -20); r.setAttribute("y", -20); r.setAttribute("width", SW + 40); r.setAttribute("height", SH + 40); }
+  const hr = $("#hr"), fb = $("#fb"), shade = $("#shade");
+  // the region, padded a little, clamped to the screen
+  const pad = 10 * u, rx0 = Math.max(0, PX(R[0]) - pad), ry0 = Math.max(0, PY(R[1]) - pad), rx1 = Math.min(SW, PX(R[0] + R[2]) + pad), ry1 = Math.min(SH, PY(R[1] + R[3]) + pad);
+  const T = { x: rx0, y: ry0, w: rx1 - rx0, h: ry1 - ry0, r: 16 * u, f: 6 * u };
+  // the pool starts wide and soft where the eye already is (the middle), then the operator swings it onto the region and irises in
+  const S0 = { w: SW * 0.62, h: SH * 0.7 }; S0.x = SW * 0.5 - S0.w / 2 + (T.x + T.w / 2 - SW / 2) * -0.25; S0.y = SH * 0.5 - S0.h / 2; S0.r = Math.min(S0.w, S0.h) / 2; S0.f = 60 * u;
+
+  // ---- the lifted card: the same pixels as the region, so it peels off the page seamlessly
+  const lift = $("#lift");
+  Object.assign(lift.style, { left: T.x + "px", top: T.y + "px", width: T.w + "px", height: T.h + "px" });
+  const li = MV.img(src, "lay"); Object.assign(li.style, { width: imgW + "px", height: imgH + "px", left: -offX - T.x + "px", top: -offY - T.y + "px" }); lift.insertBefore(li, lift.firstChild);
+
+  // the tag
+  const pill = $(".pill"), lab = String(v.label || "").trim();
+  if (lab) { $("span", pill).textContent = lab; pill.style.fontSize = (P ? 34 : 30) * u + "px"; MV.fitText($("span", pill), SW * 0.6, 14);
+    const pw = pill.getBoundingClientRect().width, ph = pill.getBoundingClientRect().height, above = T.y - ph - 22 * u > 12 * u;
+    Object.assign(pill.style, { left: Math.max(14 * u, Math.min(SW - pw - 14 * u, T.x + T.w / 2 - pw / 2)) + "px", top: (above ? T.y - ph - 22 * u : Math.min(SH - ph - 12 * u, T.y + T.h + 22 * u)) + "px" }); }
+  else pill.style.display = "none";
+
+  // ---- the beam (look mode): from above the frame into the pool; placed in frame space once the window lands
+  const beam = $("#beam");
+
+  // ---- one clock: lights down, the pool swings and irises onto the region, the region lifts
+  const L0 = 0.62, L1 = 1.0, M0 = 0.72, M1 = 1.52, K0 = 1.5;
+  const eD = gsap.parseEase("power2.inOut"), eM = gsap.parseEase("expo.out"), cl = (a) => Math.max(0, Math.min(1, a));
+  const clock = { t: 0 };
+  const drive = (t) => {
+    const d = eD(cl((t - L0) / (L1 - L0))), m = eM(cl((t - M0) / (M1 - M0)));
+    const lerp = (a, b) => a + (b - a) * m;
+    const x = lerp(S0.x, T.x), y = lerp(S0.y, T.y), w = lerp(S0.w, T.w), h = lerp(S0.h, T.h), r = lerp(S0.r, T.r), f = lerp(S0.f, T.f);
+    hr.setAttribute("x", x.toFixed(1)); hr.setAttribute("y", y.toFixed(1)); hr.setAttribute("width", w.toFixed(1)); hr.setAttribute("height", h.toFixed(1)); hr.setAttribute("rx", Math.min(r, w / 2, h / 2).toFixed(1));
+    fb.setAttribute("stdDeviation", f.toFixed(1));
+    shade.setAttribute("fill-opacity", (d * DIM).toFixed(3));
+    $("#bdark").style.opacity = (d * DIM).toFixed(3);
+    $("#bdim").style.opacity = (d * 0.62).toFixed(3);
+    // the beam follows the pool, in frame space
+    const pr = plate.getBoundingClientRect(), sx = pr.left + (x + w / 2) / ww * pr.width, sy = pr.top + (BAR + y + h) / wh * pr.height, bw = w / ww * pr.width;
+    const bTop = -H * 0.05, srcX = sx - (sx - W / 2) * 0.35 - W * 0.06;
+    Object.assign(beam.style, { width: W + "px", height: H + "px", clipPath: `polygon(${srcX - 30 * u}px ${bTop}px, ${srcX + 30 * u}px ${bTop}px, ${sx + bw * 0.52}px ${sy}px, ${sx - bw * 0.52}px ${sy}px)`, opacity: (d * 0.9).toFixed(3) });
+  };
+  drive(0);
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: () => drive(clock.t) }, 0);
+
+  // the lift: the card rises toward the lens, its shadow opens under it, a glint runs across
+  tl.set(lift, { opacity: 1 }, K0);
+  tl.fromTo(lift, { z: 0, scale: 1 }, { z: 40 * u, scale: 1.07, duration: 0.6, ease: "back.out(1.7)" }, K0);
+  tl.fromTo(lift, { boxShadow: `0 0 0 ${2 * u}px rgba(255,255,255,0), 0 0 0 0 rgba(0,0,0,0)` }, { boxShadow: `0 0 0 ${2 * u}px rgba(255,255,255,.22), 0 ${46 * u}px ${70 * u}px ${-14 * u}px rgba(0,0,0,.85)`, duration: 0.45, ease: "power2.out" }, K0);
+  tl.fromTo(lift, { "--g": "-40%" }, { "--g": "140%", duration: 0.8, ease: "power2.inOut" }, K0 + 0.1);
+  if (lab) tl.fromTo(pill, { opacity: 0, scale: 0.6, z: 0 }, { opacity: 1, scale: 1, z: 50 * u, duration: 0.42, ease: "back.out(2.2)" }, K0 + 0.25);
+
+  // ---- the page: rises in tipped back, drifts slowly in 3D
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.05, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#bd2", { x: 0, y: 0 }, { x: -W * 0.25, y: H * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+  tl.fromTo(plate, { y: wy + 140 * u, rotationX: 22, rotationY: -12, scale: 0.92 }, { y: wy, rotationX: 7, rotationY: -6, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(plate, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.to(plate, { rotationX: 3, rotationY: 5, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  if (MV.alpha) tl.to(plate, { y: wy + 120 * u, opacity: 0, duration: 0.38, ease: "power2.in" }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

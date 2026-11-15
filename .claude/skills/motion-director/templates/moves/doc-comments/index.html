@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"docName","type":"string","label":"File name in the top bar","default":"Launch post"},
+  {"id":"title","type":"string","label":"Heading on the page","default":"The new routine"},
+  {"id":"body","type":"string","label":"The paragraph (both marked phrases must be in it)","default":"Most teams lose the first hour of every day to email. We tried a new routine for one month. The results surprised everyone on the team."},
+  {"id":"mark1","type":"string","label":"Phrase the first comment is on","default":"first hour of every day"},
+  {"id":"who1","type":"string","label":"First commenter (initials avatar)","default":"Alex"},
+  {"id":"c1","type":"string","label":"First comment","default":"Make this the hook"},
+  {"id":"mark2","type":"string","label":"Phrase the second comment is on","default":"surprised everyone"},
+  {"id":"who2","type":"string","label":"Second commenter (empty: the brand, with its photo)","default":""},
+  {"id":"c2","type":"string","label":"Second comment","default":"Say what changed"},
+  {"id":"resolve","type":"string","label":"Which comment gets resolved (1 or 2)","default":"1"},
+  {"id":"done","type":"string","label":"Label on the resolved comment","default":"Resolved"},
+  {"id":"time","type":"string","label":"Time label on the comments","default":"now"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --pink: #1C1A17; --pmut: #77726A; --ok: #2BD67B; --okd: #17A35A; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.4) 12%, rgba(255,255,255,.4) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.25); }
+  #wrap { position: absolute; }
+  /* real paper, warm light from the top left, a contact shadow */
+  #page { position: absolute; overflow: hidden; border-radius: calc(var(--s) * 14);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--paper) 92%, white), var(--paper) 55%, color-mix(in srgb, var(--paper) 94%, #8a7a60));
+    box-shadow: 0 calc(var(--s) * 2) calc(var(--s) * 3) rgba(0,0,0,.25), 0 calc(var(--s) * 40) calc(var(--s) * 80) calc(var(--s) * -20) rgba(0,0,0,.75); }
+  .is-key #page { box-shadow: none; }
+  #page::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 25; opacity: .5; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .42 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); }
+  #page::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 26; mix-blend-mode: soft-light;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 16%), rgba(255,255,255,.7) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 16%)); }
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { left: 0; right: 0; top: 0; border-bottom: calc(var(--s) * 1.5) solid rgba(0,0,0,.09); background: rgba(255,255,255,.35); }
+  #ficon { border-radius: calc(var(--s) * 8); background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 85%, white), var(--accent)); }
+  #ficon::after { content: ""; position: absolute; left: 22%; right: 22%; top: 30%; height: 40%;
+    background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)) 0 0 / 100% 16% no-repeat, linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)) 0 50% / 100% 16% no-repeat, linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)) 0 100% / 60% 16% no-repeat; }
+  #fname { font-weight: 700; font-size: calc(var(--s) * 34); color: var(--pink); white-space: nowrap; line-height: 1.1; }
+  #cnt { display: flex; align-items: center; gap: calc(var(--s) * 8); font-weight: 800; font-size: calc(var(--s) * 34); color: var(--pink); white-space: nowrap; }
+  #cnt svg { width: calc(var(--s) * 40); height: calc(var(--s) * 40); flex: none; }
+  #cnum { display: inline-block; min-width: 0.7em; text-align: center; font-variant-numeric: tabular-nums; }
+  #ttl { font-family: var(--font-display); font-size: calc(var(--s) * 60); line-height: 1.08; color: var(--pink); letter-spacing: -0.01em; }
+  #para { font-size: calc(var(--s) * 43); line-height: 1.42; font-weight: 500; color: var(--pink); z-index: 2; }
+  .hl { position: absolute; z-index: 1; transform-origin: 0 50%; transform: scaleX(0); mix-blend-mode: multiply; border-radius: calc(var(--s) * 5);
+    background: color-mix(in srgb, var(--accent2) 62%, white); }
+  .hl.act { box-shadow: inset 0 calc(var(--s) * -4) 0 color-mix(in srgb, var(--accent2) 90%, #8a6a00); }
+  .gl { position: absolute; height: calc(var(--s) * 16); border-radius: calc(var(--s) * 8); background: rgba(0,0,0,.07); }
+
+  .cm { position: absolute; box-sizing: border-box; border-radius: calc(var(--s) * 26); padding: calc(var(--s) * 24) calc(var(--s) * 26) calc(var(--s) * 28);
+    background: linear-gradient(170deg, #fff, color-mix(in srgb, var(--paper) 40%, white));
+    box-shadow: 0 0 0 calc(var(--s) * 1.5) rgba(0,0,0,.06), 0 calc(var(--s) * 3) calc(var(--s) * 4) rgba(0,0,0,.12), 0 calc(var(--s) * 34) calc(var(--s) * 60) calc(var(--s) * -18) rgba(0,0,0,.55); }
+  .is-key .cm { box-shadow: 0 0 0 calc(var(--s) * 1.5) rgba(0,0,0,.12); }
+  .cm .edge { position: absolute; left: 0; top: calc(var(--s) * 22); bottom: calc(var(--s) * 22); width: calc(var(--s) * 6); border-radius: 0 calc(var(--s) * 6) calc(var(--s) * 6) 0; background: color-mix(in srgb, var(--accent2) 85%, #b08400); }
+  .cm .hd { display: flex; align-items: center; gap: calc(var(--s) * 16); height: calc(var(--s) * 80); }
+  .av { flex: none; width: calc(var(--s) * 72); height: calc(var(--s) * 72); border-radius: 50%; overflow: hidden; position: relative; display: grid; place-items: center;
+    font-weight: 800; font-size: calc(var(--s) * 32); color: #fff; background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 80%, white), var(--accent)); }
+  .av.alt { background: linear-gradient(150deg, #5E6AD2, #3A43A0); }
+  .av img { position: absolute; left: 0; top: 4%; width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
+  .cm .who { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+  .cm .nm { font-weight: 800; font-size: calc(var(--s) * 38); color: var(--pink); white-space: nowrap; line-height: 1.1; }
+  .cm .tm { font-weight: 600; font-size: calc(var(--s) * 34); color: var(--pmut); white-space: nowrap; line-height: 1.2; position: relative; }
+  .cm .tm .ok { position: absolute; left: 0; top: 0; color: var(--okd); font-weight: 800; opacity: 0; }
+  .cm .rb { flex: none; width: calc(var(--s) * 60); height: calc(var(--s) * 60); border-radius: 50%; position: relative; box-shadow: inset 0 0 0 calc(var(--s) * 3) rgba(0,0,0,.18); }
+  .cm .rb .fill { position: absolute; inset: 0; border-radius: 50%; background: var(--ok); transform: scale(0); box-shadow: 0 calc(var(--s) * 6) calc(var(--s) * 16) color-mix(in srgb, var(--ok) 60%, transparent); }
+  .cm .rb svg { position: absolute; inset: 18%; width: 64%; height: 64%; }
+  .cm .rb svg path { stroke: rgba(0,0,0,.35); }
+  .cm .tx { margin-top: calc(var(--s) * 14); font-weight: 600; font-size: calc(var(--s) * 41); line-height: 1.24; color: var(--pink); }
+  .cm .tx .w { opacity: 0; }
+  .cm .ring { position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 calc(var(--s) * 4) var(--ok); opacity: 0; }
+  #cur { position: absolute; left: 0; top: 0; width: calc(var(--u) * 62); height: calc(var(--u) * 62); z-index: 30; opacity: 0; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 12) rgba(0,0,0,.55)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="page">
+        <div id="bar" class="ab"></div>
+        <i id="ficon" class="ab"></i><div id="fname" class="ab"></div>
+        <div id="cnt" class="ab"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span id="cnum">0</span></div>
+        <div id="ttl" class="ab"></div>
+        <div id="hls"></div>
+        <div id="para" class="ab"></div>
+        <div id="gls"></div>
+      </div>
+      <div id="cms"></div>
+    </div>
+  </div></div></div>
+  <svg id="cur" viewBox="0 0 24 24"><path d="M5 2.8l13.6 12.1-6.1.4 3.6 6.4-2.6 1.4-3.6-6.5L5.6 20.5z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const esc = (t) => String(t || "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const initials = (n) => String(n || "").trim().split(/\s+/).map((p) => p[0] || "").join("").slice(0, 2).toUpperCase();
+  const who2 = String(v.who2 || "").trim() || v.brandName || "";
+  const photo = !String(v.who2 || "").trim() && v.people && v.people[0];
+  const RS = Math.max(0, Math.min(1, (parseInt(v.resolve, 10) || 1) - 1));
+
+  // ---- zone and design: a page with a margin, comment cards hang over its right edge
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.47; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.08; zB = H * 0.89; }
+  const pad = 52, BAR = 96, PW = 690, TXW = 430, CX = 500, CW = 430, DW = CX + CW + 6;
+  let s = Math.min((cR - cL) / DW, P ? 1.05 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // the paragraph, with the two phrases wrapped so their lines can be measured
+  const para = $("#para"), ttl = $("#ttl");
+  const marks = [v.mark1, v.mark2].map((m) => String(m || "").trim());
+  let html = esc(v.body);
+  marks.forEach((m, i) => { if (!m) return; const k = html.toLowerCase().indexOf(esc(m).toLowerCase()); if (k >= 0) html = html.slice(0, k) + `<span class="mk" data-i="${i}">` + html.slice(k, k + esc(m).length) + "</span>" + html.slice(k + esc(m).length); });
+  para.innerHTML = html; MV.words(para);
+  ttl.textContent = v.title || "";
+  const lay = () => {
+    box(ttl, pad, BAR + 46, TXW + 40);
+    let tf = 60; ttl.style.fontSize = S(tf); while (ttl.getBoundingClientRect().height / s > 60 * 1.08 * 2 + 4 && tf > 34) { tf -= 2; ttl.style.fontSize = S(tf); }
+    const tH = ttl.getBoundingClientRect().height / s;
+    box(para, pad, BAR + 46 + tH + 30, TXW);
+    return BAR + 46 + tH + 30;
+  };
+  let pY = lay();
+
+  // the comment cards
+  const cms = $("#cms");
+  const mkCard = (name, text, img, alt) => {
+    const c = document.createElement("div"); c.className = "cm"; cms.appendChild(c);
+    c.innerHTML = `<i class="edge"></i><div class="hd"><div class="av${alt ? " alt" : ""}"></div><div class="who"><div class="nm"></div><div class="tm"><span class="t0"></span><span class="ok"></span></div></div><div class="rb"><i class="fill"></i><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2 8.8-9.4" fill="none" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div><div class="tx"></div><i class="ring"></i>`;
+    const av = c.querySelector(".av"); if (img) av.appendChild(MV.img(img)); else av.textContent = initials(name);
+    c.querySelector(".nm").textContent = name; c.querySelector(".t0").textContent = v.time || ""; c.querySelector(".ok").textContent = v.done || "";
+    c.querySelector(".tx").textContent = text || ""; box(c, CX, 0, CW);
+    MV.fitText(c.querySelector(".nm"), (CW - 52 - 72 - 32 - 60) * s, 16 * s);
+    return c;
+  };
+  const cards = [mkCard(v.who1 || "", v.c1, null, true), mkCard(who2, v.c2, photo, false)];
+  // comment text: at most 3 lines, shrink if longer
+  cards.forEach((c) => { const t = c.querySelector(".tx"); let f = 41; while (t.getBoundingClientRect().height / s > 41 * 1.24 * 3 + 4 && f > 30) { f -= 2; t.style.fontSize = S(f); } MV.words(t); });
+
+  // phrase line boxes in design units (relative to the page)
+  const pageBox = () => $("#page").getBoundingClientRect();
+  Object.assign($("#page").style, { left: 0, top: 0, width: S(PW) });
+  const lineRects = (i) => { const pb = pageBox(); const lines = [];
+    const sp = para.querySelector(`.mk[data-i="${i}"]`); if (!sp) return lines;
+    sp.querySelectorAll(".w").forEach((w) => { const r = w.getBoundingClientRect(); const l = lines.find((q) => Math.abs(q.top - r.top) < 4 * s); if (l) l.right = r.right; else lines.push({ top: r.top, left: r.left, right: r.right, h: r.height }); });
+    return lines.map((l) => ({ x: (l.left - pb.left) / s, y: (l.top - pb.top) / s, w: (l.right - l.left) / s, h: l.h / s })); };
+  const L = [lineRects(0), lineRects(1)];
+  const paraH = para.getBoundingClientRect().height / s;
+  const GY = pY + paraH + 34;
+  // card tops: level with their phrase, never stacked on each other
+  const cH = cards.map((c) => c.getBoundingClientRect().height / s);
+  const cY = [];
+  cY[0] = L[0].length ? L[0][0].y - 16 : pY;
+  cY[1] = Math.max(L[1].length ? L[1][0].y - 16 : pY + 200, cY[0] + cH[0] + 26);
+  const PH = Math.max(GY + 3 * 36 + 40, cY[1] + cH[1] - 40);
+  const DH = Math.max(PH, cY[1] + cH[1] + 10);
+  s = Math.min(s, (zB - zT) / DH);
+  // second pass at the final scale (text reflows identically: everything is in s units)
+  root.style.setProperty("--s", s + "px");
+  pY = lay(); cards.forEach((c, i) => box(c, CX, cY[i], CW));
+  const L2 = [lineRects(0), lineRects(1)];
+
+  const cw = DW * s, chh = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - chh) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: chh + "px" });
+  box($("#page"), 0, 0, PW, PH);
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + chh + 34 * u + "px" });
+  box($("#bar"), 0, 0, null, BAR); $("#bar").style.width = "100%";
+  box($("#ficon"), pad - 16, (BAR - 44) / 2, 36, 44);
+  box($("#fname"), pad + 34, (BAR - 38) / 2); $("#fname").textContent = v.docName || "";
+  Object.assign($("#cnt").style, { right: S(pad - 16), top: S((BAR - 40) / 2) });
+  MV.fitText($("#fname"), (PW - pad - 34 - 140) * s, 18 * s);
+  const hls = L2.map((ls, i) => ls.map((r) => { const d = document.createElement("i"); d.className = "hl"; $("#hls").appendChild(d); box(d, r.x - 6, r.y + r.h * 0.08, r.w + 12, r.h * 0.86); return d; }));
+  [0.94, 0.86, 0.6].forEach((f, i) => { const g = document.createElement("i"); g.className = "gl"; $("#gls").appendChild(g); box(g, pad, GY + i * 36, TXW * f, 16); });
+
+  // ---- timing
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + chh / 2}px` });
+  tl.fromTo("#rig", { rotationY: 13, rotationX: 10, rotationZ: -1.5, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, rotationZ: 0.5, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#page", { rotationX: 34, y: 120 * u, scale: 0.88 }, { rotationX: 0, y: 0, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo("#page", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#ficon", "#fname", "#cnt"], { opacity: 0, y: -10 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.2);
+  tl.fromTo(["#ttl", "#para"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out", stagger: 0.08 }, 0.3);
+  tl.fromTo(".gl", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out", stagger: 0.06 }, 0.45);
+
+  // each comment: the highlight sweeps the phrase, the card swings in from the margin, its words write in
+  const cnum = $("#cnum");
+  const T = [1.05, 1.95];
+  cards.forEach((c, i) => {
+    const t = T[i];
+    hls[i].forEach((d, j) => tl.to(d, { scaleX: 1, duration: 0.42, ease: "power3.inOut" }, t + j * 0.3));
+    tl.fromTo(c, { opacity: 0, x: 80 * s, rotationY: -24, scale: 0.92 }, { opacity: 1, x: 0, rotationY: 0, scale: 1, duration: 0.8, ease: "expo.out" }, t + 0.15);
+    tl.fromTo(c.querySelector(".av"), { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(2.4)" }, t + 0.3);
+    tl.fromTo(c.querySelectorAll(".tx .w"), { opacity: 0, y: 6 * s }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out", stagger: 0.07 }, t + 0.45);
+    tl.set(cnum, { textContent: String(i + 1) }, t + 0.2);
+    tl.fromTo("#cnt", { scale: 1 }, { scale: 1.18, duration: 0.08, ease: "power2.out", immediateRender: false }, t + 0.2);
+    tl.to("#cnt", { scale: 1, duration: 0.4, ease: "back.out(3)" }, t + 0.28);
+  });
+
+  // ---- resolve: the cursor presses the check, it fills green, the card settles back and its highlight lifts off the text
+  const rc = cards[RS], rb = rc.querySelector(".rb");
+  const TR = Math.min(3.35, D - 1.6);
+  const rr = { x: cL + (CX + CW - 26 - 30) * s, y: cT + (cY[RS] + 24 + 40 + 6) * s };
+  tl.fromTo("#cur", { x: rr.x + 220 * u, y: rr.y + 360 * u, opacity: 0 }, { x: rr.x, y: rr.y, opacity: 1, duration: 0.7, ease: "power3.out" }, TR - 0.72);
+  tl.to("#cur", { scale: 0.82, duration: 0.08, ease: "power2.out", transformOrigin: "20% 10%" }, TR);
+  tl.to("#cur", { scale: 1, duration: 0.25, ease: "back.out(3)" }, TR + 0.08);
+  tl.to("#cur", { opacity: 0, y: "+=" + 50 * u, x: "+=" + 30 * u, duration: 0.3, ease: "power2.in" }, TR + 0.42);
+  tl.to(rb, { scale: 0.86, duration: 0.08, ease: "power2.out" }, TR);
+  tl.to(rb, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TR + 0.08);
+  tl.to(rb.querySelector(".fill"), { scale: 1, duration: 0.42, ease: "back.out(2.2)" }, TR + 0.02);
+  tl.to(rb.querySelector("path"), { stroke: "#fff", duration: 0.12, ease: "power2.out" }, TR + 0.04);
+  tl.to(rc.querySelector(".edge"), { background: "#2BD67B", duration: 0.3, ease: "power2.out" }, TR + 0.05);
+  tl.to(rc.querySelector(".t0"), { opacity: 0, duration: 0.15, ease: "power2.out" }, TR + 0.05);
+  tl.fromTo(rc.querySelector(".ok"), { opacity: 0, y: 10 * s }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, TR + 0.12);
+  tl.fromTo(rc.querySelector(".ring"), { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.08, duration: 0.7, ease: "expo.out", immediateRender: false }, TR + 0.1);
+  tl.to(rc.querySelector(".tx"), { opacity: 0.45, duration: 0.5, ease: "power2.out" }, TR + 0.35);
+  tl.to(rc, { scale: 0.96, x: 14 * s, duration: 0.7, ease: "expo.out" }, TR + 0.35);
+  hls[RS].forEach((d) => tl.to(d, { opacity: 0, duration: 0.5, ease: "power2.inOut" }, TR + 0.3));
+  tl.set(cnum, { textContent: "1" }, TR + 0.3);
+  hls[1 - RS].forEach((d) => d.classList.add("act"));
+  tl.fromTo("#page", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut" }, TR + 0.2);
+  gsap.set("#cam", { transformOrigin: `${cL + (CX + CW / 2) * s}px ${cT + (cY[RS] + cH[RS] / 2) * s}px` });
+  tl.fromTo("#cam", { scale: 1 }, { scale: A ? 1.02 : 1.05, duration: 1.6, ease: "power3.inOut" }, TR - 0.6);
+
+  if (A) tl.to(["#stage", "#cur"], { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

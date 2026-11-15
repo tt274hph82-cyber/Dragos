@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"photo","type":"string","label":"The person, a cut-out PNG with transparency (path; empty: the first brand person)","default":""},
+  {"id":"backdrop","type":"string","label":"The background photo (path; empty: a night street in bokeh)","default":""},
+  {"id":"word","type":"string","label":"The big word that lands behind the head (one or two words; empty: the brand name)","default":""},
+  {"id":"tag","type":"string","label":"The name tag (empty: the handle, else the brand name; none: no tag)","default":""},
+  {"id":"sub","type":"string","label":"Small line under the name tag (empty: none)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #000; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); background: #000; }
+  .layer { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 50% 50%; }
+  #bg img { position: absolute; inset: -6%; width: 112%; height: 112%; object-fit: cover; }
+  /* the grade: the brand accent pooled low, a cool top, crushed corners */
+  #grade { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(70% 45% at 70% 100%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 70%),
+      linear-gradient(180deg, rgba(10,12,30,.45), transparent 45%, rgba(0,0,0,.25)); mix-blend-mode: normal; }
+  #word { display: flex; align-items: center; justify-content: center; }
+  #word span { font-family: var(--font-display); white-space: nowrap; line-height: .86; letter-spacing: -0.035em; text-transform: uppercase;
+    color: transparent; background: linear-gradient(180deg, #fff 10%, color-mix(in srgb, var(--ink) 70%, var(--accent)) 95%); -webkit-background-clip: text; background-clip: text;
+    filter: drop-shadow(0 calc(var(--u) * 20) calc(var(--u) * 40) rgba(0,0,0,.55)); }
+  #halo { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(calc(var(--u) * 70));
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 75%, #fff 10%), transparent); }
+  #person img { position: absolute; display: block;
+    filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(255,255,255,.35)) drop-shadow(calc(var(--u) * -14) 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 55%, transparent)) drop-shadow(0 calc(var(--u) * 30) calc(var(--u) * 50) rgba(0,0,0,.6)); }
+  #fg { mix-blend-mode: screen; opacity: .5; }
+  #fg img { position: absolute; inset: -10%; width: 120%; height: 120%; object-fit: cover; filter: blur(calc(var(--u) * 10)); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 95% at 50% 45%, transparent 50%, rgba(0,0,0,.6)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #flash { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(60% 40% at 50% 35%, rgba(255,255,255,.5), transparent 70%); opacity: 0; mix-blend-mode: screen; }
+  #tag { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 18); padding: calc(var(--u) * 16) calc(var(--u) * 30) calc(var(--u) * 16) calc(var(--u) * 18);
+    border-radius: calc(var(--u) * 26); background: linear-gradient(160deg, rgba(255,255,255,.2), rgba(255,255,255,.06));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -18) rgba(0,0,0,.75); }
+  #tag .bar { flex: none; width: calc(var(--u) * 8); align-self: stretch; border-radius: 99px; background: var(--accent); box-shadow: 0 0 calc(var(--u) * 14) var(--accent); }
+  #tag .nm { font-family: var(--font-display); color: #fff; white-space: nowrap; line-height: 1.05; }
+  #tag .sb { color: rgba(255,255,255,.72); font-weight: 650; white-space: nowrap; margin-top: calc(var(--u) * 6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div class="layer" id="bg"></div>
+  <div id="grade"></div>
+  <div class="layer" id="mid"><div id="halo"></div></div>
+  <div class="layer" id="word"><span></span></div>
+  <div class="layer" id="person"></div>
+  <div class="layer" id="fg"><img src="assets/fg-bokeh.jpg" alt="" /></div>
+  <div id="flash"></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+  <div id="tag"><div class="bar"></div><div><div class="nm"></div><div class="sb"></div></div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H;
+  const photo = v.photo || (v.people || [])[0];
+  $("#bg").appendChild(MV.img(v.backdrop || "assets/backdrop.jpg"));
+
+  // ---- the person, anchored to the bottom edge; the head sits where the frame wants it
+  const pimg = photo ? MV.img(photo) : null;
+  // the photo's own aspect (read from the file once it loads; a head-and-shoulders cut-out is ~1.1:1)
+  const PA = 900 / 818;
+  let pw, px, pb;
+  if (P) { pw = W * 1.22; px = (W - pw) / 2; }
+  else if (SQ) { pw = W * 0.92; px = (W - pw) / 2 + W * 0.04; }
+  else { pw = H * 1.02 * PA; px = W * 0.62 - pw / 2; }
+  const ph = pw / PA, py = H - ph + (P ? 0 : H * 0.02);
+  if (pimg) { $("#person").appendChild(pimg); Object.assign(pimg.style, { left: px + "px", top: py + "px", width: pw + "px", height: ph + "px", objectFit: "contain", objectPosition: "50% 100%" }); }
+  // the head is roughly the upper 45% of a head-and-shoulders cut-out, centred
+  const hx = px + pw * 0.5, hy = py + ph * 0.3;
+  const halo = $("#halo"), HR = pw * 0.55; Object.assign(halo.style, { width: HR * 2 + "px", height: HR * 1.6 + "px", left: hx - HR + "px", top: hy - HR * 0.8 + "px" });
+
+  // ---- the word: as wide as the frame allows, its lower part tucked behind the top of the head
+  const word = String(v.word || v.brandName || "").trim();
+  const ws = $("#word span"); ws.textContent = word;
+  ws.style.fontSize = (P ? 330 : SQ ? 300 : 300) * u + "px";
+  // tall and square: across the frame, only its lower edge tucked behind the hair; wide: in the open space left of the person, its end tucked behind the head
+  MV.fitText(ws, P ? W * 0.86 : SQ ? W * 0.8 : W * 0.36, 40);
+  const wh = ws.getBoundingClientRect().height;
+  const wy = P ? Math.max(safe.top + 120 * u, py - wh * 0.62) : SQ ? Math.max(H * 0.07, py - wh * 0.55) : H * 0.42 - wh / 2;
+  const wordEl = $("#word"); Object.assign(wordEl.style, { alignItems: "flex-start", paddingTop: wy + "px", boxSizing: "border-box" });
+  if (!P && !SQ) Object.assign(wordEl.style, { justifyContent: "flex-start", paddingLeft: W * 0.07 + "px" });
+  if (!word) wordEl.style.display = "none";
+
+  // ---- the name tag
+  const tagEl = $("#tag"), nm = $(".nm", tagEl), sb = $(".sb", tagEl);
+  const tagTxt = String(v.tag || "").trim().toLowerCase() === "none" ? "" : (v.tag || v.handle || v.brandName || "");
+  nm.textContent = tagTxt; nm.style.fontSize = (P ? 50 : 44) * u + "px"; sb.textContent = v.sub || ""; sb.style.fontSize = (P ? 30 : 26) * u + "px"; if (!v.sub) sb.style.display = "none";
+  MV.fitText(nm, (P ? W * 0.62 : W * 0.32), 18); if (v.sub) MV.fitText(sb, (P ? W * 0.62 : W * 0.32), 14);
+  const tb = tagEl.getBoundingClientRect();
+  let tx, ty;
+  if (P) { tx = safe.left; ty = safe.top; }
+  else if (SQ) { tx = 56 * u; ty = H - tb.height - 70 * u; }
+  else { tx = W * 0.06; ty = H * 0.86 - tb.height; }
+  Object.assign(tagEl.style, { left: tx + "px", top: ty + "px" });
+  if (!tagTxt) tagEl.style.display = "none";
+
+  // ---- the 2.5D camera: one slow push and drift, each layer moving by its own depth
+  const DEP = { bg: 0.25, mid: 0.45, word: 0.55, person: 1, fg: 1.9 };
+  const DX = (P ? -50 : -90) * u, DY = -18 * u, ZM = 0.07;
+  Object.entries(DEP).forEach(([id, d]) => {
+    gsap.set("#" + id, { transformOrigin: `${hx}px ${hy}px` });
+    tl.fromTo("#" + id, { x: -DX * d * 0.5, y: -DY * d * 0.5, scale: 1 + (id === "fg" ? 0.1 : 0) }, { x: DX * d * 0.5, y: DY * d * 0.5, scale: 1 + ZM * d + (id === "fg" ? 0.1 : 0), duration: D, ease: "power1.inOut" }, 0);
+  });
+  // the photo splits: everything starts as one flat picture at the same scale, then the depth opens up
+  tl.fromTo(["#bg", "#person"], { filter: "brightness(0.35)" }, { filter: "brightness(1)", duration: 0.8, ease: "power2.out" }, 0);
+  // the focus pulls from the backdrop to the person
+  tl.fromTo("#bg img", { filter: "blur(0px)" }, { filter: `blur(${7 * u}px)`, duration: 1.2, ease: "power2.inOut" }, 0.25);
+  tl.fromTo("#fg", { opacity: 0 }, { opacity: 0.5, duration: 1.0, ease: "power2.out" }, 0.2);
+  tl.fromTo(halo, { opacity: 0, scale: 0.7 }, { opacity: 0.55, scale: 1, duration: 1.2, ease: "power2.out" }, 0.2);
+
+  // ---- the moment: the word slams in behind the head, the light behind it flares
+  const TW = 0.95;
+  tl.fromTo(ws, { scale: 1.45, opacity: 0, filter: "blur(18px)" }, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.42, ease: "power3.out", transformOrigin: "50% 60%" }, TW);
+  tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.8, duration: 0.06, ease: "power2.out", immediateRender: false }, TW + 0.12);
+  tl.to("#flash", { opacity: 0, duration: 0.6, ease: "expo.out" }, TW + 0.18);
+  tl.to(halo, { opacity: 1, scale: 1.12, duration: 0.12, ease: "power2.out" }, TW + 0.12);
+  tl.to(halo, { opacity: 0.6, scale: 1, duration: 0.9, ease: "expo.out" }, TW + 0.24);
+  tl.fromTo("#person img", { y: 0 }, { y: 8 * u, duration: 0.07, ease: "power2.out", immediateRender: false }, TW + 0.12);
+  tl.to("#person img", { y: 0, duration: 0.5, ease: "back.out(3)" }, TW + 0.19);
+
+  // ---- the tag: its accent bar draws, the glass lands
+  const TT = 1.55;
+  tl.fromTo(tagEl, { opacity: 0, x: -40 * u, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, TT);
+  tl.fromTo($(".bar", tagEl), { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "expo.out" }, TT + 0.1);
+  tl.fromTo([nm, sb], { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, TT + 0.15);
+  MV.done();
+</script>
+</body>
+</html>

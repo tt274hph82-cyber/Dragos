@@ -1,0 +1,5 @@
+{ "id": "video-tile", "name": "Video tile", "oneLiner": "a video tile (a thumbnail built from the brand's screen and a person cut-out, duration badge, title, channel row) pops in on glass, the view count races up, a glass play button lands with a ring on hover and a progress bar starts running along the bottom of the thumbnail",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["video", "thumbnail", "views", "content", "creator", "channel", "viral", "watch", "play", "proof", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker mentions a video they made or saw ('I posted a video about it', 'that video did a million views'): the play ring lands on 'video', the count settles as they say the number" }

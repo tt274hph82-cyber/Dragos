@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Dashboard title","default":"Affiliate program"},
+  {"id":"link","type":"string","label":"Referral link in the chip (empty: the brand domain plus /ref)","default":""},
+  {"id":"clicks","type":"number","label":"Clicks it counts to","default":4812},
+  {"id":"signups","type":"number","label":"Signups it counts to","default":312},
+  {"id":"earnings","type":"number","label":"Earnings it counts to","default":2480},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"clicksLabel","type":"string","label":"Clicks label","default":"Clicks"},
+  {"id":"signupsLabel","type":"string","label":"Signups label","default":"Signups"},
+  {"id":"earnLabel","type":"string","label":"Earnings label","default":"Earnings"},
+  {"id":"period","type":"string","label":"Period chip on the earnings tile","default":"This month"},
+  {"id":"payout","type":"string","label":"Green chip that stamps on (the amount is added)","default":"Payout sent"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 34%; top: 4%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #card { position: absolute; box-sizing: border-box; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--s) * 50) calc(var(--s) * 100) calc(var(--s) * -30) rgba(0,0,0,.65), 0 0 calc(var(--s) * 110) calc(var(--s) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 84%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--s) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #mk { border-radius: calc(var(--s) * 22); display: grid; place-items: center; overflow: hidden; background: #fff; box-shadow: 0 calc(var(--s) * 12) calc(var(--s) * 24) calc(var(--s) * -10) rgba(0,0,0,.6); }
+  #mk img { width: 74%; height: 74%; object-fit: contain; }
+  #tt { font-weight: 800; font-size: calc(var(--s) * 44); color: var(--ink); white-space: nowrap; line-height: 1.1; letter-spacing: -0.015em; }
+  #lk { display: flex; align-items: center; gap: calc(var(--s) * 10); height: calc(var(--s) * 54); padding: 0 calc(var(--s) * 22) 0 calc(var(--s) * 16); border-radius: 99px; white-space: nowrap;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); font-weight: 650; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 78%, transparent); }
+  .is-key #lk { background: color-mix(in srgb, var(--surface) 80%, #fff); }
+  #lk svg { flex: none; width: calc(var(--s) * 30); height: calc(var(--s) * 30); color: var(--accent2, var(--accent)); }
+  .tile { border-radius: calc(var(--s) * 30); overflow: hidden; background: linear-gradient(160deg, rgba(255,255,255,.09), rgba(255,255,255,.03)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.18), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  .is-key .tile { background: color-mix(in srgb, var(--surface) 88%, #fff); }
+  .gt { position: absolute; border-radius: calc(var(--s) * 18); display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,.05)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1) rgba(255,255,255,.12); }
+  .gt svg { width: 52%; height: 52%; }
+  .lb { position: absolute; white-space: nowrap; font-weight: 700; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 64%, transparent); line-height: 1.1; }
+  .is-key .lb { color: color-mix(in srgb, var(--ink) 64%, var(--surface)); }
+  .num { position: absolute; white-space: nowrap; font-family: var(--font-display); color: var(--ink); line-height: 1; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+  #per { position: absolute; display: flex; align-items: center; height: calc(var(--s) * 50); padding: 0 calc(var(--s) * 20); border-radius: 99px; white-space: nowrap;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); font-weight: 650; font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 70%, transparent); }
+  .is-key #per { background: color-mix(in srgb, var(--surface) 80%, #fff); }
+  #hero .wash { position: absolute; inset: 0; background: radial-gradient(90% 80% at 15% 0%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%); }
+  #chart { position: absolute; overflow: visible; }
+  #chart .ln { fill: none; stroke: color-mix(in srgb, var(--accent) 50%, #fff); stroke-linecap: round; stroke-linejoin: round; }
+  #chart .dt { fill: #fff; }
+  #chart .dr { fill: none; stroke: #fff; }
+  #pay { display: flex; align-items: center; gap: calc(var(--s) * 12); height: calc(var(--s) * 72); padding: 0 calc(var(--s) * 28) 0 calc(var(--s) * 14); border-radius: 99px; white-space: nowrap; opacity: 0; z-index: 30;
+    font-weight: 800; font-size: calc(var(--s) * 36); color: #fff; text-shadow: 0 1px 2px rgba(0,60,25,.35);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 72%, #fff), var(--ok) 55%, #1BA85B);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), 0 calc(var(--s) * 16) calc(var(--s) * 30) calc(var(--s) * -8) rgba(20,140,70,.7); }
+  .is-key #pay { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55); }
+  #pay .ck { flex: none; width: calc(var(--s) * 48); height: calc(var(--s) * 48); border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.25); }
+  #pay .ck svg { width: 66%; height: 66%; }
+  #pay b { font-weight: 900; }
+  #prg { position: absolute; box-sizing: border-box; border-radius: 99px; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; z-index: 29; }
+  .is-key #prg { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="vig"></div>
+  <div id="stage"><div id="card">
+    <div id="mk" class="ab"></div><div id="tt" class="ab"></div>
+    <div id="lk" class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3.1-3.1a4 4 0 0 0-5.7-5.7L11.6 6.7"/><path d="M14 10a4 4 0 0 0-5.7 0l-3.1 3.1a4 4 0 0 0 5.7 5.7l1.5-1.5"/></svg><span id="lkt"></span></div>
+    <div id="t1" class="ab tile"><div class="gt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3.5v2M3.5 9h2M5.2 5.2l1.4 1.4M12.6 5.2l-1.4 1.4"/><path d="M9.5 9.5l10 3.6-4.3 1.6-1.6 4.3z"/></svg></div><div class="lb"></div><div class="num"></div></div>
+    <div id="t2" class="ab tile"><div class="gt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="8.4" r="3.6"/><path d="M3.6 19.6c.8-3.6 3.4-5.6 6.4-5.6s5.6 2 6.4 5.6M18.5 8v6M15.5 11h6"/></svg></div><div class="lb"></div><div class="num"></div></div>
+    <div id="hero" class="ab tile"><i class="wash"></i><svg id="chart"></svg><div class="lb"></div><div class="num"></div><div id="per"></div></div>
+    <i id="prg"></i>
+    <div id="pay" class="ab"><i class="ck"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.8" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg></i><span id="payt"></span><b id="paya"></b></div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q), NS = "http://www.w3.org/2000/svg";
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const cur$ = v.currency || "";
+  const nC = Math.max(0, +v.clicks || 0), nS = Math.max(0, +v.signups || 0), nE = Math.max(0, +v.earnings || 0);
+  const f0 = (n) => Math.round(n).toLocaleString("en-US"), money = (n) => cur$ + f0(n);
+
+  // ---- design grid and scale s
+  const pad = 40, DW = 900, G = 22;
+  const yT = 172, TH = 216, yH = yT + TH + G, HH = 360, DH = yH + HH + pad;
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.52; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.08; zB = H * 0.92; }
+  const s = Math.min((cR - cL) / DW, (zB - zT) / (DH + 40), P ? 1.06 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  const x0 = cL + (cR - cL - cw) / 2, y0 = A && P ? zT : zT + (zB - zT - ch - 40 * s) / 2;
+  Object.assign($("#card").style, { left: x0 + "px", top: y0 + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- header: mark, title, the referral link
+  box($("#mk"), pad, pad, 104, 104); if (v.mark) $("#mk").appendChild(MV.img(v.mark));
+  const hx = pad + 104 + 24, hw = (DW - hx - pad) * s;
+  Object.assign($("#tt").style, { left: S(hx), top: S(pad + 2) }); $("#tt").textContent = v.title || "";
+  MV.fitText($("#tt"), hw, 18);
+  Object.assign($("#lk").style, { left: S(hx), top: S(pad + 56) });
+  $("#lkt").textContent = v.link || ((v.domain || "yoursite.com") + "/ref");
+  MV.fitText($("#lkt"), hw - 80 * s, 14);
+
+  // ---- two small tiles and the earnings tile
+  const TW = (DW - pad * 2 - G) / 2;
+  const small = (id, x, label) => { const t = $(id); box(t, x, yT, TW, TH);
+    box(t.querySelector(".gt"), 26, 26, 64, 64);
+    const lb = t.querySelector(".lb"); Object.assign(lb.style, { left: S(106), top: S(38) }); lb.textContent = label; MV.fitText(lb, (TW - 130) * s, 14);
+    const n = t.querySelector(".num"); Object.assign(n.style, { left: S(26), top: S(112), fontSize: S(80) }); return { t, n }; };
+  const T1 = small("#t1", pad, v.clicksLabel || ""), T2 = small("#t2", pad + TW + G, v.signupsLabel || "");
+  T1.n.textContent = f0(nC); MV.fitText(T1.n, (TW - 52) * s, 20); T2.n.textContent = f0(nS); MV.fitText(T2.n, (TW - 52) * s, 20);
+  T1.n.textContent = "0"; T2.n.textContent = "0";
+  const HW = DW - pad * 2, hero = $("#hero"); box(hero, pad, yH, HW, HH);
+  const hl = hero.querySelector(".lb"), hn = hero.querySelector(".num");
+  Object.assign(hl.style, { left: S(32), top: S(30) }); hl.textContent = v.earnLabel || "";
+  $("#per").textContent = v.period || ""; if (!v.period) $("#per").style.display = "none";
+  Object.assign($("#per").style, { right: S(26), top: S(24) }); MV.fitText($("#per"), 260 * s, 14);
+  MV.fitText(hl, (HW - 64) * s - $("#per").getBoundingClientRect().width - 20 * s, 14);
+  Object.assign(hn.style, { left: S(28), top: S(84), fontSize: S(132) }); hn.textContent = money(nE); MV.fitText(hn, (HW - 60) * s, 30);
+  hn.textContent = money(0);
+
+  // the chart: a rising earnings line along the tile floor, under the number
+  const CX0 = 0, CY0 = 196, CWd = HW, CHt = HH - CY0;
+  const chart = $("#chart"); box(chart, CX0, CY0, CWd, CHt); chart.setAttribute("viewBox", `0 0 ${CWd} ${CHt}`);
+  const rnd = MV.rand(77), K = 14, pts = [];
+  for (let k = 0; k < K; k++) pts.push(0.08 + 0.78 * Math.pow(k / (K - 1), 1.5) + (rnd() - 0.5) * 0.14);
+  pts[K - 1] = 0.92;
+  const XY = pts.map((p, k) => [24 + (k / (K - 1)) * (CWd - 70), CHt - 16 - p * (CHt - 40)]);
+  let d = `M${XY[0][0]} ${XY[0][1]}`;
+  for (let k = 0; k < K - 1; k++) { const p0 = XY[Math.max(0, k - 1)], p1 = XY[k], p2 = XY[k + 1], p3 = XY[Math.min(K - 1, k + 2)];
+    d += ` C${p1[0] + (p2[0] - p0[0]) / 6} ${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6} ${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]} ${p2[1]}`; }
+  chart.innerHTML = `<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${v.accent || "#FF6A3D"}" stop-opacity=".55"/><stop offset="1" stop-color="${v.accent || "#FF6A3D"}" stop-opacity="0"/></linearGradient>
+    <clipPath id="ac"><rect id="acr" x="0" y="-20" width="0" height="${CHt + 40}"/></clipPath></defs>
+    <path d="${d} L${XY[K - 1][0]} ${CHt} L${XY[0][0]} ${CHt} Z" fill="url(#ag)" clip-path="url(#ac)"/>
+    <path class="ln" d="${d}" stroke-width="5"/><circle class="dr" r="10" stroke-width="3" opacity="0"/><circle class="dt" r="10" opacity="0"/>`;
+  const ln = chart.querySelector(".ln"), Lc = ln.getTotalLength(); ln.style.strokeDasharray = Lc; ln.style.strokeDashoffset = Lc;
+  const dt = chart.querySelector(".dt"), drg = chart.querySelector(".dr"), acr = chart.querySelector("#acr");
+
+  // the payout chip lands on the tile, right side, over the chart's peak area
+  $("#payt").textContent = v.payout || ""; $("#paya").textContent = money(nE);
+  if (!v.payout) $("#pay").style.display = "none";
+  MV.fitText($("#payt"), (HW - 280) * s * 0.6, 14);
+  const pw = $("#pay").getBoundingClientRect().width / s, px = (DW - pw) / 2, py = DH - 36;
+  Object.assign($("#pay").style, { left: S(px), top: S(py) }); box($("#prg"), px, py, pw, 72);
+
+  // ---- timing
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  tl.fromTo("#card", { z: -700 * u, rotationX: 28, rotationY: 24, rotationZ: 4, scale: 0.76 },
+    { z: 0, rotationX: 9, rotationY: 10, rotationZ: 1, scale: 1, duration: 0.95, ease: "back.out(1.3)" }, 0.04);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.04);
+  tl.to("#card", { rotationX: 3, rotationY: -8, rotationZ: -0.5, duration: D - 1.4, ease: "sine.inOut" }, 0.99);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.06, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#mk", { scale: 0.4, rotation: -24 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, 0.26);
+  tl.fromTo(["#tt", "#lk"], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.07 }, 0.32);
+  tl.fromTo(["#t1", "#t2", "#hero"], { opacity: 0, y: 40 * s, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "expo.out", stagger: 0.08 }, 0.42);
+  tl.fromTo([T1.t.querySelector(".gt"), T2.t.querySelector(".gt")], { scale: 0.4, rotation: -24 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)", stagger: 0.08 }, 0.6);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.7);
+
+  // counters follow the playhead (tweened values)
+  const cnt = (el, to, t, dur, fmt) => { const o = { n: 0 }; tl.to(o, { n: to, duration: dur, ease: "expo.out", onUpdate: () => { el.textContent = fmt(o.n); } }, t); };
+  cnt(T1.n, nC, 0.75, 1.7, f0); cnt(T2.n, nS, 0.95, 1.7, f0);
+  const E0 = 1.05, ED = 2.0, eo = { p: 0 };
+  tl.to(eo, { p: 1, duration: ED, ease: "power2.inOut", onUpdate: () => {
+    hn.textContent = money(nE * eo.p);
+    const len = Lc * eo.p; ln.style.strokeDashoffset = Lc - len; const pt = ln.getPointAtLength(len);
+    dt.setAttribute("cx", pt.x); dt.setAttribute("cy", pt.y); drg.setAttribute("cx", pt.x); drg.setAttribute("cy", pt.y); acr.setAttribute("width", pt.x); } }, E0);
+  tl.fromTo(dt, { opacity: 0 }, { opacity: 1, duration: 0.2 }, E0);
+  const TP = E0 + ED;
+  tl.fromTo(drg, { attr: { r: 10 }, opacity: 0.9 }, { attr: { r: 38 }, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TP - 0.05);
+  tl.fromTo(hn, { scale: 1, transformOrigin: "0% 60%" }, { scale: 1.06, duration: 0.1, ease: "power2.out", immediateRender: false }, TP - 0.1); tl.to(hn, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TP);
+
+  // the moment: Payout sent stamps on with a ring, the card jolts
+  const TS = TP + 0.12;
+  tl.fromTo("#pay", { opacity: 0, scale: 2.1, rotation: 6 }, { opacity: 1, scale: 1, rotation: -3, duration: 0.24, ease: "power4.in" }, TS);
+  tl.to("#pay", { scale: 1.07, duration: 0.06, ease: "power1.out" }, TS + 0.24); tl.to("#pay", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TS + 0.3);
+  tl.fromTo("#prg", { scale: 1, opacity: 0.9, rotation: -3 }, { scale: 1.4, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TS + 0.26);
+  tl.to("#stage", { scale: 1.016, duration: 0.07, ease: "power2.out" }, TS + 0.24); tl.to("#stage", { scale: 1, duration: 0.55, ease: "expo.out" }, TS + 0.31);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, TS + 0.3);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

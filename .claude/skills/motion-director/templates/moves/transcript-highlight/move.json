@@ -1,0 +1,5 @@
+{ "id": "transcript-highlight", "name": "Transcript highlight", "oneLiner": "a glass transcript with timestamps scrolls fast and settles on one line, a marker sweeps the key sentence, then the line lifts out of the page as its own clip card with a time range and a play bar while the transcript steps back",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["transcript", "podcast", "clip", "quote", "highlight", "repurpose", "shorts", "timestamps", "interview", "creator tools", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker talks about pulling the best moment out of a long recording ('it reads the whole transcript and finds the one line', 'that sentence became the clip'): the scroll runs while they explain, the line clips out as they say it" }

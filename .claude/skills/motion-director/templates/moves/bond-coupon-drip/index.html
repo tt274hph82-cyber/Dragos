@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The word printed across the certificate","default":"Bond"},
+  {"id":"rate","type":"string","label":"The big figure in the medallion","default":"3%"},
+  {"id":"coupon","type":"string","label":"What each payment is worth (one per tab)","default":"$30"},
+  {"id":"periods","type":"string","label":"A short label per payment, comma separated, 3 to 5","default":"Year 1,Year 2,Year 3,Year 4"},
+  {"id":"totalLabel","type":"string","label":"A label under the running total (empty = none)","default":"Paid to you"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Serif"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --sec: color-mix(in srgb, var(--accent) 62%, #16241c); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 38%; top: 2%; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 52%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the certificate: scanned paper, a guilloche border, a rosette medallion, a strip of coupons */
+  #cert { position: absolute; transform-style: preserve-3d; }
+  #sheetshadow { position: absolute; inset: 0; border-radius: calc(var(--u) * 6); box-shadow: 0 calc(var(--u) * 40) calc(var(--u) * 80) rgba(0,0,0,.55), 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.35); }
+  .paper { background: #f1e9d6 url(assets/paper-white.jpg) center / calc(var(--u) * 640); background-blend-mode: multiply; }
+  #sheet { position: absolute; inset: 0; border-radius: calc(var(--u) * 6); overflow: hidden; }
+  #sheet::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, rgba(255,255,255,.22), transparent 38%, transparent 62%, rgba(0,0,0,.08)); }
+  #print { position: absolute; inset: 0; overflow: visible; }
+  .ink { mix-blend-mode: multiply; }
+  #title { position: absolute; white-space: nowrap; font-family: "MV Serif", serif; font-weight: 800; text-transform: uppercase; color: var(--sec); letter-spacing: .32em; line-height: 1; mix-blend-mode: multiply; }
+  #rate { position: absolute; white-space: nowrap; font-family: var(--font-display); color: var(--sec); letter-spacing: -0.02em; line-height: 1; mix-blend-mode: multiply; }
+  /* coupons: paper tabs on the bottom strip, each with its own perforated edge */
+  .tab { position: absolute; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; transform-origin: 8% 0%; }
+  .tab .perf { position: absolute; inset: 0; pointer-events: none; }
+  .tab .k { font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: color-mix(in srgb, var(--sec) 80%, transparent); line-height: 1; mix-blend-mode: multiply; white-space: nowrap; }
+  .tab .a { font-family: "MV Serif", serif; font-weight: 800; color: var(--sec); line-height: 1; mix-blend-mode: multiply; white-space: nowrap; }
+  .slot { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 3); background: rgba(40,30,20,.16); box-shadow: inset 0 calc(var(--u) * 3) calc(var(--u) * 8) rgba(0,0,0,.25); opacity: 0; }
+  /* the coin stack */
+  #pile { position: absolute; }
+  .coin { position: absolute; left: 0; top: 0; }
+  .coin img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 2) rgba(40,20,0,.55)); }
+  .coin .glint { position: absolute; inset: 0; mix-blend-mode: screen; opacity: 0; pointer-events: none;
+    -webkit-mask: url(assets/coin.png) 0 0 / 100% 100%; mask: url(assets/coin.png) 0 0 / 100% 100%;
+    background: linear-gradient(105deg, transparent calc(var(--gx, -40%) - 10%), rgba(255,250,230,.95) var(--gx, -40%), transparent calc(var(--gx, -40%) + 10%)); }
+  #cshadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.6), transparent 70%); }
+  .is-key #cshadow { display: none; }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent2) 60%, white); box-sizing: border-box; opacity: 0; }
+  #halo { position: absolute; border-radius: 50%; opacity: 0; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent2) 45%, transparent), transparent 70%); }
+  .is-key #halo, .is-key #ring { display: none; }
+  .plus { position: absolute; white-space: nowrap; font-family: var(--font-display); line-height: 1; color: #fff; border-radius: 999px; background: #2BD67B; box-shadow: 0 0 calc(var(--u) * 24) rgba(43,214,123,.5), 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.35); opacity: 0; }
+  .is-key .plus { box-shadow: none; }
+  #total { position: absolute; white-space: nowrap; text-align: center; }
+  #tv { font-family: var(--font-display); color: var(--ink); line-height: 1; letter-spacing: -0.02em; white-space: nowrap; }
+  #tl { margin-top: calc(var(--u) * 10); font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 62%, transparent); line-height: 1; white-space: nowrap; }
+  .is-alpha #tv, .is-alpha #tl { color: #fff; text-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 14) rgba(0,0,0,.75); }
+  .is-key #tv, .is-key #tl { text-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="cert"><div id="sheetshadow"></div><div id="sheet" class="paper"><svg id="print"></svg><div id="title"></div><div id="rate"></div></div></div>
+    <div id="pile"><div id="cshadow"></div><div id="halo"></div><div id="ring"></div></div>
+    <div id="total"><div id="tv"></div><div id="tl"></div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration;
+  const P = MV.portrait, SQ = W === H, A = MV.alpha, NS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+  // ---- content
+  let periods = String(v.periods || "").split(",").map((s) => s.trim()).filter(Boolean);
+  if (periods.length < 3) periods = ["1", "2", "3", "4"].map((n, i) => periods[i] || ""); periods = periods.slice(0, 5);
+  const N = periods.length;
+  const coupon = String(v.coupon || "").trim();
+  const cm = coupon.match(/^([^\d]*)([\d][\d,]*(?:\.\d+)?)(.*)$/);
+  const money = (x) => { if (!cm) return coupon; const d = (cm[2].split(".")[1] || "").length; const s = x.toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }); return cm[1] + s + cm[3]; };
+  const unitV = cm ? parseFloat(cm[2].replace(/,/g, "")) : 0;
+  // ---- layout: the certificate and the pile side by side (landscape, square, portrait overlay) or stacked (portrait B-roll)
+  let box;
+  if (P) box = A ? { x: safe.left, y: safe.top, w: W - safe.left - safe.right, h: H * 0.42 - safe.top } : { x: safe.left, y: safe.top, w: W - safe.left - safe.right, h: H - safe.top - safe.bottom };
+  else if (SQ) box = A ? { x: W * 0.05, y: H * 0.05, w: W * 0.9, h: H * 0.44 } : { x: W * 0.06, y: H * 0.1, w: W * 0.88, h: H * 0.8 };
+  else box = A ? { x: W * 0.42, y: H * 0.1, w: W * 0.53, h: H * 0.62 } : { x: W * 0.06, y: H * 0.12, w: W * 0.88, h: H * 0.76 };
+  const STACK = (P || SQ) && !A, AR = 1.5; // certificate width : height
+  const COIN = { w: 536, h: 258, cx: 268, cy: 109.4, ry: 108.9, th: 39.2 };
+  let CW, CHt, cx0, cy0, pileW, pileX, pileBase;
+  const TF = Math.round((STACK ? 88 : A ? 56 : 78) * u), TLF = Math.round((STACK ? 30 : A ? 22 : 28) * u);
+  if (STACK) {
+    CW = box.w; CHt = CW / AR;
+    const pileH = (COIN.h + (N - 1) * COIN.th * 0.92) * (box.w * 0.42 / COIN.w);
+    const need = CHt + 70 * u + TF + TLF + 30 * u + pileH;
+    if (need > box.h) { const s = (box.h - (70 * u + TF + TLF + 30 * u)) / (CHt + pileH); CW *= s; CHt *= s; }
+    pileW = CW * 0.42; const ph = (COIN.h + (N - 1) * COIN.th * 0.92) * (pileW / COIN.w);
+    const tot = CHt + 70 * u + TF + TLF + 30 * u + ph, y0 = box.y + (box.h - tot) / 2;
+    cx0 = box.x + (box.w - CW) / 2; cy0 = y0;
+    pileX = box.x + box.w / 2; pileBase = y0 + tot;
+  } else {
+    const gap = (A ? 40 : 80) * u;
+    // the pile column is ~0.34 of the certificate width
+    const room = (A ? 120 : 160) * u;
+    CW = Math.min((box.w - gap - room) / 1.34, box.h * AR); CHt = CW / AR;
+    pileW = CW * 0.34; const ph = (COIN.h + (N - 1) * COIN.th * 0.92) * (pileW / COIN.w);
+    const colH = TF + TLF + 30 * u + ph, h = Math.max(CHt, colH);
+    const x0 = box.x + (box.w - (CW + gap + pileW + room)) / 2;
+    cx0 = x0; cy0 = box.y + (box.h - CHt) / 2;
+    pileX = x0 + CW + gap + pileW / 2; pileBase = box.y + (box.h + colH) / 2;
+  }
+  const k = pileW / COIN.w, CH2 = CHt;
+  // ---- the certificate
+  const cert = $("cert"); Object.assign(cert.style, { left: cx0 + "px", top: cy0 + "px", width: CW + "px", height: CH2 + "px" });
+  const svg = $("print"); svg.setAttribute("viewBox", `0 0 ${CW} ${CH2}`); svg.setAttribute("width", CW); svg.setAttribute("height", CH2);
+  const el = (n, a, p = svg) => { const e = document.createElementNS(NS, n); for (const kk in a) e.setAttribute(kk, a[kk]); p.append(e); return e; };
+  const ins = CW * 0.035, bw = CW * 0.045, sw = Math.max(0.8, CW / 900);
+  const g = el("g", { class: "ink", stroke: "var(--sec)", fill: "none" });
+  // guilloche border: interlaced sine bands running round the frame
+  const band = (x0, y0, x1, y1, len, horiz) => { for (let j = 0; j < 4; j++) { let d = ""; const n = Math.ceil(len / 3); for (let i = 0; i <= n; i++) { const t = i / n, s = t * len, ph = j * Math.PI / 2;
+      const off = (Math.sin(s / (bw * 0.42) + ph) * 0.42 + 0.5) * bw; const x = horiz ? x0 + s : x0 + off, y = horiz ? y0 + off : y0 + s; d += (i ? "L" : "M") + x.toFixed(1) + " " + y.toFixed(1); }
+    el("path", { d, "stroke-width": sw * 0.9, opacity: 0.75 }, g); } };
+  band(ins, ins, 0, 0, CW - 2 * ins, true); band(ins, CH2 - ins - bw, 0, 0, CW - 2 * ins, true);
+  band(ins, ins + bw, 0, 0, CH2 - 2 * ins - 2 * bw, false); band(CW - ins - bw, ins + bw, 0, 0, CH2 - 2 * ins - 2 * bw, false);
+  el("rect", { x: ins, y: ins, width: CW - 2 * ins, height: CH2 - 2 * ins, "stroke-width": sw * 2.2 }, g);
+  el("rect", { x: ins + bw, y: ins + bw, width: CW - 2 * ins - 2 * bw, height: CH2 - 2 * ins - 2 * bw, "stroke-width": sw * 1.4 }, g);
+  el("rect", { x: ins + bw + 6 * sw, y: ins + bw + 6 * sw, width: CW - 2 * ins - 2 * bw - 12 * sw, height: CH2 - 2 * ins - 2 * bw - 12 * sw, "stroke-width": sw * 0.7, opacity: 0.6 }, g);
+  // corner rosettes
+  const ros = (cx, cy, R0, a, b, turns, n, wdt, op) => { let d = ""; const sc = R0 / (R0 - a + b); for (let i = 0; i <= n; i++) { const t = i / n * Math.PI * 2 * turns, x = (R0 - a) * Math.cos(t) + b * Math.cos((R0 - a) / a * t), y = (R0 - a) * Math.sin(t) - b * Math.sin((R0 - a) / a * t); d += (i ? "L" : "M") + (cx + x * sc).toFixed(1) + " " + (cy + y * sc).toFixed(1); } return el("path", { d, "stroke-width": wdt, opacity: op }, g); };
+  [[ins + bw / 2, ins + bw / 2], [CW - ins - bw / 2, ins + bw / 2], [ins + bw / 2, CH2 - ins - bw / 2], [CW - ins - bw / 2, CH2 - ins - bw / 2]].forEach(([x, y]) => {
+    el("circle", { cx: x, cy: y, r: bw * 0.95, fill: "#f1e9d6", stroke: "none" }, g); ros(x, y, bw * 0.9, bw * 0.9 / 7, bw * 0.62, 7, 900, sw * 0.7, 0.85); });
+  // title
+  const inner = { x: ins + bw, y: ins + bw, w: CW - 2 * (ins + bw), h: CH2 - 2 * (ins + bw) };
+  const stripH = inner.h * 0.3, stripY = inner.y + inner.h - stripH;
+  const title = $("title"); title.textContent = v.title || ""; title.style.fontSize = CH2 * 0.085 + "px"; MV.fitText(title, inner.w * 0.8, 10);
+  const trc = document.createRange(); trc.selectNodeContents(title); const tw = trc.getBoundingClientRect().width;
+  Object.assign(title.style, { left: CW / 2 - tw / 2 + CH2 * 0.085 * 0.16 + "px", top: inner.y + inner.h * 0.075 + "px" });
+  // the medallion: two rosettes, a paper disc, the rate
+  const mY = inner.y + (stripY - inner.y) * 0.6, mR = Math.min((stripY - inner.y) * 0.34, inner.w * 0.2);
+  // engraved rules either side of the medallion
+  [[-1], [1]].forEach(([s]) => { for (let j = 0; j < 3; j++) el("line", { x1: CW / 2 + s * (mR * 1.12), y1: mY - 8 * sw + j * 8 * sw, x2: CW / 2 + s * inner.w * 0.42, y2: mY - 8 * sw + j * 8 * sw, "stroke-width": sw * (j === 1 ? 1.6 : 0.7), opacity: 0.7 }, g); });
+  ros(CW / 2, mY, mR, mR / 13, mR * 0.72, 13, 2400, sw * 0.6, 0.8);
+  ros(CW / 2, mY, mR * 0.86, mR * 0.86 / 11, mR * 0.5, 11, 2000, sw * 0.5, 0.55);
+  el("circle", { cx: CW / 2, cy: mY, r: mR * 0.6, fill: "#f3ecdb", stroke: "var(--sec)", "stroke-width": sw * 1.6 }, g);
+  el("circle", { cx: CW / 2, cy: mY, r: mR * 0.54, fill: "none", stroke: "var(--sec)", "stroke-width": sw * 0.7, opacity: 0.7 }, g);
+  const rate = $("rate"); rate.textContent = v.rate || ""; rate.style.fontSize = mR * 0.62 + "px"; MV.fitText(rate, mR * 1.0, 8);
+  const rr = document.createRange(); rr.selectNodeContents(rate); const rb = rr.getBoundingClientRect();
+  Object.assign(rate.style, { left: CW / 2 - rb.width / 2 + "px", top: mY - parseFloat(rate.style.fontSize) * 0.5 + "px" });
+  // the coupon strip: a perforation line and N tabs
+  el("line", { x1: inner.x, y1: stripY, x2: inner.x + inner.w, y2: stripY, "stroke-width": sw * 2, "stroke-dasharray": `${4 * sw} ${5 * sw}`, opacity: 0.8 }, g);
+  const tabs = [], slots = [], tabW = inner.w / N, sheet = $("sheet");
+  periods.forEach((p, i) => {
+    const x = inner.x + i * tabW, y = stripY + 4 * sw, w = tabW, h = stripH - 4 * sw;
+    const sl = document.createElement("div"); sl.className = "slot"; Object.assign(sl.style, { left: x + 3 * sw + "px", top: y + "px", width: w - 6 * sw + "px", height: h - 2 * sw + "px" }); sheet.append(sl); slots.push(sl);
+    const t = document.createElement("div"); t.className = "tab paper"; Object.assign(t.style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px", backgroundPosition: `${-x}px ${-y}px`, gap: h * 0.08 + "px" });
+    t.innerHTML = `<svg class="perf" viewBox="0 0 ${w} ${h}"><rect x="${3 * sw}" y="${2 * sw}" width="${w - 6 * sw}" height="${h - 4 * sw}" rx="${3 * sw}" fill="none" stroke="var(--sec)" stroke-width="${sw * 1.2}" stroke-dasharray="${3 * sw} ${4 * sw}" opacity=".7" class="ink"/></svg><div class="k"></div><div class="a"></div>`;
+    t.querySelector(".k").textContent = p; t.querySelector(".a").textContent = coupon;
+    const kf = Math.max(9, h * 0.17), af = h * 0.32; t.querySelector(".k").style.fontSize = kf + "px"; t.querySelector(".a").style.fontSize = af + "px";
+    sheet.append(t); MV.fitText(t.querySelector(".k"), w * 0.82, 6); MV.fitText(t.querySelector(".a"), w * 0.8, 6);
+    tabs.push(t);
+  });
+  // ---- the pile: N coins, each one image of a real rendered coin, stacked on a contact shadow
+  const pile = $("pile"); Object.assign(pile.style, { left: pileX + "px", top: pileBase + "px" });
+  const cwid = COIN.w * k, chei = COIN.h * k, step = COIN.th * 0.92 * k;
+  const R = rand(7);
+  function rand(s) { return MV.rand(s); }
+  const coins = periods.map((_, i) => { const c = document.createElement("div"); c.className = "coin";
+    const jx = i ? (R() - 0.5) * cwid * 0.09 : 0; const x = -cwid / 2 + jx, y = -chei - i * step;
+    Object.assign(c.style, { width: cwid + "px", height: chei + "px", left: x + "px", top: y + "px", zIndex: 2 + i });
+    c.append(MV.img("assets/coin.png")); const gl = document.createElement("div"); gl.className = "glint"; c.append(gl); pile.append(c); return { c, x, y, gl }; });
+  const csh = $("cshadow"); Object.assign(csh.style, { width: cwid * 1.5 + "px", height: chei * 0.6 + "px", left: -cwid * 0.75 + "px", top: -chei * 0.42 + "px" });
+  const topY = -chei - (N - 1) * step;
+  Object.assign($("halo").style, { width: cwid * 2.2 + "px", height: cwid * 2.2 + "px", left: -cwid * 1.1 + "px", top: topY + chei * 0.42 - cwid * 1.1 + "px" });
+  Object.assign($("ring").style, { width: cwid + "px", height: cwid * 0.42 + "px", left: -cwid / 2 + "px", top: topY + COIN.cy * k - cwid * 0.21 + "px" });
+  // running total above the pile
+  const tot = $("total"), tv = $("tv"), tlb = $("tl");
+  tv.style.fontSize = TF + "px"; tlb.style.fontSize = TLF + "px"; tlb.textContent = v.totalLabel || ""; if (!v.totalLabel) tlb.style.display = "none";
+  tv.textContent = money(unitV * N); const tmax = Math.max(pileW * (STACK ? 2.2 : 1.6), 200 * u);
+  MV.fitText(tv, STACK ? box.w * 0.9 : Math.min(tmax, box.x + box.w - (pileX - tmax / 2)), 12); MV.fitText(tlb, STACK ? box.w * 0.9 : tmax * 1.2, 10);
+  const totTop = pileBase + topY - 30 * u - (TF + (v.totalLabel ? TLF + 10 * u : 0));
+  Object.assign(tot.style, { left: pileX + "px", top: totTop + "px" });
+  const center = () => { [tv, tlb].forEach((e) => { const r = document.createRange(); r.selectNodeContents(e); e.style.transform = `translateX(${-r.getBoundingClientRect().width / 2}px)`; e.style.width = "max-content"; }); };
+  tv.textContent = money(0); center();
+  // "+coupon" pills that pop as each coin lands
+  const PF = Math.round((STACK ? 40 : A ? 28 : 36) * u);
+  const pluses = coins.map((cn, i) => { const e = document.createElement("div"); e.className = "plus"; e.textContent = "+" + coupon; e.style.fontSize = PF + "px"; e.style.padding = `${PF * 0.32}px ${PF * 0.5}px`; e.style.zIndex = 20;
+    pile.append(e); const w = e.getBoundingClientRect().width; Object.assign(e.style, { left: cwid * 0.42 + "px", top: cn.y + chei * 0.15 + "px" }); return e; });
+
+  // ---- time
+  const T0 = 0.15, DRIP = N >= 5 ? 0.55 : 0.68, T1 = 1.2, land = (i) => T1 + i * DRIP + 0.5;
+  tl.fromTo("#cert", { y: 120 * u, rotationX: 24, opacity: 0 }, { y: 0, rotationX: 0, opacity: 1, duration: 1.0, ease: "expo.out" }, T0);
+  tl.fromTo("#title", { opacity: 0, letterSpacing: "0.6em" }, { opacity: 1, letterSpacing: "0.32em", duration: 0.9, ease: "expo.out" }, T0 + 0.3);
+  tl.fromTo("#rate", { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "power3.in", transformOrigin: "50% 55%" }, T0 + 0.5);
+  tl.to("#cert", { x: 3 * u, duration: 0.05, ease: "power2.out" }, T0 + 0.95); tl.to("#cert", { x: 0, duration: 0.3, ease: "expo.out" }, T0 + 1.0);
+  tl.fromTo("#total", { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, T1 + 0.5);
+  tl.fromTo("#cshadow", { opacity: 0 }, { opacity: 0.9, duration: 0.6, ease: "power2.out" }, T0 + 0.6);
+  // the drip: each coupon tears off, a coin flies out of it and lands on the pile
+  coins.forEach((cn, i) => {
+    const t = T1 + i * DRIP, tab = tabs[i];
+    tl.to(tab, { rotation: -6, y: 6 * u, duration: 0.12, ease: "power2.out" }, t);
+    tl.to(tab, { rotation: -14, y: 90 * u, opacity: 0, duration: 0.45, ease: "power2.in" }, t + 0.12);
+    tl.to(slots[i], { opacity: 1, duration: 0.2, ease: "power2.out" }, t + 0.1);
+    // start where the tab sits, measured in the pile's frame
+    const tr = { x: cx0 + parseFloat(tab.style.left) + parseFloat(tab.style.width) / 2, y: cy0 + parseFloat(tab.style.top) + parseFloat(tab.style.height) / 2 };
+    const sx = tr.x - pileX - (cn.x + cwid / 2), sy = tr.y - pileBase - (cn.y + chei / 2);
+    const peak = Math.min(sy, 0) - 36 * u;
+    tl.fromTo(cn.c, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.42, ease: "power2.out" }, t + 0.08);
+    tl.fromTo(cn.c, { x: sx }, { x: 0, duration: 0.5, ease: "power1.inOut" }, t + 0.08);
+    tl.fromTo(cn.c, { y: sy }, { keyframes: [{ y: peak, duration: 0.22, ease: "power2.out" }, { y: 0, duration: 0.28, ease: "power2.in" }] }, t + 0.08);
+    tl.fromTo(cn.c, { rotation: -18 }, { rotation: 0, duration: 0.5, ease: "power2.out" }, t + 0.08);
+    // landing: a tiny bounce, the pile settles, the total ticks, the pill pops
+    const L = t + 0.58;
+    tl.to(cn.c, { y: -6 * u, duration: 0.07, ease: "power2.out" }, L); tl.to(cn.c, { y: 0, duration: 0.1, ease: "power2.in" }, L + 0.07);
+    tl.fromTo(tv, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", transformOrigin: "0% 60%", immediateRender: false }, L); tl.to(tv, { scale: 1, duration: 0.35, ease: "expo.out" }, L + 0.08);
+    tl.fromTo(pluses[i], { opacity: 0, y: 10 * u, scale: 0.7 }, { opacity: 1, y: -10 * u, scale: 1, duration: 0.25, ease: "back.out(2)" }, L);
+    tl.to(pluses[i], { opacity: 0, y: -40 * u, duration: 0.25, ease: "power2.in" }, L + (i === N - 1 ? 0.9 : Math.min(0.32, DRIP - 0.33)));
+  });
+  // the running total follows the clock: one more coupon each time a coin lands
+  const clock = { t: 0 }, lands = coins.map((_, i) => T1 + i * DRIP + 0.58); let shown = -1;
+  const paintT = () => { const n = lands.filter((x) => x <= clock.t + 1e-4).length; if (n !== shown) { shown = n; tv.textContent = money(unitV * n); center(); } };
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: paintT }, 0);
+  // the moment: the last coin lands, a glint crosses it, a ring of light goes out
+  const LT = land(N - 1) + 0.1, last = coins[N - 1];
+  tl.fromTo(last.gl, { opacity: 1, "--gx": "-30%" }, { "--gx": "130%", duration: 0.7, ease: "power2.inOut", immediateRender: false }, LT);
+  tl.to(last.gl, { opacity: 0, duration: 0.01 }, LT + 0.72);
+  tl.fromTo("#ring", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 2.2, duration: 0.9, ease: "expo.out", immediateRender: false }, LT);
+  tl.fromTo("#halo", { opacity: 0, scale: 0.6 }, { opacity: A ? 0.5 : 0.85, scale: 1, duration: 0.9, ease: "expo.out" }, LT - 0.1);
+  tl.fromTo(tv, { scale: 1 }, { scale: 1.18, duration: 0.12, ease: "power2.out", immediateRender: false }, LT); tl.to(tv, { scale: 1, duration: 0.6, ease: "expo.out" }, LT + 0.12);
+  // drift
+  tl.fromTo("#rig", { rotationX: 5, rotationY: P ? -5 : -7 }, { rotationX: -1, rotationY: P ? 3 : 5, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#cert", { rotationZ: -1.2 }, { rotationZ: 0.4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.to("#stage", { opacity: 0, y: -40 * u, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

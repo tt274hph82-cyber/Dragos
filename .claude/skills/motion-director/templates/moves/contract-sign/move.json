@@ -1,0 +1,5 @@
+{ "id": "contract-sign", "name": "Contract sign", "oneLiner": "a printed contract on real paper is slid onto a walnut desk under a lamp, the camera travels down its clauses to the signature line where a sign-here tab peels away, the signer's name writes itself in blue ink on twos, the date follows, and a green SIGNED stamp slams over the block",
+  "category": "business", "kind": "effect", "uses": ["broll"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["contract", "signed", "agreement", "deal", "client", "partnership", "sponsor", "hire", "legal", "signature", "paper", "desk", "stamp", "on twos", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker says the deal got signed or the paperwork went through ('they signed on Friday', 'we made it official'): cut in as they set it up, the name writes on 'signed' and the stamp lands on the beat after" }

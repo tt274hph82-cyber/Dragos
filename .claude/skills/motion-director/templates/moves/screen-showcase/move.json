@@ -1,0 +1,5 @@
+{ "id": "screen-showcase", "name": "Screen showcase", "oneLiner": "a screen recording or screenshot floats in a window on a brand-colour gradient with a soft shadow and slow 3D drift, a facecam tile sits in a corner, then a focus box snaps onto one region with a quick push-in and 1 to 3 callout pins draw leader lines to tag pills",
+  "category": "creator", "kind": "effect", "uses": ["broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["screen", "screenshot", "screen recording", "demo", "product", "ui", "callout", "annotation", "focus", "highlight", "zoom", "facecam", "tutorial"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.0, "alpha": false,
+  "say": "when the speaker shows the product or a result on screen and points at one part ('look at this summary here'): cut in on 'look', the focus box snaps on the word that names the part, the pills land on the features they list. Swap screen for any screenshot or a still from the recording. 9:16 also takes layout top (window in the upper ~45%, speaker below, no facecam)" }

@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"project","type":"string","label":"Project name (blank uses the brand name)","default":""},
+  {"id":"env","type":"string","label":"Environment chip","default":"Production"},
+  {"id":"steps","type":"string","label":"Pipeline steps, comma separated (up to 3)","default":"Build,Test,Deploy"},
+  {"id":"times","type":"string","label":"Time under each step, comma separated","default":"21s,8s,4s"},
+  {"id":"screen","type":"number","label":"Which brand screen shows when live (1 = first)","default":2},
+  {"id":"url","type":"string","label":"Preview URL (blank uses the brand domain)","default":""},
+  {"id":"working","type":"string","label":"Status while it runs","default":"Deploying"},
+  {"id":"live","type":"string","label":"Status when it is live","default":"Live"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; --del: #FF6B6B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #glow { position: absolute; border-radius: calc(var(--s) * 30); box-shadow: 0 0 calc(var(--s) * 60) calc(var(--s) * 6) rgba(43,214,123,.55); opacity: 0; }
+  .is-key #glow { display: none; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+
+  #ico { display: flex; align-items: center; justify-content: center; border-radius: calc(var(--s) * 20);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 40%, transparent), color-mix(in srgb, var(--accent) 14%, transparent));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #ico svg { width: 58%; height: 58%; }
+  #ttl { font-weight: 750; font-size: calc(var(--s) * 46); line-height: 1.1; color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+  #env { display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 20); border-radius: 99px; font-weight: 650; font-size: calc(var(--s) * 32); white-space: nowrap;
+    color: color-mix(in srgb, var(--ink) 80%, transparent); background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.2); }
+  #env i { width: calc(var(--s) * 14); height: calc(var(--s) * 14); border-radius: 50%; background: var(--al); flex: none; }
+  .is-key #env { background: color-mix(in srgb, var(--surface) 80%, white); }
+
+  /* preview frame */
+  #pv { border-radius: calc(var(--s) * 22); overflow: hidden; background: rgba(0,0,0,.3); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  .is-key #pv { background: color-mix(in srgb, var(--surface) 70%, black); }
+  #pv .sk { position: absolute; border-radius: calc(var(--s) * 10); background: rgba(255,255,255,.08); overflow: hidden; }
+  #pv .sk::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.12) 50%, transparent 70%); transform: translateX(var(--shim, -100%)); }
+  #shot { position: absolute; inset: 0; overflow: hidden; }
+  #shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; display: block; }
+  #scan { position: absolute; left: 0; right: 0; height: calc(var(--s) * 4); background: var(--okl); box-shadow: 0 0 calc(var(--s) * 24) calc(var(--s) * 6) rgba(43,214,123,.55); opacity: 0; }
+  .is-key #scan { box-shadow: none; }
+
+  /* pipeline */
+  .node { position: absolute; }
+  .node svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .node .ok { opacity: 0; }
+  .node .sp, .node .rg { opacity: 0; }
+  .lnk { position: absolute; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .lnk i { position: absolute; inset: 0; background: linear-gradient(90deg, var(--ok), var(--okl)); transform-origin: 0 50%; transform: scaleX(0); border-radius: inherit; }
+  .lb { position: absolute; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; }
+  .tm { position: absolute; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: pre; }
+
+  /* url bar */
+  #ub { border-radius: calc(var(--s) * 24); background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  .is-key #ub { background: color-mix(in srgb, var(--surface) 70%, black); }
+  #ubg { position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--ok), 0 0 calc(var(--s) * 40) rgba(43,214,123,.4); opacity: 0; }
+  .is-key #ubg { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--ok); }
+  #dot { position: absolute; border-radius: 50%; background: var(--amb); }
+  #dring, #dring2 { position: absolute; border-radius: 50%; border: calc(var(--s) * 3) solid var(--ok); box-sizing: border-box; opacity: 0; }
+  #url { position: absolute; display: flex; align-items: center; font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: pre; }
+  #url .pr { color: color-mix(in srgb, var(--ink) 38%, transparent); }
+  #st { perspective: 600px; }
+  #st .in { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #st .f { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 10); border-radius: 99px; backface-visibility: hidden; font-weight: 750; font-size: calc(var(--s) * 32); white-space: nowrap; }
+  #st .f svg { width: calc(var(--s) * 28); height: calc(var(--s) * 28); flex: none; }
+  #st .w { color: var(--amb); background: rgba(245,184,61,.12); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(245,184,61,.4); }
+  #st .g { color: #04150B; background: linear-gradient(180deg, var(--okl), var(--ok) 60%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--s) * 8) calc(var(--s) * 26) rgba(43,214,123,.45); visibility: hidden; }
+  .is-key #st .g { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+  .is-key #st .w { background: color-mix(in srgb, var(--surface) 80%, #F5B83D 10%); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap">
+      <div id="glow"></div>
+      <div id="win">
+        <div id="ico" class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="var(--al)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18.5H6.2a4.2 4.2 0 0 1-.6-8.36A6 6 0 0 1 17.3 8.6a4.6 4.6 0 0 1 .5 9.9H17"/><path d="M12 20.5v-8M8.8 15.4 12 12.2l3.2 3.2"/></svg></div>
+        <div id="ttl" class="ab"></div>
+        <div id="env" class="ab"><i></i><span></span></div>
+        <div id="pv" class="ab"><div id="shot"></div><div id="scan"></div></div>
+        <div id="pipe" class="ab"></div>
+        <div id="ub" class="ab"><div id="ubg"></div><i id="dring"></i><i id="dring2"></i><i id="dot"></i><div id="url"></div>
+          <div id="st" class="ab"><div class="in">
+            <div class="f w"><span class="t0"></span></div>
+            <div class="f g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span class="t1"></span></div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q), $$ = (q) => [...document.querySelectorAll(q)];
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const steps = String(v.steps || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 3);
+  const times = String(v.times || "").split(",").map((x) => x.trim());
+  const NS_ = Math.max(1, steps.length);
+
+  // ---- zone and scale (an 820-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.07; zB = H * 0.9; }
+  const DW = 820, pad = 40, inner = DW - pad * 2;
+  const HY = 36, HH = 76;
+  const PVY = HY + HH + 26, PVH = 290;
+  const STY = PVY + PVH + 34, NODE = 58, STH = 150;
+  const UY = STY + STH + 18, UH = 100;
+  const DH = UY + UH + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+  const slug = (x) => String(x || "").toLowerCase().trim().replace(/[^a-z0-9._-]+/g, "-").replace(/^-|-$/g, "");
+
+  // ---- header
+  box($("#ico"), pad, HY, HH, HH);
+  const env = $("#env"); env.querySelector("span").textContent = v.env || ""; if (!v.env) env.style.display = "none";
+  env.style.height = S(56);
+  const envW = v.env ? env.getBoundingClientRect().width / s : 0;
+  box(env, DW - pad - envW, HY + (HH - 56) / 2);
+  const ttl = $("#ttl"); ttl.textContent = v.project || slug(v.brandName) || "my-app";
+  MV.fitText(ttl, (inner - HH - 22 - envW - 24) * s, 24 * s);
+  box(ttl, pad + HH + 22, HY + (HH - ttl.getBoundingClientRect().height / s) / 2);
+
+  // ---- preview: skeleton until it is live, then the brand screen wipes in
+  const pv = $("#pv"); box(pv, pad, PVY, inner, PVH);
+  const sk = [[28, 26, 180, 22], [inner - 28 - 300, 26, 300, 22], [28, 86, 420, 40], [28, 142, 300, 24], [28, 200, 190, 56], [inner - 28 - 250, 86, 250, 176]];
+  sk.forEach(([x, y, w, h]) => { const d = document.createElement("i"); d.className = "sk"; box(d, x, y, w, h); pv.insertBefore(d, $("#shot")); });
+  const scr = (v.screens || [])[Math.max(0, (+v.screen || 1) - 1)] || (v.screens || [])[0];
+  if (scr) $("#shot").appendChild(MV.img(scr));
+  gsap.set("#shot", { clipPath: "inset(0% 0% 100% 0%)" });
+  box($("#scan"), 0, 0, inner, 4);
+
+  // ---- pipeline: nodes joined by links, label and time under each
+  const pipe = $("#pipe"); box(pipe, pad, STY, inner, STH);
+  const colW = inner / NS_, cx = (i) => colW * (i + 0.5);
+  const NODE_SVG = `<svg viewBox="0 0 40 40"><circle class="rg0" cx="20" cy="20" r="15" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="4"/><circle class="rg" cx="20" cy="20" r="15" fill="none" stroke="rgba(245,184,61,.25)" stroke-width="4.5"/><circle class="sp" cx="20" cy="20" r="15" fill="none" stroke="var(--amb)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="30 200"/>
+    <g class="ok"><circle cx="20" cy="20" r="19.5" fill="var(--ok)"/><path d="M12 20.5l5.5 5.5L28.5 15" fill="none" stroke="#04150B" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></g></svg>`;
+  const links = [];
+  for (let i = 0; i < NS_ - 1; i++) { const l = document.createElement("div"); l.className = "lnk"; l.innerHTML = "<i></i>"; box(l, cx(i) + NODE / 2 + 12, NODE / 2 - 3, colW - NODE - 24, 6); pipe.appendChild(l); links.push(l.querySelector("i")); }
+  const nodes = steps.map((t, i) => {
+    const n = document.createElement("div"); n.className = "node"; n.innerHTML = NODE_SVG; box(n, cx(i) - NODE / 2, 0, NODE, NODE); pipe.appendChild(n);
+    const lb = document.createElement("div"); lb.className = "lb"; lb.textContent = t; pipe.appendChild(lb);
+    MV.fitText(lb, (colW - 16) * s, 22 * s); box(lb, cx(i) - colW / 2, NODE + 10, colW, 50);
+    const tm = document.createElement("div"); tm.className = "tm"; tm.textContent = times[i] || ""; pipe.appendChild(tm);
+    MV.fitText(tm, (colW - 16) * s, 20 * s); box(tm, cx(i) - colW / 2, NODE + 62, colW, 42);
+    return { n, lb, tm, rg0: n.querySelector(".rg0"), rg: n.querySelector(".rg"), sp: n.querySelector(".sp"), ok: n.querySelector(".ok"), tick: n.querySelector(".ok path") };
+  });
+
+  // ---- url bar
+  const ub = $("#ub"); box(ub, pad, UY, inner, UH);
+  const DOT = 22; box($("#dot"), 34, (UH - DOT) / 2, DOT, DOT);
+  ["#dring", "#dring2"].forEach((q) => box($(q), 34 - 11, (UH - DOT) / 2 - 11, DOT + 22, DOT + 22));
+  $(".t0").textContent = v.working || ""; $(".t1").textContent = v.live || "";
+  const stW = Math.max(...$$("#st .f").map((f) => { f.style.inset = "auto"; const w = f.getBoundingClientRect().width / s; f.style.inset = ""; return w; })) + 48;
+  box($("#st"), inner - 20 - stW, (UH - 60) / 2, stW, 60);
+  const host = String(v.url || v.domain || (slug(v.brandName) || "my-app") + ".app").replace(/^https?:\/\//, "").replace(/\/$/, "");
+  const url = $("#url"); url.innerHTML = `<span class="pr">https://</span><span class="h"></span>`; url.querySelector(".h").textContent = host;
+  MV.fitText(url, (inner - 34 - DOT - 30 - stW - 40) * s, 20 * s);
+  box(url, 34 + DOT + 30, 0, null, UH);
+
+  // ---- timing
+  const R = nodes.map((_, i) => 1.3 + i * 0.5), TLV = R[R.length - 1] + 0.32;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#ico", { scale: 0.4, rotation: -25, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: "back.out(2.2)" }, 0.2);
+  tl.fromTo(["#ttl", "#env"], { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.07 }, 0.26);
+  tl.fromTo("#pv", { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, 0.34);
+  tl.fromTo("#pv .sk", { opacity: 0, x: -14 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.04 }, 0.42);
+  tl.fromTo("#pv .sk", { "--shim": "-100%" }, { "--shim": "100%", duration: 0.9, ease: "power1.inOut", repeat: 2, immediateRender: false }, 0.5);
+  tl.fromTo(nodes.map((n) => n.n), { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.4)", stagger: 0.08 }, 0.5);
+  tl.fromTo(".lnk", { opacity: 0, scaleX: 0.3, transformOrigin: "0 50%" }, { opacity: 1, scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.08 }, 0.58);
+  tl.fromTo(nodes.map((n) => n.lb), { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", stagger: 0.08 }, 0.56);
+  tl.fromTo("#ub", { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.62);
+  tl.fromTo("#st", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, 0.76);
+  gsap.set(nodes.map((n) => n.tm), { opacity: 0 });
+  // the amber dot breathes while it runs
+  tl.fromTo("#dot", { scale: 1, opacity: 1 }, { scale: 0.7, opacity: 0.55, duration: 0.32, ease: "sine.inOut", yoyo: true, repeat: Math.max(1, 2 * Math.floor(Math.floor((TLV - 0.7) / 0.32) / 2) - 1) }, 0.7);
+  // each step spins, then lands green; the link fills to the next one
+  nodes.forEach((n, i) => {
+    const t0 = i === 0 ? 0.75 : R[i - 1] + 0.12;
+    tl.set([n.rg, n.sp], { opacity: 1 }, t0); tl.set(n.rg0, { opacity: 0 }, t0);
+    tl.fromTo(n.sp, { rotation: 0, svgOrigin: "20 20" }, { rotation: 360 * 1.6, svgOrigin: "20 20", duration: R[i] - t0, ease: "none", immediateRender: false }, t0);
+    tl.fromTo(n.n, { scale: 1 }, { scale: 1.12, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, t0);
+    tl.to([n.sp, n.rg], { opacity: 0, duration: 0.1, ease: "power2.in" }, R[i]);
+    tl.fromTo(n.ok, { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)", immediateRender: false }, R[i]);
+    tl.to(n.tick, { attr: { "stroke-dashoffset": 0 }, duration: 0.26, ease: "power2.out" }, R[i] + 0.08);
+    tl.fromTo(n.tm, { opacity: 0, y: -8 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out", immediateRender: false }, R[i] + 0.1);
+    if (links[i]) tl.to(links[i], { scaleX: 1, duration: 0.42, ease: "power2.inOut" }, R[i] - 0.02);
+  });
+  // LIVE: the dot goes green with rings, the bar outlines green, the status flips, the site wipes into the preview
+  tl.to("#dot", { backgroundColor: "#2BD67B", scale: 1.25, opacity: 1, duration: 0.14, ease: "power2.out" }, TLV);
+  tl.to("#dot", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TLV + 0.14);
+  tl.fromTo("#dring", { scale: 0.4, opacity: 1 }, { scale: 1.6, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TLV);
+  tl.fromTo("#dring2", { scale: 0.4, opacity: 0.8 }, { scale: 1.6, opacity: 0, duration: 0.9, ease: "expo.out", immediateRender: false }, TLV + 0.45);
+  tl.fromTo("#dring", { scale: 0.4, opacity: 0.7 }, { scale: 1.6, opacity: 0, duration: 0.9, ease: "expo.out", immediateRender: false }, TLV + 0.95);
+  tl.fromTo("#ubg", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" }, TLV);
+  tl.to("#url", { color: "var(--ink)", duration: 0.3, ease: "power2.out" }, TLV);
+  tl.to("#st .in", { rotationX: 90, duration: 0.14, ease: "power2.in" }, TLV - 0.1);
+  tl.set("#st .w", { visibility: "hidden" }, TLV + 0.04); tl.set("#st .g", { visibility: "visible" }, TLV + 0.04);
+  tl.fromTo("#st .in", { rotationX: -90 }, { rotationX: 0, duration: 0.55, ease: "back.out(2)", immediateRender: false }, TLV + 0.04);
+  tl.fromTo("#st", { scale: 1 }, { scale: 1.14, duration: 0.1, ease: "power2.out", immediateRender: false }, TLV + 0.02); tl.to("#st", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TLV + 0.12);
+  if (scr) {
+    tl.to("#shot", { clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "power2.inOut" }, TLV + 0.05);
+    tl.fromTo("#scan", { y: 0, opacity: 1 }, { y: PVH * s, duration: 0.7, ease: "power2.inOut", immediateRender: false }, TLV + 0.05);
+    tl.to("#scan", { opacity: 0, duration: 0.15 }, TLV + 0.72);
+    tl.fromTo("#shot img", { scale: 1.08 }, { scale: 1, duration: 1.6, ease: "expo.out", immediateRender: false }, TLV + 0.05);
+  }
+  box($("#glow"), pad, UY, inner, UH);
+  tl.fromTo("#glow", { opacity: 0 }, { opacity: 0.8, duration: 0.12, ease: "power2.out" }, TLV); tl.to("#glow", { opacity: 0.3, duration: 0.9, ease: "power2.out" }, TLV + 0.12);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TLV); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TLV + 0.07);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TLV + 0.1);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

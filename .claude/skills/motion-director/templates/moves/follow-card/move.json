@@ -1,0 +1,5 @@
+{ "id": "follow-card", "name": "Follow profile card", "oneLiner": "a glass profile card (banner, real face, name, handle, bio) turns in 3D while the follower count ticks up, the Follow button is pressed with a ring and morphs into Following with a check, a gradient ring draws round the face and the count bumps",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["follow", "subscribe", "profile", "creator", "cta", "end screen", "outro", "social", "followers", "account", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "at the end of a video, on 'follow for more' or 'hit follow': the button is pressed on the word follow, the ring draws as they say what is coming next" }

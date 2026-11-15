@@ -1,0 +1,5 @@
+{ "id": "form-signup", "name": "Signup form flip", "oneLiner": "a clean sign-up form card on a warm lit desk: the focus ring hops field to field as a name, an email and a password type in with small green ticks and a strength meter filling green, a pointer presses Create account, the button spins and the card flips over to the brand mark with a green check and a Welcome with the typed first name",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["signup", "sign up", "register", "account", "onboarding", "form", "conversion", "lead", "saas", "join", "welcome", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says how easy it is to join or how people sign up ('you just make an account', 'thirty seconds and you are in'): the fields fill as they explain, the card flips to the welcome on 'you are in' or 'done'" }

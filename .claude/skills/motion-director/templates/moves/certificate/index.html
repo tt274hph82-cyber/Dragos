@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"kind","type":"string","label":"Line under CERTIFICATE","default":"of completion"},
+  {"id":"name","type":"string","label":"Who it is awarded to, set in script (empty uses the brand name)","default":""},
+  {"id":"reason","type":"string","label":"What for (one short line)","default":"for shipping the first version"},
+  {"id":"heading","type":"string","label":"The big word at the top","default":"Certificate"},
+  {"id":"side","type":"string","label":"Overlay position on 9:16: top or bottom of the safe zone","default":"top"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Serif"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  @font-face { font-family: "MV Vibes"; src: url("assets/fonts/GreatVibes-latin.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #0d0c0c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: -6%; background: #121010 url(assets/leather.jpg) center / calc(var(--u) * 760); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 42%, rgba(255,226,190,.2), transparent 70%), radial-gradient(130% 100% at 50% 45%, transparent 38%, rgba(0,0,0,.7)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 50%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #cert { position: absolute; }
+  #cert-b { position: absolute; inset: 0; }
+  #fx { position: absolute; inset: 0; --lift: 1; filter: drop-shadow(0 calc(var(--u) * (2 + var(--lift) * 6)) calc(var(--u) * (3 + var(--lift) * 5)) rgba(0,0,0,.4)) drop-shadow(calc(var(--u) * (6 + var(--lift) * 14)) calc(var(--u) * (16 + var(--lift) * 30)) calc(var(--u) * (22 + var(--lift) * 20)) rgba(0,0,0,.5)); }
+  .is-key #fx { filter: drop-shadow(calc(var(--u) * 4) calc(var(--u) * 6) 0 #1a1414); }
+  /* the sheet: a real paper scan, warmed to a heavy cream stock */
+  #sheet { position: absolute; inset: 0; background: #efe4c8 url(assets/paper-white.jpg) center / calc(var(--u) * 700); background-blend-mode: multiply; }
+  #sheet::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(120,90,40,.16)), linear-gradient(160deg, rgba(255,250,235,.18), transparent 45%); pointer-events: none; }
+  #print { position: absolute; inset: 0; mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 260); }
+  #border { position: absolute; left: 0; top: 0; overflow: visible; }
+  .t { position: absolute; white-space: nowrap; line-height: 1; color: #231d16; }
+  .serif { font-family: "MV Serif", serif; }
+  .vibes { font-family: "MV Vibes", cursive; color: #1d2236; }
+  .rule { position: absolute; border-top: solid #4a3f33; }
+  /* the roll: the unread rest of the sheet, the same paper seen from behind, lit as a cylinder */
+  #roll { position: absolute; left: -1%; width: 102%; background: #e3d6b6 url(assets/paper-white.jpg) center / calc(var(--u) * 500); background-blend-mode: multiply; border-radius: calc(var(--u) * 6); }
+  #roll::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(rgba(60,40,15,.45), rgba(255,250,235,.25) 30%, rgba(255,250,235,.05) 48%, rgba(60,40,15,.28) 78%, rgba(30,20,8,.6)); }
+  /* the wax seal: a modelled wax pool rendered in grey, the brand colour multiplied through it, the brand mark pressed in */
+  #seal { position: absolute; isolation: isolate; }
+  #seal img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #seal .tint { position: absolute; inset: 0; background: var(--accent); mix-blend-mode: multiply; -webkit-mask: url(assets/seal-base.png) 0 0 / 100% 100%; mask: url(assets/seal-base.png) 0 0 / 100% 100%; }
+  #seal .em { position: absolute; -webkit-mask-size: contain; mask-size: contain; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; -webkit-mask-position: center; mask-position: center; }
+  #sealfx { position: absolute; --h: 0; filter: drop-shadow(calc(var(--u) * (2 + var(--h) * 40)) calc(var(--u) * (4 + var(--h) * 60)) calc(var(--u) * (4 + var(--h) * 16)) rgba(0,0,0,calc(.45 - var(--h) * .15))); }
+  .seal-letter { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: "MV Serif", serif; font-weight: 900; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="cert" style="visibility:hidden"><div class="boil" id="cert-b">
+      <div id="fx"><div id="sheet"><div id="print"><svg id="border"></svg></div></div><div id="roll"></div></div>
+      <div id="sealfx"><div id="seal"><img src="assets/seal-base.png" alt="" /><div class="tint"></div><img src="assets/seal-spec.png" alt="" /></div></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('900 80px "MV Serif"'), document.fonts.load('400 40px "MV Serif"'), document.fonts.load('80px "MV Vibes"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const $ = (id) => document.getElementById(id);
+  const el = (par, cls, txt) => { const d = document.createElement("div"); d.className = cls; if (txt != null) d.textContent = txt; par.appendChild(d); return d; };
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  const NS = "http://www.w3.org/2000/svg", svgEl = (par, tag, at) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); par.appendChild(e); return e; };
+
+  // ---- size: landscape stock on wide frames, portrait on 9:16; an overlay sits in the upper or lower safe area
+  const availW = W - safe.left - safe.right, availH = H - safe.top - safe.bottom;
+  const tall = MV.portrait && !MV.alpha;
+  let CW, CH, cx, cy;
+  if (tall) { CH = availH - 40 * u; CW = Math.min(availW * 0.94, CH * 0.8); cx = safe.left + availW / 2; cy = safe.top + availH / 2; }
+  else if (MV.portrait) { CW = availW * 0.96; CH = CW * 0.72; cx = safe.left + availW / 2; cy = v.side === "bottom" ? H - safe.bottom - CH / 2 - 30 * u : safe.top + CH / 2 + 40 * u; }
+  else { CH = Math.min(availH * (MV.alpha ? 0.7 : 0.86), (W > H ? 860 : 760) * u); CW = Math.min(CH * 1.36, availW * 0.9); cx = W / 2; cy = MV.alpha ? H - safe.bottom - CH / 2 - 20 * u : safe.top + availH / 2; }
+  const cert = $("cert"); Object.assign(cert.style, { width: CW + "px", height: CH + "px", left: (cx - CW / 2) + "px", top: (cy - CH / 2) + "px" });
+  const S = Math.min(CW, CH);
+
+  // ---- the engraved border: two rules and a band of interlaced waves, rosettes in the corners, printed in the brand colour
+  const bd = $("border"); bd.setAttribute("width", CW); bd.setAttribute("height", CH);
+  const ins = S * 0.045, bw = S * 0.05, col = "var(--accent)";
+  const rect = (o, sw) => svgEl(bd, "rect", { x: o, y: o, width: CW - o * 2, height: CH - o * 2, fill: "none", "stroke-width": sw, style: `stroke:${col}` });
+  rect(ins, Math.max(2, S * 0.006)); rect(ins + bw, Math.max(1.5, S * 0.003)); rect(ins + bw + S * 0.012, Math.max(1, S * 0.0018));
+  // the guilloche band: phase-shifted sine strands following the rectangle (between ins and ins+bw)
+  const mid = ins + bw / 2, amp = bw * 0.32, per = S * 0.05;
+  const L = [[mid, mid, CW - mid, mid], [CW - mid, mid, CW - mid, CH - mid], [CW - mid, CH - mid, mid, CH - mid], [mid, CH - mid, mid, mid]];
+  for (let k = 0; k < 5; k++) { let d = ""; const ph = k / 5 * Math.PI * 2;
+    for (const [x0, y0, x1, y1] of L) { const len = Math.hypot(x1 - x0, y1 - y0), n = Math.ceil(len / (per / 8)), ux = (x1 - x0) / len, uy = (y1 - y0) / len;
+      for (let i = 0; i <= n; i++) { const s = i / n * len, o = Math.sin(s / per * Math.PI * 2 + ph) * amp; const x = x0 + ux * s - uy * o, y = y0 + uy * s + ux * o; d += (d ? " L " : "M ") + x.toFixed(1) + " " + y.toFixed(1); } }
+    svgEl(bd, "path", { d, fill: "none", "stroke-width": Math.max(1, S * 0.0022), style: `stroke:${col}`, opacity: .85 }); }
+  // corner rosettes (rose curves)
+  for (const [x, y] of [[mid, mid], [CW - mid, mid], [mid, CH - mid], [CW - mid, CH - mid]]) { svgEl(bd, "circle", { cx: x, cy: y, r: bw * 0.62, style: "fill:#efe4c8" });
+    for (let k = 0; k < 3; k++) { let d = ""; const r0 = bw * (0.55 - k * 0.12); for (let i = 0; i <= 120; i++) { const a = i / 120 * Math.PI * 2, r = r0 * (0.55 + 0.45 * Math.cos(6 * a + k)); d += (i ? " L " : "M ") + (x + Math.cos(a) * r).toFixed(1) + " " + (y + Math.sin(a) * r).toFixed(1); }
+      svgEl(bd, "path", { d: d + " Z", fill: "none", "stroke-width": Math.max(1, S * 0.002), style: `stroke:${col}` }); } }
+
+  // ---- the type: heading, kind, "awarded to", the name in script on a rule, the reason, signature and date
+  const pr = $("print"), inner = CW - (ins + bw) * 2 - S * 0.12;
+  const ctr = (e, y) => { e.style.left = (CW / 2 - tw(e) / 2) + "px"; e.style.top = y + "px"; return e; };
+  const hd = el(pr, "t serif", (v.heading || "").toUpperCase()); hd.style.fontWeight = 900; hd.style.letterSpacing = ".12em"; hd.style.fontSize = (S * (tall ? 0.105 : 0.1)) + "px"; MV.fitText(hd, inner, 10 * u);
+  const kd = el(pr, "t serif", (v.kind || "").toUpperCase()); kd.style.fontWeight = 600; kd.style.letterSpacing = ".32em"; kd.style.fontSize = (S * 0.04) + "px"; MV.fitText(kd, inner, 8 * u);
+  const aw = el(pr, "t serif", "This is awarded to"); aw.style.fontSize = (S * 0.042) + "px"; aw.style.fontStyle = "italic"; aw.style.color = "#4a3f33";
+  const nm = el(pr, "t vibes", (v.name || v.brandName || "").trim()); nm.style.fontSize = (S * (tall ? 0.2 : 0.14)) + "px"; MV.fitText(nm, inner * 0.92, 10 * u);
+  const rs = el(pr, "t serif", v.reason || ""); rs.style.fontSize = (S * (tall ? 0.05 : 0.044)) + "px"; MV.fitText(rs, inner, 8 * u);
+  const hf = parseFloat(hd.style.fontSize), nf = parseFloat(nm.style.fontSize);
+  let y = ins + bw + S * (tall ? 0.1 : 0.075);
+  ctr(hd, y); y += hf * 1.05 + S * 0.02; ctr(kd, y); y += S * 0.04 + S * (tall ? 0.16 : 0.04);
+  ctr(aw, y); y += S * 0.042 + S * 0.03;
+  ctr(nm, y); const ny = y; y += nf * 1.05;
+  const rl = el(pr, "rule"); Object.assign(rl.style, { left: (CW / 2 - inner * 0.36) + "px", width: (inner * 0.72) + "px", top: y + "px", borderTopWidth: Math.max(1.5, S * 0.0025) + "px" });
+  y += S * 0.045; ctr(rs, y);
+  // signature (the brand name in a quick hand) and date, low on the sheet either side of the seal
+  const fy = CH - ins - bw - S * (tall ? 0.12 : 0.1);
+  const sgW = inner * (tall ? 0.28 : 0.26), sgx = CW / 2 - inner * 0.5, dtx = tall ? CW / 2 + inner * 0.22 : CW / 2 - inner * 0.14;
+  for (const [x, lab] of [[sgx, "Signed"], [dtx, "Date"]]) { const r = el(pr, "rule"); Object.assign(r.style, { left: x + "px", width: sgW + "px", top: fy + "px", borderTopWidth: Math.max(1, S * 0.002) + "px" });
+    const l = el(pr, "t serif", lab); l.style.fontSize = (S * 0.032) + "px"; l.style.color = "#5a4e40"; l.style.left = (x + sgW / 2 - tw(l) / 2) + "px"; l.style.top = (fy + S * 0.015) + "px"; }
+  const sig = el(pr, "t vibes", (v.brandName || "").trim()); sig.style.fontSize = (S * 0.06) + "px"; MV.fitText(sig, sgW * 0.95, 8 * u); sig.style.left = (sgx + sgW / 2 - tw(sig) / 2) + "px"; sig.style.top = (fy - parseFloat(sig.style.fontSize) * 0.95) + "px";
+  const dt = el(pr, "t vibes", "Today"); dt.style.fontSize = (S * 0.06) + "px"; dt.style.left = (dtx + sgW / 2 - tw(dt) / 2) + "px"; dt.style.top = (fy - S * 0.06 * 0.95) + "px";
+
+  // ---- the seal: centred between the signature and the date, overlapping the lower border
+  const SD = S * (tall ? 0.27 : 0.26);
+  const sfx = $("sealfx"), seal = $("seal");
+  const sealX = tall ? CW / 2 - SD / 2 : CW - ins - bw - SD * 0.95, sealY = tall ? fy - SD * 0.36 : CH - ins - bw - SD * 0.78;
+  Object.assign(sfx.style, { width: SD + "px", height: SD + "px", left: sealX + "px", top: sealY + "px" });
+  Object.assign(seal.style, { width: SD + "px", height: SD + "px" });
+  // the pressed mark: the brand mark (or its initial) as a mask, a dark lower edge and a light upper edge
+  const ini = ((v.brandName || "").trim().charAt(0) || "A").toUpperCase();
+  { const e = el(seal, "seal-letter", ini), o = Math.max(1, S * 0.003);
+    Object.assign(e.style, { color: "rgba(0,0,0,.16)", fontSize: (SD * 0.34) + "px", textShadow: `${o}px ${o}px ${o * 0.6}px rgba(0,0,0,.5), ${-o}px ${-o}px ${o * 0.6}px rgba(255,235,225,.4)` }); }
+
+  // ---- the roll
+  const roll = $("roll"), sheet = $("sheet");
+  const D0 = S * 0.11;
+  const setOpen = (p) => { const rev = Math.max(D0 * 0.5, CH * p), d = D0 * Math.sqrt(Math.max(0, 1 - p)) + S * 0.012 * (1 - p);
+    sheet.style.clipPath = `inset(0 0 ${Math.max(0, CH - rev)}px 0)`; Object.assign(roll.style, { top: (rev - d / 2) + "px", height: d + "px", opacity: p >= 0.999 ? 0 : 1 }); };
+  const st = { p: 0 }; setOpen(0);
+  // the seal is held back until it is pressed
+  gsap.set(sfx, { opacity: 0 });
+
+  // ---- timeline
+  // 0.08 the rolled certificate drops in (twos); 0.4 it unrolls down the frame; 1.25 the paper settles flat;
+  // 1.6 the wax seal is pressed on (the moment); slow push; overlay exits
+  tl.set(cert, { visibility: "visible" }, 0.08);
+  tl.fromTo(cert, { y: -CH * 0.5 - (cy - CH / 2) - 60 * u, rotation: -4 }, { y: 0, rotation: -1, duration: 0.33, ease: twos("expo.out", 0.33), immediateRender: true }, 0.08);
+  tl.to(st, { p: 1, duration: 0.85, ease: twos("power2.out", 0.85), onUpdate: () => setOpen(st.p) }, 0.4);
+  tl.fromTo("#fx", { "--lift": 1 }, { "--lift": 0, duration: 0.5, ease: twos("power2.out", 0.5), immediateRender: true }, 1.0);
+  const TS = 1.6;
+  tl.set(sfx, { opacity: 1 }, TS);
+  tl.fromTo(seal, { scale: 1.7, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.2, ease: twos("power3.in", 0.2), immediateRender: false }, TS);
+  tl.fromTo(sfx, { "--h": 1 }, { "--h": 0, duration: 0.2, ease: twos("power3.in", 0.2), immediateRender: true }, TS);
+  tl.to(seal, { scaleX: 1.06, scaleY: 0.95, duration: STEP, ease: "steps(1)" }, TS + 0.2); tl.to(seal, { scaleX: 1, scaleY: 1, duration: STEP * 2, ease: "steps(1)" }, TS + 0.2 + STEP);
+  tl.to("#cert-b", { y: 4 * u, duration: STEP, ease: "steps(1)" }, TS + 0.2); tl.to("#cert-b", { y: 0, duration: STEP, ease: "steps(1)" }, TS + 0.2 + STEP);
+  // boil (twos), camera push
+  const rb = MV.rand(9); for (let t = 0.5; t < D; t += STEP * 2) tl.set("#cert-b", { "--bx": `${((rb() - .5) * 1.6 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 1.6 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.2).toFixed(2)}deg` }, t);
+  if (!MV.alpha) tl.fromTo("#cam", { scale: 1 }, { scale: 1.06, duration: D, ease: "power1.inOut" }, 0);
+  if (MV.alpha) { const X = D - 0.42; tl.to(cert, { y: -(cy + CH), rotation: -5, duration: 0.38, ease: twos("power2.in", 0.38) }, X); tl.set(cert, { opacity: 0 }, D - 0.04); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

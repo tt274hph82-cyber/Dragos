@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Card title","default":"Realtime"},
+  {"id":"period","type":"string","label":"Period chip on the right","default":"Last 48 hours"},
+  {"id":"metric","type":"string","label":"What the big number counts","default":"Views"},
+  {"id":"total","type":"number","label":"The big number it lands on","default":48210},
+  {"id":"videos","type":"string","label":"Top content titles, separated by |","default":"The video that started it|Three tools I use daily|What I would do again"},
+  {"id":"counts","type":"string","label":"Their view counts, separated by commas","default":"18400,9100,4260"},
+  {"id":"heroFrom","type":"number","label":"Where the top row count starts before it ticks up","default":16900},
+  {"id":"delta","type":"string","label":"Green chip on the lifted row (empty: none)","default":"+1.5K"},
+  {"id":"ago","type":"string","label":"Left axis label","default":"48h ago"},
+  {"id":"now","type":"string","label":"Right axis label","default":"Now"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --ok: #2BD67B; --okl: #8BF0B8; --amb: #F5B83D; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #rip { position: absolute; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.65), rgba(255,255,255,0) 70%); opacity: 0; pointer-events: none; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+  #live { display: flex; align-items: center; gap: calc(var(--s) * 16); }
+  #live .dot { position: relative; width: calc(var(--s) * 20); height: calc(var(--s) * 20); flex: none; }
+  #live .dot i { position: absolute; inset: 0; border-radius: 50%; background: var(--ok); box-shadow: 0 0 calc(var(--s) * 14) var(--ok); }
+  #live .dot b { position: absolute; inset: 0; border-radius: 50%; border: calc(var(--s) * 3) solid var(--ok); }
+  #ttl { font-weight: 750; font-size: calc(var(--s) * 44); color: var(--ink); white-space: nowrap; letter-spacing: -0.01em; }
+  #per { display: flex; align-items: center; padding: 0 calc(var(--s) * 22); border-radius: 99px; font-weight: 600; font-size: calc(var(--s) * 32); white-space: nowrap;
+    color: color-mix(in srgb, var(--ink) 75%, transparent); background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.16); }
+  .is-key #per { background: color-mix(in srgb, var(--surface) 82%, white); }
+  #num { font-family: var(--font-display); font-size: calc(var(--s) * 124); line-height: 1; color: var(--ink); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; transform-origin: 0 70%; }
+  #met { font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; }
+  #chart { overflow: hidden; }
+  #bars { position: absolute; left: 0; top: 0; bottom: 0; display: flex; align-items: flex-end; }
+  #bars i { flex: none; display: block; height: 100%; transform-origin: 50% 100%; border-radius: calc(var(--s) * 5) calc(var(--s) * 5) calc(var(--s) * 2) calc(var(--s) * 2);
+    background: linear-gradient(180deg, var(--al), color-mix(in srgb, var(--accent) 70%, transparent)); }
+  #bars i.hot { background: linear-gradient(180deg, #fff, var(--al)); box-shadow: 0 0 calc(var(--s) * 18) var(--accent); }
+  .grid { position: absolute; left: 0; right: 0; height: calc(var(--s) * 1.5); background: rgba(255,255,255,.08); }
+  .ax { font-weight: 600; font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 48%, transparent); white-space: nowrap; }
+  #hr { background: rgba(255,255,255,.1); }
+  #top { font-weight: 700; font-size: calc(var(--s) * 30); letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 48%, transparent); white-space: nowrap; }
+  #cols { font-weight: 600; font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 48%, transparent); white-space: nowrap; text-align: right; }
+  .row { border-radius: calc(var(--s) * 24); transform-origin: 50% 50%; }
+  .row .hl { position: absolute; inset: 0; border-radius: inherit; opacity: 0;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 70%, white 18%), color-mix(in srgb, var(--surface) 90%, white 6%));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent) 60%, transparent),
+      0 calc(var(--s) * 30) calc(var(--s) * 60) calc(var(--s) * -16) rgba(0,0,0,.75), 0 0 calc(var(--s) * 50) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key .row .hl { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .row .rk { position: absolute; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 45%, transparent); }
+  .th { position: absolute; border-radius: calc(var(--s) * 14); overflow: hidden; background: #111; box-shadow: 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  .th .bgi { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; filter: brightness(.45) saturate(1.1); }
+  .th .tn { position: absolute; inset: 0; background: linear-gradient(100deg, color-mix(in srgb, var(--accent) 75%, #000), color-mix(in srgb, var(--accent) 30%, transparent) 60%, transparent); mix-blend-mode: multiply; }
+  .th .pp { position: absolute; left: 2%; bottom: -6%; height: 120%; filter: drop-shadow(0 0 calc(var(--s) * 1.5) #fff) drop-shadow(calc(var(--s) * 4) 0 calc(var(--s) * 8) rgba(0,0,0,.5)); }
+  .th .bar { position: absolute; left: 56%; top: 28%; width: 36%; height: 15%; border-radius: calc(var(--s) * 3); background: #fff; box-shadow: 0 calc(var(--s) * 15) 0 var(--accent); }
+  .row .nm { position: absolute; display: flex; align-items: center; font-weight: 650; font-size: calc(var(--s) * 36); color: var(--ink); white-space: nowrap; }
+  .row .ct { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-weight: 700; font-size: calc(var(--s) * 38); color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #dl { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 6); padding: 0 calc(var(--s) * 16); border-radius: 99px; opacity: 0; z-index: 5;
+    font-weight: 750; font-size: calc(var(--s) * 30); color: #04150B; white-space: nowrap;
+    background: linear-gradient(180deg, var(--okl), var(--ok) 60%); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 calc(var(--s) * 8) calc(var(--s) * 22) rgba(43,214,123,.4); }
+  .is-key #dl { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+  #dl svg { width: calc(var(--s) * 26); height: calc(var(--s) * 26); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="live" class="ab"><span class="dot"><b></b><i></i></span><span id="ttl"></span></div>
+      <div id="per" class="ab"></div>
+      <div id="num" class="ab"></div>
+      <div id="met" class="ab"></div>
+      <div id="chart" class="ab"><div class="grid" style="top:0"></div><div class="grid" style="top:50%"></div><div id="bars"></div></div>
+      <div id="ax0" class="ab ax"></div><div id="ax1" class="ab ax"></div>
+      <div id="hr" class="ab"></div>
+      <div id="top" class="ab">Top content</div>
+      <div id="rows" class="ab"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const titles = String(v.videos || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 3);
+  const counts = String(v.counts || "").split(",").map((x) => +String(x).replace(/[^\d.]/g, "") || 0);
+  const NR = Math.max(1, titles.length);
+
+  // ---- zone and scale (an 820-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.06; zB = H * 0.92; }
+  const DW = 820, pad = 40, inner = DW - pad * 2;
+  const HY = 36, HH = 60, NY = HY + HH + 26, NH = 124, MY = NY + NH + 8;
+  const CY = MY + 64, CHt = 190, AY = CY + CHt + 12;
+  const HRY = AY + 52, TY = HRY + 24, RY = TY + 56, RH = 104;
+  const DH = RY + NR * RH + 30;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- header
+  $("#ttl").textContent = v.title || "";
+  const per = $("#per"); per.textContent = v.period || ""; if (!per.textContent) per.style.display = "none";
+  per.style.height = S(HH);
+  const pw = per.textContent ? per.getBoundingClientRect().width / s : 0;
+  box(per, DW - pad - pw, HY);
+  box($("#live"), pad, HY, null, HH);
+  MV.fitText($("#ttl"), (inner - pw - 60) * s, 24 * s);
+  // ---- the big number
+  const tot = Math.round(+v.total || 0), fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const num = $("#num"); num.textContent = fmt(tot);
+  MV.fitText(num, inner * s, 40 * s);
+  box(num, pad, NY);
+  const met = $("#met"); met.textContent = v.metric || ""; box(met, pad + 4, MY); MV.fitText(met, inner * s, 22 * s);
+  // ---- the bar chart: a rising, noisy realtime series
+  box($("#chart"), pad, CY, inner, CHt);
+  const NB = 32, gap = 7, bw = (inner - gap * (NB - 1)) / NB, R = MV.rand(41);
+  const hts = []; for (let i = 0; i < NB + 1; i++) hts.push(Math.min(1, 0.2 + 0.55 * Math.pow(i / NB, 1.6) + R() * 0.24 + (i % 7 === 3 ? 0.12 : 0)));
+  hts[NB] = 0.98; hts[NB - 1] = Math.max(hts[NB - 1], 0.8);
+  const bars = $("#bars"); bars.style.gap = S(gap);
+  const bEls = hts.map((h, i) => { const b = document.createElement("i"); b.style.width = S(bw); bars.appendChild(b); return b; });
+  gsap.set(bEls, { scaleY: 0 });
+  box($("#ax0"), pad, AY); $("#ax0").textContent = v.ago || "";
+  const ax1 = $("#ax1"); ax1.textContent = v.now || ""; box(ax1, DW - pad - ax1.getBoundingClientRect().width / s, AY);
+  box($("#hr"), pad, HRY, inner, 1.5);
+  box($("#top"), pad, TY); MV.fitText($("#top"), inner * 0.6 * s, 18 * s);
+
+
+  // ---- rows
+  const rowsEl = $("#rows"); box(rowsEl, pad - 16, RY, inner + 32, NR * RH);
+  const scr = v.screens || [], ppl = v.people || [];
+  const TW = 150, THt = 84;
+  const ctW = 170;
+  const rows = titles.map((t, i) => {
+    const r = document.createElement("div"); r.className = "row ab"; box(r, 0, i * RH, inner + 32, RH - 10);
+    r.innerHTML = `<div class="hl"></div><div class="rk"></div><div class="th"><div class="tn"></div></div><div class="nm"></div><div class="ct"></div>`;
+    rowsEl.appendChild(r);
+    const rk = r.querySelector(".rk"); box(rk, 6, 0, 40, RH - 10); rk.textContent = i + 1;
+    const th = r.querySelector(".th"); box(th, 52, (RH - 10 - THt) / 2, TW, THt);
+    const sc = scr[i % Math.max(1, scr.length)]; if (sc) th.insertBefore(MV.img(sc, "bgi"), th.firstChild);
+    // the creator on every thumbnail (their first person), mirrored side to side, with a headline bar
+    const pp = ppl[0]; const b = document.createElement("i"); b.className = "bar"; th.appendChild(b);
+    if (pp) { const im = MV.img(pp, "pp"); th.appendChild(im); if (i % 2) { im.style.left = "auto"; im.style.right = "2%"; b.style.left = "8%"; } }
+    if (i === 0 && sc) b.style.display = "none";
+    th.querySelector(".tn").style.filter = `hue-rotate(${[0, 28, -24][i % 3]}deg)`;
+    const nm = r.querySelector(".nm"); nm.textContent = t; box(nm, 52 + TW + 24, 0, null, RH - 10);
+    MV.fitText(nm, (inner + 32 - (52 + TW + 24) - ctW - 30) * s, 24 * s);
+    const ct = r.querySelector(".ct"); box(ct, inner + 32 - 20 - ctW, 0, ctW, RH - 10); ct.textContent = fmt(counts[i] || 0);
+    return { r, hl: r.querySelector(".hl"), ct, nm };
+  });
+  // the green delta chip sits on the hero row, between title and count
+  const dl = document.createElement("div"); dl.id = "dl";
+  dl.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16l5.5-5.5 4 4L20 8"/><path d="M14 8h6v6"/></svg><span></span>`;
+  dl.querySelector("span").textContent = v.delta || "";
+  if (rows[0]) rows[0].r.appendChild(dl);
+  dl.style.height = S(46);
+  const dlw = dl.getBoundingClientRect().width / s;
+  if (!v.delta) dl.style.display = "none";
+  else box(dl, inner + 32 - 14 - dlw, -24);
+
+  // ---- timing
+  const D0 = 0.55, TB = 0.45, TK = 2.25, TL = 2.85;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#live", "#per"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.2);
+  tl.fromTo("#live .dot b", { scale: 1, opacity: 0.9 }, { scale: 2.6, opacity: 0, duration: 1.0, ease: "expo.out", repeat: Math.floor(D / 1.1), repeatDelay: 0.1 }, 0.3);
+  tl.fromTo(["#num", "#met"], { opacity: 0, y: 20 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out", stagger: 0.06 }, 0.3);
+  // the number races to just short of the total, the chart builds left to right
+  const o = { n: 0 }, pre = tot * 0.965;
+  tl.to(o, { n: pre, duration: 1.6, ease: "power3.out", onUpdate: () => { num.textContent = fmt(o.n); } }, 0.35);
+  bEls.slice(0, NB).forEach((b, i) => tl.to(b, { scaleY: hts[i], duration: 0.55, ease: "back.out(1.6)" }, TB + i * 0.035));
+  tl.fromTo(["#ax0", "#ax1"], { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, TB + 0.2);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.75);
+  tl.fromTo(["#top"], { opacity: 0, y: 10 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 0.85);
+  tl.fromTo(rows.map((r) => r.r), { opacity: 0, x: -30 * s }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out", stagger: 0.08 }, 0.95);
+  // the realtime tick: the series slides one bar left, a new hot bar grows in at Now, the number lands
+  tl.to(bars, { x: -(bw + gap) * s, duration: 0.5, ease: "power3.inOut" }, TK);
+  tl.to(bEls[0], { opacity: 0, duration: 0.3, ease: "power2.in" }, TK);
+  tl.set(bEls[NB], { className: "hot" }, TK);
+  tl.to(bEls[NB], { scaleY: hts[NB], duration: 0.6, ease: "back.out(2)" }, TK + 0.15);
+  tl.to(bEls[NB - 1], { opacity: 0.85, duration: 0.3 }, TK + 0.2);
+  tl.to(o, { n: tot, duration: 0.5, ease: "power2.out", onUpdate: () => { num.textContent = fmt(o.n); } }, TK + 0.15);
+  tl.to(num, { scale: 1.05, duration: 0.08, ease: "power2.out" }, TK + 0.62); tl.to(num, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TK + 0.7);
+  // the top row lifts out of the list, its count ticks up and the green chip pops
+  if (rows[0]) {
+    const hr = rows[0], to = counts[0] || 0, fr = Math.min(to, Math.round(+v.heroFrom || to * 0.9));
+    hr.ct.textContent = fmt(fr);
+    tl.fromTo(hr.r, { scale: 1, z: 0 }, { scale: 1.045, z: 40, duration: 0.6, ease: "back.out(2)", immediateRender: false }, TL);
+    tl.to(hr.hl, { opacity: 1, duration: 0.35, ease: "power2.out" }, TL);
+    tl.to(rows.slice(1).map((r) => r.r), { opacity: 0.55, duration: 0.5, ease: "power2.out" }, TL);
+    const k = { n: fr };
+    tl.to(k, { n: to, duration: 1.1, ease: "power2.out", onUpdate: () => { hr.ct.textContent = fmt(k.n); } }, TL + 0.1);
+    tl.to(hr.ct, { color: "var(--al)", duration: 0.3 }, TL + 0.1);
+    tl.fromTo(dl, { opacity: 0, scale: 0.4, y: 10 * s }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(2.6)" }, TL + 0.35);
+    tl.to("#stage", { scale: 1.012, duration: 0.07, ease: "power2.out" }, TL); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TL + 0.07);
+    tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TL + 0.05);
+  }
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

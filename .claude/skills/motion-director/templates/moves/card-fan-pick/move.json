@@ -1,0 +1,5 @@
+{ "id": "card-fan-pick", "name": "Card fan pick", "oneLiner": "3 to 6 glass stat cards (the brand's screens as thumbnails, metric rows) drop one by one onto a dark desk in 3D, each landing with a skid and a contact shadow; then one card is picked up off the desk, turns to face the viewer and lifts out lit in the accent with a label pill while the rest fall back",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["cards", "desk", "pick", "choose", "compare", "options", "the one", "winner", "candidates", "lay out", "selection", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker lays options side by side and picks one (\"lay them all out and one is obvious\", \"I tested five of these and kept this one\"): cut in on the first option; the pick lifts on the word that names the winner. tone green when it is the proven winner" }

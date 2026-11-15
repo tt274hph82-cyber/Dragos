@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"screen","type":"string","label":"The screenshot or recording still (path; empty: the first brand screen)","default":""},
+  {"id":"face","type":"string","label":"Facecam image (path; empty: the first brand person; none: no facecam)","default":""},
+  {"id":"title","type":"string","label":"Text in the window bar (empty: the brand domain)","default":""},
+  {"id":"rect","type":"string","label":"Focus box on the screen in %: x,y,w,h (empty: no box)","default":"20,13.6,77,14.4"},
+  {"id":"pins","type":"string","label":"Callout pins in % of the screen, x,y,label separated by ; (up to 3)","default":"23,35.5,Decisions;61.5,35.5,Owners"},
+  {"id":"push","type":"number","label":"Push-in toward the box, % (0 to 10)","default":8},
+  {"id":"layout","type":"string","label":"9:16 only: full or top (window in the upper ~45%, speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* the backdrop: the brand's two colours as a lit gradient, slow light moving over it */
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 85% 8%, color-mix(in srgb, var(--accent) 85%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 8% 95%, color-mix(in srgb, var(--accent2) 90%, transparent), transparent 72%),
+    radial-gradient(50% 40% at 15% 15%, color-mix(in srgb, var(--accent2) 45%, transparent), transparent 70%),
+    linear-gradient(150deg, color-mix(in srgb, var(--accent2) 45%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 40%, var(--ground))); }
+  #bd2 { position: absolute; width: 70%; height: 50%; left: 30%; top: 30%; border-radius: 50%; filter: blur(calc(var(--u) * 120)); background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #win { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 26); overflow: hidden; transform-style: preserve-3d; background: #1b1a20;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.18), 0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(0,0,0,.75),
+      0 calc(var(--u) * 30) calc(var(--u) * 160) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  #bar { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: 0 calc(var(--u) * 22); box-sizing: border-box;
+    background: linear-gradient(180deg, #2a2930, #212027); border-bottom: calc(var(--u) * 1) solid rgba(255,255,255,.08); }
+  #bar i { width: calc(var(--u) * 16); height: calc(var(--u) * 16); border-radius: 50%; background: rgba(255,255,255,.22); flex: none; }
+  #bar .url { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: calc(var(--u) * 6) calc(var(--u) * 26); border-radius: calc(var(--u) * 10);
+    background: rgba(255,255,255,.07); font-size: calc(var(--u) * 23); font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #scr { position: relative; overflow: hidden; }
+  #cam { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; }
+  #cam img.s { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  #win .sh { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.28) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  /* the focus box: everything outside dims, the box is a lit rounded frame */
+  #focus { position: absolute; border-radius: calc(var(--u) * 14); opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 4) var(--accent), 0 0 calc(var(--u) * 26) calc(var(--u) * 4) color-mix(in srgb, var(--accent) 55%, transparent), 0 0 0 9999px rgba(8,6,12,var(--dim, 0)); }
+  #fring { position: absolute; border-radius: calc(var(--u) * 18); border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 60%, #fff); opacity: 0; pointer-events: none; }
+
+  /* callouts */
+  #ann { position: absolute; inset: 0; pointer-events: none; }
+  #lines { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+  #lines path { fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 2px rgba(0,0,0,.6)); }
+  .pin { position: absolute; transform-origin: 50% 50%; border-radius: 50%; background: var(--accent); box-sizing: border-box; border: calc(var(--u) * 4) solid #fff;
+    box-shadow: 0 0 0 calc(var(--u) * 6) color-mix(in srgb, var(--accent) 35%, transparent), 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.4); }
+  .pill { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: calc(var(--u) * 10) calc(var(--u) * 22) calc(var(--u) * 10) calc(var(--u) * 16);
+    border-radius: 999px; background: linear-gradient(160deg, #2d2b33, #18171c); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 80%, transparent), 0 calc(var(--u) * 14) calc(var(--u) * 26) calc(var(--u) * -8) rgba(0,0,0,.6);
+    font-weight: 750; color: #fff; white-space: nowrap; transform-origin: 0 50%; }
+  .pill b { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--accent); flex: none; box-shadow: 0 0 calc(var(--u) * 10) var(--accent); }
+
+  /* the facecam tile */
+  #face { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 40); overflow: hidden; box-sizing: border-box;
+    background: radial-gradient(80% 70% at 50% 30%, color-mix(in srgb, var(--accent) 70%, #fff 10%), color-mix(in srgb, var(--accent2) 80%, #000) 90%);
+    box-shadow: 0 0 0 calc(var(--u) * 6) rgba(255,255,255,.9), 0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  #face img { position: absolute; left: 50%; bottom: -6%; height: 108%; transform: translateX(-50%); }
+  #face .rim { position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 calc(var(--u) * -60) calc(var(--u) * 60) calc(var(--u) * -40) rgba(0,0,0,.4); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div><div id="bd2"></div>
+  <div id="stage">
+    <div id="win"><div id="bar"><i></i><i></i><i></i><span class="url"></span></div>
+      <div id="scr"><div id="cam"><div id="focus"></div><div id="fring"></div></div><div id="ann"><svg id="lines"></svg></div></div><div class="sh"></div></div>
+    <div id="face"><div class="rim"></div></div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, P = MV.portrait, TOP = P && String(v.layout || "").toLowerCase() === "top", u = MV.u;
+  const scrSrc = v.screen || (v.screens || [])[0];
+  const faceSrc = String(v.face || "").toLowerCase() === "none" || TOP ? null : (v.face || (v.people || [])[0]);
+  const num = (s) => String(s || "").split(",").map((x) => parseFloat(x));
+  const R = num(v.rect), hasRect = R.length === 4 && R.every(isFinite) && R[2] > 0 && R[3] > 0;
+  const pins = String(v.pins || "").split(";").map((s) => s.split(",")).filter((p) => p.length >= 3 && isFinite(+p[0]) && isFinite(+p[1]))
+    .slice(0, 3).map((p) => ({ x: +p[0], y: +p[1], label: p.slice(2).join(",").trim() }));
+  const push = Math.max(0, Math.min(10, +v.push || 0)) / 100;
+
+  // ---- the window: as big as the zone allows at the screen's own aspect
+  const ASP = 1440 / 900;                                 // corrected below once the image reports its size
+  const BAR = 54 * u;
+  let zx, zy, zw, zh;
+  if (TOP) { zx = 60 * W / 1080; zw = W - 2 * zx; zy = safe.top; zh = H * 0.47 - safe.top; }
+  else if (P) { zx = 40 * u; zw = W - 80 * u; zy = safe.top; zh = H - safe.top - safe.bottom; }
+  else { zx = W * 0.07; zw = W * 0.86; zy = H * 0.08; zh = H * 0.84; }
+  const faceS = faceSrc ? (P ? 300 : W > H ? 260 : 240) * u : 0;
+  // 9:16: the facecam sits under the window's lower-left corner, overlapping it a little
+  const faceBelow = P && faceSrc ? faceS - 70 * u : 0;
+  let ww = zw, wh = ww / ASP + BAR;
+  if (wh > zh - faceBelow) { wh = zh - faceBelow; ww = (wh - BAR) * ASP; }
+  const wx = zx + (zw - ww) / 2, wy = zy + (zh - faceBelow - wh) / 2;
+  const win = $("#win"), scr = $("#scr"), cam = $("#cam"), bar = $("#bar");
+  Object.assign(win.style, { width: ww + "px", height: wh + "px" });
+  bar.style.height = BAR + "px";
+  const SW = ww, SH = wh - BAR;
+  Object.assign(scr.style, { width: SW + "px", height: SH + "px" });
+  if (scrSrc) { const im = MV.img(scrSrc, "s"); cam.insertBefore(im, cam.firstChild); }
+  $("#bar .url").textContent = v.title || v.domain || "";
+  if (!(v.title || v.domain)) $("#bar .url").style.display = "none";
+  gsap.set(win, { x: wx, y: wy, transformOrigin: "50% 50%" });
+
+  // ---- the facecam
+  const face = $("#face");
+  if (faceSrc) {
+    face.appendChild(MV.img(faceSrc)); face.appendChild(face.querySelector(".rim"));
+    let fx, fy;
+    if (P) { fx = wx - 10 * u; fy = wy + wh - 70 * u; }
+    else if (W > H) { fx = wx + ww - faceS + 40 * u; fy = wy + wh - faceS + 50 * u; }
+    else { fx = wx - 20 * u; fy = wy + wh - faceS + 40 * u; }
+    fx = Math.max(fx, P ? safe.left - 30 * u : 30 * u);
+    Object.assign(face.style, { width: faceS + "px", height: faceS + "px" });
+    gsap.set(face, { x: fx, y: fy });
+  } else face.style.display = "none";
+
+  // ---- the focus box lives on the screen's camera layer (it scales with the push); the callouts sit on an unscaled layer above
+  // and track their points, so a pill never grows or slides out of the window
+  const fx = (p) => (p / 100) * SW, fy = (q) => (q / 100) * SH;
+  const focus = $("#focus"), fring = $("#fring");
+  let fcx = SW / 2, fcy = SH / 2;
+  if (hasRect) {
+    const pad = 6 * u, b = { left: fx(R[0]) - pad, top: fy(R[1]) - pad, width: fx(R[2]) + 2 * pad, height: fy(R[3]) + 2 * pad };
+    for (const k in b) focus.style[k] = fring.style[k] = b[k] + "px";
+    fcx = b.left + b.width / 2; fcy = b.top + b.height / 2;
+  } else { focus.style.display = fring.style.display = "none"; }
+  // the push origin: the box's centre, moved only as far as needed to keep the whole box inside the screen at the deepest push
+  if (hasRect && push > 0) {
+    const sm = 1 + push * 1.25, m = 14 * u, bl = fx(R[0]) - 6 * u, br = fx(R[0] + R[2]) + 6 * u, bt = fy(R[1]) - 6 * u, bb = fy(R[1] + R[3]) + 6 * u;
+    const lo = (r, lim) => (r * sm - lim) / (sm - 1), hi = (l, lim) => (l * sm - lim) / (sm - 1);
+    const ox = [lo(br, SW - m), hi(bl, m)], oy = [lo(bb, SH - m), hi(bt, m)];
+    if (ox[0] <= ox[1]) fcx = Math.min(ox[1], Math.max(ox[0], fcx));
+    if (oy[0] <= oy[1]) fcy = Math.min(oy[1], Math.max(oy[0], fcy));
+  }
+  const ann = $("#ann"), svg = $("#lines"), NS = "http://www.w3.org/2000/svg";
+  svg.setAttribute("viewBox", `0 0 ${SW} ${SH}`); svg.setAttribute("width", SW); svg.setAttribute("height", SH);
+  const PIN = 28 * u, PFS = (P && !TOP ? 32 : 28) * u, MARG = 18 * u, LEAD = 120 * u;
+  // the right edge text may reach: the window, and on 9:16 the platform's right rail
+  // (the 9:16 right rail only covers the lower half of the frame, so a window in the upper half may run under it)
+  const XMAX = Math.min(SW - MARG, P && !TOP && wy + wh > H * 0.55 ? W - safe.right - wx : SW - MARG);
+  const S1 = 1 + push * 1.25;
+  const PS = pins.map((p) => {
+    const el = document.createElement("div"); el.className = "pill"; el.style.fontSize = PFS + "px"; el.innerHTML = "<b></b><span></span>"; $("span", el).textContent = p.label; ann.appendChild(el);
+    MV.fitText($("span", el), SW * 0.4, 14);
+    const pw = el.getBoundingClientRect().width, ph = el.getBoundingClientRect().height;
+    const dot = document.createElement("div"); dot.className = "pin"; Object.assign(dot.style, { width: PIN + "px", height: PIN + "px", left: -PIN / 2 + "px", top: -PIN / 2 + "px" }); ann.appendChild(dot);
+    const path = document.createElementNS(NS, "path"); path.setAttribute("stroke-width", 4 * u); path.setAttribute("pathLength", "1");
+    path.style.strokeDasharray = "1 1"; path.style.strokeDashoffset = "1"; svg.appendChild(path);
+    const X1 = fcx + (fx(p.x) - fcx) * S1;
+    // the pill goes right of its point unless the point's final place leaves no room there
+    const side = X1 + LEAD + pw > XMAX ? -1 : 1;
+    return { ...p, el, dot, path, pw, ph, side };
+  });
+  const placeAnn = (sc) => {
+    PS.forEach((p) => { p.X = fcx + (fx(p.x) - fcx) * sc; p.Y = fcy + (fy(p.y) - fcy) * sc;
+      p.lx = p.side > 0 ? Math.min(XMAX - p.pw, p.X + LEAD) : Math.max(MARG, p.X - LEAD - p.pw); p.ly = p.Y - p.ph / 2; });
+    const byY = PS.slice().sort((a, b) => a.ly - b.ly);
+    for (let i = 1; i < byY.length; i++) for (let j = 0; j < i; j++) { const a = byY[j], b = byY[i];
+      const ov = Math.min(a.lx + a.pw, b.lx + b.pw) - Math.max(a.lx, b.lx); if (ov > -10 * u && b.ly < a.ly + a.ph + 12 * u && b.ly + b.ph > a.ly - 12 * u) b.ly = a.ly + a.ph + 12 * u; }
+    PS.forEach((p) => {
+      p.ly = Math.max(MARG, Math.min(SH - MARG - p.ph, p.ly));
+      p.dot.style.transform = `translate(${p.X}px, ${p.Y}px) scale(${p.ds == null ? 1 : p.ds})`;
+      p.el.style.left = p.lx + "px"; p.el.style.top = p.ly + "px";
+      const ex = p.side > 0 ? p.lx - 2 * u : p.lx + p.pw + 2 * u, ey = p.ly + p.ph / 2, kx = ex - p.side * Math.min(28 * u, Math.abs(ex - p.X) * 0.4);
+      p.path.setAttribute("d", `M ${p.X} ${p.Y} L ${kx} ${p.Y} L ${ex} ${ey}`);
+    });
+  };
+
+  // ---- the camera over the backdrop: slow light, slow 3D drift on the window
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.05, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#bd2", { x: 0, y: 0 }, { x: -W * 0.25, y: H * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + ww / 2}px ${wy + wh / 2}px` });
+  // the window rises in, tipped back, out of focus, and lands on a long tail
+  tl.fromTo(win, { y: wy + 160 * u, rotationX: 24, rotationY: P ? -10 : -14, scale: 0.9 }, { y: wy, rotationX: 7, rotationY: P ? -6 : -8, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo(win, { opacity: 0, filter: "blur(16px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.02);
+  tl.to(win, { rotationX: 2, rotationY: P ? 5 : 7, duration: D - 1.02, ease: "sine.inOut" }, 1.02);
+  tl.fromTo(win, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.4);
+  if (faceSrc) {
+    tl.fromTo(face, { scale: 0.5, rotation: -10, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: "back.out(1.8)" }, 0.4);
+    tl.fromTo(face, { y: "+=0" }, { y: "-=" + 10 * u, duration: D - 1.1, ease: "sine.inOut" }, 1.1);
+  }
+
+  // ---- the focus: the box snaps on in a few frames, everything else dims, the camera pushes in toward it
+  const F0 = 1.05;
+  if (hasRect) {
+    tl.fromTo(focus, { opacity: 0, scale: 1.18 }, { opacity: 1, scale: 1, duration: 0.16, ease: "power3.out" }, F0);
+    tl.fromTo(focus, { "--dim": 0 }, { "--dim": 0.4, duration: 0.3, ease: "power2.out" }, F0);
+    tl.fromTo(fring, { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.12, duration: 0.6, ease: "expo.out", immediateRender: false }, F0 + 0.14);
+  }
+  // the push lands in 0.15s, then keeps creeping in under the callouts; one driver over the whole shot, so any seek is exact
+  const F1 = F0 + 0.02, F2 = F1 + 0.15, F3 = D - 0.45, e2 = gsap.parseEase("power2.out"), es = gsap.parseEase("sine.inOut");
+  const scaleAt = (t) => t <= F1 ? 1 : t <= F2 ? 1 + push * e2((t - F1) / (F2 - F1)) : 1 + push + push * 0.25 * es(Math.min(1, (t - F2) / (F3 - F2)));
+  gsap.set(cam, { transformOrigin: `${fcx}px ${fcy}px` });
+  const clock = { t: 0 };
+  const drive = () => { const sc = scaleAt(clock.t); cam.style.transform = `scale(${sc})`; placeAnn(sc); };
+  drive();
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: drive }, 0);
+
+  // ---- the callouts: a dot pops, its leader draws, the pill lands at the end of it
+  const C0 = F0 + 0.45, CG = Math.min(0.3, 1.2 / Math.max(1, PS.length));
+  PS.forEach((p, i) => {
+    const t = C0 + i * CG;
+    p.ds = 0;
+    tl.fromTo(p, { ds: 0 }, { ds: 1, duration: 0.35, ease: "back.out(3)", onUpdate: drive }, t);
+    tl.fromTo(p.path, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.24, ease: "power2.out" }, t + 0.06);
+    tl.fromTo(p.el, { scale: 0.5, opacity: 0, transformOrigin: p.side > 0 ? "0 50%" : "100% 50%" }, { scale: 1, opacity: 1, duration: 0.42, ease: "back.out(2.2)" }, t + 0.24);
+  });
+  MV.done();
+</script>
+</body>
+</html>

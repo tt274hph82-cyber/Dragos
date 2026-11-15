@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"kicker","type":"string","label":"The small line over the name","default":"Take something as simple as"},
+  {"id":"name","type":"string","label":"What the product is","default":"a light bulb"},
+  {"id":"value","type":"string","label":"The number it grew into (counts up from zero)","default":"$4,200,000"},
+  {"id":"valueLabel","type":"string","label":"A short label under the number (empty = none)","default":"a year in sales"},
+  {"id":"image","type":"string","label":"Your own product cut-out (a transparent PNG under assets/brand/); empty = the bundled light bulb, which switches on","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --warm: #FFC66B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 0%; background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 54%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 90%; height: 60%; left: 5%; top: 10%; background: color-mix(in srgb, var(--warm) 40%, transparent); opacity: 0; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #prod { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #ring { position: absolute; overflow: visible; }
+  #bulb { position: absolute; }
+  #bulb img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  #lit { position: absolute; inset: 0; opacity: 0; mix-blend-mode: screen;
+    -webkit-mask: url(assets/bulb-mask.png) 0 0 / 100% 100%; mask: url(assets/bulb-mask.png) 0 0 / 100% 100%;
+    background: radial-gradient(46% 34% at 46% 36%, #fff 0%, #FFE2A8 20%, var(--warm) 48%, color-mix(in srgb, var(--warm) 55%, #7a3a00) 80%, rgba(122,58,0,0) 108%); }
+  #core { position: absolute; border-radius: 50%; opacity: 0; background: radial-gradient(50% 50% at 50% 50%, #fff, #FFE9B8 30%, rgba(255,198,107,.0) 70%); mix-blend-mode: screen; }
+  #bloom { position: absolute; border-radius: 50%; opacity: 0; background: radial-gradient(50% 50% at 50% 50%, rgba(255,214,140,.75), rgba(255,180,80,.25) 40%, transparent 70%); }
+  #cshadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.6), transparent 70%); }
+  .is-key #bloom, .is-key #cshadow { display: none; }
+  #txt { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  #kick, #name { position: absolute; white-space: nowrap; line-height: 1; }
+  #kick { font-weight: 600; color: color-mix(in srgb, var(--ink) 70%, transparent); letter-spacing: .01em; }
+  #name { font-family: var(--font-display); color: var(--ink); letter-spacing: -0.02em; }
+  .is-alpha #kick, .is-alpha #name, .is-alpha #plab { color: #fff; text-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 14) rgba(0,0,0,.8); }
+  .is-key #kick, .is-key #name, .is-key #plab { text-shadow: none; }
+  #lead { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+  #pill { position: absolute; white-space: nowrap; border-radius: 999px; box-sizing: border-box; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 82%, white), var(--accent) 55%, color-mix(in srgb, var(--accent) 80%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 calc(var(--u) * -3) calc(var(--u) * 6) rgba(0,0,0,.25), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 50%, white), 0 calc(var(--u) * 24) calc(var(--u) * 60) color-mix(in srgb, var(--accent) 45%, transparent), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.4); }
+  .is-key #pill { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--accent) 50%, white); }
+  #pv { font-family: var(--font-display); color: #fff; line-height: 1; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 6) rgba(0,0,0,.25); }
+  #plab { position: absolute; white-space: nowrap; line-height: 1; font-weight: 600; color: color-mix(in srgb, var(--ink) 70%, transparent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig">
+    <svg id="lead"></svg>
+    <div id="prod"><div id="bloom"></div><div id="cshadow"></div><svg id="ring"></svg><div id="bulb"><div id="lit"></div><div id="core"></div></div></div>
+    <div id="txt"><div id="kick"></div><div id="name"></div></div>
+    <div id="pill"><span id="pv"></span></div>
+    <div id="plab"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration;
+  const P = MV.portrait, SQ = W === H, A = MV.alpha, KEY = root.classList.contains("is-key"), NS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+  const custom = String(v.image || "").trim();
+  // ---- the product: the bundled render (532 x 879) or the user's cut-out
+  const bulb = $("bulb"), im = MV.img(custom || "assets/bulb-off.png"); bulb.prepend(im);
+  const IA = custom ? null : 532 / 879; // aspect; a custom image is measured once loaded (rendering waits for images)
+  const aspect = IA || (im.naturalWidth && im.naturalHeight ? im.naturalWidth / im.naturalHeight : 0.7);
+  if (custom) { $("lit").style.display = "none"; $("core").style.display = "none"; }
+  // ---- the number
+  const val = String(v.value || "").trim(), vm = val.match(/^([^\d]*)([\d][\d,]*(?:\.\d+)?)(.*)$/);
+  const vnum = vm ? parseFloat(vm[2].replace(/,/g, "")) : 0, vdec = vm ? (vm[2].split(".")[1] || "").length : 0, vcomma = vm ? vm[2].includes(",") : false;
+  const fmtV = (x) => !vm ? val : vm[1] + (vcomma ? x.toLocaleString("en-US", { minimumFractionDigits: vdec, maximumFractionDigits: vdec }) : x.toFixed(vdec)) + vm[3];
+  // ---- text
+  const kick = $("kick"), name = $("name"), pill = $("pill"), pv = $("pv"), plab = $("plab");
+  kick.textContent = v.kicker || ""; name.textContent = v.name || ""; plab.textContent = v.valueLabel || "";
+  const kw = MV.words(kick);
+  // ---- layout. STACK: product centred, text under; then it all rises and the number lands under it.
+  // SIDE: product left, text right; then the text rises and the number lands under it.
+  let box;
+  if (!A) box = P ? { x: safe.left, y: safe.top, w: W - safe.left - safe.right, h: H - safe.top - safe.bottom } : SQ ? { x: W * 0.07, y: H * 0.08, w: W * 0.86, h: H * 0.84 } : { x: W * 0.07, y: H * 0.1, w: W * 0.86, h: H * 0.8 };
+  else box = P ? { x: safe.left, y: safe.top, w: W - safe.left - safe.right, h: H * 0.42 - safe.top } : SQ ? { x: W * 0.05, y: H * 0.05, w: W * 0.9, h: H * 0.44 } : { x: W * 0.45, y: H * 0.1, w: W * 0.5, h: H * 0.62 };
+  const STACK = !A && (P || SQ);
+  const KF = Math.round((STACK ? (P ? 38 : 34) : A ? 26 : 36) * u), NFs = Math.round((STACK ? (P ? 96 : 84) : A ? 60 : 92) * u), VF = Math.round((STACK ? (P ? 84 : 72) : A ? 52 : 86) * u), LF = Math.round((STACK ? 32 : A ? 24 : 32) * u);
+  kick.style.fontSize = KF + "px"; name.style.fontSize = NFs + "px"; pv.style.fontSize = VF + "px"; plab.style.fontSize = LF + "px";
+  pv.textContent = fmtV(vnum);
+  const rw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  // ring geometry relative to the product box (h = product height): centre at 42% down, radius 56% of h
+  const RC = 0.44, RR = 0.56;
+  const textH = KF + 16 * u + NFs, pillH = VF * 1.55, labH = v.valueLabel ? LF + 18 * u : 0;
+  let S0, S1; // states: {px, py, ph (product), tx, ty, align}
+  if (STACK) {
+    const colW = box.w * 0.94; MV.fitText(name, colW, 20); MV.fitText(kick, colW, 14); MV.fitText(pv, colW - VF * 1.2, 20); MV.fitText(plab, colW, 14);
+    // A: product + text centred. B: product smaller, everything up, pill + label under.
+    const gap = 40 * u;
+    let ph = Math.min((box.h - textH - gap) / (2 * RR * 1.02 + 0.0), box.w / (2 * RR * 1.04));
+    const hA = ph * 2 * RR + gap + textH, yA = box.y + (box.h - hA) / 2;
+    S0 = { ph, cx: box.x + box.w / 2, top: yA + ph * RR, ty: yA + ph * 2 * RR + gap };
+    let ph1 = Math.min(ph * 0.78, (box.h - textH - pillH - labH - 3 * gap * 0.8) / (2 * RR));
+    const hB = ph1 * 2 * RR + gap * 0.8 + textH + gap * 1.2 + pillH + labH, yB = box.y + (box.h - hB) / 2;
+    S1 = { ph: ph1, cx: box.x + box.w / 2, top: yB + ph1 * RR, ty: yB + ph1 * 2 * RR + gap * 0.8, py: yB + ph1 * 2 * RR + gap * 0.8 + textH + gap * 1.2 };
+  } else {
+    const gap = (A ? 36 : 70) * u;
+    let ph = Math.min(box.h / (2 * RR * 1.04), box.w * 0.46 / (2 * RR));
+    const ringW = ph * 2 * RR, colX = box.x + ringW + gap, colW = box.x + box.w - colX;
+    MV.fitText(name, colW, 18); MV.fitText(kick, colW, 12); MV.fitText(pv, colW - VF * 1.2, 18); MV.fitText(plab, colW, 12);
+    const cy = box.y + box.h / 2;
+    S0 = { ph, cx: box.x + ringW / 2, top: cy, tx: colX, ty: cy - textH / 2 };
+    const colH = textH + gap * 0.7 + pillH + labH;
+    S1 = { ph, cx: S0.cx, top: S0.top, tx: colX, ty: cy - colH / 2, px: colX, py: cy - colH / 2 + textH + gap * 0.7 };
+  }
+  // the product block at its full (state A) size; state B scales it
+  const prod = $("prod"), PH = S0.ph, PW = PH * aspect, R = PH * RR;
+  Object.assign(bulb.style, { width: PW + "px", height: PH + "px", left: -PW / 2 + "px", top: -PH * RC + "px" });
+  const ring = $("ring"); Object.assign(ring.style, { left: -R - 30 * u + "px", top: -R - 30 * u + "px", width: 2 * R + 60 * u + "px", height: 2 * R + 60 * u + "px" });
+  ring.setAttribute("viewBox", `${-R - 30 * u} ${-R - 30 * u} ${2 * R + 60 * u} ${2 * R + 60 * u}`);
+  const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const kk in a) e.setAttribute(kk, a[kk]); p.append(e); return e; };
+  const rdefs = el("defs", {}, ring); rdefs.innerHTML = `<filter id="rg" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${10 * u}"/></filter>`;
+  el("circle", { cx: 0, cy: 0, r: R, fill: "none", stroke: "rgba(255,255,255,.08)", "stroke-width": 18 * u }, ring);
+  const rglow = el("circle", { cx: 0, cy: 0, r: R, fill: "none", stroke: "var(--accent)", "stroke-width": 22 * u, filter: "url(#rg)", opacity: KEY ? 0 : 0.7, transform: "rotate(-90)" }, ring);
+  const rline = el("circle", { cx: 0, cy: 0, r: R, fill: "none", stroke: "var(--accent)", "stroke-width": 12 * u, "stroke-linecap": "round", transform: "rotate(-90)" }, ring);
+  const rhi = el("circle", { cx: 0, cy: 0, r: R - 3 * u, fill: "none", stroke: "rgba(255,255,255,.55)", "stroke-width": 2 * u, "stroke-linecap": "round", transform: "rotate(-90)" }, ring);
+  const CIRC = 2 * Math.PI * R; [rglow, rline, rhi].forEach((c) => { c.style.strokeDasharray = `${CIRC} ${CIRC}`; c.style.strokeDashoffset = CIRC; });
+  Object.assign($("bloom").style, { width: R * 3 + "px", height: R * 3 + "px", left: -R * 1.5 + "px", top: -R * 1.5 - PH * (0.34 - RC) * -1 + "px" });
+  Object.assign($("cshadow").style, { width: PW * 1.2 + "px", height: PW * 0.22 + "px", left: -PW * 0.6 + "px", top: PH * (1 - RC) - PW * 0.11 + "px" });
+  Object.assign($("core").style, { width: PW * 0.5 + "px", height: PW * 0.5 + "px", left: PW * 0.46 - PW * 0.25 + "px", top: PH * 0.34 - PW * 0.25 + "px" });
+  // text and pill sizes
+  const nameW = rw(name), kickW = rw(kick);
+  const placeText = (S) => { if (STACK) { kick.style.left = -kickW / 2 + "px"; name.style.left = -nameW / 2 + "px"; } else { kick.style.left = 0; name.style.left = 0; } kick.style.top = 0; name.style.top = KF + 16 * u + "px"; };
+  placeText();
+  const pvW = rw(pv); pill.style.width = pvW + VF * 1.1 + "px"; pill.style.height = pillH + "px";
+  const PWd = pvW + VF * 1.1;
+  // state transforms
+  const tx = (S) => (STACK ? S.cx : S.tx), ty = (S) => S.ty;
+  gsap.set(prod, { x: S0.cx, y: S0.top, scale: 1 }); gsap.set("#txt", { x: tx(S0), y: ty(S0) });
+  const pillX = STACK ? S1.cx - PWd / 2 : S1.px, pillY = S1.py;
+  Object.assign(pill.style, { left: pillX + "px", top: pillY + "px" });
+  Object.assign(plab.style, { left: (STACK ? S1.cx - rw(plab) / 2 : pillX + VF * 0.3) + "px", top: pillY + pillH + 18 * u + "px" });
+  // the dashed leader: from the ring (state B) to the pill
+  const lead = $("lead"); lead.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const k1 = S1.ph / S0.ph, rc = { x: S1.cx, y: S1.top }, R1 = R * k1;
+  let p0, p1, c1;
+  let ld;
+  if (STACK) { // round the outside of the text: out from the ring's right side, down a clear lane, into the pill's top corner
+    const textR = S1.cx + Math.max(nameW, kickW) * 0.92 / 2, pillR = pillX + PWd;
+    p0 = { x: rc.x + R1 * Math.cos(-0.15), y: rc.y + R1 * Math.sin(-0.15) };
+    const X = Math.min(box.x + box.w - 6 * u, Math.max(textR, pillR - 30 * u, p0.x) + 36 * u), r = 40 * u;
+    p1 = { x: pillR - PWd * 0.12, y: pillY - 4 * u };
+    ld = `M${p0.x} ${p0.y}Q${X} ${p0.y} ${X} ${p0.y + r * 2}L${X} ${p1.y - r * 1.6}Q${X} ${p1.y} ${p1.x} ${p1.y}`;
+  } else { p0 = { x: rc.x + R1 * Math.cos(-0.35), y: rc.y + R1 * Math.sin(-0.35) }; p1 = { x: pillX - 8 * u, y: pillY + pillH / 2 }; c1 = { x: (p0.x + p1.x) / 2, y: p1.y };
+    ld = `M${p0.x} ${p0.y}Q${c1.x} ${c1.y} ${p1.x} ${p1.y}`; }
+  const ldefs = el("defs", {}, lead), mk = el("mask", { id: "lm", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H }, ldefs);
+  const mpath = el("path", { d: ld, fill: "none", stroke: "#fff", "stroke-width": 12 * u }, mk);
+  const LL = mpath.getTotalLength(); mpath.style.strokeDasharray = `${LL} ${LL}`; mpath.style.strokeDashoffset = LL;
+  el("path", { d: ld, fill: "none", stroke: A ? "rgba(255,255,255,.9)" : "color-mix(in srgb, var(--accent) 70%, white)", "stroke-width": 4 * u, "stroke-linecap": "round", "stroke-dasharray": `${2 * u} ${14 * u}`, mask: "url(#lm)" }, lead);
+  const dot = el("circle", { cx: p0.x, cy: p0.y, r: 8 * u, fill: "var(--accent)", opacity: 0 }, lead);
+
+  // ---- time
+  const T0 = 0.1;
+  tl.fromTo(prod, { opacity: 0, y: S0.top + 60 * u, scale: 0.9 }, { opacity: 1, y: S0.top, scale: 1, duration: 1.1, ease: "expo.out" }, T0);
+  [rline, rhi, rglow].forEach((c, i) => tl.to(c, { strokeDashoffset: 0, duration: 1.1, ease: "power2.inOut" }, T0 + 0.25 + i * 0.03));
+  tl.fromTo(kw, { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.07 }, T0 + 0.45);
+  tl.fromTo(name, { opacity: 0, y: 24 * u, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, T0 + 0.5 + kw.length * 0.07);
+  // the camera finds the number
+  const TM = 1.7;
+  tl.to(prod, { x: S1.cx, y: S1.top, scale: k1, duration: 0.9, ease: "expo.inOut" }, TM);
+  tl.to("#txt", { x: tx(S1), y: ty(S1), scale: STACK ? 0.92 : 1, duration: 0.9, ease: "expo.inOut" }, TM);
+  tl.to(dot, { opacity: 1, duration: 0.15 }, TM + 0.65);
+  tl.to(mpath, { strokeDashoffset: 0, duration: 0.5, ease: "power2.inOut" }, TM + 0.7);
+  tl.fromTo(pill, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, TM + 1.05);
+  const TC = TM + 1.1, CD = 1.4, cnt = { x: 0 };
+  tl.fromTo(cnt, { x: 0 }, { x: vnum, duration: CD, ease: "power3.out", onUpdate: () => { pv.textContent = fmtV(vdec ? cnt.x : Math.round(cnt.x)); } }, TC);
+  tl.fromTo(plab, { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, TC + 0.5);
+  // the moment: the number lands and the bulb switches on
+  const TL = TC + CD - 0.15;
+  tl.fromTo(pill, { scale: 1 }, { scale: 1.08, duration: 0.1, ease: "power2.out", immediateRender: false }, TL); tl.to(pill, { scale: 1, duration: 0.5, ease: "expo.out" }, TL + 0.1);
+  if (!custom) {
+    tl.set("#lit", { opacity: 0.9 }, TL); tl.set("#lit", { opacity: 0.15 }, TL + 0.05); tl.set("#lit", { opacity: 1 }, TL + 0.1);
+    tl.set("#core", { opacity: 1 }, TL); tl.set("#core", { opacity: 0.2 }, TL + 0.05); tl.set("#core", { opacity: 1 }, TL + 0.1);
+    tl.fromTo("#bloom", { opacity: 0, scale: 0.6 }, { opacity: A ? 0.55 : 1, scale: 1, duration: 0.7, ease: "expo.out" }, TL + 0.1);
+    if (!A) tl.fromTo("#ground .l3", { opacity: 0 }, { opacity: 0.7, duration: 0.8, ease: "expo.out" }, TL + 0.1);
+  }
+  tl.fromTo(rglow, { attr: { opacity: KEY ? 0 : 0.7 } }, { attr: { opacity: KEY ? 0 : 1 }, duration: 0.2, ease: "power2.out" }, TL);
+  tl.to(rglow, { attr: { opacity: KEY ? 0 : 0.6 }, duration: 0.8, ease: "power2.out" }, TL + 0.2);
+  // drift
+  tl.fromTo("#rig", { rotationX: 4, rotationY: -6 }, { rotationX: -2, rotationY: 5, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(bulb, { rotation: -2 }, { rotation: 1.5, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.to("#stage", { opacity: 0, y: -40 * u, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

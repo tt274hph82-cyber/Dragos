@@ -1,0 +1,10 @@
+{ "sources": [
+  { "file": "assets/manila.jpg", "from": "ambientCG Paper005 (scanned kraft paper), resized; the folder", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper005" },
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; the photo print's border", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/backdrop.jpg", "from": "ambientCG Plaster001 (scanned plaster), resized; the studio backdrop inside the photo", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster001" },
+  { "file": "assets/leather.jpg", "from": "ambientCG Leather030 (scanned brown leather), resized; the desk", "license": "CC0", "page": "https://ambientcg.com/view?id=Leather030" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into a rubber-stamp ink-coverage mask", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/clip.png, assets/clip-front.png", "from": "A steel Gem paper clip modelled as a wire tube for this move and rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0); clip-front.png is the same render masked to the loop that sits over the photo", "license": "Original render, free to use; HDRI CC0", "page": "https://polyhaven.com/a/studio_small_09" },
+  { "file": "assets/fonts/SpecialElite-Regular.ttf", "from": "Special Elite by Astigmatic, Google Fonts", "license": "Apache License 2.0", "page": "https://fonts.google.com/specimen/Special+Elite" },
+  { "file": "assets/fonts/Anton-Regular.ttf", "from": "Anton by Vernon Adams, Google Fonts", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Anton" }
+] }

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Table name","default":"All leads"},
+  {"id":"cols","type":"string","label":"Three column headers, comma separated","default":"Name,Stage,Value"},
+  {"id":"rows","type":"string","label":"4 to 7 rows: cells split by a bar, rows by a semicolon","default":"Ava Chen|Hot|$4,200;Leo Park|Cold|$900;Mia Ross|Warm|$1,750;Sam Diaz|Hot|$6,100;Noah Kim|Cold|$650;Zoe Lane|Warm|$2,300"},
+  {"id":"match","type":"string","label":"The second-column value the filter keeps","default":"Hot"},
+  {"id":"op","type":"string","label":"Word between the column and the value on the chip","default":"is"},
+  {"id":"unit","type":"string","label":"Word after the count","default":"results"},
+  {"id":"button","type":"string","label":"Filter button label","default":"Filter"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.26) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #head { display: flex; align-items: center; gap: calc(var(--s) * 18); }
+  #head svg { flex: none; width: calc(var(--s) * 54); height: calc(var(--s) * 54); }
+  #ttl { font-family: var(--font-display); font-size: calc(var(--s) * 46); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #fbtn { display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 24) 0 calc(var(--s) * 20); border-radius: calc(var(--s) * 33);
+    font-weight: 700; font-size: calc(var(--s) * 36); color: var(--ink); white-space: nowrap;
+    background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.16); }
+  .is-key #fbtn { background: color-mix(in srgb, var(--surface) 80%, white 8%); }
+  #fbtn svg { width: calc(var(--s) * 34); height: calc(var(--s) * 34); flex: none; }
+  #chip { display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 18) 0 calc(var(--s) * 26); border-radius: calc(var(--s) * 33); white-space: nowrap; transform-origin: 0 50%;
+    font-size: calc(var(--s) * 36); font-weight: 600; color: var(--ink);
+    background: color-mix(in srgb, var(--accent) 30%, transparent); box-shadow: inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent) 80%, white 10%), 0 0 calc(var(--s) * 28) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-key #chip { background: color-mix(in srgb, var(--accent) 30%, var(--surface)); box-shadow: inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent) 80%, white 10%); }
+  #chip .f { color: color-mix(in srgb, var(--ink) 72%, transparent); }
+  #chip .o { color: color-mix(in srgb, var(--ink) 52%, transparent); font-weight: 500; }
+  #chip .m { font-weight: 800; color: var(--ink); display: inline-block; }
+  #chip svg { width: calc(var(--s) * 26); height: calc(var(--s) * 26); flex: none; margin-left: calc(var(--s) * 6); opacity: .6; }
+
+  .th { position: absolute; display: flex; align-items: center; font-weight: 700; font-size: calc(var(--s) * 34); letter-spacing: .02em; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  #thl { position: absolute; height: calc(var(--s) * 1.5); background: rgba(255,255,255,.16); }
+  .row { position: absolute; left: 0; overflow: hidden; transform-origin: 50% 0; }
+  .row .ln { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--s) * 1.5); background: rgba(255,255,255,.1); }
+  .row .wash { position: absolute; inset: calc(var(--s) * 6) 0; border-radius: calc(var(--s) * 16); opacity: 0; transform-origin: 0 50%;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 26%, transparent), color-mix(in srgb, var(--accent) 8%, transparent)); }
+  .is-key .row .wash { background: color-mix(in srgb, var(--accent) 18%, var(--surface)); }
+  .cb { position: absolute; border-radius: calc(var(--s) * 9); box-shadow: inset 0 0 0 calc(var(--s) * 2.5) rgba(255,255,255,.28); }
+  .nm { position: absolute; display: flex; align-items: center; font-weight: 600; font-size: calc(var(--s) * 39); color: var(--ink); white-space: nowrap; }
+  .pl { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: calc(var(--s) * 30); font-weight: 700; font-size: calc(var(--s) * 34); white-space: nowrap; box-sizing: border-box; }
+  .vl { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-weight: 600; font-size: calc(var(--s) * 39); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #foot { display: flex; align-items: center; gap: calc(var(--s) * 14); white-space: nowrap; }
+  #odo { position: relative; display: inline-block; overflow: hidden; height: calc(var(--s) * 58); font-family: var(--font-display); font-size: calc(var(--s) * 50); line-height: calc(var(--s) * 58); color: var(--ink); font-variant-numeric: tabular-nums; }
+  #odo span { display: block; text-align: right; }
+  #odo #n2 { position: absolute; left: 0; right: 0; top: 100%; color: var(--al); }
+  #unit { font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  #of { display: inline-block; overflow: hidden; white-space: nowrap; font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 40%, transparent); opacity: 0; }
+  #cur { position: absolute; left: 0; top: 0; width: calc(var(--u) * 62); height: calc(var(--u) * 62); z-index: 30; opacity: 0; filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 12) rgba(0,0,0,.55)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="head" class="ab"><svg viewBox="0 0 48 48"><rect x="4" y="4" width="40" height="40" rx="10" fill="var(--accent)"/><rect x="12" y="13" width="24" height="5" rx="2" fill="#fff"/><rect x="12" y="22" width="24" height="5" rx="2" fill="#fff" opacity=".75"/><rect x="12" y="31" width="24" height="5" rx="2" fill="#fff" opacity=".5"/></svg><div id="ttl"></div></div>
+      <div id="fbtn" class="ab"><svg viewBox="0 0 24 24"><path d="M3.5 5h17l-6.6 7.7v5.6l-3.8 1.9v-7.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span id="flab"></span></div>
+      <div id="chip" class="ab"><span class="f"></span><span class="o"></span><span class="m"></span><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></div>
+      <div id="tbl" class="ab"><i id="thl"></i></div>
+      <div id="foot" class="ab"><span id="odo"><span id="n1"></span><span id="n2"></span></span><span id="of"></span><span id="unit"></span></div>
+    </div></div>
+  </div></div></div>
+  <svg id="cur" viewBox="0 0 24 24"><path d="M5 2.8l13.6 12.1-6.1.4 3.6 6.4-2.6 1.4-3.6-6.5L5.6 20.5z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const cols = String(v.cols || "").split(",").map((c) => c.trim()); while (cols.length < 3) cols.push("");
+  let rows = String(v.rows || "").split(";").map((r) => r.split("|").map((c) => c.trim())).filter((r) => r[0]).slice(0, 7);
+  while (rows.length < 4) rows.push(["", "", ""]);
+  const match = String(v.match || "").trim().toLowerCase();
+  rows = rows.map((r) => ({ c: [r[0] || "", r[1] || "", r[2] || ""], keep: (r[1] || "").trim().toLowerCase() === match && !!match }));
+  if (!rows.some((r) => r.keep)) rows[0].keep = true;
+  const N = rows.length, K = rows.filter((r) => r.keep).length;
+
+  // ---- zone, then one scale s for the table design (DW x DH)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.26; cR = W * 0.74; zT = H * 0.08; zB = H * 0.9; }
+  const pad = 40, hdH = 70, tbH = 66, thH = 70, rowH = N >= 7 ? 80 : 86, ftH = 84;
+  const DW = 860, inner = DW - pad * 2;
+  const tbY = pad + hdH + 22, thY = tbY + tbH + 26, rY = thY + thH, ftY = (n) => rY + n * rowH + 6;
+  const DH = ftY(N) + ftH + pad - 14, DH2 = ftY(K) + ftH + pad - 14;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.22);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+  const cw = DW * s, ch = DH * s, ch2 = DH2 * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- header + toolbar
+  box($("#head"), pad, pad, inner, hdH);
+  $("#ttl").textContent = v.title || v.brandName || ""; MV.fitText($("#ttl"), (inner - 80) * s, 18);
+  $("#flab").textContent = v.button || "";
+  box($("#fbtn"), pad, tbY, null, tbH);
+  const fbW = $("#fbtn").getBoundingClientRect().width / s;
+  const chip = $("#chip"); box(chip, pad + fbW + 18, tbY, null, tbH);
+  chip.querySelector(".f").textContent = cols[1]; chip.querySelector(".o").textContent = v.op || "";
+  const mWord = (rows.find((r) => r.keep) || rows[0]).c[1]; chip.querySelector(".m").textContent = mWord;
+  const chipMax = inner - fbW - 18;
+  let cfs = 36; while (chip.getBoundingClientRect().width / s > chipMax && cfs > 22) { cfs -= 2; chip.style.fontSize = S(cfs); }
+
+  // ---- the table
+  const tbl = $("#tbl"); box(tbl, pad, 0, inner, DH);
+  const cbW = 34, c0x = cbW + 26, c0w = Math.round(inner * 0.47) - c0x, c1x = c0x + c0w + 12, c1w = Math.round(inner * 0.27), c2w = inner - c1x - c1w - 12, c2x = inner - c2w;
+  const mk = (cls, txt, parent = tbl) => { const d = document.createElement("div"); d.className = cls; if (txt != null) d.textContent = txt; parent.appendChild(d); return d; };
+  const ths = [mk("th", cols[0]), mk("th", cols[1]), mk("th", cols[2])];
+  box(ths[0], c0x, thY, c0w, thH); box(ths[1], c1x, thY, c1w, thH); box(ths[2], c2x, thY, c2w, thH); ths[2].style.justifyContent = "flex-end"; ths[1].style.justifyContent = "center";
+  ths.forEach((t, i) => MV.fitText(t, [c0w, c1w, c2w][i] * s, 14));
+  box($("#thl"), 0, thY + thH - 2, inner, null);
+  // tag hues: the matched value wears the accent, the others two quiet tints
+  const tags = [...new Set(rows.map((r) => r.c[1].toLowerCase()))];
+  const hue = (t) => { if (t === match) return ["color-mix(in srgb, var(--accent) 34%, transparent)", "color-mix(in srgb, var(--accent) 45%, #fff)"];
+    const k = tags.filter((x) => x !== match).indexOf(t) % 2; return k ? ["rgba(255,255,255,.1)", "color-mix(in srgb, var(--ink) 70%, transparent)"] : ["color-mix(in srgb, var(--accent2) 22%, transparent)", "color-mix(in srgb, var(--accent2) 70%, #fff)"]; };
+  const R = rows.map((r, i) => {
+    const el = mk("row"); box(el, 0, rY + i * rowH, inner, rowH);
+    const wash = mk("wash", null, el);
+    const cb = mk("cb", null, el); box(cb, 2, (rowH - cbW) / 2, cbW, cbW);
+    const nm = mk("nm", r.c[0], el); box(nm, c0x, 0, c0w, rowH); MV.fitText(nm, c0w * s, 16);
+    const [bgc, fg] = hue(r.c[1].toLowerCase());
+    const pl = mk("pl", r.c[1], el); Object.assign(pl.style, { background: bgc, color: fg }); pl.style.padding = `0 ${S(22)}`;
+    box(pl, c1x, (rowH - 54) / 2, null, 54); let pw = Math.min(pl.getBoundingClientRect().width / s, c1w); MV.fitText(pl, (c1w - 44) * s, 14); pw = Math.min(pl.getBoundingClientRect().width / s, c1w);
+    pl.style.left = S(c1x + (c1w - pw) / 2);
+    const vl = mk("vl", r.c[2], el); box(vl, c2x, 0, c2w, rowH); MV.fitText(vl, c2w * s, 16);
+    mk("ln", null, el);
+    return { el, wash, pl, keep: r.keep, y0: rY + i * rowH };
+  });
+  let k = 0; R.forEach((r) => { if (r.keep) r.y1 = rY + (k++) * rowH; });
+
+  // ---- footer count: an odometer from N to K
+  box($("#foot"), pad, ftY(N), inner, ftH);
+  $("#n1").textContent = N; $("#n2").textContent = K; $("#unit").textContent = v.unit || ""; $("#of").textContent = "of " + N;
+  $("#odo").style.width = Math.max($("#n1").getBoundingClientRect().width, $("#n2").getBoundingClientRect().width) + 2 + "px";
+
+  // ---- timing
+  const TC = 1.55, TF = TC + 0.55, TX = TF + 0.42;     // click, chip lands, rows collapse
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: P ? 12 : 14, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#head", "#fbtn"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.18);
+  tl.fromTo("#thl", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+  tl.fromTo(ths, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out", stagger: 0.05 }, 0.32);
+  tl.fromTo(R.map((r) => r.el), { opacity: 0, y: 26 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out", stagger: 0.055 }, 0.38);
+  tl.fromTo("#foot", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.75);
+
+  // the cursor comes in and presses the filter button
+  const fr = { x: cL + (pad + fbW * 0.55) * s, y: cT + (tbY + tbH * 0.62) * s };
+  tl.fromTo("#cur", { x: fr.x + 300 * u, y: fr.y + 380 * u, opacity: 0 }, { x: fr.x, y: fr.y, opacity: 1, duration: 0.7, ease: "power3.out" }, TC - 0.72);
+  tl.to("#cur", { scale: 0.82, duration: 0.08, ease: "power2.out", transformOrigin: "20% 10%" }, TC);
+  tl.to("#cur", { scale: 1, duration: 0.25, ease: "back.out(3)" }, TC + 0.08);
+  tl.to("#fbtn", { scale: 0.93, duration: 0.08, ease: "power2.out" }, TC);
+  tl.to("#fbtn", { scale: 1, duration: 0.4, ease: "back.out(3)" }, TC + 0.08);
+  tl.to("#fbtn", { background: "rgba(255,255,255,.2)", duration: 0.15, ease: "power2.out" }, TC);
+  tl.to("#cur", { opacity: 0, y: "+=" + 50 * u, x: "+=" + 30 * u, duration: 0.3, ease: "power2.in" }, TC + 0.4);
+  // the chip grows out of the button, its value word lands with a pop
+  tl.fromTo(chip, { opacity: 0, scaleX: 0.3, scaleY: 0.8, x: -20 * s }, { opacity: 1, scaleX: 1, scaleY: 1, x: 0, duration: 0.55, ease: "back.out(1.7)" }, TC + 0.1);
+  tl.fromTo(chip.querySelectorAll(".f,.o"), { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out", stagger: 0.06 }, TC + 0.22);
+  tl.fromTo(chip.querySelector(".m"), { opacity: 0, y: 14 * s, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2.6)" }, TF - 0.12);
+
+  // ---- the collapse: misses squash away, the kept rows glide up, the card follows
+  const drop = R.filter((r) => !r.keep);
+  drop.forEach((r, i) => {
+    const t = TX + i * 0.07;
+    tl.to(r.el, { scaleY: 0, opacity: 0, x: -30 * s, duration: 0.42, ease: "power3.in" }, t);
+  });
+  R.filter((r) => r.keep).forEach((r, i) => tl.to(r.el, { top: r.y1 * s, duration: 0.75, ease: "expo.inOut" }, TX + 0.12 + i * 0.04));
+  const TL = TX + 0.12 + 0.75;
+  tl.to("#foot", { top: ftY(K) * s, duration: 0.75, ease: "expo.inOut" }, TX + 0.16);
+  tl.to("#wrap", { height: ch2, y: A && P ? 0 : (ch - ch2) / 2, duration: 0.8, ease: "expo.inOut" }, TX + 0.14);
+  tl.to("#base", { y: A && P ? 0 : -(ch - ch2) / 2, duration: 0.8, ease: "expo.inOut" }, TX + 0.14);
+  // the count rolls over to the new number and lands
+  tl.to("#n1", { yPercent: -100, opacity: 0, duration: 0.5, ease: "expo.inOut" }, TX + 0.25);
+  tl.set("#n2", { opacity: 0 }, 0);
+  tl.to("#n2", { yPercent: -100, duration: 0.5, ease: "expo.inOut" }, TX + 0.25);
+  tl.to("#n2", { opacity: 1, duration: 0.2, ease: "power2.out" }, TX + 0.28);
+  const ofW = $("#of").getBoundingClientRect().width;
+  tl.fromTo("#of", { opacity: 0, width: 0, marginRight: -14 * s }, { width: ofW + 1, marginRight: 0, duration: 0.45, ease: "expo.out" }, TX + 0.45);
+  tl.to("#of", { opacity: 1, duration: 0.3, ease: "power2.out" }, TX + 0.82);
+  tl.fromTo("#odo", { scale: 1 }, { scale: 1.22, duration: 0.09, ease: "power2.out", transformOrigin: "50% 60%", immediateRender: false }, TL - 0.05);
+  tl.to("#odo", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TL + 0.04);
+  // the kept rows light, one wash sweep each
+  R.filter((r) => r.keep).forEach((r, i) => {
+    tl.fromTo(r.wash, { opacity: 0, scaleX: 0 }, { opacity: 1, scaleX: 1, duration: 0.55, ease: "expo.out" }, TL - 0.05 + i * 0.08);
+    tl.fromTo(r.pl, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, TL + i * 0.08);
+    tl.to(r.pl, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TL + 0.08 + i * 0.08);
+  });
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TL);
+  gsap.set("#cam", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#cam", { scale: 1 }, { scale: A ? 1.02 : 1.08, duration: 1.6, ease: "power3.inOut" }, TX);
+
+  if (A) tl.to(["#stage", "#cur"], { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

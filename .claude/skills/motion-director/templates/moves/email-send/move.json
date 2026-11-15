@@ -1,0 +1,5 @@
+{ "id": "email-send", "name": "Glass email send", "oneLiner": "a compose window on glass: the recipient chip pops, the subject types and the body writes itself behind a caret, a cursor presses Send, the window winds up and flies off, and a Message sent toast lands green in its place with the tick drawing",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["email", "send", "compose", "outreach", "cold email", "reply", "message", "pitch", "sent", "ai writing", "productivity", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says they sent it or the AI wrote and sent the email ('it wrote the email and hit send', 'I sent the pitch that night'): the body writes as they describe it, the window flies off and the green Sent toast lands on 'sent'" }

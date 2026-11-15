@@ -1,0 +1,5 @@
+{ "id": "focus-ring-hop", "name": "Focus ring hop", "oneLiner": "a screenshot floats in a window with slow 3D drift; a lit focus ring locks onto one real region while the page around it dims, then hops to the next and the next (it lifts, swells and lands with a pulse) as the camera glides along, a numbered chip popping under each stop",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["focus", "ring", "highlight", "walkthrough", "tour", "steps", "sections", "screenshot", "ui", "website", "landing page", "explain", "anatomy", "1 2 3"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker walks through the parts of one screen in order ('first the headline, then the offer, then the proof'): cut in on 'first', each hop lands on the word that names the next part. Set stops to the real regions in % of the screenshot (x,y,w,h; 2 or 3, separated by ;) and labels to one short name each" }

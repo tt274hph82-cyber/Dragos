@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"mode","type":"string","label":"row (tiles one by one) or equation (A + B = result)","default":"row"},
+  {"id":"tiles","type":"string","label":"Tile images, comma separated paths (empty: the brand mark plus drawn glyph tiles)","default":""},
+  {"id":"count","type":"number","label":"How many default tiles when tiles is empty (2 to 4)","default":3},
+  {"id":"labels","type":"string","label":"Names under the tiles, comma separated (optional)","default":""},
+  {"id":"title","type":"string","label":"Small title above the row (optional)","default":"The stack"},
+  {"id":"result","type":"string","label":"Equation result: an image path or a word (empty: no equals)","default":""},
+  {"id":"side","type":"string","label":"16:9 side: left or right","default":"left"},
+  {"id":"beat","type":"number","label":"Seconds between tiles","default":0.4}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(60% 32% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 28%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 15% 100%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 70%), var(--ground); }
+  #floor { position: absolute; left: 0; right: 0; height: 40%; background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 60%); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #floor { display: none; }
+
+  #title { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: calc(var(--u) * 46); font-weight: 750; letter-spacing: -0.01em; color: var(--ink);
+    text-shadow: 0 calc(var(--u) * 3) calc(var(--u) * 14) rgba(0,0,0,.55); }
+  .is-key #title { text-shadow: none; }
+  #uline { position: absolute; left: 0; top: 0; height: calc(var(--u) * 5); border-radius: calc(var(--u) * 3); transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--accent), var(--al)); box-shadow: 0 0 calc(var(--u) * 14) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #uline { box-shadow: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1500); }
+  #row { position: relative; transform-style: preserve-3d; }
+  .it { position: absolute; left: 0; top: 0; }
+  /* the tile: an app icon made physical: face, bevel, gloss, a moving sheen, a soft floor reflection */
+  .tile { position: relative; border-radius: 23%; transform-origin: 50% 100%;
+    -webkit-box-reflect: below calc(var(--u) * 10) linear-gradient(transparent 70%, rgba(255,255,255,.2));
+    box-shadow: 0 calc(var(--u) * 26) calc(var(--u) * 44) calc(var(--u) * -14) rgba(0,0,0,.65), 0 0 calc(var(--u) * 50) calc(var(--u) * -12) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-key .tile { -webkit-box-reflect: none; box-shadow: none; }
+  .tile .face { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; display: grid; place-items: center; }
+  .tile .face img { width: 100%; height: 100%; object-fit: cover; }
+  .tile .face svg { width: 62%; height: 62%; filter: drop-shadow(0 calc(var(--u) * 4) calc(var(--u) * 6) rgba(0,0,0,.25)); }
+  .tile .bev { position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 calc(var(--u) * 3) calc(var(--u) * 1) rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.22),
+      inset 0 calc(var(--u) * -10) calc(var(--u) * 18) rgba(0,0,0,.32); }
+  .tile .gls { position: absolute; left: 4%; right: 4%; top: 2.5%; height: 48%; border-radius: 22% 22% 50% 50% / 30% 30% 22% 22%; pointer-events: none;
+    background: linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.05)); }
+  .tile .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; overflow: hidden;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.45) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  .lab { position: absolute; left: 50%; white-space: nowrap; transform: translateX(-50%); font-size: calc(var(--u) * 28); font-weight: 650; color: var(--ink);
+    text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.6); }
+  .is-key .lab { text-shadow: none; }
+  .op svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.45)); }
+  .is-key .op svg { filter: none; }
+  .res { font-family: var(--font-display); white-space: nowrap; line-height: 1.15; letter-spacing: -0.02em; color: transparent; -webkit-background-clip: text; background-clip: text;
+    background-image: linear-gradient(100deg, transparent calc(var(--sheen, -40%) - 8%), rgba(255,255,255,.95) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 8%)),
+      linear-gradient(180deg, #fff 8%, color-mix(in srgb, var(--accent) 25%, #fff) 50%, var(--al) 100%); }
+  .resw { filter: drop-shadow(0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.5)); }
+  .is-key .resw { filter: none; }
+  .burst { position: absolute; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 4) solid var(--al); opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key .burst { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div><div id="floor"></div>
+  <div id="title"></div><div id="uline"></div>
+  <div id="stage"><div id="row"></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.alpha ? MV.u : MV.u * (P ? 1.1 : 1.25);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const EQ = String(v.mode || "").toLowerCase() === "equation";
+  const list = (s) => String(s || "").split(",").map((x) => x.trim()).filter(Boolean);
+
+  // ---- the tiles: given images, else the brand mark followed by clean drawn glyph tiles
+  const GLYPH = [
+    { bg: "linear-gradient(155deg,#A78BFA,#6D28D9 70%,#4C1D95)", svg: '<path d="M22 26h56a8 8 0 0 1 8 8v28a8 8 0 0 1-8 8H46l-16 13V70h-8a8 8 0 0 1-8-8V34a8 8 0 0 1 8-8z" fill="#fff"/><circle cx="36" cy="48" r="5" fill="#6D28D9"/><circle cx="50" cy="48" r="5" fill="#6D28D9"/><circle cx="64" cy="48" r="5" fill="#6D28D9"/>' },
+    { bg: "linear-gradient(155deg,#5EEAD4,#0D9488 70%,#115E59)", svg: '<path d="M56 10L24 56h22l-6 34 34-48H52z" fill="#fff" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>' },
+    { bg: "linear-gradient(155deg,#4A4A55,#1E1E25 70%,#121216)", svg: '<path d="M36 30L16 50l20 20M64 30l20 20-20 20" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><path d="M56 22L44 78" stroke="#5EEAD4" stroke-width="9" stroke-linecap="round"/>' },
+    { bg: "linear-gradient(155deg,#93C5FD,#2563EB 70%,#1E3A8A)", svg: '<path d="M50 12c3 20 18 35 38 38-20 3-35 18-38 38-3-20-18-35-38-38 20-3 35-18 38-38z" fill="#fff"/>' },
+  ];
+  let srcs = list(v.tiles);
+  const n = srcs.length ? Math.min(4, srcs.length) : Math.max(2, Math.min(4, Math.round(+v.count || 3)));
+  const labels = list(v.labels);
+  const resS = String(v.result || "").trim(), resImg = /\.(png|jpe?g|webp|svg|gif)$/i.test(resS) || /^assets\//.test(resS);
+  const hasRes = EQ && !!resS;
+
+  // ---- size: as big as the free band allows
+  const m = n + (hasRes ? 1 : 0), ops = EQ ? m - 1 : 0;
+  const availW = P ? W - safe.left - safe.right : SQ ? W * 0.84 : W * 0.4;
+  const GAP = 0.2, OPW = 0.42;   // gaps and operator widths, in tile sizes
+  // equations with a result put "= result" on its own line under the terms, so the tiles stay big
+  const TWO = EQ && hasRes;
+  const fixedW = TWO ? n + (n - 1) * (OPW + 2 * 0.12) : EQ ? m + ops * (OPW + 2 * 0.12) : n + (n - 1) * GAP;
+  let S = Math.floor(Math.min((MV.alpha ? (P ? 212 : SQ ? 180 : 200) : (P ? 250 : 230)) * u, availW / fixedW));
+  const row = $("#row"), items = [];
+  const mkTile = (src, k, isRes) => {
+    const it = document.createElement("div"); it.className = "it";
+    const t = document.createElement("div"); t.className = "tile"; t.style.width = t.style.height = S + "px";
+    const f = document.createElement("div"); f.className = "face";
+    if (src) f.appendChild(MV.img(src));
+    else { const g = GLYPH[k % GLYPH.length]; f.style.background = g.bg; f.innerHTML = `<svg viewBox="0 0 100 100">${g.svg}</svg>`; }
+    t.appendChild(f); t.insertAdjacentHTML("beforeend", '<div class="gls"></div><div class="bev"></div><div class="sh"></div>');
+    it.appendChild(t);
+    const lb = labels[isRes ? n : k];
+    if (lb) { const l = document.createElement("div"); l.className = "lab"; l.textContent = lb; l.style.top = S + 0.36 * S + "px"; it.appendChild(l); }
+    row.appendChild(it); return { el: it, tile: t, w: S, kind: "tile" };
+  };
+  const mkOp = (eq) => {
+    const it = document.createElement("div"); it.className = "it op"; const w = OPW * S; it.style.width = it.style.height = w + "px";
+    it.innerHTML = eq
+      ? '<svg viewBox="0 0 100 100"><path d="M14 36h72M14 64h72" stroke="#fff" stroke-width="15" stroke-linecap="round"/></svg>'
+      : '<svg viewBox="0 0 100 100"><path d="M50 14v72M14 50h72" stroke="#fff" stroke-width="15" stroke-linecap="round"/></svg>';
+    row.appendChild(it); return { el: it, w, kind: "op" };
+  };
+  for (let k = 0; k < n; k++) {
+    const src = srcs.length ? srcs[k] : (k === 0 ? v.mark : null);
+    items.push(mkTile(src, srcs.length ? k : k - 1, false));
+    if (EQ && (k < n - 1 || hasRes)) items.push(mkOp(k === n - 1));
+  }
+  if (hasRes) {
+    if (resImg) items.push(mkTile(resS, 0, true));
+    else {
+      const it = document.createElement("div"); it.className = "it"; it.innerHTML = '<div class="resw"><div class="res"></div></div>';
+      const r = it.querySelector(".res"); r.textContent = resS; r.style.fontSize = Math.round(S * 0.5) + "px"; row.appendChild(it);
+      items.push({ el: it, tile: it.querySelector(".resw"), w: 0, kind: "word", txt: r });
+    }
+  }
+  // a word result takes what width it needs; shrink everything if the line overflows
+  const lay = () => {
+    const word = items.find((x) => x.kind === "word");
+    if (word) { word.txt.style.fontSize = Math.round(S * (TWO ? 0.56 : 0.5)) + "px"; MV.fitText(word.txt, availW * (TWO ? 0.75 : 0.45), 20); word.w = word.txt.getBoundingClientRect().width; }
+    const gap = (EQ ? 0.12 : GAP) * S;
+    const lines = TWO ? [items.slice(0, -2), items.slice(-2)] : [items];
+    const ws = lines.map((ln) => { let x = 0; ln.forEach((it, i) => { it.x = x; x += it.w + (i < ln.length - 1 ? gap : 0); }); return x; });
+    const RWm = Math.max(...ws);
+    lines.forEach((ln, li) => ln.forEach((it) => { it.x += (RWm - ws[li]) / 2; it.ly = li * S * 1.16; }));
+    return RWm;
+  };
+  let RW = lay();
+  if (RW > availW) { const k = availW / RW; S = Math.floor(S * k);
+    items.forEach((it) => { if (it.kind === "tile") { it.tile.style.width = it.tile.style.height = S + "px"; it.w = S; const l = it.el.querySelector(".lab"); if (l) l.style.top = S * 1.36 + "px"; }
+      if (it.kind === "op") { it.w = OPW * S; it.el.style.width = it.el.style.height = it.w + "px"; } });
+    RW = lay(); }
+  items.forEach((it) => { const h = it.kind === "tile" ? S : it.kind === "op" ? it.w : it.el.offsetHeight; gsap.set(it.el, { x: it.x, y: it.ly + (S - h) / 2 }); });
+  const RH = TWO ? S * 2.16 : S;
+  row.style.width = RW + "px"; row.style.height = RH + "px";
+
+  // ---- place: upper third on 9:16 and 1:1 (above the head), the free side on 16:9, centred as B-roll
+  const ttl = $("#title"), ul = $("#uline");
+  ttl.textContent = v.title || ""; if (!v.title) { ttl.style.display = "none"; ul.style.display = "none"; }
+  MV.fitText(ttl, availW, 16);
+  const TH = v.title ? ttl.offsetHeight + 24 * u : 0;
+  const blockH = TH + RH + (labels.length ? 0.55 * S : 0.3 * S);
+  let x0, y0;
+  if (MV.alpha) {
+    if (P) { x0 = safe.left + (availW - RW) / 2; y0 = safe.top + 6 * u; }
+    else if (SQ) { x0 = (W - RW) / 2; y0 = safe.top + 4 * u; }
+    else { const right = String(v.side || "").toLowerCase() === "right"; x0 = right ? W - safe.right - RW : safe.left + 20 * u; y0 = H * 0.6 - blockH / 2; }
+  } else { x0 = (W - RW) / 2; y0 = (P ? H * 0.42 : H * 0.5) - blockH / 2; }
+  const left = !MV.alpha || P || SQ ? null : x0;
+  const tw = ttl.getBoundingClientRect().width;
+  const tx = left == null ? x0 + (RW - tw) / 2 : x0;
+  gsap.set(ttl, { x: tx, y: y0 });
+  Object.assign(ul.style, { width: tw + "px" }); gsap.set(ul, { x: tx, y: y0 + ttl.offsetHeight + 4 * u });
+  gsap.set("#stage", { x: x0, y: y0 + TH, width: RW, height: RH });
+  gsap.set(row, { transformOrigin: "50% 100%" });
+  root.style.setProperty("--gx", ((x0 + RW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y0 + TH + S / 2) / H * 100) + "%");
+  $("#floor").style.top = y0 + TH + RH + "px";
+
+  // ---- timing: the title wipes in, then one item per beat
+  const beat = Math.max(0.2, Math.min(0.8, +v.beat || 0.4));
+  const Tt = 0.05;
+  const tc = { p: 0 }, tclip = () => { ttl.style.clipPath = `inset(-30px ${(1 - tc.p) * 100}% -30px -30px)`; ttl.style.visibility = tc.p < 0.01 ? "hidden" : ""; }; tclip();
+  if (v.title) {
+    tl.to(tc, { p: 1, duration: 0.45, ease: "power3.out", onUpdate: tclip }, Tt);
+    tl.fromTo(ttl, { y: y0 + 10 * u }, { y: y0, duration: 0.6, ease: "expo.out" }, Tt);
+    tl.fromTo(ul, { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "expo.out" }, Tt + 0.12);
+  }
+  const t0 = v.title ? 0.28 : 0.06;
+  // equations alternate term / operator on a half beat; rows space tiles a full beat
+  const step = EQ ? Math.max(0.24, Math.min(beat * 0.8, (D - 1.6 - t0) / Math.max(1, items.length - 1))) : beat;
+  const at = items.map((_, i) => t0 + i * step);
+  items.forEach((it, i) => {
+    const t = at[i], last = i === items.length - 1;
+    if (it.kind === "op") {
+      tl.fromTo(it.el, { scale: 0, rotation: -120 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, t);
+      tl.fromTo(it.el, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power1.out" }, t);
+      return;
+    }
+    const slam = EQ && hasRes && last;
+    if (slam) {
+      // the payoff: it falls out of the lens and slams down, the row flinches, a ring bursts
+      tl.fromTo(it.tile, { scale: 2.2, rotationX: 0, y: -0.2 * S }, { scale: 0.94, y: 0, duration: 0.2, ease: "power3.in" }, t);
+      tl.fromTo(it.tile, { opacity: 0, filter: "blur(16px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power2.in" }, t);
+      tl.to(it.tile, { scale: 1, duration: 0.45, ease: "back.out(3)" }, t + 0.2);
+      const b = document.createElement("div"); b.className = "burst"; const bs = Math.max(S, it.w) * 1.1;
+      Object.assign(b.style, { width: bs + "px", height: bs + "px", left: (it.w - bs) / 2 + "px", top: (S - bs) / 2 + "px" }); it.el.appendChild(b);
+      tl.fromTo(b, { scale: 0.5, opacity: 1 }, { scale: 1.5, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, t + 0.2);
+      items.slice(0, -1).forEach((o, k) => { tl.to(o.el, { y: "+=" + 8 * u, duration: 0.07, ease: "power2.out" }, t + 0.2 + k * 0.015); tl.to(o.el, { y: "-=" + 8 * u, duration: 0.4, ease: "back.out(3)" }, t + 0.27 + k * 0.015); });
+      tl.fromTo(it.kind === "word" ? it.txt : it.tile, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, t + 0.3);
+    } else {
+      // a tile springs up off the floor, tipped back, out of blur
+      tl.fromTo(it.tile, { y: 0.75 * S, scale: 0.45, rotationX: 60 }, { y: 0, scale: 1, rotationX: 0, duration: 0.75, ease: "back.out(1.7)" }, t);
+      tl.fromTo(it.tile, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, t);
+      tl.fromTo(it.tile, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.6, ease: "power2.inOut" }, t + 0.25);
+    }
+    const lb = it.el.querySelector(".lab");
+    if (lb) tl.fromTo(lb, { opacity: 0, y: -8 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, t + 0.18);
+  });
+  // row mode's moment: once the last tile lands, the whole row hops in a wave and light runs across
+  const settled = at[at.length - 1] + 0.45;
+  if (!EQ) {
+    items.forEach((it, k) => {
+      tl.to(it.el, { y: "-=" + 0.12 * S, duration: 0.16, ease: "power2.out" }, settled + k * 0.07);
+      tl.to(it.el, { y: "+=" + 0.12 * S, duration: 0.5, ease: "back.out(3)" }, settled + 0.16 + k * 0.07);
+      tl.fromTo(it.tile, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.5, ease: "power2.inOut", immediateRender: false }, settled + 0.05 + k * 0.07);
+    });
+  }
+  // the hold turns slowly in depth
+  tl.fromTo(row, { rotationY: -9, rotationX: 6 }, { rotationY: 7, rotationX: 2, duration: D - 0.2, ease: "sine.inOut" }, 0);
+  // exit: tiles lift and blur away, last in first out; the title wipes off
+  const O = D - 0.42;
+  const xs = Math.min(0.03, 0.12 / Math.max(1, items.length - 1));
+  items.slice().reverse().forEach((it, k) => tl.to(it.el, { y: "-=" + 0.35 * S, opacity: 0, filter: "blur(12px)", scale: 0.85, duration: 0.26, ease: "power3.in" }, O + k * xs));
+  if (v.title) { tl.to(tc, { p: 0, duration: 0.26, ease: "power3.in", onUpdate: tclip }, O); tl.to(ul, { scaleX: 0, duration: 0.26, ease: "power3.in" }, O + 0.04); }
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "audio-mixer", "name": "Audio mixer solo", "oneLiner": "a glass mixing console of five channel strips: machined fader caps rise with a spring to their levels while the dB readouts follow, play is pressed and the LED meters bounce green to amber, then a cursor hits solo on the voice channel, it lights yellow with a halo, the other channels dim and drop silent and the voice rides alone into the master",
+  "category": "creator", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["audio", "mixer", "mix", "sound", "faders", "levels", "meters", "voice", "solo", "podcast", "music", "editing", "creator tools", "workflow", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says they mix or clean up the audio or that the voice matters most ('I bring the music down under my voice', 'audio is half the video'): the faders rise while they set it up, solo lands on 'voice' or 'just me'" }

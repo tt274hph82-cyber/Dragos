@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"number","type":"string","label":"The ordinal","default":"03"},
+  {"id":"label","type":"string","label":"The point, a few words","default":"The setup nobody shows you"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 45%; left: -15%; top: 0%; background: color-mix(in srgb, var(--accent) 34%, transparent); }
+  #ground .l2 { width: 60%; height: 50%; left: 55%; top: 45%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  /* the ordinal: a solid extruded in real depth (stacked slices), a glass face on the front, a soft shadow under it */
+  #blurw { position: absolute; }
+  #shadoww { filter: drop-shadow(0 calc(var(--u) * 22) calc(var(--u) * 26) rgba(0,0,0,.42)); }
+  #persp { perspective: calc(var(--u) * 1400); }
+  #ord { position: relative; transform-style: preserve-3d; font-family: var(--font-display); line-height: 1.3; letter-spacing: -0.02em; white-space: nowrap; }
+  #ord span { position: absolute; left: 0; top: 0; display: block; }
+  #ord .face { position: relative; color: transparent; -webkit-text-stroke: calc(var(--u) * 1.5) rgba(255,255,255,.7);
+    background: linear-gradient(100deg, transparent calc(var(--sheen, -30%) - 9%), rgba(255,255,255,.95) var(--sheen, -30%), transparent calc(var(--sheen, -30%) + 9%)),
+      linear-gradient(178deg, #fff 0%, color-mix(in srgb, var(--accent) 22%, white) 38%, color-mix(in srgb, var(--accent) 70%, white) 62%, var(--accent) 100%);
+    -webkit-background-clip: text; background-clip: text; }
+
+  /* the label: a dark glass tag over a thin accent rule */
+  #tag { position: absolute; padding: calc(var(--u) * 20) calc(var(--u) * 30) calc(var(--u) * 22); border-radius: calc(var(--u) * 22);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 78%, white 6%), color-mix(in srgb, var(--surface) 88%, transparent));
+    -webkit-backdrop-filter: blur(18px) saturate(150%); backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.3), inset 0 0 0 calc(var(--u) * 1.2) rgba(255,255,255,.1), 0 calc(var(--u) * 16) calc(var(--u) * 34) rgba(0,0,0,.4); }
+  .is-key #tag { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.3); }
+  #lab { font-family: var(--font-display); color: var(--ink); line-height: 1.04; letter-spacing: -0.01em; }
+  #rule { position: absolute; height: calc(var(--u) * 5); border-radius: calc(var(--u) * 3); transform-origin: 0 50%;
+    background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 50%, white)); box-shadow: 0 0 calc(var(--u) * 16) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #rule { box-shadow: none; }
+  .is-key #shadoww { filter: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="blurw"><div id="shadoww"><div id="persp"><div id="ord" data-layered></div></div></div></div>
+  <div id="rule"></div>
+  <div id="tag"><div id="lab"></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const D = +document.getElementById("root").dataset.duration;
+  const root = document.getElementById("root");
+  const ACC = getComputedStyle(root).getPropertyValue("--accent").trim();
+  const P = MV.portrait, SQ = W === H;
+  const txt = String(v.number || "03");
+
+  // ---- the slab: K slices from the face back, darkening with depth
+  const ord = document.getElementById("ord"), fs = Math.round((P ? 300 : SQ ? 290 : 330) * u);
+  ord.style.fontSize = fs + "px";
+  const K = 22, dz = fs * 0.0095;
+  for (let i = K; i >= 1; i--) {
+    const s = document.createElement("span"); s.textContent = txt;
+    const k = i / K, dark = Math.round(34 + k * 40);
+    s.style.color = i === 1 ? `color-mix(in srgb, ${ACC} 55%, white)` : `color-mix(in srgb, ${ACC} ${100 - dark}%, black)`;
+    s.style.transform = `translateZ(${-i * dz}px)`;
+    ord.append(s);
+  }
+  const face = document.createElement("span"); face.className = "face"; face.textContent = txt; ord.append(face);
+
+  // ---- layout: upper third, inside the safe box, clear of the face zone
+  const x0 = Math.round(P ? safe.left + 20 * u : SQ ? 80 * u : 120 * u), y0 = Math.round(P ? safe.top + 26 * u : SQ ? 90 * u : 100 * u);
+  // the line box is taller than the digits (so the face box holds every glyph): lift it so the digits sit at y0
+  const lift = Math.round(fs * 0.27);
+  const bw = document.getElementById("blurw"); Object.assign(bw.style, { left: x0 + "px", top: y0 - lift + "px" });
+  const ow = face.offsetWidth, oh = face.offsetHeight;
+  gsap.set("#ord", { transformOrigin: `${ow * 0.5}px ${oh * 0.5}px ${-K * dz * 0.5}px` });
+
+  // the tag sits beside the ordinal, its rule underlines the pair
+  const lab = document.getElementById("lab"), tag = document.getElementById("tag"), rule = document.getElementById("rule");
+  lab.textContent = v.label || "";
+  const tx = Math.round(x0 + ow * 0.92 + 34 * u), maxR = P ? W - safe.right : W * (SQ ? 0.93 : 0.62);
+  const tw = Math.round(maxR - tx);
+  lab.style.fontSize = Math.round((P ? 50 : 54) * u) + "px";
+  tag.style.left = tx + "px"; tag.style.maxWidth = tw + "px"; tag.style.boxSizing = "border-box";
+  // up to two lines: shrink until the words fit in two lines of the box
+  let lf = parseFloat(lab.style.fontSize);
+  const twoLines = () => lab.scrollHeight <= lf * 1.04 * 2 + 4 && lab.scrollWidth <= lab.clientWidth + 1;
+  while (!twoLines() && lf > 24 * u) { lf -= 2; lab.style.fontSize = lf + "px"; }
+  tag.style.width = "max-content"; tag.style.maxWidth = tw + "px";
+  const th = tag.offsetHeight, tyTop = Math.round(y0 - lift + oh * 0.5 - th * 0.5 + 6 * u);
+  tag.style.top = tyTop + "px";
+  const ruleY = Math.round(Math.max(y0 - lift + oh * 0.5 + fs * 0.38, tyTop + th) + 22 * u);
+  Object.assign(rule.style, { left: x0 + 6 * u + "px", top: ruleY + "px", width: Math.round(tx + tag.offsetWidth - x0 - 6 * u) + "px" });
+  if (!v.label) { tag.style.display = "none"; rule.style.width = ow + "px"; }
+
+  // ---- in: the ordinal falls onto the beat out of the lens, lands hard, recoils, keeps turning to show its depth
+  const T = 0.04;
+  tl.fromTo("#ord", { scale: 2.5, z: 0, rotationY: -64, rotationX: 22 }, { scale: 0.95, rotationY: -30, rotationX: 10, duration: 0.26, ease: "power3.in" }, T);
+  tl.fromTo("#blurw", { filter: "blur(22px)", opacity: 0 }, { filter: "blur(0px)", opacity: 1, duration: 0.26, ease: "power2.in" }, T);
+  tl.to("#ord", { scale: 1, duration: 0.42, ease: "back.out(2.6)" }, T + 0.26);
+  tl.to("#ord", { rotationY: -20, rotationX: 7, duration: D - 0.75 - T - 0.26, ease: "expo.out" }, T + 0.26);
+  tl.fromTo(face, { "--sheen": "-30%" }, { "--sheen": "130%", duration: 0.8, ease: "power2.inOut" }, T + 0.5);
+  // the rule draws from the ordinal out under the label; the tag wipes in on it
+  tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, T + 0.3);
+  const w = { p: 0 }, clip = () => { tag.style.clipPath = `inset(-40px ${(1 - w.p) * 100}% -40px -40px)`; tag.style.visibility = w.p < 0.002 ? "hidden" : ""; };
+  clip();
+  tl.to(w, { p: 1, duration: 0.5, ease: "power3.inOut", onUpdate: clip }, T + 0.4);
+  tl.fromTo(lab, { x: -10 * u }, { x: 0, duration: 0.7, ease: "expo.out" }, T + 0.45);
+
+  // ---- out: clean, accelerating, before the end
+  const O = D - 0.42;
+  tl.to(w, { p: 0, duration: 0.3, ease: "power3.in", onUpdate: clip }, O);
+  tl.to(rule, { scaleX: 0, transformOrigin: "0% 50%", duration: 0.3, ease: "power3.in" }, O + 0.04);
+  tl.to("#ord", { z: -400, rotationY: -40, duration: 0.36, ease: "power3.in" }, O);
+  tl.to("#blurw", { filter: "blur(14px)", opacity: 0, duration: 0.36, ease: "power3.in" }, O);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"data","type":"string","label":"The data points, comma separated, oldest first (empty = a growth curve ending on the brand first stat)","default":""},
+  {"id":"value","type":"string","label":"Text on the last point (empty = the last data point, formatted)","default":""},
+  {"id":"prefix","type":"string","label":"Before the value","default":""},
+  {"id":"suffix","type":"string","label":"After the value (empty = the stat suffix)","default":""},
+  {"id":"decimals","type":"number","label":"Decimals","default":0},
+  {"id":"label","type":"string","label":"What it counts (empty = the stat label)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 50%; left: 45%; top: 4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 70%; height: 55%; left: -25%; top: 50%; background: color-mix(in srgb, var(--accent2) 34%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  /* the camera is #rig: one transform (translate + scale) derived from the line's head every frame */
+  #rig { position: absolute; left: 0; top: 0; width: {{W}}px; height: {{H}}px; transform-origin: 0 0; }
+  #chart { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  /* the value: a frosted glass pill on the last point */
+  #pill { position: absolute; padding: calc(var(--u) * 22) calc(var(--u) * 40) calc(var(--u) * 26); border-radius: calc(var(--u) * 36); overflow: hidden; white-space: nowrap; opacity: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.06) 60%);
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16),
+      0 calc(var(--u) * 30) calc(var(--u) * 70) calc(var(--u) * -24) rgba(0,0,0,.6), 0 0 calc(var(--u) * 80) calc(var(--u) * -14) color-mix(in srgb, var(--accent) 50%, transparent); }
+  #pill::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.34) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); mix-blend-mode: screen; }
+  #num { font-family: var(--font-display); line-height: .95; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--accent) 55%, transparent); }
+  #num .fx { color: color-mix(in srgb, var(--accent) 55%, white 45%); }
+  #lab { margin-top: calc(var(--u) * 10); font-weight: 600; color: color-mix(in srgb, var(--ink) 74%, transparent); letter-spacing: .01em; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="rig">
+    <svg id="chart" width="{{W}}" height="{{H}}" viewBox="0 0 {{W}} {{H}}">
+      <defs>
+        <linearGradient id="gStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0" class="c2" /><stop offset=".55" class="c1" /><stop offset="1" class="c3" /></linearGradient>
+        <linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="a0" /><stop offset="1" class="a1" /></linearGradient>
+        <filter id="fGlow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="14" /></filter>
+        <radialGradient id="gHalo"><stop offset="0" class="h0" /><stop offset="1" class="h1" /></radialGradient>
+        <clipPath id="clip"><rect id="clipR" x="0" y="0" width="0" height="{{H}}" /></clipPath>
+      </defs>
+      <linearGradient id="gFade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".38" /><stop offset=".55" stop-color="#fff" stop-opacity="0" /></linearGradient>
+      <mask id="mRefl" maskUnits="userSpaceOnUse"><rect id="mRect" x="0" y="0" width="{{W}}" height="{{H}}" fill="url(#gFade)" /></mask>
+      <filter id="fSoft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="7" /></filter>
+      <g id="refl" mask="url(#mRefl)" filter="url(#fSoft)"><g id="reflFlip"><use href="#area" /><use href="#line" /></g></g>
+      <g id="axes"></g>
+      <path id="area" clip-path="url(#clip)" fill="url(#gArea)" />
+      <path id="glow" fill="none" stroke="url(#gStroke)" filter="url(#fGlow)" stroke-linecap="round" stroke-linejoin="round" />
+      <path id="line" fill="none" stroke="url(#gStroke)" stroke-linecap="round" stroke-linejoin="round" />
+      <path id="core" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" opacity=".55" />
+      <g id="dots"></g>
+      <line id="drop" stroke-linecap="round" />
+      <circle id="halo" r="1" fill="url(#gHalo)" />
+      <circle id="ring" r="1" fill="none" />
+      <circle id="head" r="1" fill="#fff" />
+    </svg>
+    <div id="pill"><div id="num"></div><div id="lab"></div></div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const D = +document.getElementById("root").dataset.duration;
+  const cs = getComputedStyle(document.getElementById("root"));
+  const C = (n) => cs.getPropertyValue(n).trim();
+  const ACC = C("--accent"), ACC2 = C("--accent2"), INK = C("--ink");
+  const stop = (sel, color, op = 1) => document.querySelectorAll(sel).forEach((s) => { s.style.stopColor = color; s.style.stopOpacity = op; });
+  stop(".c1", ACC); stop(".c2", ACC2); stop(".c3", `color-mix(in srgb, ${ACC} 45%, white)`);
+  stop(".a0", ACC, 0.55); stop(".a1", ACC, 0);
+  stop(".h0", ACC, 0.9); stop(".h1", ACC, 0);
+
+  // ---- the data: given, or a growth curve that lands on the brand's first stat
+  const st0 = (v.stats && v.stats[0]) || { value: 100, label: "" };
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => +String(s).trim()).filter((n) => isFinite(n) && String(n) !== "");
+  let data = list(v.data);
+  if (data.length < 2) data = [0.05, 0.08, 0.07, 0.12, 0.15, 0.13, 0.21, 0.27, 0.25, 0.37, 0.46, 0.6, 0.77, 1].map((f) => f * st0.value);
+  const dec = v.data && v.decimals !== undefined ? +v.decimals || 0 : (+v.decimals || st0.decimals || 0);
+  const last = data[data.length - 1];
+  const fmt = (x) => (dec ? x.toFixed(dec) : Math.round(x).toLocaleString("en-US"));
+  const suffix = v.suffix || (list(v.data).length >= 2 ? "" : st0.suffix || ""), prefix = v.prefix || (list(v.data).length >= 2 ? "" : st0.prefix || "");
+  const valueText = v.value || fmt(last);
+  const labelText = v.label || (list(v.data).length >= 2 ? "" : st0.label || "");
+
+  // ---- the plot, in frame pixels at the final (pulled back) view
+  const P = MV.portrait, SQ = W === H;
+  const Lx = P ? safe.left + 24 * u : SQ ? 110 * u : 170 * u, Rx = P ? W - safe.right - 40 * u : SQ ? W - 120 * u : W - 190 * u;
+  const Ty = P ? safe.top + 300 * u : SQ ? 330 * u : 330 * u, By = P ? H - safe.bottom - 90 * u : SQ ? H - 150 * u : H - 150 * u;
+  const lo = Math.min(0, ...data), hi = Math.max(...data);
+  const pts = data.map((d, i) => [Lx + (i / (data.length - 1)) * (Rx - Lx), By - ((d - lo) / (hi - lo || 1)) * (By - Ty)]);
+  // monotone cubic through the points (no overshoot below a dip or above a peak)
+  const n = pts.length, dx = [], m = [], t = [];
+  for (let i = 0; i < n - 1; i++) { dx[i] = pts[i + 1][0] - pts[i][0]; m[i] = (pts[i + 1][1] - pts[i][1]) / dx[i]; }
+  t[0] = m[0]; t[n - 1] = m[n - 2];
+  for (let i = 1; i < n - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : (3 * (dx[i - 1] + dx[i])) / ((2 * dx[i] + dx[i - 1]) / m[i - 1] + (dx[i] + 2 * dx[i - 1]) / m[i]);
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < n - 1; i++) { const h = dx[i] / 3; d += ` C${pts[i][0] + h},${pts[i][1] + t[i] * h} ${pts[i + 1][0] - h},${pts[i + 1][1] - t[i + 1] * h} ${pts[i + 1][0]},${pts[i + 1][1]}`; }
+  const sw = (P ? 10 : 8) * u;
+  for (const id of ["line", "glow", "core"]) document.getElementById(id).setAttribute("d", d);
+  document.getElementById("line").setAttribute("stroke-width", sw);
+  document.getElementById("glow").setAttribute("stroke-width", sw * 3.2);
+  document.getElementById("core").setAttribute("stroke-width", sw * 0.28);
+  document.getElementById("area").setAttribute("d", d + ` L${Rx},${By} L${Lx},${By} Z`);
+  const path = document.getElementById("line"), L = path.getTotalLength();
+  // the glossy floor: the line and its fill mirrored under the baseline, fading out
+  document.getElementById("reflFlip").setAttribute("transform", `translate(0 ${2 * By + 6 * u}) scale(1 -1)`);
+  const mr = document.getElementById("mRect"); mr.setAttribute("y", By); mr.setAttribute("height", (By - Ty) * 0.9);
+  for (const id of ["line", "glow", "core"]) { const e = document.getElementById(id); e.style.strokeDasharray = `${L} ${L + 10}`; e.style.strokeDashoffset = L; }
+
+  // ---- hairline axes: a baseline, three faint guides, a tick under each point
+  const NS = "http://www.w3.org/2000/svg", ax = document.getElementById("axes");
+  const mk = (tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const guides = [];
+  for (let g = 1; g <= 3; g++) { const y = By - (g / 3) * (By - Ty); const e = mk("line", { x1: Lx - 30 * u, x2: Rx + 30 * u, y1: y, y2: y, stroke: INK, "stroke-opacity": 0.1, "stroke-width": 1.5 * u, "stroke-dasharray": `${2 * u} ${10 * u}` }); ax.append(e); guides.push(e); }
+  const baseL = mk("line", { x1: Lx - 30 * u, x2: Rx + 30 * u, y1: By, y2: By, stroke: INK, "stroke-opacity": 0.45, "stroke-width": 2 * u }); ax.append(baseL);
+  const ticks = pts.map(([x]) => { const e = mk("line", { x1: x, x2: x, y1: By + 8 * u, y2: By + 22 * u, stroke: INK, "stroke-opacity": 0.35, "stroke-width": 2 * u }); ax.append(e); return e; });
+  // a small dot on each point, lit as the head passes it
+  const dots = pts.map(([x, y]) => { const e = mk("circle", { cx: x, cy: y, r: 6 * u, fill: C("--ground") || "#000", stroke: ACC, "stroke-width": 3 * u, opacity: 0 }); document.getElementById("dots").append(e); return e; });
+
+  const [ex, ey] = pts[n - 1];
+  const head = document.getElementById("head"), halo = document.getElementById("halo"), ring = document.getElementById("ring");
+  head.setAttribute("r", sw * 1.25); halo.setAttribute("r", sw * 7);
+  ring.setAttribute("cx", ex); ring.setAttribute("cy", ey); ring.setAttribute("r", sw * 2); ring.style.stroke = `color-mix(in srgb, ${ACC} 50%, white)`; ring.setAttribute("stroke-width", 3 * u); ring.style.opacity = 0;
+  const drop = document.getElementById("drop");
+  Object.entries({ x1: ex, x2: ex, y1: ey, y2: ey, stroke: INK, "stroke-opacity": 0.5, "stroke-width": 2 * u, "stroke-dasharray": `${2 * u} ${8 * u}` }).forEach(([k, val]) => drop.setAttribute(k, val));
+
+  // ---- the value pill: above the last point, its right edge just past it; below it if the line is in the way
+  const num = document.getElementById("num"), lab = document.getElementById("lab"), pill = document.getElementById("pill");
+  num.innerHTML = (prefix ? `<span class="fx">${prefix}</span>` : "") + `<span>${valueText}</span>` + (suffix ? `<span class="fx">${suffix}</span>` : "");
+  lab.textContent = labelText; if (!labelText) lab.style.display = "none";
+  num.style.fontSize = (P ? 132 : 112) * u + "px"; lab.style.fontSize = (P ? 38 : 34) * u + "px";
+  MV.fit(num, (P ? 600 : 640) * u, 40); MV.fit(lab, (P ? 600 : 640) * u, 22);
+  const pw = pill.offsetWidth, ph = pill.offsetHeight;
+  // sample the drawn curve so the pill never sits on the line
+  const samp = []; for (let i = 0; i <= 240; i++) { const q = path.getPointAtLength((i / 240) * L); samp.push([q.x, q.y]); }
+  const ys = (x0, x1) => samp.filter(([x]) => x >= x0 - 30 * u && x <= x1 + 30 * u).map(([, y]) => y);
+  const topLim = P ? safe.top + 10 * u : 40 * u, botLim = P ? H - safe.bottom : H - 60 * u, gapP = 40 * u;
+  let px = Math.max(Lx, Math.min(ex + 40 * u, W - (P ? safe.right : 120 * u)) - pw), py;
+  const above = Math.min(...ys(px, px + pw)) - gapP - ph;
+  if (above >= topLim) py = above;
+  else {
+    const below = ey + 44 * u, clash = ys(px, px + pw).some((y) => y > below - gapP && y < below + ph + gapP);
+    if (!clash && below + ph <= botLim) py = below;
+    else { px = Math.max(Lx, ex - 60 * u - pw); py = Math.max(topLim, Math.min(...ys(px, px + pw)) - gapP - ph); }
+  }
+  px = Math.round(px); py = Math.round(py);
+  Object.assign(pill.style, { left: px + "px", top: py + "px", transformOrigin: `${ex - px}px ${ey - py}px` });
+
+  // ---- the camera: rides the head (zoomed), then pulls back to the whole line
+  const Z = P ? 2.0 : 1.75, aimX = P ? 0.56 : 0.6, aimY = 0.52;
+  const trendY = (x) => pts[0][1] + ((x - pts[0][0]) / (ex - pts[0][0])) * (ey - pts[0][1]);
+  const S = { p: 0.06, k: 0, z: 1 };
+  const passed = new Array(n).fill(false);
+  const render = () => {
+    const len = S.p * L, hp = path.getPointAtLength(len);
+    for (const id of ["line", "glow", "core"]) document.getElementById(id).style.strokeDashoffset = L - len;
+    document.getElementById("clipR").setAttribute("width", hp.x);
+    head.setAttribute("cx", hp.x); head.setAttribute("cy", hp.y); halo.setAttribute("cx", hp.x); halo.setAttribute("cy", hp.y);
+    pts.forEach(([x], i) => { const on = hp.x >= x - 1; dots[i].setAttribute("opacity", on ? 1 : 0); dots[i].setAttribute("r", (on ? Math.min(1, (hp.x - x + 1) / (40 * u)) : 0) * 6 * u); });
+    // track a smoothed head: its x, and the trend's y plus a third of the line's swing
+    const fy = trendY(hp.x) + (hp.y - trendY(hp.x)) * 0.35;
+    const tx1 = W * aimX - hp.x * Z, ty1 = H * aimY - fy * Z;
+    const s = (Z + (1 - Z) * S.k) * S.z, tx = tx1 * (1 - S.k), ty = ty1 * (1 - S.k);
+    const ox = W / 2, oy = H / 2; // the final drift scales about the centre
+    document.getElementById("rig").style.transform = `translate(${tx + (1 - S.z) * ox}px, ${ty + (1 - S.z) * oy}px) scale(${s})`;
+  };
+  const R = { onUpdate: render };
+  render();
+
+  // ---- the build
+  tl.fromTo(baseL, { attr: { x2: Lx - 30 * u } }, { attr: { x2: Rx + 30 * u }, duration: 1.0, ease: "expo.out" }, 0);
+  guides.forEach((g, i) => tl.fromTo(g, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out" }, 0.1 + i * 0.08));
+  ticks.forEach((tk, i) => tl.fromTo(tk, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.1 + i * 0.03));
+  tl.fromTo("#area", { opacity: 0 }, { opacity: 1, duration: 1.4, ease: "power2.in" }, 0.4);
+  // the draw: eases in, runs, lands on a long tail at the last point
+  const T1 = 0.12, TD = 2.45;
+  tl.to(S, { p: 1, duration: TD, ease: "power1.inOut", ...R }, T1);
+  // the pull back starts as the head nears the end, so the end point lands in the full view
+  tl.to(S, { k: 1, duration: 1.05, ease: "power3.inOut", ...R }, T1 + TD - 0.6);
+  tl.to(S, { z: 1.035, duration: D - (T1 + TD + 0.45), ease: "sine.inOut", ...R }, T1 + TD + 0.45);
+
+  // ---- the moment: the last point pops, the drop line falls to the baseline, the value lands on glass
+  const E = T1 + TD - 0.02;
+  tl.fromTo(head, { attr: { r: sw * 1.25 } }, { attr: { r: sw * 2.1 }, duration: 0.12, ease: "power2.out" }, E);
+  tl.to(head, { attr: { r: sw * 1.5 }, duration: 0.5, ease: "back.out(3)" }, E + 0.12);
+  tl.fromTo(ring, { attr: { r: sw * 1.5 }, opacity: 0.95 }, { attr: { r: sw * 9 }, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, E + 0.05);
+  tl.fromTo(halo, { attr: { r: sw * 7 } }, { attr: { r: sw * 11 }, duration: 0.6, ease: "expo.out" }, E);
+  tl.to(drop, { attr: { y2: By }, duration: 0.55, ease: "expo.out" }, E + 0.08);
+  tl.fromTo(pill, { scale: 0.55 }, { scale: 1, duration: 0.55, ease: "back.out(1.6)" }, E + 0.12);
+  tl.fromTo(pill, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, E + 0.12);
+  tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut" }, E + 0.5);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"from","type":"number","label":"Count it starts on","default":10000},
+  {"id":"to","type":"number","label":"Count it lands on","default":600000},
+  {"id":"unit","type":"string","label":"What is counted","default":"followers"},
+  {"id":"start","type":"string","label":"Tag at the start (empty: none)","default":"Day 1"},
+  {"id":"end","type":"string","label":"Tag when it lands","default":"Day 78"},
+  {"id":"avatar","type":"string","label":"Avatar image (empty: the brand person, else the mark)","default":""},
+  {"id":"delta","type":"string","label":"Show the green gain chip: yes or no","default":"yes"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --ok: #2BD67B; --okg: rgba(43,214,123,.5); --al: color-mix(in srgb, var(--accent) 58%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 30% at 45% 55%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 16%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='5'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #grp { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1200); }
+  #fl { position: relative; transform-style: preserve-3d; }
+  .glass { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 74%, #fff 12%), color-mix(in srgb, var(--surface) 92%, transparent));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -14) rgba(0,0,0,.62), 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.25); }
+  .is-key .glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  #chip { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 28); box-sizing: border-box; white-space: nowrap;
+    height: calc(var(--u) * 168); padding: 0 calc(var(--u) * 46) 0 calc(var(--u) * 16); border-radius: calc(var(--u) * 84); }
+  #chip .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.28) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  /* the avatar: a story ring in the brand colours round a portrait */
+  #av { position: relative; flex: none; width: calc(var(--u) * 136); height: calc(var(--u) * 136); border-radius: 50%;
+    background: conic-gradient(from 200deg, var(--accent), var(--accent2), var(--al), var(--accent));
+    box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 18) calc(var(--u) * -6) rgba(0,0,0,.6); }
+  #av .in { position: absolute; inset: calc(var(--u) * 7); border-radius: 50%; overflow: hidden;
+    background: radial-gradient(80% 80% at 40% 25%, color-mix(in srgb, var(--surface) 70%, #fff 18%), var(--surface));
+    box-shadow: 0 0 0 calc(var(--u) * 4) color-mix(in srgb, var(--surface) 90%, #000); }
+  #av img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
+  #av img.person { width: 150%; height: 150%; left: -25%; top: -6%; object-fit: cover; object-position: 50% 0%; }
+  #av img.mark { width: 64%; height: 64%; left: 18%; top: 18%; object-fit: contain; }
+  #av .gl { position: absolute; inset: calc(var(--u) * 7); border-radius: 50%; pointer-events: none;
+    background: radial-gradient(70% 50% at 35% 18%, rgba(255,255,255,.4), rgba(255,255,255,0) 60%); }
+  #txt { display: flex; flex-direction: column; justify-content: center; }
+  /* the odometer */
+  #num { display: flex; align-items: flex-end; font-family: var(--font-display); color: var(--ink); line-height: 1; font-variant-numeric: tabular-nums;
+    font-size: calc(var(--u) * 92); letter-spacing: -0.02em; }
+  #num .col { position: relative; overflow: hidden; height: 1.08em; flex: none;
+    -webkit-mask-image: linear-gradient(transparent 0, #000 30%, #000 70%, transparent 100%); mask-image: linear-gradient(transparent 0, #000 30%, #000 70%, transparent 100%); }
+  #num .strip { position: absolute; left: 0; top: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  #num .strip span { display: block; height: 1.08em; line-height: 1.08em; }
+  #num .fix { display: block; height: 1.08em; line-height: 1.08em; flex: none; }
+  #unit { font-size: calc(var(--u) * 28); font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 62%, transparent); margin-top: calc(var(--u) * 2); }
+  /* the day tag: a small card that flips over */
+  #tagw { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 600); }
+  #tag { position: relative; transform-style: preserve-3d; }
+  .face { display: flex; align-items: center; justify-content: center; box-sizing: border-box; height: calc(var(--u) * 64); padding: 0 calc(var(--u) * 26);
+    border-radius: calc(var(--u) * 18); font-family: var(--font-display); font-size: calc(var(--u) * 32); letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden; color: var(--ink); }
+  .face.back { position: absolute; left: 0; top: 0; transform: rotateX(180deg); color: #fff;
+    background: linear-gradient(170deg, var(--al), var(--accent) 55%, color-mix(in srgb, var(--accent) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--u) * 14) calc(var(--u) * 26) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key .face.back { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  /* the gain: semantic green */
+  #delta { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 8); height: calc(var(--u) * 62); padding: 0 calc(var(--u) * 22) 0 calc(var(--u) * 16);
+    border-radius: calc(var(--u) * 31); white-space: nowrap; color: #04210f; font-weight: 800; font-size: calc(var(--u) * 32); letter-spacing: -0.01em;
+    background: linear-gradient(170deg, #7CF2B0, var(--ok) 55%, #19a45b);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 calc(var(--u) * 12) calc(var(--u) * 28) calc(var(--u) * -6) var(--okg); }
+  .is-key #delta { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6); }
+  #delta svg { width: calc(var(--u) * 28); height: calc(var(--u) * 28); }
+  #halo { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 60%, transparent), transparent 75%); }
+  .is-key #halo { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="grp"><div id="fl">
+    <div id="halo"></div>
+    <div id="tagw"><div id="tag"><div class="face front glass" id="t0"></div><div class="face back" id="t1"></div></div></div>
+    <div id="chip" class="glass">
+      <div id="av"><div class="in"></div><div class="gl"></div></div>
+      <div id="txt"><div id="num" data-bleed="drum"></div><div id="unit"></div></div>
+      <div class="sh"></div>
+    </div>
+    <div id="delta"><svg viewBox="0 0 24 24" fill="none" stroke="#04210f" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg><span id="dtxt"></span></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1.12 : SQ ? 0.8 : 1.12);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const A = Math.max(0, +v.from || 0), B = Math.max(0, +v.to || 0);
+
+  // ---- the scale and format, chosen once from the landing value so the drum never changes shape
+  const big = Math.max(A, B);
+  const [div, suf, dec] = big >= 1e6 ? [1e6, "M", big < 1e7 ? 1 : 0] : big >= 1e4 ? [1e3, "K", big < 1e5 ? 1 : 0] : [1, "", 0];
+  const fmt = (x) => { const s = (x / div).toFixed(dec); return s; };
+  const nOf = (x) => (x / div) * Math.pow(10, dec);   // the integer domain the columns roll in
+  const NB = nOf(B), NA = nOf(A);
+  const digits = Math.max(1, String(Math.floor(Math.max(NA, NB))).length);
+  // build columns, most significant first: [col p] ... with a fixed point before the last `dec` columns
+  const num = $("#num"), cols = [];
+  for (let p = digits - 1; p >= 0; p--) {
+    const c = document.createElement("div"); c.className = "col";
+    const st = document.createElement("div"); st.className = "strip";
+    for (let d = 0; d <= 10; d++) { const s = document.createElement("span"); s.textContent = d % 10; st.appendChild(s); }
+    c.appendChild(st); num.appendChild(c); cols.push({ p, c, st });
+    if (p === dec && dec > 0) { const f = document.createElement("span"); f.className = "fix"; f.textContent = "."; num.appendChild(f); }
+    if (p > dec && (p - dec) % 3 === 0 && !suf) { const f = document.createElement("span"); f.className = "fix sep"; f.textContent = ","; num.appendChild(f); }
+  }
+  if (suf) { const f = document.createElement("span"); f.className = "fix"; f.textContent = suf; f.style.marginLeft = "0.04em"; num.appendChild(f); }
+  $("#unit").textContent = v.unit || "";
+  if (!v.unit) $("#unit").style.display = "none";
+  // the digit width, measured from a zero
+  const probe = cols[0].st.children[0]; const DW = probe.getBoundingClientRect().width, CH = probe.getBoundingClientRect().height;
+  cols.forEach((o) => { o.c.style.width = DW + "px"; o.st.style.width = DW + "px"; });
+  const seps = [...num.querySelectorAll(".sep")];
+  const setN = (n) => {
+    cols.forEach((o) => {
+      const q = Math.pow(10, o.p), whole = Math.floor(n / q), rem = n - whole * q;
+      let pos = whole % 10;
+      if (o.p === 0) pos += n - Math.floor(n); else if (rem > q - 1) pos += rem - (q - 1);
+      o.st.style.transform = `translateY(${-pos * CH}px)`;
+      for (let d = 0; d <= 10; d++) { const dd = Math.abs(d - pos); o.st.children[d].style.visibility = dd < 0.999 ? "visible" : "hidden"; o.st.children[d].style.opacity = Math.max(0, 1 - dd * 0.85); }
+      // leading columns grow in as the number reaches them
+      const need = o.p <= dec ? 1 : Math.max(0, Math.min(1, (n - 0.9 * q) / (0.1 * q)));
+      o.c.style.width = DW * need + "px"; o.c.style.opacity = need;
+    });
+    seps.forEach((s) => { s.style.display = n >= 1000 * Math.pow(10, dec) ? "block" : "none"; });
+  };
+  // the gain
+  const gain = B - A, gs = (gain / div).toFixed(gain / div < 10 && div > 1 ? 1 : 0).replace(/\.0$/, "") + suf;
+  $("#dtxt").textContent = (gain >= 0 ? "+" : "") + (div === 1 ? Math.round(gain).toLocaleString("en-US") : gs);
+  const showDelta = String(v.delta || "yes").toLowerCase() !== "no" && gain > 0;
+  if (!showDelta) $("#delta").style.display = "none";
+
+  // ---- the avatar
+  const avIn = $("#av .in");
+  const src = v.avatar || (v.people && v.people[0]) || v.mark || v.logo;
+  if (src) avIn.appendChild(MV.img(src, v.avatar ? "" : (v.people && v.people[0]) ? "person" : "mark"));
+
+  // ---- the tag text
+  const t0 = $("#t0"), t1 = $("#t1");
+  t0.textContent = v.start || ""; t1.textContent = v.end || "";
+  const hasTag = !!(v.start || v.end);
+  if (!v.start) t0.style.visibility = "hidden";
+
+  // ---- size: the chip holds the landing number at full width
+  setN(NB);
+  const chip = $("#chip");
+  const maxW = P ? W - safe.left - safe.right : SQ ? W * 0.62 : W * 0.4;
+  if (chip.offsetWidth > maxW) { const k = maxW / chip.offsetWidth; root.style.setProperty("--u", u * k + "px"); }
+  const uu = parseFloat(root.style.getPropertyValue("--u"));
+  const DW2 = cols[0].st.children[0].getBoundingClientRect().width, CH2 = cols[0].st.children[0].getBoundingClientRect().height;
+  const cw = chip.offsetWidth, ch = chip.offsetHeight;
+  chip.style.width = cw + "px";   // fixed: the drum grows inside it, the glass never jumps
+  // tag width: the wider face
+  const tw = Math.max(t0.offsetWidth, t1.offsetWidth); t0.style.width = tw + "px"; t1.style.width = tw + "px";
+  const th = t0.offsetHeight;
+
+  // ---- place: 9:16 under the chin, centred; 16:9 upper left beside the head; 1:1 lower left
+  let x, y;
+  const blockH = ch + (hasTag ? th + 8 * uu : 0);
+  if (P) { x = Math.max(safe.left, Math.min(W / 2 - cw / 2, W - safe.right - cw)); y = H * 0.645 - blockH; }
+  else if (SQ) { x = W * 0.05; y = H * 0.9 - blockH; }
+  else { x = safe.left; y = H * 0.12; }
+  gsap.set("#grp", { x, y });
+  // the tag hangs off the chip's lower edge, under the number; the gain chip sits on its top right corner
+  const tagX = 16 * uu + 136 * uu + 28 * uu - 6 * uu, tagY = ch + 8 * uu;
+  gsap.set("#tagw", { x: tagX, y: tagY });
+  const dl = $("#delta"); const dw = dl.offsetWidth, dh = dl.offsetHeight;
+  gsap.set(dl, { x: Math.min(cw - dw * 0.7, (P ? W - safe.right - x : W - x) - dw - 6 * uu), y: -dh * 0.55 });
+  const HS = cw * 1.1; Object.assign($("#halo").style, { width: HS + "px", height: HS * 0.6 + "px", left: cw / 2 - HS / 2 + "px", top: ch / 2 - HS * 0.3 + "px" });
+
+  // ---- timeline
+  const n = { v: NA }; setN(NA);
+  // in: the avatar pops, the glass opens out to the right, the number and unit arrive
+  const pc = { p: 0 }, clip = () => { chip.style.clipPath = pc.p >= 1 ? "none" : `inset(-6px ${(1 - pc.p) * (cw - ch)}px -6px -6px round ${ch / 2}px)`; };
+  clip();
+  tl.fromTo(chip, { scale: 0, transformOrigin: `${ch / 2}px 50%` }, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 0.05);
+  tl.fromTo(chip, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power1.out" }, 0.05);
+  tl.fromTo("#av .in", { scale: 1.4, rotation: -14 }, { scale: 1, rotation: 0, duration: 1.0, ease: "expo.out" }, 0.05);
+  tl.fromTo("#av", { rotation: -120 }, { rotation: 0, duration: 1.2, ease: "expo.out" }, 0.05);
+  tl.to(pc, { p: 1, duration: 0.65, ease: "expo.out", onUpdate: clip }, 0.26);
+  tl.fromTo("#num", { opacity: 0, x: -20 * uu, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 0.4);
+  tl.fromTo("#unit", { opacity: 0, x: -14 * uu }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.52);
+  if (hasTag) tl.fromTo("#tagw", { y: tagY - th * 0.9, opacity: 0, rotation: -6 }, { y: tagY, opacity: 1, rotation: -3, duration: 0.55, ease: "back.out(2)" }, 0.62);
+  // the count: the drum rolls, slow, fast, slow, and lands
+  const C0 = 1.15, CD = Math.min(1.9, Math.max(1.2, D - 2.6)), LAND = C0 + CD;
+  tl.to(n, { v: NB, duration: CD, ease: "power3.inOut", onUpdate: () => setN(n.v) }, C0);
+  // the day tag flips over as the count lands
+  if (hasTag) {
+    tl.to("#tag", { rotationX: -180, duration: 0.6, ease: "back.out(1.6)" }, LAND - 0.3);
+    // the faces swap the moment the card passes edge-on (the hidden one is also hidden from the text audit)
+    const fe = gsap.parseEase("back.out(1.6)"); let th0 = 0; while (th0 < 1 && fe(th0) < 0.5) th0 += 0.01;
+    gsap.set(t1, { visibility: "hidden" });
+    tl.set(t1, { visibility: "visible" }, LAND - 0.3 + th0 * 0.6); tl.set(t0, { visibility: "hidden" }, LAND - 0.3 + th0 * 0.6);
+  }
+  // land: the number punches, the halo blooms, the gain chip pops
+  tl.to("#num", { scale: 1.1, transformOrigin: "0% 60%", duration: 0.08, ease: "power2.out" }, LAND);
+  tl.to("#num", { scale: 1, duration: 0.5, ease: "back.out(3)" }, LAND + 0.08);
+  tl.fromTo("#halo", { opacity: 0, scale: 0.6 }, { opacity: 0.9, scale: 1, duration: 0.15, ease: "power2.out" }, LAND);
+  tl.to("#halo", { opacity: 0.25, duration: 0.9, ease: "power2.out" }, LAND + 0.15);
+  if (showDelta) tl.fromTo(dl, { scale: 0, rotation: 12, transformOrigin: "30% 80%" }, { scale: 1, rotation: 4, duration: 0.5, ease: "back.out(2.6)" }, LAND + 0.06);
+  tl.fromTo(chip, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, LAND + 0.05);
+  // the hold: slow turn in depth
+  tl.fromTo("#fl", { rotationY: P ? 10 : 12, rotationX: 5 }, { rotationY: -5, rotationX: -2, duration: D, ease: "sine.inOut" }, 0);
+  // out
+  const O = D - 0.45;
+  tl.to([dl, "#tagw"], { opacity: 0, scale: 0.6, duration: 0.18, ease: "power3.in" }, O);
+  tl.to(["#num", "#unit"], { opacity: 0, x: -14 * uu, duration: 0.14, ease: "power2.in" }, O);
+  tl.to("#halo", { opacity: 0, duration: 0.15, ease: "power2.in" }, O);
+  const pc2 = { p: 1 }, clip2 = () => { chip.style.clipPath = pc2.p >= 1 ? "none" : `inset(-6px ${(1 - pc2.p) * (cw - ch)}px -6px -6px round ${ch / 2}px)`; };
+  tl.to(pc2, { p: 0, duration: 0.2, ease: "power3.in", onUpdate: clip2 }, O + 0.03);
+  tl.to(chip, { scale: 0, opacity: 0, duration: 0.14, ease: "power3.in" }, O + 0.22);
+  MV.done();
+</script>
+</body>
+</html>

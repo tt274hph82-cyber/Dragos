@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"count","type":"number","label":"How many of the 100 dots light up","default":37},
+  {"id":"suffix","type":"string","label":"After the big number (e.g. %)","default":""},
+  {"id":"label","type":"string","label":"Under the number, a few words","default":"out of 100"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor, .is-alpha #base, .is-alpha #refl { display: none; }
+
+  #cam { position: absolute; inset: 0; transform-origin: 0 0; }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #floor { position: absolute; left: -60%; right: -60%; height: 60%; background: linear-gradient(180deg, rgba(255,255,255,.05), transparent 55%); -webkit-mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(90deg, transparent, #000 30%, #000 70%, transparent); }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.55) 12%, rgba(255,255,255,.55) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.35); }
+
+  /* the board: a pane of glass holding 100 beads */
+  #board { position: absolute; border-radius: calc(var(--u) * 40);
+    background: linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.03) 60%);
+    -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 50) calc(var(--u) * 80) calc(var(--u) * -40) rgba(0,0,0,.7); }
+  #board::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .is-alpha #board { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, #fff), var(--surface)); }
+  .is-key #board { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); }
+  .bd { position: absolute; border-radius: 50%; box-sizing: border-box;
+    background: radial-gradient(60% 60% at 36% 30%, rgba(255,255,255,.26), rgba(255,255,255,.05) 70%);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), inset 0 calc(var(--u) * -4) calc(var(--u) * 8) rgba(0,0,0,.3); }
+  .is-alpha .bd { background: radial-gradient(60% 60% at 36% 30%, rgba(255,255,255,.3), rgba(0,0,0,.25) 80%); }
+  .bd.on { background: radial-gradient(55% 55% at 36% 30%, #fff, color-mix(in srgb, var(--accent) 55%, white) 22%, var(--accent) 60%, color-mix(in srgb, var(--accent) 65%, black));
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.4), 0 0 calc(var(--u) * 26) color-mix(in srgb, var(--accent) 75%, transparent); }
+  .is-key .bd.on { box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.4); }
+  #refl { position: absolute; transform: scaleY(-1); transform-origin: 50% 50%; filter: blur(calc(var(--u) * 5)); opacity: .4;
+    -webkit-mask: linear-gradient(0deg, rgba(0,0,0,.9), transparent 55%); mask: linear-gradient(0deg, rgba(0,0,0,.9), transparent 55%); }
+  #refl .rb { position: absolute; inset: 0; border-radius: calc(var(--u) * 40); background: rgba(255,255,255,.06); }
+  #ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 50%, white 50%); opacity: 0; }
+  .is-key #ring { display: none; }
+
+  #readout { position: absolute; }
+  #num { white-space: nowrap; font-family: var(--font-display); line-height: .9; letter-spacing: -0.03em; font-variant-numeric: tabular-nums;
+    color: color-mix(in srgb, var(--accent) 40%, white); text-shadow: 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #num .fx { font-size: .5em; margin-left: .03em; }
+  #lab { white-space: nowrap; font-weight: 700; color: color-mix(in srgb, var(--ink) 74%, transparent); margin-top: calc(var(--u) * 12); }
+  .is-alpha #readout { padding: calc(var(--u) * 26) calc(var(--u) * 34); border-radius: calc(var(--u) * 32); background: color-mix(in srgb, var(--surface) 92%, transparent); }
+  .is-key #readout { background: var(--surface); }
+  .is-key #num { text-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="cam"><div id="stage"><div id="rig">
+    <div id="floor"></div>
+    <div id="base"></div>
+    <div id="refl"><div class="rb"></div></div>
+    <div id="board"></div>
+    <div id="ring"></div>
+    <div id="readout"><div id="num"><span class="n"></span><span class="fx"></span></div><div id="lab"></div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s) => document.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H;
+  const N = Math.max(1, Math.min(100, Math.round(isFinite(+v.count) ? +v.count : 37)));
+
+  // ---- layout: number above the board (portrait, square) or beside it (landscape, portrait overlay)
+  const num = $("#num"), nn = num.querySelector(".n"), lab = $("#lab"), ro = $("#readout");
+  num.querySelector(".fx").textContent = v.suffix || "";
+  lab.textContent = v.label || ""; if (!v.label) lab.style.display = "none";
+  const side = !!(MV.alpha || (!P && !SQ));
+  if (!side) Object.assign(ro.style, { display: "flex", alignItems: "baseline", gap: 26 * u + "px" });
+  const fsN = (side ? (MV.alpha ? 170 : 240) : P ? 200 : 150) * u, fsL = (side ? (MV.alpha ? 40 : 52) : P ? 50 : 44) * u;
+  num.style.fontSize = fsN + "px"; lab.style.fontSize = fsL + "px";
+  nn.textContent = String(N).replace(/\d/g, "8");
+  let G, gx, gy;
+  if (side) {
+    if (MV.alpha && P) { G = 450 * u; gx = W - safe.right - G; gy = safe.top + 30 * u; }
+    else if (MV.alpha) { G = 470 * u; gx = W - safe.right - G - 20 * u; gy = H - safe.bottom - G - 20 * u; }
+    else { G = 790 * u; gx = W * 0.5; gy = (H - G) / 2 - 30 * u; }
+    const roomW = gx - (MV.alpha ? (P ? safe.left : W * 0.35) : 120 * u) - 90 * u - (MV.alpha ? 68 * u : 0);
+    MV.fitText(num, roomW, 40); MV.fitText(lab, roomW, 20);
+    const rr = ro.getBoundingClientRect();
+    // a full-frame cutaway centres the readout and the board as one group
+    if (!MV.alpha) gx = (W - (rr.width + 70 * u + G)) / 2 + rr.width + 70 * u;
+    Object.assign(ro.style, { left: gx - 70 * u - rr.width + "px", top: gy + G / 2 - rr.height / 2 + "px", textAlign: "right" });
+  } else {
+    const L = P ? safe.left + 20 * u : 110 * u, R = P ? W - safe.right - 20 * u : W - 110 * u;
+    MV.fitText(lab, (R - L) * 0.5, 20); MV.fitText(num, R - L - lab.getBoundingClientRect().width - 26 * u, 40);
+    const rr = ro.getBoundingClientRect();
+    const tY = P ? safe.top + 10 * u : 100 * u, bot = P ? H - safe.bottom - 40 * u : H - 100 * u;
+    G = Math.min(P ? 760 * u : 700 * u, bot - tY - rr.height - 50 * u);
+    gx = (L + R - G) / 2; gy = bot - G;
+    Object.assign(ro.style, { left: gx + "px", top: gy - 50 * u - rr.height + "px" });
+  }
+  // ---- the board: 10 x 10 beads, lit from the bottom row up so the fill rises like a level
+  const board = $("#board"), refl = $("#refl");
+  for (const e of [board, refl]) Object.assign(e.style, { left: gx + "px", top: gy + "px", width: G + "px", height: G + "px" });
+  const pad = G * 0.06, pitch = (G - 2 * pad) / 10, bs = pitch * 0.78;
+  const beads = [];
+  for (let r = 0; r < 10; r++) for (let c = 0; c < 10; c++) {
+    const b = document.createElement("div"); b.className = "bd";
+    const x = pad + c * pitch + (pitch - bs) / 2, y = pad + r * pitch + (pitch - bs) / 2;
+    Object.assign(b.style, { left: x + "px", top: y + "px", width: bs + "px", height: bs + "px" });
+    board.appendChild(b);
+    const m = b.cloneNode(); refl.appendChild(m);
+    beads.push({ b, m, r, c, x, y });
+  }
+  // fill order: bottom row first, left to right
+  const order = beads.slice().sort((a, b) => b.r - a.r || a.c - b.c);
+  const floorY = gy + G + 16 * u;
+  $("#floor").style.top = floorY + "px";
+  Object.assign($("#base").style, { left: gx - G * 0.25 + "px", width: G * 1.5 + "px", top: floorY - 1.5 * u + "px" });
+  refl.style.top = floorY + 6 * u + "px";
+
+  // ---- the count: eases in, runs, lands slow on the last bead
+  const T0 = 0.55, TD = 2.35, EASE = gsap.parseEase("power2.inOut");
+  const tOf = (k) => { for (let i = 0; i <= 600; i++) if (EASE(i / 600) * N >= k - 1e-6) return T0 + (i / 600) * TD; return T0 + TD; };
+  const litAt = order.map((_, k) => (k < N ? tOf(k + 1) : Infinity));
+  const S = { t: 0 }, last = order[N - 1];
+  const paint = () => {
+    const t = S.t;
+    let c = 0;
+    order.forEach((o, k) => {
+      const a = t - litAt[k], on = a >= 0;
+      if (on) c++;
+      const cls = on ? "bd on" : "bd";
+      if (o.b.className !== cls) { o.b.className = cls; o.m.className = cls; }
+      // a lit bead pops in hot, then settles on a damped spring
+      const s = on ? 1 + 0.32 * Math.exp(-a * 8) * Math.cos(a * 20) : 1;
+      const tr = `scale(${s.toFixed(4)})`; o.b.style.transform = tr; o.m.style.transform = tr;
+    });
+    nn.textContent = String(c);
+    // the camera rides the rising level, then settles on the whole board
+    const lvl = c ? order[c - 1].r : 9, ly = gy + pad + (lvl + 0.5) * pitch;
+    const k = Math.min(1, Math.max(0, (t - (T0 + TD - 0.6)) / 1.0)), kk = k * k * (3 - 2 * k);
+    const z = 1.1 - 0.1 * kk, fy = (H / 2 - ly) * 0.18 * (1 - kk);
+    const cxm = gx + G / 2;
+    // never push the readout or the board top past the frame (or the platform's top bar)
+    const topEl = Math.min(ro.offsetTop, gy) - 30 * u, minTop = P ? safe.top : 40 * u;
+    const ty = Math.max((1 - z) * (gy + G / 2) + fy, minTop - topEl * z);
+    $("#cam").style.transform = `translate(${(1 - z) * cxm}px, ${ty}px) scale(${z})`;
+  };
+  paint();
+  tl.to(S, { t: D, duration: D, ease: "none", onUpdate: paint }, 0);
+
+  const cx = gx + G / 2, cy = gy + G / 2;
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: side ? -12 : 10, rotationX: 9, z: -50 * u }, { rotationY: side ? 6 : -6, rotationX: 3, z: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the build: the board stands up on the floor, the beads ripple on
+  tl.fromTo("#base", { scaleX: 0.3, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.7, ease: "expo.out" }, 0.02);
+  tl.fromTo(board, { y: 60 * u, scale: 0.92 }, { y: 0, scale: 1, duration: 0.9, ease: "expo.out" }, 0.02);
+  tl.fromTo(board, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.02);
+  tl.fromTo(refl, { opacity: 0 }, { opacity: 0.4, duration: 0.7, ease: "power2.out" }, 0.15);
+  tl.fromTo(ro, { opacity: 0, y: 20 * u, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.2);
+
+  // ---- the moment: the last bead lands with a ring, every lit bead pulses once, the number stamps
+  const E = litAt[N - 1];
+  const ring = $("#ring"), rd = bs * 1.2;
+  Object.assign(ring.style, { width: rd + "px", height: rd + "px", left: gx + last.x + bs / 2 - rd / 2 + "px", top: gy + last.y + bs / 2 - rd / 2 + "px" });
+  tl.fromTo(ring, { scale: 1, opacity: 0.95 }, { scale: 3.2, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, E);
+  tl.fromTo(num, { scale: 1 }, { scale: 1.12, duration: 0.09, ease: "power2.out", immediateRender: false, transformOrigin: side ? "100% 60%" : "0% 60%" }, E);
+  tl.to(num, { scale: 1, duration: 0.5, ease: "back.out(3)" }, E + 0.09);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out", transformOrigin: `${cx}px ${cy}px` }, E); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, E + 0.07);
+  const litEls = order.slice(0, N).map((o) => o.b);
+  tl.to(litEls, { filter: "brightness(1.6)", duration: 0.12, ease: "power2.out", stagger: { each: 0.004, from: "end" } }, E + 0.25);
+  tl.to(litEls, { filter: "brightness(1)", duration: 0.5, ease: "power2.out", stagger: { each: 0.004, from: "end" } }, E + 0.37);
+  tl.fromTo(board, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, E + 0.35);
+
+  // ---- out
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

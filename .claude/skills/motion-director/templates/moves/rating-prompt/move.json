@@ -1,0 +1,5 @@
+{ "id": "rating-prompt", "name": "Glass rating prompt", "oneLiner": "an in-app rating sheet on glass with the brand icon, a question and five empty stars: a pointer taps the last star and they fill one by one with a pop, a glint and a gold ring, Submit lights and is pressed, the button row folds away, the icon flips over into a green check and the sheet turns to a thank-you as the stars wave",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["rating", "review", "stars", "five stars", "feedback", "app", "app review", "customers", "social proof", "rate us", "satisfaction", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker asks for a rating or says users rated it ('leave it five stars', 'they rate it straight away'): the stars fill on 'five stars', the check lands on 'thanks' or the result; it shows the act of rating, review-stars shows the score" }

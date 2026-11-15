@@ -1,0 +1,5 @@
+{ "id": "time-zoom", "name": "Time zoom", "oneLiner": "one continuous camera dives through a timeline on a glass rail: a decade of activity dots, then one year, one week, one day, the scale gliding in log space with a short hold at each level while ticks and labels re-form like a map; the target span glows in the accent before each dive and the camera lands on a single accent dot, where a needle rises and a glass pill names the moment and its time",
+  "category": "data", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "new",
+  "tags": ["timeline", "zoom", "time", "date", "decade", "year", "week", "day", "the moment", "history", "story", "camera", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.8, "alpha": false,
+  "say": "when the speaker pins a turning point inside a long stretch of time ('ten years of posting, and it all changed on one Thursday night'): cut in on the long view, the pin lands on the word that names the moment" }

@@ -1,0 +1,5 @@
+{ "id": "parallax-photo", "name": "Parallax photo", "oneLiner": "a still of the speaker splits into depth layers (a real night-street bokeh backdrop, a glow, a huge word, the cut-out person, foreground bokeh) and the camera makes a slow 2.5D push while focus pulls from the street to the face; the word slams in behind the head with a light flare, then a glass name tag lands",
+  "category": "creator", "kind": "effect", "uses": ["broll"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["photo", "portrait", "person", "parallax", "2.5d", "depth", "intro", "name", "who", "about", "speaker", "title", "cinematic", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker introduces themself or a guest ('I'm...', 'meet the person who...') or names the one idea a section is about: the word lands behind the head on the name or the idea, the tag follows. Use a cut-out PNG (cutout.mjs makes one from any photo) and set word to the name or one strong word" }

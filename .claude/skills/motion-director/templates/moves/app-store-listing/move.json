@@ -1,0 +1,5 @@
+{ "id": "app-store-listing", "name": "App store listing", "oneLiner": "a dark glass app store page assembles: the brand icon springs in, name and subtitle slide, the rating counts up as the stars fill, screenshots from the brand's screens swing in, then the Get button is pressed, folds into a progress ring that fills and springs open in green as Open",
+  "category": "dev", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["app", "app store", "download", "install", "launch", "mobile", "rating", "stars", "product", "listing", "get", "dark", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says the app is out or tells people to download it ('it's live on the app store, just hit get'): the page builds on the name, the button is pressed on 'get' and turns green on 'installed'" }

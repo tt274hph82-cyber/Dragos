@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"text","type":"string","label":"The post line (empty: the brand headline)","default":""},
+  {"id":"name","type":"string","label":"Display name (empty: the brand name)","default":""},
+  {"id":"time","type":"string","label":"Time label","default":"1h"},
+  {"id":"countFrom","type":"number","label":"Reactions it starts from","default":1204},
+  {"id":"count","type":"number","label":"Reactions it rolls up to","default":8950},
+  {"id":"react","type":"string","label":"The reaction picked (tooltip and button)","default":"Love"},
+  {"id":"likeLabel","type":"string","label":"Like button label","default":"Like"},
+  {"id":"commentLabel","type":"string","label":"Comment button label","default":"Comment"},
+  {"id":"shareLabel","type":"string","label":"Share button label","default":"Share"},
+  {"id":"comments","type":"string","label":"Right of the count","default":"312 comments"},
+  {"id":"media","type":"string","label":"Picture in the post: screen or none","default":"screen"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --s: 1px; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 46%; left: 40%; top: -2%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; left: 0; top: 0; }
+  #card { position: relative; box-sizing: border-box; width: 100%; padding: calc(var(--s) * 40) calc(var(--s) * 44) 0; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+
+  .hd { display: flex; align-items: center; gap: calc(var(--s) * 24); }
+  #av { position: relative; flex: none; width: calc(var(--s) * 104); height: calc(var(--s) * 104); border-radius: 50%; padding: calc(var(--s) * 4); box-sizing: border-box;
+    background: conic-gradient(from 210deg, var(--al), var(--accent), var(--accent2), var(--al)); }
+  #av i { display: block; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; border: calc(var(--s) * 4) solid var(--surface);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 170% auto; background-position: 50% 6%; }
+  .who { min-width: 0; flex: 1; }
+  #nm { display: flex; align-items: center; gap: calc(var(--s) * 10); font-size: calc(var(--s) * 42); font-weight: 800; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; line-height: 1.15; }
+  #nm svg { flex: none; width: calc(var(--s) * 36); height: calc(var(--s) * 36); }
+  #hdl { margin-top: calc(var(--s) * 2); font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.15; }
+  .more { flex: none; align-self: flex-start; width: calc(var(--s) * 44); margin-top: calc(var(--s) * 10); opacity: .5; }
+  #body { margin-top: calc(var(--s) * 24); font-size: calc(var(--s) * 46); line-height: 1.22; font-weight: 650; letter-spacing: -0.012em; color: var(--ink); text-wrap: balance; }
+  #media { position: relative; margin-top: calc(var(--s) * 24); border-radius: calc(var(--s) * 28); overflow: hidden; background-color: rgba(0,0,0,.35); background-size: cover; background-position: 50% 0%;
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #media .gl { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.12), transparent 30%, transparent 70%, rgba(0,0,0,.3)); }
+  .stats { display: flex; align-items: center; gap: calc(var(--s) * 16); margin-top: calc(var(--s) * 22); }
+  #stack { display: flex; flex: none; }
+  #stack .d { width: calc(var(--s) * 58); height: calc(var(--s) * 58); border: calc(var(--s) * 4) solid color-mix(in srgb, var(--surface) 94%, white 6%); margin-left: calc(var(--s) * -16); }
+  #stack .d:first-child { margin-left: 0; }
+  #count { display: flex; font-size: calc(var(--s) * 42); font-weight: 800; color: var(--ink); line-height: 1.15; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  #count .col { position: relative; display: block; height: 1.15em; overflow: hidden; }
+  #count .col i { display: block; font-style: normal; height: 1.15em; }
+  #count .col i::before { content: attr(data-d); }
+  #count .sep { display: block; }
+  #cm { margin-left: auto; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  .acts { position: relative; display: flex; justify-content: space-between; margin-top: calc(var(--s) * 22); padding: calc(var(--s) * 8) calc(var(--s) * 6) calc(var(--s) * 14); border-top: calc(var(--s) * 1.5) solid rgba(255,255,255,.12); }
+  .act { position: relative; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 14); height: calc(var(--s) * 92); padding: 0 calc(var(--s) * 22); border-radius: calc(var(--s) * 24);
+    color: color-mix(in srgb, var(--ink) 72%, transparent); font-size: calc(var(--s) * 36); font-weight: 700; white-space: nowrap; }
+  .act svg { width: calc(var(--s) * 46); height: calc(var(--s) * 46); flex: none; overflow: visible; }
+  #like .hl { position: absolute; inset: 0; border-radius: inherit; background: rgba(255,255,255,.1); opacity: 0; }
+  #like .g { position: relative; width: calc(var(--s) * 46); height: calc(var(--s) * 46); flex: none; }
+  #like .g svg { position: absolute; left: 0; top: 0; }
+  #like .hf { filter: drop-shadow(0 0 calc(var(--s) * 10) color-mix(in srgb, var(--accent) 70%, transparent)); }
+  .is-key #like .hf { filter: none; }
+  #like .lw { position: relative; height: 1.2em; }
+  #like .lw span { position: absolute; left: 0; top: 0; line-height: 1.2em; }
+  #loveL { color: var(--al); }
+  #lring { position: absolute; width: calc(var(--s) * 150); height: calc(var(--s) * 150); border-radius: 50%; border: calc(var(--s) * 5) solid var(--al); box-sizing: border-box; opacity: 0; pointer-events: none; }
+  .is-key #lring { display: none; }
+
+  /* reaction discs: a lit coloured coin with a white glyph */
+  .d { position: relative; display: block; border-radius: 50%; box-sizing: border-box;
+    background: radial-gradient(75% 75% at 35% 28%, color-mix(in srgb, var(--c) 55%, white), var(--c) 58%, color-mix(in srgb, var(--c) 70%, black));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--s) * 8) calc(var(--s) * 16) rgba(0,0,0,.35); }
+  .d svg { position: absolute; left: 20%; top: 20%; width: 60%; height: 60%; overflow: visible; }
+  #tray { position: absolute; z-index: 20; display: flex; gap: calc(var(--s) * 14); padding: calc(var(--s) * 16) calc(var(--s) * 18); border-radius: 999px;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 82%, white 18%), color-mix(in srgb, var(--surface) 97%, white 3%));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14), 0 calc(var(--s) * 30) calc(var(--s) * 60) calc(var(--s) * -14) rgba(0,0,0,.75); }
+  .is-key #tray { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #tray .d { width: calc(var(--s) * 86); height: calc(var(--s) * 86); flex: none; }
+  #tip { position: absolute; z-index: 25; padding: calc(var(--s) * 8) calc(var(--s) * 22); border-radius: 999px; background: #0B0B0E; color: #fff; font-size: calc(var(--s) * 36); font-weight: 750; white-space: nowrap; line-height: 1.25;
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.18), 0 calc(var(--s) * 10) calc(var(--s) * 24) rgba(0,0,0,.4); opacity: 0; }
+  #fly { position: absolute; left: 0; top: 0; width: 0; height: 0; z-index: 35; }
+  #fly .d { position: absolute; opacity: 0; }
+  #tap { position: absolute; left: 0; top: 0; z-index: 40; width: calc(var(--s) * 90); height: calc(var(--s) * 90); margin: calc(var(--s) * -45) 0 0 calc(var(--s) * -45); border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle, rgba(255,255,255,.55), rgba(255,255,255,.22) 62%, rgba(255,255,255,.1)); box-shadow: inset 0 0 0 calc(var(--s) * 3) rgba(255,255,255,.85), 0 calc(var(--s) * 8) calc(var(--s) * 20) rgba(0,0,0,.35); }
+  #tap .rp { position: absolute; inset: 0; border-radius: 50%; border: calc(var(--s) * 4) solid #fff; box-sizing: border-box; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div class="hd">
+        <div id="av"><i></i></div>
+        <div class="who"><div id="nm"><span id="nmt"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="var(--accent)"/><path d="M7.4 12.4l3 3 6.2-6.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <div id="hdl"></div></div>
+        <svg class="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.8" fill="var(--ink)"/><circle cx="12" cy="12" r="1.8" fill="var(--ink)"/><circle cx="19" cy="12" r="1.8" fill="var(--ink)"/></svg>
+      </div>
+      <div id="body"></div>
+      <div id="media"><i class="gl"></i></div>
+      <div class="stats"><div id="stack"></div><div id="count"></div><div id="cm"></div></div>
+      <div class="acts">
+        <div class="act" id="like"><i class="hl"></i><span class="g">
+            <svg id="thumb" viewBox="0 0 24 24"><path d="M7.5 10.5v9.5H5a1.5 1.5 0 0 1-1.5-1.5V12A1.5 1.5 0 0 1 5 10.5h2.5zM9 10.2l3.3-6a1.7 1.7 0 0 1 3.1 1.2l-.7 3.6h4.4a2 2 0 0 1 2 2.4l-1.3 6.8A2.2 2.2 0 0 1 17.6 20H9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <svg class="hf" viewBox="0 0 24 24"><path d="M12 20.3s-7.4-4.5-9.5-9C1.1 8.2 3 4.7 6.5 4.4c2.1-.2 3.8 1 5.5 3 1.7-2 3.4-3.2 5.5-3 3.5.3 5.4 3.8 4 6.9-2.1 4.5-9.5 9-9.5 9z" fill="var(--accent)"/></svg>
+          </span><span class="lw"><span id="likeL"></span><span id="loveL"></span></span></div>
+        <div class="act"><svg viewBox="0 0 24 24"><path d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5v-3.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="cmL"></span></div>
+        <div class="act"><svg viewBox="0 0 24 24"><path d="M13.5 4.5l7 6.5-7 6.5v-3.8C8.5 13.7 5.6 15.6 3.5 19c.6-5.6 3.8-9.6 10-10.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="shL"></span></div>
+        <i id="lring"></i>
+      </div>
+      <div id="tray"></div>
+      <div id="tip"></div>
+      <i id="sheen"></i>
+    </div></div>
+    <div id="fly"></div>
+    <div id="tap"><i class="rp"></i></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+
+  // ---- the five reactions, drawn as clean glyphs on lit coins
+  const RX = {
+    thumb: ["#2F7CF6", '<path d="M7.5 10.5v9.5H5a1.5 1.5 0 0 1-1.5-1.5V12A1.5 1.5 0 0 1 5 10.5h2.5zM9 10.2l3.3-6a1.7 1.7 0 0 1 3.1 1.2l-.7 3.6h4.4a2 2 0 0 1 2 2.4l-1.3 6.8A2.2 2.2 0 0 1 17.6 20H9z" fill="#fff"/>'],
+    heart: ["var(--accent)", '<path d="M12 20.3s-7.4-4.5-9.5-9C1.1 8.2 3 4.7 6.5 4.4c2.1-.2 3.8 1 5.5 3 1.7-2 3.4-3.2 5.5-3 3.5.3 5.4 3.8 4 6.9-2.1 4.5-9.5 9-9.5 9z" fill="#fff"/>'],
+    laugh: ["#F5B000", '<path d="M5.6 9.6q1.9-2.2 3.8 0M14.6 9.6q1.9-2.2 3.8 0" fill="none" stroke="#4A2C00" stroke-width="2" stroke-linecap="round"/><path d="M5.4 12.6h13.2a6.6 6.6 0 0 1-13.2 0z" fill="#4A2C00"/><path d="M8.2 16.6a5 5 0 0 0 7.6 0 3.6 3.6 0 0 0-7.6 0z" fill="#FF6B6B"/>'],
+    flame: ["#FF7A1A", '<path d="M12 22c-4.3 0-7.3-3-7.3-6.9 0-3.3 2.2-5.5 3.7-7.4.3 1.8 1.2 2.9 2.4 3.3-.6-3.6.8-6.4 3.4-8.2-.2 3 1.4 5 3 6.9 1.4 1.7 2.4 3.4 2.4 5.9 0 3.9-3.2 6.4-7.6 6.4z" fill="#fff"/><path d="M12 21c-1.8 0-3.1-1.2-3.1-2.9 0-1.5 1-2.4 1.7-3.3.2.9.7 1.4 1.3 1.5-.2-1.6.4-2.8 1.5-3.6 0 1.4.7 2.3 1.4 3.2.6.8 1 1.5 1 2.6 0 1.6-1.4 2.5-3.8 2.5z" fill="#FFB36B"/>'],
+    bolt: ["#8B5CF6", '<path d="M13.4 2.5L5 13.6h6.1l-1.3 7.9 8.3-11.2h-6.2z" fill="#fff"/>'],
+  };
+  const disc = (k) => { const b = document.createElement("b"); b.className = "d"; b.dataset.k = k; b.style.setProperty("--c", RX[k][0]); b.innerHTML = `<svg viewBox="0 0 24 24">${RX[k][1]}</svg>`; return b; };
+  const ORDER = ["thumb", "heart", "laugh", "flame", "bolt"], PICK = 1;
+  ["thumb", "heart", "laugh"].forEach((k) => $("#stack").appendChild(disc(k)));
+  ORDER.forEach((k) => $("#tray").appendChild(disc(k)));
+
+  // ---- copy
+  const brand = v.brandName || "";
+  $("#nmt").textContent = v.name || brand;
+  $("#hdl").textContent = (v.handle || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "")) + (v.time ? "  ·  " + v.time : "");
+  $("#body").textContent = v.text || v.headline || v.tagline || "";
+  if (v.people && v.people[0]) $("#av i").style.backgroundImage = `url("${v.people[0]}")`;
+  else if (v.mark) { const i = $("#av i"); i.style.backgroundImage = `url("${v.mark}")`; i.style.backgroundSize = "62%"; i.style.backgroundPosition = "50% 50%"; }
+  const shot = String(v.media) !== "none" && v.screens && v.screens[0];
+  if (shot) $("#media").style.backgroundImage = `url("${shot}")`; else $("#media").style.display = "none";
+  $("#likeL").textContent = v.likeLabel || ""; $("#loveL").textContent = v.react || "";
+  $("#cmL").textContent = v.commentLabel || ""; $("#shL").textContent = v.shareLabel || "";
+  $("#cm").textContent = v.comments || ""; $("#tip").textContent = v.react || "";
+
+  // ---- the odometer: one rolling column per digit of the target
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  const to = Math.max(0, Math.round(+v.count || 0)), from = Math.max(0, Math.min(to, Math.round(+v.countFrom || 0)));
+  const ts = fmt(to), fs0 = fmt(from).padStart(ts.length, " "), cols = [];
+  for (let i = 0; i < ts.length; i++) {
+    const c = ts[i];
+    if (!/\d/.test(c)) { const sp = document.createElement("span"); sp.className = "sep"; sp.textContent = c; $("#count").appendChild(sp); if (!/\d|,/.test(fs0[i]) || fs0[i] === " ") cols.push({ fade: sp }); continue; }
+    const col = document.createElement("span"); col.className = "col"; const strip = document.createElement("span"); strip.style.display = "block";
+    for (let k = 0; k < 30; k++) { const d = document.createElement("i"); d.dataset.d = k % 10; strip.appendChild(d); }
+    col.appendChild(strip); $("#count").appendChild(col);
+    const s0 = /\d/.test(fs0[i]) ? +fs0[i] : 0, place = ts.slice(i + 1).replace(/\D/g, "").length;
+    let e = +c + 10 * Math.min(2, place >= 2 ? 2 : 1); if (e <= s0) e += 10;
+    if (from === to) e = s0;
+    cols.push({ strip, s0, e, place, fade: /\d/.test(fs0[i]) ? null : col });
+  }
+
+  // ---- zone and scale: laid out at --s = 1, measured, then scaled to the zone
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 120 * u; cR = W - 120 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.29; cR = W * 0.71; zT = H * 0.06; zB = H * 0.94; }
+  const DW = 820, wrap = $("#wrap"), card = $("#card");
+  wrap.style.width = DW + "px";
+  if (shot) $("#media").style.height = (DW - 88) * 0.44 + "px";
+  // the post wraps to at most two lines
+  { const b = $("#body"); let f = 46; b.style.fontSize = f + "px"; while (b.getBoundingClientRect().height > f * 1.22 * 2 + 2 && f > 24) { f -= 2; b.style.fontSize = f + "px"; } b.dataset.f = f; }
+  const DH = card.getBoundingClientRect().height + 40;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s; wrap.style.width = cw + "px";
+  if (shot) $("#media").style.height = (DW - 88) * 0.44 * s + "px";
+  $("#body").style.fontSize = (+$("#body").dataset.f) * s + "px";
+  MV.fitText("#nmt", cw - (88 + 104 + 24 + 44 + 24 + 50) * s, 18);
+  MV.fitText("#hdl", cw - (88 + 104 + 24 + 44 + 24) * s, 16);
+  MV.fitText("#cm", cw - 88 * s - $("#stack").getBoundingClientRect().width - $("#count").getBoundingClientRect().width - 48 * s, 16);
+  // the like label slot holds the wider of its two words
+  { const a = $("#likeL").getBoundingClientRect().width, b = $("#loveL").getBoundingClientRect().width; $("#like .lw").style.width = Math.max(a, b) + "px"; }
+  const ch = card.getBoundingClientRect().height;
+  const x0 = cL + ((cR - cL) - cw) / 2, y0 = A && P ? zT + 20 * s : zT + (zB - zT - ch) / 2;
+  Object.assign(wrap.style, { left: x0 + "px", top: y0 + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: x0 - 40 * u + "px", width: cw + 80 * u + "px", top: y0 + ch + 34 * u + "px" });
+
+  // ---- measure, in card space, before anything moves
+  const cr = card.getBoundingClientRect(), rel = (el) => { const r = el.getBoundingClientRect(); return { x: r.left - cr.left, y: r.top - cr.top, w: r.width, h: r.height, cx: r.left - cr.left + r.width / 2, cy: r.top - cr.top + r.height / 2 }; };
+  const LK = rel($("#like")), G = rel($("#like .g")), ST = rel($("#stack")), ACT = rel($(".acts"));
+  const tray = $("#tray"), TR = { w: tray.getBoundingClientRect().width, h: tray.getBoundingClientRect().height };
+  const trX = Math.max(10 * s, LK.x - 10 * s), trY = ACT.y - TR.h + 6 * s;
+  Object.assign(tray.style, { left: trX + "px", top: trY + "px" });
+  const tds = [...tray.querySelectorAll(".d")], HD = rel(tds[PICK]);
+  const tip = $("#tip"), tipW = tip.getBoundingClientRect().width, tipH = tip.getBoundingClientRect().height;
+  Object.assign(tip.style, { left: HD.cx - tipW / 2 + "px", top: trY - tipH - 62 * s + "px" });
+  gsap.set("#lring", { left: G.cx - ACT.x - 75 * s, top: G.cy - ACT.y - 75 * s });
+  // card space to rig space
+  const RX0 = x0, RY0 = y0;
+
+  // ---- the flying reactions, seeded: mostly the picked one
+  const rnd = MV.rand(23), fly = $("#fly"), F = [];
+  const mix = ["heart", "heart", "thumb", "heart", "flame", "laugh", "heart", "bolt", "heart", "thumb", "heart", "flame", "heart", "laugh", "heart", "heart"];
+  mix.forEach((k, i) => { const d = disc(k), sz = (62 + rnd() * 34) * s; d.style.width = d.style.height = sz + "px"; fly.appendChild(d);
+    const a = (-178 + (i / (mix.length - 1)) * 92 + (rnd() - 0.5) * 12) * Math.PI / 180, r = (120 + rnd() * 170) * s;
+    const by = Math.sin(a) * r * 0.7; F.push({ d, sz, bx: Math.cos(a) * r, by, rise: Math.max(120 * s, G.cy + by - (90 + rnd() * 260) * s), sway: (rnd() - 0.65) * 120 * s, rot: (rnd() - 0.5) * 50, t: i * 0.04 + rnd() * 0.03 }); });
+
+  // ---- timing
+  const TP = 1.05, TT = 1.42, TH = 1.98, TR2 = 2.42, TL = 2.74;
+  gsap.set("#rig", { transformOrigin: `${x0 + cw / 2}px ${y0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#av", { scale: 0.4, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, 0.18);
+  tl.fromTo([".who", ".more"], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.06, ease: "expo.out" }, 0.24);
+  const bw = MV.words("#body");
+  tl.fromTo(bw, { opacity: 0, y: 20 * s, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: Math.min(0.035, 0.5 / bw.length), ease: "expo.out" }, 0.32);
+  if (shot) tl.fromTo("#media", { opacity: 0, scale: 0.94, y: 24 * s }, { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "expo.out" }, 0.42);
+  tl.fromTo([".stats", ".acts"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "expo.out" }, 0.55);
+  tl.fromTo("#sheen", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut" }, 0.8);
+  // hidden pieces
+  gsap.set(tray, { opacity: 0, scale: 0.3, transformOrigin: `${LK.cx - trX}px 100%` });
+  gsap.set(tds, { scale: 0, y: 30 * s });
+  gsap.set("#like .hf", { scale: 0, opacity: 0, transformOrigin: "50% 55%" });
+  gsap.set("#loveL", { opacity: 0 });
+  const LH = parseFloat(getComputedStyle($("#count")).fontSize) * 1.15;
+  cols.forEach((c) => { if (c.strip) gsap.set(c.strip, { y: -c.s0 * LH }); if (c.fade) gsap.set(c.fade, { opacity: 0 }); });
+
+  // the finger comes in and holds the Like button
+  const tap = $("#tap");
+  gsap.set(tap, { x: RX0 + LK.cx, y: RY0 + LK.cy });
+  tl.fromTo(tap, { opacity: 0, scale: 1.6, x: RX0 + LK.cx + 150 * s, y: RY0 + LK.cy + 170 * s }, { opacity: 1, scale: 1, x: RX0 + LK.cx, y: RY0 + LK.cy, duration: 0.42, ease: "expo.out" }, TP - 0.1);
+  tl.to(tap, { scale: 0.82, duration: 0.12, ease: "power2.out" }, TP + 0.25);
+  tl.to("#like", { scale: 0.94, duration: 0.14, ease: "power2.out" }, TP + 0.25);
+  tl.to("#like .hl", { opacity: 1, duration: 0.2, ease: "power2.out" }, TP + 0.25);
+  // the tray grows out of the button, the coins pop in a wave
+  tl.to(tray, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" }, TT);
+  tl.to(tds, { scale: 1, y: 0, duration: 0.4, ease: "back.out(2.6)", stagger: 0.04 }, TT + 0.06);
+  // the finger slides onto the heart, it swells, the label pops above
+  tl.to(tap, { x: RX0 + HD.cx, y: RY0 + HD.cy, duration: 0.42, ease: "expo.inOut" }, TH - 0.2);
+  tl.to(tds[PICK], { scale: 1.42, y: -26 * s, duration: 0.45, ease: "back.out(2.2)", transformOrigin: "50% 80%" }, TH);
+  tl.to([tds[0], tds[2]], { scale: 0.88, duration: 0.3, ease: "expo.out" }, TH);
+  tl.fromTo(tip, { opacity: 0, y: 16 * s, scale: 0.7 }, { opacity: 1, y: 0, scale: 1, duration: 0.4, ease: "back.out(2.2)" }, TH + 0.08);
+  // release: the heart drops into the button, the tray folds away
+  tl.to(tap, { scale: 1.25, opacity: 0, duration: 0.3, ease: "power2.out" }, TR2);
+  tl.fromTo("#tap .rp", { scale: 1, opacity: 0.9 }, { scale: 2, opacity: 0, duration: 0.45, ease: "expo.out" }, TR2);
+  tl.to(tip, { opacity: 0, y: -10 * s, duration: 0.18, ease: "power2.in" }, TR2);
+  tl.to(tds.filter((d, i) => i !== PICK), { scale: 0, duration: 0.22, ease: "power3.in", stagger: 0.02 }, TR2);
+  tl.to(tray, { opacity: 0, scaleX: 0.4, scaleY: 0.6, duration: 0.3, ease: "power3.in" }, TR2 + 0.06);
+  tl.to(tds[PICK], { x: G.cx - HD.cx, y: G.cy - HD.cy, scale: 0.55, duration: 0.32, ease: "power3.in" }, TR2);
+  tl.set(tds[PICK], { opacity: 0 }, TL - 0.02);
+  // the moment: the button turns into the filled reaction, a ring breathes out of it
+  tl.to("#thumb", { opacity: 0, scale: 0.4, duration: 0.1, ease: "power2.in" }, TL - 0.06);
+  tl.to("#like .hf", { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(4)" }, TL);
+  tl.to("#likeL", { opacity: 0, y: -18 * s, duration: 0.12, ease: "power2.in" }, TL - 0.04);
+  tl.fromTo("#loveL", { opacity: 0, y: 18 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out", immediateRender: false }, TL + 0.1);
+  tl.to("#like", { scale: 1.08, duration: 0.09, ease: "power2.out" }, TL); tl.to("#like", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TL + 0.09);
+  tl.to("#like .hl", { opacity: 0, duration: 0.4, ease: "power2.out" }, TL + 0.1);
+  tl.fromTo("#lring", { scale: 0.3, opacity: 1 }, { scale: 1.3, opacity: 0, duration: 0.55, ease: "power2.out" }, TL);
+  tl.to("#wrap", { scale: 1.015, duration: 0.08, ease: "power2.out" }, TL); tl.to("#wrap", { scale: 1, duration: 0.5, ease: "back.out(2.5)" }, TL + 0.08);
+  // the burst: reactions spring out of the bar and float up off the card
+  F.forEach((f) => {
+    const sx = RX0 + G.cx - f.sz / 2, sy = RY0 + G.cy - f.sz / 2, t0 = TL + 0.04 + f.t;
+    tl.fromTo(f.d, { left: sx, top: sy, x: 0, y: 0, scale: 0.2, opacity: 0, rotation: 0 }, { x: f.bx, y: f.by, scale: 1, opacity: 1, rotation: f.rot * 0.4, duration: 0.5, ease: "expo.out", immediateRender: false }, t0);
+    tl.to(f.d, { x: f.bx + f.sway, y: f.by - f.rise, rotation: f.rot, scale: 0.7, duration: 1.0, ease: "power1.inOut" }, t0 + 0.3);
+    tl.to(f.d, { opacity: 0, duration: 0.3, ease: "power2.in" }, t0 + 0.98);
+  });
+  // the stack pulses, the count rolls, every digit spinning to its new value
+  tl.to("#stack .d", { scale: 1.18, duration: 0.12, ease: "power2.out", stagger: 0.05 }, TL + 0.05);
+  tl.to("#stack .d", { scale: 1, duration: 0.45, ease: "back.out(3)", stagger: 0.05 }, TL + 0.17);
+  cols.forEach((c) => {
+    if (c.fade) tl.to(c.fade, { opacity: 1, duration: 0.3, ease: "power2.out" }, TL + 0.1);
+    if (c.strip) tl.to(c.strip, { y: -c.e * LH, duration: 1.0 + c.place * 0.12, ease: "power3.out" }, TL + 0.08);
+  });
+  tl.fromTo("#count", { scale: 1 }, { scale: 1.08, duration: 0.1, ease: "power2.out", transformOrigin: "0% 60%", immediateRender: false }, TL + 1.2);
+  tl.to("#count", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TL + 1.3);
+  tl.fromTo("#sheen", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TL + 0.2);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

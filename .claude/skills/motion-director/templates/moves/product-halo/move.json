@@ -1,0 +1,5 @@
+{ "id": "product-halo", "name": "Product halo", "oneLiner": "a real 3D-rendered product (a light bulb by default) rises into frame inside a ring of light that draws itself round it while the line 'take something as simple as...' writes in; the shot shifts, a dashed leader runs out to a glossy pill where the number it became counts up, and on the landing the bulb switches on",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["product", "idea", "simple product", "boring business", "revenue", "valuation", "big number", "count up", "brand", "ecommerce", "3d", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker sets up a simple product and pays it off with a big number ('take something as simple as a light bulb... it does four million a year'): cut in on 'take something as', the name lands on the product, the number counts on the payoff and the bulb lights as it lands. Swap the image for the brand's own product cut-out" }

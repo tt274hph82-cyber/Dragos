@@ -1,0 +1,5 @@
+{ "id": "evidence-doc-stack", "name": "Evidence doc stack", "oneLiner": "printed pages on real scanned paper are dealt one per beat onto a pile beside the speaker, each landing a little askew while the ones under it fall into shadow and a glass counter ticks the page count, then a yellow highlighter swipes the key line on the top page",
+  "category": "paper", "kind": "effect", "uses": ["overlay"], "looks": ["paper", "glass"], "from": "new",
+  "tags": ["document", "pdf", "report", "pages", "evidence", "proof", "receipts", "paper", "printout", "highlight", "research", "audit", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker shows the paper trail ('it produced a 7-page report with timestamps', 'I read every filing'): one page lands per section they name, the highlighter lands on the finding they quote; set highlight to that line" }

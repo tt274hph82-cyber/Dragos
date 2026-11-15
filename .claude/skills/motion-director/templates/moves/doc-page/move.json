@@ -1,0 +1,5 @@
+{ "id": "doc-page", "name": "Paper doc page writes itself", "oneLiner": "a sheet of real paper with a doc editor bar lands out of depth, the heading types letter by letter behind a caret, three bullets write themselves word by word, then a highlighter sweeps one line and the page answers with a small punch",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["paper"], "from": "new",
+  "tags": ["doc", "document", "notes", "plan", "writing", "outline", "bullets", "highlight", "ai writing", "brief", "strategy", "paper", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker talks about writing the plan, an outline, or an AI drafting a document ('it wrote the whole plan', 'step one, step two'): one bullet per step they name, the highlighter lands on the step that matters" }

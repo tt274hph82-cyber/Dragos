@@ -1,0 +1,5 @@
+{ "id": "dossier-card", "name": "Dossier file", "oneLiner": "a kraft file folder slides onto a leather desk, a person's photo print drops on and a steel paper clip goes over its edge, the name, role and three facts type on like a typewriter, then a brand-colour rubber stamp thumps across it",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["profile", "person", "introduce", "bio", "about", "file", "dossier", "case", "facts", "typewriter", "stamp", "paper clip", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker introduces someone or something with a few facts ('meet the person who...', 'here is the file on'): the facts type on as they list them and the stamp lands on the verdict" }

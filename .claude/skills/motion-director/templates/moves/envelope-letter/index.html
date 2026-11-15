@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"greeting","type":"string","label":"First line of the letter","default":"Hi there,"},
+  {"id":"line","type":"string","label":"The key line, typed big (one sentence)","default":"The answer was simpler than we thought."},
+  {"id":"underline","type":"string","label":"Words of the key line to underline (empty: the last three words)","default":""},
+  {"id":"sign","type":"string","label":"Who signs it (empty uses the brand name)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Type"; src: url("assets/fonts/SpecialElite-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Script"; src: url("assets/fonts/CoveredByYourGrace.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1a100a; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground: a real brown leather desk under a warm lamp */
+  #ground { position: absolute; inset: -6%; background: #2a1a10 url(assets/leather.jpg) center / calc(var(--u) * 800); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 50% at 46% 40%, rgba(255,214,160,.2), transparent 65%), radial-gradient(130% 100% at 50% 45%, transparent 40%, rgba(0,0,0,.62)); }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 42%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  /* the envelope: every panel is the same real kraft scan, lit a little differently */
+  #env { position: absolute; }
+  .lay { position: absolute; inset: 0; }
+  #eback, #efront { filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 3) rgba(0,0,0,.4)) drop-shadow(calc(var(--u) * 10) calc(var(--u) * 24) calc(var(--u) * 30) rgba(0,0,0,.5)); }
+  .kr { position: absolute; inset: 0; background: #c9a878 url(assets/manila.jpg) center / calc(var(--u) * 900); }
+  #inside { filter: brightness(.55) saturate(.9); border-radius: calc(var(--u) * 6); }
+  #inside::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(0,0,0,.35), transparent 45%); }
+  .piece { position: absolute; inset: 0; }
+  .sideL { clip-path: polygon(0 0, 51% 52%, 0 100%); }
+  .sideR { clip-path: polygon(100% 0, 49% 52%, 100% 100%); filter: brightness(.94); }
+  .bot { clip-path: polygon(0 100%, 0 97%, 47% 41%, 53% 41%, 100% 97%, 100% 100%); filter: brightness(1.04); }
+  #sides { position: absolute; inset: 0; filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(40,20,0,.45)); }
+  #botw { position: absolute; inset: 0; filter: drop-shadow(0 calc(var(--u) * -2) calc(var(--u) * 3) rgba(40,20,0,.4)); }
+  #flapw { position: absolute; inset: 0; filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 4) rgba(40,20,0,.45)); }
+  #flap { position: absolute; inset: 0; transform-origin: 50% 0; clip-path: polygon(0 0, 100% 0, 54% 55%, 50% 57%, 46% 55%); }
+  #flap .kr { filter: brightness(1.06); }
+  /* lamp light from the upper left across each panel, and a worn pale edge where paper is folded */
+  .sideL::after, .sideR::after, .bot::after, #flap .kr::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+  .sideL::after { background: linear-gradient(100deg, rgba(255,240,210,.18), transparent 45%, rgba(0,0,0,.12)); }
+  .sideR::after { background: linear-gradient(260deg, rgba(0,0,0,.16), transparent 50%, rgba(255,240,210,.06)); }
+  .bot::after { background: linear-gradient(rgba(0,0,0,.10), transparent 30%, rgba(255,240,210,.10) 80%, rgba(0,0,0,.08)); }
+  #flap .kr::after { background: linear-gradient(170deg, rgba(255,244,220,.22), transparent 50%, rgba(0,0,0,.14)); }
+  .kr { background-size: calc(var(--u) * 520); }
+  /* the letter: a real white paper scan, folded once */
+  #letter { position: absolute; }
+  #lfx { position: absolute; inset: 0; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 3) rgba(0,0,0,.3)) drop-shadow(calc(var(--u) * 6) calc(var(--u) * 18) calc(var(--u) * 24) rgba(0,0,0,.4)); }
+  #lpersp { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  .half { position: absolute; left: 0; width: 100%; overflow: hidden; }
+  .pw { position: absolute; inset: 0; background: #f4f1ea url(assets/paper-white.jpg) center / calc(var(--u) * 700); }
+  #upper::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 10%; background: linear-gradient(transparent, rgba(0,0,0,.06)); }
+  #lower { transform-origin: 50% 0; transform-style: preserve-3d; }
+  .lf { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; overflow: hidden; }
+  #lback { transform: rotateX(180deg); }
+  #lback .pw { filter: brightness(.9); }
+  #lshade { position: absolute; inset: 0; background: #000; opacity: 0; }
+  .ty { position: absolute; font-family: "MV Type", monospace; color: #26221e; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 240); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 240); }
+  #sig { position: absolute; font-family: "MV Script", cursive; color: #1d2650; white-space: nowrap; }
+  #ul { position: absolute; left: 0; top: 0; overflow: visible; filter: url(#bleed); }
+  #ul path { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; opacity: .92; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-20%" width="110%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.6"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="env"><div class="boil" id="env-b" style="position:absolute;inset:0">
+      <div id="eback" class="lay" style="z-index:1"><div class="kr" id="inside"></div></div>
+      <div id="flapw" class="lay" style="z-index:5"><div id="flap"><div class="kr"></div></div></div>
+      <div id="letter" style="z-index:3"><div class="boil" id="letter-b" style="position:absolute;inset:0"><div id="lfx"><div id="lpersp">
+        <div class="half" id="lower">
+          <div class="lf" id="lfront"><div class="pw" id="lpw"></div><div id="ltext" style="position:absolute;inset:0"></div><div id="lshade"></div></div>
+          <div class="lf" id="lback"><div class="pw"></div></div>
+        </div>
+        <div class="half" id="upper"><div class="pw" id="upw"></div><div id="utext" style="position:absolute;inset:0"></div><svg id="ul" style="visibility:hidden"><path id="ulp"/></svg></div>
+      </div></div></div></div>
+      <div id="efront" class="lay" style="z-index:4"><div id="sides"><div class="kr piece sideL"></div><div class="kr piece sideR"></div></div><div id="botw"><div class="kr piece bot"></div></div></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('60px "MV Type"'), document.fonts.load('60px "MV Script"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- geometry: the envelope sits low on the desk; the letter, folded once, rides inside it
+  const availW = W - safe.left - safe.right;
+  const EW = MV.portrait ? W * 0.86 : H * 0.36 / 0.62, EH = EW * 0.62;
+  const zTop = safe.top, zBot = H - (MV.portrait ? 520 * (W / 1080) : safe.bottom);
+  const ecx = MV.portrait ? W / 2 : safe.left + availW / 2, ecy = MV.portrait ? zBot - EH * 0.62 : H * 0.7;
+  const env = document.getElementById("env");
+  Object.assign(env.style, { width: EW + "px", height: EH + "px", left: (ecx - EW / 2) + "px", top: (ecy - EH / 2) + "px" });
+  // the letter: its final, unfolded size is fitted to the safe zone; folded it is half that tall and fits inside the envelope
+  const LW = EW * 0.9, LH0 = EH * 0.9;           // folded size
+  const LH = LH0 * 2;                            // unfolded
+  const letter = document.getElementById("letter");
+  Object.assign(letter.style, { position: "absolute", left: "0px", top: "0px", width: LW + "px", height: LH + "px" });
+  const up = document.getElementById("upper"), lo = document.getElementById("lower");
+  Object.assign(up.style, { top: "0px", height: LH0 + "px" });
+  Object.assign(lo.style, { top: LH0 + "px", height: LH0 + "px" });
+  document.getElementById("lpw").style.backgroundPosition = `center ${-LH0}px`;
+
+  // ---- what is typed on it: a greeting, the key line big, and on the lower half a sign-off
+  const pad = LW * 0.09, colW = LW - pad * 2;
+  const ut = document.getElementById("utext"), lt = document.getElementById("ltext");
+  const mk = (par, cls, txt) => { const d = document.createElement("div"); d.className = cls; d.textContent = txt; par.appendChild(d); return d; };
+  const g = mk(ut, "ty", v.greeting || ""); g.style.left = pad + "px"; g.style.top = (LH0 * 0.14) + "px"; g.style.fontSize = (LW * 0.05) + "px"; g.style.whiteSpace = "nowrap";
+  MV.fitText(g, colW, 12 * u);
+  const k = mk(ut, "ty", (v.line || "").trim()); k.dataset.block = "";
+  Object.assign(k.style, { left: pad + "px", width: colW + "px", top: (LH0 * 0.28) + "px", lineHeight: "1.18" });
+  let fs = LW * 0.1; k.style.fontSize = fs + "px";
+  const kw = MV.words(k);
+  while ((k.getBoundingClientRect().height > LH0 * 0.64 || kw.some((w) => w.getBoundingClientRect().width > colW)) && fs > 16 * u) { fs -= 2; k.style.fontSize = fs + "px"; }
+  const f1 = mk(lt, "ty", "Thanks for reading this far."); Object.assign(f1.style, { left: pad + "px", top: (LH0 * 0.1) + "px", fontSize: (LW * 0.048) + "px", whiteSpace: "nowrap", opacity: .9 });
+  MV.fitText(f1, colW, 10 * u);
+  const f2 = mk(lt, "ty", "More soon,"); Object.assign(f2.style, { left: pad + "px", top: (LH0 * 0.3) + "px", fontSize: (LW * 0.048) + "px", whiteSpace: "nowrap", opacity: .9 });
+  const sig = document.createElement("div"); sig.id = "sig"; sig.textContent = (v.sign || v.brandName || "").trim(); lt.appendChild(sig);
+  Object.assign(sig.style, { left: pad + "px", top: (LH0 * 0.42) + "px", fontSize: (LW * 0.15) + "px" }); MV.fitText(sig, colW * 0.8, 12 * u);
+  sig.style.transform = "rotate(-4deg)";
+
+  // ---- the underline: the chosen words of the key line (or its last three), one marker swipe per line
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const pick = (v.underline || "").split(/\s+/).map(norm).filter(Boolean);
+  let on = kw.map((w) => pick.includes(norm(w.textContent)));
+  if (!on.some(Boolean)) on = kw.map((_, i) => i >= kw.length - Math.min(3, kw.length));
+  const ub = up.getBoundingClientRect(), runs = [];
+  kw.forEach((w, i) => { if (!on[i]) return; const b = w.getBoundingClientRect(), last = runs[runs.length - 1];
+    if (last && on[i - 1] && Math.abs(last.y - b.bottom) < fs * 0.3) last.r = b.right; else runs.push({ l: b.left, r: b.right, y: b.bottom }); });
+  const ul = document.getElementById("ul"), ulp = document.getElementById("ulp");
+  ul.setAttribute("width", LW); ul.setAttribute("height", LH0);
+  const rj = MV.rand(12), j = () => (rj() - 0.5) * fs * 0.06;
+  ulp.setAttribute("d", runs.map((r) => { const x0 = r.l - ub.left - fs * 0.08, x1 = r.r - ub.left + fs * 0.06, y = r.y - ub.top + fs * 0.02;
+    return `M ${x0} ${y + j()} C ${x0 + (x1 - x0) * 0.35} ${y + fs * 0.04 + j()} ${x0 + (x1 - x0) * 0.7} ${y - fs * 0.03 + j()} ${x1} ${y - fs * 0.04}`; }).join(" "));
+  ulp.setAttribute("stroke-width", Math.max(4, fs * 0.13));
+
+  // ---- the letter starts folded inside the envelope: behind the pocket, in front of the envelope's inside
+  const lx0 = (EW - LW) / 2, ly0 = EH * 0.06;
+  gsap.set(letter, { x: lx0, y: ly0, transformOrigin: `50% ${LH0 / 2}px` });
+  gsap.set(lo, { rotateX: 180 });          // the lower half is folded up behind the upper one
+
+  // ---- timeline
+  // 0.25 the flap opens; 0.62 the folded letter slides out; 1.3 the envelope drops away and the letter comes forward; 1.8 it unfolds; 2.4 the key words are underlined
+  const fl = document.getElementById("flap"), flw = document.getElementById("flapw");
+  tl.fromTo(fl, { rotateX: 0, transformPerspective: 1600 * u }, { rotateX: 180, duration: 0.33, ease: twos("power2.inOut", 0.33), immediateRender: true }, 0.25);
+  tl.set(flw, { zIndex: 2 }, 0.25 + 0.168);
+  tl.fromTo("#flap .kr", { filter: "brightness(1.06)" }, { filter: "brightness(.62)", duration: STEP, ease: "steps(1)", immediateRender: true }, 0.25 + 0.168);
+  tl.to(letter, { y: ly0 - EH * 1.02, duration: 0.67, ease: twos("power2.out", 0.67) }, 0.62);
+  const TX = 1.3;
+  tl.set(letter, { zIndex: 6 }, TX);
+  // the envelope falls away down the desk
+  const wide = W > H * 1.2;
+  // wide frames keep the open envelope on the desk to the left; tall and square ones let it drop out of frame
+  if (wide) tl.to(["#eback", "#flapw", "#efront"], { x: -(ecx - W * 0.2), y: H * 0.06, rotation: -8, duration: 0.5, ease: twos("power3.inOut", 0.5) }, TX);
+  else tl.to(["#eback", "#flapw", "#efront"], { y: H * 0.8, rotation: 7, duration: 0.5, ease: twos("power2.in", 0.5) }, TX);
+  // the letter: to the centre of the safe zone, bigger, square to the lens (the envelope box is unrotated by now)
+  const sc = Math.min(1.15, (zBot - zTop - 30 * u) / LH, (MV.portrait ? W - 40 * u : availW * 0.92) / LW);
+  const tcx = MV.portrait ? W / 2 - 30 * u : W > H * 1.2 ? W * 0.6 : safe.left + availW / 2, tcy = (zTop + zBot) / 2;
+  const envL = ecx - EW / 2, envT = ecy - EH / 2;
+  const txU = tcx - envL - LW / 2, tyU = (tcy - sc * LH / 2 + sc * LH0 / 2) - envT - LH0 / 2;
+  tl.to(letter, { x: txU, y: tyU, scale: sc, rotation: -1.2, duration: 0.5, ease: twos("power3.inOut", 0.5) }, TX + 0.08);
+  // it unfolds: the lower half swings down from behind on twos, the light catching it as it opens
+  const TU = TX + 0.5;
+  tl.to(lo, { rotateX: 0, duration: 0.42, ease: twos("power2.out", 0.42) }, TU);
+  tl.fromTo("#lshade", { opacity: 0.35 }, { opacity: 0, duration: 0.42, ease: twos("power2.out", 0.42), immediateRender: true }, TU);
+  tl.to(letter, { rotation: 0.5, duration: 0.42, ease: twos("power2.out", 0.42) }, TU);
+  // the marker: one swipe under the key words
+  lt.style.visibility = "hidden"; tl.set("#ltext", { visibility: "visible" }, TU + 0.085);
+  const TM = TU + 0.6, L = ulp.getTotalLength();
+  tl.set(ul, { visibility: "visible" }, TM);
+  tl.fromTo(ulp, { strokeDasharray: `${L} ${L * 2}`, strokeDashoffset: L * 1.02 }, { strokeDashoffset: 0, duration: 0.42, ease: twos("power2.inOut", 0.42), immediateRender: true }, TM);
+  // boil: paper breathes, ink crawls (on twos)
+  const rb = MV.rand(7); for (let tt = 0; tt < D; tt += STEP * 2) { tl.set("#letter-b", { "--bx": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.3).toFixed(2)}deg` }, tt);
+    if (tt < 1.3) tl.set("#env-b", { "--bx": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2 * u).toFixed(2)}px` }, tt); }
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k2 = 0, tt = 0; tt < D; tt += STEP * 2, k2++) tl.set(bt, { attr: { seed: 2 + (k2 % 5) } }, tt);
+  tl.fromTo(env, { rotation: -3 }, { rotation: 0, duration: 1.3, ease: "power1.inOut", immediateRender: true }, 0);
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.05, duration: D, ease: "power1.inOut", immediateRender: true }, 0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"episode","type":"string","label":"Episode title on the player","default":"The full interview"},
+  {"id":"show","type":"string","label":"Show name (empty = the brand name)","default":""},
+  {"id":"chapters","type":"string","label":"Chapter names, comma separated (3 or 4)","default":"Intro,The setup,The results,Questions"},
+  {"id":"pick","type":"number","label":"Chapter the playhead jumps to (1 = the first)","default":3},
+  {"id":"length","type":"string","label":"Episode length (m:ss or h:mm:ss)","default":"48:12"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 38%; top: 4%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 74%; height: 46%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #wrap { position: absolute; transform-style: preserve-3d; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; border-radius: calc(var(--s) * 48);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 95%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  .ab { position: absolute; box-sizing: border-box; }
+  /* the cover: the author on the brand light, the show name set big, lifted off the card */
+  #cover { border-radius: calc(var(--s) * 26); overflow: hidden; transform-style: preserve-3d;
+    background: radial-gradient(90% 75% at 50% 35%, color-mix(in srgb, var(--accent) 90%, white 6%), color-mix(in srgb, var(--accent) 55%, var(--ground)) 62%, color-mix(in srgb, var(--accent) 18%, var(--ground)));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.4), 0 calc(var(--s) * 24) calc(var(--s) * 40) calc(var(--s) * -14) rgba(0,0,0,.75), 0 0 calc(var(--s) * 60) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key #cover { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.4); }
+  #cover img.cut { position: absolute; left: 0; right: 0; margin: 0 auto; bottom: 0; height: 90%; }
+  #cover .sh { position: absolute; left: 0; right: 0; bottom: 0; height: 46%; background: linear-gradient(transparent, rgba(0,0,0,.65)); }
+  #cover .nm { position: absolute; left: 7%; right: 7%; bottom: 7%; font-family: var(--font-display); color: #fff; line-height: .92; text-transform: uppercase; letter-spacing: -0.01em; white-space: nowrap; }
+  #cover .gl { position: absolute; inset: 0; background: linear-gradient(150deg, rgba(255,255,255,.22), transparent 40%); }
+  #showN { font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  #ep { font-weight: 800; color: var(--ink); line-height: 1.12; letter-spacing: -0.015em; }
+  #live { display: flex; align-items: flex-end; gap: calc(var(--s) * 5); height: calc(var(--s) * 30); }
+  #live i { width: calc(var(--s) * 7); border-radius: calc(var(--s) * 3); background: var(--accent); height: 30%; transform-origin: 50% 100%; }
+  /* the scrubber: a waveform, played part bright, chapter ticks under it */
+  #wave .b { position: absolute; border-radius: calc(var(--s) * 4); background: color-mix(in srgb, var(--ink) 22%, transparent); }
+  .is-key #wave .b { background: color-mix(in srgb, var(--ink) 22%, var(--surface)); }
+  #played { position: absolute; left: 0; top: 0; bottom: 0; overflow: hidden; }
+  #played .b { background: linear-gradient(180deg, #fff, color-mix(in srgb, var(--ink) 80%, var(--accent))); }
+  .tick { position: absolute; width: calc(var(--s) * 3); border-radius: 2px; background: color-mix(in srgb, var(--ink) 45%, transparent); }
+  .tick b { position: absolute; left: 50%; bottom: calc(var(--s) * -9); width: calc(var(--s) * 14); height: calc(var(--s) * 14); margin-left: calc(var(--s) * -7); border-radius: 50%;
+    background: var(--surface); box-shadow: inset 0 0 0 calc(var(--s) * 3) color-mix(in srgb, var(--ink) 60%, transparent); }
+  .tick.on b { background: var(--accent); box-shadow: 0 0 calc(var(--s) * 20) var(--accent); }
+  #ph { position: absolute; width: calc(var(--s) * 5); border-radius: calc(var(--s) * 3); background: #fff; box-shadow: 0 0 calc(var(--s) * 16) rgba(255,255,255,.8); }
+  #ph::before { content: ""; position: absolute; left: 50%; top: calc(var(--s) * -12); width: calc(var(--s) * 24); height: calc(var(--s) * 24); margin-left: calc(var(--s) * -12); border-radius: 50%; background: #fff; box-shadow: 0 calc(var(--s) * 4) calc(var(--s) * 10) rgba(0,0,0,.4); }
+  .is-key #ph { box-shadow: none; }
+  #chip { display: flex; align-items: center; gap: calc(var(--s) * 14); white-space: nowrap; padding: 0 calc(var(--s) * 24); height: calc(var(--s) * 66); border-radius: calc(var(--s) * 33);
+    font-weight: 800; font-size: calc(var(--s) * 32); color: #fff; transform-origin: 50% 100%;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 70%, white 22%), var(--accent) 55%, color-mix(in srgb, var(--accent) 65%, black));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), 0 calc(var(--s) * 16) calc(var(--s) * 34) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #chip { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55); }
+  #chip em { font-style: normal; opacity: .75; font-weight: 700; }
+  #chip::after { content: ""; position: absolute; left: 50%; bottom: calc(var(--s) * -9); width: calc(var(--s) * 18); height: calc(var(--s) * 18); margin-left: calc(var(--s) * -9); transform: rotate(45deg); background: color-mix(in srgb, var(--accent) 85%, black); border-radius: calc(var(--s) * 3); z-index: -1; }
+  .tm { font-size: calc(var(--s) * 28); font-weight: 600; color: color-mix(in srgb, var(--ink) 55%, transparent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tr { border-radius: 50%; display: grid; place-items: center; color: var(--ink); }
+  .tr svg { width: 62%; height: 62%; overflow: visible; }
+  #play { background: var(--ink); color: var(--ground); box-shadow: 0 calc(var(--s) * 16) calc(var(--s) * 30) calc(var(--s) * -10) rgba(0,0,0,.6), inset 0 calc(var(--s) * -4) calc(var(--s) * 8) rgba(0,0,0,.15); }
+  #play svg { width: 44%; height: 44%; }
+  #rg { position: absolute; border-radius: 50%; border: calc(var(--s) * 4) solid #fff; opacity: 0; }
+  .is-key #rg { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="wrap"><div id="card">
+    <div id="cover" class="ab"><i class="gl"></i></div>
+    <div id="showN" class="ab"></div><div id="ep" class="ab"></div><div id="live" class="ab"><i></i><i></i><i></i><i></i></div>
+    <div id="wave" class="ab"><div id="played"></div><i id="ph"></i></div>
+    <div id="chip" class="ab"><em></em><span></span></div>
+    <div id="t0" class="ab tm">0:00</div><div id="t1" class="ab tm"></div>
+    <div id="back" class="ab tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4.5h4.5"/><text x="12" y="15.6" text-anchor="middle" font-size="7.5" font-weight="800" fill="currentColor" stroke="none" font-family="Inter, sans-serif">15</text></svg></div>
+    <div id="play" class="ab tr"><svg id="pi" viewBox="0 0 24 24"><path id="pp" d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg><i id="rg"></i></div>
+    <div id="fwd" class="ab tr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4.5h-4.5"/><text x="12" y="15.6" text-anchor="middle" font-size="7.5" font-weight="800" fill="currentColor" stroke="none" font-family="Inter, sans-serif">30</text></svg></div>
+  </div></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const people = (Array.isArray(v.people) ? v.people : []).filter(Boolean);
+  const chs = String(v.chapters || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 5);
+  if (chs.length < 2) chs.push("Intro", "Main part", "Wrap up");
+  const pick = Math.max(2, Math.min(chs.length, Math.round(+v.pick || 3))) - 1;
+  const lenS = (() => { const p = String(v.length || "48:12").split(":").map((x) => +x || 0); return p.reduce((a, b) => a * 60 + b, 0) || 2892; })();
+  const fmt = (t) => { t = Math.max(0, Math.round(t)); const h = Math.floor(t / 3600), m = Math.floor(t / 60) % 60, s2 = String(t % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${s2}` : `${m}:${s2}`; };
+
+  // ---- zone in a 760-wide design space
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; if (!A) cR = W - safe.left; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 120 * u; cR = W - 120 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.29; cR = W * 0.71; zT = H * 0.07; zB = H * 0.93; }
+  const pad = 44, DW = 760, inner = DW - pad * 2, CV = 250, DH = 790;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.12 : 1.35);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // cover
+  const cover = $("#cover"); box(cover, pad, pad, CV, CV);
+  if (people[0]) cover.insertBefore(MV.img(people[0], "cut"), cover.firstChild);
+  cover.insertAdjacentHTML("beforeend", '<i class="sh"></i><div class="nm"></div>');
+  const show = String(v.show || "").trim() || v.brandName || "";
+  const nm = cover.querySelector(".nm"); nm.textContent = show; nm.style.fontSize = S(46); MV.fitText(nm, CV * 0.86 * s, 12 * s);
+  // titles
+  const tx = pad + CV + 34, tw = DW - pad - tx;
+  const sn = $("#showN"); sn.textContent = show; box(sn, tx, pad + 18); sn.style.fontSize = S(24); MV.fitText(sn, tw * s, 10 * s);
+  const ep = $("#ep"); ep.textContent = v.episode || ""; box(ep, tx, pad + 58, tw); ep.style.fontSize = S(48);
+  { let fs = 48; while (ep.getBoundingClientRect().height > 48 * 1.12 * 2 * s + 2 && fs > 26) { fs -= 2; ep.style.fontSize = S(fs); } }
+  box($("#live"), tx, pad + CV - 34);
+  // waveform
+  const WY = pad + CV + 116, WH = 120, wave = $("#wave"), played = $("#played"); box(wave, pad, WY, inner, WH);
+  const BW = 7, BG = 5, NB = Math.floor((inner + BG) / (BW + BG)), rnd = MV.rand(21);
+  for (let i = 0; i < NB; i++) { const syl = Math.abs(Math.sin(i * 0.47 + Math.sin(i * 0.11) * 2.2)), a = Math.max(0.1, Math.min(1, (0.3 + 0.7 * syl) * (0.5 + 0.5 * rnd())));
+    const h = Math.max(8, a * WH), x = i * (BW + BG);
+    [wave, played].forEach((p) => { const b = document.createElement("i"); b.className = "b"; box(b, x, WH / 2 - h / 2, BW, h); p.insertBefore(b, p === wave ? played : null); }); }
+  played.style.width = S(inner); played.style.clipPath = "inset(0 100% 0 0)";
+  // chapter ticks: spaced like a real episode
+  const marks = chs.map((_, i) => i === 0 ? 0 : [0, 0.17, 0.46, 0.71, 0.88][Math.min(4, i)] + (chs.length === 3 && i === 2 ? 0.1 : 0));
+  const ticks = marks.map((m, i) => { if (i === 0) return null; const t = document.createElement("i"); t.className = "tick"; t.innerHTML = "<b></b>"; box(t, m * inner - 1.5, -10, null, WH + 20); wave.appendChild(t); return t; });
+  wave.appendChild($("#ph")); box($("#ph"), 0, -14, null, WH + 28);
+  // times + transport
+  box($("#t0"), pad, WY + WH + 26); const t1 = $("#t1"); t1.textContent = "-" + fmt(lenS); Object.assign(t1.style, { right: S(pad), top: S(WY + WH + 26) });
+  const TY = WY + WH + 82, PB = 132, SB = 86;
+  box($("#play"), DW / 2 - PB / 2, TY, PB, PB); box($("#back"), DW / 2 - PB / 2 - 70 - SB, TY + (PB - SB) / 2, SB, SB); box($("#fwd"), DW / 2 + PB / 2 + 70, TY + (PB - SB) / 2, SB, SB);
+  box($("#rg"), -4, -4, PB + 8, PB + 8); $("#rg").style.left = $("#rg").style.top = "-4px";
+  // chapter chip above the target tick
+  const chip = $("#chip"); chip.querySelector("em").textContent = "Ch " + (pick + 1); chip.querySelector("span").textContent = chs[pick];
+  MV.fitText(chip.querySelector("span"), inner * 0.7 * s, 12 * s);
+  const cwid = chip.getBoundingClientRect().width / s, tx0 = marks[pick] * inner;
+  box(chip, Math.max(pad - 10, Math.min(DW - pad + 10 - cwid, pad + tx0 - cwid / 2)), WY - 96);
+  chip.style.setProperty("--ax", "0");
+  { const off = pad + tx0 - (parseFloat(chip.style.left) / s) ; chip.style.setProperty("--off", off); }
+
+  // place the card
+  const cw = DW * s, chh = DH * s;
+  const L0 = cL + ((cR - cL) - cw) / 2, T0 = A && P ? zT : zT + (zB - zT - chh) / 2;
+  Object.assign($("#wrap").style, { left: L0 + "px", top: T0 + "px", width: cw + "px", height: chh + "px" });
+  // the chip's pointer sits over the tick even when the chip is pushed in from an edge
+  chip.style.setProperty("--pt", ((pad + tx0) - parseFloat(chip.style.left) / s) + "");
+  { const st = document.createElement("style"); st.textContent = `#chip::after { left: calc(var(--s) * var(--pt)); }`; document.head.appendChild(st); }
+
+  // ---- timing
+  const TPLAY = 0.62, TSCRUB = 1.55, TSNAP = 2.2, pos0 = 0.035, posP = marks[pick];
+  gsap.set("#rig", { transformOrigin: `${L0 + cw / 2}px ${T0 + chh / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  // the cover lifts off the card toward the lens
+  tl.fromTo(cover, { z: 0, scale: 0.8, rotation: -6 }, { z: 40, scale: 1, rotation: 0, duration: 0.9, ease: "back.out(1.7)" }, 0.12);
+  tl.fromTo(["#showN", "#ep"], { opacity: 0, x: 24 * s }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out", stagger: 0.06 }, 0.22);
+  tl.fromTo(wave.querySelectorAll(":scope > .b"), { scaleY: 0 }, { scaleY: 1, duration: 0.5, ease: "back.out(2.4)", stagger: { each: 0.004 } }, 0.3);
+  tl.fromTo(ticks.filter(Boolean), { opacity: 0, scaleY: 0 }, { opacity: 1, scaleY: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.06 }, 0.5);
+  tl.fromTo(["#back", "#play", "#fwd", "#t0", "#t1"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.04 }, 0.35);
+  // 1. play pressed: the triangle becomes pause, a ring of light, the live bars start
+  tl.to("#play", { scale: 0.88, duration: 0.08, ease: "power2.out" }, TPLAY); tl.to("#play", { scale: 1, duration: 0.35, ease: "back.out(3)" }, TPLAY + 0.08);
+  tl.set("#pp", { attr: { d: "M6.5 4.5h4v15h-4zM13.5 4.5h4v15h-4z" } }, TPLAY + 0.06);
+  tl.fromTo("#rg", { scale: 1, opacity: 0.85 }, { scale: 1.6, opacity: 0, duration: 0.65, ease: "expo.out", immediateRender: false }, TPLAY + 0.04);
+  tl.set("#rg", { opacity: 0 }, 0);
+  const lv = [...document.querySelectorAll("#live i")], lr = MV.rand(3);
+  for (let t = TPLAY + 0.1; t < D - 0.3; t += 1 / 7.5) lv.forEach((b) => tl.to(b, { height: (25 + lr() * 75) + "%", duration: 1 / 7.5, ease: "sine.inOut" }, t));
+  tl.fromTo("#live", { opacity: 0 }, { opacity: 1, duration: 0.2 }, TPLAY + 0.1);
+  // 2. it plays a beat, then the playhead is grabbed and scrubbed to the chapter, snapping onto its tick (the moment)
+  const P_ = { p: 0 };
+  const setP = () => { const x = P_.p * inner; gsap.set("#ph", { x: x * s }); played.style.clipPath = `inset(0 ${(100 - P_.p * 100).toFixed(2)}% 0 0)`;
+    $("#t0").textContent = fmt(P_.p * lenS); t1.textContent = "-" + fmt((1 - P_.p) * lenS); };
+  setP();
+  tl.fromTo(P_, { p: 0 }, { p: pos0, duration: TSCRUB - TPLAY, ease: "none", onUpdate: setP, immediateRender: false }, TPLAY);
+  tl.to("#ph", { scaleX: 1.6, scaleY: 1.08, duration: 0.15, ease: "power2.out" }, TSCRUB - 0.1);
+  tl.fromTo(P_, { p: pos0 }, { p: posP + 0.012, duration: TSNAP - TSCRUB, ease: "power3.inOut", onUpdate: setP, immediateRender: false }, TSCRUB);
+  tl.fromTo(P_, { p: posP + 0.012 }, { p: posP, duration: 0.3, ease: "back.out(3)", onUpdate: setP, immediateRender: false }, TSNAP);
+  tl.to("#ph", { scaleX: 1, scaleY: 1, duration: 0.4, ease: "back.out(3)" }, TSNAP);
+  tl.fromTo(P_, { p: posP }, { p: posP + 0.02, duration: D - TSNAP - 0.3, ease: "none", onUpdate: setP, immediateRender: false }, TSNAP + 0.3);
+  // the tick lights and the chip pops up from it
+  const tk = ticks[pick];
+  tl.set(tk, { className: "tick on" }, TSNAP); tl.set(tk, { className: "tick" }, 0);
+  tl.fromTo(tk.querySelector("b"), { scale: 1 }, { scale: 1.7, duration: 0.1, ease: "power2.out", immediateRender: false }, TSNAP);
+  tl.to(tk.querySelector("b"), { scale: 1, duration: 0.45, ease: "back.out(3)" }, TSNAP + 0.1);
+  tl.fromTo(chip, { opacity: 0, y: 30 * s, scale: 0.6 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(2.2)" }, TSNAP + 0.04);
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TSNAP + 0.1);
+  tl.fromTo("#wrap", { y: 0 }, { y: -6 * s, duration: 0.08, ease: "power2.out", immediateRender: false }, TSNAP); tl.to("#wrap", { y: 0, duration: 0.5, ease: "back.out(3)" }, TSNAP + 0.08);
+  // the cover breathes with the audio
+  for (let t = TPLAY + 0.3, k = 0; t < D - 0.6; t += 0.54, k++) tl.fromTo(cover, { scale: 1 }, { scale: 1.025, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, t);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

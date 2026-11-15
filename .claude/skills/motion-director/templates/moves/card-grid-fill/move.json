@@ -1,0 +1,5 @@
+{ "id": "card-grid-fill", "name": "Card grid fill", "oneLiner": "a glass grid of content cards (the brand's screens as thumbnails, an avatar and skeleton lines, no copy) fills slot by slot, each card dropping out of depth into a dashed slot, faster and faster, while a chip counts them; the chip snaps to the accent when the grid is full and a light sweeps every card",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["grid", "volume", "body of work", "portfolio", "library", "output", "content", "cards", "count", "consistency", "scale", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker talks about volume or a body of work (\"I've posted 300 videos\", \"we shipped a post every day for a year\"): cut in on the number, set unit to what they made and total to the real number so the chip runs past the cards; the snap lands as they finish the sentence" }

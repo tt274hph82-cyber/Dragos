@@ -1,0 +1,5 @@
+{ "id": "control-toggles", "name": "Control panel toggles", "oneLiner": "a smoked-glass control panel rises tile by tile in slow 3D: the wireless switches pop on in the brand colour one at a time, the brightness and volume wells fill white to their levels, a few square toggles flip white, then the mode label rolls through the modes and settles on the last one as its tile lights white and lifts toward the camera",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["settings", "control panel", "toggles", "switches", "mode", "focus", "deep work", "do not disturb", "setup", "routine", "phone", "os", "system", "turn on", "configure"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker describes switching into a mode or setting things up just right ('I flip everything into work mode', 'phone on silent, lights down, and I start'): the switches flip under the list and the mode label settles on its name. Set modes (the last one is where it lands) and sub" }

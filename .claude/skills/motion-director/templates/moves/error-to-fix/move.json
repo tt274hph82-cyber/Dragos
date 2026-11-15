@@ -1,0 +1,5 @@
+{ "id": "error-to-fix", "name": "Glass error to fix", "oneLiner": "a code editor on glass: the broken line squiggles red and an error toast drops onto the card with a shake, an AI caret with a spark erases the line and types the fix, the row flushes green and the toast flips over to a green Fixed",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["error", "bug", "fix", "debug", "code", "ai coding", "agent", "developer", "editor", "toast", "programming", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says it broke and the AI fixed it ('it threw an error, I pasted it in and it fixed itself', 'the agent found the bug'): the toast drops on 'error', the fix types under 'fixed it', the toast flips green on the payoff" }

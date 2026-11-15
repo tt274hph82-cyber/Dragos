@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"t1","type":"string","label":"First post (empty: the brand headline)","default":""},
+  {"id":"t2","type":"string","label":"Second post","default":"Here is how it works, step by step."},
+  {"id":"t3","type":"string","label":"Third post","default":"Save this one for later."},
+  {"id":"name","type":"string","label":"Display name (empty: the brand name)","default":""},
+  {"id":"account","type":"string","label":"Handle override (empty: the brand handle or @ + name)","default":""},
+  {"id":"likes","type":"number","label":"Likes on the first post","default":3800},
+  {"id":"time","type":"string","label":"Time label","default":"1h"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(48% 34% at 50% var(--gy, 40%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 85% 100%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1900); }
+  #stack { position: relative; transform-style: preserve-3d; }
+  .card { position: absolute; left: 0; box-sizing: border-box; padding: calc(var(--u) * 30) calc(var(--u) * 34) calc(var(--u) * 26) calc(var(--u) * 30);
+    border-radius: calc(var(--u) * 38); display: flex; gap: calc(var(--u) * 24);
+    background: linear-gradient(160deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 40) calc(var(--u) * 80) calc(var(--u) * -30) rgba(0,0,0,.7); }
+  .rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 75%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  .sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.24) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .av { position: relative; z-index: 2; flex: none; width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: 50%; padding: calc(var(--u) * 4); box-sizing: border-box;
+    background: conic-gradient(from 210deg, var(--al), var(--accent), var(--accent2), var(--al)); }
+  .av i { display: block; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 4) solid var(--surface);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 170% auto; background-position: 50% 6%; }
+  .av .flash { position: absolute; inset: calc(var(--u) * -8); border-radius: 50%; border: calc(var(--u) * 5) solid var(--al); opacity: 0; box-sizing: border-box; }
+  .main { flex: 1; min-width: 0; }
+  .hd { display: flex; align-items: baseline; gap: calc(var(--u) * 12); white-space: nowrap; }
+  .nm { font-size: calc(var(--u) * 36); font-weight: 800; color: var(--ink); letter-spacing: -0.01em; display: flex; align-items: center; gap: calc(var(--u) * 8); }
+  .nm svg { width: calc(var(--u) * 30); height: calc(var(--u) * 30); flex: none; }
+  .hdl { font-size: calc(var(--u) * 28); color: color-mix(in srgb, var(--ink) 52%, transparent); overflow: hidden; text-overflow: clip; }
+  .num { margin-left: auto; flex: none; align-self: center; padding: calc(var(--u) * 5) calc(var(--u) * 16); border-radius: 999px; font-size: calc(var(--u) * 26); font-weight: 800;
+    color: var(--ink); background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); font-variant-numeric: tabular-nums; }
+  .num.last { background: var(--accent); box-shadow: 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .body { margin-top: calc(var(--u) * 8); font-size: calc(var(--u) * 44); line-height: 1.2; font-weight: 650; letter-spacing: -0.012em; color: var(--ink); text-wrap: balance; }
+  .ft { display: flex; align-items: center; gap: calc(var(--u) * 40); margin-top: calc(var(--u) * 18); color: color-mix(in srgb, var(--ink) 55%, transparent);
+    font-size: calc(var(--u) * 27); font-weight: 650; font-variant-numeric: tabular-nums; }
+  .ft .it { display: flex; align-items: center; gap: calc(var(--u) * 10); }
+  .ft svg { width: calc(var(--u) * 34); height: calc(var(--u) * 34); }
+  .ft .lk.on { color: var(--al); }
+  /* the thread: a lit wire from avatar to avatar, a pulse of light runs down it */
+  .wire { position: absolute; width: calc(var(--u) * 6); border-radius: 99px; transform-origin: 50% 0; z-index: 3;
+    background: linear-gradient(180deg, var(--al), var(--accent)); box-shadow: 0 0 calc(var(--u) * 14) color-mix(in srgb, var(--accent) 80%, transparent); }
+  #pulse { position: absolute; left: 0; top: 0; width: calc(var(--u) * 26); height: calc(var(--u) * 26); margin: calc(var(--u) * -13); border-radius: 50%; z-index: 4; opacity: 0;
+    background: radial-gradient(circle, #fff 0 30%, var(--al) 55%, transparent 72%); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+  .is-key .card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45); }
+  .is-key .wire { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="stack"><div id="pulse"></div></div></div>
+  <div id="grain"></div>
+</div>
+<template id="tpl"><div class="card">
+  <div class="av"><i></i><div class="flash"></div></div>
+  <div class="main">
+    <div class="hd"><span class="nm"><span class="nmt"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="var(--accent)"/><path d="M7.4 12.4l3 3 6.2-6.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="hdl"></span><span class="num"></span></div>
+    <div class="body"></div>
+    <div class="ft">
+      <div class="it"><svg viewBox="0 0 24 24"><path d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5v-3.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span class="rp"></span></div>
+      <div class="it"><svg viewBox="0 0 24 24"><path d="M17 3.5l3 3-3 3M4 11V9.5a3 3 0 0 1 3-3h13M7 20.5l-3-3 3-3M20 13v1.5a3 3 0 0 1-3 3H4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="rt"></span></div>
+      <div class="it lk"><svg viewBox="0 0 24 24"><path class="hp" d="M12 20.3s-7.4-4.5-9.5-9C1.1 8.2 3 4.7 6.5 4.4c2.1-.2 3.8 1 5.5 3 1.7-2 3.4-3.2 5.5-3 3.5.3 5.4 3.8 4 6.9-2.1 4.5-9.5 9-9.5 9z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg><span class="lc"></span></div>
+    </div>
+  </div>
+  <div class="rim"></div><div class="sheen"></div>
+</div></template>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  let u = P ? MV.u * 1.1 : MV.u * (SQ ? 1.02 : 1.2);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s, e = document) => e.querySelector(s);
+  const brand = v.brandName || "";
+  const name = v.name || brand, handle = String(v.account || "").trim() || String(v.handle || "").trim() || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  const hdl = handle + (v.time ? " · " + v.time : "");
+  const texts = [v.t1 || v.headline || v.tagline || "", v.t2 || "", v.t3 || ""].filter((s) => String(s).trim());
+  const N = texts.length;
+  const fmt = (x) => { x = Math.round(x); return x >= 10000 ? (x / 1000).toFixed(1).replace(/\.0$/, "") + "K" : x.toLocaleString("en-US"); };
+  const L = Math.max(10, +v.likes || 0);
+
+  // the column the thread lives in: 9:16 the safe zone, elsewhere a centred column
+  const CW = P ? (W - safe.left - safe.right) * 0.94 : Math.min((SQ ? 860 : 980) * u, W - 2 * safe.left);
+  const AH = P ? H - safe.top - safe.bottom : H - safe.top - safe.bottom;
+  const stack = $("#stack"), cards = [];
+  texts.forEach((t, i) => {
+    const c = $("#tpl").content.firstElementChild.cloneNode(true);
+    $(".nmt", c).textContent = name; $(".hdl", c).textContent = hdl; $(".body", c).textContent = t;
+    const nb = $(".num", c); nb.textContent = (i + 1) + "/" + N; if (i === N - 1) nb.classList.add("last");
+    const k = [1, 0.38, 0.22][i] || 0.2;
+    $(".lc", c).textContent = fmt(L * k); $(".rp", c).textContent = fmt(L * k * 0.05); $(".rt", c).textContent = fmt(L * k * 0.12);
+    if (v.people && v.people[0]) $(".av i", c).style.backgroundImage = `url("${v.people[0]}")`;
+    else if (v.mark) { const m = $(".av i", c); m.style.backgroundImage = `url("${v.mark}")`; m.style.backgroundSize = "62%"; m.style.backgroundPosition = "50% 50%"; }
+    c.style.width = CW + "px"; stack.appendChild(c); cards.push(c);
+  });
+  // fit: name and handle on one line, each post at most 2 lines
+  const inner = CW - (30 + 34 + 92 + 24) * u;
+  cards.forEach((c) => {
+    MV.fitText($(".nmt", c), inner * 0.5, 20);
+    const room = inner - $(".nm", c).getBoundingClientRect().width - $(".num", c).getBoundingClientRect().width - 24 * u;
+    $(".hdl", c).style.maxWidth = Math.max(0, room) + "px";
+    const b = $(".body", c); let fs = 44 * u; while (b.getBoundingClientRect().height > fs * 1.2 * 2 + 2 && fs > 30 * u) { fs -= 2; b.style.fontSize = fs + "px"; }
+  });
+  // one shared body size so the thread reads as one voice
+  const bs = Math.min(...cards.map((c) => parseFloat($(".body", c).style.fontSize || 44 * u)));
+  cards.forEach((c) => { $(".body", c).style.fontSize = bs + "px"; });
+  let GAP = 36 * u, hs = cards.map((c) => c.getBoundingClientRect().height);
+  let TH = hs.reduce((a, b) => a + b, 0) + GAP * (N - 1);
+  // if the thread is taller than the zone, the whole stack scales to fit
+  const fitS = Math.min(1, AH / TH);
+  let y0 = 0; const ys = hs.map((h) => { const y = y0; y0 += h + GAP; return y; });
+  cards.forEach((c, i) => { c.style.top = ys[i] + "px"; });
+  Object.assign(stack.style, { width: CW + "px", height: TH + "px" });
+  const sx = (W - CW) / 2 + (P ? (safe.left - safe.right) / 2 : 0);
+  const sy = P ? safe.top + (AH - TH * fitS) / 2 : safe.top + (AH - TH * fitS) / 2;
+  gsap.set("#stage", { x: sx, y: sy, width: CW, height: TH });
+  gsap.set(stack, { scale: fitS, transformOrigin: "50% 0%" });
+  root.style.setProperty("--gy", ((sy + TH * fitS * 0.45) / H * 100) + "%");
+
+  // wires: from the bottom of one avatar to the top of the next (avatar centre x = card padding + 46u)
+  const ax = 30 * u + 46 * u, aTop = 30 * u, aBot = 30 * u + 92 * u;
+  const wires = [];
+  for (let i = 0; i < N - 1; i++) {
+    const w = document.createElement("div"); w.className = "wire";
+    const a = ys[i] + aBot + 6 * u, b = ys[i + 1] + aTop - 6 * u;
+    Object.assign(w.style, { left: ax - 3 * u + "px", top: a + "px", height: b - a + "px" }); stack.appendChild(w); wires.push(w);
+  }
+
+  // ---- motion
+  gsap.set(stack, { rotationX: 10, rotationY: -12, rotationZ: -1.5 });
+  tl.to(stack, { rotationX: 2, rotationY: 8, rotationZ: 0.5, duration: D, ease: "sine.inOut" }, 0);
+  const T0 = 0.08, STEP = 0.62;
+  cards.forEach((c, i) => {
+    const t = T0 + i * STEP;
+    tl.fromTo(c, { z: -520 * u, y: 120 * u, rotationX: 38, scale: 0.8 }, { z: 0, y: 0, rotationX: 0, scale: 1, duration: 0.85, ease: "back.out(1.3)" }, t);
+    tl.fromTo(c, { opacity: 0, filter: "blur(16px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, t);
+    tl.fromTo($(".av", c), { scale: 0.4, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2)" }, t + 0.16);
+    tl.fromTo($(".hd", c), { opacity: 0, x: -18 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, t + 0.22);
+    const bw = MV.words($(".body", c));
+    tl.fromTo(bw, { opacity: 0, y: 18 * u, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, stagger: Math.min(0.03, 0.4 / bw.length), ease: "expo.out" }, t + 0.28);
+    tl.fromTo($(".ft", c), { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, t + 0.42);
+    tl.fromTo($(".sheen", c), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, t + 0.35);
+    // the wire to this card draws down as it lands, and its avatar ring flashes when the wire arrives
+    if (i > 0) {
+      tl.fromTo(wires[i - 1], { scaleY: 0 }, { scaleY: 1, duration: 0.38, ease: "power2.inOut" }, t + 0.06);
+      tl.fromTo($(".flash", c), { scale: 0.85, opacity: 1 }, { scale: 1.35, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, t + 0.44);
+    }
+  });
+  // the moment: a pulse of light runs the whole thread top to bottom, every like lights as it passes, the last chip stamps
+  const PT = T0 + (N - 1) * STEP + 0.85, pulse = $("#pulse");
+  const pts = [ys[0] + aTop + 46 * u]; for (let i = 1; i < N; i++) pts.push(ys[i] + aTop + 46 * u);
+  gsap.set(pulse, { x: ax, y: pts[0] });
+  tl.to(pulse, { opacity: 1, duration: 0.1, ease: "power1.out" }, PT);
+  tl.to(pulse, { y: pts[N - 1], duration: 0.22 * (N - 1) + 0.2, ease: "power1.inOut" }, PT);
+  tl.to(pulse, { opacity: 0, scale: 2.4, duration: 0.3, ease: "power2.out" }, PT + 0.22 * (N - 1) + 0.2);
+  cards.forEach((c, i) => {
+    const t = PT + (0.22 * (N - 1) + 0.2) * (N > 1 ? i / (N - 1) : 0);
+    tl.fromTo($(".flash", c), { scale: 0.85, opacity: 1 }, { scale: 1.4, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, t);
+    const lk = $(".lk", c), hp = $(".hp", c);
+    tl.set(lk, { color: "var(--al)" }, t + 0.02);
+    tl.set(hp, { attr: { fill: "var(--accent)", stroke: "var(--accent)" } }, t + 0.02);
+    tl.fromTo($("svg", lk), { scale: 0.4 }, { scale: 1, duration: 0.45, ease: "back.out(4)", immediateRender: false }, t + 0.02);
+  });
+  const last = $(".num.last");
+  tl.fromTo(last, { scale: 1 }, { scale: 1.35, duration: 0.09, ease: "power2.out", immediateRender: false }, PT + 0.22 * (N - 1) + 0.2);
+  tl.to(last, { scale: 1, duration: 0.45, ease: "back.out(3)" }, PT + 0.22 * (N - 1) + 0.29);
+  // exit: the thread tips back and rises into blur, accelerating
+  tl.to(stack, { y: -140 * u, z: -320 * u, opacity: 0, filter: "blur(14px)", duration: 0.42, ease: "power3.in" }, D - 0.44);
+  MV.done();
+</script>
+</body>
+</html>

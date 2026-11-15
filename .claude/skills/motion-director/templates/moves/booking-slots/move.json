@@ -1,0 +1,5 @@
+{ "id": "booking-slots", "name": "Booking slots", "oneLiner": "a white booking page lands on a warm lit desk: host photo and call type, a strip of days and a grid of time slots; a cursor picks a day, the slots reload, it picks a time and presses Confirm, then the slots fold away and a green confirmed panel rises with the check, the date and the time",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["booking", "calendar", "schedule", "call", "appointment", "slots", "consult", "sales call", "confirmed", "cursor", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker says people book time with them ('they pick a slot and book a call', 'just grab a time on my calendar'): cut in on 'book', the slot is picked on 'pick' and the green panel lands on 'booked' or 'confirmed'" }

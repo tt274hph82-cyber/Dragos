@@ -1,0 +1,5 @@
+{ "id": "video-publish", "name": "Glass video publish", "oneLiner": "an upload dialog on glass: the thumbnail fills with colour behind a bright edge as the upload counts to 100%, three checks (processing, checks, HD) spin and pass green one by one, the Publish button wakes up and is pressed, green floods out of the click, the status flips from Draft to Live and a LIVE badge lands on the thumbnail",
+  "category": "creator", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["upload", "publish", "video", "creator", "studio", "live", "youtube", "post", "ship", "launch", "checks", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.4, "alpha": true,
+  "say": "when the speaker says the video went up or they hit publish ('I uploaded it that night', 'hit publish and it was live'): the upload fills on 'uploaded', the button is pressed and it turns live on 'publish'" }

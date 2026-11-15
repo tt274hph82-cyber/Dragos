@@ -1,0 +1,5 @@
+{ "id": "skeleton-load", "name": "Skeleton load", "oneLiner": "a floating glass page shows only its loading skeleton, grey blocks with a light shimmer sweeping across them, then the page resolves block by block into the brand's real screen, each block lifting out of blur, the headline block landing last with a push-in while the spinner turns into a green check",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["loading", "skeleton", "page load", "website", "app", "screen", "reveal", "build", "generate", "it builds", "landing page", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says the page or app comes together ('it built the whole site', 'and the page just loads in', 'watch it fill in'): the skeleton holds on the setup, the blocks resolve as they say it built it" }

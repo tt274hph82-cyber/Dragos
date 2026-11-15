@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Mixer name","default":"Mix"},
+  {"id":"channels","type":"string","label":"Four channel names then the master, split by commas (the first one is soloed)","default":"Voice,Music,SFX,Room,Master"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2400px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, rgba(255,255,255,.15), rgba(255,255,255,.04) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  .ab { position: absolute; box-sizing: border-box; }
+  #ttl { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #cur { position: absolute; left: 0; top: 0; z-index: 40; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5)); opacity: 0; }
+  #cur svg { width: 100%; height: 100%; display: block; }
+  .tool { border-radius: calc(var(--s) * 14); display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 70%, transparent); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.35), 0 0 calc(var(--s) * 22) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key .tool { background: var(--accent); box-shadow: none; }
+  .tool svg { width: 58%; height: 58%; }
+  #tc { font-family: var(--font-display); font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; font-variant-numeric: tabular-nums; text-align: right; }
+  #play { width: calc(var(--s) * 34); height: calc(var(--s) * 34); }
+  .strip { border-radius: calc(var(--s) * 22); background: rgba(0,0,0,.24); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  .is-key .strip { background: color-mix(in srgb, var(--surface) 70%, black); }
+  .strip.ms { background: color-mix(in srgb, var(--accent) 16%, rgba(0,0,0,.3)); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-key .strip.ms { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); }
+  .strip.solo { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--accent2), 0 0 calc(var(--s) * 30) color-mix(in srgb, var(--accent2) 40%, transparent); }
+  .is-key .strip.solo { box-shadow: inset 0 0 0 calc(var(--s) * 3) var(--accent2); }
+  .cn { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; text-align: center; }
+  .bt { border-radius: calc(var(--s) * 10); display: grid; place-items: center; font-weight: 800; font-size: calc(var(--s) * 36); line-height: 1; color: color-mix(in srgb, var(--ink) 70%, transparent); background: rgba(255,255,255,.08); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12); }
+  .is-key .bt { background: color-mix(in srgb, var(--surface) 70%, white 10%); }
+  .bt.lit { color: #111; background: var(--accent2); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.5), 0 0 calc(var(--s) * 24) var(--accent2); }
+  .is-key .bt.lit { box-shadow: none; }
+  .slot { border-radius: calc(var(--s) * 6); background: linear-gradient(90deg, #000, #1b1b1f 50%, #000); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.08); }
+  .tk { height: calc(var(--s) * 2); background: rgba(255,255,255,.2); }
+  .cap { border-radius: calc(var(--s) * 10); z-index: 3;
+    background: linear-gradient(180deg, #f3f3f5 0%, #b9b9c0 22%, #e6e6ea 46%, #8e8e96 54%, #cfcfd5 78%, #7a7a82 100%);
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.9), 0 calc(var(--s) * 10) calc(var(--s) * 16) calc(var(--s) * -4) rgba(0,0,0,.8); }
+  .cap::after { content: ""; position: absolute; left: 10%; right: 10%; top: 50%; height: calc(var(--s) * 3); margin-top: calc(var(--s) * -1.5); background: var(--accent); border-radius: 2px; }
+  .seg { border-radius: calc(var(--s) * 2.5); }
+  .db { font-family: var(--font-display); font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 85%, transparent); white-space: nowrap; line-height: 1; text-align: center; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="tIc" class="ab tool"><svg viewBox="0 0 24 24"><path d="M6 4v16M12 4v16M18 4v16" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".55"/><rect x="3.5" y="12" width="5" height="3.4" rx="1" fill="#fff"/><rect x="9.5" y="6.5" width="5" height="3.4" rx="1" fill="#fff"/><rect x="15.5" y="14.5" width="5" height="3.4" rx="1" fill="#fff"/></svg></div>
+      <div id="ttl" class="ab"></div>
+      <svg id="play" class="ab" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="var(--ink)"/></svg>
+      <div id="tc" class="ab">00:00:00</div>
+      <div id="cur"><svg viewBox="0 0 24 24"><path d="M5 2.5v17.2l4.4-4.2 2.9 6.6 3-1.3-2.9-6.5 6.1-.3z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+
+  // ---- zone (a 900-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.96; zT = H * 0.06; zB = H * 0.94; }
+  else if (SQ) { cL = 70 * u; cR = W - 70 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.24; cR = W * 0.76; zT = H * 0.05; zB = H * 0.95; }
+  const pad = 34, DW = 900, inner = DW - pad * 2;
+  const HY = 28, HH = 64, SY = HY + HH + 20, SHt = P && !A ? 700 : P ? 620 : 540, DH = SY + SHt + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.06 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+  const mk = (cls, parent, html) => { const e = document.createElement("div"); e.className = "ab " + cls; if (html) e.innerHTML = html; parent.appendChild(e); return e; };
+  const card = $("#card");
+
+  // ---- header
+  box($("#tIc"), pad, HY, HH, HH);
+  const ttl = $("#ttl"); ttl.textContent = v.title || ""; box(ttl, pad + HH + 22, HY + HH / 2 - 22);
+  const tc = $("#tc"); Object.assign(tc.style, { right: S(pad), top: S(HY + HH / 2 - 22) });
+  const tcW = tc.getBoundingClientRect().width / s; box($("#play"), pad + inner - tcW - 50, HY + HH / 2 - 17);
+  MV.fitText(ttl, (inner - HH - 22 - tcW - 90) * s, 24 * s);
+
+  // ---- five channel strips: name, mute and solo, the fader slot with its cap, the stereo meter, the level
+  const names = String(v.channels || "").split(",").map((t) => t.trim());
+  const GAP = 12, colW = (inner - GAP * 4) / 5, FT = 150, FB = SHt - 76, TRAV = FB - FT - 40, NSEG = P ? 22 : 18;
+  const target = [0.8, 0.52, 0.6, 0.4, 0.72];
+  const strips = [], caps = [], dbs = [], meters = [], solos = [];
+  for (let i = 0; i < 5; i++) {
+    const st = mk("strip" + (i === 4 ? " ms" : ""), card); box(st, pad + i * (colW + GAP), SY, colW, SHt); strips.push(st);
+    const cn = mk("cn", st); cn.textContent = names[i] || ""; box(cn, 0, 18, colW, null); MV.fitText(cn, (colW - 18) * s, 22 * s);
+    const bw = (colW - 16 * 2 - 10) / 2;
+    if (i < 4) { const m = mk("bt", st); m.textContent = "M"; box(m, 16, 78, bw, 52); const so = mk("bt", st); so.textContent = "S"; box(so, 16 + bw + 10, 78, bw, 52); solos.push(so); }
+    const sx = colW * 0.36; const slot = mk("slot", st); box(slot, sx - 5, FT, 10, FB - FT);
+    for (let k = 0; k <= 8; k++) { const t = mk("tk", st); box(t, sx - 26, FT + 20 + k * TRAV / 8, k % 2 ? 10 : 16, null); }
+    const cap = mk("cap", st); box(cap, sx - 34, FB - 20 - 22, 68, 44); caps.push(cap);
+    const segs = [[], []], segH = (FB - FT) / NSEG;
+    [0, 1].forEach((c) => { for (let k = 0; k < NSEG; k++) { const g = mk("seg", st); const top = k >= NSEG - 2, amb = k >= NSEG - 5;
+      g.style.background = top ? "#FF4D4D" : amb ? "#FFC23D" : "#2BD67B"; box(g, colW * 0.66 + c * 18, FB - (k + 1) * segH + 1.5, 13, segH - 3); segs[c].push(g); } });
+    meters.push(segs);
+    const db = mk("db", st); box(db, 0, SHt - 54, colW, null); dbs.push(db);
+  }
+  const CU = 60, cur = $("#cur"); Object.assign(cur.style, { width: S(CU), height: S(CU) });
+
+  // ---- place the card
+  const cw = DW * s, ch = DH * s;
+  const x0 = cL + ((cR - cL) - cw) / 2, y0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: x0 + "px", top: y0 + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: x0 - 40 * u + "px", width: cw + 80 * u + "px", top: y0 + ch + 34 * u + "px" });
+
+  // ---- the mix, as a pure function of time: faders rise, meters dance to seeded audio, solo isolates the first channel
+  const TS = 2.95, TPLAY = 1.0;
+  const cl = (x) => Math.min(1, Math.max(0, x)), bo = (x) => { const c1 = 1.5, c3 = c1 + 1; return x <= 0 ? 0 : x >= 1 ? 1 : 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const hash = (a, b) => { let h = (a * 374761393 + b * 668265263) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; };
+  const sig = (ch, t, c) => { const r = 15, x = t * r, a = Math.floor(x), f = x - a, sm = f * f * (3 - 2 * f);
+    const n = (k) => hash(ch * 7 + c * 3 + 1, k);
+    const raw = n(a) + (n(a + 1) - n(a)) * sm;
+    if (ch === 0) return 0.45 + 0.55 * raw * (0.6 + 0.4 * Math.abs(Math.sin(t * 5.1))); // voice: syllables
+    if (ch === 1) return 0.62 + 0.25 * raw;            // music: steady bed
+    if (ch === 2) return Math.pow(raw, 2.2) * 1.1;     // sfx: spikes
+    return 0.35 + 0.25 * raw;                          // room: low
+  };
+  const fAt = (i, t) => { const t0 = 0.6 + i * 0.12; let f = target[i] * bo(cl((t - t0) / 0.75)); if (i === 0) f += 0.05 * bo(cl((t - TS - 0.05) / 0.45)); return f; };
+  const dbOf = (f) => f < 0.01 ? "-inf" : (20 * 2.2 * Math.log10(f / 0.75)).toFixed(1);
+  const clk = { t: 0 };
+  const render = () => {
+    const t = clk.t, play = cl((t - TPLAY) / 0.25), solo = cl((t - TS - 0.02) / 0.15);
+    const lv = [];
+    for (let i = 0; i < 4; i++) { const f = fAt(i, t), keep = i === 0 ? 1 : 1 - solo; lv.push([0, 1].map((c) => f * play * keep * sig(i, t, c) * (i === 0 ? 1 + 0.12 * solo : 1))); }
+    const mf = fAt(4, t) / target[4];
+    lv.push([0, 1].map((c) => Math.min(1, mf * (lv[0][c] * 0.75 + lv[1][c] * 0.35 + lv[2][c] * 0.25 + lv[3][c] * 0.15) * 1.05)));
+    for (let i = 0; i < 5; i++) {
+      const f = fAt(i, t); caps[i].style.transform = `translateY(${(-f * TRAV * s).toFixed(2)}px)`;
+      dbs[i].textContent = dbOf(f);
+      meters[i].forEach((segs, c) => { const n = Math.round(Math.min(1, lv[i][c]) * NSEG); segs.forEach((g, k) => { g.style.opacity = k < n ? 1 : 0.1; }); });
+    }
+    const fr = Math.floor(Math.max(0, t - TPLAY) * 30), ss = Math.floor(fr / 30) + 12;
+    tc.textContent = `00:${String(ss).padStart(2, "0")}:${String(fr % 30).padStart(2, "0")}`;
+  };
+  tl.fromTo(clk, { t: 0 }, { t: D, duration: D, ease: "none", immediateRender: true, onUpdate: render }, 0);
+  render();
+
+  // ---- timing
+  gsap.set("#rig", { transformOrigin: `${x0 + cw / 2}px ${y0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 10, rotationX: 10, scale: 0.94, y: 24 * u }, { rotationY: P ? -5 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#tIc", "#ttl", "#play", "#tc"], { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.04 }, 0.12);
+  tl.fromTo(strips, { opacity: 0, y: 50 * s }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 0.18);
+  tl.fromTo("#play", { scale: 1 }, { scale: 0.75, duration: 0.07, ease: "power2.in", immediateRender: false, transformOrigin: "50% 50%" }, TPLAY - 0.05);
+  tl.to("#play", { scale: 1, duration: 0.35, ease: "back.out(3)", transformOrigin: "50% 50%" }, TPLAY + 0.03);
+
+  // the cursor comes to the first channel's solo and presses it: it lights, the rest of the board drops away
+  const so = solos[0], sb = { x: pad + 16 + (colW - 42) / 2 + 10 + (colW - 42) / 4, y: SY + 78 + 30 };
+  tl.fromTo(cur, { x: (sb.x + 220) * s, y: (sb.y + 260) * s, opacity: 0 }, { x: sb.x * s, y: sb.y * s, opacity: 1, duration: 0.65, ease: "expo.out" }, TS - 0.68);
+  tl.to(cur, { scale: 0.84, duration: 0.07, ease: "power2.in", transformOrigin: "20% 10%" }, TS);
+  tl.to(cur, { scale: 1, duration: 0.3, ease: "back.out(3)", transformOrigin: "20% 10%" }, TS + 0.08);
+  tl.to(so, { scale: 0.85, duration: 0.07, ease: "power2.in" }, TS);
+  tl.set(so, { attr: { class: "ab bt lit" } }, TS + 0.04);
+  tl.to(so, { scale: 1, duration: 0.4, ease: "back.out(3)" }, TS + 0.07);
+  tl.set(strips[0], { attr: { class: "ab strip solo" } }, TS + 0.04);
+  tl.to(strips.slice(1, 4), { opacity: 0.38, duration: 0.3, ease: "power2.out" }, TS + 0.04);
+  tl.to("#wrap", { y: 8 * s, duration: 0.06, ease: "power2.out" }, TS + 0.02);
+  tl.to("#wrap", { y: 0, duration: 0.5, ease: "back.out(3)" }, TS + 0.08);
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut", immediateRender: false }, TS + 0.06);
+  tl.to(cur, { x: "+=" + 130 * s, y: "+=" + 120 * s, opacity: 0, duration: 0.4, ease: "power2.in" }, TS + 0.5);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

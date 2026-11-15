@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"Each rung of the ladder, comma separated, 3 to 5, cheapest or simplest first","default":"Basic,Better,Pro,Ultimate"},
+  {"id":"values","type":"string","label":"A short value printed under each (price or level; empty = none)","default":"$0,$20,$200,$2,000"},
+  {"id":"glyphs","type":"string","label":"Glyph per rung, comma separated (cup, gift, card, bolt, rocket, crown, star, trophy, code, spark...; empty = guessed from the label)","default":"gift,bolt,rocket,crown"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 44%; left: 50%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 50%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #floor { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2400px; }
+  #rig { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+  .step { position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; }
+  .fc { position: absolute; box-sizing: border-box; backface-visibility: visible; }
+  .front { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; color: var(--ink);
+    background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 40%, rgba(255,255,255,.02));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16); }
+  .top { background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.22)); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.22); }
+  .side { background: linear-gradient(90deg, rgba(255,255,255,.07), rgba(255,255,255,.02)); box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .fc .litf { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 70%, white 30%), color-mix(in srgb, var(--accent) 40%, transparent)); }
+  .is-alpha .front { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 80%, white 20%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-alpha .top { background: color-mix(in srgb, var(--surface) 70%, white 30%); }
+  .is-alpha .side { background: color-mix(in srgb, var(--surface) 92%, black 8%); }
+  .is-key .front, .is-key .side, .is-key .top { background: var(--surface); }
+  .front .nm { position: relative; z-index: 2; white-space: nowrap; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; line-height: 1; color: color-mix(in srgb, var(--ink) 80%, transparent); }
+  .front .vl { position: relative; z-index: 2; white-space: nowrap; font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; line-height: 1; color: var(--ink); }
+  .is-alpha .front .nm { color: #fff; }
+  .is-portrait .front .nm { letter-spacing: .03em; }
+
+  .tile { position: absolute; box-sizing: border-box; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(155deg, rgba(255,255,255,.22), rgba(255,255,255,.07) 62%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), 0 calc(var(--u) * 26) calc(var(--u) * 46) calc(var(--u) * -20) rgba(0,0,0,.7); }
+  .is-alpha .tile { background: linear-gradient(155deg, color-mix(in srgb, var(--surface) 82%, white 18%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .tile { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .tile .gl { position: relative; width: 52%; height: 52%; z-index: 2; }
+  .tile .fill { position: absolute; inset: 0; border-radius: inherit; opacity: 0; z-index: 1;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 62%, white 38%), var(--accent) 52%, color-mix(in srgb, var(--accent) 72%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.7); }
+  .tile .rim { position: absolute; inset: calc(var(--u) * -2); border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--accent2) 75%, white), 0 0 calc(var(--u) * 44) calc(var(--u) * 2) color-mix(in srgb, var(--accent2) 45%, transparent); }
+  .tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 3;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.34) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .tsh { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.6), transparent 70%); }
+  #puck { position: absolute; border-radius: 50%; opacity: 0;
+    background: radial-gradient(circle at 34% 30%, #fff 0%, color-mix(in srgb, var(--accent2) 60%, white) 26%, var(--accent2) 60%, color-mix(in srgb, var(--accent2) 60%, black) 100%);
+    box-shadow: 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent2) 70%, transparent), 0 calc(var(--u) * 10) calc(var(--u) * 20) rgba(0,0,0,.5); }
+  #halo { position: absolute; border-radius: 50%; opacity: 0; pointer-events: none; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 70%); filter: blur(calc(var(--u) * 24)); }
+  #ring { position: absolute; opacity: 0; pointer-events: none; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent) 50%, white); box-sizing: border-box; }
+  #floor { position: absolute; height: calc(var(--u) * 2); background: linear-gradient(90deg, transparent, rgba(255,255,255,.22) 18%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.22) 82%, transparent); }
+  .is-key #puck { box-shadow: none; } .is-key #halo, .is-key .tsh { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="floor"></div><div id="halo"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration;
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const list = (x) => String(x || "").split(",").map((s) => s.trim());
+  const glue = (arr) => { const o = []; for (const s of arr) { if (o.length && /^\d{3}\b/.test(s) && /\d$/.test(o[o.length - 1])) o[o.length - 1] += "," + s; else o.push(s); } return o; };
+  let labels = list(v.labels).filter((s) => s.length); const N = Math.max(3, Math.min(5, labels.length || 4));
+  while (labels.length < N) labels.push(""); labels = labels.slice(0, N);
+  let values = glue(list(v.values)); values = values.slice(0, N); while (values.length < N) values.push("");
+  const gl = list(v.glyphs), used = new Set(), glyphs = labels.map((l, i) => GLYPH.pick(l, gl[i], i, used));
+  const hasVal = values.some((s) => s.length);
+
+  // ---- layout: N glass steps rising left to right, a glass tile on each, a puck that climbs them
+  let bx, by, bw, bh;
+  if (P) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top + (A ? 0 : 40) * u; bh = (A ? H * 0.44 : H - safe.bottom - 20 * u) - by; }
+  else if (SQ) { bx = W * 0.07; bw = W * 0.86; by = H * (A ? 0.06 : 0.12); bh = H * (A ? 0.48 : 0.78); }
+  else { bx = A ? W * 0.45 : W * 0.1; bw = A ? W * 0.5 : W * 0.8; by = H * 0.1; bh = H * 0.8; }
+  const GAPX = Math.round(10 * u), w = (bw * 0.96 - GAPX * (N - 1)) / N, T = Math.round(Math.min(w * 0.66, (P ? 210 : 190) * u));
+  const NFS = Math.round(Math.min(w * (P ? 0.2 : 0.17), (P ? 38 : 36) * u)), VFS = Math.round(Math.min(w * 0.3, (P ? 70 : 66) * u));
+  const pad = Math.round(NFS * 0.8), frontMin = pad * 2 + NFS + (hasVal ? VFS + NFS * 0.5 : 0);
+  const free = bh - T - (P ? 120 : 110) * u;            // room for the tallest step under its tile and the puck
+  const h0 = Math.max(frontMin + 10 * u, free * 0.36), hN = Math.max(h0 + 60 * u, free), dh = (hN - h0) / (N - 1), dz = Math.round(w * 0.55);
+  const ox = bx + (bw - (N * w + (N - 1) * GAPX)) / 2, oy = by + bh;
+  const rig = document.getElementById("rig"); Object.assign(rig.style, { left: ox + "px", top: oy + "px" });
+  const floor = document.getElementById("floor"); Object.assign(floor.style, { left: -w * 0.5 + "px", width: N * w + (N - 1) * GAPX + w + "px", top: "0px", transform: `translateZ(${dz / 2}px)` });
+
+  const PS = Math.round(Math.max(36 * u, Math.min(w * 0.2, 58 * u))), TG = PS + 22 * u; // the tile floats this far over its step, the puck lands under it
+  const steps = [];
+  for (let i = 0; i < N; i++) {
+    const x = i * (w + GAPX), h = h0 + dh * i, last = i === N - 1;
+    const st = document.createElement("div"); st.className = "step"; rig.append(st);
+    const side = document.createElement("div"); side.className = "fc side"; Object.assign(side.style, { width: dz + "px", height: h + "px", left: x + w - dz / 2 + "px", top: -h + "px", transform: "rotateY(90deg)" });
+    const top = document.createElement("div"); top.className = "fc top"; Object.assign(top.style, { width: w + "px", height: dz + "px", left: x + "px", top: -h - dz / 2 + "px", transform: "rotateX(90deg)" }); top.innerHTML = '<div class="litf"></div>';
+    const front = document.createElement("div"); front.className = "fc front"; Object.assign(front.style, { width: w + "px", height: h + "px", left: x + "px", top: -h + "px", transform: `translateZ(${dz / 2}px)`, paddingTop: pad + "px" });
+    front.innerHTML = '<div class="litf"></div>';
+    const nm = document.createElement("div"); nm.className = "nm"; nm.textContent = labels[i]; nm.style.fontSize = NFS + "px";
+    const vl = document.createElement("div"); vl.className = "vl"; vl.textContent = values[i]; vl.style.fontSize = VFS + "px"; vl.style.marginTop = Math.round(NFS * 0.5) + "px";
+    front.append(nm); if (values[i]) front.append(vl);
+    st.append(side, top, front);
+    // the tile floats over the step's top, with its shadow on it
+    const tsh = document.createElement("div"); tsh.className = "tsh"; Object.assign(tsh.style, { width: T * 1.1 + "px", height: dz * 0.7 + "px", left: x + w / 2 - T * 0.55 + "px", top: -h - dz * 0.35 + "px", transform: "rotateX(90deg)" });
+    const tile = document.createElement("div"); tile.className = "tile"; tile.innerHTML = '<div class="fill"></div>' + GLYPH.svg(glyphs[i], "gl") + '<div class="rim"></div>';
+    Object.assign(tile.style, { width: T + "px", height: T + "px", left: x + w / 2 - T / 2 + "px", top: -h - T - TG + "px", borderRadius: T * 0.26 + "px" });
+    st.append(tsh, tile);
+    steps.push({ st, front, top, tile, tsh, nm, vl, x, h, last, litF: front.querySelector(".litf"), litT: top.querySelector(".litf"), fill: tile.querySelector(".fill"), rim: tile.querySelector(".rim"), gl: tile.querySelector(".gl") });
+  }
+  steps.forEach((s) => { MV.fitText(s.nm, w - 16 * u, 22); MV.fitText(s.vl, w - 20 * u, 24); });
+  // the puck sits on the front of each step's top, in front of the tile
+  const puck = document.createElement("div"); puck.id = "puck"; Object.assign(puck.style, { width: PS + "px", height: PS + "px" }); rig.append(puck);
+  const pAt = (i) => [steps[i].x + w / 2 - PS / 2, -steps[i].h - PS];
+  const halo = document.getElementById("halo"), L = steps[N - 1], hS = T * 2.4;
+  Object.assign(halo.style, { width: hS + "px", height: hS + "px", left: L.x + w / 2 - hS / 2 + "px", top: -L.h - T / 2 - TG - hS / 2 + "px" });
+  const ring = document.createElement("div"); ring.id = "ring"; L.st.append(ring);
+  Object.assign(ring.style, { width: T + "px", height: T + "px", left: L.x + w / 2 - T / 2 + "px", top: -L.h - T - TG + "px", borderRadius: T * 0.26 + "px" });
+
+  // ---- time: the steps rise in order, then the puck climbs them one by one; the last one is the moment
+  const T0 = 0.1;
+  steps.forEach((s, i) => { const at = T0 + i * 0.1;
+    tl.fromTo(s.st, { y: 60 * u, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "expo.out" }, at);
+    tl.fromTo([s.tile, s.tsh], { y: -50 * u, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: "back.out(1.6)" }, at + 0.22);
+    tl.fromTo([s.nm, s.vl], { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", stagger: 0.06 }, at + 0.3);
+    // each tile bobs slowly once it is in
+    tl.to(s.tile, { y: (i % 2 ? -1 : 1) * 6 * u, duration: D - at - 1, ease: "sine.inOut" }, at + 1);
+  });
+  const C0 = T0 + N * 0.1 + 0.5, HOP = N >= 5 ? 0.42 : N === 4 ? 0.5 : 0.6;
+  const pz = dz * 0.32;
+  const o = { k: 0 };
+  const paintPuck = () => { const k = Math.max(0, Math.min(N - 1, o.k)), i = Math.min(N - 2, Math.floor(k)), f = k - i, a = pAt(i), b = pAt(i + 1);
+    const arc = Math.sin(Math.PI * f) * (dh + 70 * u) * 1.0;
+    const x = a[0] + (b[0] - a[0]) * f, y = a[1] + (b[1] - a[1]) * f - arc;
+    const sq = f < 0.06 ? 1 - f / 0.06 : f > 0.94 ? (f - 0.94) / 0.06 : 0; // squash at take-off and landing
+    puck.style.transform = `translate3d(${x}px, ${y + sq * PS * 0.12}px, ${pz}px) scale(${1 + sq * 0.16}, ${1 - sq * 0.16})`; };
+  paintPuck();
+  tl.fromTo(puck, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, C0 - 0.3);
+  const land = (i, at) => { const s = steps[i];
+    tl.fromTo([s.litT, s.litF], { opacity: 0 }, { opacity: s.last ? 0.75 : 0.5, duration: 0.1, ease: "power2.out", immediateRender: false }, at);
+    tl.to([s.litT, s.litF], { opacity: s.last ? 0.45 : 0.08, duration: 0.7, ease: "power2.out" }, at + 0.1);
+    tl.fromTo(s.rim, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, at); tl.to(s.rim, { opacity: s.last ? 0 : 0.2, duration: 0.7, ease: "power2.out" }, at + 0.1);
+    tl.fromTo(s.tile, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.6, ease: "power2.inOut", immediateRender: false }, at);
+    tl.fromTo(s.st, { y: 0 }, { y: 8 * u, duration: 0.07, ease: "power2.out", immediateRender: false }, at); tl.to(s.st, { y: 0, duration: 0.45, ease: "back.out(3)" }, at + 0.07); };
+  land(0, C0 - 0.1);
+  for (let i = 1; i < N; i++) { const at = C0 + (i - 1) * (HOP + 0.12);
+    tl.fromTo(o, { k: i - 1 }, { k: i, duration: HOP, ease: "power1.inOut", immediateRender: false, onUpdate: paintPuck }, at);
+    land(i, at + HOP); }
+  // ---- the moment: the top tile floods with the accent, a ring goes out, the glyph turns white
+  const MT = C0 + (N - 1) * (HOP + 0.12) - 0.12;
+  tl.fromTo(L.fill, { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out" }, MT);
+  tl.fromTo(L.tile, { scale: 1 }, { scale: 1.14, duration: 0.09, ease: "power2.out", immediateRender: false }, MT); tl.to(L.tile, { scale: 1, duration: 0.55, ease: "back.out(3)" }, MT + 0.09);
+  tl.fromTo(L.gl, { color: "currentColor" }, { color: "#fff", duration: 0.2 }, MT);
+  tl.fromTo(ring, { scale: 1, opacity: 0.95 }, { scale: 1.9, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, MT + 0.02);
+  tl.fromTo(halo, { opacity: 0, scale: 0.5 }, { opacity: A ? 0.5 : 0.85, scale: 1, duration: 0.8, ease: "expo.out" }, MT);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, MT); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, MT + 0.07);
+  tl.to(L.vl, { scale: 1.12, color: "#fff", duration: 0.1, ease: "power2.out" }, MT); tl.to(L.vl, { scale: 1, duration: 0.5, ease: "back.out(3)" }, MT + 0.1);
+
+  // ---- the camera drifts
+  gsap.set(rig, { transformOrigin: `${(N * w) / 2}px ${-hN / 2}px` });
+  tl.fromTo(rig, { rotationX: -14, rotationY: P ? 10 : 14 }, { rotationX: -8, rotationY: P ? -6 : -8, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.to("#stage", { opacity: 0, y: -40 * u, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

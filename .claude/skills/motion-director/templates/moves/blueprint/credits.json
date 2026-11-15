@@ -1,0 +1,7 @@
+{ "sources": [
+  { "file": "assets/paper-white.jpg", "from": "ambientCG Paper001 (scanned white paper), cropped and resized; multiplied into Prussian blue for the cyanotype (reused from certificate)", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), used as the uneven cyanotype coating", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; the drafting table", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/pencil.png", "from": "Poly Haven stationery_supplies (CC0 model), the new pencil alone, rendered with prop-render.mjs under the Poly Haven studio_small_09 HDRI (CC0) (reused from index-card-flip)", "license": "CC0", "page": "https://polyhaven.com/a/stationery_supplies" },
+  { "file": "assets/fonts/ShareTechMono-Regular.ttf", "from": "Share Tech Mono by Carrois Apostrophe, Google Fonts; the drafting lettering", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Share+Tech+Mono" }
+] }

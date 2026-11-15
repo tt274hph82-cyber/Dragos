@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"models","type":"string","label":"Model names in the list, comma separated, 3 to 5","default":"Swift,Balanced,Deep,Vision"},
+  {"id":"notes","type":"string","label":"One short line under each name, separated by |","default":"Quick everyday answers|The smart default|Thinks longer on hard work|Reads images and screens"},
+  {"id":"current","type":"number","label":"Model selected at the start (1 = first)","default":2},
+  {"id":"pick","type":"number","label":"Model that gets picked (1 = first)","default":3},
+  {"id":"heading","type":"string","label":"Menu heading","default":"Model"},
+  {"id":"placeholder","type":"string","label":"Composer placeholder before the switch","default":"Ask anything"},
+  {"id":"prefix","type":"string","label":"Placeholder after the switch, before the model name","default":"Message"},
+  {"id":"layout","type":"string","label":"9:16 only: full or top (graphic in the upper ~45%, speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 140)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 75%; height: 46%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 28%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.42)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #rig { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .glass { position: absolute; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(165deg, rgba(255,255,255,.15), rgba(255,255,255,.05) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(0,0,0,.7); }
+  .is-alpha .glass { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .is-key .glass { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  .glass .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 9;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  /* the composer */
+  #bar { left: 0; border-radius: calc(var(--u) * 46); }
+  #ph { position: absolute; left: calc(var(--u) * 56); top: calc(var(--u) * 34); right: calc(var(--u) * 40); height: calc(var(--u) * 60); }
+  #ph span { position: absolute; left: 0; top: 0; font-size: calc(var(--u) * 42); font-weight: 500; color: color-mix(in srgb, var(--ink) 46%, transparent); white-space: nowrap; line-height: calc(var(--u) * 60); }
+  #ph b { font-weight: 700; color: var(--ink); }
+  #caret { position: absolute; left: calc(var(--u) * 38); top: calc(var(--u) * 40); width: calc(var(--u) * 4); height: calc(var(--u) * 50); border-radius: 2px; background: var(--accent); }
+  #pill { position: absolute; left: calc(var(--u) * 24); bottom: calc(var(--u) * 24); height: calc(var(--u) * 92); display: flex; align-items: center; gap: calc(var(--u) * 16);
+    padding: 0 calc(var(--u) * 24) 0 calc(var(--u) * 12); border-radius: 99px; box-sizing: border-box; background: rgba(255,255,255,.09);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14), inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.18); }
+  .is-key #pill { background: color-mix(in srgb, var(--surface) 82%, #fff); }
+  #pill .gl { position: relative; flex: none; width: calc(var(--u) * 68); height: calc(var(--u) * 68); }
+  #pill .gl .tile { position: absolute; inset: 0; }
+  #nm { position: relative; flex: none; height: calc(var(--u) * 56); overflow: hidden; }
+  #nm span { position: absolute; left: 0; top: 0; font-size: calc(var(--u) * 40); font-weight: 700; color: var(--ink); white-space: nowrap; line-height: calc(var(--u) * 56); }
+  #pill .chev { flex: none; width: calc(var(--u) * 34); height: calc(var(--u) * 34); }
+  #pill .chev path { fill: none; stroke: color-mix(in srgb, var(--ink) 70%, transparent); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  #glow { position: absolute; left: calc(var(--u) * 24); bottom: calc(var(--u) * 24); height: calc(var(--u) * 92); border-radius: 99px; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #glow { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent); }
+  #send { position: absolute; right: calc(var(--u) * 24); bottom: calc(var(--u) * 24); width: calc(var(--u) * 92); height: calc(var(--u) * 92); border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 70%, #fff), var(--accent) 60%, color-mix(in srgb, var(--accent) 80%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 10) calc(var(--u) * 24) calc(var(--u) * -6) color-mix(in srgb, var(--accent) 70%, transparent); }
+  #send svg { width: 44%; height: 44%; }
+
+  /* glyph tiles: generic shapes, never a real model mark */
+  .tile { border-radius: 30%; display: grid; place-items: center; box-sizing: border-box;
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.14); }
+  .tile svg { width: 56%; height: 56%; overflow: visible; }
+  .tile svg * { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tile svg .fl { fill: #fff; stroke: none; }
+  .t0 { background: linear-gradient(150deg, color-mix(in srgb, var(--accent2) 70%, #fff 6%), color-mix(in srgb, var(--accent2) 30%, #000 30%)); }
+  .t1 { background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 75%, #fff 10%), color-mix(in srgb, var(--accent) 40%, #000 35%)); }
+  .t2 { background: linear-gradient(150deg, color-mix(in srgb, var(--ink) 30%, #3A3F55), #161824); }
+  .t3 { background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 35%, color-mix(in srgb, var(--accent2) 50%, #fff 10%)), color-mix(in srgb, var(--accent) 30%, #000 45%)); }
+  .t4 { background: linear-gradient(150deg, #5A6070, #1E2028); }
+
+  /* the menu */
+  #panel { left: 0; top: 0; border-radius: calc(var(--u) * 40); padding: calc(var(--u) * 18); }
+  #panel .hd { height: calc(var(--u) * 70); display: flex; align-items: center; padding: 0 calc(var(--u) * 22); font-size: calc(var(--u) * 30); font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; }
+  #hover { position: absolute; top: 0; left: calc(var(--u) * 18); right: calc(var(--u) * 18); border-radius: calc(var(--u) * 26); opacity: 0;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 26%, rgba(255,255,255,.06)), rgba(255,255,255,.05));
+    box-shadow: inset 0 0 0 calc(var(--u) * 1.5) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .opt { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 26); padding: 0 calc(var(--u) * 22); box-sizing: border-box; }
+  .opt .tile { flex: none; width: calc(var(--u) * 80); height: calc(var(--u) * 80); }
+  .opt .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: calc(var(--u) * 4); }
+  .opt .n { font-size: calc(var(--u) * 42); font-weight: 700; color: var(--ink); white-space: nowrap; line-height: 1.15; }
+  .opt .d { font-size: calc(var(--u) * 32); font-weight: 500; color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: nowrap; line-height: 1.2; }
+  .opt .ck { flex: none; position: relative; width: calc(var(--u) * 52); height: calc(var(--u) * 52); }
+  .opt .ck i { position: absolute; inset: 0; border-radius: 50%; display: grid; place-items: center; transform: scale(0); background: var(--ink); }
+  .opt .ck svg { width: 62%; height: 62%; overflow: visible; }
+  .opt .ck path { fill: none; stroke: var(--ground); stroke-width: 3.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 20; }
+  #ring { position: absolute; top: 0; border-radius: calc(var(--u) * 26); border: calc(var(--u) * 3) solid var(--accent); box-sizing: border-box; opacity: 0; pointer-events: none; }
+  #pring { position: absolute; width: calc(var(--u) * 130); height: calc(var(--u) * 130); margin: calc(var(--u) * -65); border-radius: 50%; border: calc(var(--u) * 8) solid #fff; box-sizing: border-box; opacity: 0; pointer-events: none;
+    box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 30) rgba(0,0,0,.35); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="panel" class="glass"><div class="hd"></div><div id="hover"></div><div id="opts"></div><div id="ring"></div><div class="sh"></div></div>
+    <div id="bar" class="glass">
+      <div id="ph"><span id="ph0"></span><span id="ph1"></span></div><i id="caret"></i>
+      <div id="glow"></div>
+      <div id="pill"><div class="gl"></div><div id="nm"><span id="n0"></span><span id="n1"></span></div>
+        <svg class="chev" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6"/></svg></div>
+      <div id="send"><svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div class="sh"></div>
+    </div>
+    <div id="pring"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  const D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, LTOP = P && String(v.layout || "").toLowerCase() === "top", u = MV.u;
+  const names = String(v.models || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 5);
+  while (names.length < 3) names.push("Model " + (names.length + 1));
+  const notes = String(v.notes || "").split("|").map((s) => s.trim());
+  const N = names.length;
+  const clampI = (x, d) => Math.max(0, Math.min(N - 1, (Math.round(+x) || d) - 1));
+  const cur = clampI(v.current, 2);
+  let pick = clampI(v.pick, 3); if (pick === cur) pick = (cur + 1) % N;
+
+  // generic glyphs, one per slot
+  const G = [
+    '<path d="M12 2.5l2.2 7.3 7.3 2.2-7.3 2.2L12 21.5l-2.2-7.3L2.5 12l7.3-2.2z" class="fl"/>',
+    '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.6" class="fl"/>',
+    '<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M12 7.6l3.8 2.2v4.4L12 16.4l-3.8-2.2V9.8z" class="fl"/>',
+    '<path d="M2.6 12s3.6-6.4 9.4-6.4S21.4 12 21.4 12s-3.6 6.4-9.4 6.4S2.6 12 2.6 12z"/><circle cx="12" cy="12" r="3.2" class="fl"/>',
+    '<path d="M4 18.5L12 4l8 14.5z"/><path d="M8.6 15.5h6.8" />',
+  ];
+  const tile = (i) => `<div class="tile t${i}"><svg viewBox="0 0 24 24">${G[i]}</svg></div>`;
+
+  // ---- build the menu
+  $("#panel .hd").textContent = v.heading || "";
+  const CW = 940 * u, RH = 132 * u, PAD = 18 * u, HD = 70 * u, BH = 236 * u, GAP = 26 * u;
+  const PH = PAD * 2 + HD + N * RH;
+  const opts = $("#opts"), R = [];
+  names.forEach((n, i) => {
+    const r = document.createElement("div"); r.className = "opt"; r.style.height = RH + "px";
+    r.innerHTML = `${tile(i)}<div class="tx"><span class="n"></span><span class="d"></span></div><div class="ck"><i><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-8.6"/></svg></i></div>`;
+    $(".n", r).textContent = n; $(".d", r).textContent = notes[i] || "";
+    if (!notes[i]) $(".d", r).style.display = "none";
+    opts.appendChild(r); R.push(r);
+  });
+  const panel = $("#panel"), bar = $("#bar");
+  Object.assign(panel.style, { width: CW + "px", height: PH + "px" });
+  Object.assign(bar.style, { width: CW + "px", height: BH + "px", top: PH + GAP + "px" });
+  const natH = PH + GAP + BH;
+  $("#rig").style.width = CW + "px"; $("#rig").style.height = natH + "px";
+  R.forEach((r) => { const room = CW - 2 * PAD - 44 * u - 80 * u - 52 * u - 52 * u; MV.fitText($(".n", r), room, 16); MV.fitText($(".d", r), room, 14); });
+  MV.fitText($("#panel .hd"), CW - 100 * u, 14);
+
+  // ---- the composer: placeholder, pill with the current model, send
+  const ph0 = $("#ph0"), ph1 = $("#ph1");
+  ph0.textContent = v.placeholder || "";
+  ph1.innerHTML = ""; ph1.appendChild(document.createTextNode((v.prefix ? v.prefix + " " : ""))); const bn = document.createElement("b"); bn.textContent = names[pick]; ph1.appendChild(bn);
+  const phRoom = CW - 96 * u;
+  MV.fitText(ph0, phRoom, 14); MV.fitText(ph1, phRoom, 14);
+  $("#pill .gl").innerHTML = `<div class="g0">${tile(cur)}</div><div class="g1">${tile(pick)}</div>`;
+  $("#pill .gl .g0").style.cssText = $("#pill .gl .g1").style.cssText = "position:absolute;inset:0;display:grid";
+  [$("#pill .g0 .tile"), $("#pill .g1 .tile")].forEach((t) => { t.style.width = "100%"; t.style.height = "100%"; });
+  const n0 = $("#n0"), n1 = $("#n1"); n0.textContent = names[cur]; n1.textContent = names[pick];
+  const nmMax = CW - 48 * u - (12 + 68 + 16 + 16 + 34 + 24) * u - 92 * u - 40 * u;
+  MV.fitText(n0, nmMax, 16); MV.fitText(n1, nmMax, 16);
+  const w0 = n0.getBoundingClientRect().width + 2, w1 = n1.getBoundingClientRect().width + 2;
+  $("#nm").style.width = w0 + "px";
+  const pillW = (w) => (12 + 68 + 16 + 16 + 34 + 24) * u + w;
+
+  // ---- place the rig in its zone and scale it to fit
+  let bx, by, bw, bh;
+  if (LTOP) { bx = 70 * W / 1080; bw = W - 2 * bx; by = safe.top; bh = H * 0.47 - safe.top; }
+  else if (P && MV.alpha) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H * 0.56 - safe.top; }
+  else if (P) { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H - safe.top - safe.bottom; }
+  else if (W > H && MV.alpha) { bw = W * 0.46; bx = W - safe.right - bw; by = safe.top; bh = H - safe.top - safe.bottom; }
+  else { bx = safe.left; bw = W - safe.left - safe.right; by = safe.top; bh = H - safe.top - safe.bottom; }
+  const S = Math.min(W > H && !MV.alpha ? 1.12 : 1, bw / CW, bh / natH);
+  const X = bx + (bw - CW * S) / 2, Y = by + (bh - natH * S) / 2;
+  const X0 = X - CW * (1 - S) / 2, Y0 = Y - natH * (1 - S) / 2;
+  const rig = $("#rig");
+  const OFF = (PH + GAP) / 2 * S;
+  gsap.set(rig, { x: X0, y: Y0 - OFF, scale: S, transformOrigin: `${CW / 2}px ${natH / 2}px` });
+  const cx = X + CW * S / 2, cy = Y + natH * S / 2;
+  const ZK = 1.1;
+  gsap.set("#stage", { perspectiveOrigin: `${cx}px ${cy}px` });
+
+  // geometry inside the rig (unscaled px)
+  const pillCX = 24 * u + pillW(w0) * 0.5, pillCY = PH + GAP + BH - 24 * u - 46 * u;
+  const rowY = (i) => PAD + HD + i * RH;
+  Object.assign($("#hover").style, { height: RH + "px" });
+  Object.assign($("#ring").style, { left: PAD + "px", width: CW - 2 * PAD + "px", height: RH + "px", top: rowY(pick) + "px" });
+
+  // ---- camera: slow 3D drift, the ground light moves against it
+  tl.fromTo(rig, { rotationY: P ? -9 : -12, rotationX: 8, z: -40 * u }, { rotationY: P ? 5 : 7, rotationX: 2, z: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- the composer arrives with the current model in its pill
+  tl.fromTo(bar, { y: 90 * u, scale: 0.95 }, { y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, 0.03);
+  tl.fromTo(bar, { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.03);
+  tl.fromTo("#pill", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.2);
+  tl.fromTo("#send", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.2)", transformOrigin: "50% 50%" }, 0.26);
+  tl.fromTo(ph0, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.25);
+  gsap.set(ph1, { opacity: 0 });
+  [0.5, 0.9, 1.3].forEach((t) => { tl.set("#caret", { opacity: 0 }, t); tl.set("#caret", { opacity: 1 }, t + 0.2); });
+  tl.fromTo("#caret", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 0.3);
+  tl.fromTo(bar, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, 0.3);
+
+  // ---- the pill is pressed: a ring lands on it, it squashes, the menu opens up out of it
+  const T1 = 0.82;
+  tl.fromTo("#pring", { left: pillCX, top: pillCY, scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, T1 - 0.22);
+  tl.to("#pring", { scale: 0.85, duration: 0.1 }, T1);
+  tl.fromTo("#pill", { scale: 1 }, { scale: 0.93, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false, transformOrigin: "50% 50%" }, T1);
+  tl.to("#pring", { opacity: 0, scale: 1.3, duration: 0.25, ease: "power2.out" }, T1 + 0.12);
+  tl.to("#pill .chev", { rotation: 180, duration: 0.35, ease: "back.out(2)", transformOrigin: "50% 50%" }, T1);
+  tl.set("#caret", { opacity: 0 }, T1);
+  const T2 = T1 + 0.1;
+  tl.to(rig, { y: Y0, duration: 0.6, ease: "power3.inOut" }, T1 - 0.25);
+  gsap.set(panel, { transformOrigin: `${pillCX}px ${PH + GAP}px` });
+  tl.fromTo(panel, { scale: 0.86, y: 40 * u }, { scale: 1, y: 0, duration: 0.6, ease: "back.out(1.5)" }, T2);
+  tl.fromTo(panel, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power3.out" }, T2);
+  tl.fromTo("#panel .hd", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, T2 + 0.1);
+  R.forEach((r, i) => tl.fromTo(r, { opacity: 0, y: 24 * u }, { opacity: 1, y: 0, duration: 0.42, ease: "expo.out" }, T2 + 0.08 + (N - 1 - i) * 0.05));
+  tl.fromTo($(".ck i", R[cur]), { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(2.6)", transformOrigin: "50% 50%" }, T2 + 0.3);
+
+  // ---- the hover plate lands on the current one, then glides to the pick
+  const T3 = T2 + 0.55;
+  gsap.set("#hover", { y: rowY(cur) });
+  tl.fromTo("#hover", { opacity: 0, scaleX: 0.96 }, { opacity: 1, scaleX: 1, duration: 0.25, ease: "power2.out" }, T3);
+  const steps = []; for (let i = cur; i !== pick; i += pick > cur ? 1 : -1) steps.push(i + (pick > cur ? 1 : -1));
+  const T4 = T3 + 0.28, SG = Math.min(0.24, 0.6 / steps.length);
+  steps.forEach((i, k) => tl.to("#hover", { y: rowY(i), duration: 0.3, ease: "expo.out" }, T4 + k * SG));
+  steps.forEach((i, k) => tl.fromTo($(".tile", R[i]), { scale: 1 }, { scale: 1.1, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false, transformOrigin: "50% 50%" }, T4 + k * SG));
+
+  // ---- the pick: the row presses in, a ring goes out, the check moves to it
+  const T5 = T4 + steps.length * SG + 0.22;
+  tl.to(R[pick], { scale: 0.97, duration: 0.08, ease: "power2.out", transformOrigin: "50% 50%" }, T5);
+  tl.to(R[pick], { scale: 1, duration: 0.45, ease: "back.out(3)" }, T5 + 0.08);
+  tl.to("#hover", { scale: 0.97, duration: 0.08, ease: "power2.out" }, T5); tl.to("#hover", { scale: 1, duration: 0.4, ease: "back.out(3)" }, T5 + 0.08);
+  if (!KEY) tl.fromTo("#ring", { scale: 1, opacity: 0.9 }, { scale: 1.08, opacity: 0, duration: 0.55, ease: "expo.out", immediateRender: false, transformOrigin: "50% 50%" }, T5 + 0.06);
+  tl.to($(".ck i", R[cur]), { scale: 0, duration: 0.2, ease: "power2.in" }, T5 + 0.02);
+  tl.fromTo($(".ck i", R[pick]), { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.42, ease: "back.out(3)", transformOrigin: "50% 50%" }, T5 + 0.08);
+  tl.fromTo($(".ck path", R[pick]), { strokeDashoffset: 20 }, { strokeDashoffset: 0, duration: 0.22, ease: "power2.out" }, T5 + 0.14);
+  gsap.set(R.map((r) => $(".ck path", r)), { strokeDashoffset: 0 });
+
+  // ---- the menu folds back into the pill; the pill takes the new name and glyph
+  const T6 = T5 + 0.5;
+  tl.to(panel, { scale: 0.9, y: 30 * u, opacity: 0, duration: 0.3, ease: "power3.in" }, T6);
+  tl.to("#pill .chev", { rotation: 0, duration: 0.35, ease: "back.out(2)" }, T6);
+  const T7 = T6 + 0.18;
+  tl.to(n0, { yPercent: -110, opacity: 0, duration: 0.22, ease: "power2.in" }, T7);
+  tl.fromTo(n1, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: "back.out(2)" }, T7 + 0.12);
+  tl.fromTo("#nm", { width: w0 }, { width: w1, duration: 0.5, ease: "expo.out" }, T7 + 0.05);
+  tl.to("#pill .g0", { rotationY: 90, opacity: 0, duration: 0.18, ease: "power2.in", transformOrigin: "50% 50%" }, T7);
+  tl.fromTo("#pill .g1", { rotationY: -90, opacity: 0 }, { rotationY: 0, opacity: 1, duration: 0.5, ease: "back.out(2)", transformOrigin: "50% 50%" }, T7 + 0.18);
+  tl.fromTo("#glow", { width: pillW(w0), opacity: 0 }, { width: pillW(w1), opacity: 1, duration: 0.25, ease: "power2.out" }, T7 + 0.2);
+  tl.to("#glow", { opacity: 0, duration: 0.8, ease: "power2.out" }, T7 + 0.5);
+  tl.to("#pill", { scale: 1.06, duration: 0.1, ease: "power2.out", transformOrigin: "0% 50%" }, T7 + 0.2);
+  tl.to("#pill", { scale: 1, duration: 0.5, ease: "back.out(3)" }, T7 + 0.3);
+  tl.to(ph0, { opacity: 0, y: -14 * u, duration: 0.22, ease: "power2.in" }, T7 + 0.1);
+  tl.fromTo(ph1, { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, T7 + 0.3);
+  tl.set("#caret", { opacity: 1 }, T7 + 0.5);
+  [T7 + 0.9, T7 + 1.3].forEach((t) => { if (t < D - 0.5) { tl.set("#caret", { opacity: 0 }, t); tl.set("#caret", { opacity: 1 }, t + 0.2); } });
+  tl.fromTo(bar, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, T7 + 0.3);
+  // the camera follows: the composer sits centred alone, the frame rises to hold the open menu, then settles back
+  tl.to(rig, { y: Y0 - OFF - (ZK - 1) * OFF, scale: S * ZK, duration: 0.9, ease: "expo.inOut" }, T6 + 0.05);
+
+  // ---- out
+  if (MV.alpha) tl.to(rig, { y: Y0 - OFF - (ZK - 1) * OFF - 80 * u, opacity: 0, filter: "blur(14px)", duration: 0.36, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

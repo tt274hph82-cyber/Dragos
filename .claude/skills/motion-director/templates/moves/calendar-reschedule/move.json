@@ -1,0 +1,5 @@
+{ "id": "calendar-reschedule", "name": "Calendar reschedule", "oneLiner": "a glass day view where two events land on the same hour and squeeze side by side, outlined red under a Conflict chip; one lifts off, glides down to the only free slot and snaps in, the other widens back to full and the chip flips green to Conflict cleared",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["calendar", "schedule", "conflict", "double booked", "reschedule", "meeting", "assistant", "agent", "time", "fix", "clash", "productivity", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says something sorted out their schedule ('I was double booked, it moved the call', 'it finds a free slot for you'): the clash lands red on 'double booked', the event slides to the free hour and the chip goes green on 'moved' or 'sorted'. Set the two events, at (the clash hour) and to (the free hour)" }

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"day","type":"number","label":"The day the calendar lands on","default":100},
+  {"id":"from","type":"number","label":"The day on the first page","default":1},
+  {"id":"unit","type":"string","label":"Word printed over the number","default":"Day"},
+  {"id":"caption","type":"string","label":"Small line printed under the number (empty = none)","default":""},
+  {"id":"circle","type":"string","label":"Ring the final number in marker: yes or no","default":"yes"},
+  {"id":"side","type":"string","label":"Overlay side: left or right","default":"right"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Hand"; src: url("assets/fonts/GochiHand-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1a120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --ink-c: #1f1c22; }
+  /* ground: a walnut desk under a warm lamp, top left */
+  #ground { position: absolute; inset: -8%; background: #2a1d14 url(assets/wood.jpg) center / calc(var(--u) * 900); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(55% 45% at 40% 36%, rgba(255,214,160,.22), transparent 70%), radial-gradient(120% 95% at 50% 45%, transparent 35%, rgba(10,6,3,.72)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); }
+  #rig { position: absolute; transform-style: preserve-3d; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #cal { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the backing board: leather over card, with a soft desk shadow */
+  #board { position: absolute; border-radius: calc(var(--s) * 14); background: #3b2619 url(assets/leather.jpg) center / calc(var(--s) * 500);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,230,200,.18), inset 0 calc(var(--s) * -10) calc(var(--s) * 24) rgba(0,0,0,.35),
+      0 calc(var(--s) * 30) calc(var(--s) * 50) calc(var(--s) * -10) rgba(8,4,2,.7), 0 calc(var(--s) * 6) calc(var(--s) * 10) rgba(8,4,2,.45); }
+  .is-key #board { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,230,200,.18); }
+  #board::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(80% 60% at 35% 20%, rgba(255,220,180,.14), transparent 70%); }
+  #hdr { position: absolute; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 14); color: rgba(255,236,214,.78); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+  #hdr img { border-radius: 50%; filter: sepia(.3) saturate(.8); box-shadow: 0 0 0 calc(var(--s) * 2) rgba(255,236,214,.3); }
+  /* the clamp: brushed metal with two rivets */
+  #clamp { position: absolute; z-index: 60; border-radius: calc(var(--s) * 8); background: #9a9a9a url(assets/metal.jpg) center / cover;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.75), inset 0 calc(var(--s) * -3) calc(var(--s) * 4) rgba(0,0,0,.35), 0 calc(var(--s) * 8) calc(var(--s) * 12) calc(var(--s) * -2) rgba(0,0,0,.55); }
+  #clamp i { position: absolute; top: 50%; width: calc(var(--s) * 22); height: calc(var(--s) * 22); margin-top: calc(var(--s) * -11); border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, #b9b9b9 40%, #555 100%); box-shadow: 0 calc(var(--s) * 2) calc(var(--s) * 3) rgba(0,0,0,.5); }
+  /* the pad: page edges stacked under the top page */
+  #edges { position: absolute; }
+  #edges b { position: absolute; left: 0; right: 0; height: calc(var(--s) * 3); background: #e9e3d6; box-shadow: 0 calc(var(--s) * 1) 0 rgba(60,40,20,.35); border-radius: 0 0 calc(var(--s) * 3) calc(var(--s) * 3); }
+  .pg { position: absolute; transform-origin: 50% 0; transform-style: preserve-3d; }
+  .pp { position: absolute; inset: 0; background: #f4efe4 url(assets/paper-white.jpg) center / calc(var(--s) * 560); border-radius: 0 0 calc(var(--s) * 6) calc(var(--s) * 6);
+    box-shadow: inset 0 calc(var(--s) * 10) calc(var(--s) * 14) calc(var(--s) * -8) rgba(80,60,30,.25); backface-visibility: hidden; }
+  .pp::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255,250,240,.0), rgba(120,90,50,.08)); pointer-events: none; }
+  .pg .shade { position: absolute; inset: 0; opacity: 0; background: linear-gradient(180deg, rgba(40,25,10,.16), rgba(255,250,240,.10) 70%, rgba(255,255,255,.18)); border-radius: 0 0 calc(var(--s) * 6) calc(var(--s) * 6); pointer-events: none; }
+  /* the peeled corner: the paper's back, lit from the lamp, throwing a soft shadow on the page under it */
+  .fw { position: absolute; inset: 0; pointer-events: none; z-index: 3; filter: drop-shadow(calc(var(--s) * 5) calc(var(--s) * 7) calc(var(--s) * 7) rgba(40,25,10,.45)); }
+  .flap { position: absolute; width: 0; height: 0; background: linear-gradient(var(--fa, to top left), #a99a80 50%, #e6dccb 68%, #fffaf1 100%), url(assets/paper-white.jpg) center / calc(var(--s) * 400); background-blend-mode: multiply; }
+  /* print: the ink sits in the paper (a scanned grit mask) */
+  .ink { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; line-height: 1; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--s) * 300); mask: url(assets/inkmask.png) 0 0 / calc(var(--s) * 300); }
+  .ink.un { color: var(--accent); font-weight: 900; letter-spacing: .32em; text-indent: .32em; text-transform: uppercase; }
+  .ink.n { font-family: var(--font-display); color: var(--ink-c); letter-spacing: -0.03em; }
+  .ink.cp { color: color-mix(in srgb, var(--ink-c) 72%, #a08a70); font-weight: 600; }
+  .ink.rule { height: calc(var(--s) * 3); background: var(--accent); left: 22%; right: 22%; }
+  .perf { position: absolute; left: 0; right: 0; top: 0; height: calc(var(--s) * 12); background: radial-gradient(circle at 50% 0, rgba(70,50,30,.35) 30%, transparent 32%) 0 0 / calc(var(--s) * 14) calc(var(--s) * 10) repeat-x; opacity: .6; }
+  /* the torn stub left under the clamp after each tear */
+  #stub { position: absolute; z-index: 55; background: #f1ebdf url(assets/paper-white.jpg) center / calc(var(--s) * 560); filter: drop-shadow(0 calc(var(--s) * 2) calc(var(--s) * 1.5) rgba(40,25,10,.4)); }
+  #ring { position: absolute; overflow: visible; z-index: 70; filter: url(#bleed); }
+  #ring path { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; opacity: .92; }
+  #fly { position: absolute; inset: 0; transform-style: preserve-3d; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-10%" width="110%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="2"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="cam"><div id="rig"><div class="boil" id="cal">
+    <div id="board"></div><div id="hdr"></div>
+    <div id="edges"></div><div id="pad"></div><div id="stub"></div>
+    <div id="clamp"><i></i><i></i></div>
+    <svg id="ring"><path id="ringp"/></svg>
+  </div></div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await document.fonts.load('80px "MV Hand"');
+  try { await document.fonts.load(`100px "${v.fontDisplay}"`); } catch (e) {}
+  const root = document.getElementById("root"), D = +root.dataset.duration, P = MV.portrait, A = MV.alpha, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- the numbers: a run that accelerates from the first day to the last
+  const last = Math.max(1, Math.round(+v.day || 100)), first = Math.max(0, Math.min(last - 1, Math.round(+v.from || 1)));
+  const K = Math.min(10, last - first + 1);
+  let nums = [];
+  for (let i = 0; i < K; i++) { const t = i / (K - 1 || 1); const n = Math.round(first === 0 ? (last + 1) * Math.pow(t, 2.2) : first * Math.pow(last / first, Math.pow(t, 1.25))); nums.push(n); }
+  nums[0] = first; nums[K - 1] = last;
+  for (let i = 1; i < K; i++) if (nums[i] <= nums[i - 1]) nums[i] = nums[i - 1] + 1;
+  for (let i = K - 2; i >= 0; i--) if (nums[i] >= nums[i + 1]) nums[i] = nums[i + 1] - 1;
+
+  // ---- design space: board 600 x 780; pages 520 x 560 under a clamp
+  const BW = 600, BH = 790, PGW = 524, PGH = 590, PX = (BW - PGW) / 2, PY = 158;
+  let s, cx, cy;
+  if (!A) { s = P ? Math.min((W - safe.left * 2) / BW, (H - safe.top - safe.bottom * 0.5) / BH) : H * 0.8 / BH; cx = W / 2; cy = P ? safe.top + (H - safe.top - safe.bottom * 0.5) / 2 : H / 2 + 10 * u; }
+  else { const right = v.side !== "left"; s = (P ? 500 : W > H ? 470 : 420) * u / BW;
+    const bw = BW * s, bh = BH * s; cx = right ? W - (P ? safe.right : safe.right) - bw / 2 - 20 * u : safe.left + bw / 2 + 20 * u; cy = (P ? safe.top + 20 * u : safe.top + 10 * u) + bh / 2; }
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", rig = document.getElementById("rig");
+  Object.assign(rig.style, { left: cx - BW * s / 2 + "px", top: cy - BH * s / 2 + "px", width: S(BW), height: S(BH) });
+  const box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  box(document.getElementById("board"), 0, 0, BW, BH);
+  const hdr = document.getElementById("hdr"); box(hdr, 0, 26, BW, 56); hdr.style.fontSize = S(24);
+  if (v.mark) { const m = MV.img(v.mark); m.style.width = m.style.height = S(44); hdr.appendChild(m); }
+  hdr.appendChild(document.createTextNode(v.brandName || "")); MV.fitText(hdr, BW * s * 0.8, 10);
+  box(document.getElementById("clamp"), PX - 16, PY - 52, PGW + 32, 64);
+  const ck = document.querySelectorAll("#clamp i"); ck[0].style.left = S(46); ck[1].style.right = S(46);
+  // page edges below the top page: the pad's thickness
+  const edges = document.getElementById("edges"); box(edges, PX + 4, PY, PGW - 8, PGH + 16);
+  for (let i = 0; i < 5; i++) { const b = document.createElement("b"); b.style.top = S(PGH + 2 + i * 3); b.style.left = S(i * 0.8); b.style.right = S(i * 0.8); edges.appendChild(b); }
+
+  // ---- the pages (top first)
+  const pad = document.getElementById("pad"), pages = [];
+  const unit = String(v.unit || "").trim(), capt = String(v.caption || "").trim();
+  // pages are opaque stacked paper (data-layered): a torn page covers the next one
+  nums.forEach((n, i) => {
+    const pg = document.createElement("div"); pg.className = "pg"; pg.dataset.layered = ""; box(pg, PX, PY - 10, PGW, PGH + 10); pg.style.zIndex = 50 - i;
+    pad.appendChild(pg);
+    pg.innerHTML = `<div class="pp"><i class="perf"></i>${unit ? `<div class="ink un"></div>` : ""}<div class="ink n"></div><div class="ink rule"></div>${capt ? `<div class="ink cp"></div>` : ""}</div><i class="shade"></i><div class="fw"><i class="flap"></i></div>`;
+    const ue = pg.querySelector(".un"), ne = pg.querySelector(".n"), ce = pg.querySelector(".cp"), re = pg.querySelector(".rule");
+    if (ue) { ue.textContent = unit; ue.style.fontSize = S(46); MV.fitText(ue, PGW * s * 0.8, 12); }
+    ne.textContent = String(n); ne.style.fontSize = S(280); MV.fitText(ne, PGW * s * 0.8, 30 * s);
+    if (ce) { ce.textContent = capt; ce.style.fontSize = S(36); MV.fitText(ce, PGW * s * 0.84, 12); }
+    // stack it, centred on the page: unit, number, a short rule, caption
+    const th = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().height / s; };
+    const uh = ue ? th(ue) : 0, nh = th(ne), chh = ce ? th(ce) : 0, G1 = 54, G2 = 40, G3 = 30;
+    const blockH = (ue ? uh + G1 : 0) + nh + G2 + 3 + (ce ? G3 + chh : 0);
+    let y = 10 + (PGH - blockH) / 2 + 6;
+    if (ue) { ue.style.top = S(y); y += uh + G1; }
+    ne.style.top = S(y - nh * 0.04); y += nh + G2; re.style.top = S(y); y += 3 + G3;
+    if (ce) ce.style.top = S(y);
+    // the inkmask offset differs page to page so the grit never repeats
+    pg.querySelectorAll(".ink").forEach((e) => { e.style.webkitMaskPosition = e.style.maskPosition = `${(i * 97) % 300}px ${(i * 53) % 300}px`; });
+    pages.push({ pg, ne, n });
+  });
+  // a corner peel of size c (px): the page loses the corner, the flap is that corner folded back over the crease
+  const PWp = PGW * s, PHp = (PGH + 10) * s;
+  const curl = (p, c, dir) => { const pp = p.pg.querySelector(".pp"), f = p.pg.querySelector(".flap");
+    if (c <= 0.5) { pp.style.clipPath = "none"; f.style.width = f.style.height = "0px"; return; }
+    Object.assign(f.style, { width: c + "px", height: c + "px", top: PHp - c + "px" });
+    if (dir > 0) { pp.style.clipPath = `polygon(0 0,${PWp}px 0,${PWp}px ${PHp - c}px,${PWp - c}px ${PHp}px,0 ${PHp}px)`;
+      Object.assign(f.style, { left: PWp - c + "px", clipPath: "polygon(0 0,100% 0,0 100%)" }); f.style.setProperty("--fa", "to top left"); }
+    else { pp.style.clipPath = `polygon(0 0,${PWp}px 0,${PWp}px ${PHp}px,${c}px ${PHp}px,0 ${PHp - c}px)`;
+      Object.assign(f.style, { left: "0px", clipPath: "polygon(0 0,100% 0,100% 100%)" }); f.style.setProperty("--fa", "to top right"); } };
+  pages.forEach((p) => curl(p, 0, 1));
+  // the stub: a ragged strip under the clamp (hidden until the first tear)
+  const stub = document.getElementById("stub"); box(stub, PX, PY - 10, PGW, 30);
+  { const r = MV.rand(4), pts = ["0% 0%", "100% 0%"]; for (let x = 100; x >= 0; x -= 2.5) pts.push(`${x}% ${40 + r() * 55}%`); stub.style.clipPath = `polygon(${pts.join(",")})`; }
+  gsap.set(stub, { opacity: 0 });
+
+  // ---- the marker ring around the final number
+  const doRing = String(v.circle || "yes").toLowerCase() !== "no";
+  const ring = document.getElementById("ring"), rp = document.getElementById("ringp");
+  { const lastP = pages[K - 1], cb = document.getElementById("cal").getBoundingClientRect(), nb = lastP.ne.getBoundingClientRect();
+    // measure the text itself, not the full-width block
+    const rg = document.createRange(); rg.selectNodeContents(lastP.ne); const tb = rg.getBoundingClientRect();
+    const ccx = (tb.left + tb.right) / 2 - cb.left, ccy = (tb.top + tb.bottom) / 2 - cb.top, rx = Math.min(tb.width / 2 + 40 * s, PGW * s / 2 - 14 * s), ry = tb.height / 2 + 16 * s;
+    Object.assign(ring.style, { left: 0, top: 0, width: BW * s + "px", height: BH * s + "px" });
+    const rr = MV.rand(17); let d = ""; const N = 44, a0 = -2.1;
+    for (let i = 0; i <= N; i++) { const a = a0 + (i / N) * Math.PI * 2.18, w = 1 + (rr() - 0.5) * 0.05 + (i / N) * 0.07;
+      const x = ccx + Math.cos(a) * rx * w, y = ccy + Math.sin(a) * ry * w * (1 - (i / N) * 0.06); d += (i ? " L " : "M ") + x.toFixed(1) + " " + y.toFixed(1); }
+    rp.setAttribute("d", d); rp.setAttribute("stroke-width", 12 * s); }
+  if (!doRing) ring.style.display = "none";
+
+  // ---- timeline
+  gsap.set(rig, { transformOrigin: "50% 60%" });
+  // the calendar settles into view, slow 3D drift after
+  tl.fromTo(rig, { rotationX: 14, rotationY: -12, y: 40 * u, scale: 0.96 }, { rotationX: 6, rotationY: 7, y: 0, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.set(rig, { opacity: 0 }, 0), tl.set(rig, { opacity: 1 }, 0.04), tl.fromTo(rig, { y: -60 * u, rotationZ: -4 }, { y: 0, rotationZ: 0, duration: 0.33, ease: twos("back.out(1.6)", 0.33), immediateRender: true }, 0.04);
+  if (!A) tl.fromTo("#cam", { scale: 1.0 }, { scale: 1.05, duration: D, ease: "power1.inOut" }, 0);
+  // the tears: the first is slow, the run accelerates, the last page hangs a beat before it goes
+  const T0 = A ? 0.5 : 0.4, TEND = Math.min(D - 1.55, 2.9);
+  const gaps = []; for (let i = 0; i < K - 1; i++) gaps.push(Math.pow(0.72, i)); const gs = gaps.reduce((a, b) => a + b, 0);
+  let t = T0;
+  pages.slice(0, K - 1).forEach((p, i) => {
+    const dur = Math.max(0.25, 0.6 * Math.pow(0.8, i)), dir = i % 2 ? -1 : 1, last2 = i === K - 2;
+    // grab the bottom corner: it lifts toward the lens and curls off the hinge
+    gsap.set(p.pg, { transformOrigin: dir > 0 ? "0% 0%" : "100% 0%" });
+    tl.fromTo(p.pg, { rotationX: 0, rotationY: 0, rotationZ: 0, z: 0, x: 0, y: 0 }, { rotationX: -20, rotationY: dir * 8, rotationZ: dir * -3, z: 20, duration: dur * 0.34, ease: twos("power2.out", dur * 0.34), immediateRender: false }, t);
+    const cp = { c: 0 }, cmax = Math.min(PWp, PHp) * 0.5;
+    tl.fromTo(cp, { c: 0 }, { c: cmax, duration: dur * 0.4, ease: twos("power2.out", dur * 0.4), immediateRender: false, onUpdate: () => curl(p, cp.c, dir) }, t - dur * 0.12);
+    tl.fromTo(p.pg.querySelector(".shade"), { opacity: 0 }, { opacity: 1, duration: dur * 0.3, ease: twos("power1.out", dur * 0.3), immediateRender: false }, t);
+    // rip: it lets go of the perforation and flies up and out, tumbling
+    tl.fromTo(p.pg, { rotationX: -20, rotationY: dir * 8, rotationZ: dir * -3, z: 20, x: 0, y: 0 }, { y: -(cy + BH * s) * 1.15, x: dir * W * 0.4, rotationZ: dir * (40 + i * 7), rotationX: -75, rotationY: dir * 30, z: 220, duration: dur * 0.66, ease: twos("power2.in", dur * 0.66), immediateRender: false }, t + dur * 0.34);
+    if (i === 0) tl.set(stub, { opacity: 1 }, t + dur * 0.34);
+    // the pad jolts with each rip
+    tl.fromTo("#cal", { y: 0 }, { y: -5 * s, duration: STEP, ease: "none", immediateRender: false }, t + dur * 0.34); tl.fromTo("#cal", { y: -5 * s }, { y: 0, duration: STEP * 2, ease: twos("power2.out", STEP * 2), immediateRender: false }, t + dur * 0.34 + STEP);
+    t += (TEND - T0) * gaps[i] / gs;
+  });
+  // ---- the landing: the last page shows, the ink ring is drawn around the number on twos (the moment)
+  const TL = t + 0.12, lp = pages[K - 1];
+  tl.fromTo(lp.ne, { scale: 1 }, { scale: 1.06, duration: STEP * 2, ease: "none", immediateRender: false }, TL - 0.1);
+  tl.to(lp.ne, { scale: 1, duration: 0.3, ease: twos("back.out(2)", 0.3) }, TL - 0.1 + STEP * 2);
+  if (doRing) { const len = rp.getTotalLength(); gsap.set(rp, { strokeDasharray: len, strokeDashoffset: len }); tl.set(ring, { opacity: 0 }, 0); tl.set(ring, { opacity: 1 }, TL + 0.08 + STEP);
+    tl.to(rp, { strokeDashoffset: 0, duration: 0.5, ease: twos("power2.inOut", 0.5) }, TL + 0.08); }
+  // boil: paper breathes, ink crawls (on twos)
+  const rb = MV.rand(9); for (let tt = 0; tt < D; tt += STEP * 2) tl.set("#cal", { "--bx": `${((rb() - .5) * 1.6 * s).toFixed(2)}px`, "--by": `${((rb() - .5) * 1.6 * s).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.3).toFixed(2)}deg` }, tt);
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, tt);
+  // exit (overlay): the whole calendar lifts away
+  if (A) tl.to(rig, { y: -(cy + BH * s), rotationZ: 8, duration: 0.36, ease: twos("power2.in", 0.36) }, D - 0.42); if (A) tl.set(rig, { opacity: 0 }, D - 0.05);
+  MV.done();
+})();
+</script>
+</body>
+</html>

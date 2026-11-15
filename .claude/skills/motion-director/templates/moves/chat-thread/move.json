@@ -1,0 +1,5 @@
+{ "id": "chat-thread", "name": "Glass chat thread", "oneLiner": "a message thread floats in 3D with no phone: typing dots, then the reply lands; bubbles arrive left and right on springs and push the thread up, a read receipt ticks in and a heart reaction lands on the last bubble with a burst",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["chat", "messages", "text", "dm", "conversation", "typing", "reaction", "story", "customer", "friend", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker retells a conversation ('so I texted her...', 'a customer messaged me'): one bubble per line they say, the heart lands on the punchline" }

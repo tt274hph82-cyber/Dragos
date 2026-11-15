@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"labels","type":"string","label":"Source tiles, comma separated, 4 to 6","default":"Email,Calendar,Docs,Chat,Code,Analytics"},
+  {"id":"glyphs","type":"string","label":"Glyph per tile, comma separated (mail, calendar, doc, chat, code, chart, search, cart, video, phone; empty = guessed from the label)","default":""},
+  {"id":"output","type":"string","label":"The card under the hub (empty: Daily brief, or One prompt in fanout)","default":""},
+  {"id":"outputGlyph","type":"string","label":"Glyph on that card (empty = guessed)","default":""},
+  {"id":"mode","type":"string","label":"in (sources flow into the hub) or fanout (the hub sends out to every source)","default":"in"},
+  {"id":"layout","type":"string","label":"9:16 only: full (the whole safe frame) or top (the top ~42%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 64%; height: 40%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 62%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #ground .l3 { width: 60%; height: 36%; left: 60%; top: -6%; background: color-mix(in srgb, var(--accent2) 18%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2000px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #fit { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform-style: preserve-3d; }
+  #wires { position: absolute; left: 0; top: 0; overflow: visible; }
+
+  /* a source: a pane of glass with a line glyph, its label under it */
+  .tile { position: absolute; box-sizing: border-box; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(155deg, rgba(255,255,255,.2), rgba(255,255,255,.06) 62%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      inset 0 calc(var(--u) * -26) calc(var(--u) * 50) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 40%, transparent),
+      0 calc(var(--u) * 28) calc(var(--u) * 56) calc(var(--u) * -22) rgba(0,0,0,.65); }
+  .tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.32) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .tile .gl { width: 46%; height: 46%; filter: drop-shadow(0 0 calc(var(--u) * 10) rgba(255,255,255,.25)); }
+  .tile .rim { position: absolute; inset: calc(var(--u) * -2); border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 80%, white), 0 0 calc(var(--u) * 40) calc(var(--u) * 2) color-mix(in srgb, var(--accent) 55%, transparent); }
+  .is-alpha .tile { background: linear-gradient(155deg, color-mix(in srgb, var(--surface) 84%, white 16%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .lab { position: absolute; white-space: nowrap; font-weight: 650; letter-spacing: .005em; color: color-mix(in srgb, var(--ink) 80%, transparent);
+    text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(0,0,0,.6); }
+
+  /* the hub: a bigger pane with the brand mark, lit from behind */
+  #hub { border-radius: 30%; }
+  #hub img { width: 62%; height: 62%; object-fit: contain; filter: drop-shadow(0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.35)); }
+  #halo { position: absolute; border-radius: 50%; pointer-events: none; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 70%, transparent), transparent 70%); filter: blur(calc(var(--u) * 26)); }
+  .ring { position: absolute; border-radius: 30%; pointer-events: none; opacity: 0; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--accent) 55%, white); }
+
+  /* the output: a glass card with an accent glyph tile */
+  #out { position: absolute; display: flex; align-items: center; box-sizing: border-box; white-space: nowrap;
+    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.07) 60%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(24px) saturate(170%); backdrop-filter: blur(24px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.15),
+      0 0 calc(var(--u) * 60) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 45%, transparent),
+      0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -22) rgba(0,0,0,.65); }
+  .is-alpha #out { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 84%, white 16%), color-mix(in srgb, var(--surface) 95%, transparent)); }
+  #out::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.34) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  #out .ot { flex: none; display: grid; place-items: center; color: #fff;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 65%, white 35%), var(--accent) 55%, color-mix(in srgb, var(--accent) 75%, black));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--accent) 60%, transparent); }
+  #out .ot .gl { width: 52%; height: 52%; }
+  #out .otx { font-family: var(--font-display); color: var(--ink); letter-spacing: -0.01em; line-height: 1; }
+  #out .ok { flex: none; display: grid; place-items: center; border-radius: 50%; color: color-mix(in srgb, var(--accent) 40%, white);
+    box-shadow: inset 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 60%, white); }
+  #out .ok .gl { width: 60%; height: 60%; }
+
+  .is-key .tile, .is-key #out { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  .is-key .lab { text-shadow: none; color: var(--ink); }
+  .is-key #halo { display: none; }
+  .is-key .tile .rim { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><div id="fit">
+    <div id="halo"></div>
+    <svg id="wires">
+      <defs><filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" /></filter></defs>
+      <g id="lines"></g><g id="packets"></g>
+    </svg>
+    <div id="nodes"></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const cs = getComputedStyle(root), ACC = cs.getPropertyValue("--accent").trim(), INK = cs.getPropertyValue("--ink").trim();
+  const list = (x) => (Array.isArray(x) ? x : String(x || "").split(",")).map((s) => String(s).trim());
+  let labels = list(v.labels).filter((s) => s.length).slice(0, 6);
+  const FILL = ["Email", "Calendar", "Docs", "Chat"];
+  while (labels.length < 4) labels.push(FILL[labels.length]);
+  const gl = list(v.glyphs), N = labels.length, USED = new Set();
+  const FAN = String(v.mode || "").toLowerCase().startsWith("fan");
+  const outText = v.output || (FAN ? "One prompt" : "Daily brief");
+
+  // ---- the region it fills: the safe frame, or on 9:16 with layout top the band above the speaker
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top";
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.44 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.07, x1: W * 0.93, y0: H * 0.07, y1: H * 0.93 } : { x0: W * 0.07, x1: W * 0.93, y0: H * 0.08, y1: H * 0.92 };
+
+  // ---- the design, in px at scale 1: hub at (0,0), sources on an arc above and beside it, the card below
+  const T = 150 * u, HT = (TOP ? 204 : 236) * u, LF = 31 * u;
+  const geo = TOP ? { rx: 430, ry: 330, a0: 180, a1: 0 } : P ? { rx: 340, ry: 470, a0: 168, a1: 12 } : SQ ? { rx: 380, ry: 380, a0: 190, a1: -10 } : { rx: 600, ry: 400, a0: 192, a1: -12 };
+  const nodes = document.getElementById("nodes"), NS = "http://www.w3.org/2000/svg";
+  const mk = (tag, a, parent) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (parent) parent.appendChild(e); return e; };
+  const S = labels.map((txt, i) => {
+    const a = (geo.a0 + (geo.a1 - geo.a0) * (N === 1 ? 0.5 : i / (N - 1))) * Math.PI / 180;
+    const x = Math.cos(a) * geo.rx * u, y = -Math.sin(a) * geo.ry * u;
+    const t = document.createElement("div"); t.className = "tile";
+    t.innerHTML = GLYPH.svg(GLYPH.pick(txt, gl[i], i, USED)) + '<div class="rim"></div>';
+    const l = document.createElement("div"); l.className = "lab"; l.textContent = txt; l.style.fontSize = LF + "px";
+    nodes.append(t, l);
+    return { i, x, y, t, l, txt };
+  });
+  // a label never wider than the gap to its neighbours
+
+  // the hub
+  const hub = document.createElement("div"); hub.className = "tile"; hub.id = "hub";
+  if (v.mark) hub.appendChild(MV.img(v.mark)); else hub.innerHTML = GLYPH.svg("spark");
+  const ring1 = document.createElement("div"), ring2 = document.createElement("div"); ring1.className = ring2.className = "ring";
+  nodes.append(ring1, ring2, hub);
+
+  // the card
+  const out = document.createElement("div"); out.id = "out";
+  out.innerHTML = `<div class="ot">${GLYPH.svg(GLYPH.pick(outText, v.outputGlyph, 2))}</div><div class="otx"></div><div class="ok">${GLYPH.svg("check")}</div>`;
+  nodes.appendChild(out);
+  const OH = 128 * u, otx = out.querySelector(".otx"), ot = out.querySelector(".ot"), ok = out.querySelector(".ok");
+  Object.assign(out.style, { height: OH + "px", borderRadius: OH * 0.32 + "px", padding: `0 ${30 * u}px 0 ${20 * u}px`, gap: 24 * u + "px" });
+  Object.assign(ot.style, { width: 88 * u + "px", height: 88 * u + "px", borderRadius: 24 * u + "px" });
+  Object.assign(ok.style, { width: 50 * u + "px", height: 50 * u + "px" });
+  otx.textContent = outText; otx.style.fontSize = 44 * u + "px";
+  MV.fitText(otx, 420 * u, 20);
+  const OW = out.offsetWidth;
+
+  // ---- place everything (design px, hub centre at 0,0)
+  const box = (x, y, w, h) => ({ l: x, t: y, r: x + w, b: y + h });
+  // labels sit on the outside of the ring: above a tile that is above the hub, under the others
+  const hit = (a, b, m) => a.l < b.r + m && a.r > b.l - m && a.t < b.b + m && a.b > b.t - m;
+  S.forEach((s) => { s.tb = box(s.x - T / 2, s.y - T / 2, T, T); s.above = s.y + T / 2 < -HT / 2; });
+  const placeLab = (s, maxW) => { s.l.style.fontSize = LF + "px"; MV.fitText(s.l, maxW, 16);
+    const lw = s.l.offsetWidth, lh = s.l.offsetHeight;
+    s.lb = box(s.x - lw / 2, s.above ? s.tb.t - 12 * u - lh : s.tb.b + 12 * u, lw, lh); };
+  S.forEach((s) => placeLab(s, 260 * u));
+  // a label shrinks until it clears every other tile and label
+  for (let pass = 0; pass < 2; pass++) S.forEach((s) => { let mw = 260 * u;
+    while (mw > 110 * u && S.some((o) => o !== s && (hit(s.lb, o.tb, 12 * u) || hit(s.lb, o.lb, 14 * u)))) { mw -= 16 * u; placeLab(s, mw); } });
+  const blocks = S.map((s) => { s.bb = { l: Math.min(s.tb.l, s.lb.l), r: Math.max(s.tb.r, s.lb.r), t: Math.min(s.tb.t, s.lb.t), b: Math.max(s.tb.b, s.lb.b) }; return s.bb; });
+  const hb = box(-HT / 2, -HT / 2, HT, HT);
+  // the card under the hub, pushed down past any label it would touch
+  let oy = hb.b + (TOP ? 70 : 96) * u;
+  S.forEach((s) => { if (s.bb.r > -OW / 2 - 20 * u && s.bb.l < OW / 2 + 20 * u) oy = Math.max(oy, s.bb.b + 44 * u); });
+  const ob = box(-OW / 2, oy, OW, OH);
+  const all = [...blocks, hb, ob];
+  const bb = { l: Math.min(...all.map((b) => b.l)), t: Math.min(...all.map((b) => b.t)), r: Math.max(...all.map((b) => b.r)), b: Math.max(...all.map((b) => b.b)) };
+  const ox = -bb.l, oyy = -bb.t, BW = bb.r - bb.l, BH = bb.b - bb.t;
+  const pos = (el, b) => Object.assign(el.style, { left: b.l + ox + "px", top: b.t + oyy + "px" });
+  S.forEach((s) => { Object.assign(s.t.style, { width: T + "px", height: T + "px", borderRadius: T * 0.27 + "px" }); pos(s.t, s.tb); pos(s.l, s.lb); });
+  Object.assign(hub.style, { width: HT + "px", height: HT + "px" }); pos(hub, hb);
+  [ring1, ring2].forEach((r) => { Object.assign(r.style, { width: HT + "px", height: HT + "px" }); pos(r, hb); });
+  const halo = document.getElementById("halo"); Object.assign(halo.style, { width: HT * 2.6 + "px", height: HT * 2.6 + "px" }); pos(halo, box(-HT * 1.3, -HT * 1.3, 0, 0));
+  pos(out, ob);
+  const svg = document.getElementById("wires"); svg.setAttribute("width", BW); svg.setAttribute("height", BH); svg.setAttribute("viewBox", `0 0 ${BW} ${BH}`);
+
+  // ---- the wires: from the edge of each source's tile+label block to the edge of the hub, never through a glyph or a word
+  const exitRect = (cx, cy, dx, dy, b, pad) => { // where a ray from (cx,cy) leaves box b (grown by pad)
+    const ts = [];
+    if (dx > 0) ts.push((b.r + pad - cx) / dx); if (dx < 0) ts.push((b.l - pad - cx) / dx);
+    if (dy > 0) ts.push((b.b + pad - cy) / dy); if (dy < 0) ts.push((b.t - pad - cy) / dy);
+    const t = Math.min(...ts); return [cx + dx * t, cy + dy * t];
+  };
+  const lines = document.getElementById("lines"), packets = document.getElementById("packets");
+  const SW = 3.6 * u;
+  const wire = (A, B) => { // A, B in design px; returns the drawn path set
+    const d = `M${A[0] + ox},${A[1] + oyy} L${B[0] + ox},${B[1] + oyy}`;
+    const g = mk("g", {}, lines);
+    const base = mk("path", { d, stroke: KEY ? `color-mix(in srgb, ${INK} 30%, black)` : INK, "stroke-opacity": KEY ? 1 : 0.16, "stroke-width": SW, fill: "none", "stroke-linecap": "round" }, g);
+    const glow = mk("path", { d, stroke: ACC, "stroke-opacity": KEY ? 0 : 0.55, "stroke-width": SW * 3, fill: "none", "stroke-linecap": "round", filter: KEY ? "" : "url(#fGlow)" }, g);
+    const line = mk("path", { d, stroke: `color-mix(in srgb, ${ACC} 70%, white)`, "stroke-width": SW, fill: "none", "stroke-linecap": "round" }, g);
+    const L = line.getTotalLength();
+    [base, glow, line].forEach((p) => { p.style.strokeDasharray = `${L} ${L + 20}`; p.style.strokeDashoffset = L; });
+    return { g, base, glow, line, L, A, B };
+  };
+  S.forEach((s) => {
+    const dx = -s.x, dy = -s.y, n = Math.hypot(dx, dy), ux = dx / n, uy = dy / n;
+    const A = exitRect(s.x, s.y, ux, uy, s.bb, 18 * u);
+    const B = exitRect(0, 0, -ux, -uy, hb, 18 * u);
+    s.w = FAN ? wire(B, A) : wire(A, B);
+  });
+  const ow = wire(FAN ? [0, ob.t - 16 * u] : [0, hb.b + 16 * u], FAN ? [0, hb.b + 16 * u] : [0, ob.t - 16 * u]);
+
+  // packets: a hot dot with a soft glow riding a wire, fading at each end
+  const packet = () => { const g = mk("g", { opacity: 0 }, packets);
+    if (!KEY) mk("circle", { r: 18 * u, fill: ACC, opacity: 0.5, filter: "url(#fGlow)" }, g);
+    mk("circle", { r: 8.5 * u, fill: `color-mix(in srgb, ${ACC} 45%, white)` }, g); mk("circle", { r: 4 * u, fill: "#fff" }, g); return g; };
+  const ride = (w, at, dur, ease = "power1.inOut") => { const p = packet(), o = { k: 0 };
+    tl.to(o, { k: 1, duration: dur, ease, onUpdate: () => { const q = w.line.getPointAtLength(o.k * w.L); p.setAttribute("transform", `translate(${q.x} ${q.y})`); p.setAttribute("opacity", Math.min(1, o.k * 6, (1 - o.k) * 6)); } }, at);
+  };
+  const draw = (w, at, dur) => {
+    tl.to([w.base, w.glow, w.line], { strokeDashoffset: 0, duration: dur, ease: "power2.inOut" }, at);
+    if (!KEY) tl.to(w.glow, { strokeOpacity: 0.22, duration: 0.6, ease: "power2.out" }, at + dur);
+  };
+
+  // ---- fit the design into the region, centred, as big as it will go
+  const sc = Math.min(1.25, (R.x1 - R.x0) / BW, (R.y1 - R.y0) / BH);
+  const fx = R.x0 + ((R.x1 - R.x0) - BW * sc) / 2, fy = R.y0 + ((R.y1 - R.y0) - BH * sc) / 2;
+  gsap.set("#fit", { x: fx, y: fy, scale: sc });
+  const hcx = fx + (ox) * sc, hcy = fy + (oyy) * sc;
+  const l1 = document.querySelector("#ground .l1"); Object.assign(l1.style, { left: hcx - W * 0.32 + "px", top: hcy - H * 0.2 + "px" });
+  gsap.set("#rig", { transformOrigin: `${hcx}px ${hcy}px` });
+
+  // ---- the camera: one slow drift in 3D, a small push as the card lands
+  tl.fromTo("#rig", { rotationY: 9, rotationX: 8, scale: 0.94, y: 24 * u }, { rotationY: -6, rotationX: 3, scale: 1.0, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.14, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo(l1, { scale: 0.85, opacity: 0.6 }, { scale: 1.1, opacity: 1, duration: D, ease: "sine.inOut" }, 0);
+
+  const pop = (el, at, s0 = 0.4) => {
+    tl.fromTo(el, { scale: s0, y: 26 * u }, { scale: 1, y: 0, duration: 0.7, ease: "back.out(1.9)" }, at);
+    tl.fromTo(el, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.32, ease: "power2.out" }, at);
+  };
+  const label = (el, at) => tl.fromTo(el, { opacity: 0, y: -10 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, at);
+  const lightTile = (s, at) => { tl.fromTo(s.t.querySelector(".rim"), { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power2.out" }, at);
+    tl.to(s.t.querySelector(".rim"), { opacity: KEY ? 1 : 0.45, duration: 0.6, ease: "power2.inOut" }, at + 0.2); };
+  const pulse = (at, big) => { const r = big ? ring2 : ring1;
+    tl.fromTo(r, { scale: 1, opacity: 0.9 }, { scale: big ? 1.9 : 1.35, opacity: 0, duration: big ? 0.8 : 0.55, ease: "expo.out", immediateRender: false }, at);
+    tl.fromTo(hub, { scale: big ? 1.1 : 1.04 }, { scale: 1, duration: 0.5, ease: "back.out(3)", immediateRender: false }, at); };
+  tl.fromTo(halo, { opacity: 0, scale: 0.6 }, { opacity: 0.75, scale: 1, duration: 1.0, ease: "power2.out" }, 0.05);
+
+  const DRAW = 0.62, STEP = 0.3;            // ~19 frames a line, ~9 frames between pops (measured off the references)
+  let tEnd;
+  if (!FAN) {
+    pop(hub, 0.06, 0.55);
+    S.forEach((s, i) => { const at = 0.3 + i * STEP; s.at = at; pop(s.t, at); label(s.l, at + 0.12);
+      tl.fromTo(s.t, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut" }, at + 0.15);
+      draw(s.w, at + 0.22, DRAW); });
+    // packets flow in once each wire is drawn, two per wire, looping until the end
+    S.forEach((s, i) => { const t0 = s.at + 0.22 + DRAW - 0.12; lightTile(s, s.at + 0.22);
+      for (let t = t0; t < D - 0.5; t += 1.05) ride(s.w, t + (i % 2) * 0.22, 0.8);
+      pulse(t0 + 0.68, false); });
+    // the moment: everything is in, the hub flashes and the card drops out under it
+    const L = S[N - 1].at + 0.22 + DRAW + 0.3;
+    pulse(L, true);
+    tl.fromTo(out, { y: -(ob.t - hb.t) * 0.55, scale: 0.6, rotationX: -35 }, { y: 0, scale: 1, rotationX: 0, duration: 0.8, ease: "back.out(1.6)" }, L);
+    tl.fromTo(out, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power2.out" }, L);
+    draw(ow, L + 0.3, 0.32); ride(ow, L + 0.42, 0.5, "power2.in");
+    tl.fromTo(ok, { scale: 0, rotation: -30, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.55, ease: "back.out(2.6)" }, L + 0.92);
+    tl.fromTo(out, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.85, ease: "power2.inOut" }, L + 0.9);
+    tl.to("#stage", { scale: 1.02, duration: 0.08, ease: "power2.out" }, L + 0.12); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, L + 0.2);
+    tEnd = L + 1.4;
+  } else {
+    // fanout: the prompt card arrives, runs up into the hub, the hub sends it out to every tool at once
+    pop(hub, 0.06, 0.55);
+    tl.fromTo(out, { y: 60 * u, scale: 0.8 }, { y: 0, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 0.16);
+    tl.fromTo(out, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power2.out" }, 0.16);
+    tl.fromTo(ok, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.6)" }, 0.42);
+    draw(ow, 0.5, 0.32); ride(ow, 0.56, 0.42, "power2.in");
+    const F = 0.98; pulse(F, true);
+    tl.to("#stage", { scale: 1.02, duration: 0.08, ease: "power2.out" }, F); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, F + 0.08);
+    // the wires shoot out in a sweep, each tile pops as its wire reaches it
+    S.forEach((s, i) => { const at = F + 0.05 + i * 0.12; draw(s.w, at, 0.5); ride(s.w, at, 0.5, "power2.in");
+      pop(s.t, at + 0.38, 0.5); label(s.l, at + 0.5); lightTile(s, at + 0.42);
+      tl.fromTo(s.t, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut" }, at + 0.5);
+      for (let t = at + 1.05; t < D - 0.5; t += 1.05) ride(s.w, t + (i % 2) * 0.22, 0.8);
+      s.at = at; });
+    tEnd = F + 1.4;
+  }
+  // the hub breathes while the packets run
+  tl.to(halo, { scale: 1.12, opacity: 0.95, duration: Math.max(0.5, D - tEnd), ease: "sine.inOut" }, Math.min(tEnd, D - 0.5));
+
+  // ---- out: an overlay leaves clean; a cutaway holds to the cut
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "receipt-print", "name": "Receipt print", "oneLiner": "a thermal receipt feeds up out of a real printer's slot in short bursts on twos, line items printing as they come out, the lifted paper curling toward the lens, then the total is thumped with a brand-colour rubber stamp",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper"], "from": "new",
+  "tags": ["receipt", "cost", "price", "money", "budget", "breakdown", "total", "list", "stamp", "thermal", "paper", "on twos"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker adds something up ('here is what it actually costs', 'the whole stack is'): the items print as they list them and the stamp lands on the total" }

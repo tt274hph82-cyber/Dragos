@@ -1,0 +1,5 @@
+{ "id": "live-chat", "name": "Live chat paid message", "oneLiner": "a glass live-stream chat scrolls fast beside the live player, then a paid message in the brand colour band posts at the bottom, lifts, rides up to the top and pins with a badge while the chat keeps racing underneath",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["live", "livestream", "stream", "chat", "super chat", "donation", "tip", "paid message", "pinned", "community", "audience", "creator", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker talks about going live or a viewer paying to be heard ('someone sent fifty dollars in chat', 'the live stream blew up'): the chat races under the setup, the paid message lands and pins on the money line" }

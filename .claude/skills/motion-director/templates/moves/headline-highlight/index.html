@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"The headline (empty uses the brand headline)","default":""},
+  {"id":"highlight","type":"string","label":"Words to highlight, comma separated (empty: the last 3 words)","default":""},
+  {"id":"kicker","type":"string","label":"Small section line above the headline","default":"Front page"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV News"; src: url("assets/fonts/PlayfairDisplay-wght.ttf"); font-weight: 400 900; font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground (look mode): a real walnut desk under a warm lamp */
+  #ground { position: absolute; inset: -6%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1100); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 45% 40%, rgba(255,214,160,.16), transparent 60%), radial-gradient(130% 100% at 50% 45%, transparent 45%, rgba(0,0,0,.6)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  /* the clipping: scanned newsprint, torn top and bottom, scissor-cut sides */
+  #clip { position: absolute; transform-origin: 50% 0; }
+  #clip-fx { position: relative; filter: drop-shadow(0 calc(var(--u) * 18) calc(var(--u) * 20) rgba(0,0,0,.45)); }
+  .is-key #clip-fx { filter: drop-shadow(0 calc(var(--u) * 4) 0 #1a1410); }
+  #paper { position: absolute; inset: 0; background: #EFE7D6 url(assets/newsprint.jpg) center / calc(var(--u) * 900); isolation: isolate; }
+  /* show-through: the reverse page, mirrored, faint */
+  #through { position: absolute; left: 6%; right: 6%; top: 8%; height: 84%; background: url(assets/newscol.jpg) center / cover; transform: scaleX(-1); opacity: .05; mix-blend-mode: multiply; }
+  #body { position: absolute; left: var(--pad); right: var(--pad); background: url(assets/newscol.jpg) top center / 100% auto no-repeat; mix-blend-mode: multiply; opacity: .9; }
+  #content { position: relative; padding: var(--pad); padding-bottom: 0; color: #1a1714; }
+  #kicker { font-family: "MV News"; font-weight: 700; font-size: calc(var(--u) * 26); letter-spacing: .22em; text-transform: uppercase; display: flex; align-items: center; gap: calc(var(--u) * 18); white-space: nowrap; }
+  #kicker::after { content: ""; flex: 1; height: calc(var(--u) * 3); background: #1a1714; }
+  #head { position: relative; text-wrap: balance; font-family: "MV News"; font-weight: 900; line-height: .98; letter-spacing: -0.012em; margin: calc(var(--u) * 20) 0 0; }
+  #head .w { position: relative; z-index: 1; }
+  #marks { position: absolute; inset: 0; z-index: 0; }
+  .mk { position: absolute; background: var(--accent); mix-blend-mode: multiply; opacity: .78; transform-origin: 0 50%; }
+  .is-key .mk { opacity: .78; }
+  #rule { height: calc(var(--u) * 2); background: #1a1714; margin-top: calc(var(--u) * 26); }
+  #rule2 { height: calc(var(--u) * 1); background: #1a1714; margin-top: calc(var(--u) * 4); }
+  .tape { position: absolute; opacity: .92; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(0,0,0,.25)); }
+  .is-key .tape { opacity: 1; filter: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="clip" style="visibility:hidden"><div class="boil" id="clip-b"><div id="clip-fx">
+      <div id="paper"><div id="through"></div><div id="body"></div></div>
+      <div id="content">
+        <div id="kicker"></div>
+        <div id="head" data-block><div id="marks"></div><span id="htxt"></span></div>
+        <div id="rule"></div><div id="rule2"></div>
+      </div>
+    </div></div>
+    <img class="tape" id="tp" src="assets/tape-a.png" alt="" style="visibility:hidden" /></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('900 100px "MV News"'), document.fonts.load('700 30px "MV News"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- size: a single newspaper column, as wide as the safe area allows
+  const availW = W - safe.left - safe.right, availH = H - safe.top - safe.bottom;
+  const CW = Math.min(availW * (MV.portrait ? 0.98 : 0.62), (MV.portrait ? 900 : 1000) * u);
+  const pad = Math.round(CW * 0.075);
+  const clip = document.getElementById("clip");
+  clip.style.width = CW + "px"; clip.style.setProperty("--pad", pad + "px");
+  document.getElementById("kicker").textContent = v.kicker || "";
+  const title = (v.title || v.headline || v.tagline || "").trim();
+  const htxt = document.getElementById("htxt"); htxt.textContent = title;
+  const head = document.getElementById("head");
+  // fit: biggest size that keeps the headline to 4 lines inside the column
+  const inner = CW - pad * 2;
+  let fs = Math.round(inner * (MV.portrait ? 0.15 : 0.13));
+  const lines = () => Math.round(head.getBoundingClientRect().height / (fs * 0.98));
+  head.style.fontSize = fs + "px";
+  while ((lines() > 4 || htxt.getBoundingClientRect().width > inner + 1 || [...head.querySelectorAll(".w")].some(() => false)) && fs > 30 * u) { fs -= 2; head.style.fontSize = fs + "px"; }
+  const words = MV.words(htxt);
+  // no single word may overflow the column
+  while (words.some((w) => w.getBoundingClientRect().width > inner) && fs > 30 * u) { fs -= 2; head.style.fontSize = fs + "px"; }
+
+  // ---- clipping height and position: headline + a band of real body copy below the rules
+  const contentH = document.getElementById("content").getBoundingClientRect().height;
+  // the vertical zone: an overlay keeps to the safe area; a B-roll cutaway may fill down into the caption zone (it is only paper there)
+  const zTop = safe.top + 34 * u, zBot = MV.alpha ? H - safe.bottom : H - (MV.portrait ? 330 * (W / 1080) : safe.bottom);
+  const bodyH = Math.round(Math.min(inner * 1.24, Math.max(zBot - zTop - contentH - pad * 0.5, CW * 0.16)));
+  const CH = Math.round(contentH + pad * 0.5 + bodyH);
+  clip.style.height = CH + "px"; document.getElementById("clip-fx").style.height = CH + "px";
+  const body = document.getElementById("body"); body.style.top = (contentH + pad * 0.5) + "px"; body.style.height = (bodyH + 4 * u) + "px";
+  const cx = safe.left + availW / 2, cy = (zTop + zBot) / 2;
+  clip.style.left = (cx - CW / 2) + "px"; clip.style.top = Math.max(safe.top, cy - CH / 2) + "px";
+  // torn top and bottom, cut sides
+  const r = MV.rand(41), pts = [], step = 10 * u, amp = 9 * u;
+  for (let x = 0; x <= CW; x += step) pts.push([x, r() * amp + Math.sin(x / (90 * u)) * 3 * u]);
+  pts.push([CW, 0], [CW - 3 * u, CH * 0.5], [CW, CH]);
+  for (let x = CW; x >= 0; x -= step) pts.push([x, CH - r() * amp - Math.sin(x / (70 * u)) * 3 * u]);
+  pts.push([0, CH], [2 * u, CH * 0.5]);
+  document.getElementById("paper").style.clipPath = `polygon(${pts.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(",")})`;
+  // the tape holds the top edge to the desk (or the frame)
+  const tp = document.getElementById("tp"), tw = 230 * u;
+  tp.style.width = tw + "px"; tp.style.left = (CW * 0.5 - tw / 2) + "px"; tp.style.top = (-tw * 0.13) + "px"; tp.style.transform = "rotate(-4deg)";
+
+  // ---- the highlighter: the chosen words (or the last 3), merged into one swipe per line
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const pick = (v.highlight || "").split(",").map((s) => s.trim()).filter(Boolean);
+  let on = words.map(() => false);
+  if (pick.length) { const want = pick.join(" ").split(/\s+/).map(norm); words.forEach((w, i) => { if (want.includes(norm(w.textContent))) on[i] = true; }); }
+  if (!on.some(Boolean)) on = words.map((_, i) => i >= words.length - Math.min(3, words.length));
+  const hb = head.getBoundingClientRect(), runs = [];
+  words.forEach((w, i) => { if (!on[i]) return; const b = w.getBoundingClientRect(), last = runs[runs.length - 1];
+    if (last && Math.abs(last.top - b.top) < fs * 0.3 && on[i - 1]) { last.right = b.right; } else runs.push({ left: b.left, right: b.right, top: b.top, bottom: b.bottom }); });
+  const marks = document.getElementById("marks");
+  const mkEls = runs.map((rn, k) => { const m = document.createElement("div"); m.className = "mk";
+    const h = fs * 0.62, y = rn.top - hb.top + fs * 0.34;
+    m.style.left = (rn.left - hb.left - fs * 0.1) + "px"; m.style.width = (rn.right - rn.left + fs * 0.2) + "px"; m.style.top = y + "px"; m.style.height = h + "px";
+    // a chisel marker: slanted ends, a slightly wavy body
+    const rr = MV.rand(70 + k), j = () => (rr() * 6).toFixed(1);
+    m.style.clipPath = `polygon(${j()}% ${4 + +j()}%, 30% ${j() / 2}%, 70% ${(+j() / 2 + 2).toFixed(1)}%, ${100 - +j()}% 0%, 100% ${92 - +j()}%, 70% ${100 - +j() / 2}%, 30% 100%, 0% ${100 - +j()}%)`;
+    m.style.transform = `rotate(${((rr() - .5) * 1.4).toFixed(2)}deg)`;
+    marks.appendChild(m); return m; });
+
+  // ---- timeline
+  // 0.0 the desk; 0.12 the clipping drops onto it on twos; 0.5 tape slaps; 1.0 the highlighter swipes word by word; slow camera push; exit
+  tl.set(clip, { visibility: "visible" }, 0.12);
+  tl.fromTo(clip, { y: -H * 0.5, rotation: -9, scale: 1.06 }, { y: 0, rotation: -1.5, scale: 1, duration: 0.42, ease: twos("power3.out", 0.42), immediateRender: true }, 0.12);
+  tl.fromTo(clip, { rotation: -1.5 }, { rotation: -2.2, duration: 0.25, ease: twos("back.out(3)", 0.25) }, 0.54);
+  tl.set(tp, { visibility: "visible" }, 0.5);
+  tl.fromTo(tp, { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, 0.5);
+  let t = 1.0;
+  mkEls.forEach((m, k) => { const d = Math.min(0.5, 0.18 + runs[k].right / W * 0.1 + (runs[k].right - runs[k].left) / CW * 0.35);
+    tl.fromTo(m, { scaleX: 0 }, { scaleX: 1, duration: d, ease: twos("power1.inOut", d), immediateRender: true }, t); t += d + 0.08; });
+  // camera: one slow push the whole time, smooth (the paper is on twos, the lens is not)
+  tl.fromTo("#cam", { scale: 1 }, { scale: 1.07, duration: D, ease: "power1.inOut" }, 0);
+  // boil on twos
+  const rb = MV.rand(9); for (let k = 0, tt = 0.54; tt < D; tt += STEP * 2, k++) tl.set("#clip-b", { "--bx": `${((rb() - .5) * 2.4 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2.4 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.5).toFixed(2)}deg` }, tt);
+  // exit: overlay leaves clean (pulled up off the frame); B-roll holds on the desk
+  if (MV.alpha) { const lift = parseFloat(clip.style.top) + CH + 160 * u;
+    tl.to(clip, { y: -lift, rotation: "+=6", duration: 0.33, ease: twos("power2.in", 0.33) }, D - 0.42); tl.set(clip, { opacity: 0 }, D - 0.06); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

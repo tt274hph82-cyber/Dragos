@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"modes","type":"string","label":"Modes the label rolls through, comma separated; the last one is where it settles","default":"Personal,Sleep,Fitness,Deep work"},
+  {"id":"sub","type":"string","label":"Small line under the mode","default":"On"},
+  {"id":"brightness","type":"number","label":"Brightness slider level, 0 to 100","default":85},
+  {"id":"volume","type":"number","label":"Volume slider level, 0 to 100","default":55}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --on: var(--accent); }
+  #ground { position: absolute; inset: -10%; background:
+    radial-gradient(45% 35% at 22% 18%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 70%),
+    radial-gradient(50% 40% at 85% 88%, color-mix(in srgb, var(--accent2) 40%, transparent), transparent 72%),
+    radial-gradient(40% 30% at 80% 25%, color-mix(in srgb, var(--accent) 25%, var(--accent2) 20%), transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, var(--ground)), var(--ground) 60%); filter: blur(calc(var(--u) * 30)); }
+  #dim { position: absolute; inset: 0; background: rgba(0,0,0,.42); }
+  #grain { position: absolute; inset: 0; opacity: .4; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #dim { display: none; }
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #cam { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+
+  /* every tile is a slab of smoked glass with a lit top edge */
+  .t { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 46); overflow: hidden;
+    background: linear-gradient(165deg, rgba(255,255,255,.17), rgba(255,255,255,.07) 60%, rgba(255,255,255,.05));
+    -webkit-backdrop-filter: blur(30px) saturate(170%); backdrop-filter: blur(30px) saturate(170%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -26) rgba(0,0,0,.7); }
+  .is-alpha .t { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 84%, #fff), color-mix(in srgb, var(--surface) 95%, transparent)); }
+  .is-key .t { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .t .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 5;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  /* the white "on" face of a square tile */
+  .t .lit { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(170deg, #FFFFFF, #E9E8EE); opacity: 0;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, 0 0 calc(var(--u) * 40) rgba(255,255,255,.25); }
+  .is-key .t .lit { box-shadow: none; }
+  .g { position: absolute; left: 50%; top: 50%; overflow: visible; }
+  .g .off, .g .onn { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .g .off { stroke: rgba(255,255,255,.88); }
+  .g .onn { stroke: #17161C; opacity: 0; }
+  .g .ff { fill: currentColor; stroke: none; }
+  /* round toggles inside the connectivity block */
+  .rb { position: absolute; border-radius: 50%; background: rgba(255,255,255,.14); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.22); }
+  .rb .fill { position: absolute; inset: 0; border-radius: 50%; opacity: 0;
+    background: radial-gradient(70% 70% at 35% 25%, color-mix(in srgb, var(--on) 65%, #fff), var(--on) 70%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--on) 70%, transparent); }
+  .is-key .rb .fill { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  .rb svg { position: absolute; left: 22%; top: 22%; width: 56%; height: 56%; overflow: visible; }
+  .rb svg * { fill: none; stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  /* sliders: a tall glass well that fills white from the bottom */
+  .sl .lv { position: absolute; left: 0; right: 0; bottom: 0; height: 100%; transform-origin: 50% 100%; background: linear-gradient(180deg, #FFFFFF, #E4E3E9); box-shadow: inset 0 calc(var(--u) * 2) 0 #fff; }
+  .sl svg { position: absolute; left: 50%; overflow: visible; z-index: 3; }
+  .sl svg * { fill: none; stroke: #6E6C76; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  /* the mode tile */
+  #mode .mc { position: absolute; border-radius: 50%; background: rgba(255,255,255,.14); display: grid; place-items: center; overflow: hidden; }
+  #mode .mc i { position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(70% 70% at 35% 25%, color-mix(in srgb, var(--on) 65%, #fff), var(--on) 70%); opacity: 0; }
+  #mode .mc svg { position: relative; width: 52%; height: 52%; }
+  #mode .mc svg path { fill: #fff; }
+  #mode .win { position: absolute; overflow: hidden; }
+  #mode .reel { position: absolute; left: 0; top: 0; }
+  #mode .reel div { font-weight: 750; color: #fff; white-space: nowrap; letter-spacing: -0.01em; }
+  #mode .sb { position: absolute; font-weight: 600; color: rgba(255,255,255,.62); white-space: nowrap; }
+  #mode.is-on .reel div { color: #17161C; } #mode.is-on .sb { color: rgba(23,22,28,.6); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="dim"></div>
+  <div id="persp"><div id="cam"></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(() => {
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const P = MV.portrait, LAND = W > H;
+  const u = MV.u; root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s, e = document) => e.querySelector(s);
+  const cam = $("#cam");
+
+  // ---- glyphs (24 grid, stroked)
+  const GL = {
+    plane: `<path d="M12 3.2c.8 0 1.4.7 1.4 1.6v5.1l6.9 4v1.9l-6.9-2v4.3l2 1.5v1.5L12 20l-3.4 1.1v-1.5l2-1.5v-4.3l-6.9 2v-1.9l6.9-4V4.8c0-.9.6-1.6 1.4-1.6z"/>`,
+    wifi: `<path d="M3 9.2a13 13 0 0 1 18 0M6 12.6a8.6 8.6 0 0 1 12 0M9 15.9a4.2 4.2 0 0 1 6 0"/><circle cx="12" cy="19" r="1.1"/>`,
+    bt: `<path d="M7 7.5l10 9-5 4.2V3.3l5 4.2-10 9"/>`,
+    cell: `<path d="M5 19v-3M9.5 19v-6M14 19v-9M18.5 19V6.5"/>`,
+    torch: `<path d="M8.5 3h7v3.2l-1.6 3v11.3h-3.8V9.2l-1.6-3z M8.5 6.2h7"/><circle cx="12" cy="13" r="0.9"/>`,
+    rot: `<path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.8 4v4.4h-4.4"/>`,
+    timer: `<circle cx="12" cy="13.2" r="7.3"/><path d="M12 13.2V9M10 2.8h4"/>`,
+    cam: `<path d="M3.5 8.2a1.7 1.7 0 0 1 1.7-1.7h2.6L9.5 4.4h5l1.7 2.1h2.6a1.7 1.7 0 0 1 1.7 1.7v9.5a1.7 1.7 0 0 1-1.7 1.7H5.2a1.7 1.7 0 0 1-1.7-1.7z"/><circle cx="12" cy="12.8" r="3.6"/>`,
+    rec: `<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4" class="ff"/>`,
+    calc: `<rect x="5" y="3.2" width="14" height="17.6" rx="2.6"/><path d="M8.2 7.3h7.6M8.6 11.6h.1M12 11.6h.1M15.4 11.6h.1M8.6 15.4h.1M12 15.4h.1M15.4 15.4h.1"/>`,
+    sun: `<circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.2M12 19v2.2M2.8 12H5M19 12h2.2M5.5 5.5l1.5 1.5M17 17l1.5 1.5M5.5 18.5L7 17M17 7l1.5-1.5"/>`,
+    spk: `<path d="M4.5 9.5h3.2L12 5.8v12.4l-4.3-3.7H4.5z"/><path d="M15.4 9.2a4 4 0 0 1 0 5.6M18 6.8a7.6 7.6 0 0 1 0 10.4"/>`,
+  };
+  const MOON = `<path d="M20.3 14.6A8.6 8.6 0 0 1 9.4 3.7a8.6 8.6 0 1 0 10.9 10.9z"/>`;
+
+  // ---- layout: a 4 x 4 grid of tile units
+  const regionW = W - safe.left - safe.right, regionH = H - safe.top - safe.bottom;
+  const PWmax = P ? Math.min(regionW, MV.alpha ? 820 * u : 900 * u) : Math.min(regionH * (MV.alpha ? 0.92 : 0.96), 880 * u);
+  const GAP = PWmax * 0.034;
+  const TU = (PWmax - GAP * 3) / 4, PW = PWmax, PH = TU * 4 + GAP * 3;
+  let ox = (W - PW) / 2, oy = (H - PH) / 2;
+  if (MV.alpha) { if (P) { ox = safe.left + (regionW - PW) / 2; oy = safe.top + 10 * u; } else if (LAND) { ox = W - safe.right - PW; oy = safe.top; } else oy = safe.top; }
+  gsap.set(cam, { x: ox, y: oy, width: PW, height: PH });
+  const at = (c, r, cw, rh) => ({ x: c * (TU + GAP), y: r * (TU + GAP), w: cw * TU + (cw - 1) * GAP, h: rh * TU + (rh - 1) * GAP });
+  const tile = (id, b, cls = "") => { const d = document.createElement("div"); d.className = "t " + cls; if (id) d.id = id;
+    Object.assign(d.style, { left: b.x + "px", top: b.y + "px", width: b.w + "px", height: b.h + "px" }); d.innerHTML = `<div class="lit"></div><div class="sh"></div>`; cam.appendChild(d); return d; };
+  const glyph = (parent, name, size) => { const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.setAttribute("class", "g");
+    s.innerHTML = `<g class="off">${GL[name]}</g><g class="onn">${GL[name]}</g>`; Object.assign(s.style, { width: size + "px", height: size + "px", marginLeft: -size / 2 + "px", marginTop: -size / 2 + "px" });
+    s.querySelectorAll(".ff").forEach((f) => f.setAttribute("style", "fill:currentColor")); s.querySelector(".off").style.color = "rgba(255,255,255,.88)"; s.querySelector(".onn").style.color = "#17161C";
+    parent.insertBefore(s, parent.querySelector(".sh")); return s; };
+
+  // connectivity block: four round toggles
+  const conn = tile("conn", at(0, 0, 2, 2));
+  const RB = TU * 0.74, cpad = (at(0, 0, 2, 2).w - RB * 2) / 3;
+  const rbs = ["plane", "wifi", "bt", "cell"].map((n, i) => { const b = document.createElement("div"); b.className = "rb";
+    Object.assign(b.style, { left: cpad + (i % 2) * (RB + cpad) + "px", top: cpad + Math.floor(i / 2) * (RB + cpad) + "px", width: RB + "px", height: RB + "px" });
+    b.innerHTML = `<div class="fill"></div><svg viewBox="0 0 24 24">${GL[n]}</svg>`; conn.insertBefore(b, conn.querySelector(".sh")); return b; });
+  // mode tile
+  const mode = tile("mode", at(2, 0, 2, 1));
+  const mb = at(2, 0, 2, 1), MC = TU * 0.5, MPAD = (TU - MC) / 2;
+  const mc = document.createElement("div"); mc.className = "mc"; Object.assign(mc.style, { left: MPAD + "px", top: MPAD + "px", width: MC + "px", height: MC + "px" });
+  mc.innerHTML = `<i></i><svg viewBox="0 0 24 24">${MOON}</svg>`; mode.insertBefore(mc, mode.querySelector(".sh"));
+  const MODES = String(v.modes || "").split(",").map((s) => s.trim()).filter(Boolean).slice(-6);
+  if (!MODES.length) MODES.push("Focus");
+  const FS = TU * 0.235, LH = FS * 1.3;
+  const tx = MPAD * 2 + MC - MPAD * 0.4, tw = mb.w - tx - MPAD * 0.8;
+  const win = document.createElement("div"); win.className = "win"; Object.assign(win.style, { left: tx + "px", top: TU * 0.5 - LH * 0.92 + "px", width: tw + "px", height: LH + "px" });
+  const reel = document.createElement("div"); reel.className = "reel"; win.appendChild(reel);
+  mode.insertBefore(win, mode.querySelector(".sh"));
+  const labels = MODES.map((m) => { const d = document.createElement("div"); d.textContent = m; Object.assign(d.style, { position: "absolute", left: 0, top: 0, height: LH + "px", lineHeight: LH + "px", fontSize: FS + "px" }); reel.appendChild(d); return d; });
+  labels.forEach((l) => MV.fitText(l, tw - 4 * u, 12));
+  const sb = document.createElement("div"); sb.className = "sb"; sb.textContent = v.sub || ""; Object.assign(sb.style, { left: tx + "px", top: TU * 0.5 + LH * 0.12 + "px", fontSize: FS * 0.78 + "px" });
+  mode.insertBefore(sb, mode.querySelector(".sh")); MV.fitText(sb, tw - 4 * u, 12);
+  // small square toggles
+  const SG = TU * 0.36;
+  const small = [["torch", 2, 1], ["rot", 3, 1], ["timer", 2, 2], ["cam", 3, 2], ["rec", 2, 3], ["calc", 3, 3]].map(([n, c, r]) => { const t = tile("", at(c, r, 1, 1), "sq"); t.dataset.g = n; glyph(t, n, SG); return t; });
+  // sliders
+  const sliders = [["sun", 0, +v.brightness], ["spk", 1, +v.volume]].map(([n, c, lvl]) => { const t = tile("", at(c, 2, 1, 2), "sl");
+    const lv = document.createElement("div"); lv.className = "lv"; t.insertBefore(lv, t.querySelector(".sh"));
+    const s = document.createElementNS("http://www.w3.org/2000/svg", "svg"); s.setAttribute("viewBox", "0 0 24 24"); s.innerHTML = GL[n];
+    const z = TU * 0.36; Object.assign(s.style, { width: z + "px", height: z + "px", marginLeft: -z / 2 + "px", bottom: TU * 0.28 + "px" }); t.insertBefore(s, t.querySelector(".sh"));
+    return { t, lv, lvl: Math.max(0.12, Math.min(1, (isFinite(lvl) ? lvl : 60) / 100)) }; });
+
+  // ---- timeline
+  const all = [...cam.children];
+  // the panel: tiles rise in from below, staggered from the top left, while the camera drifts
+  tl.fromTo(cam, { rotationX: 16, rotationY: -10, y: oy + 60 * u }, { rotationX: 4, rotationY: 6, y: oy, duration: D, ease: "power2.out" }, 0);
+  all.forEach((t, i) => {
+    const r = parseFloat(t.style.top) / (TU + GAP), c = parseFloat(t.style.left) / (TU + GAP), d = 0.04 + (r + c) * 0.045;
+    tl.fromTo(t, { opacity: 0, y: 70 * u, scale: 0.86 }, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, d);
+    tl.fromTo(t.querySelector(".sh"), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, d + 0.2);
+  });
+  // one by one the switches flip on, each with a small press
+  const press = (el, t) => tl.fromTo(el, { scale: 1 }, { keyframes: [{ scale: 0.88, duration: 0.07 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }], immediateRender: false }, t);
+  const T0 = 0.8, STEP = 0.19;
+  let t = T0;
+  [1, 2, 3].forEach((i) => { press(rbs[i], t); tl.to(rbs[i].querySelector(".fill"), { opacity: 1, duration: 0.16, ease: "power2.out" }, t + 0.03); t += STEP; });
+  // the sliders rise to their levels
+  sliders.forEach((s, i) => { tl.fromTo(s.lv, { scaleY: 0.08 }, { scaleY: s.lvl, duration: 0.65, ease: "expo.out", immediateRender: true }, t + i * 0.12); });
+  t += 0.34;
+  [1, 4, 3].forEach((i) => { const q = small[i]; press(q, t); tl.to(q.querySelector(".lit"), { opacity: 1, duration: 0.16, ease: "power2.out" }, t + 0.03);
+    tl.to(q.querySelector(".g .off"), { opacity: 0, duration: 0.12 }, t + 0.03); tl.to(q.querySelector(".g .onn"), { opacity: 1, duration: 0.12 }, t + 0.03); t += STEP; });
+  // the mode: the label rolls through the modes and settles on the last one, the tile lights
+  const MR = t + 0.12, N = MODES.length;
+  // slot-machine roll: each mode slides up through the window, quick at first, slower toward the last
+  const gaps = Array.from({ length: Math.max(0, N - 1) }, (_, i) => 0.12 + 0.24 * Math.pow(i / Math.max(1, N - 2), 1.6));
+  const ent = [0]; gaps.forEach((g, i) => ent.push(ent[i] + g));
+  labels.forEach((l, i) => {
+    const last = i === N - 1;
+    if (i > 0) { const d = last ? 0.5 : gaps[i - 1];
+      tl.fromTo(l, { y: LH }, { y: 0, duration: d, ease: last ? "back.out(1.2)" : "none" }, MR + ent[i] - (last ? 0 : 0));
+      tl.fromTo(l, { opacity: 0 }, { opacity: 1, duration: d * 0.5, ease: "power1.out" }, MR + ent[i]); }
+    else gsap.set(l, { y: 0, opacity: 1 });
+    if (i < N - 1) { const nl = i + 1 === N - 1, d = nl ? 0.5 : gaps[i];
+      tl.to(l, { y: -LH, duration: d, ease: nl ? "expo.out" : "none" }, MR + ent[i + 1]);
+      tl.to(l, { opacity: 0, duration: d * 0.5, ease: "power1.in" }, MR + ent[i + 1]); }
+  });
+  labels.forEach((l, i) => { if (i > 0) gsap.set(l, { opacity: 0 }); });
+  const ROLL = ent[N - 1] + 0.12;
+  const LD = MR + ROLL;
+  press(mode, LD - 0.04);
+  tl.to(mode.querySelector(".lit"), { opacity: 1, duration: 0.2, ease: "power2.out" }, LD);
+  tl.set(mode, { className: "t is-on" }, LD + 0.06);
+  tl.to(mc.querySelector("i"), { opacity: 1, duration: 0.2, ease: "power2.out" }, LD);
+  tl.fromTo(mc.querySelector("svg"), { rotation: -40, scale: 0.7 }, { rotation: 0, scale: 1, duration: 0.6, ease: "back.out(2.6)", transformOrigin: "50% 50%" }, LD);
+  tl.fromTo(sb, { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, LD + 0.1);
+  tl.fromTo(mode.querySelector(".sh"), { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, LD + 0.05);
+  // the rest of the panel dims a touch, the mode tile lifts toward the camera
+  tl.to(mode, { z: 40 * u, duration: 0.6, ease: "expo.out" }, LD);
+  if (MV.alpha) all.slice().reverse().forEach((el, i) => tl.to(el, { y: "-=" + 80 * u, opacity: 0, duration: 0.3, ease: "power3.in" }, D - 0.42 + i * 0.008));
+  MV.done();
+})();
+</script>
+</body>
+</html>

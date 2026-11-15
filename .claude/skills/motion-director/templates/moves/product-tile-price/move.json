@@ -1,0 +1,5 @@
+{ "id": "product-tile-price", "name": "Product tile price", "oneLiner": "a white shop tile with a real 3D-rendered product rises in and its price gets a red hand-drawn circle; the shot widens, a second tile slides in beside it, its much higher price is circled in green, the tile lifts with a green edge and a 12x chip lands over it",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["studio", "glass"], "from": "new",
+  "tags": ["price", "pricing", "premium", "brand", "markup", "compare", "cheap vs premium", "ecommerce", "shop", "product", "positioning", "value", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker contrasts a cheap version of a thing with a premium one ('this one is $3, this one is $35, same thing'): cut in on the first price (red circle), the second tile lands on the second price (green circle) and the chip on 'twelve times more'. Swap in the brand's own product cut-outs with img1 and img2" }

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"board","type":"string","label":"Pipeline name in the header (empty: the brand name)","default":"Sales pipeline"},
+  {"id":"stages","type":"string","label":"Stages, top to bottom, the last is the win (3 to 5)","default":"Lead,Qualified,Proposal,Won"},
+  {"id":"company","type":"string","label":"Who the deal is with","default":"New client"},
+  {"id":"value","type":"number","label":"Deal value it counts up to","default":24000},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"before","type":"number","label":"Won total before this deal (the header adds the deal to it)","default":72000},
+  {"id":"wonLabel","type":"string","label":"Label on the header total","default":"Won"},
+  {"id":"stamp","type":"string","label":"The green stamp word","default":"Won"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #F4F3EF; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --tx: #17161C; --mu: #8B8893; --ln: rgba(20,18,30,.08); --ok: #2BD67B; --okd: #12924C; --okb: #E3F6EA; }
+  /* warm paper lit by the brand colour from one corner and a warm key light */
+  #g { position: absolute; inset: -10%; background:
+    radial-gradient(42% 32% at 86% 8%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 70%),
+    radial-gradient(48% 36% at 8% 96%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 24% 16%, rgba(255,214,140,.30), transparent 70%),
+    color-mix(in srgb, var(--paper, #F4F3EF) 60%, #F4F3EF); }
+  #grain { position: absolute; inset: 0; z-index: 90; pointer-events: none; opacity: .35; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #cshadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(40,25,15,.34), transparent 70%); filter: blur(calc(var(--u) * 22)); opacity: 0; }
+  .is-alpha #g, .is-alpha #grain, .is-alpha #cshadow { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2200); perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #wrap { position: absolute; }
+  #pane { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, #FFFFFF, #FBFAF8);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 #fff, 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.06),
+      0 calc(var(--s) * 70) calc(var(--s) * 120) calc(var(--s) * -40) rgba(40,25,15,.42), 0 calc(var(--s) * 30) calc(var(--s) * 150) calc(var(--s) * -30) color-mix(in srgb, var(--accent) 30%, transparent); }
+  .is-alpha #pane { box-shadow: inset 0 calc(var(--s) * 2) 0 #fff, 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.08), 0 calc(var(--s) * 40) calc(var(--s) * 80) calc(var(--s) * -30) rgba(0,0,0,.55); }
+  .is-key #pane { box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.1); }
+  #pane::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 40;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.75) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); mix-blend-mode: soft-light; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #mk { border-radius: calc(var(--s) * 18); display: grid; place-items: center; background: #F3F1EE; box-shadow: inset 0 0 0 calc(var(--s) * 1.5) var(--ln); overflow: hidden; }
+  #mk img { width: 76%; height: 76%; object-fit: contain; }
+  #ttl { font-weight: 800; font-size: calc(var(--s) * 42); color: var(--tx); white-space: nowrap; line-height: 1.1; letter-spacing: -0.015em; }
+  #tot { display: flex; align-items: center; gap: calc(var(--s) * 12); padding: 0 calc(var(--s) * 22); border-radius: 99px; background: #F3F1EE; box-shadow: inset 0 0 0 calc(var(--s) * 1.5) var(--ln); white-space: nowrap; }
+  #tot .dt { flex: none; width: calc(var(--s) * 16); height: calc(var(--s) * 16); border-radius: 50%; background: var(--ok); }
+  #tot .lb { font-weight: 650; font-size: calc(var(--s) * 32); color: var(--mu); }
+  #tot .vl { font-weight: 800; font-size: calc(var(--s) * 38); color: var(--tx); font-variant-numeric: tabular-nums; }
+  #totfl { position: absolute; inset: 0; border-radius: inherit; background: var(--okb); box-shadow: inset 0 0 0 calc(var(--s) * 2.5) var(--ok); opacity: 0; }
+  #tot > *:not(#totfl) { position: relative; }
+
+  .lane { border-top: calc(var(--s) * 1.5) solid var(--ln); }
+  .lane .nm { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 14); white-space: nowrap; font-weight: 750; font-size: calc(var(--s) * 38); color: var(--tx); opacity: .42; }
+  .lane .nm i { flex: none; width: calc(var(--s) * 16); height: calc(var(--s) * 16); border-radius: 50%; background: var(--mu); }
+  .lane.win .nm i { background: var(--ok); }
+  #band { border-radius: calc(var(--s) * 26); background: color-mix(in srgb, var(--accent) 8%, transparent); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--accent) 16%, transparent); }
+  #bandok { position: absolute; inset: 0; border-radius: inherit; background: var(--okb); box-shadow: inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--ok) 60%, transparent); opacity: 0; }
+
+  .gh { border-radius: calc(var(--s) * 24); background: #F3F1EE; box-shadow: inset 0 0 0 calc(var(--s) * 1.5) var(--ln); }
+  .gh i { position: absolute; display: block; border-radius: 99px; background: #E4E1DC; }
+
+  #deal { z-index: 20; border-radius: calc(var(--s) * 26); background: #fff;
+    box-shadow: 0 0 0 calc(var(--s) * 1.5) rgba(20,18,30,.09), 0 calc(var(--s) * 14) calc(var(--s) * 28) calc(var(--s) * -12) rgba(40,25,15,.35); }
+  #lift { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+    box-shadow: 0 calc(var(--s) * 50) calc(var(--s) * 60) calc(var(--s) * -18) rgba(40,25,15,.5), 0 0 0 calc(var(--s) * 3) color-mix(in srgb, var(--accent) 55%, #fff); }
+  .is-key #lift { box-shadow: 0 0 0 calc(var(--s) * 3) color-mix(in srgb, var(--accent) 55%, #fff); }
+  #okrim { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+    box-shadow: 0 0 0 calc(var(--s) * 3.5) var(--ok), 0 calc(var(--s) * 16) calc(var(--s) * 50) calc(var(--s) * -10) rgba(43,214,123,.55); }
+  .is-key #okrim { box-shadow: 0 0 0 calc(var(--s) * 3.5) var(--ok); }
+  #bar { position: absolute; border-radius: 99px; background: var(--accent); }
+  #barok { position: absolute; inset: 0; border-radius: inherit; background: var(--ok); opacity: 0; }
+  #av { border-radius: 50%; display: grid; place-items: center; overflow: hidden;
+    background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 22%, #fff), color-mix(in srgb, var(--accent2) 30%, #fff)); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(0,0,0,.06); }
+  #av img { width: 66%; height: 66%; object-fit: contain; }
+  #co { font-weight: 750; font-size: calc(var(--s) * 38); color: var(--tx); white-space: nowrap; line-height: 1.1; }
+  #val { font-weight: 800; font-size: calc(var(--s) * 44); color: var(--tx); white-space: nowrap; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  #pips { display: flex; gap: calc(var(--s) * 8); }
+  #pips i { position: relative; display: block; flex: none; width: calc(var(--s) * 26); height: calc(var(--s) * 12); border-radius: 99px; background: #E9E6E1; overflow: hidden; }
+  #pips i b { position: absolute; inset: 0; border-radius: inherit; background: var(--accent); transform: scaleX(0); transform-origin: 0 50%; }
+
+  #stamp { z-index: 30; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 10); border-radius: 99px; white-space: nowrap; opacity: 0;
+    font-weight: 850; font-size: calc(var(--s) * 38); letter-spacing: .06em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 2px rgba(0,60,25,.35);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 72%, #fff), var(--ok) 55%, #1BA85B);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), 0 calc(var(--s) * 14) calc(var(--s) * 26) calc(var(--s) * -8) rgba(20,140,70,.6); }
+  .is-key #stamp { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55); }
+  #stamp svg { flex: none; width: calc(var(--s) * 36); height: calc(var(--s) * 36); }
+  .rg { position: absolute; box-sizing: border-box; border-radius: 99px; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; z-index: 29; }
+  .is-key .rg { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="g"></div>
+  <div id="cshadow"></div>
+  <div id="stage"><div id="rig">
+    <div id="wrap"><div id="pane">
+      <div id="mk" class="ab"></div><div id="ttl" class="ab"></div>
+      <div id="tot" class="ab"><i id="totfl"></i><i class="dt"></i><span class="lb"></span><span class="vl"></span></div>
+      <div id="band" class="ab"><i id="bandok"></i></div>
+      <div id="lanes"></div>
+      <div id="deal" class="ab">
+        <i id="bar"><i id="barok"></i></i>
+        <div id="av" class="ab"></div><div id="co" class="ab"></div><div id="val" class="ab"></div>
+        <div id="pips" class="ab"></div>
+        <i id="lift"></i><i id="okrim"></i>
+      </div>
+      <i class="rg" id="r1"></i><i class="rg" id="r2"></i>
+      <div id="stamp" class="ab"><svg viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.8" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="stw"></span></div>
+    </div></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const stages = String(v.stages || "").split(",").map((x) => x.trim()).filter(Boolean).slice(0, 5);
+  while (stages.length < 3) stages.push(["Lead", "Proposal", "Won"][stages.length]);
+  const N = stages.length;
+  const cur$ = v.currency || "";
+  const money = (n) => cur$ + Math.round(n).toLocaleString("en-US");
+  const value = +v.value || 0, before = +v.before || 0;
+
+  // ---- zone and one scale s for the pane's design
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.52; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 60 * u; cR = W - 60 * u; zT = 60 * u; zB = H - 60 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.07; zB = H * 0.93; }
+  const pad = 40, DW = 900, hdH = 76, LH = N > 4 ? 150 : 168, laneY0 = pad + hdH + 24;
+  const DH = laneY0 + N * LH + 20;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.06 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+  const pane = $("#pane");
+
+  // ---- header: mark, pipeline name, the won total
+  box($("#mk"), pad, pad + 4, 68, 68); if (v.mark) $("#mk").appendChild(MV.img(v.mark));
+  $("#tot .lb").textContent = v.wonLabel || ""; $("#tot .vl").textContent = money(before + value);
+  Object.assign($("#tot").style, { right: S(pad), top: S(pad + 6), height: S(64) });
+  MV.fitText($("#tot .vl"), 260 * s, 16);
+  const totW = $("#tot").getBoundingClientRect().width / s;
+  $("#tot .vl").textContent = money(before);
+  Object.assign($("#ttl").style, { left: S(pad + 68 + 20), top: S(pad + 16) });
+  $("#ttl").textContent = v.board || v.brandName || "";
+  MV.fitText($("#ttl"), (DW - pad * 2 - 68 - 20 - totW - 24) * s, 18);
+
+  // ---- lanes: a stage name on the left, cards to the right; the board runs on past the pane's edge
+  const LW = 236, CX = pad + LW, CW = 540, CHt = 132, cy = (i) => laneY0 + i * LH + (LH - CHt) / 2;
+  const lanes = stages.map((nm, i) => {
+    const d = document.createElement("div"); d.className = "lane ab" + (i === N - 1 ? " win" : ""); box(d, pad - 10, laneY0 + i * LH, DW - pad * 2 + 20, LH);
+    const n = document.createElement("div"); n.className = "nm"; n.innerHTML = "<i></i><span></span>"; n.querySelector("span").textContent = nm;
+    Object.assign(n.style, { left: S(10), top: S(0), height: S(LH) }); d.appendChild(n); $("#lanes").appendChild(d);
+    MV.fitText(n.querySelector("span"), (LW - 50) * s, 16);
+    return { d, n };
+  });
+  // other deals, as quiet skeleton cards in every lane; each slides along to make room while the deal passes through
+  const rg = MV.rand(41), ghosts = [];
+  const ghost = (i, slot) => {
+    const g = document.createElement("div"); g.className = "gh ab"; box(g, CX + slot * (CW + 24), cy(i), CW, CHt);
+    [[24, 34, 58, 58, "50%"], [104, 36, 150 + rg() * 120, 22], [104, 76, 90 + rg() * 60, 22]].forEach(([x, y, w, h, r]) => { const b = document.createElement("i"); Object.assign(b.style, { left: S(x), top: S(y), width: S(w), height: S(h) }); if (r) b.style.borderRadius = r; g.appendChild(b); });
+    $("#lanes").appendChild(g); ghosts.push({ g, i }); return g;
+  };
+  stages.forEach((_, i) => ghost(i, 0));
+  const SL = (CW + 24) * s;
+
+  // ---- the deal card
+  const deal = $("#deal");
+  box(deal, CX, cy(0), CW, CHt);
+  box($("#bar"), 0, 0, 0, 0); Object.assign($("#bar").style, { left: S(14), top: S(24), width: S(7), height: S(CHt - 48) });
+  box($("#av"), 38, (CHt - 70) / 2, 70, 70); if (v.mark) $("#av").appendChild(MV.img(v.mark));
+  const pipW = N * 26 + (N - 1) * 8;
+  Object.assign($("#co").style, { left: S(128), top: S(22) }); $("#co").textContent = v.company || "";
+  MV.fitText($("#co"), (CW - 128 - pipW - 46) * s, 16);
+  Object.assign($("#val").style, { left: S(128), top: S(72) }); $("#val").textContent = money(value);
+  MV.fitText($("#val"), (CW - 128 - 30) * s, 18);
+  $("#val").textContent = money(0);
+  Object.assign($("#pips").style, { right: S(24), top: S(32) });
+  const pips = stages.map(() => { const i = document.createElement("i"); i.innerHTML = "<b></b>"; $("#pips").appendChild(i); return i.querySelector("b"); });
+
+  // the stamp sits over the card's right end; its rings go out from it
+  $("#stw").textContent = v.stamp || "";
+  const stH = 70; Object.assign($("#stamp").style, { height: S(stH), padding: `0 ${S(26)} 0 ${S(20)}` });
+  MV.fitText($("#stw"), 260 * s, 16);
+  const stWd = $("#stamp").getBoundingClientRect().width / s;
+  const stX = CX + CW - stWd + 20, stY = cy(N - 1) + CHt - stH + 26;
+  Object.assign($("#stamp").style, { left: S(stX), top: S(stY) });
+  [$("#r1"), $("#r2")].forEach((r) => box(r, stX, stY, stWd, stH));
+  box($("#band"), pad - 10, cy(0) - 12, DW - pad * 2 + 20, CHt + 24);
+  Object.assign($("#cshadow").style, { left: cL + cw * 0.06 + "px", top: cT + ch * 0.78 + "px", width: cw * 0.88 + "px", height: ch * 0.36 + "px" });
+
+  // ---- timing: drop in, three hops down the pipeline, the win
+  const T0 = 0.62, HOP = 0.58, GAP = 0.06, TH = (k) => 1.3 + k * (HOP + GAP), TW = TH(N - 2) + HOP;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 11, rotationX: 8, scale: 0.95, y: 20 * u }, { rotationY: P ? -6 : -8, rotationX: 2, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#cshadow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#mk", "#ttl", "#tot"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.2);
+  tl.fromTo(lanes.map((l) => l.d), { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out", stagger: 0.05 }, 0.26);
+  tl.fromTo(ghosts.map((g) => g.g), { opacity: 0, x: 60 * s }, { opacity: 1, x: 0, duration: 0.6, ease: "expo.out", stagger: 0.04 }, 0.32);
+  tl.fromTo(lanes[0].n, { opacity: 0.42 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, T0);
+
+  // the deal drops into the first stage, its value counting up as it settles
+  tl.to(ghosts[0].g, { x: SL, duration: 0.55, ease: "expo.out" }, T0 - 0.08);
+  tl.fromTo(deal, { opacity: 0, y: -70 * s, scale: 1.08, rotation: -3 }, { opacity: 1, y: 0, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T0);
+  tl.fromTo("#band", { opacity: 0, scaleX: 0.96 }, { opacity: 1, scaleX: 1, duration: 0.4, ease: "power3.out" }, T0 + 0.1);
+  tl.to(pips[0], { scaleX: 1, duration: 0.3, ease: "expo.out" }, T0 + 0.3);
+  const vo = { n: 0 };
+  tl.to(vo, { n: value, duration: 1.0, ease: "power3.out", onUpdate: () => { $("#val").textContent = money(vo.n); } }, T0 + 0.1);
+
+  // hops: lift toward the lens, lean, travel one lane down with a long tail, squash in
+  for (let k = 0; k < N - 1; k++) {
+    const t = TH(k), dy = (cy(k + 1) - cy(0)) * s, last = k === N - 2;
+    tl.to(deal, { y: dy, duration: HOP, ease: "expo.inOut" }, t);
+    tl.to(deal, { scale: 1.06, rotation: k % 2 ? 1.8 : -1.8, duration: HOP * 0.45, ease: "power2.out" }, t);
+    tl.to(deal, { scale: 1, rotation: 0, duration: HOP * 0.7, ease: "back.out(2.2)" }, t + HOP * 0.55);
+    tl.fromTo("#lift", { opacity: 0 }, { opacity: 1, duration: HOP * 0.4, ease: "power2.out", immediateRender: false }, t);
+    tl.to("#lift", { opacity: 0, duration: HOP * 0.5, ease: "power2.in" }, t + HOP * 0.55);
+    tl.to("#band", { y: dy, duration: HOP, ease: "expo.inOut" }, t + 0.04);
+    tl.to(lanes[k].n, { opacity: 0.42, duration: 0.3, ease: "power2.out" }, t + 0.1);
+    tl.to(lanes[k + 1].n, { opacity: 1, duration: 0.3, ease: "power2.out" }, t + HOP * 0.6);
+    tl.to(pips[k + 1], { scaleX: 1, duration: 0.3, ease: "expo.out" }, t + HOP * 0.8);
+    // the deal in the next lane slides along to make room, the one left behind closes up
+    tl.to(ghosts[k + 1].g, { x: SL, duration: 0.55, ease: "expo.inOut" }, t + HOP * 0.2);
+    tl.to(ghosts[k].g, { x: 0, duration: 0.6, ease: "expo.out" }, t + HOP * 0.45);
+    if (last) tl.to(deal, { scale: 0.975, duration: 0.08, ease: "power3.in" }, t + HOP - 0.04);
+  }
+
+  // the win: green edge, the stamp thumps on with rings, the lane fills green, the header total adds the deal
+  tl.to("#okrim", { opacity: 1, duration: 0.25, ease: "power2.out" }, TW);
+  tl.to("#barok", { opacity: 1, duration: 0.2, ease: "power2.out" }, TW);
+  tl.to(pips.map((p) => p), { backgroundColor: "#2BD67B", duration: 0.25, ease: "power2.out", stagger: 0.03 }, TW);
+  tl.to("#bandok", { opacity: 1, duration: 0.3, ease: "power2.out" }, TW + 0.02);
+  tl.to("#band", { boxShadow: "none", duration: 0.2 }, TW);
+  tl.fromTo("#stamp", { opacity: 0, scale: 2.2, rotation: -2 }, { opacity: 1, scale: 1, rotation: -7, duration: 0.24, ease: "power4.in" }, TW + 0.04);
+  tl.to("#stamp", { scale: 1.07, duration: 0.06, ease: "power1.out" }, TW + 0.28); tl.to("#stamp", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TW + 0.34);
+  tl.to("#stage", { scale: 1.018, duration: 0.07, ease: "power2.out" }, TW + 0.28); tl.to("#stage", { scale: 1, duration: 0.55, ease: "expo.out" }, TW + 0.35);
+  tl.to(deal, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TW + 0.3);
+  tl.fromTo("#r1", { scale: 1, opacity: 0.9, rotation: -7 }, { scale: 1.45, opacity: 0, duration: 0.75, ease: "expo.out", immediateRender: false }, TW + 0.3);
+  tl.fromTo("#r2", { scale: 1, opacity: 0.6, rotation: -7 }, { scale: 1.9, opacity: 0, duration: 0.95, ease: "expo.out", immediateRender: false }, TW + 0.4);
+  const to = { n: before };
+  tl.to(to, { n: before + value, duration: 0.9, ease: "power3.out", onUpdate: () => { $("#tot .vl").textContent = money(to.n); } }, TW + 0.42);
+  tl.to("#totfl", { opacity: 1, duration: 0.2, ease: "power2.out" }, TW + 0.42);
+  tl.fromTo("#tot", { scale: 1 }, { scale: 1.08, duration: 0.1, ease: "power2.out", immediateRender: false }, TW + 0.42); tl.to("#tot", { scale: 1, duration: 0.5, ease: "back.out(3)" }, TW + 0.52);
+  tl.fromTo("#pane", { "--sheen": "-40%" }, { "--sheen": "150%", duration: 1.0, ease: "power2.inOut" }, TW + 0.4);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

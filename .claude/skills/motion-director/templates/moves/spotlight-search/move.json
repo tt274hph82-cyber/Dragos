@@ -1,0 +1,5 @@
+{ "id": "spotlight-search", "name": "Launcher search", "oneLiner": "a glass launcher bar drops in, the brand's name types into it letter by letter, the results grow down with the brand's app as the top hit under an accent selection bar, Return is pressed and the icon pops with a ring of light",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["search", "launcher", "spotlight", "command bar", "type", "find", "app", "open", "desktop", "keyboard", "product", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.8, "alpha": true,
+  "say": "when the speaker says 'just search for it' or names the tool to open: the name types as they say it, Return lands on 'and open it'" }

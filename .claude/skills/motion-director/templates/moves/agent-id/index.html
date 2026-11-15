@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"mode","type":"string","label":"badge (one agent) or roster (three rows)","default":"badge"},
+  {"id":"name","type":"string","label":"The agent name","default":"Jamie"},
+  {"id":"lead","type":"string","label":"Small italic connector under the name","default":"is my"},
+  {"id":"role","type":"string","label":"Role in the pill","default":"Chief of Staff"},
+  {"id":"image","type":"string","label":"Avatar image path (empty: first brand person, else the brand mark)","default":""},
+  {"id":"line","type":"string","label":"Roster: first agent last message","default":"Morning. Pulled your numbers."},
+  {"id":"name2","type":"string","label":"Roster: second agent","default":"Nora"},
+  {"id":"role2","type":"string","label":"Roster: second role","default":"Talent Manager"},
+  {"id":"line2","type":"string","label":"Roster: second last message","default":"New contract in, worth a look"},
+  {"id":"name3","type":"string","label":"Roster: third agent","default":"Muse"},
+  {"id":"role3","type":"string","label":"Roster: third role","default":"Content Strategist"},
+  {"id":"line3","type":"string","label":"Roster: third last message","default":"Ten hooks ready for today"},
+  {"id":"time","type":"string","label":"Roster: time label","default":"now"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 34% at var(--gx, 50%) var(--gy, 35%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 85% 100%, color-mix(in srgb, var(--accent2) 24%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  /* ---- the round portrait on a glass rim */
+  .av { position: absolute; left: 0; top: 0; border-radius: 50%; box-sizing: border-box;
+    background: linear-gradient(145deg, rgba(255,255,255,.98) 0%, rgba(255,255,255,.55) 22%, color-mix(in srgb, var(--surface) 70%, rgba(255,255,255,.2)) 50%, color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.3)) 82%, var(--al) 100%);
+    box-shadow: 0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -14) rgba(0,0,0,.6), 0 0 calc(var(--u) * 60) calc(var(--u) * -10) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key .av { box-shadow: none; }
+  .av .ph { position: absolute; inset: 4.5%; border-radius: 50%; overflow: hidden; box-sizing: border-box;
+    background: radial-gradient(80% 80% at 50% 25%, color-mix(in srgb, var(--accent) 34%, var(--surface)), var(--surface));
+    box-shadow: inset 0 0 0 calc(var(--u) * 4) rgba(0,0,0,.35); }
+  .av .ph i { position: absolute; inset: 0; background-repeat: no-repeat; }
+  /* glass: a curved highlight across the top of the lens */
+  .av .gl { position: absolute; inset: 4.5%; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(70% 45% at 38% 14%, rgba(255,255,255,.42), rgba(255,255,255,0) 70%),
+      linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.35) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  .ring { position: absolute; left: 0; top: 0; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 3) solid rgba(255,255,255,.85); box-shadow: 0 0 calc(var(--u) * 24) color-mix(in srgb, var(--accent) 70%, transparent), inset 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent) 50%, transparent); opacity: 0; }
+  .is-key .ring { box-shadow: none; }
+
+  /* ---- the name: big display letters, lit from above */
+  #badge { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; perspective: calc(var(--u) * 1200); }
+  #namew { perspective: calc(var(--u) * 900); filter: drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 22) rgba(0,0,0,.45)); }
+  .is-key #namew { filter: none; }
+  #name { font-family: var(--font-display); font-size: calc(var(--u) * 134); line-height: 1.1; letter-spacing: -0.025em; white-space: nowrap; transform-style: preserve-3d; }
+  #name .ch { display: inline-block; color: transparent; -webkit-background-clip: text; background-clip: text; transform-origin: 50% 80%;
+    background-image: linear-gradient(100deg, transparent calc(var(--sheen, -40%) - 8%), rgba(255,255,255,.95) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 8%)),
+      linear-gradient(180deg, #fff 8%, color-mix(in srgb, var(--accent) 22%, #fff) 52%, var(--al) 100%); }
+  #lead { margin-top: calc(var(--u) * -12); font-family: "Instrument Serif", "Playfair Display", Georgia, "Times New Roman", serif; font-style: italic; font-size: calc(var(--u) * 42); line-height: 1.1;
+    color: color-mix(in srgb, var(--ink) 82%, transparent); text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.5); white-space: nowrap; }
+  .is-key #lead { text-shadow: none; }
+  #pill { position: relative; margin-top: calc(var(--u) * 12); display: flex; align-items: center; gap: calc(var(--u) * 18); height: calc(var(--u) * 92);
+    padding: 0 calc(var(--u) * 36) 0 calc(var(--u) * 10); box-sizing: border-box; border-radius: calc(var(--u) * 46); white-space: nowrap;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 80%, #fff 8%), color-mix(in srgb, var(--surface) 94%, transparent));
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) color-mix(in srgb, var(--accent) 45%, transparent),
+      0 calc(var(--u) * 14) calc(var(--u) * 30) rgba(0,0,0,.45), 0 0 calc(var(--u) * 30) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 55%, transparent); }
+  .is-key #pill { background: var(--surface); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.35), inset 0 0 0 calc(var(--u) * 1.5) color-mix(in srgb, var(--accent) 45%, transparent); }
+  #slot { flex: none; width: calc(var(--u) * 72); height: calc(var(--u) * 72); }
+  #role { font-size: calc(var(--u) * 40); font-weight: 650; color: var(--al); letter-spacing: -0.005em; }
+
+  /* ---- roster: three chat rows */
+  #roster { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1400); }
+  .row { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 24); box-sizing: border-box; height: calc(var(--u) * 126);
+    padding: 0 calc(var(--u) * 26) 0 calc(var(--u) * 14); border-radius: calc(var(--u) * 34); margin-bottom: calc(var(--u) * 12); transform-origin: 0% 50%;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, #fff 9%), color-mix(in srgb, var(--surface) 95%, transparent));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 24) calc(var(--u) * 46) calc(var(--u) * -20) rgba(0,0,0,.6); }
+  .is-key .row { background: var(--surface); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1); }
+  .row .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+  .row .av { position: relative; flex: none; width: calc(var(--u) * 96); height: calc(var(--u) * 96); box-shadow: 0 calc(var(--u) * 8) calc(var(--u) * 18) rgba(0,0,0,.45); }
+  .row .on { position: absolute; right: 2%; bottom: 2%; width: 24%; height: 24%; border-radius: 50%; background: #34D17A; box-shadow: 0 0 0 calc(var(--u) * 4) var(--surface); }
+  .row .tx { flex: 1; min-width: 0; }
+  .row .l1 { display: flex; align-items: center; gap: calc(var(--u) * 12); }
+  .row .rn { font-size: calc(var(--u) * 40); font-weight: 800; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
+  .row .rr { font-size: calc(var(--u) * 26); font-weight: 650; color: var(--al); padding: calc(var(--u) * 4) calc(var(--u) * 12); border-radius: calc(var(--u) * 20); white-space: nowrap;
+    background: color-mix(in srgb, var(--accent) 18%, transparent); box-shadow: inset 0 0 0 calc(var(--u) * 1.2) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .row .rt { margin-left: auto; font-size: calc(var(--u) * 26); color: color-mix(in srgb, var(--ink) 48%, transparent); white-space: nowrap; }
+  .row .l2 { position: relative; margin-top: calc(var(--u) * 6); height: calc(var(--u) * 42); }
+  .row .rm { position: absolute; left: 0; top: 0; font-size: calc(var(--u) * 34); color: color-mix(in srgb, var(--ink) 66%, transparent); white-space: nowrap; }
+  .row .dots { position: absolute; left: 0; top: calc(var(--u) * 6); display: flex; gap: calc(var(--u) * 7); opacity: 0; }
+  .row .dots i { width: calc(var(--u) * 12); height: calc(var(--u) * 12); border-radius: 50%; background: color-mix(in srgb, var(--ink) 70%, transparent); }
+  .row .bd { position: absolute; right: calc(var(--u) * 26); bottom: calc(var(--u) * 20); min-width: calc(var(--u) * 40); height: calc(var(--u) * 40); border-radius: calc(var(--u) * 20);
+    display: grid; place-items: center; font-size: calc(var(--u) * 24); font-weight: 800; color: #fff; background: var(--accent); opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 16) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key .row .bd { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="badge">
+    <div id="namew"><div id="name" data-block></div></div>
+    <div id="lead"></div>
+    <div id="pill"><div id="slot"></div><div id="role"></div></div>
+  </div>
+  <div id="ring" class="ring"></div>
+  <div id="av" class="av"><div class="ph"><i></i></div><div class="gl"></div></div>
+  <div id="roster"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.alpha ? MV.u * (SQ ? 0.92 : P ? 1 : 1.3) : MV.u * (P ? 1.6 : 1.4);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const ROSTER = String(v.mode || "").toLowerCase() === "roster";
+  const people = (v.people || []).filter(Boolean);
+  // the portrait: a variable image, else a brand person cut-out (cropped to the head), else the brand mark
+  const face = (el, src, isPerson) => {
+    if (!src) return;
+    el.style.backgroundImage = `url("${src}")`;
+    if (isPerson) { el.style.backgroundSize = "175% auto"; el.style.backgroundPosition = "50% 7%"; }
+    else if (/mark|logo|\.svg/i.test(src)) { el.style.backgroundSize = "58% auto"; el.style.backgroundPosition = "50% 50%"; }
+    else { el.style.backgroundSize = "cover"; el.style.backgroundPosition = "50% 30%"; }
+  };
+  const pick = (i) => (i === 0 && v.image) ? [v.image, false] : people[i] ? [people[i], true] : [v.mark, false];
+
+  if (!ROSTER) {
+    $("#roster").style.display = "none";
+    // ---------------- BADGE ----------------
+    const name = String(v.name || v.brandName || "");
+    const nm = $("#name");
+    [...name].forEach((c) => { const s = document.createElement("span"); s.className = "ch"; s.textContent = c === " " ? " " : c; nm.appendChild(s); });
+    $("#lead").textContent = v.lead || "";
+    if (!v.lead) $("#lead").style.display = "none";
+    $("#role").textContent = v.role || "";
+    const maxW = P ? W - safe.left - safe.right : SQ ? W * 0.8 : W * 0.4;
+    MV.fitText(nm, maxW, 40); MV.fitText("#role", maxW - 140 * u, 14);
+    // one continuous gradient across the letters: each letter shows its own slice of it
+    const nw = nm.getBoundingClientRect().width;
+    nm.querySelectorAll(".ch").forEach((c) => { c.style.backgroundSize = nw + "px 100%"; c.style.backgroundPosition = -c.offsetLeft + "px 0"; });
+
+    // place the group: above the head on 9:16 and 1:1, the right third on 16:9, centred as B-roll
+    const badge = $("#badge"), bw = badge.offsetWidth, bh = badge.offsetHeight;
+    let cx = W / 2, y0 = P ? safe.top + 6 * u : SQ ? safe.top + 4 * u : H * 0.15;
+    if (!P && !SQ) cx = W - safe.right - Math.max(bw, 520 * u) / 2 - 20 * u;
+    if (!MV.alpha) y0 = (P ? H * 0.4 : H * 0.48) - bh / 2;
+    gsap.set(badge, { x: cx - bw / 2, y: y0 });
+    root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", ((y0 + bh / 2) / H * 100) + "%");
+
+    // the portrait: big where the name will sit, then it flies into the pill's slot
+    const BA = Math.round(Math.min(275 * u, bh * 1.04)), av = $("#av"), ring = $("#ring");
+    Object.assign(av.style, { width: BA + "px", height: BA + "px" }); Object.assign(ring.style, { width: BA + "px", height: BA + "px" });
+    const [src, isP] = pick(0); face(av.querySelector("i"), src, isP);
+    const bigX = cx - BA / 2, bigY = y0 + Math.max(0, (bh - BA) / 2) - 6 * u;
+    const sr = $("#slot").getBoundingClientRect(), SA = sr.width, sc = SA / BA;
+    const smX = sr.left + SA / 2 - BA / 2, smY = sr.top + SA / 2 - BA / 2;   // translate so the scaled avatar centres on the slot
+    gsap.set([av, ring], { x: bigX, y: bigY, transformOrigin: "50% 50%" });
+
+    const T0 = 0.05, T1 = 0.62;
+    // pop: 3 frames to full size, a spring settles it, a light ring leaves it
+    tl.fromTo(av, { scale: 0, rotation: -24 }, { scale: 1.1, rotation: 0, duration: 0.1, ease: "power2.out" }, T0);
+    tl.to(av, { scale: 1, duration: 0.42, ease: "back.out(3)" }, T0 + 0.1);
+    tl.fromTo(av, { opacity: 0 }, { opacity: 1, duration: 0.07, ease: "power1.out" }, T0);
+    tl.fromTo(ring, { scale: 0.9, opacity: 0.9 }, { scale: 1.45, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, T0 + 0.08);
+    tl.fromTo(av, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.55, ease: "power2.inOut" }, T0 + 0.12);
+    // a slow drift while it holds
+    tl.to(av, { y: bigY - 8 * u, rotation: 4, duration: T1 - T0 - 0.1, ease: "sine.inOut" }, T0 + 0.1);
+
+    // the hand-off: portrait shrinks into the pill slot, the pill grows out from it, the name sets in
+    tl.to(av, { x: smX, y: smY, scale: sc, rotation: 0, duration: 0.34, ease: "power3.inOut" }, T1);
+    const pill = $("#pill"), pw = pill.offsetWidth, ph = pill.offsetHeight;
+    const pc = { p: 0 }, pclip = () => { pill.style.clipPath = `inset(0 ${(1 - pc.p) * (pw - ph)}px 0 0 round ${ph / 2}px)`; pill.style.visibility = pc.p < 0.01 ? "hidden" : ""; };
+    pclip();
+    tl.to(pc, { p: 1, duration: 0.5, ease: "expo.out", onUpdate: pclip }, T1 + 0.3);
+    tl.fromTo("#role", { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, T1 + 0.38);
+    // the landing: the pill squashes and a small ring pulses round the portrait
+    const LAND = T1 + 0.34;
+    tl.fromTo(pill, { scale: 1 }, { scale: 1.06, duration: 0.07, ease: "power2.out", immediateRender: false }, LAND);
+    tl.to(pill, { scale: 1, duration: 0.4, ease: "back.out(3)" }, LAND + 0.07);
+    tl.set(ring, { x: smX, y: smY }, LAND);
+    tl.fromTo(ring, { scale: sc, opacity: 1 }, { scale: sc * 1.9, opacity: 0, duration: 0.45, ease: "power2.out", immediateRender: false }, LAND);
+    // letters rise out of the line, tipped back, out of blur, overlapping
+    const chs = [...nm.querySelectorAll(".ch")];
+    tl.fromTo(chs, { yPercent: 55, rotationX: -75, opacity: 0, filter: "blur(10px)" },
+      { yPercent: 0, rotationX: 0, opacity: 1, filter: "blur(0px)", duration: 0.6, stagger: Math.min(0.04, 0.3 / chs.length), ease: "expo.out" }, T1 + 0.06);
+    tl.fromTo("#lead", { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, T1 + 0.3);
+    tl.fromTo(nm, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, T1 + 0.5);
+    // the hold drifts: the group breathes in depth
+    tl.fromTo(nm, { rotationY: -10, rotationX: 8 }, { rotationY: 7, rotationX: -3, duration: D - T1 - 0.1, ease: "sine.inOut" }, T1);
+    // exit: letters fly up into blur, the pill folds back into its portrait, which pops out
+    const O = D - 0.42;
+    tl.to(chs, { yPercent: -40, opacity: 0, filter: "blur(12px)", duration: 0.28, stagger: Math.min(0.025, 0.12 / chs.length), ease: "power3.in" }, O);
+    tl.to("#lead", { opacity: 0, y: -10 * u, duration: 0.22, ease: "power3.in" }, O);
+    tl.to("#role", { opacity: 0, duration: 0.14, ease: "power2.in" }, O);
+    tl.to(pc, { p: 0, duration: 0.2, ease: "power3.in", onUpdate: pclip }, O + 0.02);
+    tl.to(av, { scale: 0, duration: 0.14, ease: "power3.in" }, O + 0.18);
+  } else {
+    // ---------------- ROSTER ----------------
+    ["#badge", "#av", "#ring"].forEach((s) => ($(s).style.display = "none"));
+    const R = [[v.name, v.role, v.line], [v.name2, v.role2, v.line2], [v.name3, v.role3, v.line3]].filter((r) => r[0] && String(r[0]).trim());
+    const RW = P ? W - safe.left - safe.right : SQ ? Math.min(760 * u, W - safe.left - safe.right) : Math.min(700 * u, W * 0.4);
+    const ros = $("#roster"); ros.style.width = RW + "px";
+    const rows = R.map(([n, r, m], i) => {
+      const el = document.createElement("div"); el.className = "row";
+      el.innerHTML = `<div class="av"><div class="ph"><i></i></div><div class="gl"></div><div class="on"></div></div>
+        <div class="tx"><div class="l1"><span class="rn"></span><span class="rr"></span><span class="rt"></span></div>
+        <div class="l2"><span class="rm"></span><span class="dots"><i></i><i></i><i></i></span></div></div><div class="bd">1</div><div class="sh"></div>`;
+      el.querySelector(".rn").textContent = n; el.querySelector(".rr").textContent = r || ""; if (!r) el.querySelector(".rr").style.display = "none";
+      el.querySelector(".rt").textContent = v.time || ""; el.querySelector(".rm").textContent = m || "";
+      const [src, isP] = pick(i); face(el.querySelector(".ph i"), src, isP);
+      ros.appendChild(el); return el;
+    });
+    rows.forEach((el) => {
+      const inner = RW - (14 + 96 + 24 + 26) * u;
+      MV.fitText(el.querySelector(".rn"), inner * 0.45, 18); MV.fitText(el.querySelector(".rr"), inner * 0.38, 12);
+      MV.fitText(el.querySelector(".rm"), inner - 56 * u, 14);
+    });
+    const RH = ros.offsetHeight;
+    let x = (W - RW) / 2, y = (H - RH) / 2;
+    if (MV.alpha) {
+      if (P) { x = safe.left; y = safe.top + 6 * u; }
+      else if (!SQ) { x = W - safe.right - RW; y = H * 0.14; }
+      else { y = safe.top + 4 * u; }
+    } else if (P) y = H * 0.4 - RH / 2;
+    gsap.set(ros, { x, y });
+    root.style.setProperty("--gx", ((x + RW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + RH / 2) / H * 100) + "%");
+
+    const T = rows.map((_, i) => 0.06 + i * 0.26);
+    rows.forEach((el, i) => {
+      const t = T[i];
+      // each row swings in from the left edge on its hinge, out of blur
+      tl.fromTo(el, { x: -70 * u, rotationY: 28, scale: 0.94 }, { x: 0, rotationY: 0, scale: 1, duration: 0.8, ease: "back.out(1.5)" }, t);
+      tl.fromTo(el, { opacity: 0, filter: "blur(12px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power3.out" }, t);
+      // its portrait pops on the glass rim
+      tl.fromTo(el.querySelector(".av"), { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, t + 0.06);
+      tl.fromTo(el.querySelector(".on"), { scale: 0 }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, t + 0.36);
+      tl.fromTo(el.querySelector(".l1"), { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, t + 0.12);
+      tl.fromTo(el, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.75, ease: "power2.inOut" }, t + 0.3);
+      if (i > 0) tl.fromTo(el.querySelector(".rm"), { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out" }, t + 0.2);
+    });
+    // the moment: the first agent is typing, then its message lands with an unread badge
+    const r0 = rows[0], dots = r0.querySelector(".dots"), HIT = Math.min(1.55, D - 1.4);
+    tl.set(r0.querySelector(".rm"), { opacity: 0 }, 0);
+    tl.to(dots, { opacity: 1, duration: 0.15, ease: "power1.out" }, T[0] + 0.3);
+    [...dots.children].forEach((d, k) => { for (let b = 0; b < 3; b++) { const s = T[0] + 0.35 + b * 0.36 + k * 0.1; if (s + 0.3 > HIT) break;
+      tl.fromTo(d, { y: 0 }, { y: -8 * u, duration: 0.15, ease: "sine.out", yoyo: true, repeat: 1, immediateRender: false }, s); } });
+    tl.to(dots, { opacity: 0, duration: 0.1, ease: "power1.in" }, HIT - 0.08);
+    tl.fromTo(r0.querySelector(".rm"), { opacity: 0, x: -10 * u, color: "var(--ink)" }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", immediateRender: false }, HIT);
+    tl.fromTo(r0.querySelector(".bd"), { scale: 0, opacity: 1 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(3.4)", immediateRender: false }, HIT);
+    tl.fromTo(r0, { scale: 1 }, { scale: 1.025, duration: 0.07, ease: "power2.out", immediateRender: false }, HIT);
+    tl.to(r0, { scale: 1, duration: 0.4, ease: "back.out(2.5)" }, HIT + 0.07);
+    tl.fromTo(r0, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.7, ease: "power2.inOut", immediateRender: false }, HIT + 0.05);
+    // the hold drifts
+    tl.fromTo(ros, { y }, { y: y + 10 * u, duration: D - 0.6, ease: "sine.inOut", immediateRender: false }, 0.3);
+    // exit: rows flick away left, top first, accelerating
+    rows.forEach((el, i) => tl.to(el, { x: -110 * u, opacity: 0, filter: "blur(12px)", duration: 0.28, ease: "power3.in" }, D - 0.42 + i * 0.05));
+  }
+  MV.done();
+</script>
+</body>
+</html>

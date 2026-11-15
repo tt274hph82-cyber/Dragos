@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"label","type":"string","label":"One line under the name (empty: the brand tagline)","default":""},
+  {"id":"name","type":"string","label":"Name under the icon (empty: the brand name)","default":""},
+  {"id":"badge","type":"number","label":"The number on the badge (0: no badge)","default":12}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); --S: 300px; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(48% 30% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 34%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 24%, transparent), transparent 70%), var(--ground); }
+  /* a glass floor: a faint horizon line of light the icon lands on */
+  #floor { position: absolute; left: 0; height: calc(var(--u) * 2); background: linear-gradient(90deg, transparent, rgba(255,255,255,.16) 30%, rgba(255,255,255,.22) 50%, rgba(255,255,255,.16) 70%, transparent); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #floor { display: none; }
+
+  #glow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 70%); }
+  .is-key #glow { display: none; }
+  #shadow { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.7), rgba(0,0,0,.3) 45%, transparent 72%); }
+  #wave { position: absolute; border-radius: 50%; border: calc(var(--u) * 3) solid color-mix(in srgb, var(--al) 80%, transparent); box-sizing: border-box; opacity: 0; }
+  .is-key #shadow, .is-key #wave { display: none; }
+
+  .persp { position: absolute; width: var(--S); height: var(--S); perspective: calc(var(--u) * 1400); }
+  .drop { position: absolute; inset: 0; transform-style: preserve-3d; }
+  /* the tile: a squircle with real thickness (stacked slices), a bevel, a gloss and a specular sweep */
+  .slab { position: absolute; inset: 0; border-radius: 22.5%; }
+  .face { position: absolute; inset: 0; border-radius: 22.5%; overflow: hidden; transform: translateZ(0.5px);
+    background: linear-gradient(150deg, var(--al), var(--accent) 52%, var(--ad)); }
+  .face img { position: absolute; display: block; }
+  .face.full img { inset: -1%; width: 102%; height: 102%; object-fit: cover; }
+  .face.glyph img { left: 21%; top: 21%; width: 58%; height: 58%; object-fit: contain; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.25)); }
+  .gloss { position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: radial-gradient(130% 75% at 30% -12%, rgba(255,255,255,.42), rgba(255,255,255,.08) 48%, transparent 62%),
+      linear-gradient(180deg, transparent 62%, rgba(0,0,0,.2)); }
+  .bevel { position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 calc(var(--u) * 4) calc(var(--u) * 2) rgba(255,255,255,.55), inset 0 calc(var(--u) * -8) calc(var(--u) * 16) rgba(0,0,0,.3),
+      inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.16); }
+  .rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 3); pointer-events: none;
+    background: linear-gradient(140deg, rgba(255,255,255,.9), rgba(255,255,255,.12) 35%, transparent 55%, rgba(255,255,255,.35) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  .spec { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 16%), rgba(255,255,255,.55) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 16%)); }
+
+  #badge { position: absolute; right: -9%; top: -9%; min-width: 30%; height: 30%; padding: 0 7%; box-sizing: border-box; border-radius: 999px; display: grid; place-items: center;
+    transform: translateZ(calc(var(--u) * 20)); background: radial-gradient(circle at 35% 25%, #FF7A6E, #FF3B30 55%, #D61F17);
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 10) calc(var(--u) * 22) rgba(120,0,0,.45), 0 0 0 calc(var(--u) * 5) rgba(0,0,0,.18);
+    font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  #bring { position: absolute; left: 50%; top: 50%; width: 220%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); border: calc(var(--u) * 5) solid #FF5A4E; box-sizing: border-box; opacity: 0; }
+
+  /* the reflection: the same tile, mirrored under the floor, fading out */
+  #refl { position: absolute; overflow: hidden; -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.42), transparent 46%); mask-image: linear-gradient(180deg, rgba(0,0,0,.42), transparent 46%); }
+  #rflip { position: absolute; inset: 0; transform: scaleY(-1); }
+  .is-alpha #refl { -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.26), transparent 38%); mask-image: linear-gradient(180deg, rgba(0,0,0,.26), transparent 38%); }
+  .is-key #refl { display: none; }
+
+  #txt { position: absolute; text-align: center; }
+  #nm { display: inline-block; font-family: var(--font-display); color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
+  #lb { display: inline-block; margin-top: calc(var(--u) * 10); color: color-mix(in srgb, var(--ink) 62%, transparent); font-weight: 500; white-space: nowrap; }
+  .is-alpha #txt { text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 16) rgba(0,0,0,.55); }
+  .is-key #txt { text-shadow: none; }
+  .is-key #lb { color: color-mix(in srgb, var(--ink) 78%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="floor"></div>
+  <div id="glow"></div>
+  <div id="refl"><div id="rflip"><div class="persp" id="rp"><div class="drop" id="rdrop"></div></div></div></div>
+  <div id="shadow"></div>
+  <div id="wave"></div>
+  <div class="persp" id="ip"><div id="blurw" style="position:absolute;inset:0;perspective:calc(var(--u) * 1400)"><div class="drop" id="drop"></div></div></div>
+  <div id="txt"><div><span id="nm"></span></div><div><span id="lb"></span></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 1 : 1.25);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const ACC = getComputedStyle(root).getPropertyValue("--accent").trim();
+
+  // ---- size: the icon is the hero
+  const S = Math.round((MV.alpha ? (MV.portrait ? 300 : 300) : (MV.portrait ? 420 : 360)) * u);
+  root.style.setProperty("--S", S + "px");
+
+  // ---- build the tile (and its mirror): K slices for the thickness, then the face
+  const face = () => { const f = document.createElement("div"); f.className = "face glyph"; if (v.mark) f.appendChild(MV.img(v.mark));
+    f.insertAdjacentHTML("beforeend", '<div class="gloss"></div><div class="bevel"></div><div class="spec"></div><div class="rim"></div>'); return f; };
+  const K = 16, dz = S * 0.0062;
+  for (let i = K; i >= 1; i--) { const s = document.createElement("div"); s.className = "slab";
+    s.style.background = `color-mix(in srgb, ${ACC} ${Math.round(70 - (i / K) * 30)}%, black)`; s.style.transform = `translateZ(${-i * dz}px)`; $("#drop").appendChild(s); }
+  const F = face(); $("#drop").appendChild(F);
+  const RF = face(); $("#rdrop").appendChild(RF);
+  const badgeN = Math.max(0, Math.round(+v.badge || 0));
+  if (badgeN) { $("#drop").insertAdjacentHTML("beforeend", '<div id="badge"><span id="bn">1</span><i id="bring"></i></div>'); $("#badge").style.fontSize = S * 0.17 + "px"; }
+  // a mark that is already a full tile fills the face; a bare glyph sits on a brand-colour tile
+  if (v.mark) { const p = new Image(); p.onload = () => { try { const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d"); g.drawImage(p, 0, 0, 64, 64);
+      const a = (x, y) => g.getImageData(x, y, 1, 1).data[3];
+      if (a(32, 3) > 200 && a(3, 32) > 200 && a(60, 32) > 200 && a(32, 60) > 200) [F, RF].forEach((f) => f.classList.replace("glyph", "full")); } catch (e) {} }; p.src = v.mark; }
+
+  // ---- text
+  const nm = $("#nm"), lb = $("#lb");
+  nm.textContent = v.name || v.brandName || "";
+  lb.textContent = v.label || v.tagline || "";
+  nm.style.fontSize = Math.round((MV.alpha ? 66 : 84) * u) + "px"; lb.style.fontSize = Math.round((MV.alpha ? 32 : 38) * u) + "px";
+
+  // ---- layout: the icon, its floor, the name under the reflection's bright part
+  const TW = MV.portrait ? W - safe.left - safe.right : Math.min(W * (MV.alpha ? 0.36 : 0.7), 900 * u);
+  MV.fit(nm, TW, 20); MV.fit(lb, TW, 14);
+  const gap = S * 0.2, nmH = nm.getBoundingClientRect().height, lbH = lb.textContent ? lb.getBoundingClientRect().height + 10 * u : 0;
+  const blockH = S + gap + nmH + lbH;
+  let cx = W / 2, top0 = (H - blockH) / 2 - (MV.portrait ? 60 * u : 0);
+  if (MV.alpha) {
+    if (MV.portrait) { cx = safe.left + (W - safe.left - safe.right) / 2; top0 = safe.top + 60 * u; }
+    else if (W > H) { cx = W - safe.right - TW / 2; top0 = (H - blockH) / 2 - 40 * u; }
+    else { cx = W - safe.right - Math.max(TW, S) / 2 - 20 * u; top0 = safe.top + 70 * u; }
+  }
+  if (MV.alpha && W === H) { /* 1:1: keep the block in the upper right corner, the face sits centre-left */ }
+  const ix = Math.round(cx - S / 2), iy = Math.round(top0), floorY = iy + S;
+  for (const s of ["#ip"]) gsap.set(s, { left: ix, top: iy });
+  gsap.set("#refl", { left: ix - S * 0.2, top: floorY, width: S * 1.4, height: S });
+  gsap.set("#rp", { left: S * 0.2, top: 0 });
+  gsap.set("#floor", { top: floorY, left: cx - S * 1.6, width: S * 3.2 });
+  gsap.set("#shadow", { left: cx - S * 0.55, top: floorY - S * 0.07, width: S * 1.1, height: S * 0.16 });
+  gsap.set("#wave", { left: cx - S * 0.6, top: floorY - S * 0.09, width: S * 1.2, height: S * 0.18 });
+  gsap.set("#glow", { left: cx - S * 1.1, top: iy + S / 2 - S * 1.1, width: S * 2.2, height: S * 2.2 });
+  gsap.set("#txt", { left: cx - TW / 2, width: TW, top: floorY + gap });
+  root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", ((iy + S / 2) / H * 100) + "%");
+
+  // ---- the drop: icon and mirror get the same motion (the mirror's wrapper flips it)
+  const both = (vars, pos) => tl.to(["#drop", "#rdrop"], vars, pos);
+  gsap.set(["#drop", "#rdrop"], { transformOrigin: "50% 100%", y: -(iy + S * 1.3), rotationX: 34, rotationY: -22, rotationZ: -14, scaleX: 0.92, scaleY: 1.1 });
+  const T = 0.06, LAND = T + 0.44;
+  both({ y: 0, rotationX: 8, rotationY: -16, rotationZ: 0, duration: 0.44, ease: "power2.in" }, T);
+  tl.fromTo("#blurw", { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.4, ease: "power2.in" }, T);
+  tl.fromTo("#refl", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in" }, T + 0.14);
+  // land: squash, rebound, settle on a spring
+  both({ scaleX: 1.12, scaleY: 0.84, duration: 0.07, ease: "power2.out" }, LAND);
+  both({ scaleX: 0.97, scaleY: 1.04, y: -S * 0.2, duration: 0.24, ease: "power2.out" }, LAND + 0.07);
+  both({ scaleX: 1, scaleY: 1, y: 0, duration: 0.2, ease: "power2.in" }, LAND + 0.31);
+  both({ scaleX: 1.05, scaleY: 0.94, duration: 0.06, ease: "power2.out" }, LAND + 0.51);
+  both({ scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(2.6)" }, LAND + 0.57);
+  // the shadow gathers as it falls and spreads on the hit; a ring of light runs out across the floor
+  tl.fromTo("#shadow", { opacity: 0, scaleX: 0.3 }, { opacity: 1, scaleX: 1, duration: 0.44, ease: "power2.in" }, T);
+  tl.to("#shadow", { scaleX: 1.12, duration: 0.07 }, LAND); tl.to("#shadow", { scaleX: 0.8, opacity: 0.6, duration: 0.24, ease: "power2.out" }, LAND + 0.07);
+  tl.to("#shadow", { scaleX: 1, opacity: 1, duration: 0.2, ease: "power2.in" }, LAND + 0.31);
+  tl.fromTo("#wave", { scale: 0.5, opacity: 0.9 }, { scale: 2.1, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, LAND);
+  tl.set("#wave", { opacity: 0 }, 0);
+  tl.fromTo("#glow", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.9, ease: "expo.out" }, LAND);
+  // then it turns slowly through the hold, showing its thickness
+  both({ rotationX: -4, rotationY: 16, rotationZ: 1.5, duration: D - (LAND + 0.6) - 0.4, ease: "sine.inOut" }, LAND + 0.6);
+  // the specular sweep runs over the glass, twice
+  tl.fromTo([F.querySelector(".spec"), RF.querySelector(".spec")], { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, LAND + 0.25);
+  tl.fromTo([F.querySelector(".spec"), RF.querySelector(".spec")], { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut", immediateRender: false }, D - 1.75);
+  // the name and line rise out of the floor
+  tl.fromTo("#nm", { opacity: 0, y: 30 * u, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "expo.out" }, LAND + 0.4);
+  tl.fromTo("#lb", { opacity: 0, y: 22 * u }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, LAND + 0.52);
+  // the badge: the moment that lands. It pops on a spring, rings, counts up and stamps
+  if (badgeN) {
+    const B = LAND + 0.95, bn = $("#bn"), o = { n: 1 };
+    tl.fromTo("#badge", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3.2)" }, B);
+    tl.fromTo("#bring", { scale: 0.3, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, B + 0.04);
+    tl.set("#bring", { opacity: 0 }, 0);
+    if (badgeN > 1) {
+      tl.to(o, { n: badgeN, duration: 0.55, ease: "power2.out", onUpdate: () => { bn.textContent = Math.round(o.n); } }, B + 0.18);
+      tl.to("#badge", { scale: 1.22, duration: 0.07, ease: "power2.out" }, B + 0.74); tl.to("#badge", { scale: 1, duration: 0.45, ease: "back.out(3)" }, B + 0.81);
+    }
+    tl.set(bn, { textContent: "1" }, 0);
+  }
+  // exit: the icon lifts away into blur, the words sink, accelerating
+  const O = D - 0.42;
+  both({ y: -S * 0.5, rotationX: -20, duration: 0.38, ease: "power3.in" }, O);
+  tl.to("#blurw", { opacity: 0, filter: "blur(14px)", duration: 0.36, ease: "power3.in" }, O + 0.02);
+  tl.to(["#refl", "#shadow", "#glow"], { opacity: 0, duration: 0.3, ease: "power2.in" }, O);
+  tl.to("#txt", { opacity: 0, y: 30 * u, filter: "blur(8px)", duration: 0.32, ease: "power3.in" }, O);
+  MV.done();
+</script>
+</body>
+</html>

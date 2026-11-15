@@ -1,0 +1,5 @@
+{ "id": "file-attach-flow", "name": "File attach flow", "oneLiner": "on warm paper, a white glass chat panel and a second panel (a memory or library) float in 3D; a real document with the brand's page on it arcs in and drops into the composer as an attachment chip, its bar fills to a green check, it sends up as a bubble, then a dotted link carries it across into the second panel where it lands with Saved, or hits a red wall and stops",
+  "category": "ai", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "paper"], "from": "new",
+  "tags": ["file", "attach", "upload", "document", "pdf", "chat", "ai", "context", "memory", "privacy", "data flow", "saved", "blocked", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker hands an AI a file and says where it goes ('you attach the report, and it lands in its memory' or 'it never leaves the chat'): the file drops in on 'attach', the link reaches the second panel as they name it. mode saved (lands with a green check) or blocked (a red wall stops it)" }

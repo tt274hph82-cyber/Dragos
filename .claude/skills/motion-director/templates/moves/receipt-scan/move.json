@@ -1,0 +1,5 @@
+{ "id": "receipt-scan", "name": "Receipt scan", "oneLiner": "a thermal receipt is laid on a stone counter, a phone slides in over it and its camera brackets snap to the corners, a scan line runs down the paper and boxes find the shop, the date and the total, the shutter blinks, then each field lifts off the receipt and flies into a glass expense card that fills its rows, files a category and lands a green Ready to submit",
+  "category": "business", "kind": "effect", "uses": ["broll"], "looks": ["paper", "glass"], "from": "new",
+  "tags": ["receipt", "expense", "scan", "ocr", "bookkeeping", "accounting", "taxes", "automation", "ai", "phone", "camera", "extract", "paper", "admin"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker says they snap a receipt and the admin does itself ('I take a photo and it files the expense', 'no more typing in receipts'): the scan runs as they say 'photo', the fields fly in on 'files itself'" }

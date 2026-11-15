@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"rating","type":"number","label":"Rating out of 5","default":4.9},
+  {"id":"ratings","type":"string","label":"Ratings count label","default":"12,000 ratings"},
+  {"id":"category","type":"string","label":"Line under the app name","default":"Productivity"},
+  {"id":"quote","type":"string","label":"The review","default":"I have not written meeting notes by hand in months."},
+  {"id":"reviewer","type":"string","label":"Reviewer name","default":"Priya S."}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --gold: color-mix(in srgb, var(--accent) 30%, #FFC24A); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 18% 96%, color-mix(in srgb, var(--accent2) 26%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1700); }
+  #card { position: relative; box-sizing: border-box; padding: calc(var(--u) * 40) calc(var(--u) * 44) calc(var(--u) * 38); border-radius: calc(var(--u) * 44);
+    transform-style: preserve-3d;
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 80%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.26) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  .hd { display: flex; align-items: center; gap: calc(var(--u) * 24); }
+  #tile { flex: none; width: calc(var(--u) * 104); height: calc(var(--u) * 104); border-radius: calc(var(--u) * 26); overflow: hidden;
+    box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.16), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 60%, rgba(0,0,0,.6)); }
+  #tile img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  .who { flex: 1; min-width: 0; }
+  #an { font-size: calc(var(--u) * 42); font-weight: 800; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
+  #cat { margin-top: calc(var(--u) * 4); font-size: calc(var(--u) * 28); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  .rt { display: flex; align-items: center; gap: calc(var(--u) * 34); margin-top: calc(var(--u) * 30); }
+  #num { flex: none; font-family: var(--font-display); font-size: calc(var(--u) * 150); line-height: .9; letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums; transform-origin: 50% 60%; }
+  .sc { flex: 1; min-width: 0; }
+  #stars { display: flex; gap: calc(var(--u) * 10); }
+  .st { position: relative; width: calc(var(--u) * 60); height: calc(var(--u) * 60); flex: none; }
+  .st svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .st .f { clip-path: inset(0 100% 0 0); filter: drop-shadow(0 0 calc(var(--u) * 8) color-mix(in srgb, var(--gold) 70%, transparent)); }
+  .is-key .st .f { filter: none; }
+  .st .gl { position: absolute; left: 50%; top: 45%; width: calc(var(--u) * 90); height: calc(var(--u) * 90); margin: calc(var(--u) * -45); opacity: 0; pointer-events: none;
+    background: radial-gradient(circle, #fff 0 8%, rgba(255,255,255,.0) 9%), linear-gradient(90deg, transparent 47%, #fff 50%, transparent 53%), linear-gradient(0deg, transparent 47%, #fff 50%, transparent 53%);
+    -webkit-mask: radial-gradient(circle, #000 20%, transparent 70%); mask: radial-gradient(circle, #000 20%, transparent 70%); }
+  #cnt { margin-top: calc(var(--u) * 14); font-size: calc(var(--u) * 28); font-weight: 600; color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; }
+  #rw { overflow: hidden; }
+  #hr { height: calc(var(--u) * 1.5); margin: calc(var(--u) * 32) 0 calc(var(--u) * 28); background: linear-gradient(90deg, rgba(255,255,255,.2), rgba(255,255,255,.03)); transform-origin: 0 50%; }
+  .rv { display: flex; gap: calc(var(--u) * 20); align-items: flex-start; }
+  #qm { flex: none; width: calc(var(--u) * 50); height: calc(var(--u) * 50); margin-top: calc(var(--u) * 2); }
+  #quote { flex: 1; min-width: 0; font-size: calc(var(--u) * 42); line-height: 1.26; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); text-wrap: balance; }
+  .by { display: flex; align-items: center; gap: calc(var(--u) * 16); margin-top: calc(var(--u) * 24); margin-left: calc(var(--u) * 70); }
+  #rav { flex: none; width: calc(var(--u) * 60); height: calc(var(--u) * 60); border-radius: 50%; overflow: hidden;
+    background-color: color-mix(in srgb, var(--accent2) 40%, var(--surface)); background-repeat: no-repeat; background-size: 170% auto; background-position: 50% 6%; box-shadow: 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.2); }
+  #rn { font-size: calc(var(--u) * 30); font-weight: 700; color: color-mix(in srgb, var(--ink) 80%, transparent); white-space: nowrap; }
+  #ms { display: flex; gap: calc(var(--u) * 4); }
+  #ms svg { width: calc(var(--u) * 26); height: calc(var(--u) * 26); }
+  #ring { position: absolute; left: 0; top: 0; width: calc(var(--u) * 260); height: calc(var(--u) * 260); margin: calc(var(--u) * -130); border-radius: 50%;
+    border: calc(var(--u) * 6) solid var(--gold); box-sizing: border-box; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div class="hd"><div id="tile"></div><div class="who"><div id="an"></div><div id="cat"></div></div></div>
+    <div class="rt"><div id="num">0.0</div><div class="sc"><div id="stars"></div><div id="cnt"></div></div></div>
+    <div id="rw"><div id="hr"></div>
+    <div class="rv"><svg id="qm" viewBox="0 0 24 24"><path d="M3.5 18.5v-5.2c0-4.4 2.3-7.3 6-8.3l.8 1.9c-2 .9-3.1 2.4-3.3 4.4h3.2v7.2H3.5zm10.4 0v-5.2c0-4.4 2.3-7.3 6-8.3l.8 1.9c-2 .9-3.1 2.4-3.3 4.4h3.2v7.2h-6.7z" fill="var(--accent)"/></svg><div id="quote"></div></div>
+    <div class="by"><div id="rav"></div><div><div id="rn"></div><div id="ms"></div></div></div></div>
+    <div id="ring"></div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const u = MV.portrait ? MV.u * 1.04 : MV.u * (MV.alpha ? 1 : 1.24);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const fitw = (el, maxW, min) => { if (typeof el === "string") el = $(el); let fs = parseFloat(getComputedStyle(el).fontSize); const r = document.createRange(); r.selectNodeContents(el);
+    while (r.getBoundingClientRect().width > maxW && fs > min) { fs -= 1; el.style.fontSize = fs + "px"; } };
+  const R = Math.max(0, Math.min(5, +v.rating || 0));
+  $("#an").textContent = v.brandName || ""; $("#cat").textContent = v.category || "";
+  $("#cnt").textContent = v.ratings || ""; $("#quote").textContent = v.quote || "";
+  $("#rn").textContent = v.reviewer || "";
+  if (v.mark) $("#tile").appendChild(MV.img(v.mark));
+  const ppl = v.people || []; if (ppl.length) $("#rav").style.backgroundImage = `url("${ppl[0]}")`;
+  const STAR = "M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.2l-5.8 3.2 1.2-6.5-4.8-4.5 6.5-.8z";
+  for (let i = 0; i < 5; i++) { const s = document.createElement("div"); s.className = "st";
+    s.innerHTML = `<svg viewBox="0 0 24 24"><path d="${STAR}" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.28)" stroke-width="1.2" stroke-linejoin="round"/></svg><svg class="f" viewBox="0 0 24 24"><path d="${STAR}" fill="var(--gold)" stroke="var(--gold)" stroke-width="1.2" stroke-linejoin="round"/></svg><i class="gl"></i>`;
+    $("#stars").appendChild(s); }
+  for (let i = 0; i < 5; i++) $("#ms").insertAdjacentHTML("beforeend", `<svg viewBox="0 0 24 24"><path d="${STAR}" fill="var(--gold)"/></svg>`);
+
+  const CW = MV.portrait ? W - safe.left - safe.right : Math.min(820 * u, W - safe.left - safe.right);
+  $("#card").style.width = CW + "px";
+  const inner = CW - 88 * u;
+  fitw("#an", inner - 128 * u, 18); fitw("#cat", inner - 128 * u, 14);
+  $("#num").textContent = R.toFixed(1);
+  // the rating column: number, then stars + count in what is left
+  { const nw = $("#num").getBoundingClientRect().width, room = inner - nw - 34 * u;
+    const sw = Math.min(60 * u, (room - 40 * u) / 5); document.querySelectorAll(".st").forEach((s) => { s.style.width = s.style.height = sw + "px"; });
+    fitw("#cnt", room, 12); $("#num").style.minWidth = nw + "px"; }
+  $("#num").textContent = "0.0";
+  { const q = $("#quote"); let fs = 42 * u; while (q.getBoundingClientRect().height > fs * 1.26 * 3 + 2 && fs > 20) { fs -= 2; q.style.fontSize = fs + "px"; } }
+  fitw("#rn", inner - 150 * u, 14);
+  const CH = $("#card").getBoundingClientRect().height;
+  const RWH = $("#rw").getBoundingClientRect().height + 6 * u; gsap.set("#rw", { height: 0 });
+
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) {
+    if (MV.portrait) { x = safe.left; y = safe.top + 16 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = (H - CH) / 2 - 20 * u; }
+    else { y = safe.top + 10; }
+  } else if (MV.portrait) y = (H - CH) / 2 - 120 * u;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+  { const n = $("#num"); gsap.set("#ring", { left: n.offsetLeft + n.offsetWidth / 2, top: n.offsetTop + n.offsetHeight / 2 }); }
+
+  // 0.05: the card pops in out of depth, tilted
+  tl.fromTo("#card", { z: -700 * u, rotationX: 30, rotationY: -28, rotationZ: -6, scale: 0.72 },
+    { z: 0, rotationX: 8, rotationY: -11, rotationZ: -1.5, scale: 1, duration: 0.95, ease: "back.out(1.35)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.to("#card", { rotationX: 3, rotationY: 9, rotationZ: 1, duration: D - 1.45, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#tile", { scale: 0.4, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.2)" }, 0.28);
+  tl.fromTo(".who", { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.36);
+  tl.fromTo(["#num", "#stars", "#cnt"], { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.06, ease: "expo.out" }, 0.5);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.9);
+  // the stars fill one by one, each with a glint; the number counts with them and stops on the last
+  const S0 = 0.95, SG = 0.2, stars = [...document.querySelectorAll(".st")];
+  const o = { n: 0 }, HIT = S0 + 4 * SG + 0.22;
+  tl.to(o, { n: R, duration: HIT - S0, ease: "none", onUpdate: () => { $("#num").textContent = (Math.round(o.n * 10) / 10).toFixed(1); } }, S0);
+  stars.forEach((s, i) => {
+    const fill = Math.max(0, Math.min(1, R - i)); if (!fill) return;
+    const t = S0 + i * SG;
+    tl.fromTo(s.querySelector(".f"), { clipPath: "inset(0 100% 0 0)" }, { clipPath: `inset(0 ${((1 - fill) * 100).toFixed(1)}% 0 0)`, duration: 0.22, ease: "power2.out" }, t);
+    tl.fromTo(s, { scale: 1 }, { scale: 1.3, duration: 0.09, ease: "power2.out", immediateRender: false }, t);
+    tl.to(s, { scale: 1, duration: 0.4, ease: "back.out(3)" }, t + 0.09);
+    tl.fromTo(s.querySelector(".gl"), { opacity: 1, scale: 0.2, rotation: 0 }, { opacity: 0, scale: 1.3, rotation: 45, duration: 0.45, ease: "power2.out", immediateRender: false }, t + 0.1);
+  });
+  // the number stamps: a ring off it, the card answers, light runs across
+  // real colours to tween between (a CSS variable does not interpolate)
+  const probe = (c) => { const d = document.createElement("i"); d.style.color = c; $("#card").appendChild(d); const r = getComputedStyle(d).color; d.remove();
+    const cx = document.createElement("canvas").getContext("2d"); cx.fillStyle = "#000"; cx.fillStyle = r; cx.fillRect(0, 0, 1, 1); const p = cx.getImageData(0, 0, 1, 1).data; return `rgb(${p[0]}, ${p[1]}, ${p[2]})`; };
+  const GOLD = probe("var(--gold)"), INK = probe("var(--ink)");
+  tl.set("#num", { color: GOLD }, HIT);
+  tl.fromTo("#num", { scale: 1 }, { scale: 1.16, duration: 0.08, ease: "power2.out", immediateRender: false }, HIT);
+  tl.to("#num", { scale: 1, duration: 0.45, ease: "back.out(3)" }, HIT + 0.08);
+  tl.fromTo("#num", { color: GOLD }, { color: INK, duration: 0.8, ease: "power2.out", immediateRender: false }, HIT + 0.5);
+  tl.fromTo("#ring", { scale: 0.3, opacity: 1 }, { scale: 1.15, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, HIT);
+  tl.to("#card", { scale: 1.03, duration: 0.08, ease: "power2.out" }, HIT); tl.to("#card", { scale: 1, duration: 0.45, ease: "back.out(2.5)" }, HIT + 0.08);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut", immediateRender: false }, HIT + 0.1);
+  // the review lands
+  const RV = HIT + 0.25;
+  tl.to("#rw", { height: RWH, duration: 0.6, ease: "expo.out" }, RV - 0.2);
+  tl.fromTo("#hr", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, RV - 0.1);
+  tl.fromTo("#qm", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, RV);
+  const qw = MV.words("#quote");
+  tl.fromTo(qw, { opacity: 0, y: 20 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: Math.min(0.035, 0.5 / qw.length), ease: "expo.out" }, RV + 0.05);
+  tl.fromTo(".by", { opacity: 0, x: -24 * u }, { opacity: 1, x: 0, duration: 0.55, ease: "expo.out" }, RV + 0.45);
+  tl.fromTo("#rav", { scale: 0.4 }, { scale: 1, duration: 0.5, ease: "back.out(2.4)" }, RV + 0.45);
+  // exit: tips back and flies up into blur, accelerating
+  tl.to("#card", { y: -140 * u, z: -300 * u, rotationX: -18, opacity: 0, filter: "blur(16px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"caller","type":"string","label":"Who is calling (empty: the brand name)","default":""},
+  {"id":"label","type":"string","label":"Line over the avatar while it rings","default":"Incoming call"},
+  {"id":"sub","type":"string","label":"Line under the name","default":"mobile"},
+  {"id":"slide","type":"string","label":"Text in the slider","default":"slide to answer"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --go: #2BD46B; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 34% at var(--gx, 50%) var(--gy, 40%), color-mix(in srgb, var(--accent) 32%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 1800); }
+  #card { position: absolute; border-radius: calc(var(--u) * 64); overflow: hidden; background: var(--surface);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 60) calc(var(--u) * 110) calc(var(--u) * -30) rgba(0,0,0,.8), 0 0 calc(var(--u) * 140) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 50%, transparent); }
+  .is-key #card { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14); }
+  /* the caller's own photo, blown up and blurred, lights the card from behind */
+  #bgph { position: absolute; inset: -20%; background-size: cover; background-position: 50% 30%; filter: blur(46px) saturate(140%) brightness(.62); }
+  #tint { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.25) 45%, rgba(0,0,0,.72)); }
+  #gloss { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: radial-gradient(90% 40% at 30% -5%, rgba(255,255,255,.18), transparent 60%),
+      linear-gradient(105deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.16) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  .c { position: absolute; left: 0; right: 0; text-align: center; white-space: nowrap; }
+  #lab { font-size: calc(var(--u) * 38); font-weight: 600; letter-spacing: .02em; color: color-mix(in srgb, #fff 75%, transparent); }
+  #lab .dot { display: inline-block; width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--go); margin-right: calc(var(--u) * 14); vertical-align: middle; position: relative; top: calc(var(--u) * -3); }
+  #tm { font-size: calc(var(--u) * 40); font-weight: 600; color: var(--go); font-variant-numeric: tabular-nums; opacity: 0; }
+  #av { position: absolute; border-radius: 50%; background-size: cover; background-position: 50% 30%;
+    box-shadow: 0 0 0 calc(var(--u) * 5) rgba(255,255,255,.22), 0 calc(var(--u) * 30) calc(var(--u) * 60) rgba(0,0,0,.55); }
+  .ring { position: absolute; border-radius: 50%; border: calc(var(--u) * 5) solid color-mix(in srgb, var(--al) 50%, #fff); box-shadow: 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--al) 60%, transparent); box-sizing: border-box; opacity: 0; }
+  #ok { position: absolute; border-radius: 50%; border: calc(var(--u) * 7) solid var(--go); box-sizing: border-box; opacity: 0; }
+  #nm { font-family: var(--font-display); font-size: calc(var(--u) * 78); color: #fff; letter-spacing: -0.01em; }
+  #sb { font-size: calc(var(--u) * 38); font-weight: 500; color: color-mix(in srgb, #fff 62%, transparent); }
+
+  #track { position: absolute; border-radius: 999px; overflow: hidden;
+    background: rgba(255,255,255,.14); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.25), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .is-key #track { -webkit-backdrop-filter: none; backdrop-filter: none; background: color-mix(in srgb, var(--surface) 70%, #fff); }
+  #fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: linear-gradient(180deg, color-mix(in srgb, var(--go) 80%, #fff), var(--go)); }
+  #stx { position: absolute; inset: 0; display: grid; place-items: center; font-size: calc(var(--u) * 38); font-weight: 600; color: transparent; white-space: nowrap;
+    background: linear-gradient(90deg, rgba(255,255,255,.45) calc(var(--sh, 0%) - 18%), #fff var(--sh, 0%), rgba(255,255,255,.45) calc(var(--sh, 0%) + 18%));
+    -webkit-background-clip: text; background-clip: text; }
+  #knob { position: absolute; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 35% 25%, color-mix(in srgb, var(--go) 60%, #fff), var(--go) 55%, color-mix(in srgb, var(--go) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.45), 0 calc(var(--u) * 10) calc(var(--u) * 24) rgba(0,0,0,.45); }
+  #knob svg { width: 46%; height: 46%; fill: #fff; }
+  #flash { position: absolute; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--go) 70%, #fff), transparent 70%); opacity: 0; }
+  .is-key #flash { display: none; }
+  .is-key .ring { box-shadow: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="card">
+    <div id="bgph"></div><div id="tint"></div>
+    <div class="c" id="lab"><span class="dot"></span><span id="labt"></span></div>
+    <div class="c" id="tm">00:00</div>
+    <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+    <div id="ok"></div>
+    <div id="av"></div>
+    <div class="c" id="nm"></div>
+    <div class="c" id="sb"></div>
+    <div id="track"><div id="fill"></div><div id="stx"></div><div id="knob"><svg viewBox="0 0 24 24"><path d="M6.6 3.5h2.8l1.4 4-2 1.4a11 11 0 0 0 6.3 6.3l1.4-2 4 1.4v2.8a2 2 0 0 1-2 2A16.5 16.5 0 0 1 4.6 5.5a2 2 0 0 1 2-2z"/></svg></div></div>
+    <div id="flash"></div>
+    <div id="gloss"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 0.9 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const photo = (v.people && v.people[0]) || v.mark || "";
+
+  // ---- the card: phone-screen proportions, as big as the frame allows
+  const availH = MV.portrait ? H - safe.top - safe.bottom : H - safe.top - safe.bottom;
+  const CH = Math.min(availH, (MV.portrait ? (MV.alpha ? 760 : 940) : 900) * u);
+  const CW = Math.min(W - safe.left - safe.right, CH * 0.66);
+  let cx = W / 2, cy = MV.portrait ? safe.top + availH / 2 : H / 2;
+  if (MV.alpha) { if (MV.portrait) { cx = safe.left + (W - safe.left - safe.right) / 2; cy = safe.top + CH / 2; } else cx = W - safe.right - CW / 2; }
+  const card = $("#card"); gsap.set(card, { left: cx - CW / 2, top: cy - CH / 2, width: CW, height: CH });
+  root.style.setProperty("--gx", (cx / W * 100) + "%"); root.style.setProperty("--gy", (cy / H * 100) + "%");
+  if (photo) { $("#bgph").style.backgroundImage = `url("${photo}")`; $("#av").style.backgroundImage = `url("${photo}")`; }
+  else { $("#av").style.background = "linear-gradient(150deg, var(--al), var(--accent))"; $("#bgph").style.background = "var(--accent)"; }
+
+  // ---- inside the card, top to bottom
+  const AV = Math.round(CH * 0.3), pad = CH * 0.07;
+  const avTop = CH * 0.17, avL = (CW - AV) / 2;
+  gsap.set("#lab", { top: pad }); gsap.set("#tm", { top: pad });
+  gsap.set("#av", { left: avL, top: avTop, width: AV, height: AV });
+  document.querySelectorAll(".ring").forEach((r) => gsap.set(r, { left: avL, top: avTop, width: AV, height: AV }));
+  gsap.set("#ok", { left: avL - 14 * u, top: avTop - 14 * u, width: AV + 28 * u, height: AV + 28 * u });
+  gsap.set("#nm", { top: avTop + AV + CH * 0.06 });
+  $("#labt").textContent = v.label || ""; if (!v.label) $("#lab .dot").style.display = "none";
+  $("#nm").textContent = v.caller || v.brandName || "";
+  $("#sb").textContent = v.sub || "";
+  const inner = CW - 80 * u;
+  MV.fitText($("#nm"), inner, 24); MV.fitText($("#labt"), inner - 40 * u, 16); MV.fitText($("#sb"), inner, 16);
+  gsap.set("#sb", { top: avTop + AV + CH * 0.06 + $("#nm").offsetHeight + 6 * u });
+  const TH = Math.round(CH * 0.13), TW = CW - 2 * Math.max(40 * u, CW * 0.08), KN = TH - 16 * u;
+  gsap.set("#track", { left: (CW - TW) / 2, top: CH - pad - TH, width: TW, height: TH });
+  gsap.set("#knob", { left: 8 * u, top: 8 * u, width: KN, height: KN });
+  gsap.set("#fill", { width: KN + 16 * u });
+  $("#stx").textContent = v.slide || ""; $("#stx").style.paddingLeft = KN * 0.8 + "px";
+  MV.fitText($("#stx"), TW - KN * 1.9, 16);
+  gsap.set("#flash", { left: (CW + TW) / 2 - KN * 1.6 - 8 * u, top: CH - pad - TH / 2 - KN * 1.1, width: KN * 2.2, height: KN * 2.2 });
+
+  // ---- timeline
+  // 1. the card rises and turns toward camera
+  tl.fromTo(card, { opacity: 0, y: 120 * u, rotationX: 24, rotationY: -14, scale: 0.9, filter: "blur(14px)" },
+    { opacity: 1, y: 0, rotationX: 6, rotationY: -6, scale: 1, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 0.04);
+  tl.fromTo("#av", { scale: 0.6 }, { scale: 1, duration: 0.7, ease: "back.out(1.8)" }, 0.18);
+  tl.fromTo(["#lab", "#nm", "#sb"], { opacity: 0, y: 24 * u }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out", stagger: 0.07 }, 0.25);
+  tl.fromTo("#track", { opacity: 0, y: 30 * u }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, 0.4);
+  // 2. it rings: rings of light ripple off the avatar, the avatar pulses, the slider text shimmers
+  const A = 2.15;
+  const rings = document.querySelectorAll(".ring");
+  for (let k = 0; k < 4; k++) rings.forEach((r, i) => {
+    const t = 0.35 + k * 0.5 + i * 0.16; if (t > A - 0.15) return;
+    tl.fromTo(r, { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.85, ease: "power2.out", immediateRender: false }, t);
+  });
+  rings.forEach((r) => tl.set(r, { opacity: 0 }, 0));
+  [0.4, 0.9, 1.4].forEach((t) => { tl.to("#av", { scale: 1.045, duration: 0.12, ease: "power2.out" }, t + 0.2); tl.to("#av", { scale: 1, duration: 0.3, ease: "power2.inOut" }, t + 0.32); });
+  tl.fromTo("#stx", { "--sh": "-20%" }, { "--sh": "120%", duration: 1.1, ease: "none" }, 0.55);
+  // 3. accept: the knob slides across, the track fills green behind it (the moment that lands)
+  const travel = TW - KN - 16 * u;
+  tl.to("#knob", { x: travel, duration: 0.5, ease: "power3.inOut" }, A);
+  tl.to("#fill", { width: TW, duration: 0.5, ease: "power3.inOut" }, A);
+  tl.to("#stx", { opacity: 0, duration: 0.2, ease: "power2.out" }, A);
+  tl.to("#knob", { scaleX: 0.86, scaleY: 1.1, duration: 0.06, ease: "power2.out" }, A + 0.5);
+  tl.to("#knob", { scaleX: 1, scaleY: 1, duration: 0.5, ease: "back.out(2.6)" }, A + 0.56);
+  tl.fromTo("#flash", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.14, ease: "power2.out", immediateRender: false }, A + 0.48);
+  tl.set("#flash", { opacity: 0 }, 0);
+  tl.to("#flash", { opacity: 0, duration: 0.5, ease: "power2.out" }, A + 0.62);
+  tl.fromTo("#ok", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.4)" }, A + 0.52);
+  tl.to(card, { scale: 1.02, duration: 0.1, ease: "power2.out" }, A + 0.5); tl.to(card, { scale: 1, duration: 0.5, ease: "back.out(2)" }, A + 0.6);
+  // the label becomes the call timer
+  tl.to("#lab", { opacity: 0, y: -14 * u, duration: 0.18, ease: "power2.in" }, A + 0.48);
+  tl.fromTo("#tm", { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.35, ease: "expo.out" }, A + 0.72);
+  const t0 = A + 0.72; for (let s = 1; t0 + s * 0.6 < D; s++) tl.set("#tm", { textContent: "00:0" + s }, t0 + s * 0.6);
+  tl.set("#tm", { textContent: "00:00" }, 0);
+  // light and drift
+  tl.fromTo("#gloss", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, A + 0.55);
+  tl.to(card, { rotationX: 2, rotationY: 6, duration: D - 0.9, ease: "sine.inOut" }, 0.84);
+  // exit
+  const X = D - 0.42;
+  tl.to(card, { y: -80 * u, opacity: 0, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, X);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"place","type":"string","label":"The place","default":"Lisbon, Portugal"},
+  {"id":"sub","type":"string","label":"Small line under it (optional: a day, a venue, a time)","default":""},
+  {"id":"align","type":"string","label":"9:16 position: center or left","default":"center"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 30% at 50% 62%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 15% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #grp { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1200); }
+  #fl { position: relative; transform-style: preserve-3d; }
+  #pill { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 26); box-sizing: border-box; white-space: nowrap;
+    height: calc(var(--u) * 140); padding: 0 calc(var(--u) * 52) 0 calc(var(--u) * 14); border-radius: calc(var(--u) * 70);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 76%, #fff 11%), color-mix(in srgb, var(--surface) 92%, transparent));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      inset 0 calc(var(--u) * -16) calc(var(--u) * 30) calc(var(--u) * -16) color-mix(in srgb, var(--accent) 40%, transparent),
+      0 calc(var(--u) * 26) calc(var(--u) * 50) calc(var(--u) * -14) rgba(0,0,0,.62), 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.25); }
+  .is-key #pill { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--surface); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  #pill .sh { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.28) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+  /* the map disc: a tiny street map under a glass dome */
+  #disc { position: relative; flex: none; width: calc(var(--u) * 112); height: calc(var(--u) * 112); border-radius: 50%; overflow: hidden;
+    box-shadow: 0 calc(var(--u) * 6) calc(var(--u) * 14) calc(var(--u) * -4) rgba(0,0,0,.55); }
+  #disc svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #disc .dome { position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(70% 55% at 35% 22%, rgba(255,255,255,.45), rgba(255,255,255,0) 60%), radial-gradient(100% 100% at 50% 50%, transparent 60%, rgba(0,0,0,.28));
+    box-shadow: inset 0 calc(var(--u) * 2.5) calc(var(--u) * 1) rgba(255,255,255,.7), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.4); }
+  #ripple { position: absolute; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 4) solid var(--al); opacity: 0; pointer-events: none;
+    box-shadow: 0 0 calc(var(--u) * 18) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #ripple { box-shadow: none; }
+  #pshadow { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.55), transparent); pointer-events: none; }
+  #pin { position: absolute; pointer-events: none; transform-origin: 50% 100%; }
+  #pin svg { display: block; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 8) rgba(0,0,0,.45)); }
+  .is-key #pin svg { filter: none; }
+  #txt { display: flex; flex-direction: column; justify-content: center; }
+  #place { font-size: calc(var(--u) * 52); font-weight: 760; letter-spacing: -0.015em; color: var(--ink); line-height: 1.08; }
+  #sub { font-size: calc(var(--u) * 28); font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: color-mix(in srgb, var(--ink) 58%, transparent); margin-top: calc(var(--u) * 4); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="grp"><div id="fl">
+    <div id="pill">
+      <div id="disc">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+          <rect width="100" height="100" fill="#ECE8DF"/>
+          <path d="M-5 78 C 20 70, 34 88, 60 80 S 92 66, 108 72 L108 108 L-5 108 Z" fill="#9CC9E8"/>
+          <path d="M8 10 h22 v18 h-22 z" fill="#C6DDB0"/>
+          <path d="M66 14 l20 4 -4 18 -20 -4 z" fill="#C6DDB0"/>
+          <g stroke="#fff" stroke-linecap="round" fill="none">
+            <path d="M-5 40 L105 30" stroke-width="7"/>
+            <path d="M40 -5 L52 105" stroke-width="7"/>
+            <path d="M-5 60 L105 54" stroke-width="4"/>
+            <path d="M18 -5 L24 75" stroke-width="4"/>
+            <path d="M74 -5 L80 70" stroke-width="4"/>
+            <path d="M-5 20 L105 12" stroke-width="3"/>
+          </g>
+          <path d="M-5 40 L105 30" stroke="#F4C66A" stroke-width="3" fill="none"/>
+        </svg>
+        <div class="dome"></div>
+      </div>
+      <div id="txt"><div id="place"></div><div id="sub"></div></div>
+      <div class="sh"></div>
+    </div>
+    <div id="ripple"></div><div id="pshadow"></div>
+    <div id="pin"><svg viewBox="0 0 64 88">
+      <defs>
+        <radialGradient id="pg" cx="34%" cy="26%" r="80%"><stop offset="0" style="stop-color:var(--al)"/><stop offset=".45" style="stop-color:var(--accent)"/><stop offset="1" style="stop-color:color-mix(in srgb, var(--accent) 55%, #000)"/></radialGradient>
+      </defs>
+      <path d="M32 86 C 26 70, 4 52, 4 31 A 28 28 0 0 1 60 31 C 60 52, 38 70, 32 86 Z" fill="url(#pg)" stroke="rgba(255,255,255,.35)" stroke-width="1.2"/>
+      <ellipse cx="22" cy="18" rx="10" ry="6" fill="rgba(255,255,255,.55)" transform="rotate(-30 22 18)"/>
+      <circle cx="32" cy="31" r="10.5" fill="#fff"/>
+      <circle cx="32" cy="31" r="10.5" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+    </svg></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1.15 : SQ ? 0.86 : 1.05);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const pl = $("#place"), sb = $("#sub");
+  pl.textContent = v.place || ""; sb.textContent = v.sub || ""; if (!v.sub) sb.style.display = "none";
+  const maxW = P ? W - safe.left - safe.right : SQ ? W * 0.7 : W * 0.42;
+  MV.fitText(pl, maxW - 200 * u, 18); MV.fitText(sb, maxW - 200 * u, 12);
+  const pill = $("#pill"), pw = pill.offsetWidth, ph = pill.offsetHeight;
+
+  // the zone: under the chin on 9:16 (centred or left), the lower left elsewhere
+  let x, y;
+  if (P) { x = String(v.align || "").toLowerCase() === "left" ? safe.left : Math.max(safe.left, Math.min(W / 2 - pw / 2, W - safe.right - pw)); y = H * 0.605 - ph / 2; }
+  else if (SQ) { x = W * 0.05; y = H * 0.84 - ph / 2; }
+  else { x = safe.left; y = H * 0.8 - ph / 2; }
+  gsap.set("#grp", { x, y });
+
+  // the pin stands on the disc's centre; its shadow and ripple sit on the disc
+  const DS = 112 * u, dcx = 14 * u + DS / 2, dcy = ph / 2;
+  const PW = 64 * u * 1.15, PH = 88 * u * 1.15;
+  Object.assign($("#pin").style, { width: PW + "px", height: PH + "px", left: dcx - PW / 2 + "px", top: dcy + 10 * u - PH + "px" });
+  Object.assign($("#pshadow").style, { width: 46 * u + "px", height: 16 * u + "px", left: dcx - 23 * u + "px", top: dcy + 10 * u - 8 * u + "px" });
+  Object.assign($("#ripple").style, { width: DS + "px", height: DS + "px", left: dcx - DS / 2 + "px", top: dcy - DS / 2 + "px" });
+
+  // in: the disc pops, the glass opens out to the right, the pin falls onto the map and squashes
+  const pc = { p: 0 }, clip = () => { pill.style.clipPath = `inset(-4px ${(1 - pc.p) * (pw - ph)}px -4px 0 round ${ph / 2}px)`; };
+  clip();
+  tl.fromTo(pill, { scale: 0, transformOrigin: `${ph / 2}px 50%` }, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 0.05);
+  tl.fromTo(pill, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "power1.out" }, 0.05);
+  tl.fromTo("#disc svg", { scale: 1.6, rotation: -20 }, { scale: 1, rotation: 0, duration: 1.1, ease: "expo.out" }, 0.05);
+  tl.to(pc, { p: 1, duration: 0.65, ease: "expo.out", onUpdate: clip }, 0.28);
+  const LAND = 0.62;
+  tl.fromTo("#pin", { y: -260 * u, opacity: 0 }, { y: 0, opacity: 1, duration: 0.34, ease: "power3.in" }, LAND - 0.34);
+  tl.fromTo("#pin", { scaleY: 1.18, scaleX: 0.88 }, { scaleY: 1, scaleX: 1, duration: 0.34, ease: "power2.in", immediateRender: false }, LAND - 0.34);
+  tl.to("#pin", { scaleY: 0.78, scaleX: 1.16, duration: 0.07, ease: "power2.out" }, LAND);
+  tl.to("#pin", { scaleY: 1, scaleX: 1, duration: 0.55, ease: "back.out(3.2)" }, LAND + 0.07);
+  tl.fromTo("#pshadow", { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.34, ease: "power2.in" }, LAND - 0.34);
+  tl.fromTo("#ripple", { scale: 0.35, opacity: 1 }, { scale: 1.9, opacity: 0, duration: 0.7, ease: "power2.out", immediateRender: false }, LAND);
+  tl.fromTo(pl, { opacity: 0, x: -22 * u, filter: "blur(8px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, 0.42);
+  if (v.sub) tl.fromTo(sb, { opacity: 0, x: -14 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.58);
+  tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.8, ease: "power2.inOut" }, LAND + 0.1);
+  // the hold: the chip hangs in depth and turns slowly; the pin pulses its ripple now and then
+  tl.fromTo("#fl", { rotationY: 12, rotationX: 5 }, { rotationY: -6, rotationX: -2, duration: D, ease: "sine.inOut" }, 0);
+  for (let t = LAND + 1.4; t < D - 1.0; t += 1.6) tl.fromTo("#ripple", { scale: 0.35, opacity: 0.7 }, { scale: 1.7, opacity: 0, duration: 0.8, ease: "power2.out", immediateRender: false }, t);
+  for (let t = LAND + 2.0; t < D - 1.2; t += 3.0) tl.fromTo(pill, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, t);
+  // out: the pin springs up and off, the text goes, the glass folds back into the disc
+  const O = D - 0.42;
+  tl.to("#pin", { y: -120 * u, opacity: 0, duration: 0.24, ease: "power3.in" }, O);
+  tl.to("#pshadow", { opacity: 0, duration: 0.15, ease: "power2.in" }, O);
+  tl.to(["#place", "#sub"], { opacity: 0, x: -14 * u, duration: 0.14, ease: "power2.in" }, O);
+  const pc2 = { p: 1 }, clip2 = () => { pill.style.clipPath = `inset(-4px ${(1 - pc2.p) * (pw - ph)}px -4px 0 round ${ph / 2}px)`; };
+  tl.to(pc2, { p: 0, duration: 0.22, ease: "power3.in", onUpdate: clip2 }, O + 0.04);
+  tl.to(pill, { scale: 0, opacity: 0, duration: 0.14, ease: "power3.in" }, O + 0.26);
+  MV.done();
+</script>
+</body>
+</html>

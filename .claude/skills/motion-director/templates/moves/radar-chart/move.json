@@ -1,0 +1,5 @@
+{ "id": "radar-chart", "name": "Radar chart", "oneLiner": "a frosted glass disc opens with a five-spoke web etched into it and the skills around its edge, a grey shape grows to its values, then the brand shape ripples outward spoke by spoke past it in the accent, springs into place with its corner dots popping and a pulse going out, while the plate tilts slowly",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["radar chart", "spider chart", "skills", "strengths", "all-rounder", "comparison", "scorecard", "profile", "data", "numbers", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker says one option beats another on every count ('faster, cheaper, better on all five', 'it wins on every skill that matters'): cut in on the list, the brand shape pushes past on the word that names the win" }

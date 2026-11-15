@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"values","type":"string","label":"One number per card, comma separated (3 to 8); the count of values is the count of cards","default":"1.8,2.6,2.2,6.2,6.4,5.1"},
+  {"id":"label","type":"string","label":"The metric name on each chip (CTR, views, retention...; empty = none)","default":"CTR"},
+  {"id":"unit","type":"string","label":"After each number (%, K, s, or empty)","default":"%"},
+  {"id":"threshold","type":"number","label":"Cards at or above this lift and go green, the rest drain (0 = half way between the lowest and highest)","default":0},
+  {"id":"layout","type":"string","label":"9:16 only: full (a list in the safe frame) or top (a row in the top ~40%, the speaker below)","default":"full"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --win: #2BD67B; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 56%; height: 36%; left: 22%; top: 34%; background: color-mix(in srgb, var(--win) 13%, transparent); opacity: 0; }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 60%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #ground .l3 { width: 60%; height: 40%; left: 62%; top: -10%; background: color-mix(in srgb, var(--accent) 22%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.55)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .cell { position: absolute; transform-style: preserve-3d; }
+  .card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(162deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, rgba(255,255,255,.035));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11),
+      0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -22) rgba(0,0,0,.7); }
+  .is-alpha .card { background: linear-gradient(162deg, color-mix(in srgb, var(--surface) 86%, white 14%), color-mix(in srgb, var(--surface) 97%, transparent)); }
+  .card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(112deg, transparent calc(var(--sheen, -50%) - 15%), rgba(255,255,255,.3) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 15%)); }
+  .rim { position: absolute; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--win) 80%, white), 0 0 calc(var(--u) * 46) color-mix(in srgb, var(--win) 45%, transparent); }
+  .thumb { position: absolute; overflow: hidden; background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 55%, var(--surface)), color-mix(in srgb, var(--accent2) 40%, var(--surface)));
+    box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(255,255,255,.14); }
+  .thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .gx { position: absolute; inset: 0; display: grid; place-items: center; color: rgba(255,255,255,.9); }
+  .thumb .gx svg { width: 30%; height: 30%; }
+  .thumb .dur { position: absolute; right: 5%; bottom: 7%; height: 15%; min-height: 10px; aspect-ratio: 2.4; border-radius: 18%/40%; background: rgba(0,0,0,.75); }
+  .bar { position: absolute; border-radius: 99px; background: color-mix(in srgb, var(--ink) 30%, transparent); }
+  .bar.b2 { background: color-mix(in srgb, var(--ink) 15%, transparent); }
+  .chip { position: absolute; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; color: var(--ink); }
+  .chip .k { font-weight: 800; text-transform: uppercase; letter-spacing: .12em; line-height: 1; opacity: .55; white-space: nowrap; }
+  .chip .n { font-family: var(--font-display); line-height: 1; white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .meter { position: absolute; border-radius: 99px; overflow: hidden; background: color-mix(in srgb, var(--ink) 12%, transparent); }
+  .meter i { position: absolute; inset: 0; border-radius: inherit; transform-origin: 0 50%; transform: scaleX(0); background: color-mix(in srgb, var(--ink) 70%, transparent); }
+
+  .is-key .card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.11); }
+  .is-key .rim { box-shadow: inset 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--win) 80%, white); }
+  .is-key .bar { background: color-mix(in srgb, var(--ink) 30%, var(--surface)); }
+  .is-key .bar.b2, .is-key .meter { background: color-mix(in srgb, var(--ink) 14%, var(--surface)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i><i class="l3"></i></div>
+  <div id="stage"><div id="rig"><div id="cards"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const WIN = "#2BD67B";
+  const P = MV.portrait, SQ = W === H, TOP = P && String(v.layout || "").toLowerCase() === "top", LIST = false;   // a grid reads bigger than a studio list at every aspect
+  let VAL = String(v.values || "").split(",").map((s) => parseFloat(s.replace(/[^\d.\-]/g, ""))).filter((x) => isFinite(x)).slice(0, 8);
+  if (VAL.length < 3) VAL = [1.8, 2.6, 2.2, 6.2, 6.4, 5.1];
+  const N = VAL.length, MAX = Math.max(...VAL), MIN = Math.min(...VAL);
+  const DEC = Math.max(0, ...String(v.values || "1.8").split(",").map((s) => ((s.trim().split(".")[1] || "").replace(/\D/g, "")).length));
+  const UNIT = v.unit == null ? "%" : String(v.unit), LAB = String(v.label == null ? "CTR" : v.label).trim();
+  const TH = +v.threshold > 0 ? +v.threshold : (MIN + MAX) / 2;
+  const fmt = (n) => n.toFixed(DEC) + UNIT;
+  const shots = (Array.isArray(v.screens) ? v.screens : []).filter(Boolean);
+  const ORIG = ["50% 0%", "100% 20%", "0% 60%", "70% 100%", "20% 10%", "90% 70%", "40% 50%", "0% 0%"];
+
+  // ---- layout: a studio list on 9:16, a row (or two) of cards elsewhere
+  const R = P ? { x0: safe.left, x1: W - safe.right, y0: safe.top + 10 * u, y1: TOP ? H * 0.42 : H - safe.bottom - 10 * u }
+              : SQ ? { x0: W * 0.06, x1: W * 0.94, y0: H * 0.1, y1: H * 0.9 } : { x0: W * 0.05, x1: W * 0.95, y0: H * 0.1, y1: H * 0.9 };
+  const RW = R.x1 - R.x0, RH = R.y1 - R.y0;
+  const cards = document.getElementById("cards"), C = [];
+  let cw, ch, cols, rows, GAP;
+  if (LIST) { GAP = 18 * u; cols = 1; rows = N; cw = RW; ch = Math.min(190 * u, (RH - GAP * (N - 1)) / N); }
+  else { GAP = (TOP ? 14 : 26) * u; const RATIO = 1.0; let best = { w: 0 };
+    for (let c = 2; c <= N; c++) { const r = Math.ceil(N / c); if (r * c - N >= c) continue; const w = Math.min((RW - GAP * (c - 1)) / c, (RH - GAP * (r - 1)) / r / RATIO); if (w > best.w * 1.04) best = { w, c, r }; }
+    cols = best.c; rows = best.r; cw = Math.min(best.w, 420 * u); ch = cw * RATIO; }
+  const GW = cols * cw + (cols - 1) * GAP, GH = rows * ch + (rows - 1) * GAP;
+  const gx0 = R.x0 + (RW - GW) / 2, gy0 = R.y0 + (RH - GH) / 2, cx = gx0 + GW / 2, cy = gy0 + GH / 2;
+  const rad = Math.min(30 * u, Math.min(cw, ch) * 0.1);
+  VAL.forEach((val, i) => {
+    const r = Math.floor(i / cols), k = i % cols, inRow = Math.min(cols, N - r * cols);
+    const x = gx0 + (cols - inRow) * (cw + GAP) / 2 + k * (cw + GAP), y = gy0 + r * (ch + GAP);
+    const cell = document.createElement("div"); cell.className = "cell"; cards.appendChild(cell);
+    Object.assign(cell.style, { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px" });
+    const pad = LIST ? ch * 0.1 : cw * 0.055;
+    let tx, ty, tw, th, bx, by, bw, chx, chy, chw, chh;
+    if (LIST) { th = ch - pad * 2; tw = th * 16 / 9; tx = pad; ty = pad; chw = Math.min(cw * 0.27, 230 * u); chh = th; chx = cw - pad - chw; chy = pad; bx = tx + tw + pad * 1.2; by = pad + th * 0.12; bw = chx - bx - pad * 1.2; }
+    else { tw = cw - pad * 2; th = tw * 0.5625; tx = pad; ty = pad; bx = pad; by = ty + th + pad * 0.9; bw = tw; chx = pad; chw = tw;
+      const mh = Math.max(8 * u, ch * 0.035); chy = by + ch * 0.045 + pad * 0.6; chh = ch - pad - mh - pad * 0.6 - chy; }
+    const si = shots.length ? i % shots.length : -1;
+    const shot = si >= 0 ? `<img src="${shots[si]}" style="transform:scale(${i < shots.length ? 1.25 : 1.7});transform-origin:${ORIG[i % ORIG.length]}">` : `<div class="gx">${GLYPH.svg("play")}</div>`;
+    const bh = LIST ? th * 0.16 : ch * 0.045;
+    const nfs = LIST ? chh * 0.36 : Math.min(chh * 0.6, cw * 0.2), kfs = Math.max(16 * u, nfs * 0.32);
+    cell.innerHTML = `<div class="card" style="border-radius:${rad}px">
+      <div class="thumb" style="left:${tx}px;top:${ty}px;width:${tw}px;height:${th}px;border-radius:${rad * 0.6}px">${shot}<div class="dur"></div></div>
+      <div class="bar" style="left:${bx}px;top:${by}px;width:${bw * (0.9 - (i % 3) * 0.12)}px;height:${bh}px"></div>
+      <div class="bar b2" style="${LIST ? "" : "display:none;"}left:${bx}px;top:${by + bh * 1.9}px;width:${bw * (0.55 - (i % 2) * 0.12)}px;height:${bh * 0.85}px"></div>
+      <div class="chip" style="left:${chx}px;top:${chy}px;width:${chw}px;height:${chh}px;gap:${nfs * 0.18}px;${LIST ? "align-items:flex-end" : "align-items:flex-start"}">
+        ${LAB ? `<span class="k" style="font-size:${kfs}px">${LAB}</span>` : ""}<span class="n" style="font-size:${nfs}px">${fmt(val)}</span></div>
+      <div class="meter" style="${LIST ? `left:${bx}px;top:${pad + th - th * 0.14}px;width:${bw}px;height:${th * 0.1}px` : `left:${pad}px;bottom:${pad}px;width:${tw}px;height:${Math.max(8 * u, ch * 0.035)}px`}"><i></i></div>
+      <div class="rim"></div></div>`;
+    const n = cell.querySelector(".chip .n"); MV.fitText(n, chw - 6 * u, 14); n.textContent = fmt(0);
+    if (LIST) n.style.textAlign = "right";
+    C.push({ i, val, win: val >= TH, cell, x, y, card: cell.querySelector(".card"), n, rim: cell.querySelector(".rim"), img: cell.querySelector(".thumb img"), meter: cell.querySelector(".meter i"), chip: cell.querySelector(".chip") });
+  });
+
+  // ---- camera
+  gsap.set("#rig", { transformOrigin: `${cx}px ${cy}px` });
+  tl.fromTo("#rig", { rotationY: LIST ? -12 : -8, rotationX: LIST ? 6 : 12, scale: 0.95, y: 24 * u }, { rotationY: 5, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0 }, { x: W * 0.12, duration: D, ease: "sine.inOut" }, 0);
+
+  // ---- 1. the thumbnails drop in; each chip counts up and its meter fills
+  const ST = Math.min(0.13, 0.85 / N);
+  C.forEach((c, k) => { const at = 0.06 + k * ST;
+    tl.fromTo(c.cell, { z: 260, y: -20 * u, rotationX: 14 }, { z: 0, y: 0, rotationX: 0, duration: 0.6, ease: "back.out(1.4)" }, at);
+    tl.fromTo(c.cell, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.26, ease: "power2.out" }, at);
+    const o = { n: 0 }; tl.to(o, { n: c.val, duration: 0.7, ease: "expo.out", onUpdate: () => { c.n.textContent = fmt(o.n); } }, at + 0.2);
+    tl.to(c.meter, { scaleX: Math.max(0.04, c.val / MAX), duration: 0.8, ease: "expo.out" }, at + 0.2); });
+
+  // ---- 2. the split: one beat, all at once
+  const S = 0.06 + (N - 1) * ST + 1.05;
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, S); tl.to("#stage", { scale: 1, duration: 0.6, ease: "expo.out" }, S + 0.07);
+  tl.to("#ground .l1", { opacity: 1, duration: 1, ease: "power2.out" }, S - 0.2);
+  C.forEach((c) => {
+    if (c.win) {
+      tl.to(c.cell, { z: 70, y: -10 * u, duration: 0.6, ease: "back.out(2)" }, S);
+      tl.to(c.rim, { opacity: 1, duration: 0.3, ease: "power2.out" }, S);
+      tl.to(c.chip, { color: WIN, duration: 0.25, ease: "power2.out" }, S);
+      tl.to(c.meter, { background: WIN, duration: 0.25, ease: "power2.out" }, S);
+      tl.fromTo(c.n, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, S); tl.to(c.n, { scale: 1, duration: 0.5, ease: "back.out(3)" }, S + 0.08);
+      tl.fromTo(c.card, { "--sheen": "-50%" }, { "--sheen": "150%", duration: 0.7, ease: "power2.inOut", immediateRender: false }, S + 0.1 + (c.x - gx0) / GW * 0.3 + (c.y - gy0) / Math.max(1, GH) * 0.2);
+    } else {
+      tl.to(c.cell, { z: -50, y: 6 * u, duration: 0.6, ease: "power2.out" }, S);
+      tl.to(c.cell, KEY ? { filter: "brightness(0.5) grayscale(1)", duration: 0.5, ease: "power2.inOut" } : { opacity: 0.3, filter: "grayscale(1)", duration: 0.5, ease: "power2.inOut" }, S);
+    }
+  });
+  // the winners breathe
+  C.forEach((c) => { if (c.win) tl.to(c.cell, { y: -16 * u, duration: Math.max(0.3, D - S - 0.9), ease: "sine.inOut" }, S + 0.6); });
+
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

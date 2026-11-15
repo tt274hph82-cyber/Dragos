@@ -1,0 +1,5 @@
+{ "id": "ui-metric-ring-link", "name": "Metric ring and link", "oneLiner": "a screenshot floats in a window and the camera eases in toward one row; a glowing hand-drawn ring loops around one or two real numbers on it, a leader line runs out from each ring and the lines meet at a glass card beside the window that names what the number means",
+  "category": "data", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["metric", "analytics", "number", "stat", "dashboard", "circle", "ring", "annotation", "link", "proof", "screenshot", "insight", "explain"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker reads a number off a screen and says what it means ('see this, that is why it worked'): the ring draws on the number, the card lands on the meaning. Set rings to the real numbers in % of the screenshot (x,y,w,h; up to 2, separated by ;), title and sub to the meaning" }

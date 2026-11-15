@@ -1,0 +1,5 @@
+{ "id": "chain-links", "name": "Chain links", "oneLiner": "2 to 6 glass plates (glyph tile, label, number) arrive one by one, each joined to the last by a real chrome chain that clinks in link by link through riveted eyelets; then the chain pulls taut and a glint runs down it lighting every plate in the accent, or (weak set) one link cracks red and the rest of the chain drops away",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["chain", "system", "links", "steps", "connected", "dependency", "weak link", "process", "every step matters", "sequence", "break", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker says the parts only work together (\"your topic, your packaging, your hook, your editing: every one has to work\"): cut in on the first part, one plate per word. Set weak to the link that fails (\"and if one breaks, the whole thing breaks\"): the crack lands on that word" }

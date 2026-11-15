@@ -1,0 +1,5 @@
+{ "id": "top-band-insert", "name": "Top band insert", "oneLiner": "for a vertical talking head: a glass panel drops into the top band above the speaker and the brand's real screens swap inside it on every beat with a cube turn (or a flip), a pager pill tracking which one is up, leaving the lower half clear for the face",
+  "category": "creator", "kind": "effect", "uses": ["overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["screens", "screenshots", "insert", "top", "vertical", "talking head", "shorts", "reels", "tiktok", "demo", "walkthrough", "examples", "carousel", "proof", "overlay"],
+  "formats": ["9:16"], "duration": 4.6, "alpha": true,
+  "say": "on a 9:16 talking head when the speaker runs through examples or steps on screen ('first this, then this, then this'): cut in on the first example, each screen swaps on the next one they name. Set beat to the gap between their words, shots to the screenshots in order, labels to what they call each" }

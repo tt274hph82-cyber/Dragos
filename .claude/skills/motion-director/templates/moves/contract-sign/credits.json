@@ -1,0 +1,8 @@
+{ "sources": [
+  { "file": "assets/paper.jpg", "from": "ambientCG Paper001 (scanned white paper); the contract page", "license": "CC0", "page": "https://ambientcg.com/view?id=Paper001" },
+  { "file": "assets/wood.jpg", "from": "ambientCG Wood051 (scanned walnut), resized; the desk", "license": "CC0", "page": "https://ambientcg.com/view?id=Wood051" },
+  { "file": "assets/inkmask.png", "from": "ambientCG Plaster003 (scanned rough plaster), turned into an ink-coverage mask for the rubber-stamp imprint", "license": "CC0", "page": "https://ambientcg.com/view?id=Plaster003" },
+  { "file": "assets/fonts/LibreBaskerville-wght.ttf", "from": "Libre Baskerville by Impallari Type, Google Fonts; the contract face", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Libre+Baskerville" },
+  { "file": "assets/fonts/GreatVibes-latin.ttf", "from": "Great Vibes by TypeSETit, Google Fonts, subset to Latin; the signature", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Great+Vibes" },
+  { "file": "assets/fonts/Anton-Regular.ttf", "from": "Anton by Vernon Adams, Google Fonts; the stamp", "license": "SIL Open Font License 1.1", "page": "https://fonts.google.com/specimen/Anton" }
+] }

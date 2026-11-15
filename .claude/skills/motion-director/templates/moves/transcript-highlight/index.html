@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Transcript title","default":"Episode transcript"},
+  {"id":"lines","type":"string","label":"Transcript lines, split by |","default":"So we started posting every single day.|Most of it went nowhere for months.|Then we changed one thing about the opening.|We stopped explaining and started showing.|Retention went up on every video after that.|The first three seconds decide everything.|Nobody waits for the point anymore.|So every edit now starts from the hook.|And the rest of the video follows it."},
+  {"id":"pick","type":"number","label":"Which line is the key one (1 = the first)","default":6},
+  {"id":"at","type":"string","label":"Timestamp of the key line (m:ss or h:mm:ss)","default":"12:41"},
+  {"id":"length","type":"number","label":"Clip length in seconds","default":14},
+  {"id":"clip","type":"string","label":"Label on the clipped card","default":"Clip"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap, #cwrap { position: absolute; }
+  .glass { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(170deg, rgba(255,255,255,.15), rgba(255,255,255,.04) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha .glass { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key .glass { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  .glass::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+  #clipc { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 70%, rgba(255,255,255,.5) 30%), color-mix(in srgb, var(--surface) 88%, transparent) 60%, color-mix(in srgb, var(--surface) 84%, transparent));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.6), inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.2)),
+      0 calc(var(--s) * 50) calc(var(--s) * 100) calc(var(--s) * -20) rgba(0,0,0,.8), 0 0 calc(var(--s) * 70) color-mix(in srgb, var(--accent) 35%, transparent); }
+  .is-alpha #clipc { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 76%, white 18%), color-mix(in srgb, var(--surface) 92%, white 4%)); }
+  .is-key #clipc { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 20%), var(--surface)); box-shadow: inset 0 0 0 calc(var(--s) * 2) var(--accent); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #hic { border-radius: calc(var(--s) * 16); display: grid; place-items: center; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.2); }
+  #hic svg { width: 56%; height: 56%; }
+  #ttl { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.14); }
+  #vp { overflow: hidden; -webkit-mask: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent); mask: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent); }
+  #list { position: absolute; left: 0; right: 0; top: 0; }
+  .row { position: relative; display: flex; gap: calc(var(--s) * 26); padding: calc(var(--s) * 16) calc(var(--s) * 18); border-radius: calc(var(--s) * 20); }
+  .row .ts { flex: none; width: calc(var(--s) * 112); font-weight: 700; font-size: calc(var(--s) * 32); line-height: calc(var(--s) * 54); color: color-mix(in srgb, var(--ink) 45%, transparent); font-variant-numeric: tabular-nums; }
+  .row .tt { position: relative; flex: 1; min-width: 0; font-weight: 600; font-size: calc(var(--s) * 40); line-height: 1.35; color: color-mix(in srgb, var(--ink) 78%, transparent); }
+  .row .tt span { position: relative; z-index: 2; }
+  .row.key { background: rgba(255,255,255,.06); }
+  .hl { position: absolute; z-index: 1; border-radius: calc(var(--s) * 8); background: color-mix(in srgb, var(--accent) 62%, transparent); transform-origin: 0 50%; transform: scaleX(0);
+    box-shadow: 0 0 calc(var(--s) * 26) color-mix(in srgb, var(--accent) 45%, transparent); }
+  .is-key .hl { background: var(--accent); box-shadow: none; }
+
+  #cic { border-radius: calc(var(--s) * 16); display: grid; place-items: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 85%, #fff 15%), color-mix(in srgb, var(--accent) 80%, #000));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.4); }
+  #cic svg { width: 58%; height: 58%; }
+  #clab { font-weight: 800; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #crng { font-weight: 700; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; line-height: 1.1; font-variant-numeric: tabular-nums; text-align: right; }
+  #cq { font-family: var(--font-display); font-size: calc(var(--s) * 58); line-height: 1.12; color: #fff; letter-spacing: -0.01em; }
+  #cpl { border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  #cpl svg { width: 44%; height: 44%; margin-left: 6%; }
+  #cbar { height: calc(var(--s) * 8); border-radius: calc(var(--s) * 4); background: rgba(255,255,255,.18); overflow: hidden; }
+  #cbar i { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--al)); transform-origin: 0 50%; transform: scaleX(0); }
+  #cdur { font-weight: 700; font-size: calc(var(--s) * 34); color: var(--ink); white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="card" class="glass">
+      <div id="hic" class="ab"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 10.5h14M5 15h9M5 19.5h6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+      <div id="ttl" class="ab"></div>
+      <div id="hr" class="ab"></div>
+      <div id="vp" class="ab"><div id="list"></div></div>
+    </div></div>
+    <div id="cwrap"><div id="clipc" class="glass">
+      <div id="cic" class="ab"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="7" r="2.8" fill="none" stroke="#fff" stroke-width="2.1"/><circle cx="6.5" cy="17" r="2.8" fill="none" stroke="#fff" stroke-width="2.1"/><path d="M8.8 8.6L20 17M8.8 15.4L20 7" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round"/></svg></div>
+      <div id="clab" class="ab"></div><div id="crng" class="ab"></div>
+      <div id="cq" class="ab"></div>
+      <div id="cpl" class="ab"><svg viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="#111" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
+      <div id="cbar" class="ab"><i></i></div>
+      <div id="cdur" class="ab"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+
+  // ---- zone (an 800-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.54; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 110 * u; cR = W - 110 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.28; cR = W * 0.72; zT = H * 0.06; zB = H * 0.94; }
+  const pad = 40, DW = 800, inner = DW - pad * 2, HY = 36, IC = 64, VY = HY + IC + 30, VH = P ? 640 : 560, DH = VY + VH + 20;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- header
+  box($("#hic"), pad, HY, IC, IC);
+  const ttl = $("#ttl"); ttl.textContent = v.title || ""; box(ttl, pad + IC + 20, HY + IC / 2 - 22);
+  MV.fitText(ttl, (inner - IC - 20) * s, 24 * s);
+  box($("#hr"), pad, VY - 14, inner);
+  box($("#vp"), pad - 10, VY, inner + 20, VH);
+
+  // ---- rows with timestamps counting around the key line
+  const lines = String(v.lines || "").split("|").map((t) => t.trim()).filter(Boolean);
+  const K = Math.min(lines.length, Math.max(1, Math.round(+v.pick || 1))) - 1;
+  const parseT = (t) => String(t || "0").split(":").reduce((a, b) => a * 60 + (+b || 0), 0);
+  const fmt = (n) => { n = Math.max(0, Math.round(n)); const h = Math.floor(n / 3600), m = Math.floor((n % 3600) / 60), x = n % 60; return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`; };
+  const T = parseT(v.at), rnd = MV.rand(5), stamps = [];
+  for (let i = 0; i < lines.length; i++) stamps[i] = 0;
+  stamps[K] = T; for (let i = K - 1; i >= 0; i--) stamps[i] = stamps[i + 1] - (6 + Math.round(rnd() * 9)); for (let i = K + 1; i < lines.length; i++) stamps[i] = stamps[i - 1] + (6 + Math.round(rnd() * 9));
+  const list = $("#list"), rows = [];
+  lines.forEach((t, i) => { const r = document.createElement("div"); r.className = "row" + (i === K ? " key" : "");
+    const ts = document.createElement("div"); ts.className = "ts"; ts.textContent = fmt(stamps[i]);
+    const tt = document.createElement("div"); tt.className = "tt"; const sp = document.createElement("span"); sp.textContent = t; tt.appendChild(sp);
+    r.append(ts, tt); list.appendChild(r); rows.push(r); });
+  // the widest timestamp sets the column
+  let tsw = 0; rows.forEach((r) => { const q = r.querySelector(".ts"); q.style.width = "auto"; tsw = Math.max(tsw, q.getBoundingClientRect().width); });
+  rows.forEach((r) => { r.querySelector(".ts").style.width = tsw + "px"; });
+  const kr = rows[K], kTop = kr.offsetTop, kH = kr.offsetHeight;
+  const yEnd = VH * s / 2 - (kTop + kH / 2), yStart = Math.min(0, yEnd + Math.max(VH * s * 1.4, kTop * 0.9)) ;
+  // the marker, one bar per wrapped line of the key sentence
+  const sp = kr.querySelector(".tt span"), tt = kr.querySelector(".tt"), rr = sp.getClientRects(), tb = tt.getBoundingClientRect(), hls = [];
+  [...rr].forEach((q) => { const d = document.createElement("i"); d.className = "hl"; tt.appendChild(d);
+    Object.assign(d.style, { left: q.left - tb.left - 6 * s + "px", top: q.top - tb.top + q.height * 0.08 + "px", width: q.width + 12 * s + "px", height: q.height * 0.86 + "px" }); hls.push(d); });
+
+  // ---- the clip card: what lifts out of the transcript
+  const CW = 730, cpad = 40;
+  box($("#cic"), cpad, cpad, 60, 60);
+  $("#clab").textContent = v.clip || ""; box($("#clab"), cpad + 78, cpad + 9);
+  const len = Math.max(1, +v.length || 14);
+  $("#crng").textContent = fmt(T) + " to " + fmt(T + len); Object.assign($("#crng").style, { right: S(cpad), top: S(cpad + 12) });
+  const rngW = $("#crng").getBoundingClientRect().width / s; MV.fitText($("#clab"), (CW - cpad * 2 - 78 - rngW - 20) * s, 22 * s);
+  const cq = $("#cq"); cq.textContent = lines[K] || ""; box(cq, cpad, cpad + 60 + 30, CW - cpad * 2);
+  let qf = 58; while (cq.getBoundingClientRect().height / s > 58 * 1.12 * 3 + 4 && qf > 38) { qf -= 2; cq.style.fontSize = S(qf); }
+  const qH = cq.getBoundingClientRect().height / s, BY = cpad + 60 + 30 + qH + 34, PLs = 58;
+  box($("#cpl"), cpad, BY, PLs, PLs);
+  $("#cdur").textContent = fmt(len); Object.assign($("#cdur").style, { right: S(cpad), top: S(BY + PLs / 2 - 17) });
+  const durW = $("#cdur").getBoundingClientRect().width / s;
+  box($("#cbar"), cpad + PLs + 22, BY + PLs / 2 - 4, CW - cpad * 2 - PLs - 22 - durW - 22, 8);
+  const CH = BY + PLs + cpad;
+
+  // ---- place the panel and the card
+  const cw = DW * s, ch = DH * s;
+  const x0 = cL + ((cR - cL) - cw) / 2, y0 = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: x0 + "px", top: y0 + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: x0 - 40 * u + "px", width: cw + 80 * u + "px", top: y0 + ch + 34 * u + "px" });
+  const ccw = CW * s, cch = CH * s, cx = x0 + (cw - ccw) / 2, cy = y0 + (VY + VH / 2) * s - cch / 2 + 30 * s;
+  Object.assign($("#cwrap").style, { left: cx + "px", top: cy + "px", width: ccw + "px", height: cch + "px" });
+  // where the key row will sit once the scroll lands, in frame space
+  const rowX = x0 + (pad - 10) * s, rowY = y0 + VY * s + yEnd + kTop, rowW = (inner + 20) * s;
+  const fx = (rowX + rowW / 2) - (cx + ccw / 2), fy = (rowY + kH / 2) - (cy + cch / 2), fsx = rowW / ccw, fsy = kH / cch;
+
+  // ---- timing
+  const TS = 0.35, TL = 1.6, THL = TL - 0.05, TC = THL + 0.75;
+  gsap.set("#rig", { transformOrigin: `${x0 + cw / 2}px ${y0 + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: -11, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? 5 : 7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#hic", "#ttl", "#hr"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.15);
+  // the scroll: quick, then a long-tailed stop on the key line
+  // rows outside the window are hidden (the mask already fades them, this keeps them off the header)
+  const clipRows = () => { const y = +gsap.getProperty(list, "y"), vh = VH * s; rows.forEach((r) => { const a = r.offsetTop + y, b = a + r.offsetHeight; r.style.visibility = a < -2 || b > vh + 2 ? "hidden" : "visible"; }); };
+  tl.fromTo(list, { y: yStart }, { y: yEnd, duration: TL - TS, ease: "power3.inOut", onUpdate: clipRows, onStart: clipRows }, TS);
+  clipRows();
+  tl.fromTo(list, { filter: "blur(0px)" }, { filter: "blur(4px)", duration: (TL - TS) * 0.4, ease: "power2.in" }, TS);
+  tl.to(list, { filter: "blur(0px)", duration: (TL - TS) * 0.6, ease: "power2.out" }, TS + (TL - TS) * 0.4);
+  tl.fromTo(rows.filter((r) => r !== kr), { opacity: 1 }, { opacity: 0.45, duration: 0.5, ease: "power2.out", immediateRender: false }, THL);
+  tl.fromTo(kr, { backgroundColor: "rgba(255,255,255,0)" }, { backgroundColor: "rgba(255,255,255,0.08)", duration: 0.3 }, TL - 0.2);
+  tl.set(kr.querySelector(".ts"), { color: "#fff" }, THL);
+  tl.set(kr.querySelector(".tt"), { color: "#fff" }, THL);
+  hls.forEach((d, i) => tl.to(d, { scaleX: 1, duration: 0.4, ease: "power3.inOut" }, THL + i * 0.3));
+  // the line clips out: the row lifts, the card grows out of it, the panel steps back
+  const lift = THL + 0.3 * hls.length + 0.15;
+  tl.to(kr, { scale: 1.03, duration: 0.25, ease: "power2.out" }, lift - 0.15);
+  tl.fromTo("#cwrap", { x: fx, y: fy, scaleX: fsx, scaleY: fsy, z: 0, opacity: 0 }, { x: 0, y: 0, scaleX: 1, scaleY: 1, z: 60, duration: 0.75, ease: "expo.out" }, lift);
+  tl.to("#cwrap", { opacity: 1, duration: 0.12, ease: "power2.out" }, lift);
+  tl.fromTo(["#clipc > *"], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: true }, lift + 0.1);
+  tl.to([kr.querySelector(".tt"), kr.querySelector(".ts")], { opacity: 0, duration: 0.08, ease: "power2.in" }, lift);
+  tl.to(kr, { opacity: 0.2, scale: 1, duration: 0.3, ease: "power2.out" }, lift + 0.15);
+  const KEY = root.classList.contains("is-key");
+  tl.to("#wrap", KEY ? { scale: 0.94, filter: "brightness(0.5)", duration: 0.7, ease: "power3.out" } : { scale: 0.94, opacity: 0.45, filter: "blur(6px)", duration: 0.7, ease: "power3.out" }, lift);
+  tl.fromTo("#cic", { rotation: -60, scale: 0.4 }, { rotation: 0, scale: 1, duration: 0.6, ease: "back.out(2.4)", immediateRender: false }, lift + 0.2);
+  tl.fromTo("#clipc", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, lift + 0.25);
+  tl.fromTo("#cpl", { scale: 0.4 }, { scale: 1, duration: 0.5, ease: "back.out(2.6)", immediateRender: false }, lift + 0.35);
+  tl.to("#cbar i", { scaleX: 0.7, duration: D - lift - 0.5, ease: "none" }, lift + 0.5);
+  tl.to("#cwrap", { rotationY: P ? -4 : -6, rotationX: 2, duration: D - lift, ease: "sine.inOut" }, lift + 0.6);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

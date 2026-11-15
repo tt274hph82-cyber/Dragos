@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"docName","type":"string","label":"File name in the top bar","default":"Launch plan"},
+  {"id":"title","type":"string","label":"Heading that types onto the page","default":"Launch plan"},
+  {"id":"b1","type":"string","label":"First bullet","default":"Film the demo on Monday"},
+  {"id":"b2","type":"string","label":"Second bullet","default":"Ship the free tier first"},
+  {"id":"b3","type":"string","label":"Third bullet (empty to skip)","default":"Email the waitlist at 9am"},
+  {"id":"pick","type":"string","label":"Which bullet gets the highlighter (1, 2 or 3; empty for none)","default":"2"},
+  {"id":"share","type":"string","label":"Button in the top bar (empty to hide)","default":"Share"},
+  {"id":"edited","type":"string","label":"Small line under the heading","default":"Edited just now"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --pink: #1C1A17; --pmut: #77726A; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 36%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 24%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.4) 12%, rgba(255,255,255,.4) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.25); }
+  #wrap { position: absolute; }
+  /* the page: real paper, a warm light from the top left, a contact shadow under it */
+  #page { position: absolute; inset: 0; overflow: hidden; border-radius: calc(var(--s) * 14);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--paper) 92%, white), var(--paper) 55%, color-mix(in srgb, var(--paper) 94%, #8a7a60));
+    box-shadow: 0 calc(var(--s) * 2) calc(var(--s) * 3) rgba(0,0,0,.25), 0 calc(var(--s) * 40) calc(var(--s) * 80) calc(var(--s) * -20) rgba(0,0,0,.75); }
+  .is-key #page { box-shadow: none; }
+  #page::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 25; opacity: .5; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .5 0 0 0 0 .42 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"); }
+  #page::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 26; mix-blend-mode: soft-light;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 16%), rgba(255,255,255,.7) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 16%)); }
+  .ab { position: absolute; box-sizing: border-box; }
+  #bar { left: 0; right: 0; top: 0; border-bottom: calc(var(--s) * 1.5) solid rgba(0,0,0,.09); background: rgba(255,255,255,.35); }
+  #ficon { border-radius: calc(var(--s) * 8); background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 85%, white), var(--accent)); }
+  #ficon::after { content: ""; position: absolute; left: 22%; right: 22%; top: 30%; height: 40%;
+    background: linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)) 0 0 / 100% 16% no-repeat, linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)) 0 50% / 100% 16% no-repeat, linear-gradient(rgba(255,255,255,.9), rgba(255,255,255,.9)) 0 100% / 60% 16% no-repeat; }
+  #fname { font-weight: 700; font-size: calc(var(--s) * 32); color: var(--pink); white-space: nowrap; line-height: 1.1; }
+  #tools { display: flex; gap: calc(var(--s) * 8); }
+  #tools b { width: calc(var(--s) * 44); height: calc(var(--s) * 44); border-radius: calc(var(--s) * 10); display: grid; place-items: center; font-size: calc(var(--s) * 26); color: var(--pmut); font-weight: 800; font-family: Georgia, serif; }
+  #tools b.on { background: color-mix(in srgb, var(--accent2) 45%, white); color: var(--pink); }
+  #share { display: flex; align-items: center; height: calc(var(--s) * 56); padding: 0 calc(var(--s) * 24); border-radius: calc(var(--s) * 28); font-weight: 800; font-size: calc(var(--s) * 28); color: #fff; white-space: nowrap;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, white 20%), var(--accent)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.4); }
+  #ttl { font-family: var(--font-display); font-size: calc(var(--s) * 66); line-height: 1.08; color: var(--pink); letter-spacing: -0.01em; }
+  #ttl .ch { opacity: 0; }
+  #ed { font-weight: 600; font-size: calc(var(--s) * 28); color: var(--pmut); white-space: nowrap; }
+  .bl { position: absolute; font-size: calc(var(--s) * 44); line-height: 1.34; font-weight: 600; color: var(--pink); z-index: 2; }
+  .bl .w { opacity: 0; }
+  .bd { position: absolute; width: calc(var(--s) * 13); height: calc(var(--s) * 13); border-radius: 50%; background: var(--pink); }
+  .hl { position: absolute; z-index: 1; transform-origin: 0 50%; transform: scaleX(0); mix-blend-mode: multiply; border-radius: calc(var(--s) * 4) calc(var(--s) * 12) calc(var(--s) * 6) calc(var(--s) * 14);
+    background: linear-gradient(176deg, color-mix(in srgb, var(--accent2) 92%, white), color-mix(in srgb, var(--accent2) 76%, white) 70%, color-mix(in srgb, var(--accent2) 88%, white)); }
+  .gl { position: absolute; height: calc(var(--s) * 16); border-radius: calc(var(--s) * 8); background: rgba(0,0,0,.07); }
+  #caret { position: absolute; left: 0; top: 0; width: calc(var(--s) * 4); background: var(--accent); z-index: 4; opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="page">
+      <div id="bar" class="ab"></div>
+      <i id="ficon" class="ab"></i><div id="fname" class="ab"></div>
+      <div id="tools" class="ab"><b>B</b><b><i>I</i></b><b style="text-decoration: underline">U</b><b id="hlt"><svg viewBox="0 0 24 24" width="70%" height="70%"><path d="M4 20h8" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M14.5 4.5l5 5-7.5 7.5H7v-5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg></b></div>
+      <div id="share" class="ab"></div>
+      <div id="ttl" class="ab" data-block></div><div id="ed" class="ab"></div>
+      <div id="body"></div>
+      <i id="caret"></i>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const items = [v.b1, v.b2, v.b3].filter((t) => t && String(t).trim()).slice(0, 3);
+  const pick = parseInt(v.pick, 10) - 1;
+
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.56; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 120 * u; cR = W - 120 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.29; cR = W * 0.71; zT = H * 0.06; zB = H * 0.92; }
+  const pad = 56, DW = 760, inner = DW - pad * 2, BAR = 96;
+  let s = Math.min((cR - cL) / DW, P ? 1.08 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- measure the text in design units first, it sets the page height
+  const ttl = $("#ttl"); box(ttl, pad, BAR + 50, inner);
+  [...String(v.title || "")].forEach((c) => { const sp = document.createElement("span"); sp.className = "ch"; sp.textContent = c; ttl.appendChild(sp); });
+  let tfs = 66; while (ttl.getBoundingClientRect().height / s > 66 * 1.08 * 2 + 4 && tfs > 36) { tfs -= 2; ttl.style.fontSize = S(tfs); }
+  const tH = ttl.getBoundingClientRect().height / s;
+  const EDY = BAR + 50 + tH + 14, B0 = EDY + 62, BX = pad + 40, BW = inner - 40;
+  const bls = items.map((t) => { const d = document.createElement("div"); d.className = "bl"; d.textContent = t; $("#body").appendChild(d); box(d, BX, 0, BW); return d; });
+  let bfs = 44; const tooTall = () => bls.some((d) => d.getBoundingClientRect().height / s > bfs * 1.34 * 2 + 4);
+  while (tooTall() && bfs > 28) { bfs -= 2; bls.forEach((d) => d.style.fontSize = S(bfs)); }
+  const bH = bls.map((d) => d.getBoundingClientRect().height / s);
+  let yy = B0; const bY = bH.map((h) => { const y = yy; yy += h + 22; return y; });
+  const GY = yy + 14, DH = GY + 3 * 34 + 30;
+  s = Math.min(s, (zB - zT) / DH); root.style.setProperty("--s", s + "px");
+
+  // ---- place everything at the final scale
+  box($("#bar"), 0, 0, null, BAR); $("#bar").style.width = "100%";
+  box($("#ficon"), pad - 16, (BAR - 44) / 2, 36, 44);
+  box($("#fname"), pad + 34, (BAR - 36) / 2); $("#fname").textContent = v.docName || "";
+  const shareOn = v.share && String(v.share).trim(); $("#share").textContent = shareOn ? v.share : ""; if (!shareOn) $("#share").style.display = "none";
+  Object.assign($("#share").style, { right: S(pad - 16), top: S((BAR - 56) / 2) });
+  const shW = shareOn ? $("#share").getBoundingClientRect().width / s : 0;
+  const toolsOn = !P || DW - pad * 2 > 0; Object.assign($("#tools").style, { right: S(pad - 16 + shW + 18), top: S((BAR - 44) / 2) });
+  const tlW = $("#tools").getBoundingClientRect().width / s;
+  MV.fitText($("#fname"), (DW - (pad + 34) - (pad - 16) - shW - tlW - 50) * s, 20 * s);
+  box(ttl, pad, BAR + 50, inner); ttl.style.fontSize = S(tfs);
+  box($("#ed"), pad, EDY); $("#ed").textContent = v.edited || "";
+  bls.forEach((d, i) => { box(d, BX, bY[i], BW); d.style.fontSize = S(bfs);
+    const dot = document.createElement("i"); dot.className = "bd"; $("#body").appendChild(dot); box(dot, pad + 6, bY[i] + bfs * 1.34 / 2 - 6.5); d._dot = dot; });
+  [0.92, 0.78, 0.55].forEach((f, i) => { const g = document.createElement("i"); g.className = "gl"; $("#body").appendChild(g); box(g, pad, GY + i * 34, inner * f, 16); });
+
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- tokens the caret walks: heading letters, then each bullet's words
+  const pb = $("#page").getBoundingClientRect();
+  const at = (el, h) => { const r = el.getBoundingClientRect(); return { x: r.right - pb.left + 3 * s, y: r.top - pb.top + (r.height - h) / 2 }; };
+  const tCh = [...ttl.querySelectorAll(".ch")], tCaretH = tfs * 0.95 * s, bCaretH = bfs * 1.05 * s;
+  const tPos = tCh.map((c) => at(c, tCaretH));
+  const bWords = bls.map((d) => MV.words(d));
+  const bPos = bWords.map((ws) => ws.map((w) => at(w, bCaretH)));
+  // the highlighter strokes, one per wrapped line of the picked bullet
+  const hls = [];
+  if (pick >= 0 && pick < bls.length) {
+    const lines = [];
+    bWords[pick].forEach((w) => { const r = w.getBoundingClientRect(); const l = lines.find((q) => Math.abs(q.top - r.top) < 4); if (l) l.right = r.right; else lines.push({ top: r.top, left: r.left, right: r.right, h: r.height }); });
+    lines.forEach((l, i) => { const d = document.createElement("i"); d.className = "hl"; $("#body").appendChild(d);
+      Object.assign(d.style, { left: l.left - pb.left - 6 * s + "px", top: l.top - pb.top + l.h * 0.12 + "px", width: l.right - l.left + 16 * s + "px", height: l.h * 0.8 + "px", rotate: (i % 2 ? 0.5 : -0.6) + "deg" }); hls.push(d); });
+  }
+
+  // ---- timing
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 13, rotationX: 10, rotationZ: -1.5, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, rotationZ: 0.5, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  // the page slides up out of depth like a sheet laid down
+  tl.fromTo("#wrap", { rotationX: 34, y: 120 * u, scale: 0.88 }, { rotationX: 0, y: 0, scale: 1, duration: 1.0, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#ficon", "#fname", "#tools", "#share"], { opacity: 0, y: -10 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.2);
+  const caret = $("#caret");
+  // the heading types letter by letter
+  const T1 = 0.55, TS = Math.min(0.045, 0.75 / Math.max(1, tCh.length));
+  tl.set(caret, { opacity: 1, height: tCaretH, x: pad * s, y: tPos[0] ? tPos[0].y : 0 }, T1 - 0.1);
+  tCh.forEach((c, i) => { tl.set(c, { opacity: 1 }, T1 + i * TS); tl.set(caret, { x: tPos[i].x, y: tPos[i].y }, T1 + i * TS); });
+  const TE = T1 + tCh.length * TS;
+  tl.fromTo("#ed", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, TE + 0.05);
+  // bullets: the dot pops, the words write in, the caret rides along
+  let t = TE + 0.2; const WS = 0.075;
+  bls.forEach((d, i) => {
+    tl.fromTo(d._dot, { scale: 0 }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, t);
+    tl.set(caret, { height: bCaretH, x: BX * s, y: bPos[i][0] ? bPos[i][0].y : 0 }, t);
+    bWords[i].forEach((w, j) => { tl.fromTo(w, { opacity: 0, y: 5 * s }, { opacity: 1, y: 0, duration: 0.16, ease: "power2.out", immediateRender: false }, t + 0.06 + j * WS); tl.set(caret, { x: bPos[i][j].x, y: bPos[i][j].y }, t + 0.06 + j * WS); });
+    t += 0.06 + bWords[i].length * WS + 0.14;
+  });
+  tl.fromTo(".gl", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.5, ease: "expo.out", stagger: 0.06 }, t - 0.1);
+  // the highlighter: the tool lights, the stroke sweeps the line, the page answers with a little punch
+  const TH = Math.min(t + 0.25, D - 1.3);
+  tl.to(caret, { opacity: 0, duration: 0.1 }, TH - 0.15);
+  if (hls.length) {
+    tl.set("#hlt", { className: "on" }, TH - 0.12);
+    hls.forEach((d, i) => tl.to(d, { scaleX: 1, duration: 0.45, ease: "power3.inOut" }, TH + i * 0.38));
+    const ws = bWords[pick];
+    tl.to(ws, { y: -3 * s, duration: 0.18, ease: "power2.out", stagger: 0.025 }, TH + 0.15);
+    tl.to(ws, { y: 0, duration: 0.45, ease: "back.out(3)", stagger: 0.025 }, TH + 0.33);
+    tl.to("#stage", { scale: 1.02, duration: 0.08, ease: "power2.out" }, TH + 0.4); tl.to("#stage", { scale: 1, duration: 0.55, ease: "expo.out" }, TH + 0.48);
+  }
+  tl.fromTo("#page", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 1.0, ease: "power2.inOut" }, TH + 0.3);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

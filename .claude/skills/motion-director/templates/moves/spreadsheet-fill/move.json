@@ -1,0 +1,5 @@
+{ "id": "spreadsheet-fill", "name": "Glass spreadsheet fill", "oneLiner": "a spreadsheet on a glass pane: the selection walks down the column filling each cell, a SUM formula types into the formula bar with marching ants round the range, and the column total counts up and lands",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["spreadsheet", "sheet", "table", "numbers", "formula", "total", "sum", "data", "finance", "budget", "tracking", "results", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker adds things up or shows their numbers ('here is what each channel brought in', 'add it all up'): the cells fill as they list them, the total lands on the sum" }

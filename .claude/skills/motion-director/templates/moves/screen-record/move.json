@@ -1,0 +1,5 @@
+{ "id": "screen-record", "name": "Screen record", "oneLiner": "a window shows the brand's screen in slow 3D, a crosshair drags a region out with a live size readout while the rest dims, a glass capture bar rises, Record turns the frame solid red with a breathing dot and a running timer, the pointer clicks Stop, the frame flashes and the region shrinks into a floating clip thumbnail with a play button, its duration and a green saved chip",
+  "category": "system", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["screen recording", "record", "capture", "screencast", "clip", "timer", "loom", "tutorial", "demo", "desktop", "os", "save", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says they just recorded their screen or shows how they film a demo ('I record a quick walkthrough', 'hit record, show it, done'): the drag lands on 'record', Stop and the saved clip on 'done'" }

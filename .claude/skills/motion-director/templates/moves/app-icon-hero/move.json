@@ -1,0 +1,5 @@
+{ "id": "app-icon-hero", "name": "App icon hero", "oneLiner": "the brand's app icon drops in as a thick glossy 3D tile with a glass bevel, bounces on a glass floor with its reflection, a light sweep runs over it, the name and a line settle under it and a notification badge pops and counts up",
+  "category": "system", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["app", "icon", "app icon", "launch", "download", "product", "phone", "badge", "notification", "logo", "3d", "hero", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker names the app or tells people to download it: the icon lands on the name, the badge pops on 'it's already waiting for you' or a number" }

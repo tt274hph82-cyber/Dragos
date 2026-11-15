@@ -1,0 +1,5 @@
+{ "id": "waitlist-spot", "name": "Waitlist spot", "oneLiner": "a white waitlist confirmation card lands on a warm lit desk: your spot number set huge on rolling odometer digits counts down as the queue of people ahead files into a green gate and your marker slides up the line, then the number lands, turns green and a Moving up chip stamps on",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["waitlist", "queue", "launch", "early access", "demand", "position", "line", "beta", "odometer", "countdown", "light"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": true,
+  "say": "when the speaker talks about a waitlist or a queue ('thousands joined the waitlist', 'you move up every time someone gets in', 'I was number 1,284 in line'): cut in on 'waitlist', the number lands on the spot they name" }

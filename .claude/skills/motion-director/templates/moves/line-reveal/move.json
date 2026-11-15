@@ -1,0 +1,5 @@
+{ "id": "line-reveal", "name": "Line reveal", "oneLiner": "a glowing line draws itself left to right while the camera rides its head, then pulls back as the last point pops with its value on a glass pill",
+  "category": "data", "kind": "effect", "uses": ["broll"], "looks": ["glass"], "from": "glass",
+  "tags": ["chart", "line", "trend", "growth", "data", "numbers", "camera", "premium", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": false,
+  "say": "when the speaker describes growth or a trend over time: cut in on the trend, the value pops on the number word" }

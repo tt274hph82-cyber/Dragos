@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"question","type":"string","label":"The poll question","default":"What should the next video be?"},
+  {"id":"options","type":"string","label":"Two to four options, separated by |","default":"Full setup guide|Tool tier list|A day of building|Live Q and A"},
+  {"id":"percents","type":"string","label":"Final percents per option, comma separated (the highest wins)","default":"52,23,15,10"},
+  {"id":"votes","type":"number","label":"Total votes it counts up to","default":12480},
+  {"id":"channel","type":"string","label":"Channel name on the post (empty: the brand name)","default":""},
+  {"id":"age","type":"string","label":"Post age label","default":"2 hours ago"},
+  {"id":"votesLabel","type":"string","label":"Word after the vote count","default":"votes"},
+  {"id":"final","type":"string","label":"Label once the winner lands","default":"Final results"},
+  {"id":"liveLabel","type":"string","label":"Footer label while votes come in","default":"Voting"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ok: #2BD67B; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 36% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 88% 100%, color-mix(in srgb, var(--accent2) 20%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #card { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 44); padding: calc(var(--u) * 36) calc(var(--u) * 38) calc(var(--u) * 34); transform-style: preserve-3d;
+    background: linear-gradient(165deg, rgba(255,255,255,.16), rgba(255,255,255,.06) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.75), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 34%, transparent); }
+  .is-alpha #card { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 40;
+    background: linear-gradient(108deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  #hd { display: flex; align-items: center; gap: calc(var(--u) * 20); }
+  #av { flex: none; width: calc(var(--u) * 76); height: calc(var(--u) * 76); border-radius: 50%; padding: calc(var(--u) * 3); box-sizing: border-box; background: conic-gradient(from 210deg, var(--al), var(--accent), var(--accent2), var(--al)); }
+  #av i { display: block; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 3) solid var(--surface);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 64%; background-position: 50% 50%; }
+  #who { flex: 1; min-width: 0; }
+  #chn { font-size: calc(var(--u) * 36); font-weight: 750; color: var(--ink); white-space: nowrap; line-height: 1.15; }
+  #age { font-size: calc(var(--u) * 30); font-weight: 500; color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: nowrap; line-height: 1.2; }
+  #dots { flex: none; display: flex; gap: calc(var(--u) * 7); } #dots i { width: calc(var(--u) * 9); height: calc(var(--u) * 9); border-radius: 50%; background: color-mix(in srgb, var(--ink) 50%, transparent); }
+  #q { margin: calc(var(--u) * 28) 0 calc(var(--u) * 26); font-size: calc(var(--u) * 46); line-height: 1.18; font-weight: 750; color: var(--ink); letter-spacing: -0.012em; text-wrap: balance; }
+  #opts { display: flex; flex-direction: column; gap: calc(var(--u) * 18); }
+  .op { position: relative; height: calc(var(--u) * 96); border-radius: calc(var(--u) * 26); overflow: hidden; transform-origin: 50% 50%;
+    background: rgba(255,255,255,.05); box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.14); }
+  .is-key .op { background: color-mix(in srgb, var(--surface) 88%, #fff); }
+  .op .fill { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; transform-origin: 0 50%; transform: scaleX(0);
+    background: linear-gradient(90deg, rgba(255,255,255,.16), rgba(255,255,255,.3)); box-shadow: inset calc(var(--u) * -3) 0 0 rgba(255,255,255,.55); }
+  .op .win { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; transform-origin: 0 50%; transform: scaleX(0); opacity: 0;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--ok) 70%, #000), var(--ok)); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.45); }
+  .op .row { position: absolute; inset: 0; display: flex; align-items: center; gap: calc(var(--u) * 18); padding: 0 calc(var(--u) * 28) 0 calc(var(--u) * 24); }
+  .op .rd { flex: none; position: relative; width: calc(var(--u) * 44); height: calc(var(--u) * 44); border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 3.5) solid color-mix(in srgb, var(--ink) 45%, transparent); }
+  .op .ck { position: absolute; inset: calc(var(--u) * -3.5); border-radius: 50%; background: #fff; display: grid; place-items: center; opacity: 0; }
+  .op .ck svg { width: 66%; height: 66%; }
+  .op .lb { flex: 1; min-width: 0; font-size: calc(var(--u) * 38); font-weight: 650; color: var(--ink); white-space: nowrap; }
+  .op .pc { flex: none; font-size: calc(var(--u) * 40); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; transform-origin: 100% 50%; }
+  #ft { display: flex; align-items: center; justify-content: space-between; margin-top: calc(var(--u) * 26); font-size: calc(var(--u) * 34); font-weight: 600; color: color-mix(in srgb, var(--ink) 58%, transparent); white-space: nowrap; }
+  #vc { font-variant-numeric: tabular-nums; }
+  #st { position: relative; display: grid; justify-items: end; } #st > span { grid-area: 1 / 1; }
+  #fin { display: flex; align-items: center; gap: calc(var(--u) * 10); color: var(--ok); font-weight: 750; }
+  #fin i { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--ok); box-shadow: 0 0 calc(var(--u) * 12) var(--ok); }
+  #live { display: flex; align-items: center; gap: calc(var(--u) * 10); }
+  #live i { width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: var(--al); box-shadow: 0 0 calc(var(--u) * 12) var(--accent); }
+  #ring { position: absolute; border-radius: calc(var(--u) * 30); box-sizing: border-box; border: calc(var(--u) * 5) solid var(--ok); opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="hd"><div id="av"><i></i></div><div id="who"><div id="chn"></div><div id="age"></div></div><div id="dots"><i></i><i></i><i></i></div></div>
+    <div id="q"></div>
+    <div id="opts"></div>
+    <div id="ft"><span id="vc"></span><span id="st"><span id="live"><i></i><span id="lt"></span></span><span id="fin"><i></i><span id="fint"></span></span></span></div>
+    <div id="ring"></div>
+    <div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const u = P ? MV.u * (A ? 0.96 : 1.16) : MV.u * (A ? 0.9 : SQ ? 0.96 : 1.12);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const opts = String(v.options || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 4);
+  let pct = String(v.percents || "").split(",").map((s) => Math.max(0, +s || 0)).slice(0, opts.length);
+  while (pct.length < opts.length) pct.push(0);
+  { const sum = pct.reduce((a, b) => a + b, 0) || 1; pct = pct.map((p) => p * 100 / sum); }
+  const WIN = pct.indexOf(Math.max(...pct));
+  // an early state where the runner-up leads, so the winner overtakes
+  const ru = pct.map((p, i) => [p, i]).filter(([, i]) => i !== WIN).sort((a, b) => b[0] - a[0])[0];
+  const early = pct.map((p) => p);
+  if (ru) { early[WIN] = pct[ru[1]] * 0.95; early[ru[1]] = pct[WIN]; }
+  const votes = Math.max(0, Math.round(+v.votes || 0)), fmt = (n) => Math.round(n).toLocaleString("en-US");
+
+  // ---- content
+  { const i = $("#av i"); if (v.mark) i.style.backgroundImage = `url("${v.mark}")`; else if ((v.people || [])[0]) { i.style.backgroundImage = `url("${v.people[0]}")`; i.style.backgroundSize = "170% auto"; i.style.backgroundPosition = "50% 6%"; } }
+  $("#chn").textContent = v.channel || v.brandName || ""; $("#age").textContent = v.age || "";
+  $("#q").textContent = v.question || "";
+  const ck = `<svg viewBox="0 0 24 24" fill="none" stroke="#14894B" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+  const rows = opts.map((t, i) => {
+    const o = document.createElement("div"); o.className = "op";
+    o.innerHTML = `<div class="fill"></div><div class="win"></div><div class="row"><div class="rd"><div class="ck">${ck}</div></div><div class="lb"></div><div class="pc">0%</div></div>`;
+    o.querySelector(".lb").textContent = t; $("#opts").appendChild(o); return o;
+  });
+
+  // ---- size and place
+  const rw = W - safe.left - safe.right;
+  const CW = P ? rw : Math.min((A ? 760 : SQ ? 900 : 1000) * u, rw);
+  $("#card").style.width = CW + "px";
+  const inner = CW - 76 * u;
+  MV.fitText($("#chn"), inner - 76 * u - 20 * u - 60 * u, 18); MV.fitText($("#age"), inner - 160 * u, 16);
+  { const q = $("#q"); let fs = 46 * u; while (q.getBoundingClientRect().height > fs * 1.18 * 2 + 2 && fs > 22) { fs -= 2; q.style.fontSize = fs + "px"; } }
+  rows.forEach((o) => MV.fitText(o.querySelector(".lb"), inner - (24 + 44 + 18 + 18 + 28) * u - 110 * u, 20));
+  $("#vc").textContent = fmt(votes) + " " + (v.votesLabel || "");
+  $("#lt").textContent = v.liveLabel || "Voting"; $("#fint").textContent = v.final || "";
+  const CH = $("#card").getBoundingClientRect().height;
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (A) { if (P) { x = safe.left; y = safe.top; } else if (W > H) { x = W - safe.right - CW; y = safe.top; } else { x = W - safe.right - CW; y = safe.top; } }
+  else if (P) y = H * 0.47 - CH / 2;
+  gsap.set("#card", { left: x, top: y });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+  $("#vc").textContent = "0 " + (v.votesLabel || "");
+
+  // ---- timeline
+  tl.fromTo("#card", { opacity: 0, y: 90 * u, z: -300 * u, rotationX: 24, rotationY: -10 }, { opacity: 1, y: 0, z: 0, rotationX: 8, rotationY: -6, duration: 0.9, ease: "expo.out" }, 0.02);
+  tl.fromTo("#card", { filter: "blur(16px)" }, { filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.02);
+  tl.to("#card", { rotationX: 2, rotationY: 5, duration: D - 1.3, ease: "sine.inOut" }, 0.9);
+  tl.fromTo("#av", { scale: 0.4, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, 0.2);
+  tl.fromTo("#who", { opacity: 0, x: -16 * u }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.28);
+  const qw = MV.words("#q");
+  tl.fromTo(qw, { opacity: 0, y: 18 * u, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: Math.min(0.04, 0.4 / qw.length), ease: "expo.out" }, 0.32);
+  rows.forEach((o, i) => tl.fromTo(o, { opacity: 0, y: 24 * u, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.6)" }, 0.5 + i * 0.07));
+  tl.fromTo("#ft", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0.75);
+  tl.fromTo("#live i", { scale: 1 }, { scale: 0.55, duration: 0.35, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0.8);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.6);
+
+  // the votes come in: bars race, the runner-up leads early, the winner overtakes
+  const V0 = 0.95, V1 = 2.75, st = { a: 0 };
+  const val = (i, a) => a <= 1 ? early[i] * gsap.parseEase("power2.out")(a) : early[i] + (pct[i] - early[i]) * gsap.parseEase("sine.inOut")(a - 1);
+  tl.to(st, { a: 2, duration: V1 - V0, ease: "none", onUpdate: () => {
+    rows.forEach((o, i) => { const p = val(i, st.a); gsap.set(o.querySelector(".fill"), { scaleX: p / 100 }); o.querySelector(".pc").textContent = Math.round(p) + "%"; });
+    $("#vc").textContent = fmt(votes * gsap.parseEase("power2.out")(st.a / 2)) + " " + (v.votesLabel || "");
+  } }, V0);
+  // the moment: the winner flips to green, its check pops, its percent lifts
+  const T = V1 + 0.05, w = rows[WIN];
+  tl.set(w.querySelector(".win"), { opacity: 1 }, T);
+  tl.fromTo(w.querySelector(".win"), { scaleX: 0 }, { scaleX: pct[WIN] / 100, duration: 0.45, ease: "expo.out", immediateRender: false }, T);
+  tl.fromTo(w.querySelector(".ck"), { opacity: 0, scale: 0.3, rotation: -30 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(3)", immediateRender: false }, T + 0.08);
+  tl.to(w.querySelector(".rd"), { borderColor: "rgba(255,255,255,0)", duration: 0.2, ease: "power2.out" }, T + 0.08);
+  tl.to(w, { scale: 1.045, duration: 0.09, ease: "power2.out" }, T); tl.to(w, { scale: 1.025, duration: 0.55, ease: "back.out(3)" }, T + 0.09);
+  tl.to(w, { boxShadow: `inset 0 0 0 ${2 * u}px rgba(43,214,123,.9), 0 ${18 * u}px ${40 * u}px ${-12 * u}px rgba(43,214,123,.55)`, duration: 0.4, ease: "power2.out" }, T);
+  tl.fromTo(w.querySelector(".pc"), { scale: 1 }, { scale: 1.22, duration: 0.1, ease: "power2.out", immediateRender: false }, T + 0.05);
+  tl.to(w.querySelector(".pc"), { scale: 1.1, duration: 0.5, ease: "back.out(3)" }, T + 0.15);
+  rows.forEach((o, i) => { if (i !== WIN) tl.to(o, { opacity: 0.55, duration: 0.4, ease: "power2.out" }, T + 0.1); });
+  { const r = w.getBoundingClientRect(), c = $("#card").getBoundingClientRect(), m = 6 * u;
+    gsap.set("#ring", { left: w.offsetLeft - m, top: $("#opts").offsetTop + w.offsetTop - m, width: w.offsetWidth + 2 * m, height: w.offsetHeight + 2 * m }); }
+  tl.fromTo("#ring", { opacity: 0.9, scale: 1 }, { opacity: 0, scale: 1.08, duration: 0.6, ease: "expo.out", immediateRender: false }, T + 0.06);
+  tl.to("#card", { y: 8 * u, duration: 0.06, ease: "power2.out" }, T); tl.to("#card", { y: 0, duration: 0.5, ease: "back.out(2.5)" }, T + 0.06);
+  // the footer status turns to the final label
+  gsap.set("#fin", { opacity: 0 });
+  if (v.final) {
+    tl.to("#live", { opacity: 0, y: -14 * u, duration: 0.2, ease: "power2.in" }, T);
+    tl.fromTo("#fin", { opacity: 0, y: 14 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", immediateRender: false }, T + 0.16);
+  }
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, T + 0.1);
+  // exit
+  tl.to("#card", { y: -120 * u, z: -260 * u, rotationX: -14, opacity: 0, duration: 0.42, ease: "power3.in" }, D - 0.44);
+  tl.to("#card", { filter: "blur(14px)", duration: 0.42, ease: "power3.in" }, D - 0.44);
+  MV.done();
+</script>
+</body>
+</html>

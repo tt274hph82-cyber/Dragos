@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Sheet name on the tab","default":"Monthly numbers"},
+  {"id":"colA","type":"string","label":"Header over the labels","default":"Channel"},
+  {"id":"colB","type":"string","label":"Header over the numbers","default":"Revenue"},
+  {"id":"rows","type":"string","label":"3 to 5 rows, label:number, comma separated","default":"Ads:1200,Email:3400,Referrals:2150,Search:4800"},
+  {"id":"currency","type":"string","label":"Sign before every number (empty = none)","default":"$"},
+  {"id":"total","type":"string","label":"Label on the total row","default":"Total"},
+  {"id":"fn","type":"string","label":"Formula name that types in","default":"SUM"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 30%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 40);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.28) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #tab { display: flex; align-items: center; gap: calc(var(--s) * 16); }
+  #tab svg { flex: none; width: calc(var(--s) * 50); height: calc(var(--s) * 50); }
+  #ttl { font-family: var(--font-display); font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #fx { border-radius: calc(var(--s) * 18); background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1), inset 0 calc(var(--s) * 2) calc(var(--s) * 4) rgba(0,0,0,.3); }
+  .is-key #fx { background: color-mix(in srgb, var(--surface) 70%, black); }
+  #ref { position: absolute; display: grid; place-items: center; font-weight: 700; font-size: calc(var(--s) * 34); color: var(--ink); font-variant-numeric: tabular-nums;
+    border-right: calc(var(--s) * 1.5) solid rgba(255,255,255,.12); }
+  #fxg { position: absolute; font-style: italic; font-weight: 700; font-family: Georgia, "Times New Roman", serif; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 50%, transparent); line-height: 1; }
+  #ftext { position: absolute; font-family: var(--mono); font-size: calc(var(--s) * 36); color: var(--ink); white-space: nowrap; line-height: 1; }
+  #ftext .rg, .cv .rg { color: color-mix(in srgb, var(--accent2) 80%, white); }
+  #caret { display: inline-block; width: calc(var(--s) * 3); height: 1.05em; margin-left: calc(var(--s) * 3); vertical-align: -0.15em; background: var(--al); opacity: 0; }
+
+  #grid { position: absolute; }
+  .lt { position: absolute; display: grid; place-items: center; font-weight: 700; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 48%, transparent); }
+  .hr, .vr { position: absolute; background: rgba(255,255,255,.12); }
+  .hdr { position: absolute; display: flex; align-items: center; font-weight: 700; font-size: calc(var(--s) * 38); color: color-mix(in srgb, var(--ink) 66%, transparent); white-space: nowrap; letter-spacing: .01em; }
+  .ca { position: absolute; display: flex; align-items: center; font-weight: 600; font-size: calc(var(--s) * 42); color: var(--ink); white-space: nowrap; }
+  .cv { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-weight: 600; font-size: calc(var(--s) * 42); color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .cv.mono { font-family: var(--mono); font-size: calc(var(--s) * 34); font-weight: 500; }
+  #trow { position: absolute; background: color-mix(in srgb, var(--accent) 22%, transparent); opacity: 0; }
+  .is-key #trow { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); }
+  #tl { font-family: var(--font-display); font-weight: 400; }
+  #tv { font-family: var(--font-display); font-weight: 400; color: var(--ink); }
+  #sel { position: absolute; box-sizing: border-box; border: calc(var(--s) * 4.5) solid var(--al); border-radius: calc(var(--s) * 6); opacity: 0;
+    background: color-mix(in srgb, var(--accent) 14%, transparent); box-shadow: 0 0 calc(var(--s) * 26) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key #sel { box-shadow: none; }
+  #sel i { position: absolute; right: calc(var(--s) * -11); bottom: calc(var(--s) * -11); width: calc(var(--s) * 15); height: calc(var(--s) * 15); background: var(--al); border: calc(var(--s) * 3) solid var(--surface); }
+  #ants { position: absolute; overflow: visible; opacity: 0; }
+  #ants rect { fill: color-mix(in srgb, var(--accent2) 12%, transparent); stroke: color-mix(in srgb, var(--accent2) 85%, white); }
+  #ring { position: absolute; border-radius: calc(var(--s) * 10); border: calc(var(--s) * 3) solid var(--al); box-sizing: border-box; opacity: 0; }
+  .is-key #ring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="tab" class="ab"><svg viewBox="0 0 48 48"><rect x="4" y="4" width="40" height="40" rx="9" fill="var(--accent)"/><path d="M13 17h22M13 24h22M13 31h22M22 13v22" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".92"/></svg><div id="ttl"></div></div>
+      <div id="fx" class="ab"><div id="ref"></div><div id="fxg">fx</div><div id="ftext"><span id="ft"></span><span id="caret"></span></div></div>
+      <div id="grid"><div id="trow"></div></div>
+    </div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const rows = String(v.rows || "").split(",").map((r) => { const m = r.split(":"); return { l: (m[0] || "").trim(), n: +String(m[1] || "0").replace(/[^0-9.\-]/g, "") || 0 }; }).filter((r) => r.l).slice(0, 5);
+  while (rows.length < 3) rows.push({ l: "", n: 0 });
+  const N = rows.length, cur = v.currency || "";
+  const sum = rows.reduce((a, r) => a + r.n, 0);
+  const dec = rows.some((r) => r.n % 1) ? 2 : 0;
+  const fmt = (x) => cur + Number(x).toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+
+  // ---- the frame zone, then one scale s so the sheet's design (DW x DH) fits it
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.1; zB = H * 0.88; }
+  const pad = 34, barH = 60, fxH = 80, letH = 52, hdrH = 86, rowH = N >= 5 ? 80 : 88, totH = 100, gut = 66;
+  const DW = 820, DH = pad + barH + 18 + fxH + 24 + letH + hdrH + N * rowH + totH + 30;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.04 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- header: the tab and the formula bar
+  const inner = DW - pad * 2;
+  box($("#tab"), pad, pad, inner, barH);
+  $("#ttl").textContent = v.title || v.brandName || "";
+  MV.fitText($("#ttl"), (inner - 70) * s, 18);
+  const fy = pad + barH + 18;
+  box($("#fx"), pad, fy, inner, fxH);
+  box($("#ref"), 0, 0, 110, fxH);
+  Object.assign($("#fxg").style, { left: S(130), top: S((fxH - 36) / 2) });
+  Object.assign($("#ftext").style, { left: S(186), top: S((fxH - 36) / 2 + 2) });
+  const ft = $("#ft"), caret = $("#caret"), ref = $("#ref");
+
+  // ---- the grid: column letters, row numbers, headers, rows, total
+  const gy = fy + fxH + 24, colA = Math.round((inner - gut) * 0.55), colB = inner - gut - colA;
+  const grid = $("#grid"); box(grid, pad, gy, inner, letH + hdrH + N * rowH + totH);
+  const mk = (cls, txt) => { const d = document.createElement("div"); d.className = cls; if (txt != null) d.textContent = txt; grid.appendChild(d); return d; };
+  const lets = [mk("lt", "A"), mk("lt", "B")]; box(lets[0], gut, 0, colA, letH); box(lets[1], gut + colA, 0, colB, letH);
+  const rowY = (i) => letH + hdrH + i * rowH;            // data row i
+  const totY = letH + hdrH + N * rowH;
+  const nums = [];
+  for (let r = 0; r < N + 2; r++) { const y = r === 0 ? letH : r <= N ? rowY(r - 1) : totY, h = r === 0 ? hdrH : r <= N ? rowH : totH; const d = mk("lt", String(r + 1)); box(d, 0, y, gut, h); nums.push(d); }
+  const lines = [];
+  [letH, letH + hdrH, ...rows.map((_, i) => rowY(i) + rowH)].forEach((y) => { const d = mk("hr"); box(d, 0, y, inner, 1.5); lines.push(d); });
+  [gut, gut + colA].forEach((x) => { const d = mk("vr"); box(d, x, 0, 1.5, letH + hdrH + N * rowH + totH); lines.push(d); });
+  const hA = mk("hdr", v.colA || ""), hB = mk("hdr", v.colB || "");
+  box(hA, gut + 22, letH, colA - 44, hdrH); box(hB, gut + colA + 22, letH, colB - 44, hdrH); hB.style.justifyContent = "flex-end";
+  MV.fitText(hA, (colA - 44) * s, 16); MV.fitText(hB, (colB - 44) * s, 16);
+  const cells = rows.map((r, i) => {
+    const a = mk("ca", r.l); box(a, gut + 22, rowY(i), colA - 44, rowH); MV.fitText(a, (colA - 44) * s, 16);
+    const b = mk("cv", ""); box(b, gut + colA + 22, rowY(i), colB - 44, rowH);
+    return { a, b, txt: r.n ? fmt(r.n) : "" };
+  });
+  const trow = $("#trow"); box(trow, 0, totY, inner, totH);
+  const tLab = mk("ca", v.total || ""); tLab.id = "tl"; box(tLab, gut + 22, totY, colA - 44, totH); MV.fitText(tLab, (colA - 44) * s, 16);
+  const tv = mk("cv", ""); tv.id = "tv"; box(tv, gut + colA + 22, totY, colB - 44, totH);
+  tv.style.fontSize = S(46); tv.textContent = fmt(sum); const tvFS = MV.fitText(tv, (colB - 44) * s, 14); tv.textContent = "";
+  // the value cells all share the widest number's size, so the column reads as one
+  cells.forEach((c) => { c.b.textContent = c.txt; }); let vFS = 42 * s; cells.forEach((c) => { vFS = Math.min(vFS, MV.fitText(c.b, (colB - 44) * s, 14)); });
+  cells.forEach((c) => { c.b.style.fontSize = vFS + "px"; c.b.textContent = ""; });
+
+  // the selection, the marching ants round the summed range, the ring that goes out on the total
+  const sel = mk(""); sel.id = "sel"; sel.innerHTML = "<i></i>";
+  const NS = "http://www.w3.org/2000/svg";
+  const ants = document.createElementNS(NS, "svg"); ants.id = "ants"; grid.appendChild(ants);
+  const ar = document.createElementNS(NS, "rect"); ants.appendChild(ar);
+  box(ants, gut + colA, rowY(0), colB, N * rowH);
+  ants.setAttribute("viewBox", `0 0 ${colB * s} ${N * rowH * s}`);
+  const aw = 3.5 * s; Object.entries({ x: aw, y: aw, width: colB * s - aw * 2, height: N * rowH * s - aw * 2, rx: 5 * s, "stroke-width": aw, "stroke-dasharray": `${12 * s} ${9 * s}` }).forEach(([k, val]) => ar.setAttribute(k, val));
+  const ring = mk(""); ring.id = "ring"; box(ring, gut + colA, totY, colB, totH);
+  const selAt = (i) => ({ left: S(gut + colA - 2), top: S((i < N ? rowY(i) : totY) - 2), width: S(colB + 4), height: S((i < N ? rowH : totH) + 4) });
+  const refOf = (i) => "B" + (i + 2);
+  const formula = `=${(v.fn || "SUM").toUpperCase()}(B2:B${N + 1})`;
+
+  // the floor line under the pane (B-roll)
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- timing
+  const T0 = 1.0, STEP = Math.min(0.36, 1.35 / N), TS = T0 + N * STEP + 0.12;   // TS: jump to the total
+  const TF = TS + 0.2, FD = 0.62, TE = TF + FD + 0.16;                             // formula types, then enter
+  // the camera: a slow 3D drift, and a push toward the total as it lands
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: P ? 12 : 14, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  const tCx = cL + (pad + gut + colA + colB / 2) * s, tCy = cT + (gy + totY + totH / 2) * s;
+  gsap.set("#cam", { transformOrigin: `${tCx}px ${tCy}px` });
+  tl.fromTo("#cam", { scale: 1 }, { scale: A ? 1.03 : 1.06, duration: 1.4, ease: "power3.inOut" }, TS - 0.2);
+
+  // ---- in: the pane swings up, the chrome, the grid draws, the labels arrive
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#tab", "#fx"], { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.18);
+  lines.forEach((d, i) => { const hz = d.classList.contains("hr");
+    tl.fromTo(d, hz ? { scaleX: 0, transformOrigin: "0 50%" } : { scaleY: 0, transformOrigin: "50% 0" }, hz ? { scaleX: 1, duration: 0.6, ease: "expo.out" } : { scaleY: 1, duration: 0.7, ease: "expo.out" }, 0.25 + i * 0.03); });
+  tl.fromTo([...lets, ...nums], { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out", stagger: 0.03 }, 0.3);
+  tl.fromTo([hA, hB, ...cells.map((c) => c.a), tLab], { opacity: 0, x: -24 * s, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out", stagger: 0.06 }, 0.4);
+
+  // ---- the fill: the selection walks down the column, each cell types its number
+  tl.set(ref, { textContent: refOf(0) }, 0);
+  tl.fromTo(sel, Object.assign({ opacity: 0, scale: 1.25 }, selAt(0)), { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)" }, T0 - 0.3);
+  cells.forEach((c, i) => {
+    const t = T0 + i * STEP;
+    if (i) { tl.to(sel, Object.assign({ duration: 0.2, ease: "expo.out" }, selAt(i)), t - 0.1); tl.set(ref, { textContent: refOf(i) }, t - 0.1); }
+    const o = { k: 0 }, n = c.txt.length;
+    tl.fromTo(o, { k: 0 }, { k: n, duration: Math.min(0.24, STEP * 0.7), ease: `steps(${Math.max(1, n)})`, immediateRender: false,
+      onUpdate: () => { const x = c.txt.slice(0, Math.round(o.k)); c.b.textContent = x; ft.textContent = x; } }, t);
+    tl.fromTo(c.b, { scale: 1.0 }, { scale: 1.08, duration: 0.06, ease: "power2.out", immediateRender: false, transformOrigin: "100% 50%" }, t + 0.22);
+    tl.to(c.b, { scale: 1, duration: 0.3, ease: "back.out(3)" }, t + 0.28);
+  });
+
+  // ---- the formula: jump to the total cell, type it, the ants march round the range
+  tl.to(sel, Object.assign({ duration: 0.26, ease: "expo.out" }, selAt(N)), TS);
+  tl.set(ref, { textContent: "B" + (N + 2) }, TS);
+  tl.set(ft, { textContent: "" }, TS);
+  tl.set(caret, { opacity: 1 }, TF);
+  const rgHTML = (str) => str.replace(/(B\d+:B\d+)/, '<span class="rg">$1</span>');
+  const fo = { k: 0 };
+  tl.fromTo(fo, { k: 0 }, { k: formula.length, duration: FD, ease: `steps(${formula.length})`, immediateRender: false,
+    onUpdate: () => { const x = formula.slice(0, Math.round(fo.k)); ft.innerHTML = rgHTML(x); tv.innerHTML = rgHTML(x); } }, TF);
+  tl.set(tv, { fontFamily: "var(--mono)", fontSize: 34 * s, fontWeight: 500 }, TF);
+  tl.fromTo(ants, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, TF + FD * 0.55);
+  tl.fromTo(ar, { strokeDashoffset: 0 }, { strokeDashoffset: -21 * s * 6, duration: TE - TF + 0.3, ease: "none" }, TF);
+
+  // ---- enter: the formula resolves, the total counts up and lands
+  tl.set(caret, { opacity: 0 }, TE);
+  tl.to(ants, { opacity: 0, duration: 0.25, ease: "power2.in" }, TE + 0.05);
+  tl.set(tv, { fontFamily: "var(--font-display)", fontSize: tvFS, fontWeight: 400 }, TE);
+  tl.set(ft, { innerHTML: rgHTML(formula) }, TE);
+  const to = { n: 0 };
+  tl.fromTo(to, { n: 0 }, { n: sum, duration: 0.6, ease: "power3.out", immediateRender: false, onUpdate: () => { tv.textContent = fmt(to.n); } }, TE);
+  tl.fromTo(trow, { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out" }, TE + 0.45);
+  tl.to(tv, { color: "var(--al)", duration: 0.2, ease: "power2.out" }, TE + 0.55);
+  tl.fromTo(tv, { scale: 1 }, { scale: 1.2, duration: 0.08, ease: "power2.out", transformOrigin: "100% 50%", immediateRender: false }, TE + 0.58);
+  tl.to(tv, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TE + 0.66);
+  tl.fromTo(sel, { scale: 1 }, { scale: 1.06, duration: 0.08, ease: "power2.out", immediateRender: false }, TE + 0.58);
+  tl.to(sel, { scale: 1, duration: 0.45, ease: "back.out(3)" }, TE + 0.66);
+  tl.fromTo(ring, { scale: 1, opacity: 0.9 }, { scale: 1.5, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TE + 0.62);
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TE + 0.6);
+
+  // ---- out: an overlay leaves clean; a cutaway holds to the cut
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

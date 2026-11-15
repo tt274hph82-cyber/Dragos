@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"nodes","type":"string","label":"Who or what the money moves between, comma separated, 2 to 4, in order","default":"Bank,You,Purchase"},
+  {"id":"glyphs","type":"string","label":"Glyph per node, comma separated (bank, wallet, user, home, car, cart, card, coin, gift, rocket, code, chart...; empty = guessed from the label)","default":""},
+  {"id":"flows","type":"string","label":"A short label on each arrow, comma separated (one fewer than the nodes)","default":"Lends you money,You buy it"},
+  {"id":"back","type":"string","label":"Label on the arc of money flowing back (empty = no arc)","default":"Monthly payments"},
+  {"id":"backFrom","type":"string","label":"The arc runs from this node number back to the next one (1-based)","default":"2"},
+  {"id":"backTo","type":"string","label":"...to this node number","default":"1"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 60%; height: 40%; left: 45%; top: 5%; background: color-mix(in srgb, var(--accent) 34%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -30%; top: 50%; background: color-mix(in srgb, var(--accent2) 22%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #wires { position: absolute; left: 0; top: 0; overflow: visible; }
+  .tile { position: absolute; box-sizing: border-box; display: grid; place-items: center; color: var(--ink);
+    background: linear-gradient(155deg, rgba(255,255,255,.2), rgba(255,255,255,.06) 62%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--u) * 30) calc(var(--u) * 60) calc(var(--u) * -22) rgba(0,0,0,.7); }
+  .is-alpha .tile { background: linear-gradient(155deg, color-mix(in srgb, var(--surface) 84%, white 16%), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .tile .gl { position: relative; width: 50%; height: 50%; z-index: 2; }
+  .tile .rim { position: absolute; inset: calc(var(--u) * -2); border-radius: inherit; opacity: 0; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 3) color-mix(in srgb, var(--accent2) 80%, white), 0 0 calc(var(--u) * 50) calc(var(--u) * 4) color-mix(in srgb, var(--accent2) 50%, transparent); }
+  .tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 3;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -50%) - 16%), rgba(255,255,255,.34) var(--sheen, -50%), transparent calc(var(--sheen, -50%) + 16%)); }
+  .nlab { position: absolute; white-space: nowrap; font-family: var(--font-display); font-weight: 400; letter-spacing: -0.005em; line-height: 1; color: var(--ink);
+    text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(0,0,0,.6); }
+  .flab { position: absolute; white-space: nowrap; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; line-height: 1; color: color-mix(in srgb, var(--ink) 78%, transparent);
+    text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.7); }
+  #blab { position: absolute; white-space: nowrap; line-height: 1; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #fff; box-sizing: border-box; text-align: center;
+    border-radius: 999px; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 88%, white 12%), color-mix(in srgb, var(--accent) 86%, black 14%));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), 0 calc(var(--u) * 14) calc(var(--u) * 30) rgba(0,0,0,.45), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 50%, transparent); }
+  .is-alpha .nlab, .is-alpha .flab { color: #fff; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.85); }
+  .is-key .tile { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .is-key .nlab, .is-key .flab { text-shadow: none; }
+  .is-key #blab { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); }
+  .is-key .tile .rim { box-shadow: 0 0 0 calc(var(--u) * 3) var(--accent2); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <svg id="wires">
+      <defs>
+        <radialGradient id="gCoin" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".38" stop-color="#F1C24E"/><stop offset=".8" stop-color="#B8841C"/><stop offset="1" stop-color="#6E4A0C"/></radialGradient>
+        <radialGradient id="gCoinIn" cx="62%" cy="70%" r="70%"><stop offset="0" stop-color="#FFF3C4"/><stop offset=".5" stop-color="#E8B640"/><stop offset="1" stop-color="#A97615"/></radialGradient>
+        <filter id="fGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8" /></filter>
+      </defs>
+      <g id="base"></g><g id="lit"></g><g id="coins"></g>
+    </svg>
+    <div id="nodes"></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script src="assets/glyphs.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration, KEY = root.classList.contains("is-key");
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const cs = getComputedStyle(root), ACC = cs.getPropertyValue("--accent").trim(), AC2 = cs.getPropertyValue("--accent2").trim();
+  const list = (x) => String(x || "").split(",").map((s) => s.trim());
+  let names = list(v.nodes).filter((s) => s.length); const N = Math.max(2, Math.min(4, names.length || 3));
+  while (names.length < N) names.push(""); names = names.slice(0, N);
+  const gl = list(v.glyphs), flows = list(v.flows), used = new Set();
+  const glyphs = names.map((n, i) => GLYPH.pick(n, gl[i], i, used));
+  let bf = (parseInt(v.backFrom, 10) || 2) - 1, bt = (parseInt(v.backTo, 10) || 1) - 1;
+  const hasBack = !!String(v.back || "").trim() && bf !== bt && bf >= 0 && bt >= 0 && bf < N && bt < N;
+  const NS = "http://www.w3.org/2000/svg", mk = (tag, a) => { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const svg = document.getElementById("wires"); svg.setAttribute("width", W); svg.setAttribute("height", H);
+
+  // ---- layout. A column on 9:16 (labels to the right, the arc back on the left); a row elsewhere (the arc under it)
+  const VERT = P;
+  let T, pos = [], nlFs, flFs;
+  if (VERT) {
+    const top = safe.top + (A ? 10 : 40) * u, bot = A ? H * 0.5 : H - safe.bottom - 30 * u;
+    T = Math.round(Math.min(220 * u, (bot - top) / (N + (N - 1) * 0.62)));
+    const cx = safe.left + (hasBack ? 330 : 200) * u, gap = (bot - top - N * T) / Math.max(1, N - 1);
+    for (let i = 0; i < N; i++) pos.push([cx, top + T / 2 + i * (T + gap)]);
+    nlFs = Math.round(Math.min(64 * u, T * 0.3)); flFs = Math.round(36 * u);
+  } else {
+    const L = SQ ? W * 0.1 : W * 0.1, R = W - L, cy = A ? H * (SQ ? 0.26 : 0.3) : H * (hasBack ? 0.38 : 0.48);
+    T = Math.round(Math.min((SQ ? 200 : 230) * u * (A ? 0.8 : 1), ((R - L) / N) * 0.5));
+    for (let i = 0; i < N; i++) pos.push([L + T / 2 + ((R - L - T) * i) / Math.max(1, N - 1), cy]);
+    nlFs = Math.round((SQ ? 48 : 52) * u * (A ? 0.85 : 1)); flFs = Math.round((SQ ? 30 : 32) * u * (A ? 1.1 : 1));
+  }
+  const nodesEl = document.getElementById("nodes"), nodes = [];
+  pos.forEach(([x, y], i) => {
+    const t = document.createElement("div"); t.className = "tile"; t.innerHTML = GLYPH.svg(glyphs[i], "gl") + '<div class="rim"></div>';
+    Object.assign(t.style, { width: T + "px", height: T + "px", left: x - T / 2 + "px", top: y - T / 2 + "px", borderRadius: T * 0.26 + "px" });
+    const lab = document.createElement("div"); lab.className = "nlab"; lab.textContent = names[i]; lab.style.fontSize = nlFs + "px";
+    nodesEl.append(t, lab);
+    if (VERT) { MV.fitText(lab, W - safe.right - (x + T / 2 + 30 * u), 26); Object.assign(lab.style, { left: x + T / 2 + 30 * u + "px", top: y - lab.offsetHeight / 2 + "px" }); }
+    else { const room = (W * 0.8) / N; MV.fitText(lab, room, 24); Object.assign(lab.style, { left: x - lab.offsetWidth / 2 + "px", top: y + T / 2 + 26 * u + "px" }); }
+    nodes.push({ t, lab, x, y, rim: t.querySelector(".rim") });
+  });
+
+  // ---- the arrows between the nodes, each with a label
+  const SW = 6 * u, edges = [];
+  const arrowHead = (x, y, dir, col, g) => { const s = 18 * u, a1 = dir + Math.PI + 0.62, a2 = dir + Math.PI - 0.62;
+    const p = mk("path", { d: `M${x + Math.cos(a1) * s},${y + Math.sin(a1) * s} L${x},${y} L${x + Math.cos(a2) * s},${y + Math.sin(a2) * s}`, fill: "none", stroke: col, "stroke-width": SW, "stroke-linecap": "round", "stroke-linejoin": "round" }); g.append(p); return p; };
+  for (let i = 0; i < N - 1; i++) {
+    const a = nodes[i], b = nodes[i + 1], pad = 22 * u;
+    let d, hx, hy, ang;
+    if (VERT) { const y0 = a.y + T / 2 + pad, y1 = b.y - T / 2 - pad; d = `M${a.x},${y0} L${b.x},${y1}`; hx = b.x; hy = y1; ang = Math.PI / 2; }
+    else { const x0 = a.x + T / 2 + pad, x1 = b.x - T / 2 - pad; d = `M${x0},${a.y} L${x1},${b.y}`; hx = x1; hy = b.y; ang = 0; }
+    const base = mk("path", { d, fill: "none", stroke: "rgba(255,255,255,.2)", "stroke-width": SW, "stroke-linecap": "round" });
+    const glow = mk("path", { d, fill: "none", stroke: AC2, "stroke-width": SW * 2.4, "stroke-linecap": "round", filter: "url(#fGlow)", opacity: KEY ? 0 : 0.7 });
+    const lit = mk("path", { d, fill: "none", stroke: `color-mix(in srgb, ${AC2} 55%, white)`, "stroke-width": SW, "stroke-linecap": "round" });
+    document.getElementById("base").append(base); document.getElementById("lit").append(glow, lit);
+    const head = arrowHead(hx, hy, ang, "rgba(255,255,255,.85)", document.getElementById("lit"));
+    const Ln = base.getTotalLength(); for (const p of [lit, glow]) { p.style.strokeDasharray = Ln; p.style.strokeDashoffset = Ln; }
+    const fl = document.createElement("div"); fl.className = "flab"; fl.textContent = flows[i] || ""; fl.style.fontSize = flFs + "px"; nodesEl.append(fl);
+    if (VERT) { MV.fitText(fl, W - safe.right - (a.x + 34 * u), 24); Object.assign(fl.style, { left: a.x + 34 * u + "px", top: (a.y + b.y) / 2 - fl.offsetHeight / 2 + "px" }); }
+    else { // between the tiles when it fits there, else lifted over them where the whole span is free
+      const gapW = b.x - a.x - T - 30 * u; fl.style.whiteSpace = "nowrap"; const r = document.createRange(); r.selectNodeContents(fl); const w0 = r.getBoundingClientRect().width;
+      if (w0 <= gapW) Object.assign(fl.style, { left: (a.x + b.x) / 2 - w0 / 2 + "px", top: a.y - fl.offsetHeight - 20 * u + "px" });
+      else { MV.fitText(fl, (b.x - a.x) * 0.95, 24); r.selectNodeContents(fl); const w1 = r.getBoundingClientRect().width; Object.assign(fl.style, { left: (a.x + b.x) / 2 - w1 / 2 + "px", top: a.y - T / 2 - fl.offsetHeight - 26 * u + "px" }); } }
+    if (!flows[i]) fl.style.display = "none";
+    edges.push({ base, lit, glow, head, L: Ln, fl, from: i, to: i + 1 });
+  }
+  // ---- the arc back: the money returning, in the accent
+  let back = null;
+  if (hasBack) {
+    const a = nodes[bf], b = nodes[bt]; let d, hx, hy, ang, lx, ly;
+    if (VERT) { const x0 = a.x - T / 2 - 18 * u, x1 = b.x - T / 2 - 18 * u, bulge = Math.min(a.x - T / 2 - safe.left - 40 * u, 200 * u);
+      d = `M${x0},${a.y} C${x0 - bulge * 1.33},${a.y} ${x1 - bulge * 1.33},${b.y} ${x1},${b.y}`; hx = x1; hy = b.y; ang = a.y > b.y ? 0 : 0; lx = Math.min(x0, x1) - bulge; ly = (a.y + b.y) / 2; }
+    else { const y0 = a.y + T / 2 + 26 * u + nlFs + 22 * u, sag = Math.min(H * 0.2, (A ? 120 : 210) * u);
+      d = `M${a.x},${y0} C${a.x},${y0 + sag * 1.33} ${b.x},${y0 + sag * 1.33} ${b.x},${y0}`; hx = b.x; hy = y0; ang = -Math.PI / 2; lx = (a.x + b.x) / 2; ly = y0 + sag; }
+    const base = mk("path", { d, fill: "none", stroke: "rgba(255,255,255,.16)", "stroke-width": SW, "stroke-linecap": "round", "stroke-dasharray": `${2 * u} ${16 * u}` });
+    const glow = mk("path", { d, fill: "none", stroke: ACC, "stroke-width": SW * 2.6, "stroke-linecap": "round", filter: "url(#fGlow)", opacity: KEY ? 0 : 0.8 });
+    const lit = mk("path", { d, fill: "none", stroke: `color-mix(in srgb, ${ACC} 75%, white)`, "stroke-width": SW, "stroke-linecap": "round" });
+    document.getElementById("base").append(base); document.getElementById("lit").append(glow, lit);
+    // the head points along the curve's end tangent
+    const Ln = base.getTotalLength(), e1 = lit.getPointAtLength(Ln), e0 = lit.getPointAtLength(Ln - 4 * u);
+    const head = arrowHead(e1.x, e1.y, Math.atan2(e1.y - e0.y, e1.x - e0.x), `color-mix(in srgb, ${ACC} 75%, white)`, document.getElementById("lit"));
+    for (const p of [lit, glow]) { p.style.strokeDasharray = Ln; p.style.strokeDashoffset = Ln; }
+    const bl = document.createElement("div"); bl.id = "blab"; bl.textContent = v.back; nodesEl.append(bl);
+    const bfs = Math.round((P ? 34 : 32) * u); bl.style.fontSize = bfs + "px"; Object.assign(bl.style, { padding: `${Math.round(bfs * 0.55)}px ${Math.round(bfs * 0.9)}px` });
+    if (VERT) { // wrapped onto two short lines, centred on the arc's outer point
+      bl.style.whiteSpace = "normal"; bl.style.lineHeight = "1.15"; bl.style.borderRadius = bfs * 0.9 + "px"; bl.style.width = "min-content";
+      let lxx = Math.max(safe.left + 2 * u, lx - bl.offsetWidth / 2); Object.assign(bl.style, { left: lxx + "px", top: ly - bl.offsetHeight / 2 + "px" });
+    } else { MV.fitText(bl, Math.abs(a.x - b.x) * 0.9, 22); Object.assign(bl.style, { left: lx - bl.offsetWidth / 2 + "px", top: ly - bl.offsetHeight / 2 + "px" }); }
+    back = { base, lit, glow, head, L: Ln, bl, from: bf, to: bt };
+  }
+
+  // ---- a gold coin: a lit disc with a raised rim, spinning on its axis as it rides
+  const CR = Math.round(Math.max(22 * u, T * 0.15));
+  const coin = () => { const g = mk("g", { opacity: 0 }), s = mk("g", {});
+    s.append(mk("ellipse", { cx: 0, cy: CR * 0.12, rx: CR, ry: CR, fill: "#5E3E08" }), mk("circle", { r: CR, fill: "url(#gCoin)" }), mk("circle", { r: CR * 0.74, fill: "url(#gCoinIn)", stroke: "rgba(94,62,8,.45)", "stroke-width": CR * 0.06 }),
+      mk("path", { d: `M${-CR * 0.55},${-CR * 0.5} A${CR * 0.8},${CR * 0.8} 0 0 1 ${CR * 0.4},${-CR * 0.62}`, fill: "none", stroke: "rgba(255,255,255,.75)", "stroke-width": CR * 0.1, "stroke-linecap": "round" }));
+    g.append(mk("circle", { r: CR * 1.8, fill: AC2, opacity: KEY ? 0 : 0.35, filter: "url(#fGlow)" }), s); document.getElementById("coins").append(g); return { g, s }; };
+  const ride = (e, at, dur, c, spins) => { const o = { k: 0 };
+    tl.fromTo(c.g, { opacity: 0 }, { opacity: 1, duration: 0.12, ease: "power2.out" }, at);
+    tl.fromTo(o, { k: 0 }, { k: 1, duration: dur, ease: "power2.inOut", immediateRender: false, onUpdate: () => { const q = e.lit.getPointAtLength(o.k * e.L);
+      c.g.setAttribute("transform", `translate(${q.x} ${q.y})`); c.s.setAttribute("transform", `scale(${Math.max(0.12, Math.abs(Math.cos(o.k * Math.PI * spins)))} 1)`); } }, at);
+    tl.to(c.g, { opacity: 0, duration: 0.14, ease: "power2.in" }, at + dur - 0.06); };
+  const pulse = (n, at, col) => { tl.fromTo(n.rim, { opacity: 0 }, { opacity: 1, duration: 0.1, ease: "power2.out", immediateRender: false }, at); tl.to(n.rim, { opacity: 0.25, duration: 0.8, ease: "power2.out" }, at + 0.1);
+    tl.fromTo(n.t, { scale: 1 }, { scale: 1.08, duration: 0.08, ease: "power2.out", immediateRender: false }, at); tl.to(n.t, { scale: 1, duration: 0.5, ease: "back.out(3)" }, at + 0.08);
+    tl.fromTo(n.t, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.6, ease: "power2.inOut", immediateRender: false }, at); };
+
+  // ---- time
+  nodes.forEach((n, i) => { const at = 0.1 + i * 0.12;
+    tl.fromTo(n.t, { opacity: 0, y: 40 * u, scale: 0.86 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "expo.out" }, at);
+    tl.fromTo(n.lab, { opacity: 0, y: 18 * u, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, at + 0.15); });
+  const F0 = 0.55, FS = N >= 4 ? 0.62 : 0.78, FD = 0.62;
+  edges.forEach((e, i) => { const at = F0 + i * FS;
+    tl.fromTo(e.fl, { opacity: 0, y: 14 * u, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, at);
+    tl.fromTo([e.lit, e.glow], { strokeDashoffset: e.L }, { strokeDashoffset: 0, duration: FD, ease: "power2.inOut" }, at);
+    tl.fromTo(e.head, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out" }, at + FD - 0.1);
+    tl.to(e.glow, { opacity: KEY ? 0 : 0.25, duration: 0.6, ease: "power2.out" }, at + FD);
+    ride(e, at, FD, coin(), 2); pulse(nodes[e.to], at + FD - 0.04); if (i === 0) pulse(nodes[0], at - 0.05); });
+  // ---- the moment: the money flows back along the arc, coin after coin, and its label is stamped on
+  if (back) { const at = F0 + edges.length * FS + 0.1, BD = 0.85;
+    tl.fromTo(back.base, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, at - 0.2);
+    tl.fromTo([back.lit, back.glow], { strokeDashoffset: back.L }, { strokeDashoffset: 0, duration: BD, ease: "power2.inOut" }, at);
+    tl.fromTo(back.head, { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out" }, at + BD - 0.1);
+    for (let k = 0; k < 4; k++) { const ct = at + 0.1 + k * 0.32, c = coin(); ride(back, ct, BD, c, 1.5); pulse(nodes[back.to], ct + BD - 0.04); }
+    const ST = at + BD * 0.55;
+    tl.fromTo(back.bl, { opacity: 0, scale: 1.7, rotation: -6, filter: "blur(8px)" }, { opacity: 1, scale: 1, rotation: -3, filter: "blur(0px)", duration: 0.26, ease: "power4.in" }, ST);
+    tl.to(back.bl, { scale: 1.06, duration: 0.06, ease: "power1.out" }, ST + 0.26); tl.to(back.bl, { scale: 1, duration: 0.42, ease: "back.out(3)" }, ST + 0.32);
+    tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, ST + 0.26); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, ST + 0.33);
+  }
+  // ---- the drift
+  tl.fromTo("#rig", { rotationX: 7, rotationY: P ? -6 : -9, scale: 0.97 }, { rotationX: 2, rotationY: P ? 4 : 6, scale: 1, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  if (A) tl.to("#stage", { opacity: 0, y: -40 * u, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{ "id": "ai-memory", "name": "AI memory update", "oneLiner": "a glass chat: the user states a preference, the assistant answers and a Memory updated chip pops in under it, a pointer opens it and the memory panel rises out of the chip over the dimmed chat, the saved memories step down a slot and the new one drops in on top, lit with a New tag while the count ticks",
+  "category": "ai", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["ai", "memory", "personalisation", "remembers", "assistant", "chatbot", "preferences", "context", "llm", "settings", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.8, "alpha": true,
+  "say": "when the speaker says the AI remembers them ('tell it once and it remembers', 'it already knows how I like it'): the chip pops on 'remembers', the new memory drops in on the payoff" }

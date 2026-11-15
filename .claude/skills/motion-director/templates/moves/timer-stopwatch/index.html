@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"total","type":"string","label":"The final time, m:ss.cc or h:mm:ss","default":"04:52.36"},
+  {"id":"laps","type":"string","label":"Lap labels, comma separated (up to 3; the last one ends at the final time)","default":"Lap 1,Lap 2,Lap 3"},
+  {"id":"splits","type":"string","label":"Where each lap ends as a share of the total, comma separated","default":"0.31,0.64,1"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 62%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 32% at var(--gx, 50%) var(--gy, 40%), color-mix(in srgb, var(--accent) 32%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 85% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #dial { position: absolute; border-radius: 50%;
+    background: radial-gradient(80% 80% at 35% 25%, rgba(255,255,255,.2), rgba(255,255,255,.06) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.16),
+      inset 0 calc(var(--u) * -40) calc(var(--u) * 80) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 45%, transparent),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -20) rgba(0,0,0,.75); }
+  .is-alpha #dial { background: radial-gradient(80% 80% at 35% 25%, color-mix(in srgb, var(--surface) 80%, #fff), var(--surface) 70%); }
+  .is-key #dial { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.16); }
+  #dial svg.face { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #trail { position: absolute; inset: 9%; border-radius: 50%; opacity: 0;
+    background: conic-gradient(from 0deg, transparent 0deg, transparent 250deg, color-mix(in srgb, var(--accent) 55%, transparent) 360deg);
+    -webkit-mask: radial-gradient(circle, transparent 30%, #000 31%); mask: radial-gradient(circle, transparent 30%, #000 31%); }
+  .is-key #trail { display: none; }
+  #hand { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  #hand i { position: absolute; left: calc(var(--u) * -4); width: calc(var(--u) * 8); border-radius: 99px; background: linear-gradient(180deg, var(--al), var(--accent));
+    box-shadow: 0 0 calc(var(--u) * 16) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #hand i { box-shadow: none; }
+  #cap { position: absolute; left: 50%; top: 50%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff, #bbb 60%, #777); box-shadow: 0 0 0 calc(var(--u) * 5) var(--accent), 0 calc(var(--u) * 4) calc(var(--u) * 10) rgba(0,0,0,.5); }
+  #crown { position: absolute; }
+  #crown i { position: absolute; left: 30%; right: 30%; bottom: 0; height: 55%; background: linear-gradient(90deg, #3a3c41, #b9bcc2 45%, #5a5c61); border-radius: calc(var(--u) * 4); }
+  #crown b { position: absolute; left: 0; right: 0; top: 0; height: 52%; border-radius: calc(var(--u) * 12);
+    background: linear-gradient(90deg, #2a2c30, #c9ccd2 40%, #8c8f95 60%, #2a2c30); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.6), 0 calc(var(--u) * 6) calc(var(--u) * 12) rgba(0,0,0,.5); }
+  #read { position: absolute; left: 50%; text-align: center; padding: .14em .34em; border-radius: .32em; background: rgba(0,0,0,.5);
+    box-shadow: inset 0 calc(var(--u) * 3) calc(var(--u) * 8) rgba(0,0,0,.6), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.1), 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.12); font-weight: 750; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; }
+  #read .cs { color: color-mix(in srgb, var(--ink) 55%, transparent); }
+  #flash { position: absolute; border-radius: 50%; border: calc(var(--u) * 6) solid var(--al); box-sizing: border-box; opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 60%, transparent), inset 0 0 calc(var(--u) * 30) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-key #flash { box-shadow: none; }
+  #dial .sh { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  #laps { position: absolute; }
+  .lap { position: absolute; left: 0; right: 0; top: 0; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 20);
+    padding: 0 calc(var(--u) * 32) 0 calc(var(--u) * 30); border-radius: calc(var(--u) * 30);
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.06));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 calc(var(--u) * 24) calc(var(--u) * 44) calc(var(--u) * -20) rgba(0,0,0,.65); }
+  .is-alpha .lap { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 86%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key .lap { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .lap .n { display: flex; align-items: center; gap: calc(var(--u) * 16); font-size: calc(var(--u) * 38); font-weight: 600; color: color-mix(in srgb, var(--ink) 70%, transparent); white-space: nowrap; min-width: 0; }
+  .lap .n b { flex: none; width: calc(var(--u) * 14); height: calc(var(--u) * 14); border-radius: 50%; background: rgba(255,255,255,.3); }
+  .lap .t { font-size: calc(var(--u) * 42); font-weight: 750; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .lap.last { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 2.5) color-mix(in srgb, var(--accent) 80%, transparent), 0 calc(var(--u) * 24) calc(var(--u) * 44) calc(var(--u) * -20) rgba(0,0,0,.65), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-key .lap.last { box-shadow: inset 0 0 0 calc(var(--u) * 2.5) var(--accent); }
+  .lap.last .n { color: var(--ink); }
+  .lap.last .n b { background: var(--accent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="rig">
+    <div id="crown"><i></i><b></b></div>
+    <div id="dial"><svg class="face"></svg><div id="trail"></div><div id="hand"><i></i></div><div id="cap"></div><div id="read"></div><div class="sh"></div></div>
+    <div id="flash"></div>
+    <div id="laps"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha && W > H ? 0.85 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+
+  // ---- time: parse the total into centiseconds; format as the readout does
+  const parse = (s) => { const p = String(s || "").trim().split(":").map(Number); if (p.some(isNaN) || !p.length) return 29236; let t = 0; p.forEach((x) => (t = t * 60 + x)); return Math.round(t * 100); };
+  const TOT = Math.max(100, parse(v.total || "04:52.36"));
+  const hours = TOT >= 360000;
+  const fmt = (cs, wrap) => { cs = Math.max(0, Math.round(cs)); const c = cs % 100, s = Math.floor(cs / 100) % 60, m = Math.floor(cs / 6000) % 60, h = Math.floor(cs / 360000); const p2 = (n) => String(n).padStart(2, "0");
+    return hours ? `${h}:${p2(m)}:${p2(s)}` : wrap ? `${p2(m)}:${p2(s)}<span class="cs">.${p2(c)}</span>` : `${p2(m)}:${p2(s)}.${p2(c)}`; };
+  const labels = String(v.laps || "").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 3);
+  let fr = String(v.splits || "").split(",").map(Number).filter((x) => x > 0 && x <= 1).slice(0, labels.length);
+  while (fr.length < labels.length) fr.push((fr.length + 1) / labels.length);
+  if (fr.length) fr[fr.length - 1] = 1;
+  const NL = labels.length;
+
+  // ---- layout: dial with the laps beside it (landscape, square, the 9:16 overlay) or under it (9:16 B-roll)
+  const regionW = W - safe.left - safe.right, regionH = H - safe.top - safe.bottom;
+  const stacked = MV.portrait && !MV.alpha;
+  let DD, LW, dx, dy, lx, ly;
+  const RH = 104 * u, RG = 16 * u, lapsH = NL * RH + Math.max(0, NL - 1) * RG;
+  if (stacked) { DD = Math.min(regionW * 0.78, regionH - lapsH - 40 * u); LW = regionW; const tot = DD + 40 * u + lapsH; dx = (W - DD) / 2; dy = safe.top + (regionH - tot) / 2; lx = safe.left; ly = dy + DD + 40 * u; }
+  else if (MV.portrait) { DD = 380 * u; LW = regionW - DD - 26 * u; dx = safe.left; dy = safe.top + 10 * u; lx = dx + DD + 26 * u; ly = dy + (DD - lapsH) / 2; }
+  else {
+    DD = W > H ? Math.min(regionH * 0.92, 760 * u) : Math.min(regionH * 0.62, regionW * 0.52); LW = Math.min(W > H ? 620 * u : regionW - DD - 40 * u, 620 * u);
+    const tw = DD + 50 * u + LW; let x0 = W > H && MV.alpha ? W - safe.right - tw : (W - tw) / 2;
+    dx = x0; dy = safe.top + (regionH - DD) / 2; lx = x0 + DD + 50 * u; ly = dy + (DD - lapsH) / 2;
+  }
+  gsap.set("#dial", { left: dx, top: dy, width: DD, height: DD });
+  gsap.set("#flash", { left: dx - 10 * u, top: dy - 10 * u, width: DD + 20 * u, height: DD + 20 * u });
+  gsap.set("#laps", { left: lx, top: ly, width: LW, height: lapsH });
+  root.style.setProperty("--gx", ((dx + DD / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((dy + DD / 2) / H * 100) + "%");
+
+  // ---- the face: 60 ticks, the long ones every 5, numerals at the quarters (only when the dial is big enough to read them)
+  const R = 500, ns = "http://www.w3.org/2000/svg", face = $("#dial svg.face"); face.setAttribute("viewBox", "0 0 1000 1000");
+  let svg = "";
+  for (let i = 0; i < 60; i++) { const a = i * 6 * Math.PI / 180, big = i % 5 === 0, r1 = big ? 400 : 430, r2 = 462;
+    svg += `<line x1="${R + Math.sin(a) * r1}" y1="${R - Math.cos(a) * r1}" x2="${R + Math.sin(a) * r2}" y2="${R - Math.cos(a) * r2}" stroke="${big ? "rgba(255,255,255,.85)" : "rgba(255,255,255,.35)"}" stroke-width="${big ? 9 : 4}" stroke-linecap="round"/>`; }
+  const numFs = 64, numPx = numFs * DD / 1000;
+  if (numPx >= 30 * u) [[0, "60"], [15, "15"], [30, "30"], [45, "45"]].forEach(([s, t]) => { const a = s * 6 * Math.PI / 180;
+    svg += `<text x="${R + Math.sin(a) * 335}" y="${R - Math.cos(a) * 335 + 22}" text-anchor="middle" font-size="${numFs}" font-weight="700" fill="rgba(255,255,255,.6)" font-family="Inter, sans-serif">${t}</text>`; });
+  face.innerHTML = svg;
+  const HL = DD * 0.44; gsap.set("#hand i", { top: -HL, height: HL + DD * 0.08 });
+  gsap.set("#cap", { width: DD * 0.05, height: DD * 0.05, marginLeft: -DD * 0.025, marginTop: -DD * 0.025 });
+  const read = $("#read"); read.style.fontSize = DD * 0.15 + "px"; read.innerHTML = fmt(TOT, true); MV.fitText(read, DD * 0.56, 16);
+  gsap.set(read, { top: DD * 0.6, xPercent: -50 });
+  const CRW = DD * 0.13, CRH = DD * 0.1; gsap.set("#crown", { left: dx + DD / 2 - CRW / 2, top: dy - CRH * 0.82, width: CRW, height: CRH });
+  read.innerHTML = fmt(0, true);
+
+  // ---- laps (newest on top)
+  const rows = labels.map((l, i) => { const r = document.createElement("div"); r.className = "lap" + (i === NL - 1 ? " last" : ""); r.style.height = RH + "px";
+    r.innerHTML = `<div class="n"><b></b><span></span></div><div class="t"></div>`; r.querySelector("span").textContent = l;
+    const prev = i ? fr[i - 1] : 0; r.querySelector(".t").textContent = fmt(TOT * (fr[i] - prev));
+    r.style.zIndex = 10 + i; r.style.opacity = 0; $("#laps").appendChild(r); return r; });
+  if (MV.portrait && MV.alpha) rows.forEach((r) => { r.style.padding = `0 ${24 * u}px 0 ${22 * u}px`; r.querySelector(".t").style.fontSize = 40 * u + "px"; });
+  rows.forEach((r) => { const tw = r.querySelector(".t").getBoundingClientRect().width, padX = parseFloat(r.style.paddingLeft || 30 * u) + parseFloat(r.style.paddingRight || 32 * u);
+    MV.fitText(r.querySelector("span"), LW - padX - tw - 30 * u - 30 * u, 16); MV.fitText(r.querySelector(".t"), LW - 62 * u - 120 * u, 18); });
+
+  // ---- timeline
+  const R0 = 0.55, S = 3.3;                      // the run, then the stop
+  // the progress curve: it gets going, races, then brakes on a long tail
+  const prog = gsap.parseEase("power2.inOut");
+  // where each lap lands in time: invert the curve numerically
+  const inv = (f) => { let a = 0, b = 1; for (let k = 0; k < 30; k++) { const m = (a + b) / 2; if (prog(m) < f) a = m; else b = m; } return (a + b) / 2; };
+  const lapT = fr.map((f) => R0 + (S - R0) * inv(f));
+  // 1. the dial turns in, the laps area waits empty
+  tl.fromTo("#dial", { opacity: 0, scale: 0.8, rotationY: -40, rotationX: 18, filter: "blur(14px)" }, { opacity: 1, scale: 1, rotationY: -10, rotationX: 6, filter: "blur(0px)", duration: 0.85, ease: "expo.out" }, 0.03);
+  tl.to("#dial", { rotationY: 8, rotationX: 2, duration: D - 0.9 - 0.45, ease: "sine.inOut" }, 0.88);
+  tl.fromTo("#crown", { opacity: 0, y: 40 * u }, { opacity: 1, y: 0, duration: 0.6, ease: "expo.out" }, 0.2);
+  // the start press
+  tl.to("#crown", { y: CRH * 0.28, duration: 0.07, ease: "power2.out" }, R0 - 0.08); tl.to("#crown", { y: 0, duration: 0.3, ease: "back.out(3)" }, R0);
+  tl.fromTo("#dial .sh", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.2, ease: "power2.inOut" }, 0.3);
+  // 2. the run: the readout and the hand follow the same curve; the trail shows while it is fast
+  const st = { p: 0 };
+  // the hand: real seconds for short runs, a whip of up to four turns for long ones
+  const REVS = Math.max(0.25, Math.min(4, TOT / 6000));
+  tl.to(st, { p: 1, duration: S - R0, ease: "power2.inOut", onUpdate: () => {
+    const cs = TOT * st.p; read.innerHTML = fmt(cs, true);
+    const rot = st.p * REVS * 360; gsap.set("#hand", { rotation: rot }); gsap.set("#trail", { rotation: rot });
+  } }, R0);
+  // the hand: seconds round the dial, but never faster than a readable whip (long totals scale the sweep down)
+  tl.set("#hand", { rotation: 0 }, 0);
+  tl.fromTo("#trail", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power2.out", immediateRender: false }, R0 + 0.4);
+  tl.to("#trail", { opacity: 0, duration: 0.6, ease: "power2.in" }, S - 0.75);
+  tl.set("#trail", { opacity: 0 }, 0);
+  // 3. each lap: the dial pulses, a row drops onto the stack and pushes the older ones down
+  rows.forEach((r, i) => {
+    const t = lapT[i];
+    tl.to("#crown", { y: CRH * 0.28, duration: 0.07, ease: "power2.out" }, t - 0.05); tl.to("#crown", { y: 0, duration: 0.3, ease: "back.out(3)" }, t + 0.03);
+    tl.to("#dial", { scale: 0.975, duration: 0.07, ease: "power2.out" }, t); tl.to("#dial", { scale: 1, duration: 0.45, ease: "back.out(3)" }, t + 0.07);
+    tl.fromTo(r, { opacity: 0, y: -60 * u, scale: 0.9, rotationX: -30 }, { opacity: 1, y: 0, scale: 1, rotationX: 0, duration: 0.55, ease: "back.out(1.8)", immediateRender: false }, t);
+    tl.set(r, { opacity: 0 }, 0);
+    for (let j = 0; j < i; j++) tl.to(rows[j], { y: (i - j) * (RH + RG), duration: 0.5, ease: "back.out(1.5)" }, t + 0.02);
+  });
+  // 4. the stop (the moment that lands): the readout punches, a ring of light, the hand settles
+  tl.fromTo(read, { scale: 1 }, { scale: 1.12, duration: 0.08, ease: "power2.out", immediateRender: false }, S);
+  tl.to(read, { scale: 1, duration: 0.55, ease: "back.out(3)" }, S + 0.08);
+  tl.fromTo("#flash", { opacity: 0.95, scale: 0.98 }, { opacity: 0, scale: 1.18, duration: 0.8, ease: "power2.out", immediateRender: false }, S);
+  tl.set("#flash", { opacity: 0 }, 0);
+  tl.to("#rig", { y: 6 * u, duration: 0.06, ease: "power2.out" }, S); tl.to("#rig", { y: 0, duration: 0.5, ease: "back.out(2.5)" }, S + 0.06);
+  // exit
+  const X = D - 0.42;
+  tl.to(["#dial", "#crown"], { y: -60 * u, opacity: 0, filter: "blur(12px)", duration: 0.36, ease: "power3.in" }, X);
+  rows.slice().reverse().forEach((r, i) => tl.to(r, { x: 80 * u, opacity: 0, duration: 0.3, ease: "power3.in" }, X + 0.02 + i * 0.03));
+  MV.done();
+</script>
+</body>
+</html>

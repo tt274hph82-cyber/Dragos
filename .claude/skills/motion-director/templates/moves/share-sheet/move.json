@@ -1,0 +1,5 @@
+{ "id": "share-sheet", "name": "Share sheet", "oneLiner": "a glass share sheet rises over a dimmed page in slow 3D, the app tiles pop in, a fingertip glides to the brand's app and taps it, the tile squashes and springs with a ripple, a green check lands on its corner and a Shared pill drops in under the sheet",
+  "category": "social", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["share", "send", "app", "tap", "phone", "mobile", "forward", "spread", "word of mouth", "referral", "viral", "save", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker says 'people started sharing it' or 'send it to a friend': the tap lands on 'share' or 'send', the Shared pill on the payoff" }

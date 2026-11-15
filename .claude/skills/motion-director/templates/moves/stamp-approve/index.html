@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"word","type":"string","label":"The word on the rubber stamp","default":"Approved"},
+  {"id":"title","type":"string","label":"What the document is (its heading)","default":"Project proposal"},
+  {"id":"fields","type":"string","label":"Three or four form lines, label:value, comma separated","default":"Scope:First version,Owner:{brand},Timeline:Two weeks,Budget:On plan"},
+  {"id":"stampInk","type":"string","label":"Stamp ink colour (success green by default)","default":"#2BD67B"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Type"; src: url("assets/fonts/SpecialElite-Regular.ttf"); font-display: block; }
+  @font-face { font-family: "MV Cond"; src: url("assets/fonts/Anton-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* ground (look mode): a real walnut desk under a warm lamp */
+  #ground { position: absolute; inset: -6%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1100); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(60% 52% at 46% 40%, rgba(255,218,170,.18), transparent 65%), radial-gradient(130% 100% at 50% 45%, transparent 42%, rgba(0,0,0,.62)); }
+  .is-alpha #ground { display: none; }
+  #cam { position: absolute; inset: 0; transform-origin: 50% 45%; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #cb { position: absolute; }
+  #cb-b { position: absolute; inset: 0; }
+  /* the clipboard: a Poly Haven scanned hardboard clipboard, its clip a separate layer over the sheet */
+  #board { position: absolute; inset: 0; background: url(assets/board.jpg) center / 100% 100%; border-radius: calc(var(--u) * 10); filter: drop-shadow(0 calc(var(--u) * 3) calc(var(--u) * 3) rgba(0,0,0,.4)) drop-shadow(calc(var(--u) * 10) calc(var(--u) * 26) calc(var(--u) * 30) rgba(0,0,0,.5)); }
+  .is-key #board { filter: drop-shadow(calc(var(--u) * 4) calc(var(--u) * 6) 0 #1a1410); }
+  #sheet { position: absolute; background: #f4f1ea url(assets/paper-white.jpg) center / calc(var(--u) * 700); filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(40,25,10,.35)); }
+  #sheet::after { content: ""; position: absolute; inset: 0; background: linear-gradient(165deg, rgba(255,250,240,.2), transparent 45%, rgba(0,0,0,.06)); }
+  #clipf { position: absolute; filter: drop-shadow(0 calc(var(--u) * 5) calc(var(--u) * 5) rgba(0,0,0,.45)); }
+  .ty { position: absolute; font-family: "MV Type", monospace; color: #26221e; white-space: nowrap; line-height: 1; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 240); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 240); }
+  .hd { position: absolute; font-family: var(--font-display); color: #1d1a17; white-space: nowrap; line-height: 1; }
+  .ln { position: absolute; border-top: solid rgba(40,34,30,.55); }
+  .dot { position: absolute; border-top: dotted rgba(40,34,30,.6); }
+  /* the imprint: ink pressed into paper (multiply, a scanned plaster grit as coverage) */
+  #imp { position: absolute; color: var(--stamp); border: solid var(--stamp); font-family: "MV Cond", sans-serif; text-transform: uppercase; text-align: center; line-height: 1; white-space: nowrap; letter-spacing: .05em; mix-blend-mode: multiply; -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 210); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 210); }
+  #imp::before { content: ""; position: absolute; inset: var(--gap); border: solid var(--stamp); }
+  .is-key #imp { mix-blend-mode: normal; }
+  /* the rubber stamp: a turned wooden handle on a wooden block, modelled and rendered for this move */
+  #stamp { position: absolute; --h: 1; }
+  #stamp img { width: 100%; display: block; filter: drop-shadow(calc(var(--u) * (6 + var(--h) * 70)) calc(var(--u) * (10 + var(--h) * 120)) calc(var(--u) * (10 + var(--h) * 40)) rgba(0,0,0,calc(.55 - var(--h) * .25))); }
+  .is-key #stamp img { filter: drop-shadow(calc(var(--u) * 4) calc(var(--u) * 6) 0 #1a1410); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="cb" style="visibility:hidden"><div class="boil" id="cb-b">
+      <div id="board"></div>
+      <div id="sheet"></div>
+      <img id="clipf" src="assets/clip-front.png" alt="" />
+    </div></div>
+    <div id="stamp" style="visibility:hidden"><img src="assets/stamp.png" alt="" /></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('40px "MV Type"'), document.fonts.load('80px "MV Cond"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const el = (par, cls, txt) => { const d = document.createElement("div"); d.className = cls; if (txt != null) d.textContent = txt; par.appendChild(d); return d; };
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  const put = (e, x, y, fs) => { e.style.left = x + "px"; e.style.top = y + "px"; if (fs) e.style.fontSize = fs + "px"; return e; };
+  const stampInk = /^#[0-9a-f]{6}$/i.test(v.stampInk || "") ? v.stampInk : "#2BD67B";
+
+  // ---- size: the clipboard (678 x 941 board, its clip 700 wide at -11,-68 in board px) as tall as the zone allows
+  const BWr = 678, BHr = 941;
+  const availW = W - safe.left - safe.right, availH = H - safe.top - safe.bottom;
+  const zTop = safe.top + (MV.portrait ? 60 : 50) * u, zBot = MV.portrait && !MV.alpha ? H - 330 * (W / 1080) : H - safe.bottom - 10 * u;
+  let BH = Math.min(zBot - zTop, MV.portrait ? 1100 * u : 1000 * u), BW = BH * BWr / BHr;
+  if (BW > availW * (MV.portrait ? 0.92 : 0.8)) { BW = availW * (MV.portrait ? 0.92 : 0.8); BH = BW * BHr / BWr; }
+  const k = BW / BWr;
+  const cx = MV.portrait ? safe.left + availW / 2 : W / 2 - BW * 0.12, cy = (zTop + zBot) / 2;
+  const cb = document.getElementById("cb");
+  Object.assign(cb.style, { width: BW + "px", height: BH + "px", left: (cx - BW / 2) + "px", top: (cy - BH / 2) + "px" });
+  const clipf = document.getElementById("clipf"); Object.assign(clipf.style, { width: (700 * k) + "px", left: (-11 * k) + "px", top: (-68 * k) + "px" });
+  // the sheet: tucked under the clip, a little smaller than the board
+  const SX = 34 * k, SY = 70 * k, SW = BW - 68 * k, SH = BH - 100 * k;
+  const sheet = document.getElementById("sheet"); Object.assign(sheet.style, { left: SX + "px", top: SY + "px", width: SW + "px", height: SH + "px", transform: "rotate(-0.6deg)" });
+
+  // ---- the form: heading, a rule, the typed lines with dotted leaders, a signature line
+  const pad = SW * 0.1, inner = SW - pad * 2;
+  const brand = (v.brandName || "").trim();
+  const hy = 120 * k - SY + SH * 0.04;               // just below the clip
+  const head = el(sheet, "hd", v.title || ""); put(head, pad, hy, SW * 0.085); MV.fitText(head, inner, 10 * u);
+  const hf = parseFloat(head.style.fontSize);
+  const r1 = el(sheet, "ln"); Object.assign(r1.style, { left: pad + "px", width: inner + "px", top: (hy + hf * 1.3) + "px", borderTopWidth: Math.max(2, 3 * k) + "px" });
+  const rows = String(v.fields || "").split(",").map((s) => s.split(":").map((t) => t.trim())).filter((p) => p[0]).slice(0, 4)
+    .map(([a, b]) => [a, (b || "").replace(/\{brand\}/g, brand)]);
+  const fy0 = hy + hf * 1.3 + SH * 0.075, rowH = SH * 0.085, lf = SW * 0.05;
+  rows.forEach(([a, b], i) => { const y = fy0 + i * rowH;
+    const la = el(sheet, "ty", a); put(la, pad, y, lf * 0.82); la.style.color = "#6a625a"; MV.fitText(la, inner * 0.36, 8 * u);
+    const va = el(sheet, "ty", b); put(va, pad + inner * 0.4, y - lf * 0.12, lf); MV.fitText(va, inner * 0.6, 8 * u);
+    const d = el(sheet, "dot"); Object.assign(d.style, { left: (pad + inner * 0.4) + "px", width: (inner * 0.6) + "px", top: (y + lf * 1.12) + "px", borderTopWidth: Math.max(1.5, 2.4 * k) + "px" }); });
+  // the stamp zone: below the fields; the imprint lands here
+  const zoneY = fy0 + rows.length * rowH + SH * 0.04;
+  const sig = el(sheet, "ln"); Object.assign(sig.style, { left: pad + "px", width: (inner * 0.45) + "px", top: (SH - SH * 0.08) + "px", borderTopWidth: Math.max(1.5, 2 * k) + "px" });
+  const sigl = el(sheet, "ty", "Signed"); put(sigl, pad, SH - SH * 0.08 + 10 * k, lf * 0.8); sigl.style.color = "#6a625a";
+  const datl = el(sheet, "ty", "Date"); put(datl, pad + inner * 0.62, SH - SH * 0.08 + 10 * k, lf * 0.8); datl.style.color = "#6a625a";
+  const dl = el(sheet, "ln"); Object.assign(dl.style, { left: (pad + inner * 0.62) + "px", width: (inner * 0.38) + "px", top: (SH - SH * 0.08) + "px", borderTopWidth: Math.max(1.5, 2 * k) + "px" });
+
+  // ---- the stamp: sized so its rubber footprint (0.84 x 0.42 of the render's width) is the imprint
+  const STW = SW * 0.86;
+  const stamp = document.getElementById("stamp"); stamp.style.width = STW + "px";
+  const IW = STW * 0.8, IH = STW * 0.36;
+  const imp = el(sheet, "", null); imp.id = "imp"; imp.style.setProperty("--stamp", stampInk); imp.textContent = v.word || "";
+  imp.style.setProperty("--gap", (IH * 0.06) + "px");
+  Object.assign(imp.style, { width: IW + "px", height: IH + "px", borderWidth: Math.max(3, IH * 0.05) + "px", borderRadius: (IH * 0.08) + "px", fontSize: (IH * 0.58) + "px", lineHeight: IH * 0.92 + "px", boxSizing: "border-box" });
+  // fit the word inside the double frame
+  { const span = document.createElement("span"); span.textContent = imp.textContent; imp.textContent = ""; imp.appendChild(span); span.style.display = "inline-block";
+    let f = IH * 0.58; while (span.getBoundingClientRect().width > IW * 0.84 && f > 10 * u) { f -= 2; imp.style.fontSize = f + "px"; } }
+  const IR = -7;
+  const zoneMid = Math.min(zoneY + (SH * 0.9 - zoneY) / 2, SH * 0.72);
+  const ix = SW / 2 - IW / 2 + SW * 0.04, iy = zoneMid - IH / 2;
+  put(imp, ix, iy); imp.style.transform = `rotate(${IR}deg)`; imp.style.visibility = "hidden";
+  // where the stamp's footprint centre (0.5, 0.6 of the render) sits over the imprint, in frame px
+  const sheetX = parseFloat(cb.style.left) + SX, sheetY = parseFloat(cb.style.top) + SY;
+  const STH = STW * 312 / 500;
+  const sx = sheetX + ix + IW / 2 - STW * 0.5, sy = sheetY + iy + IH / 2 - STH * 0.6;
+  Object.assign(stamp.style, { left: sx + "px", top: sy + "px", transformOrigin: "50% 60%" });
+
+  // ---- timeline
+  // 0.08 the clipboard slides onto the desk (twos); 1.0 the stamp comes down from above the lens, 1.42 slam, holds 2 frames,
+  // 1.6 lifts away up and off; the green imprint is left on the sheet; slow push; exit
+  tl.set(cb, { visibility: "visible" }, 0.08);
+  if (MV.alpha) tl.fromTo(cb, { y: H * 0.9, rotation: 6 }, { y: 0, rotation: -1.5, duration: 0.5, ease: twos("expo.out", 0.5), immediateRender: true }, 0.08);
+  else tl.fromTo(cb, { y: H * 0.7, rotation: 9, scale: 1.04 }, { y: 0, rotation: -1.5, scale: 1, duration: 0.55, ease: twos("expo.out", 0.55), immediateRender: true }, 0.08);
+  const TS = 1.0, TC = 1.42;
+  tl.set(stamp, { visibility: "visible" }, TS);
+  tl.fromTo(stamp, { x: W * 0.32, y: -H * 0.35, scale: 1.9, rotation: IR + 14, "--h": 1 }, { x: 0, y: 0, scale: 1, rotation: IR, "--h": 0, duration: TC - TS, ease: twos("power3.in", TC - TS), immediateRender: true }, TS);
+  // contact: the imprint is there, the board takes the hit
+  tl.set(imp, { visibility: "visible" }, TC);
+  tl.to("#cb-b", { scale: 0.985, duration: STEP, ease: "steps(1)" }, TC); tl.to("#cb-b", { scale: 1, duration: STEP * 2, ease: "steps(1)" }, TC + STEP);
+  tl.to(stamp, { scale: 0.97, duration: STEP, ease: "steps(1)" }, TC); tl.to(stamp, { scale: 1, duration: STEP, ease: "steps(1)" }, TC + STEP);
+  const TL = TC + 0.2;
+  tl.to(stamp, { x: W * 0.4, y: -H * 0.5, scale: 1.7, rotation: IR + 18, "--h": 1, duration: 0.5, ease: twos("power2.in", 0.5) }, TL);
+  tl.set(stamp, { visibility: "hidden" }, TL + 0.5);
+  // boil (twos) and a slow camera push toward the imprint
+  const rb = MV.rand(9); for (let t = 0.6; t < D; t += STEP * 2) tl.set("#cb-b", { "--bx": `${((rb() - .5) * 1.8 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 1.8 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.25).toFixed(2)}deg` }, t);
+  if (!MV.alpha) { const ox = ((sheetX + ix + IW / 2) / W * 100).toFixed(1), oy = ((sheetY + iy + IH / 2) / H * 100).toFixed(1);
+    gsap.set("#cam", { transformOrigin: `${ox}% ${oy}%` }); tl.fromTo("#cam", { scale: 1 }, { scale: 1.08, duration: D, ease: "power1.inOut" }, 0); }
+  if (MV.alpha) { const X = D - 0.42; tl.to(cb, { y: H, rotation: 5, duration: 0.38, ease: twos("power2.in", 0.38) }, X); tl.set(cb, { opacity: 0 }, D - 0.04); }
+  MV.done();
+})();
+</script>
+</body>
+</html>

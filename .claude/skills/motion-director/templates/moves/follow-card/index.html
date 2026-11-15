@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Display name (empty: the brand name)","default":""},
+  {"id":"handle","type":"string","label":"Handle (empty: @ + brand name)","default":""},
+  {"id":"bio","type":"string","label":"Bio line (empty: the brand tagline)","default":""},
+  {"id":"followers","type":"number","label":"Followers it lands on","default":48210},
+  {"id":"followersFrom","type":"number","label":"Followers it starts from","default":47630},
+  {"id":"posts","type":"number","label":"Posts count","default":864},
+  {"id":"follow","type":"string","label":"Button before","default":"Follow"},
+  {"id":"following","type":"string","label":"Button after","default":"Following"},
+  {"id":"followersLabel","type":"string","label":"Followers label","default":"Followers"},
+  {"id":"postsLabel","type":"string","label":"Posts label","default":"Posts"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 66%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 38% at var(--gx, 50%) var(--gy, 50%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(70% 45% at 85% 100%, color-mix(in srgb, var(--accent2) 28%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1700); }
+  #card { position: relative; box-sizing: border-box; padding: 0 calc(var(--u) * 40) calc(var(--u) * 36); border-radius: calc(var(--u) * 44);
+    background: linear-gradient(160deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 55%, rgba(255,255,255,.03));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.65), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 40%, transparent); }
+  .is-alpha #card { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 88%, rgba(255,255,255,.18)), color-mix(in srgb, var(--surface) 82%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #rim { position: absolute; inset: 0; border-radius: inherit; padding: calc(var(--u) * 2); pointer-events: none; z-index: 5;
+    background: linear-gradient(135deg, rgba(255,255,255,.75), rgba(255,255,255,.08) 38%, transparent 55%, color-mix(in srgb, var(--accent) 80%, transparent) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; pointer-events: none; mix-blend-mode: screen; z-index: 5;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.22) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  /* the banner: the brand colours as a lit gradient with two soft lights drifting */
+  #ban { position: relative; margin: 0 calc(var(--u) * -40); height: calc(var(--u) * 190); border-radius: calc(var(--u) * 44) calc(var(--u) * 44) 0 0; overflow: hidden;
+    background: linear-gradient(125deg, var(--ad), var(--accent) 45%, color-mix(in srgb, var(--accent2) 85%, #000)); }
+  #ban i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 40)); }
+  #ban .b1 { width: 60%; height: 160%; left: -10%; top: -60%; background: color-mix(in srgb, var(--al) 80%, transparent); }
+  #ban .b2 { width: 50%; height: 140%; left: 60%; top: 10%; background: color-mix(in srgb, var(--accent2) 70%, #fff 10%); opacity: .7; }
+  #ban .gl { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.18), transparent 40%, rgba(0,0,0,.25)); }
+  .is-key #ban i { filter: none; opacity: 0; }
+
+  .row1 { position: relative; display: flex; align-items: flex-end; justify-content: space-between; margin-top: calc(var(--u) * -86); }
+  #avw { position: relative; flex: none; width: calc(var(--u) * 172); height: calc(var(--u) * 172); }
+  #av { position: absolute; inset: calc(var(--u) * 10); border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 7) solid var(--surface);
+    background-color: color-mix(in srgb, var(--accent) 30%, var(--surface)); background-repeat: no-repeat; background-size: 170% auto; background-position: 50% 6%;
+    box-shadow: 0 calc(var(--u) * 16) calc(var(--u) * 30) calc(var(--u) * -10) rgba(0,0,0,.6); }
+  #ring { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); overflow: visible; }
+  #btn { position: relative; flex: none; height: calc(var(--u) * 76); margin-bottom: calc(var(--u) * 10); border-radius: 999px; box-sizing: border-box; overflow: hidden;
+    overflow: visible; }
+  #btn .fl { position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, var(--al), var(--accent) 55%, var(--ad));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -8) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #btn .fl { box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5); }
+  #btn .gs { position: absolute; inset: 0; border-radius: inherit; background: rgba(255,255,255,.1); box-shadow: inset 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.35), inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4); opacity: 0; }
+  .is-key #btn .gs { background: color-mix(in srgb, var(--surface) 80%, #fff); }
+  #btn .t { position: absolute; top: 0; height: 100%; display: flex; align-items: center; gap: calc(var(--u) * 12); font-size: calc(var(--u) * 32); font-weight: 800; color: #fff; white-space: nowrap; }
+  #btn .t svg { width: calc(var(--u) * 30); height: calc(var(--u) * 30); flex: none; }
+  #bring { position: absolute; width: calc(var(--u) * 170); height: calc(var(--u) * 170); margin: calc(var(--u) * -85); border-radius: 50%; border: calc(var(--u) * 8) solid #fff;
+    box-sizing: border-box; box-shadow: 0 0 0 calc(var(--u) * 2) rgba(0,0,0,.1), 0 calc(var(--u) * 10) calc(var(--u) * 30) rgba(0,0,0,.3); opacity: 0; z-index: 6; }
+  .is-key #bring { box-shadow: none; }
+
+  #nm { display: flex; align-items: center; gap: calc(var(--u) * 10); margin-top: calc(var(--u) * 18); width: max-content; font-size: calc(var(--u) * 46); font-weight: 800; color: var(--ink); letter-spacing: -0.015em; white-space: nowrap; }
+  #nm svg { flex: none; width: calc(var(--u) * 38); height: calc(var(--u) * 38); }
+  #hdl { width: max-content; margin-top: calc(var(--u) * 2); font-size: calc(var(--u) * 30); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  #bio { margin-top: calc(var(--u) * 16); font-size: calc(var(--u) * 33); line-height: 1.28; color: color-mix(in srgb, var(--ink) 88%, transparent); text-wrap: balance; }
+  .is-key #hdl { color: color-mix(in srgb, var(--ink) 55%, var(--surface)); }
+  .st { display: flex; gap: calc(var(--u) * 44); margin-top: calc(var(--u) * 22); padding-top: calc(var(--u) * 20); border-top: calc(var(--u) * 1.5) solid rgba(255,255,255,.1); }
+  .st > div { display: flex; align-items: baseline; gap: calc(var(--u) * 14); white-space: nowrap; }
+  .st b { font-size: calc(var(--u) * 36); font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; display: inline-block; transform-origin: 50% 70%; }
+  .st span { font-size: calc(var(--u) * 28); color: color-mix(in srgb, var(--ink) 55%, transparent); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="ban"><i class="b1"></i><i class="b2"></i><div class="gl"></div></div>
+    <div class="row1">
+      <div id="avw"><svg id="ring" viewBox="0 0 100 100"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--al)"/><stop offset=".5" stop-color="var(--accent)"/><stop offset="1" stop-color="var(--accent2)"/></linearGradient></defs>
+        <circle id="rc" cx="50" cy="50" r="47" fill="none" stroke="url(#rg)" stroke-width="4.2" stroke-linecap="round"/></svg><div id="av"></div></div>
+      <div id="btn"><div class="fl"></div><div class="gs"></div>
+        <div class="t" id="t1"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg><span id="t1t"></span></div>
+        <div class="t" id="t2"><svg viewBox="0 0 24 24"><path id="ckp" d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="t2t" style="color:var(--ink)"></span></div>
+      </div>
+    </div>
+    <div id="nm"><span id="nmt"></span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10.5" fill="var(--accent)"/><path d="M7.4 12.4l3 3 6.2-6.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div id="hdl"></div>
+    <div id="bio"></div>
+    <div class="st"><div id="sf"><b id="fc"></b><span id="fl"></span></div><div id="sp"><b id="pc"></b><span id="pl"></span></div></div>
+    <div id="bring"></div>
+    <div id="rim"></div><div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha ? 1 : 1.3);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const brand = v.brandName || "";
+  $("#nmt").textContent = v.name || brand;
+  $("#hdl").textContent = v.handle || "@" + brand.toLowerCase().replace(/[^a-z0-9_]/g, "");
+  $("#bio").textContent = v.bio || v.tagline || "";
+  if (v.people && v.people[0]) $("#av").style.backgroundImage = `url("${v.people[0]}")`;
+  else if (v.mark) { const a = $("#av"); a.style.backgroundImage = `url("${v.mark}")`; a.style.backgroundSize = "60%"; a.style.backgroundPosition = "50% 50%"; }
+  const to = Math.round(+v.followers || 0), from = Math.min(to, Math.round(+v.followersFrom || 0));
+  const fmt = (n) => Math.round(n).toLocaleString("en-US");
+  $("#pc").textContent = fmt(+v.posts || 0); $("#fl").textContent = v.followersLabel || ""; $("#pl").textContent = v.postsLabel || "";
+  $("#t1t").textContent = v.follow || ""; $("#t2t").textContent = v.following || "";
+
+  // ---- size and fit
+  const CW = MV.portrait ? W - safe.left - safe.right : Math.min(740 * u, W - safe.left - safe.right);
+  const card = $("#card"); card.style.width = CW + "px";
+  const inner = CW - 80 * u;
+  // the button: both labels measured, it morphs between the two widths, anchored right
+  const pad = 34 * u, w1 = $("#t1").getBoundingClientRect().width + pad * 2, w2 = $("#t2").getBoundingClientRect().width + pad * 2;
+  gsap.set("#btn", { width: w1 }); gsap.set("#t1", { left: pad }); gsap.set("#t2", { left: pad });
+  MV.fit("#nm", inner, 20); MV.fit("#hdl", inner, 14);
+  { const b = $("#bio"); let fs = 33 * u; while (b.getBoundingClientRect().height > fs * 1.28 * 2 + 2 && fs > 16) { fs -= 1; b.style.fontSize = fs + "px"; } }
+  // the follower count must not push the row: reserve its widest
+  const fc = $("#fc"); fc.textContent = fmt(to + 1); fc.style.minWidth = fc.getBoundingClientRect().width + "px"; fc.textContent = fmt(from);
+  const CH = card.getBoundingClientRect().height;
+
+  // ---- place
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (MV.alpha) {
+    if (MV.portrait) { x = safe.left; y = safe.top + 20 * u; }
+    else if (W > H) { x = W - safe.right - CW; y = (H - CH) / 2 - 20 * u; }
+    else { x = W - safe.right - CW; y = safe.top + 20 * u; }
+  } else if (MV.portrait) y = (H - CH) / 2 - 110 * u;
+  gsap.set("#stage", { x, y, width: CW, height: CH });
+  gsap.set("#card", { transformOrigin: "50% 60%" });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  // ---- in
+  tl.fromTo("#card", { z: -700 * u, rotationX: 32, rotationY: -28, rotationZ: -6, scale: 0.74 },
+    { z: 0, rotationX: 9, rotationY: -12, rotationZ: -1.5, scale: 1, duration: 0.95, ease: "back.out(1.35)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.to("#card", { rotationX: 3, rotationY: 9, rotationZ: 1, duration: D - 1.45, ease: "sine.inOut" }, 1.0);
+  tl.fromTo("#ban .b1", { x: 0, y: 0 }, { x: 60 * u, y: 20 * u, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ban .b2", { x: 0, y: 0 }, { x: -70 * u, y: -16 * u, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#av", { scale: 0.3, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.65, ease: "back.out(2)" }, 0.3);
+  tl.fromTo("#btn", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.55, ease: "back.out(2.2)" }, 0.5);
+  tl.fromTo(["#nm", "#hdl", "#bio", ".st > div"], { opacity: 0, x: -20 * u }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.07, ease: "expo.out" }, 0.42);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.9);
+  // the followers tick up, fast then settling
+  const o = { n: from }, P = 1.75;
+  tl.to(o, { n: to, duration: P - 0.7, ease: "power2.out", onUpdate: () => { fc.textContent = fmt(o.n); } }, 0.7);
+  // the press: a ring lands on Follow, it squashes, the ring leaves
+  { const b = $("#btn").getBoundingClientRect(), c = card.getBoundingClientRect(); gsap.set("#bring", { left: b.left - c.left + b.width / 2, top: b.top - c.top + b.height / 2 }); }
+  tl.fromTo("#bring", { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, P - 0.22);
+  tl.to("#bring", { scale: 0.85, duration: 0.1 }, P);
+  tl.fromTo("#btn", { scale: 1 }, { scale: 0.88, duration: 0.08, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, P);
+  tl.to("#bring", { opacity: 0, scale: 1.3, duration: 0.25, ease: "power2.out" }, P + 0.12);
+  // the morph: Follow becomes Following; the fill drains to glass, the width eases to the new label, a check draws
+  const M = P + 0.1, ck = $("#ckp"), L = ck.getTotalLength();
+  gsap.set(ck, { strokeDasharray: L, strokeDashoffset: L });
+  tl.set("#t2", { opacity: 0 }, 0);
+  tl.to("#btn", { width: w2, duration: 0.55, ease: "back.out(1.6)" }, M);
+  tl.to("#btn .fl", { opacity: 0, duration: 0.3, ease: "power2.out" }, M);
+  tl.to("#btn .gs", { opacity: 1, duration: 0.3, ease: "power2.out" }, M);
+  tl.to("#t1", { opacity: 0, y: -24 * u, duration: 0.22, ease: "power2.in" }, M);
+  tl.fromTo("#t2", { opacity: 0, y: 24 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", immediateRender: false }, M + 0.12);
+  tl.to(ck, { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, M + 0.2);
+  // the moment: a gradient ring draws round the face, the avatar pulses, the count bumps by one
+  const rc = $("#rc"), RL = 2 * Math.PI * 47;
+  gsap.set(rc, { strokeDasharray: RL, strokeDashoffset: RL });
+  tl.set(rc, { opacity: 0 }, 0); tl.set(rc, { opacity: 1 }, M + 0.05);
+  tl.to(rc, { strokeDashoffset: 0, duration: 0.75, ease: "power2.inOut" }, M + 0.05);
+  tl.to("#av", { scale: 0.92, duration: 0.1, ease: "power2.out" }, M + 0.05); tl.to("#av", { scale: 1, duration: 0.6, ease: "back.out(3)" }, M + 0.15);
+  tl.set(fc, { textContent: fmt(to + 1), color: "var(--al)" }, M + 0.3);
+  tl.fromTo(fc, { scale: 1 }, { scale: 1.1, duration: 0.08, ease: "power2.out", immediateRender: false }, M + 0.3);
+  tl.to(fc, { scale: 1, duration: 0.45, ease: "back.out(3)" }, M + 0.38);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, M + 0.35);
+  // exit
+  tl.to("#card", { y: -140 * u, z: -300 * u, rotationX: -18, opacity: 0, filter: "blur(16px)", duration: 0.4, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

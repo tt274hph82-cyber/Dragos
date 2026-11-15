@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"name","type":"string","label":"Assistant name in the header","default":"Assistant"},
+  {"id":"prompt","type":"string","label":"What the user asks","default":"Write me a reply function"},
+  {"id":"reply","type":"string","label":"The answer that streams in","default":"Here is a function that drafts the reply for you, in your own tone:"},
+  {"id":"lang","type":"string","label":"Language label on the code block","default":"javascript"},
+  {"id":"code","type":"string","label":"Code lines, separated by |","default":"const reply = await ai.write({|  tone: \"friendly\",|  length: 3,|});"},
+  {"id":"copy","type":"string","label":"Copy button word","default":"Copy"},
+  {"id":"copied","type":"string","label":"Copy button word once pressed","default":"Copied"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); --ok: #2BD67B; --mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 48);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #tile { border-radius: calc(var(--s) * 20); display: grid; place-items: center;
+    background: linear-gradient(150deg, color-mix(in srgb, var(--accent2) 70%, white), var(--accent) 120%);
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6), 0 0 calc(var(--s) * 30) calc(var(--s) * -4) color-mix(in srgb, var(--accent) 70%, transparent); }
+  .is-key #tile { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.6); }
+  #tile svg { width: 62%; height: 62%; }
+  #nm { font-weight: 800; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  #ask { box-sizing: border-box; padding: calc(var(--s) * 22) calc(var(--s) * 32) calc(var(--s) * 24); border-radius: calc(var(--s) * 40); border-bottom-right-radius: calc(var(--s) * 12);
+    font-size: calc(var(--s) * 40); line-height: 1.24; font-weight: 600; color: #fff; white-space: nowrap; transform-origin: 100% 100%;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--accent) 72%, #fff) 0%, var(--accent) 45%, color-mix(in srgb, var(--accent) 78%, #000) 100%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--s) * 24) calc(var(--s) * 44) calc(var(--s) * -20) color-mix(in srgb, var(--accent) 55%, rgba(0,0,0,.6)); }
+  .is-key #ask { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5); }
+  #think { display: flex; gap: calc(var(--s) * 12); align-items: center; }
+  #think i { width: calc(var(--s) * 16); height: calc(var(--s) * 16); border-radius: 50%; background: color-mix(in srgb, var(--ink) 70%, transparent); }
+  #ans { font-size: calc(var(--s) * 40); line-height: 1.32; font-weight: 550; color: var(--ink); letter-spacing: -0.005em; }
+  #ans .w { opacity: 0; }
+  #caret { position: absolute; left: 0; top: 0; width: calc(var(--s) * 16); border-radius: calc(var(--s) * 3); background: var(--al); box-shadow: 0 0 calc(var(--s) * 14) var(--accent); opacity: 0; }
+  .is-key #caret { box-shadow: none; }
+  #code { overflow: hidden; border-radius: calc(var(--s) * 28); background: rgba(0,0,0,.42);
+    box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12), inset 0 calc(var(--s) * 2) calc(var(--s) * 6) rgba(0,0,0,.35); }
+  .is-key #code { background: color-mix(in srgb, var(--surface) 60%, black); }
+  #cbar { position: absolute; left: 0; right: 0; top: 0; background: rgba(255,255,255,.06); }
+  #lang { position: absolute; font-family: var(--mono); font-weight: 600; font-size: calc(var(--s) * 28); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; }
+  #cp { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 18); border-radius: calc(var(--s) * 18);
+    background: rgba(255,255,255,.1); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.25); font-weight: 700; font-size: calc(var(--s) * 31); color: var(--ink); white-space: nowrap; }
+  #cp svg { width: calc(var(--s) * 30); height: calc(var(--s) * 30); flex: none; }
+  #cp .ok { display: none; }
+  #cp.done { background: color-mix(in srgb, var(--ok) 22%, transparent); color: var(--ok); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--ok) 60%, transparent), 0 0 calc(var(--s) * 24) rgba(43,214,123,.5); }
+  .is-key #cp.done { box-shadow: inset 0 0 0 calc(var(--s) * 1.5) color-mix(in srgb, var(--ok) 60%, transparent); }
+  #cp.done .ok { display: block; } #cp.done .cf { display: none; }
+  .cl { position: absolute; left: 0; font-family: var(--mono); font-weight: 500; color: color-mix(in srgb, var(--ink) 90%, transparent); white-space: pre; line-height: 1.2; }
+  .cl .k { color: var(--accent2); font-weight: 700; } .cl .s { color: color-mix(in srgb, var(--accent) 45%, white); } .cl .n { color: color-mix(in srgb, var(--accent2) 60%, white); }
+  .cl .c { color: color-mix(in srgb, var(--ink) 42%, transparent); font-style: italic; } .cl .f { color: #fff; font-weight: 700; }
+  #cur { position: absolute; width: calc(var(--s) * 60); height: calc(var(--s) * 60); z-index: 40; overflow: visible; filter: drop-shadow(0 calc(var(--s) * 6) calc(var(--s) * 8) rgba(0,0,0,.5)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="tile" class="ab"><svg viewBox="0 0 24 24"><path d="M12 2.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z" fill="#fff"/><path d="M19 15.5c.25 1.9 1.1 2.75 3 3-1.9.25-2.75 1.1-3 3-.25-1.9-1.1-2.75-3-3 1.9-.25 2.75-1.1 3-3z" fill="#fff" opacity=".85"/></svg></div>
+      <div id="nm" class="ab"></div><div id="hr" class="ab"></div>
+      <div id="ask" class="ab"></div>
+      <div id="think" class="ab"><i></i><i></i><i></i></div>
+      <div id="ans" class="ab"></div><i id="caret"></i>
+      <div id="code" class="ab"><div id="cbar"><div id="lang"></div>
+        <div id="cp"><svg class="cf" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 5.5v-.5a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h.5" fill="none" stroke="currentColor" stroke-width="2"/></svg><svg class="ok" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cpt"></span></div></div>
+      </div>
+    </div></div>
+    <svg id="cur" viewBox="0 0 32 32"><path d="M6 3.5v21.2l5.6-5.3 3.6 8.3 3.8-1.6-3.6-8.2h7.8z" fill="#fff" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const lines = String(v.code || "").split("|").filter((l, i, a) => l.trim() || (i > 0 && i < a.length - 1)).slice(0, 6);
+
+  // ---- zone and scale (a 760-wide design space)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 110 * u; cR = W - 110 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.28; cR = W * 0.72; zT = H * 0.06; zB = H * 0.92; }
+  const pad = 40, DW = 760, inner = DW - pad * 2;
+  const S0 = Math.min((cR - cL) / DW, P ? 1.08 : 1.3);
+  root.style.setProperty("--s", S0 + "px");
+  let s = S0;
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- measure in design units at scale S0, then settle the final scale from the height
+  box($("#tile"), pad, 34, 68, 68); box($("#nm"), pad + 88, 48); $("#nm").textContent = v.name || "";
+  MV.fitText($("#nm"), (inner - 88) * s, 22 * s);
+  const HR = 128; box($("#hr"), pad, HR, inner, 1.5);
+  const ask = $("#ask"); ask.textContent = v.prompt || ""; MV.fitText(ask, (inner - 120 - 64) * s, 26 * s);
+  const askW = ask.getBoundingClientRect().width / s, askH = ask.getBoundingClientRect().height / s;
+  const askY = HR + 30; box(ask, DW - pad - askW, askY);
+  const ansY = askY + askH + 34;
+  const ans = $("#ans"); ans.textContent = v.reply || ""; box(ans, pad, ansY, inner);
+  let fs = 40; while (ans.getBoundingClientRect().height / s > 40 * 1.32 * 3 + 4 && fs > 28) { fs -= 2; ans.style.fontSize = S(fs); }
+  const ansH = ans.getBoundingClientRect().height / s;
+  box($("#think"), pad + 6, ansY + 18);
+  const words = MV.words(ans);
+  const cY = ansY + ansH + 30, BAR = 76, LH = 50;
+  // the code: one font size for every line, set by the longest
+  const code = $("#code");
+  const cls = lines.map((l, i) => {
+    const d = document.createElement("div"); d.className = "cl";
+    let h = esc(l);
+    h = h.replace(/(\/\/.*$|#.*$)|(&quot;|")(.*?)(")|('[^']*')|\b(const|let|var|await|async|function|return|import|from|export|def|for|if|else|in|new|class|while)\b|\b(\d+(?:\.\d+)?)\b|\b([A-Za-z_]\w*)(?=\()/g,
+      (m, c, q1, sv, q2, sq, k, n, f) => c ? `<span class="c">${c}</span>` : q1 ? `<span class="s">"${sv}"</span>` : sq ? `<span class="s">${sq}</span>` : k ? `<span class="k">${k}</span>` : n ? `<span class="n">${n}</span>` : `<span class="f">${f}</span>`);
+    d.innerHTML = h || " "; code.appendChild(d); return d;
+  });
+  let cfs = 34; cls.forEach((d) => d.style.fontSize = S(cfs));
+  const widest = () => Math.max(1, ...cls.map((d) => d.getBoundingClientRect().width / s));
+  while (widest() > inner - 64 && cfs > 22) { cfs -= 1; cls.forEach((d) => d.style.fontSize = S(cfs)); }
+  const CH = BAR + 24 + lines.length * LH + 26;
+  const DH = cY + CH + 34;
+  // final scale: fit the height too
+  s = Math.min(S0, (zB - zT) / DH); root.style.setProperty("--s", s + "px");
+  // re-apply every position at the final scale
+  box($("#tile"), pad, 34, 68, 68); box($("#nm"), pad + 88, 48); box($("#hr"), pad, HR, inner, 1.5); box(ask, DW - pad - askW, askY);
+  box(ans, pad, ansY, inner); ans.style.fontSize = S(fs); box($("#think"), pad + 6, ansY + 18);
+  box(code, pad, cY, inner, CH); $("#cbar").style.height = S(BAR);
+  cls.forEach((d, i) => { d.style.fontSize = S(cfs); Object.assign(d.style, { left: S(32), top: S(BAR + 24 + i * LH), height: S(LH) }); });
+  Object.assign($("#lang").style, { left: S(30), top: S((BAR - 34) / 2) }); $("#lang").textContent = v.lang || "";
+  const cp = $("#cp"); $("#cpt").textContent = v.copy || ""; Object.assign(cp.style, { right: S(16), top: S(14), height: S(BAR - 28) });
+
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const ab = ans.getBoundingClientRect(), wb = $("#wrap").getBoundingClientRect();
+
+  // ---- the caret follows the stream: each chunk's last word, measured in the final layout
+  const caret = $("#caret"), lineH = fs * 1.32;
+  const pos = words.map((w) => { const r = w.getBoundingClientRect(); return { x: (r.right - wb.left) + 6 * s, y: (r.top - wb.top) + (r.height - fs * 1.05 * s) / 2 }; });
+  caret.style.height = S(fs * 1.05);
+
+  // ---- timing
+  const TA = 0.4, TT = 0.95, TS = 1.45;
+  const rnd = MV.rand(41), chunks = []; { let i = 0; while (i < words.length) { const n = 1 + Math.floor(rnd() * 3); chunks.push(Math.min(words.length, i + n)); i += n; } }
+  const STEP = Math.min(0.11, 1.35 / Math.max(1, chunks.length)), TE = TS + chunks.length * STEP;
+  const TC = TE + 0.2, TL = TC + 0.35, LS = Math.min(0.3, 1.1 / Math.max(1, lines.length)), TCE = TL + lines.length * LS;
+  const TP = Math.min(TCE + 0.55, D - 1.25);
+
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#tile", { scale: 0.5, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 0.15);
+  tl.fromTo("#nm", { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out" }, 0.2);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.22);
+  // the question lands
+  tl.fromTo(ask, { scale: 0.55, rotationZ: 4, y: 30 * s, opacity: 0 }, { scale: 1, rotationZ: 0, y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.9)" }, TA);
+  // thinking: the tile spins up, three dots breathe
+  tl.fromTo("#think", { opacity: 0 }, { opacity: 1, duration: 0.15 }, TT);
+  document.querySelectorAll("#think i").forEach((d, q) => tl.fromTo(d, { y: 0, opacity: 0.45 }, { y: -10 * s, opacity: 1, duration: 0.13, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, TT + 0.04 + q * 0.07));
+  tl.to("#think", { opacity: 0, duration: 0.08 }, TS - 0.04);
+  tl.fromTo("#tile svg", { rotation: 0 }, { rotation: 180, duration: TE - TT, ease: "power1.inOut" }, TT);
+  // the answer streams in chunks with the caret riding the last word
+  tl.set(caret, { opacity: 1, x: pad * s, y: pos[0] ? pos[0].y : 0 }, TS - 0.02);
+  let prev = 0;
+  chunks.forEach((end, c) => {
+    const t = TS + c * STEP;
+    for (let i = prev; i < end; i++) tl.fromTo(words[i], { opacity: 0, y: 6 * s }, { opacity: 1, y: 0, duration: 0.18, ease: "power2.out", immediateRender: false }, t);
+    tl.set(caret, { x: pos[end - 1].x, y: pos[end - 1].y }, t);
+    prev = end;
+  });
+  // the code block opens under the text, the caret drops into it
+  tl.to(caret, { opacity: 0, duration: 0.1 }, TC);
+  gsap.set(code, { clipPath: "inset(0 0 100% 0 round 0px)" });
+  tl.fromTo(code, { clipPath: `inset(0 0 100% 0 round ${28 * s}px)`, y: 20 * s }, { clipPath: `inset(0 0 0% 0 round ${28 * s}px)`, y: 0, duration: 0.6, ease: "expo.out", immediateRender: false }, TC);
+  tl.fromTo(["#lang", "#cp"], { opacity: 0, y: 10 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out", stagger: 0.06 }, TC + 0.15);
+  cls.forEach((d, i) => {
+    const n = Math.max(1, d.textContent.length);
+    tl.fromTo(d, { clipPath: "inset(-10% 100% -10% 0)" }, { clipPath: "inset(-10% 0% -10% 0)", duration: LS * 0.92, ease: `steps(${Math.min(n, 24)})` }, TL + i * LS);
+  });
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TC + 0.1);
+  // the pointer copies it: the button turns into a green check
+  const cpb = cp.getBoundingClientRect(), cur = $("#cur");
+  const px = cpb.left + cpb.width * 0.55, py = cpb.top + cpb.height * 0.55;
+  tl.fromTo(cur, { opacity: 0, left: px + "px", top: py + "px", x: 120 * s, y: 240 * s }, { opacity: 1, x: 0, y: 0, duration: 0.5, ease: "expo.out" }, TP - 0.5);
+  tl.to(cur, { scale: 0.84, duration: 0.08, ease: "power2.out" }, TP); tl.to(cur, { scale: 1, duration: 0.2, ease: "power2.out" }, TP + 0.1);
+  tl.to(cp, { scale: 0.9, duration: 0.08, ease: "power2.out" }, TP);
+  tl.set(cp, { className: "done" }, TP + 0.06); tl.set("#cpt", { textContent: v.copied || "" }, TP + 0.06);
+  tl.to(cp, { scale: 1, duration: 0.5, ease: "back.out(3)" }, TP + 0.08);
+  tl.fromTo("#cp .ok path", { strokeDasharray: 30, strokeDashoffset: 30 }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, TP + 0.08);
+  tl.to(cur, { x: 100 * s, y: 200 * s, opacity: 0, duration: 0.45, ease: "power3.in" }, TP + 0.35);
+  tl.to(code, { boxShadow: `inset 0 0 0 ${3 * s}px rgba(43,214,123,.7), inset 0 ${2 * s}px ${6 * s}px rgba(0,0,0,.35)`, duration: 0.15, ease: "power2.out" }, TP + 0.08);
+  tl.to(code, { boxShadow: `inset 0 0 0 ${1.5 * s}px rgba(255,255,255,.12), inset 0 ${2 * s}px ${6 * s}px rgba(0,0,0,.35)`, duration: 0.7, ease: "power2.out" }, TP + 0.3);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

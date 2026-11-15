@@ -1,0 +1,5 @@
+{ "id": "logo-row", "name": "Logo row", "oneLiner": "two to four big glossy app tiles spring up one by one on the beat in the free side of the frame, under a small underlined title, with a soft floor reflection; equation mode builds 'A + B = result' term by term and slams the result",
+  "category": "explain", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["logos", "apps", "tools", "stack", "icons", "equation", "plus", "combo", "integration", "tiles", "overlay", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.8, "alpha": true,
+  "say": "when the speaker names the tools they use ('I use Claude, Notion and Zapier'): each tile lands on its name; mode equation when they combine them ('Claude plus YouTube equals...'), the result slams on the payoff word" }

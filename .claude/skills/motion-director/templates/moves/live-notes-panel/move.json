@@ -1,0 +1,5 @@
+{ "id": "live-notes-panel", "name": "Live notes panel", "oneLiner": "a glass notes window swings in beside the speaker: title bar, a toolbar, a heading bar in the brand colour slams in, then the notes type themselves line by line under a caret with A, B, C markers, and a highlighter swipes the line that matters",
+  "category": "ai", "kind": "effect", "uses": ["overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["notes", "notepad", "list", "points", "key points", "takeaways", "plan", "outline", "breakdown", "typing", "side panel", "explainer", "framework", "overlay", "talking head"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 6.0, "alpha": true,
+  "say": "when the speaker breaks an idea into points as they talk ('why we buy the hype: A, lots of people are talking about it; B, people we trust are'): cut in on the topic, set duration to the length of the explanation so each line types as it's said; on 16:9 the editor places the speaker on the other half (side picks the panel's half)" }

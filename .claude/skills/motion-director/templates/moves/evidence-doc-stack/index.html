@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"pages","type":"string","label":"Page titles, separated by | (2 to 5), one page lands per title","default":"Timeline|Request log|What changed|Findings"},
+  {"id":"highlight","type":"string","label":"The key line on the top page that gets highlighted","default":"Every number checks out"},
+  {"id":"doc","type":"string","label":"Small running head on every page","default":"Report"},
+  {"id":"beat","type":"number","label":"Seconds between pages","default":0.65},
+  {"id":"side","type":"string","label":"16:9 and 1:1 side: left or right","default":"left"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 58%, #fff); --hi: #FFE14D; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(40% 40% at var(--gx, 22%) 50%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 80% 100%, color-mix(in srgb, var(--accent2) 14%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; left: 0; top: 0; perspective: calc(var(--u) * 1800); }
+  #stack { position: relative; perspective: calc(var(--u) * 1800); }  /* flat: pages stack in DOM order, each tilts in its own perspective */
+  /* a page: scanned white paper, printed text, a contact shadow under it and a soft lift shadow */
+  .pg { position: absolute; left: 0; top: 0; overflow: hidden; box-sizing: border-box; transform-origin: 50% 60%;
+    background: #F7F5F0 url(assets/paper-white.jpg) center / calc(var(--u) * 600);
+    box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 2) rgba(0,0,0,.25), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -6) rgba(0,0,0,.45), 0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -20) rgba(0,0,0,.45); }
+  .is-key .pg { box-shadow: 0 calc(var(--u) * 1) calc(var(--u) * 2) rgba(0,0,0,.35); }
+  .pg::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(170deg, rgba(255,255,255,.35), transparent 30%, transparent 75%, rgba(80,60,30,.06)); }
+  .pg .shade { position: absolute; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 5; }
+  .pg .in { position: absolute; inset: 0; color: #24221F; font-family: Georgia, "Times New Roman", serif; }
+  .pg .meta { position: absolute; display: flex; justify-content: space-between; font-family: var(--font-body); font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: #8A857C; white-space: nowrap; }
+  .pg .hr { position: absolute; height: 1px; background: #CFC9BD; }
+  .pg .ttl { position: absolute; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; color: #1B1A18; }
+  .pg .par { position: absolute; line-height: 1.5; color: #4A4640; text-align: justify; hyphens: auto; }
+  .pg table { position: absolute; border-collapse: collapse; font-family: var(--font-body); color: #3D3A35; }
+  .pg td { padding: .35em .5em; border-bottom: 1px solid #DDD7CB; white-space: nowrap; overflow: hidden; }
+  .pg tr.th td { font-weight: 700; color: #fff; background: #2B2A33; }
+  .pg tr.flag td { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+  .pg .key { position: absolute; font-weight: 700; color: #1B1A18; white-space: nowrap; }
+  .pg .key .mk { position: absolute; left: -0.18em; right: -0.18em; top: 18%; bottom: 6%; background: var(--hi); mix-blend-mode: multiply; transform-origin: 0 50%;
+    border-radius: .12em .3em .2em .1em; opacity: .9; }
+  .pg .key .kt { position: relative; }
+  .pg .num { position: absolute; font-family: var(--font-body); color: #9A958B; white-space: nowrap; }
+  /* the glass counter */
+  #chip { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: calc(var(--u) * 12); white-space: nowrap; box-sizing: border-box;
+    height: calc(var(--u) * 64); padding: 0 calc(var(--u) * 24) 0 calc(var(--u) * 12); border-radius: calc(var(--u) * 32);
+    background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 76%, #fff 10%), color-mix(in srgb, var(--surface) 92%, transparent));
+    -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 1.3) rgba(255,255,255,.12), 0 calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * -8) rgba(0,0,0,.6); }
+  .is-key #chip { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5); }
+  #chip .ic { width: calc(var(--u) * 42); height: calc(var(--u) * 42); border-radius: calc(var(--u) * 12); display: grid; place-items: center;
+    background: linear-gradient(155deg, var(--al), var(--accent) 60%, color-mix(in srgb, var(--accent) 65%, #000)); box-shadow: inset 0 calc(var(--u) * 1.5) 0 rgba(255,255,255,.5); }
+  #chip .ic svg { width: 58%; height: 58%; }
+  #chip .ct { font-size: calc(var(--u) * 30); font-weight: 750; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+  #chip .of { font-size: calc(var(--u) * 30); font-weight: 600; color: color-mix(in srgb, var(--ink) 55%, transparent); font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="stack"></div></div>
+  <div id="chip"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z" fill="#fff"/><path d="M14 3v4h4" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1.4"/><path d="M9.5 12h6M9.5 15h6M9.5 18h4" stroke="rgba(0,0,0,.35)" stroke-width="1.4"/></svg></div><span class="ct" id="ct"></span><span class="of" id="of"></span></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H;
+  const u = MV.u * (P ? 1 : SQ ? 0.85 : 1);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const RIGHT = !P && String(v.side || "").toLowerCase() === "right";
+  const titles = String(v.pages || "").split("|").map((s) => s.trim()).filter(Boolean).slice(0, 5);
+  const N = Math.max(1, titles.length);
+  if (!titles.length) titles.push("");
+  const pad2 = (k) => String(k).padStart(2, "0");
+
+  // ---- the page size: beside the head, as tall as the free side allows
+  const PH = Math.round(P ? 430 * u : SQ ? H * 0.38 : H * 0.8), PW = Math.round(PH / 1.414);
+  const stack = $("#stack"); Object.assign(stack.style, { width: PW + "px", height: PH + "px" });
+
+  // printed filler: real words set too small to read, so the page reads as text, not as bars
+  const rnd = MV.rand(17);
+  const POOL = "the data shows each request was logged at the time it was made and no entry was sent twice across the full period we checked every record against the source and the totals match the figures reported in the summary below with no gaps".split(" ");
+  const prose = (n) => { let s = []; for (let i = 0; i < n; i++) s.push(POOL[Math.floor(rnd() * POOL.length)]); s[0] = s[0][0].toUpperCase() + s[0].slice(1); return s.join(" ") + "."; };
+  const fs = PW * 0.024, pd = PW * 0.085;
+  const pages = titles.map((t, i) => {
+    const pg = document.createElement("div"); pg.className = "pg";
+    Object.assign(pg.style, { width: PW + "px", height: PH + "px" });
+    const top = i === N - 1;
+    // pages under the top one are opaque paper covering paper: their print opts out of the overlap test
+    let h = `<div class="in"${top ? "" : " data-layered"}><div class="meta"><span class="dl"></span><span>${pad2(i + 1)} / ${pad2(N)}</span></div><div class="hr"></div><div class="ttl"></div>`;
+    h += `<div class="par p1"></div>`;
+    if (!top && i % 2 === 1) h += `<table></table>`;
+    if (top && v.highlight) h += `<div class="key"><span class="mk"></span><span class="kt"></span></div>`;
+    h += `<div class="par p2"></div><div class="num">${i + 1}</div></div><div class="shade"></div>`;
+    pg.innerHTML = h; stack.appendChild(pg);
+    const q = (s) => pg.querySelector(s);
+    const meta = q(".meta"); meta.querySelector(".dl").textContent = v.doc || "";
+    Object.assign(meta.style, { left: pd + "px", right: pd + "px", top: pd * 0.75 + "px", fontSize: fs * 0.85 + "px" });
+    Object.assign(q(".hr").style, { left: pd + "px", right: pd + "px", top: pd * 0.75 + fs * 1.9 + "px" });
+    const ttl = q(".ttl"); ttl.textContent = t; ttl.style.fontSize = PW * 0.085 + "px";
+    Object.assign(ttl.style, { left: pd + "px", top: pd * 0.75 + fs * 3.2 + "px" });
+    MV.fitText(ttl, PW - pd * 2, 8);
+    let y = pd * 0.75 + fs * 3.2 + ttl.getBoundingClientRect().height + fs * 1.4;
+    const par = (el, words) => { el.textContent = prose(words); Object.assign(el.style, { left: pd + "px", width: PW - pd * 2 + "px", top: y + "px", fontSize: fs + "px" }); y += el.offsetHeight + fs * 1.3; };
+    par(q(".p1"), top ? 34 : 48);
+    const tb = q("table");
+    if (tb) {
+      const rows = [["Time", "Event", "Status"]]; for (let r = 0; r < 6; r++) rows.push([`${pad2(r + 9)}:${pad2(Math.floor(rnd() * 59))}`, POOL[Math.floor(rnd() * POOL.length)] + " " + POOL[Math.floor(rnd() * POOL.length)], r % 3 === 1 ? "flag" : "ok"]);
+      tb.innerHTML = rows.map((r, k) => `<tr class="${k === 0 ? "th" : r[2] === "flag" ? "flag" : ""}">${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("");
+      Object.assign(tb.style, { left: pd + "px", width: PW - pd * 2 + "px", top: y + "px", fontSize: fs * 0.95 + "px" }); y += tb.offsetHeight + fs * 1.4;
+    }
+    let key = null;
+    if (top && v.highlight) {
+      key = q(".key"); key.querySelector(".kt").textContent = v.highlight; key.style.fontSize = PW * 0.062 + "px";
+      Object.assign(key.style, { left: pd + "px", top: y + "px" }); MV.fitText(key, PW - pd * 2.2, 8);
+      y += key.offsetHeight + fs * 1.4;
+    }
+    par(q(".p2"), 40);
+    // more printed paragraphs until the page is full
+    for (let k = 0; k < 8; k++) {
+      const el = document.createElement("div"); el.className = "par"; pg.querySelector(".in").appendChild(el);
+      const y0 = y; par(el, 30 + Math.floor(rnd() * 25));
+      if (y - fs * 1.3 > PH - pd * 1.4) { el.remove(); y = y0; break; }
+    }
+    Object.assign(q(".num").style, { left: PW / 2 - fs + "px", bottom: pd * 0.5 + "px", fontSize: fs * 0.9 + "px" });
+    return { pg, shade: q(".shade"), key, mk: key && key.querySelector(".mk") };
+  });
+
+  // ---- place: beside the head (left on 9:16), the counter chip over the stack's top corner
+  let x, y;
+  if (P) { x = safe.left + 6 * u; y = H * 0.645 - PH - 6 * u; }
+  else if (SQ) { x = RIGHT ? W * 0.955 - PW : W * 0.045; y = H * 0.6 - PH / 2; }
+  else { x = RIGHT ? W * 0.95 - PW : W * 0.05; y = H * 0.52 - PH / 2; }
+  gsap.set("#stage", { x, y });
+  root.style.setProperty("--gx", ((x + PW / 2) / W * 100) + "%");
+  const chip = $("#chip");
+  // one numeral per page, swapped as each lands (the widest sets the chip width)
+  const cts = pages.map((_, i) => { const s = document.createElement("span"); s.textContent = pad2(i + 1); s.style.display = i === N - 1 ? "inline-block" : "none"; $("#ct").appendChild(s); return s; }); $("#of").textContent = "/ " + pad2(N);
+  const cw = chip.offsetWidth, chh = chip.offsetHeight;
+  gsap.set(chip, { x: Math.min(Math.max(x + (RIGHT ? PW - cw + 14 * u : -14 * u), safe.left * 0.5), W - cw - 10 * u), y: Math.max(y - chh * 0.55, P ? safe.top : 8 * u) });
+
+  // ---- in: the counter, then one page per beat dealt onto the stack; each lands a little askew
+  const beat = Math.max(0.3, Math.min(1.2, +v.beat || 0.65));
+  const rest = [-3.2, 2.2, -1.4, 1.6, -0.6], dir = RIGHT ? 1 : -1;
+  tl.fromTo(chip, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: "back.out(2.4)" }, 0.05);
+  const T = pages.map((_, i) => 0.12 + i * beat);
+  cts.forEach((s, i) => gsap.set(s, { display: i === 0 ? "inline-block" : "none" }));
+  pages.forEach((p, i) => {
+    const t = T[i], r = rest[i % rest.length] * (RIGHT ? -1 : 1), off = (N - 1 - i) * 7 * u;
+    // each page arrives from below and the side, tipped back, and drops onto the pile with a small settle
+    tl.fromTo(p.pg, { x: dir * 120 * u - off, y: PH * 0.75, rotation: r + dir * 14, rotationX: 28 },
+      { x: -off * 0.6, y: -off * 0.4, rotation: r, rotationX: 0, duration: 0.62, ease: "expo.out" }, t);
+    tl.fromTo(p.pg, { opacity: 0 }, { opacity: 1, duration: 0.034, ease: "none" }, t + 0.04);
+    tl.fromTo(p.pg, { scale: 1.05 }, { scale: 1, duration: 0.5, ease: "back.out(2)", immediateRender: false }, t + 0.12);
+    // the pages underneath fall into shadow as each new one covers them
+    pages.slice(0, i).forEach((q, k) => tl.to(q.shade, { opacity: Math.min(0.32, 0.1 * (i - k)), duration: 0.4, ease: "power2.out" }, t + 0.1));
+    // once a page is fully covered its print is out of sight: drop it (keeps the pile cheap and the audit honest)
+    if (i > 0) { tl.to(pages[i - 1].pg.querySelector(".in"), { opacity: 0, duration: 0.14, ease: "power1.in" }, t + 0.14); tl.set(pages[i - 1].pg.querySelector(".in"), { visibility: "hidden" }, t + 0.3); }
+    // the counter ticks up
+    if (i > 0) { tl.set(cts[i - 1], { display: "none" }, t); tl.set(cts[i], { display: "inline-block" }, t); }
+    tl.fromTo(cts[i], { y: -10 * u, opacity: 0.2 }, { y: 0, opacity: 1, duration: 0.3, ease: "expo.out", immediateRender: false }, t);
+  });
+  // the moment: a highlighter pass over the key line on the top page, the stack leans in
+  const TH = T[N - 1] + 0.75, topPg = pages[N - 1];
+  if (topPg.mk) {
+    tl.fromTo(topPg.mk, { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, TH);
+    tl.fromTo("#stack", { scale: 1 }, { scale: 1.035, duration: 0.9, ease: "expo.out", immediateRender: false }, TH - 0.05);
+  }
+  // the hold: the pile drifts slowly in depth
+  tl.fromTo("#stack", { rotationY: 10 * -dir, rotationX: 4 }, { rotationY: 3 * -dir, rotationX: -2, duration: D, ease: "sine.inOut" }, 0);
+  // out: the pile slides off its own side, accelerating, out of focus; the counter pops
+  const O = D - 0.42;
+  tl.to("#stack", { x: dir * 300 * u, y: 80 * u, rotation: dir * 10, duration: 0.34, ease: "power3.in" }, O);
+  tl.to("#stage", { opacity: 0, filter: "blur(10px)", duration: 0.34, ease: "power3.in" }, O + 0.04);
+  tl.to(chip, { scale: 0, opacity: 0, duration: 0.2, ease: "power3.in" }, O);
+  MV.done();
+</script>
+</body>
+</html>

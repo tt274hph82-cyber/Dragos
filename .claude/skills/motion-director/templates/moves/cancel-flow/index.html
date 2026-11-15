@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Screen title","default":"Cancel your plan?"},
+  {"id":"sub","type":"string","label":"Line under the title","default":"Here is what you lose"},
+  {"id":"plan","type":"string","label":"Plan name (empty: the brand name)","default":"Pro plan"},
+  {"id":"price","type":"string","label":"Plan price line","default":"$19 / month"},
+  {"id":"lose","type":"string","label":"What they lose, up to 3, split with |","default":"Saved projects|Priority support|Member pricing"},
+  {"id":"cancelLabel","type":"string","label":"The cancel button","default":"Cancel anyway"},
+  {"id":"eyebrow","type":"string","label":"Offer card eyebrow","default":"Before you go"},
+  {"id":"offer","type":"string","label":"The offer, big","default":"50% off"},
+  {"id":"offerSub","type":"string","label":"Line under the offer","default":"for your next 3 months"},
+  {"id":"keep","type":"string","label":"Offer button before the press","default":"Keep my plan"},
+  {"id":"kept","type":"string","label":"Offer button after the press (green)","default":"Plan kept"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --ok: #2BD67B; --okg: rgba(43,214,123,.5); --bad: #FF6B5E; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 44);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #ttl { font-weight: 800; font-size: calc(var(--s) * 52); color: var(--ink); white-space: nowrap; line-height: 1.05; letter-spacing: -.01em; }
+  #sub { font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.1; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  #prow { border-radius: calc(var(--s) * 28); background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.1); }
+  .is-key #prow { background: color-mix(in srgb, var(--surface) 80%, white 8%); }
+  #tile { border-radius: calc(var(--s) * 20); display: grid; place-items: center; overflow: hidden;
+    background: linear-gradient(150deg, rgba(255,255,255,.22), rgba(255,255,255,.05));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.55), inset 0 0 0 calc(var(--s) * 1) rgba(255,255,255,.14); }
+  #tile img { width: 74%; height: 74%; object-fit: contain; }
+  #pl { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #pp { font-weight: 600; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.1; }
+  .lr { display: flex; align-items: center; gap: calc(var(--s) * 22); font-weight: 650; font-size: calc(var(--s) * 38); color: color-mix(in srgb, var(--ink) 82%, transparent); white-space: nowrap; }
+  .lr svg { width: calc(var(--s) * 40); height: calc(var(--s) * 40); flex: none; }
+  #cbtn { border-radius: calc(var(--s) * 28); display: grid; place-items: center; box-shadow: inset 0 0 0 calc(var(--s) * 2.5) color-mix(in srgb, var(--bad) 60%, transparent);
+    font-weight: 800; font-size: calc(var(--s) * 40); color: var(--bad); white-space: nowrap; }
+  #scrim { position: absolute; inset: 0; background: rgba(6,5,8,.62); opacity: 0; }
+
+  #sheet { border-radius: calc(var(--s) * 36); overflow: hidden;
+    background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 60%, #fff 18%), color-mix(in srgb, var(--surface) 80%, #fff 6%));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent2) 55%, transparent),
+      0 0 calc(var(--s) * 60) color-mix(in srgb, var(--accent2) 30%, transparent), 0 calc(var(--s) * 30) calc(var(--s) * 60) rgba(0,0,0,.6); }
+  .is-key #sheet { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 2) color-mix(in srgb, var(--accent2) 55%, transparent); }
+  #sheet::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.26) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  #sheet .glow { position: absolute; left: 10%; right: 10%; top: -30%; height: 70%; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in srgb, var(--accent2) 40%, transparent), transparent); }
+  .is-key #sheet .glow { display: none; }
+  #eye { display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 12); font-weight: 750; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--accent2) 80%, #fff); white-space: nowrap; text-transform: none; }
+  #eye svg { width: calc(var(--s) * 34); height: calc(var(--s) * 34); flex: none; }
+  #off { font-family: var(--font-display); font-size: calc(var(--s) * 132); color: var(--ink); white-space: nowrap; line-height: 1; text-align: center; letter-spacing: -.01em; }
+  #offs { font-weight: 650; font-size: calc(var(--s) * 38); color: color-mix(in srgb, var(--ink) 70%, transparent); white-space: nowrap; line-height: 1.1; text-align: center; }
+  #kbtn { border-radius: calc(var(--s) * 28); overflow: hidden;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, white 20%), var(--accent) 55%, color-mix(in srgb, var(--accent) 80%, black));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--s) * 16) calc(var(--s) * 36) calc(var(--s) * -10) color-mix(in srgb, var(--accent) 80%, transparent); }
+  .is-key #kbtn { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45); }
+  #kok { position: absolute; inset: 0; clip-path: inset(0 100% 0 0); background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 72%, white), var(--ok) 55%, color-mix(in srgb, var(--ok) 80%, black)); }
+  .bl { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: calc(var(--s) * 14); font-weight: 800; font-size: calc(var(--s) * 44); color: #fff; white-space: nowrap; }
+  .bl svg { width: calc(var(--s) * 40); height: calc(var(--s) * 40); flex: none; overflow: visible; }
+  #kl2 { color: #06210F; opacity: 0; }
+  #rip { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0)); opacity: 0; }
+  .rg { border-radius: calc(var(--s) * 32); border: calc(var(--s) * 4) solid var(--ok); opacity: 0; }
+  .is-key .rg { display: none; }
+  #cur { position: absolute; width: calc(var(--s) * 60); height: calc(var(--s) * 60); z-index: 60; overflow: visible; filter: drop-shadow(0 calc(var(--s) * 6) calc(var(--s) * 8) rgba(0,0,0,.5)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="ttl" class="ab"></div><div id="sub" class="ab"></div>
+      <div id="hr" class="ab"></div>
+      <div id="prow" class="ab"><div id="tile" class="ab"></div><div id="pl" class="ab"></div><div id="pp" class="ab"></div></div>
+      <div id="lose"></div>
+      <div id="cbtn" class="ab"><span id="cbt"></span></div>
+      <div id="scrim"></div>
+      <div id="sheet" class="ab"><i class="glow"></i>
+        <div id="eye" class="ab"><svg viewBox="0 0 24 24"><path d="M4 11h16v9.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 20.5zM2.5 7.5h19V11h-19zM12 7.5V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 7.5c-1.5-3.5-5.5-4-5.5-1.5S12 7.5 12 7.5zm0 0c1.5-3.5 5.5-4 5.5-1.5S12 7.5 12 7.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span id="eyt"></span></div>
+        <div id="off" class="ab"></div><div id="offs" class="ab"></div>
+        <i class="rg ab" id="r1"></i><i class="rg ab" id="r2"></i>
+        <div id="kbtn" class="ab"><div id="kok"></div><i id="rip"></i>
+          <div class="bl" id="kl1"><span id="klt1"></span></div>
+          <div class="bl" id="kl2"><svg viewBox="0 0 24 24"><path id="kck" d="M5 12.5l4.6 4.5L19 7.5" fill="none" stroke="#06210F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" pathLength="100" stroke-dasharray="100 101" stroke-dashoffset="100"/></svg><span id="klt2"></span></div>
+        </div>
+      </div>
+    </div></div>
+    <svg id="cur" viewBox="0 0 32 32"><path d="M6 3.5v21.2l5.6-5.3 3.6 8.3 3.8-1.6-3.6-8.2h7.8z" fill="#fff" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const lose = String(v.lose || "").split("|").map((x) => x.trim()).filter(Boolean).slice(0, 3);
+
+  // ---- zone and scale
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.07; zB = H * 0.93; }
+  else if (SQ) { cL = 130 * u; cR = W - 130 * u; zT = 56 * u; zB = H - 56 * u; }
+  else { cL = W * 0.3; cR = W * 0.7; zT = H * 0.07; zB = H * 0.93; }
+  const pad = 44, DW = 780, inner = DW - pad * 2;
+  const ttY = pad + 4, sbY = ttY + 66, hrY = sbY + 60, prY = hrY + 28, prH = 128;
+  const lsY = prY + prH + 30, LH = 74, cbY = lsY + Math.max(1, lose.length) * LH + 24, cbH = 104;
+  const DH = cbY + cbH + pad;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.25 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- the cancel screen
+  Object.assign($("#ttl").style, { left: S(pad), top: S(ttY) }); $("#ttl").textContent = v.title || ""; MV.fitText($("#ttl"), inner * s, 20);
+  Object.assign($("#sub").style, { left: S(pad), top: S(sbY) }); $("#sub").textContent = v.sub || ""; MV.fitText($("#sub"), inner * s, 16);
+  box($("#hr"), pad, hrY, inner, 1.5);
+  box($("#prow"), pad, prY, inner, prH);
+  const TI = 84; box($("#tile"), 22, (prH - TI) / 2, TI, TI); if (v.mark) $("#tile").appendChild(MV.img(v.mark));
+  Object.assign($("#pl").style, { left: S(22 + TI + 22), top: S(prH / 2 - 46) }); $("#pl").textContent = v.plan || v.brandName || "";
+  Object.assign($("#pp").style, { left: S(22 + TI + 22), top: S(prH / 2 + 4) }); $("#pp").textContent = v.price || "";
+  MV.fitText($("#pl"), (inner - TI - 70) * s, 18); MV.fitText($("#pp"), (inner - TI - 70) * s, 16);
+  const XG = `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="color-mix(in srgb, var(--bad) 18%, transparent)" stroke="color-mix(in srgb, var(--bad) 70%, transparent)" stroke-width="1.6"/><path d="M8.6 8.6l6.8 6.8M15.4 8.6l-6.8 6.8" stroke="var(--bad)" stroke-width="2.2" stroke-linecap="round"/></svg>`;
+  const rows = lose.map((t, i) => { const r = document.createElement("div"); r.className = "lr ab"; r.innerHTML = XG + "<span></span>"; r.querySelector("span").textContent = t;
+    $("#lose").appendChild(r); box(r, pad + 6, lsY + i * LH, inner - 6, LH); MV.fitText(r.querySelector("span"), (inner - 80) * s, 16); return r; });
+  box($("#cbtn"), pad, cbY, inner, cbH); $("#cbt").textContent = v.cancelLabel || ""; MV.fitText($("#cbt"), (inner - 60) * s, 18);
+
+  // ---- the retention offer sheet: rises over the list and the cancel button
+  const shX = 18, shW = DW - 36, shY = prY - 8, shH = DH - 18 - shY;
+  box($("#sheet"), shX, shY, shW, shH);
+  const kH = 108, kY = shH - 30 - kH, sin = shW - 60;
+  const avail = kY - 24;   // space above the button for eyebrow, offer, line
+  const blk = 44 + 14 + 140 + 6 + 48, eyY = Math.max(26, (avail - blk) / 2), ofY = eyY + 58, osY = ofY + 146;
+  box($("#eye"), 30, eyY, sin, 44); $("#eyt").textContent = v.eyebrow || ""; MV.fitText($("#eyt"), (sin - 60) * s, 16);
+  box($("#off"), 30, ofY, sin, 140); $("#off").textContent = v.offer || ""; MV.fitText($("#off"), sin * s, 30); $("#off").style.width = S(sin);
+  box($("#offs"), 30, osY, sin, 48); $("#offs").textContent = v.offerSub || ""; MV.fitText($("#offs"), sin * s, 16); $("#offs").style.width = S(sin);
+  box($("#kbtn"), 30, kY, sin, kH);
+  [$("#r1"), $("#r2")].forEach((r) => box(r, 30, kY, sin, kH));
+  $("#klt1").textContent = v.keep || ""; $("#klt2").textContent = v.kept || "";
+  MV.fitText($("#klt1"), (sin - 80) * s, 18); MV.fitText($("#klt2"), (sin - 120) * s, 18);
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- timing
+  const TH = 1.45, TO = 1.75, TP = 2.95;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // in
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#ttl", "#sub"], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.22);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+  tl.fromTo("#prow", { opacity: 0, y: 22 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.34);
+  tl.fromTo("#tile", { scale: 0.5, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 0.38);
+  tl.fromTo(rows, { opacity: 0, x: -24 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.08 }, 0.5);
+  tl.fromTo("#cbtn", { opacity: 0, y: 22 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.7);
+  gsap.set("#sheet", { opacity: 0 });
+
+  // the pointer drifts towards Cancel anyway, the button warms under it
+  const cur = $("#cur");
+  const c1x = pad + inner * 0.62, c1y = cbY + cbH * 0.6;
+  tl.fromTo(cur, { opacity: 0, left: cL + c1x * s + "px", top: cT + c1y * s + "px", x: 160 * s, y: 220 * s }, { opacity: 1, x: 0, y: 0, duration: 0.6, ease: "expo.out" }, TH - 0.6);
+  tl.to("#cbtn", { backgroundColor: "color-mix(in srgb, var(--bad) 14%, transparent)", duration: 0.25, ease: "power2.out" }, TH - 0.1);
+
+  // the offer card rises over it, the screen dims behind
+  tl.to("#scrim", { opacity: 1, duration: 0.45, ease: "power2.out" }, TO);
+  tl.to(["#prow", "#cbtn", ...rows], { opacity: 0, duration: 0.2, ease: "power2.in" }, TO - 0.04);
+  tl.fromTo("#sheet", { opacity: 1, y: (DH - shY + 30) * s }, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TO);
+  tl.fromTo("#sheet", { scale: 0.96 }, { scale: 1, duration: 0.9, ease: "back.out(1.6)", transformOrigin: "50% 100%", immediateRender: false }, TO);
+  tl.fromTo("#eye", { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, TO + 0.12);
+  tl.fromTo("#off", { opacity: 0, scale: 1.7, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.28, ease: "power4.in", transformOrigin: "50% 55%" }, TO + 0.16);
+  tl.to("#off", { scale: 1.05, duration: 0.06, ease: "power1.out" }, TO + 0.44); tl.to("#off", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TO + 0.5);
+  tl.to("#stage", { scale: 1.015, duration: 0.06, ease: "power2.out" }, TO + 0.44); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TO + 0.5);
+  tl.fromTo("#offs", { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, TO + 0.36);
+  tl.fromTo("#kbtn", { opacity: 0, y: 20 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, TO + 0.3);
+  tl.fromTo("#sheet", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TO + 0.5);
+
+  // the pointer moves up and presses Keep my plan: it floods green
+  const k2x = shX + 30 + sin * 0.64, k2y = shY + kY + kH * 0.58;
+  tl.to(cur, { left: cL + k2x * s + "px", top: cT + k2y * s + "px", duration: 0.6, ease: "power3.inOut" }, TP - 0.68);
+  tl.to(cur, { scale: 0.85, duration: 0.08, ease: "power2.out" }, TP); tl.to(cur, { scale: 1, duration: 0.2, ease: "power2.out" }, TP + 0.12);
+  tl.to("#kbtn", { scale: 0.965, duration: 0.08, ease: "power2.out" }, TP); tl.to("#kbtn", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TP + 0.09);
+  box($("#rip"), sin * 0.64 - 60, kH * 0.58 - 60, 120, 120);
+  tl.fromTo("#rip", { opacity: 0.9, scale: 0.2 }, { opacity: 0, scale: 7, duration: 0.6, ease: "expo.out", immediateRender: false }, TP + 0.02);
+  tl.to(cur, { x: 110 * s, y: 200 * s, opacity: 0, duration: 0.5, ease: "power3.in" }, TP + 0.35);
+  tl.to("#kok", { clipPath: "inset(0 0% 0 0)", duration: 0.42, ease: "expo.inOut" }, TP + 0.02);
+  tl.to("#kl1", { opacity: 0, y: -24 * s, duration: 0.18, ease: "power2.in" }, TP + 0.06);
+  tl.fromTo("#kl2", { opacity: 0, y: 24 * s }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out", immediateRender: false }, TP + 0.18);
+  tl.to("#kck", { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, TP + 0.26);
+  tl.to("#kbtn", { boxShadow: `inset 0 ${2 * s}px 0 rgba(255,255,255,.45), 0 ${16 * s}px ${36 * s}px ${-10 * s}px rgba(43,214,123,.7)`, duration: 0.4, ease: "power2.out" }, TP + 0.1);
+  tl.fromTo("#r1", { scale: 1, opacity: 0.9 }, { scale: 1.12, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false, transformOrigin: "50% 50%" }, TP + 0.12);
+  tl.fromTo("#r2", { scale: 1, opacity: 0.6 }, { scale: 1.22, opacity: 0, duration: 0.9, ease: "expo.out", immediateRender: false, transformOrigin: "50% 50%" }, TP + 0.22);
+  tl.to("#sheet", { y: -10 * s, duration: 0.5, ease: "expo.out" }, TP + 0.1);
+  tl.to("#sheet", { y: 0, duration: 0.9, ease: "sine.inOut" }, TP + 0.6);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

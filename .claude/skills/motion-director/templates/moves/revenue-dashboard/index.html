@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"label","type":"string","label":"What the number is","default":"Gross volume"},
+  {"id":"period","type":"string","label":"Period chip","default":"Last 7 days"},
+  {"id":"value","type":"number","label":"The number it lands on","default":48920},
+  {"id":"from","type":"number","label":"The number it starts from","default":0},
+  {"id":"currency","type":"string","label":"Currency sign before amounts","default":"$"},
+  {"id":"pill","type":"string","label":"The growth pill that stamps","default":"+32% this week"},
+  {"id":"payments","type":"string","label":"Three payments, name:amount separated by |","default":"Maya Chen:129|Leo Park:49|Ava Stone:299"},
+  {"id":"plan","type":"string","label":"Muted line under each name","default":"Pro plan"},
+  {"id":"title","type":"string","label":"Heading over the payments","default":"Recent payments"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #F4F3EF; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --tx: #17161C; --mu: #8B8893; --ln: rgba(20,18,30,.08); --ok: #18A957; --okb: #E3F6EA; --ad: color-mix(in srgb, var(--accent) 75%, #000); }
+  /* warm paper lit by the brand colour from two corners and one warm key light */
+  #g { position: absolute; inset: -10%; background:
+    radial-gradient(42% 32% at 84% 10%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 70%),
+    radial-gradient(48% 36% at 10% 94%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 28% 18%, rgba(255,214,140,.30), transparent 70%),
+    color-mix(in srgb, var(--paper, #F4F3EF) 60%, #F4F3EF); }
+  #bloom { position: absolute; left: 0; top: 0; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 70%); opacity: 0; pointer-events: none; }
+  #grain { position: absolute; inset: 0; z-index: 90; pointer-events: none; opacity: .35; mix-blend-mode: multiply;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  #cshadow { position: absolute; left: 0; top: 0; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(40,25,15,.34), transparent 70%); filter: blur(calc(var(--u) * 22)); opacity: 0; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #card { position: absolute; left: 0; top: 0; box-sizing: border-box; padding: calc(var(--u) * 46) calc(var(--u) * 48) calc(var(--u) * 40); border-radius: calc(var(--u) * 44);
+    transform-style: preserve-3d; background: linear-gradient(170deg, #FFFFFF, #FBFAF8);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 #fff, 0 0 0 calc(var(--u) * 1.5) rgba(20,18,30,.06),
+      0 calc(var(--u) * 70) calc(var(--u) * 120) calc(var(--u) * -40) rgba(40,25,15,.42), 0 calc(var(--u) * 30) calc(var(--u) * 150) calc(var(--u) * -30) color-mix(in srgb, var(--accent) 34%, transparent); }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; overflow: hidden;
+    background: linear-gradient(110deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.7) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); mix-blend-mode: soft-light; }
+  #shade { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(var(--sa, 110deg), transparent 45%, rgba(40,25,15,.07)); }
+  .wrap { display: block; }
+  .wide .wrap { display: grid; grid-template-columns: 1.45fr 1fr; column-gap: calc(var(--u) * 56); align-items: end; }
+  .hd { display: flex; align-items: center; gap: calc(var(--u) * 18); }
+  .mk { flex: none; width: calc(var(--u) * 58); height: calc(var(--u) * 58); border-radius: calc(var(--u) * 16); display: grid; place-items: center; background: #F3F1EE; box-shadow: inset 0 0 0 calc(var(--u) * 1.5) var(--ln); }
+  .mk img { width: 76%; height: 76%; object-fit: contain; }
+  #lab { flex: 1; min-width: 0; font-size: calc(var(--u) * 30); font-weight: 600; color: var(--mu); white-space: nowrap; }
+  #per { flex: none; font-size: calc(var(--u) * 24); font-weight: 600; color: var(--tx); padding: calc(var(--u) * 10) calc(var(--u) * 18); border-radius: calc(var(--u) * 30); background: #F3F1EE; box-shadow: inset 0 0 0 calc(var(--u) * 1.5) var(--ln); white-space: nowrap; }
+  .numrow { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 22); margin-top: calc(var(--u) * 26); height: calc(var(--u) * 132); }
+  #num { font-size: calc(var(--u) * 118); font-weight: 750; letter-spacing: -0.035em; color: var(--tx); font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1; }
+  #num .cur { font-size: .58em; vertical-align: .62em; margin-right: .06em; color: var(--tx); font-weight: 700; }
+  #pill { position: relative; flex: none; display: flex; align-items: center; gap: calc(var(--u) * 8); padding: calc(var(--u) * 12) calc(var(--u) * 20) calc(var(--u) * 12) calc(var(--u) * 14); border-radius: calc(var(--u) * 40);
+    font-size: calc(var(--u) * 27); font-weight: 750; color: #fff; white-space: nowrap; align-self: center;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 70%, #fff), var(--ok) 60%, color-mix(in srgb, var(--ok) 80%, #000));
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.5), 0 calc(var(--u) * 12) calc(var(--u) * 24) calc(var(--u) * -8) color-mix(in srgb, var(--ok) 80%, transparent); }
+  #pill svg { width: calc(var(--u) * 28); height: calc(var(--u) * 28); flex: none; }
+  #pring { position: absolute; inset: 0; border-radius: inherit; border: calc(var(--u) * 4) solid var(--ok); opacity: 0; pointer-events: none; }
+  .sp { position: relative; margin-top: calc(var(--u) * 22); }
+  .sp svg { display: block; overflow: visible; }
+  #dot { position: absolute; left: 0; top: 0; width: calc(var(--u) * 22); height: calc(var(--u) * 22); margin: calc(var(--u) * -11); border-radius: 50%; background: #fff; border: calc(var(--u) * 6) solid var(--accent); box-sizing: border-box;
+    box-shadow: 0 0 0 calc(var(--u) * 10) color-mix(in srgb, var(--accent) 18%, transparent), 0 calc(var(--u) * 4) calc(var(--u) * 14) color-mix(in srgb, var(--accent) 60%, transparent); opacity: 0; }
+  .rows { margin-top: calc(var(--u) * 30); }
+  .wide .rows { margin-top: 0; }
+  #rt { font-size: calc(var(--u) * 24); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--mu); margin-bottom: calc(var(--u) * 10); white-space: nowrap; }
+  .row { position: relative; display: flex; align-items: center; gap: calc(var(--u) * 20); height: calc(var(--u) * 100); border-top: calc(var(--u) * 1.5) solid var(--ln); }
+  .row .hl { position: absolute; left: calc(var(--u) * -18); right: calc(var(--u) * -18); top: calc(var(--u) * 8); bottom: calc(var(--u) * 8); border-radius: calc(var(--u) * 18); background: color-mix(in srgb, var(--accent) 12%, transparent); opacity: 0; }
+  .av { position: relative; flex: none; width: calc(var(--u) * 66); height: calc(var(--u) * 66); border-radius: 50%; overflow: hidden;
+    background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 50%, #fff), var(--accent2)); display: grid; place-items: center; color: #fff; font-weight: 700; font-size: calc(var(--u) * 26);
+    background-size: 180% auto; background-position: 50% 8%; background-repeat: no-repeat; box-shadow: inset 0 0 0 calc(var(--u) * 1.5) rgba(0,0,0,.06); }
+  .av.ph { background-color: #E9E5DF; }
+  .who { flex: 1; min-width: 0; }
+  .who b { display: inline-block; max-width: 100%; overflow: hidden; vertical-align: top; font-size: calc(var(--u) * 31); font-weight: 650; color: var(--tx); white-space: nowrap; }
+  .who i { display: block; overflow: hidden; font-style: normal; margin-top: calc(var(--u) * 3); font-size: calc(var(--u) * 24); color: var(--mu); white-space: nowrap; }
+  .st { flex: none; font-size: calc(var(--u) * 22); font-weight: 700; color: var(--ok); background: var(--okb); padding: calc(var(--u) * 7) calc(var(--u) * 14); border-radius: calc(var(--u) * 20); }
+  .amt { flex: none; font-size: calc(var(--u) * 33); font-weight: 700; color: var(--tx); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: calc(var(--u) * 150); text-align: right; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="g"></div>
+  <div id="bloom"></div>
+  <div id="cshadow"></div>
+  <div id="stage"><div id="card"><div class="wrap">
+    <div class="main">
+      <div class="hd"><div class="mk"></div><div id="lab"></div><div id="per"></div></div>
+      <div class="numrow"><div id="num"></div><div id="pill"><svg viewBox="0 0 24 24"><path d="M5 16l5-5 3.5 3.5L20 8M14.5 8H20v5.5" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pillt"></span><i id="pring"></i></div></div>
+      <div class="sp"><svg id="spark"></svg><i id="dot"></i></div>
+    </div>
+    <div class="rows"><div id="rt"></div><div id="rowlist"></div></div>
+  </div><div id="shade"></div><div id="sheen"></div></div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H, WIDE = W > H;
+  const u = P ? MV.u : SQ ? MV.u * 0.92 : MV.u * 1.06;
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  if (WIDE) root.classList.add("wide");
+  const cur = String(v.currency || "");
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  if (v.mark) $(".mk").appendChild(MV.img(v.mark)); else $(".mk").style.display = "none";
+  $("#lab").textContent = v.label || ""; $("#per").textContent = v.period || ""; if (!v.period) $("#per").style.display = "none";
+  $("#pillt").textContent = v.pill || ""; if (!v.pill) $("#pill").style.display = "none";
+  $("#rt").textContent = v.title || "";
+  const to = +v.value || 0, from = Math.min(to, +v.from || 0);
+  const fmt = (x) => Math.round(x).toLocaleString("en-US");
+  const money = (x) => cur + (+x).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const setNum = (x) => { $("#num").innerHTML = (cur ? `<span class="cur">${esc(cur)}</span>` : "") + fmt(x); };
+
+  // the payments
+  const pays = String(v.payments || "").split("|").map((s) => s.split(":")).filter((p) => p[0] && p[0].trim()).slice(0, 3);
+  const list = $("#rowlist");
+  pays.forEach(([name, amt], i) => {
+    const r = document.createElement("div"); r.className = "row"; r.id = "r" + i;
+    const ini = name.trim().split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+    r.innerHTML = `<i class="hl"></i><div class="av"></div><div class="who"><b></b><i></i></div><span class="st">Paid</span><span class="amt"></span>`;
+    r.querySelector("b").textContent = name.trim(); r.querySelector(".who i").textContent = v.plan || "";
+    r.querySelector(".amt").textContent = "+" + money(+amt || 0);
+    const av = r.querySelector(".av"), ph = (v.people || [])[i];
+    if (ph) { av.classList.add("ph"); av.style.backgroundImage = `url("${ph}")`; } else av.textContent = ini;
+    list.appendChild(r);
+  });
+  if (!pays.length) $(".rows").style.display = "none";
+
+  // ---- size
+  const CW = P ? W - safe.left - safe.right : WIDE ? Math.min(1500 * u, W - safe.left - safe.right) : Math.min(860 * u, W - safe.left - safe.right);
+  $("#card").style.width = CW + "px";
+  const inner = CW - 96 * u;
+  const mainW = WIDE ? (inner - 56 * u) * 1.45 / 2.45 : inner;
+  // the big number: measure the final value with the pill beside it, shrink to fit
+  setNum(to);
+  { const pw = v.pill ? $("#pill").getBoundingClientRect().width + 22 * u : 0; let fs = 118 * u;
+    while ($("#num").getBoundingClientRect().width > mainW - pw && fs > 40) { fs -= 2; $("#num").style.fontSize = fs + "px"; } }
+  setNum(from);
+  $("#num").style.minWidth = "0px";
+  MV.fit("#lab", mainW - 260 * u, 16);
+  document.querySelectorAll(".who b").forEach((b) => MV.fit(b, (WIDE ? inner - mainW - 56 * u : inner) - (66 + 20 + 100 + 20 + 150 + 40) * u, 16));
+
+  // the sparkline: a seeded climb, smoothed
+  const SH = (P ? 300 : WIDE ? 290 : 170) * u, SW = mainW;
+  const rnd = MV.rand(23), n = 14, pts = [];
+  for (let i = 0; i < n; i++) { const t = i / (n - 1); const base = 0.12 + 0.78 * Math.pow(t, 1.35); const j = i === n - 1 ? 0 : (rnd() - 0.45) * 0.16; pts.push([t * SW, SH - Math.min(0.97, Math.max(0.03, base + j)) * SH]); }
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < n - 1; i++) { const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += ` C${p1[0] + (p2[0] - p0[0]) / 6},${p1[1] + (p2[1] - p0[1]) / 6} ${p2[0] - (p3[0] - p1[0]) / 6},${p2[1] - (p3[1] - p1[1]) / 6} ${p2[0]},${p2[1]}`; }
+  const svg = $("#spark"); svg.setAttribute("width", SW); svg.setAttribute("height", SH); svg.setAttribute("viewBox", `0 0 ${SW} ${SH}`);
+  const grid = [0.25, 0.5, 0.75].map((f) => `<line x1="0" x2="${SW}" y1="${SH * f}" y2="${SH * f}" stroke="rgba(20,18,30,.07)" stroke-width="${1.5 * u}" stroke-dasharray="${6 * u} ${8 * u}"/>`).join("");
+  svg.innerHTML = `<defs><linearGradient id="ar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${v.accent}" stop-opacity=".30"/><stop offset="1" stop-color="${v.accent}" stop-opacity="0"/></linearGradient>
+    <linearGradient id="st" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${v.accent}" stop-opacity=".55"/><stop offset="1" stop-color="${v.accent}"/></linearGradient>
+    <clipPath id="cp"><rect id="cpr" x="0" y="${-20 * u}" width="0" height="${SH + 40 * u}"/></clipPath></defs>${grid}
+    <path d="${d} L${SW},${SH} L0,${SH} Z" fill="url(#ar)" clip-path="url(#cp)"/>
+    <path id="line" d="${d}" style="filter: drop-shadow(0 ${6 * u}px ${8 * u}px color-mix(in srgb, ${v.accent} 45%, transparent))" fill="none" stroke="url(#st)" stroke-width="${6 * u}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const line = $("#line"), LEN = line.getTotalLength();
+  line.style.strokeDasharray = LEN; line.style.strokeDashoffset = LEN;
+
+  const CH = $("#card").getBoundingClientRect().height;
+  const x0 = (W - CW) / 2, y0 = P ? H * 0.45 - CH / 2 : (H - CH) / 2;
+  gsap.set("#card", { x: x0, y: y0, transformOrigin: "50% 55%" });
+  gsap.set("#cshadow", { x: x0 + CW * 0.08, y: y0 + CH - 50 * u, width: CW * 0.84, height: 130 * u });
+
+  // ---- the camera: the card turns slowly the whole shot, the light drifts
+  tl.fromTo("#g", { x: 0, y: 0 }, { x: -40 * u, y: 24 * u, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#card", { z: -800 * u, rotationX: 30, rotationY: 26, rotationZ: 4, y: y0 + 140 * u },
+    { z: 0, rotationX: 9, rotationY: 12, rotationZ: 1, y: y0, duration: 1.05, ease: "back.out(1.3)" }, 0.05);
+  tl.fromTo("#card", { opacity: 0, filter: "blur(18px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.6, ease: "power3.out" }, 0.05);
+  tl.fromTo("#cshadow", { opacity: 0, scaleX: 0.5 }, { opacity: 1, scaleX: 1, duration: 0.9, ease: "power2.out" }, 0.25);
+  tl.to("#card", { rotationX: 4, rotationY: -9, rotationZ: -0.5, duration: D - 1.1, ease: "sine.inOut" }, 1.1);
+  tl.fromTo("#card", { "--sa": "110deg" }, { "--sa": "250deg", duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#stage", { scale: 1, transformOrigin: `${W / 2}px ${y0 + CH / 2}px` }, { scale: 1.05, duration: D - 0.8, ease: "sine.inOut", immediateRender: false }, 0.8);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.0, ease: "power2.inOut" }, 0.75);
+
+  // content settles in after the card, overlapping
+  tl.fromTo(".hd > *", { opacity: 0, x: -18 * u }, { opacity: 1, x: 0, duration: 0.5, stagger: 0.06, ease: "expo.out" }, 0.3);
+  tl.fromTo("#num", { opacity: 0, y: 26 * u, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" }, 0.38);
+  // the count and the line run together and finish together
+  const C0 = 0.45, C1 = 2.3, o = { n: from, p: 0 };
+  tl.to(o, { n: to, duration: C1 - C0, ease: "power3.out", onUpdate: () => setNum(o.n) }, C0);
+  const dot = $("#dot"), cpr = $("#cpr");
+  tl.fromTo(o, { p: 0 }, { p: 1, duration: C1 - C0 - 0.1, ease: "power2.inOut", immediateRender: false, onUpdate: () => {
+    const L = LEN * o.p; line.style.strokeDashoffset = LEN - L; const pt = line.getPointAtLength(Math.max(0.01, L));
+    gsap.set(dot, { x: pt.x, y: pt.y }); cpr.setAttribute("width", pt.x);
+  } }, C0);
+  tl.fromTo(dot, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(3)" }, C0 + 0.05);
+  // the payments slide in one by one, each lighting up as it lands
+  tl.fromTo("#rt", { opacity: 0, y: 12 * u }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 0.75);
+  pays.forEach((_, i) => {
+    const t = 0.95 + i * 0.36, r = `#r${i}`;
+    tl.fromTo(r, { opacity: 0, x: 70 * u, rotationY: -14 }, { opacity: 1, x: 0, rotationY: 0, duration: 0.7, ease: "back.out(1.6)" }, t);
+    tl.fromTo(`${r} .av`, { scale: 0.4 }, { scale: 1, duration: 0.55, ease: "back.out(2.4)" }, t + 0.06);
+    tl.fromTo(`${r} .hl`, { opacity: 1 }, { opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.15);
+    tl.fromTo(`${r} .amt`, { opacity: 0, y: 10 * u }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out" }, t + 0.18);
+    tl.fromTo(`${r} .st`, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)" }, t + 0.24);
+  });
+
+  // the moment: the pill is pressed down beside the number, a ring goes out, the card answers
+  const S = C1 + 0.1;
+  gsap.set("#pill", { transformOrigin: "12% 50%" });
+  tl.fromTo("#pill", { opacity: 0, scale: 2.2, rotation: -14, filter: "blur(8px)" }, { opacity: 1, scale: 1, rotation: -3, filter: "blur(0px)", duration: 0.28, ease: "power4.in" }, S);
+  tl.to("#pill", { scale: 1.1, duration: 0.06, ease: "power1.out" }, S + 0.28); tl.to("#pill", { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, S + 0.34);
+  tl.fromTo("#pring", { scale: 1, opacity: 0.9 }, { scale: 1.6, opacity: 0, duration: 0.65, ease: "expo.out", immediateRender: false }, S + 0.28);
+  tl.to("#card", { scale: 1.02, duration: 0.07, ease: "power2.out" }, S + 0.28); tl.to("#card", { scale: 1, duration: 0.5, ease: "back.out(2.5)" }, S + 0.35);
+  tl.fromTo(dot, { scale: 1 }, { scale: 1.5, duration: 0.1, ease: "power2.out", immediateRender: false }, S + 0.28); tl.to(dot, { scale: 1, duration: 0.5, ease: "back.out(3)" }, S + 0.38);
+  const bl = $("#bloom"), BR = Math.max(CW, CH) * 1.1;
+  gsap.set(bl, { x: x0 + CW / 2 - BR / 2, y: y0 + CH * 0.3 - BR / 2, width: BR, height: BR });
+  tl.to(bl, { opacity: 1, duration: 0.12, ease: "power2.out" }, S + 0.28); tl.to(bl, { opacity: 0.35, duration: 1.1, ease: "power2.out" }, S + 0.4);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.85, ease: "power2.inOut", immediateRender: false }, S + 0.32);
+  MV.done();
+</script>
+</body>
+</html>

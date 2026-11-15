@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"label","type":"string","label":"What the arrow points out (a few words)","default":"the founder"},
+  {"id":"image","type":"string","label":"Image to slap on (path); empty uses the brand person cut-out","default":""},
+  {"id":"side","type":"string","label":"Where the sticker sits: left or right","default":"left"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  /* preview ground (look mode): a scanned paper desk so the sticker has something to sit on */
+  #ground { position: absolute; inset: 0; background: #E9E4D8 url(assets/kraft.jpg) center / calc(var(--u) * 900); background-blend-mode: multiply; }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(40,28,14,.28)); }
+  .is-alpha #ground { display: none; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  .abs { position: absolute; }
+  /* the sticker: the cut-out, its torn white paper rim (an SVG filter grown from its own alpha), a lift shadow */
+  #sticker { transform-origin: 50% 60%; }
+  #stk-fx { position: relative; filter: url(#rim) drop-shadow(0 calc(var(--u) * 10) calc(var(--u) * 12) rgba(20,14,8,.38)); }
+  .is-key #stk-fx { filter: url(#rim) drop-shadow(0 calc(var(--u) * 3) 0 #2a2420); }
+  #stk-fx img { display: block; width: 100%; height: auto; }
+  /* masking tape: a real crepe paper scan, slightly see-through like the real thing */
+  .tape { position: absolute; opacity: .93; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(20,14,8,.22)); }
+  .is-key .tape { opacity: 1; filter: none; }
+  /* the label: marker on a torn scrap of real paper */
+  #scrap { transform-origin: 50% 50%; }
+  #scrap-fx { position: relative; filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 8) rgba(20,14,8,.32)); }
+  .is-key #scrap-fx { filter: drop-shadow(0 calc(var(--u) * 3) 0 #2a2420); }
+  #scrap-paper { position: absolute; inset: 0; background: #FBFAF6 url(assets/paper-white.jpg) center / calc(var(--u) * 600); }
+  #label { position: relative; font-family: "MV Marker", var(--font-display); color: #1b1916; white-space: nowrap; line-height: 1; filter: url(#ink); }
+  #label .hl { position: absolute; left: -3%; right: -3%; bottom: -10%; height: 42%; background: var(--accent); opacity: .85; z-index: -1; transform-origin: 0 50%; border-radius: 40% 10% 50% 20%; }
+  .is-key #label .hl { opacity: 1; }
+  #arrow { overflow: visible; filter: url(#ink); }
+  #arrow path { fill: none; stroke: #1b1916; stroke-linecap: round; stroke-linejoin: round; }
+  .is-alpha #arrow path { stroke: #FBFAF6; }
+  #arrow .under { stroke: #1b1916; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="rim" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+    <feMorphology in="SourceAlpha" operator="dilate" radius="12" result="grow"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".09" numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="grow" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G" result="torn"/>
+    <feImage href="assets/paper-white.jpg" preserveAspectRatio="xMidYMid slice" result="paper"/>
+    <feComposite in="paper" in2="torn" operator="in" result="rimpaper"/>
+    <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="edge"/>
+    <feGaussianBlur in="edge" stdDeviation="1.6" result="soft"/>
+    <feColorMatrix in="soft" type="matrix" values="0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.06  0 0 0 0.35 0" result="cut"/>
+    <feMerge><feMergeNode in="rimpaper"/><feMergeNode in="cut"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="ink" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="3"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="sticker" class="abs" style="visibility:hidden"><div class="boil" id="stk-b"><div id="stk-fx"></div></div></div>
+  <img class="tape boil" id="t1" src="assets/tape-a.png" alt="" style="visibility:hidden" />
+  <img class="tape boil" id="t2" src="assets/tape-b.png" alt="" style="visibility:hidden" />
+  <svg id="arrow" class="abs boil" style="visibility:hidden"><path class="under" id="a-under"/><path id="a-shaft"/><path id="a-head"/></svg>
+  <div id="scrap" class="abs" style="visibility:hidden"><div class="boil" id="scrap-b"><div id="scrap-fx"><div id="scrap-paper"></div><div id="label"><span class="hl"></span><span id="ltxt"></span></div></div></div></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const D = +document.getElementById("root").dataset.duration;
+  const R = MV.rand(17), STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+
+  // ---- the picture
+  const src = v.image || (v.people && v.people[0]) || (v.mark) || "";
+  const pic = MV.img(src); document.getElementById("stk-fx").appendChild(pic);
+  // a cut-out cropped by its photo's frame keeps straight edges: tear the bottom so the rim follows a torn line, never a box
+  const tearBottom = (seed) => { const r = MV.rand(seed), p = []; const n = 46; let y = 95; for (let i = 0; i <= n; i++) { y = Math.min(99, Math.max(90, y + (r() - .5) * 3.2)); p.push(`${(i / n * 100).toFixed(1)}% ${(y + r() * 1.2).toFixed(1)}%`); } return `polygon(0 0, 100% 0, ${p.reverse().join(",")})`; };
+  pic.style.clipPath = tearBottom(5);
+  // rim size in px
+  const rimF = document.querySelector("#rim");
+  rimF.querySelector("feMorphology").setAttribute("radius", (11 * u).toFixed(1));
+  rimF.querySelector("feDisplacementMap").setAttribute("scale", (13 * u).toFixed(1));
+
+  // ---- layout per aspect: the sticker in a side zone, the label across from it, the arrow between
+  const right = v.side === "right";
+  let S, L;   // S: sticker box {x,y,w}, L: label anchor {x,y,size}
+  const ratio = 900 / 600;  // nominal h/w of a person cut-out; the img sets its own height
+  if (MV.portrait) {
+    const w = 430 * u;
+    S = { x: right ? W - safe.right - w - 10 * u : safe.left + 10 * u, y: safe.top + 120 * u, w };
+    L = { x: right ? safe.left + 10 * u : S.x + w * 0.74, y: safe.top + 20 * u, size: 64 * u, maxW: W - safe.right - safe.left - w * 0.74 - 20 * u };
+  } else if (W > H) {
+    const w = 400 * u;
+    S = { x: right ? W - safe.right - w - 40 * u : safe.left + 40 * u, y: safe.top + 60 * u, w };
+    L = { x: right ? S.x - 520 * u : S.x + w + 110 * u, y: safe.top + 420 * u, size: 66 * u, maxW: 460 * u };
+  } else {
+    const w = 380 * u;
+    S = { x: right ? W - safe.right - w - 30 * u : safe.left + 30 * u, y: safe.top + 40 * u, w };
+    L = { x: right ? safe.left + 30 * u : S.x + w + 70 * u, y: safe.top + 380 * u, size: 62 * u, maxW: W - safe.left - safe.right - w - 140 * u };
+  }
+  const st = document.getElementById("sticker");
+  st.style.left = S.x + "px"; st.style.top = S.y + "px"; st.style.width = S.w + "px";
+  const SH = S.w * (pic.naturalWidth ? pic.naturalHeight / pic.naturalWidth : ratio);
+
+  // label on its scrap, fitted so a long label never spills
+  const lab = document.getElementById("label"), ltxt = document.getElementById("ltxt");
+  ltxt.textContent = v.label || "";
+  lab.style.fontSize = L.size + "px";
+  MV.fit(lab, Math.max(200 * u, L.maxW - 70 * u), 24 * u);
+  const lw = lab.getBoundingClientRect().width, lh = lab.getBoundingClientRect().height;
+  const pad = { x: 34 * u, y: 26 * u };
+  const scrap = document.getElementById("scrap"), sfx = document.getElementById("scrap-fx");
+  sfx.style.padding = `${pad.y}px ${pad.x}px`;
+  const sw = lw + pad.x * 2, sh = lh + pad.y * 2;
+  // right-anchored label on the "right" side variant keeps it inside the frame
+  const lx = right && !MV.portrait && W > H ? S.x - sw - 90 * u : (right ? L.x : L.x);
+  scrap.style.left = lx + "px"; scrap.style.top = L.y + "px";
+  // torn scrap: jagged all round
+  const torn = (w, h, seed, amp, every) => { const r = MV.rand(seed), p = [], nx = Math.round(w / every), ny = Math.round(h / every);
+    for (let i = 0; i <= nx; i++) p.push([(i / nx) * w, r() * amp]); for (let i = 1; i <= ny; i++) p.push([w - r() * amp, (i / ny) * h]);
+    for (let i = nx - 1; i >= 0; i--) p.push([(i / nx) * w, h - r() * amp]); for (let i = ny - 1; i > 0; i--) p.push([r() * amp, (i / ny) * h]);
+    return `polygon(${p.map(([x, y]) => `${x.toFixed(1)}px ${y.toFixed(1)}px`).join(",")})`; };
+  document.getElementById("scrap-paper").style.clipPath = torn(sw, sh, 9, 7 * u, 11 * u);
+
+  // tape: across the sticker's top corners, half on the picture, half off (real tape holds two things)
+  // tape lives inside the sticker box (in % of its real height), so it always sits on the picture's edge
+  const tape = (id, fx, fy, w, rot) => { const t = document.getElementById(id); st.appendChild(t); t.style.width = w + "px"; t.style.left = (S.w * fx - w / 2) + "px"; t.style.top = `calc(${fy * 100}% - ${w * 0.125}px)`; t.style.transform = `rotate(${rot}deg)`; t.dataset.rot = rot; };
+  tape("t1", 0.5, 0.025, 170 * u, -7);
+  tape("t2", 0.92, 0.7, 170 * u, -62);
+
+  // the arrow: a hand-drawn curve from the scrap's edge to the sticker's side, then a two-stroke head
+  const sc = { x: lx, y: L.y, w: sw, h: sh };
+  const fromLeft = sc.x > S.x;   // scrap to the right of the sticker
+  const sgn = fromLeft ? 1 : -1;
+  // aim beside the face (upper fifth of a person cut-out), never at empty box space
+  const ax1 = fromLeft ? S.x + S.w * 0.76 : S.x + S.w * 0.24, ay1 = S.y + SH * 0.2;
+  const below = sc.y > ay1;   // the scrap sits lower than the target: leave from its top edge
+  const ax0 = fromLeft ? sc.x + sw * 0.3 : sc.x + sw * 0.7, ay0 = below ? sc.y - 14 * u : sc.y + sh + 14 * u;
+  const c1x = ax0 + sgn * 20 * u, c1y = (ay0 + ay1) / 2 + (below ? -70 : 70) * u, c2x = ax1 + sgn * 120 * u, c2y = ay1 + 12 * u;
+  const svg = document.getElementById("arrow");
+  const bx = Math.min(ax0, ax1, c1x, c2x) - 80 * u, by = Math.min(ay0, ay1) - 80 * u;
+  svg.style.left = bx + "px"; svg.style.top = by + "px"; svg.setAttribute("width", Math.max(ax0, ax1, c1x, c2x) - bx + 80 * u); svg.setAttribute("height", Math.max(ay0, ay1, c1y, c2y) - by + 80 * u);
+  const P = (x, y) => `${(x - bx).toFixed(1)} ${(y - by).toFixed(1)}`;
+  const shaft = `M ${P(ax0, ay0)} C ${P(c1x, c1y)} ${P(c2x, c2y)} ${P(ax1, ay1)}`;
+  // head: two short strokes back from the tip, along the curve's last tangent
+  const tx = ax1 - c2x, ty = ay1 - c2y, tlen = Math.hypot(tx, ty), ux = tx / tlen, uy = ty / tlen, hl = 46 * u;
+  const rot = (x, y, a) => [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
+  const [h1x, h1y] = rot(-ux, -uy, 0.55), [h2x, h2y] = rot(-ux, -uy, -0.55);
+  const head = `M ${P(ax1 + h1x * hl, ay1 + h1y * hl)} L ${P(ax1, ay1)} L ${P(ax1 + h2x * hl, ay1 + h2y * hl)}`;
+  ["#a-under", "#a-shaft"].forEach((s) => document.querySelector(s).setAttribute("d", shaft));
+  document.querySelector("#a-head").setAttribute("d", head);
+  document.querySelector("#a-under").setAttribute("stroke-width", 15 * u);
+  document.querySelector("#a-shaft").setAttribute("stroke-width", 9 * u);
+  document.querySelector("#a-head").setAttribute("stroke-width", 9 * u);
+  if (!MV.alpha) document.querySelector("#a-under").style.display = "none";
+  const len = document.querySelector("#a-shaft").getTotalLength(), hlen = document.querySelector("#a-head").getTotalLength();
+
+  // ---- timeline, on twos
+  // 0.10 the sticker slaps on
+  tl.set(st, { visibility: "visible" }, 0.1);
+  tl.fromTo(st, { scale: 1.35, rotation: -16, opacity: 0 }, { scale: 1, rotation: -4, opacity: 1, duration: 0.25, ease: twos("back.out(1.6)", 0.25), immediateRender: true }, 0.1);
+  // 0.42 / 0.58 tape slaps across the corners
+  [["#t1", 0.42], ["#t2", 0.58]].forEach(([s, t]) => { const r0 = +document.querySelector(s).dataset.rot;
+    tl.set(s, { visibility: "visible" }, t);
+    tl.fromTo(s, { scale: 1.4, rotation: r0 - 10, opacity: 0 }, { scale: 1, rotation: r0, opacity: 1, duration: 0.17, ease: twos("power3.out", 0.17), immediateRender: true }, t); });
+  // 0.72 the scrap lands, its marker highlight swipes in
+  tl.set(scrap, { visibility: "visible" }, 0.72);
+  tl.fromTo(scrap, { scale: 1.3, rotation: 9, opacity: 0, y: -20 * u }, { scale: 1, rotation: 3, opacity: 1, y: 0, duration: 0.25, ease: twos("back.out(1.5)", 0.25), immediateRender: true }, 0.72);
+  tl.fromTo("#label .hl", { scaleX: 0 }, { scaleX: 1, duration: 0.33, ease: twos("power2.out", 0.33), immediateRender: true }, 0.95);
+  // 1.05 the arrow draws on, then its head
+  tl.set(svg, { visibility: "visible" }, 1.05);
+  ["#a-under", "#a-shaft"].forEach((s) => tl.fromTo(s, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 0.5, ease: twos("power2.inOut", 0.5), immediateRender: true }, 1.05));
+  tl.fromTo("#a-head", { strokeDasharray: hlen, strokeDashoffset: hlen }, { strokeDashoffset: 0, duration: 0.17, ease: twos("none", 0.17), immediateRender: true }, 1.55);
+  // boil: everything breathes on twos, the ink crawls
+  const boil = (sel, a, b, seed, px, rot) => { const el = document.querySelector(sel), r = MV.rand(seed);
+    for (let t = a; t < b; t += STEP * 2) tl.set(el, { "--bx": `${((r() - .5) * 2 * px).toFixed(2)}px`, "--by": `${((r() - .5) * 2 * px).toFixed(2)}px`, "--br": `${((r() - .5) * 2 * rot).toFixed(2)}deg` }, t); };
+  boil("#stk-b", 0.35, D, 3, 1.6 * u, 0.5); boil("#scrap-b", 0.97, D, 5, 1.6 * u, 0.6); boil("#arrow", 1.05, D, 7, 1.2 * u, 0.3);
+  boil("#t1", 0.6, D, 11, 1.2 * u, 0); boil("#t2", 0.76, D, 13, 1.2 * u, 0);
+  const inkT = document.querySelector("#ink feTurbulence"), rimT = document.querySelector("#rim feTurbulence");
+  for (let t = 0, k = 0; t < D; t += STEP * 2, k++) { tl.set(inkT, { attr: { seed: 2 + (k % 6) } }, t); }
+  // exit: the whole collage is pulled off, accelerating, on twos
+  const X = D - 0.42;
+  // pulled off the frame: paper does not fade, it leaves whole and fast, then is gone
+  tl.to(st, { scale: 0.62, y: -90 * u, rotation: "-=14", duration: 0.33, ease: twos("power2.in", 0.33) }, X);
+  tl.to([scrap, svg], { scale: 0.62, y: -70 * u, rotation: "+=8", duration: 0.33, ease: twos("power2.in", 0.33) }, X + 0.04);
+  tl.set([st, scrap, svg], { opacity: 0 }, X + 0.38);
+  MV.done();
+</script>
+</body>
+</html>

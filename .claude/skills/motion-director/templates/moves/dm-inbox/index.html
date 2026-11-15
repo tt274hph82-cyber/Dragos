@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Inbox title","default":"Messages"},
+  {"id":"n1","type":"string","label":"Top row name (the newest, the one that opens)","default":"Jordan Lee"},
+  {"id":"p1","type":"string","label":"Top row preview","default":"How did you build that?"},
+  {"id":"n2","type":"string","label":"Second row name","default":"Sam Rivera"},
+  {"id":"p2","type":"string","label":"Second row preview","default":"Is this still available?"},
+  {"id":"n3","type":"string","label":"Third row name","default":"Alex Kim"},
+  {"id":"p3","type":"string","label":"Third row preview","default":"Just signed up, thank you!"},
+  {"id":"n4","type":"string","label":"Bottom row name (arrives first)","default":"Riley Chen"},
+  {"id":"p4","type":"string","label":"Bottom row preview","default":"Can we work together?"},
+  {"id":"detail","type":"string","label":"Second bubble in the opened thread (empty to skip)","default":"I need this for my whole team."},
+  {"id":"now","type":"string","label":"Time on the newest row","default":"now"},
+  {"id":"status","type":"string","label":"Line under the name in the opened thread","default":"Active now"},
+  {"id":"placeholder","type":"string","label":"Reply box placeholder in the opened thread","default":"Message..."}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 55%, #fff); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 72%; height: 44%; left: 40%; top: 2%; background: color-mix(in srgb, var(--accent) 38%, transparent); }
+  #ground .l2 { width: 74%; height: 48%; left: -30%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  #card { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 48);
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #card { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #card::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.24) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #pane, #conv { position: absolute; inset: 0; }
+  #ttl { font-family: var(--font-display); font-size: calc(var(--s) * 56); color: var(--ink); white-space: nowrap; line-height: 1; }
+  #badge { height: calc(var(--s) * 52); min-width: calc(var(--s) * 52); padding: 0 calc(var(--s) * 16); border-radius: calc(var(--s) * 26); display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, white 22%), var(--accent)); color: #fff; font-weight: 800; font-size: calc(var(--s) * 32); font-variant-numeric: tabular-nums;
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.45), 0 0 calc(var(--s) * 24) color-mix(in srgb, var(--accent) 60%, transparent); }
+  .is-key #badge { box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.45); }
+  #compose { width: calc(var(--s) * 64); height: calc(var(--s) * 64); border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255,255,255,.1); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.35); }
+  #compose svg { width: 52%; height: 52%; }
+  .hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  #list { position: absolute; overflow: hidden; }
+  .row { position: absolute; left: 0; top: 0; width: 100%; }
+  .row .hl { position: absolute; inset: calc(var(--s) * 6) calc(var(--s) * 18); border-radius: calc(var(--s) * 30); background: color-mix(in srgb, var(--accent) 30%, transparent); opacity: 0; }
+  .row .sep { position: absolute; bottom: 0; height: calc(var(--s) * 1.5); background: rgba(255,255,255,.08); }
+  .av { position: absolute; border-radius: 50%; display: grid; place-items: center; overflow: hidden;
+    font-weight: 800; color: rgba(0,0,0,.72); line-height: 1;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.55), inset 0 calc(var(--s) * -10) calc(var(--s) * 20) rgba(0,0,0,.18), 0 calc(var(--s) * 10) calc(var(--s) * 22) calc(var(--s) * -8) rgba(0,0,0,.6); }
+  .nm { position: absolute; font-weight: 800; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; line-height: 1.15; }
+  .tm { position: absolute; font-weight: 600; font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; line-height: 1.15; text-align: right; }
+  .pv { position: absolute; font-weight: 600; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 80%, transparent); white-space: nowrap; line-height: 1.2; }
+  .dot { position: absolute; border-radius: 50%; background: var(--al); box-shadow: 0 0 calc(var(--s) * 14) var(--accent); }
+  .is-key .dot { box-shadow: none; }
+  #back { width: calc(var(--s) * 40); height: calc(var(--s) * 56); }
+  #cnm { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.15; }
+  #cst { display: flex; align-items: center; gap: calc(var(--s) * 10); font-weight: 600; font-size: calc(var(--s) * 30); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.15; }
+  #cst::before { content: ""; width: calc(var(--s) * 14); height: calc(var(--s) * 14); border-radius: 50%; background: #2BD67B; box-shadow: 0 0 calc(var(--s) * 10) rgba(43,214,123,.5); flex: none; }
+  .bb { position: absolute; left: 0; top: 0; box-sizing: border-box; padding: calc(var(--s) * 22) calc(var(--s) * 32) calc(var(--s) * 24); border-radius: calc(var(--s) * 40); border-bottom-left-radius: calc(var(--s) * 12);
+    font-size: calc(var(--s) * 46); line-height: 1.22; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); transform-origin: 0% 100%; text-wrap: balance;
+    background: linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.09));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12), 0 calc(var(--s) * 24) calc(var(--s) * 44) calc(var(--s) * -20) rgba(0,0,0,.6); }
+  .is-key .bb { background: color-mix(in srgb, var(--surface) 80%, white 16%); }
+  #cmp { border-radius: calc(var(--s) * 44); background: rgba(0,0,0,.28); box-shadow: inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.12), inset 0 calc(var(--s) * 2) calc(var(--s) * 5) rgba(0,0,0,.3); }
+  .is-key #cmp { background: color-mix(in srgb, var(--surface) 72%, black); }
+  #cph { position: absolute; left: calc(var(--s) * 34); top: 0; bottom: 0; display: flex; align-items: center; font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 42%, transparent); white-space: nowrap; }
+  #snd { position: absolute; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 78%, white 22%), var(--accent)); box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.45); }
+  #snd svg { width: 50%; height: 50%; }
+  #cur { position: absolute; width: calc(var(--s) * 60); height: calc(var(--s) * 60); z-index: 40; overflow: visible; filter: drop-shadow(0 calc(var(--s) * 6) calc(var(--s) * 8) rgba(0,0,0,.5)); }
+  #tap { position: absolute; border-radius: 50%; border: calc(var(--s) * 4) solid #fff; box-sizing: border-box; opacity: 0; z-index: 39; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="card">
+      <div id="pane">
+        <div id="ttl" class="ab"></div><div id="badge" class="ab"><span id="bn">0</span></div>
+        <div id="compose" class="ab"><svg viewBox="0 0 24 24"><path d="M11 4.5H6.5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V13" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><path d="M17.6 3.6a1.9 1.9 0 0 1 2.8 2.8L12 14.8l-3.6.8.8-3.6z" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg></div>
+        <div id="hr1" class="hr ab"></div>
+        <div id="list"></div>
+      </div>
+      <div id="conv">
+        <svg id="back" class="ab" viewBox="0 0 20 28"><path d="M14 3 L4 14 L14 25" fill="none" stroke="var(--al)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div id="cav" class="av"></div><div id="cnm" class="ab"></div><div id="cst" class="ab"></div>
+        <div id="hr2" class="hr ab"></div>
+        <div id="b1" class="bb"><span class="tx"></span></div><div id="b2" class="bb"><span class="tx"></span></div>
+        <div id="cmp" class="ab"><div id="cph"></div><div id="snd"><svg viewBox="0 0 24 24"><path d="M12 19V6M6 11.5 12 5.5l6 6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      </div>
+    </div></div>
+    <i id="tap"></i>
+    <svg id="cur" viewBox="0 0 32 32"><path d="M6 3.5v21.2l5.6-5.3 3.6 8.3 3.8-1.6-3.6-8.2h7.8z" fill="#fff" stroke="#111" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const rowsIn = [[v.n1, v.p1], [v.n2, v.p2], [v.n3, v.p3], [v.n4, v.p4]].filter(([n, p]) => (n && String(n).trim()) || (p && String(p).trim()));
+  const N = rowsIn.length;
+
+  // ---- zone and scale: the card is laid out in a 760-wide design space, then scaled into the zone
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.56; cR = W * 0.95; zT = H * 0.08; zB = H * 0.92; }
+  else if (SQ) { cL = 120 * u; cR = W - 120 * u; zT = 70 * u; zB = H - 70 * u; }
+  else { cL = W * 0.29; cR = W * 0.71; zT = H * 0.07; zB = H * 0.9; }
+  const pad = 40, DW = 760, RH = 140, LT = 150;
+  const DH = LT + RH * N + 24;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.08 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+  const inner = DW - pad * 2;
+  // a long line gives up a little size, then the tail is trimmed with dots like a real preview
+  const clip = (el, maxW, min) => { MV.fitText(el, maxW * s, min * s); const r = document.createRange(); const w = () => { r.selectNodeContents(el); return r.getBoundingClientRect().width; };
+    let t = el.textContent; while (w() > maxW * s && t.length > 4) { t = t.slice(0, -2).trimEnd(); el.textContent = t + "..."; } };
+
+  // ---- header
+  box($("#ttl"), pad, 44); $("#ttl").textContent = v.title || "";
+  MV.fitText($("#ttl"), (inner - 64 - 110) * s, 24 * s);
+  const tw = $("#ttl").getBoundingClientRect().width / s;
+  box($("#badge"), pad + tw + 18, 46);
+  box($("#compose"), DW - pad - 64, 40, 64, 64);
+  box($("#hr1"), pad, LT - 18, inner, 1.5);
+  box($("#list"), 0, LT, DW, RH * N);
+
+  // ---- rows: monogram avatars tinted from the brand, never a real face
+  const tints = [
+    "linear-gradient(150deg, color-mix(in srgb, var(--accent2) 70%, white), var(--accent2))",
+    "linear-gradient(150deg, color-mix(in srgb, var(--accent) 45%, white), color-mix(in srgb, var(--accent) 80%, white))",
+    "linear-gradient(150deg, color-mix(in srgb, var(--ink) 92%, white), color-mix(in srgb, var(--ink) 70%, var(--muted)))",
+    "linear-gradient(150deg, color-mix(in srgb, var(--accent2) 45%, white), color-mix(in srgb, var(--accent2) 55%, var(--accent)))",
+  ];
+  const initials = (n) => String(n || "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
+  const AVD = 100, tx = pad + AVD + 26, tmW = 120;
+  const rows = rowsIn.map(([n, p], i) => {
+    const r = document.createElement("div"); r.className = "row"; r.style.height = S(RH);
+    r.innerHTML = `<i class="hl"></i><div class="av"></div><div class="nm"></div><div class="tm"></div><div class="pv"></div><i class="dot"></i><i class="sep"></i>`;
+    $("#list").appendChild(r);
+    const av = r.querySelector(".av"); box(av, pad, (RH - AVD) / 2, AVD, AVD); av.style.background = tints[i % 4]; av.style.fontSize = S(38); av.textContent = initials(n);
+    const nm = r.querySelector(".nm"); box(nm, tx, 24); nm.textContent = n || "";
+    const tm = r.querySelector(".tm"); tm.textContent = i === 0 ? (v.now || "") : `${i * 2 + 1}m`; box(tm, DW - pad - tmW, 30, tmW);
+    const pv = r.querySelector(".pv"); box(pv, tx, 76); pv.textContent = p || "";
+    box(r.querySelector(".dot"), DW - pad - 22, 84, 22, 22);
+    box(r.querySelector(".sep"), tx, null, DW - tx - pad);
+    clip(nm, DW - tx - pad - tmW - 16, 30); clip(pv, DW - tx - pad - 44, 28);
+    return r;
+  });
+  // the opened thread
+  box($("#back"), pad - 6, 46, 40, 56);
+  const cav = $("#cav"); box(cav, pad + 50, 34, 80, 80); cav.style.background = tints[0]; cav.style.fontSize = S(32); cav.textContent = initials(rowsIn[0] && rowsIn[0][0]);
+  box($("#cnm"), pad + 150, 36); $("#cnm").textContent = (rowsIn[0] && rowsIn[0][0]) || ""; clip($("#cnm"), inner - 150, 28);
+  box($("#cst"), pad + 150, 84); $("#cst").textContent = v.status || "";
+  box($("#hr2"), pad, LT - 18, inner, 1.5);
+  const bubs = [[$("#b1"), rowsIn[0] && rowsIn[0][1]], [$("#b2"), v.detail]].filter(([, t]) => t && String(t).trim());
+  let by = LT + 20;
+  const BMAX = inner - 40;
+  $("#b1").style.display = $("#b2").style.display = "none";
+  bubs.forEach(([b, t]) => {
+    b.style.display = ""; b.querySelector(".tx").textContent = t; b.style.maxWidth = S(BMAX);
+    let fs = 46 * s; b.style.fontSize = fs + "px";
+    while (b.querySelector(".tx").getBoundingClientRect().height > fs * 1.22 * 2 + 2 && fs > 26 * s) { fs -= 2; b.style.fontSize = fs + "px"; }
+    const rg = document.createRange(); rg.selectNodeContents(b.querySelector(".tx")); const lw = Math.max(...[...rg.getClientRects()].map((q) => q.width));
+    b.style.width = Math.ceil(lw + 64 * s + 2) + "px";
+    gsap.set(b, { x: pad * s, y: by * s }); by += b.getBoundingClientRect().height / s + 16;
+  });
+  box($("#cmp"), pad, DH - 30 - 92, inner, 92); box($("#snd"), inner - 92 + 12, 12, 68, 68);
+  $("#cph").textContent = v.placeholder || ""; MV.fitText($("#cph"), (inner - 140) * s, 20 * s);
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- timing
+  const T0 = 0.5, BEAT = Math.min(0.42, 1.6 / Math.max(1, N)), TL = T0 + (N - 1) * BEAT;  // TL: the newest lands
+  const TP = TL + 0.95, TO = TP + 0.16, TB = TO + 0.42;                                    // tap, open, bubbles
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // the pane arrives empty
+  tl.fromTo("#wrap", { rotationX: 26, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#ttl", "#compose"], { opacity: 0, y: 16 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 0.15);
+  tl.fromTo("#badge", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2.4)" }, 0.3);
+  tl.fromTo("#hr1", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.2);
+  gsap.set("#conv", { opacity: 0, xPercent: 100 });
+
+  // messages land bottom row first: each new one takes the top slot and pushes the others down
+  gsap.set(rows, { opacity: 0 });
+  for (let k = 0; k < N; k++) {
+    const r = rows[N - 1 - k], t = T0 + k * BEAT;
+    tl.fromTo(r, { y: -RH * 0.55 * s, scale: 0.94, opacity: 0, filter: "blur(10px)" }, { y: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power3.out", immediateRender: false }, t + 0.04);
+    tl.fromTo(r.querySelector(".av"), { scale: 0.4, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2.4)" }, t + 0.06);
+    tl.fromTo(r.querySelector(".dot"), { scale: 0 }, { scale: 1, duration: 0.45, ease: "back.out(3)" }, t + 0.2);
+    tl.fromTo(r.querySelector(".hl"), { opacity: 0.9 }, { opacity: 0, duration: 0.9, ease: "power2.out", immediateRender: false }, t + 0.1);
+    for (let j = 0; j < k; j++) tl.to(rows[N - 1 - j], { y: (k - j) * RH * s, duration: 0.42, ease: "expo.out" }, t);
+    tl.set("#bn", { textContent: String(k + 1) }, t + 0.12);
+    tl.fromTo("#badge", { scale: 1.35 }, { scale: 1, duration: 0.45, ease: "back.out(3)", immediateRender: false }, t + 0.12);
+  }
+  // the pointer taps the newest, the thread pushes in from the right
+  const cur = $("#cur"), tapX = cL + DW * 0.58 * s, tapY = cT + (LT + RH * 0.55) * s;
+  tl.fromTo(cur, { opacity: 0, left: tapX + "px", top: tapY + "px", x: 160 * s, y: 260 * s }, { opacity: 1, x: 0, y: 0, duration: 0.55, ease: "expo.out" }, TP - 0.55);
+  tl.to(cur, { scale: 0.84, duration: 0.08, ease: "power2.out" }, TP); tl.to(cur, { scale: 1, duration: 0.2, ease: "power2.out" }, TP + 0.1);
+  Object.assign($("#tap").style, { left: tapX - 50 * s + "px", top: tapY - 50 * s + "px", width: 100 * s + "px", height: 100 * s + "px" });
+  if (!root.classList.contains("is-key")) tl.fromTo("#tap", { scale: 0.3, opacity: 0.9 }, { scale: 1.4, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, TP);
+  tl.to(rows[0].querySelector(".hl"), { opacity: 1, duration: 0.1, ease: "power2.out" }, TP);
+  tl.to(rows[0].querySelector(".dot"), { scale: 0, duration: 0.2, ease: "power2.in" }, TP + 0.05);
+  tl.to(cur, { x: 110 * s, y: 200 * s, opacity: 0, duration: 0.45, ease: "power3.in" }, TP + 0.25);
+  tl.to("#pane", { xPercent: -32, opacity: 0, duration: 0.5, ease: "expo.inOut" }, TO);
+  tl.to("#conv", { xPercent: 0, opacity: 1, duration: 0.55, ease: "expo.inOut" }, TO + 0.06);
+  tl.fromTo("#cav", { scale: 0.5 }, { scale: 1, duration: 0.6, ease: "back.out(2.2)" }, TO + 0.28);
+  bubs.forEach(([b], i) => {
+    const t = TB + i * 0.5;
+    tl.fromTo(b, { scale: 0.5, opacity: 0, rotationZ: -4 }, { scale: 1, opacity: 1, rotationZ: 0, duration: 0.6, ease: "back.out(1.9)", immediateRender: false }, t);
+    tl.fromTo(b.querySelector(".tx"), { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.35, ease: "power3.out" }, t + 0.06);
+  });
+  gsap.set(bubs.map(([b]) => b), { opacity: 0 });
+  tl.fromTo("#cmp", { opacity: 0, y: 30 * s }, { opacity: 1, y: 0, duration: 0.55, ease: "expo.out" }, TO + 0.3);
+  tl.fromTo("#card", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TB + 0.3);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TB + 0.05); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TB + 0.12);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

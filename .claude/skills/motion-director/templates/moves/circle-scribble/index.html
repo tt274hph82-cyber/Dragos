@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"image","type":"string","label":"The photo (path; empty: the first brand person, else a brand screen)","default":""},
+  {"id":"rect","type":"string","label":"What gets circled, in % of the image: x,y,w,h","default":"27,4,46,66"},
+  {"id":"label","type":"string","label":"Caption written on the print (empty: the brand handle; none: no caption)","default":""},
+  {"id":"marker","type":"string","label":"Marker colour: red, accent, accent2, yellow or white","default":"red"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Marker"; src: url("assets/fonts/PermanentMarker-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #bd { position: absolute; inset: -12%; background:
+    radial-gradient(55% 45% at 85% 8%, color-mix(in srgb, var(--accent) 80%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 8% 95%, color-mix(in srgb, var(--accent2) 70%, transparent), transparent 72%),
+    linear-gradient(150deg, color-mix(in srgb, var(--accent2) 30%, var(--ground)), var(--ground) 55%, color-mix(in srgb, var(--accent) 35%, var(--ground))); }
+  #bd2 { position: absolute; width: 70%; height: 50%; left: 30%; top: 30%; border-radius: 50%; filter: blur(calc(var(--u) * 120)); background: color-mix(in srgb, var(--accent) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .35; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #bd, .is-alpha #bd2, .is-alpha #vig, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); }
+  #plate { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .boil { position: absolute; inset: 0; translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  /* the print: a real instant photo, scanned white card with a wide bottom strip, a soft contact shadow */
+  #print { position: absolute; inset: 0; border-radius: calc(var(--u) * 6); background: #f4f1ea url(assets/paper-white.jpg) center / calc(var(--u) * 700);
+    box-shadow: inset 0 0 0 calc(var(--u) * 1) rgba(0,0,0,.08), inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.7),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -30) rgba(0,0,0,.7), 0 calc(var(--u) * 8) calc(var(--u) * 14) rgba(0,0,0,.35); }
+  .is-key #print { box-shadow: 0 calc(var(--u) * 4) 0 rgba(0,0,0,.5); }
+  #photo { position: absolute; overflow: hidden; background: radial-gradient(90% 80% at 50% 30%, color-mix(in srgb, var(--accent) 30%, #3a3434), #121011 85%);
+    box-shadow: inset 0 0 calc(var(--u) * 3) rgba(0,0,0,.6); }
+  .lay { position: absolute; left: 0; top: 0; display: block; max-width: none; }
+  #photo .gloss { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.26) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)),
+      radial-gradient(70% 50% at 20% 0%, rgba(255,255,255,.1), transparent 70%); }
+  #over { position: absolute; overflow: visible; pointer-events: none; }
+  #marks { position: absolute; left: 0; top: 0; overflow: visible; filter: drop-shadow(0 calc(var(--u) * 2) calc(var(--u) * 2) rgba(0,0,0,.45)); }
+  #marks .ink { fill: var(--mk); filter: url(#ink); }
+  .is-key #marks { filter: none; }
+  #cap { position: absolute; left: 0; top: 0; font-family: "MV Marker", cursive; color: var(--mk); line-height: 1.1; white-space: nowrap; filter: url(#ink); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+    <feTurbulence id="inkn" type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="3" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" id="inkd" scale="3" result="d"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".012 .3" numOctaves="2" seed="7" result="s"/>
+    <feColorMatrix in="s" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.42" result="sa"/>
+    <feComposite in="d" in2="sa" operator="in"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="bd"></div><div id="bd2"></div>
+  <div id="stage">
+    <div id="plate"><div class="boil" id="pb">
+      <div id="print"><div id="photo"><div class="gloss"></div></div></div>
+      <div id="over"><svg id="marks"></svg></div>
+      <div id="cap"></div>
+    </div></div>
+  </div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, W, H, u, safe } = MV;
+  const root = document.getElementById("root"), $ = (s, e = document) => e.querySelector(s);
+  await document.fonts.load('80px "MV Marker"');
+  const D = +root.dataset.duration, P = MV.portrait, SQ = W === H, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const inks = { accent: v.accent, accent2: v.accent2, red: "#E3261F", yellow: "#FFD23F", white: "#FFFFFF" };
+  root.style.setProperty("--mk", inks[String(v.marker || "").toLowerCase()] || (/^#[0-9a-f]{6}$/i.test(v.marker || "") ? v.marker : inks.red));
+  const src = v.image || (v.people || [])[0] || (v.screens || [])[0];
+  const probe = new Image(); probe.src = src; try { await probe.decode(); } catch (e) {}
+  const IW = probe.naturalWidth || 1000, IH = probe.naturalHeight || 1000, IA = IW / IH;
+  const RR = String(v.rect || "").split(",").map(parseFloat), R = RR.length === 4 && RR.every(isFinite) ? RR : [30, 15, 40, 50];
+  const capRaw = String(v.label || "").trim(), cap = capRaw.toLowerCase() === "none" ? "" : capRaw || v.handle || (v.brandName ? "@" + v.brandName.toLowerCase().replace(/[^a-z0-9]+/g, "") : "");
+
+  // ---- the print: photo window at the image's own shape (kept between 4:5 and 5:4), white border, a deep bottom strip
+  const PA = Math.max(0.8, Math.min(1.25, IA));
+  let zx, zy, zw, zh;
+  if (P) { zx = 70 * u; zw = W - 140 * u; zy = safe.top + 10 * u; zh = H - safe.top - safe.bottom - 20 * u; }
+  else { zx = W * 0.1; zw = W * 0.8; zy = H * 0.11; zh = H * 0.76; }
+  // print = photo + border b on three sides + strip s at the bottom (sized off the photo width)
+  const kB = 0.055, kS = cap ? 0.24 : 0.16;
+  let pw = zw / (1 + 2 * kB), ph = pw / PA;
+  const tot = (w) => w / PA + w * kB + w * kS;
+  if (tot(pw) > zh) pw = zh / (1 / PA + kB + kS);
+  ph = pw / PA;
+  const B = pw * kB, S = pw * kS, PW = pw + 2 * B, PH = ph + B + S;
+  const wx = zx + (zw - PW) / 2, wy = zy + (zh - PH) / 2;
+  const plate = $("#plate"), photo = $("#photo"), over = $("#over");
+  Object.assign(plate.style, { width: PW + "px", height: PH + "px" });
+  Object.assign(photo.style, { left: B + "px", top: B + "px", width: pw + "px", height: ph + "px" });
+  Object.assign(over.style, { left: B + "px", top: B + "px", width: pw + "px", height: ph + "px" });
+  let imgW, imgH; if (PA < IA) { imgH = ph; imgW = ph * IA; } else { imgW = pw; imgH = pw / IA; }
+  const rcx = R[0] + R[2] / 2, rcy = R[1] + R[3] / 2;
+  const offX = Math.max(0, Math.min(imgW - pw, (rcx / 100) * imgW - pw / 2)), offY = Math.max(0, Math.min(imgH - ph, (rcy / 100) * imgH - ph / 2));
+  const PX = (x) => (x / 100) * imgW - offX, PY = (y) => (y / 100) * imgH - offY;
+  const im = MV.img(src, "lay"); Object.assign(im.style, { width: imgW + "px", height: imgH + "px", left: -offX + "px", top: -offY + "px" }); photo.insertBefore(im, photo.firstChild);
+  gsap.set(plate, { x: wx, y: wy, transformOrigin: "50% 40%" });
+
+  // ---- the caption in the strip
+  const capEl = $("#cap");
+  if (cap) { capEl.textContent = cap; capEl.style.fontSize = S * 0.42 + "px"; MV.fitText(capEl, pw * 0.86, 18 * u);
+    const cw = capEl.getBoundingClientRect().width, ch = capEl.getBoundingClientRect().height;
+    Object.assign(capEl.style, { left: (PW - cw) / 2 + "px", top: B + ph + (S - ch) / 2 + "px", transform: "rotate(-2deg)" }); } else capEl.style.display = "none";
+
+  // ---- the loop: a felt-tip ring around the subject, drawn as a hand does it, a little over one turn, opening into a spiral, a flick at the end
+  const cx = PX(rcx), cy = PY(rcy), rx = Math.max(40 * u, (R[2] / 100) * imgW * 0.5 * 1.1), ry = Math.max(40 * u, (R[3] / 100) * imgH * 0.5 * 1.08);
+  const tilt = -0.12, a0 = -2.5, sweep = Math.PI * 2 * 1.13, loop = [];
+  for (let i = 0; i <= 160; i++) { const s = i / 160, a = a0 + sweep * s, k = 0.97 + 0.08 * s + 0.025 * Math.sin(a * 3 + 1) + (s > 0.93 ? (s - 0.93) * 1.2 : 0);
+    const ex = Math.cos(a) * rx * k, ey = Math.sin(a) * ry * k; loop.push([cx + ex * Math.cos(tilt) - ey * Math.sin(tilt), cy + ex * Math.sin(tilt) + ey * Math.cos(tilt)]); }
+
+  // ---- marker engine: a stroke is a filled outline whose width follows the pen pressure; it draws on twos and boils
+  const NS = "http://www.w3.org/2000/svg", svg = $("#marks");
+  svg.setAttribute("width", pw); svg.setAttribute("height", ph); svg.setAttribute("viewBox", `0 0 ${pw} ${ph}`);
+  $("#inkd").setAttribute("scale", (3.2 * u).toFixed(2));
+  const sn = (seed) => { const r = MV.rand(seed), a = r() * 6.28, b = r() * 6.28, c = r() * 6.28; return (x) => Math.sin(x * 1.7 + a) * 0.5 + Math.sin(x * 3.3 + b) * 0.3 + Math.sin(x * 6.1 + c) * 0.2; };
+  const sm = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const mkStroke = (pts, wd, seed) => { const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const el = document.createElementNS(NS, "path"); el.setAttribute("class", "ink"); svg.appendChild(el);
+    return { pts, L, total: L[L.length - 1], wd, pn: sn(seed), bx: [sn(seed + 11), sn(seed + 23), sn(seed + 37)], by: [sn(seed + 51), sn(seed + 67), sn(seed + 79)], el }; };
+  const drawStroke = (S, frac, boil) => {
+    if (frac <= 0.001) { S.el.setAttribute("d", ""); return; }
+    const upto = frac * S.total, Lf = [], Rt = [], amp = 1.6 * u, bx = S.bx[boil % 3], by = S.by[boil % 3];
+    for (let i = 0; i < S.pts.length && S.L[i] <= upto + 0.01; i++) {
+      const s = S.L[i] / S.total;
+      const p0 = S.pts[Math.max(0, i - 1)], p1 = S.pts[Math.min(S.pts.length - 1, i + 1)], tx2 = p1[0] - p0[0], ty2 = p1[1] - p0[1], tl2 = Math.hypot(tx2, ty2) || 1;
+      const nx = -ty2 / tl2, ny = tx2 / tl2;
+      const pr = (0.5 + 0.5 * sm(0, 0.05, s)) * (1 - 0.65 * sm(0.86, 1, s)) * (1 + 0.16 * S.pn(s * 9)) * (1 + 0.05 * bx(s * 3 + 9));
+      const w = S.wd * pr / 2, x = S.pts[i][0] + bx(s * 11) * amp, y = S.pts[i][1] + by(s * 11) * amp;
+      Lf.push([x + nx * w, y + ny * w]); Rt.push([x - nx * w, y - ny * w]);
+    }
+    if (Lf.length < 2) { S.el.setAttribute("d", ""); return; }
+    const f = (p) => `${p[0].toFixed(1)} ${p[1].toFixed(1)}`, cap2 = (a, b) => { const r = Math.hypot(a[0] - b[0], a[1] - b[1]) / 2; return `A ${r.toFixed(1)} ${r.toFixed(1)} 0 0 1 ${f(b)}`; };
+    const R2 = Rt.slice().reverse();
+    S.el.setAttribute("d", `M ${f(Lf[0])} ` + Lf.slice(1).map((p) => "L " + f(p)).join(" ") + " " + cap2(Lf[Lf.length - 1], R2[0]) + " " + R2.slice(1).map((p) => "L " + f(p)).join(" ") + " " + cap2(R2[R2.length - 1], Lf[0]) + " Z");
+  };
+  const ring = mkStroke(loop, (P ? 22 : 19) * u * Math.max(0.8, Math.min(1.3, pw / (700 * u))), 21);
+  const C0 = 0.95, CD = 0.66, ringE = twos("power1.inOut", CD);
+  const L0 = C0 + CD + 0.12, nL = Math.max(2, Math.ceil(cap.length / 2.5)), LD = nL * STEP;
+
+  const clock = { t: 0 };
+  const drive = (t) => { const boil = Math.floor(t * 12);
+    drawStroke(ring, ringE(Math.max(0, Math.min(1, (t - C0) / CD))), boil);
+    if (cap) { const lp = Math.max(0, Math.min(1, Math.ceil(((t - L0) / LD) * nL - 1e-6) / nL)); capEl.style.clipPath = `inset(-30% ${(104 - lp * 112).toFixed(1)}% -30% -6%)`; capEl.style.visibility = lp > 0 ? "visible" : "hidden"; }
+    $("#inkn").setAttribute("seed", 3 + (boil % 3)); };
+  drive(0);
+  tl.fromTo(clock, { t: 0 }, { t: D, duration: D, ease: "none", onUpdate: () => drive(clock.t) }, 0);
+
+  // ---- the print: tossed in on twos, settles with a slow 3D drift; the gloss catches the light; the ring closing nudges it
+  tl.fromTo("#bd", { x: 0, y: 0, rotation: 0 }, { x: -W * 0.05, y: H * 0.03, rotation: 4, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#bd2", { x: 0, y: 0 }, { x: -W * 0.25, y: H * 0.1, duration: D, ease: "sine.inOut" }, 0);
+  gsap.set("#stage", { perspectiveOrigin: `${wx + PW / 2}px ${wy + PH / 2}px` });
+  tl.fromTo(plate, { y: H + 220 * u, rotation: 9, rotationX: 18, scale: 1.08 }, { y: wy, rotation: -2.5, rotationX: 6, scale: 1, duration: 0.5, ease: twos("power3.out", 0.5) }, 0.05);
+  tl.fromTo(plate, { rotation: -2.5 }, { rotation: -3.4, duration: 0.25, ease: twos("back.out(3)", 0.25), immediateRender: false }, 0.55);
+  tl.fromTo(plate, { rotationX: 6, rotationY: -5 }, { rotationX: 2, rotationY: 5, duration: D - 0.6, ease: "sine.inOut", immediateRender: false }, 0.6);
+  tl.fromTo(photo, { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.35);
+  tl.fromTo(plate, { scale: 1 }, { scale: 1.035, duration: 0.2, ease: twos("power2.out", 0.2), immediateRender: false }, C0 + CD - 0.04);
+  tl.to(plate, { scale: 1.06, duration: D - (C0 + CD + 0.16), ease: "sine.inOut" }, C0 + CD + 0.16);
+  const rb = MV.rand(9); for (let tt = 0.6; tt < D; tt += STEP * 2) tl.set("#pb", { "--bx": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 2 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.3).toFixed(2)}deg` }, tt);
+  if (MV.alpha) tl.to(plate, { y: -(wy + PH + 160 * u), rotation: "+=6", duration: 0.36, ease: twos("power2.in", 0.36) }, D - 0.42);
+  MV.done();
+})();
+</script>
+</body>
+</html>

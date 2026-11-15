@@ -1,0 +1,55 @@
+/* motion-director base styles. Brand tokens come from brand.css (written by
+   film-init.mjs from brand.json); this file only uses the variables. */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow: hidden; background: var(--ground); }
+#root {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  background: var(--ground); color: var(--ink);
+  font-family: var(--font-body); -webkit-font-smoothing: antialiased;
+}
+
+/* a scene fills the frame; its children are placed inside the safe box */
+.md-scene { position: absolute; inset: 0; overflow: hidden; }
+.md-stage { position: absolute; left: var(--safe-l); right: var(--safe-r); top: var(--safe-t); bottom: var(--safe-b); }
+/* the camera: tween THIS (x, y, scale), never the timed scene */
+.md-cam { position: absolute; inset: 0; transform-origin: 50% 50%; will-change: transform; }
+
+/* type */
+.md-line { display: block; white-space: normal; }
+.md-display { font-family: var(--font-display); font-weight: var(--display-weight, 700); letter-spacing: var(--display-tracking, -0.025em); line-height: 0.98; }
+.md-kicker { font-family: var(--font-body); font-weight: 600; letter-spacing: 0.02em; color: var(--muted); }
+.md-accent { color: var(--accent); }
+.md-w, .md-c { display: inline-block; }
+.md-caret { display: inline-block; width: 0.06em; height: 0.9em; margin-left: 0.04em; vertical-align: -0.08em; background: currentColor; }
+
+/* a REAL screenshot, framed. No tilt, no fake chrome beyond a hairline bar. */
+.md-shot {
+  position: absolute; overflow: hidden; border-radius: var(--radius, 12px);
+  background: var(--surface);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, var(--shot-shadow, 0.22)));
+}
+.md-shot img, .md-shot video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+.md-shot.contain img { object-fit: contain; }
+.md-window { padding-top: 34px; background: var(--surface); }
+.md-window::before {
+  content: ""; position: absolute; top: 12px; left: 16px; width: 54px; height: 10px;
+  background: radial-gradient(circle, rgba(0,0,0,.18) 4.5px, transparent 5px) 0 0 / 18px 10px repeat-x;
+}
+
+/* a big cursor (4-7% of the frame), drawn, never an emoji */
+.md-cursor { position: absolute; left: 0; top: 0; width: calc(var(--H) * 0.05); height: calc(var(--H) * 0.05); opacity: 0; z-index: 50; pointer-events: none;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.35)); }
+.md-cursor svg { width: 100%; height: 100%; }
+
+/* deterministic grain: a static noise tile, no animation needed */
+.md-grain { position: absolute; inset: -20px; pointer-events: none; opacity: var(--grain, 0.05); mix-blend-mode: overlay; z-index: 90;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4'/></filter><rect width='220' height='220' filter='url(%23n)'/></svg>"); }
+
+/* a crop AT THE CUT, never a zoom: the image box is exactly what is shown.
+   <img class="md-crop" src="assets/shots/shot-1.png"
+        style="left:..;top:..;width:W;height:H;object-view-box:inset(T R B L)">
+   T R B L are in the image's own pixels; keep W/H at the cropped region's
+   aspect so nothing stretches. A child <img> overflowing a clipping div
+   reads as "media off the frame" to the layout check; this does not. */
+.md-crop { position: absolute; display: block; object-fit: fill; }

@@ -1,0 +1,5 @@
+{ "id": "product-cutout-drop", "name": "Product cut-out drop", "oneLiner": "white tiles pop onto a light studio table one per beat and a real cut-out product drops into each (camera, headphones, mic, keyboard by default), the hero lands big in the centre with its contact shadow, labels tag each piece while the whole spread drifts in slow 3D",
+  "category": "business", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["product", "gear", "kit", "setup", "tools", "what I use", "cut-out", "objects", "flat lay", "shopping", "recommendations", "desk", "creator gear"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.4, "alpha": true,
+  "say": "when the speaker lists the things they use ('all you need is a camera, a mic and headphones', 'here is my whole setup'): the hero lands on 'all you need', one product drops per item they name; swap items for their own cut-outs (PNG with transparency) and set labels to the names they say" }

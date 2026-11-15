@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"from","type":"number","label":"Charge it starts from (0 to 99)","default":8},
+  {"id":"label","type":"string","label":"Label while it charges","default":"Charging"},
+  {"id":"done","type":"string","label":"Label at 100","default":"Fully charged"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); --go: #2BD67B; --fc: #E5484D; }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(50% 30% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--fc) 26%, transparent), transparent 72%),
+    radial-gradient(70% 40% at 15% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #persp { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #bat { position: absolute; }
+  #shell { position: absolute; inset: 0; border-radius: var(--br); box-sizing: border-box;
+    background: linear-gradient(170deg, rgba(255,255,255,.17), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(26px) saturate(160%); backdrop-filter: blur(26px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 5) rgba(255,255,255,.2),
+      0 calc(var(--u) * 50) calc(var(--u) * 90) calc(var(--u) * -20) rgba(0,0,0,.75), 0 0 calc(var(--u) * 120) calc(var(--u) * -20) color-mix(in srgb, var(--fc) 55%, transparent); }
+  .is-alpha #shell { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 82%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #shell { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 calc(var(--u) * 3) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--u) * 5) rgba(255,255,255,.2); }
+  #well { position: absolute; border-radius: var(--wr); overflow: hidden; background: rgba(0,0,0,.35); box-shadow: inset 0 calc(var(--u) * 6) calc(var(--u) * 14) rgba(0,0,0,.5); }
+  #fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: var(--wr);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--fc) 60%, #fff), var(--fc) 45%, color-mix(in srgb, var(--fc) 70%, #000));
+    box-shadow: inset 0 calc(var(--u) * 4) 0 rgba(255,255,255,.4), 0 0 calc(var(--u) * 40) color-mix(in srgb, var(--fc) 70%, transparent); }
+  #fill .sh { position: absolute; inset: 0; border-radius: inherit; mix-blend-mode: screen;
+    background: linear-gradient(100deg, transparent calc(var(--fs, -40%) - 10%), rgba(255,255,255,.45) var(--fs, -40%), transparent calc(var(--fs, -40%) + 10%)); }
+  #fill .lip { position: absolute; right: 0; top: 6%; bottom: 6%; width: calc(var(--u) * 6); border-radius: 99px; background: rgba(255,255,255,.7); filter: blur(calc(var(--u) * 2)); }
+  #nub { position: absolute; border-radius: 0 calc(var(--u) * 18) calc(var(--u) * 18) 0;
+    background: linear-gradient(90deg, rgba(255,255,255,.2), rgba(255,255,255,.08)); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--u) * 4) rgba(255,255,255,.18); }
+  .is-alpha #nub { background: color-mix(in srgb, var(--surface) 85%, #fff); }
+  #mid { position: absolute; display: flex; align-items: center; justify-content: center; gap: .18em; white-space: nowrap; }
+  #bolt { flex: none; height: 1em; width: .62em; filter: drop-shadow(0 0 calc(var(--u) * 14) rgba(255,255,255,.6)); }
+  .is-key #bolt { filter: none; }
+  #pct { font-family: var(--font-display); color: #fff; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1; text-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 16) rgba(0,0,0,.45); }
+  .is-key #pct { text-shadow: none; }
+  #ring { position: absolute; border-radius: var(--br); border: calc(var(--u) * 7) solid var(--go); box-sizing: border-box; opacity: 0;
+    box-shadow: 0 0 calc(var(--u) * 40) rgba(43,214,123,.5), inset 0 0 calc(var(--u) * 30) rgba(43,214,123,.5); }
+  .is-key #ring { box-shadow: none; }
+  #bat .gl { position: absolute; inset: 0; border-radius: var(--br); pointer-events: none; mix-blend-mode: screen;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -40%) - 12%), rgba(255,255,255,.18) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 12%)); }
+
+  #plug { position: absolute; }
+  #plug .head { position: absolute; left: 0; top: 0; bottom: 0; border-radius: calc(var(--u) * 16);
+    background: linear-gradient(180deg, #d2d5da, #8c8f95 45%, #4a4c51 80%, #9da0a6); box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.7), 0 calc(var(--u) * 14) calc(var(--u) * 26) rgba(0,0,0,.5); }
+  #plug .pin { position: absolute; border-radius: calc(var(--u) * 4); background: linear-gradient(180deg, #e8e9ec, #9a9da3); }
+  #plug .cord { position: absolute; border-radius: 99px; background: linear-gradient(180deg, #3a3c41, #16171a 60%, #2a2c30); }
+  #spark { position: absolute; border-radius: 50%; background: radial-gradient(circle, #fff, color-mix(in srgb, var(--accent2) 80%, #fff) 30%, transparent 70%); opacity: 0; }
+  .is-key #spark { display: none; }
+
+  #lab { position: absolute; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 16); white-space: nowrap; }
+  #lab .t { font-size: calc(var(--u) * 46); font-weight: 650; color: color-mix(in srgb, var(--ink) 80%, transparent); letter-spacing: -0.01em; line-height: 1.2; }
+  #lab .ok { flex: none; width: calc(var(--u) * 56); height: calc(var(--u) * 56); border-radius: 50%; background: var(--go); display: grid; place-items: center; box-shadow: 0 0 calc(var(--u) * 26) rgba(43,214,123,.5); }
+  .is-key #lab .ok { box-shadow: none; }
+  #lab .ok svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+  #lab2 { position: absolute; display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 16); white-space: nowrap; opacity: 0; }
+  #lab2 .t { font-size: calc(var(--u) * 46); font-weight: 750; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+  #lab2 .ok { flex: none; width: calc(var(--u) * 56); height: calc(var(--u) * 56); border-radius: 50%; background: var(--go); display: grid; place-items: center; box-shadow: 0 0 calc(var(--u) * 26) rgba(43,214,123,.5); }
+  .is-key #lab2 .ok { box-shadow: none; }
+  #lab2 .ok svg { width: 58%; height: 58%; fill: none; stroke: #fff; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; }
+  .is-alpha #lab, .is-alpha #lab2 { padding: calc(var(--u) * 12) calc(var(--u) * 30); border-radius: 999px; background: color-mix(in srgb, var(--surface) 90%, transparent); }
+  .is-key #lab, .is-key #lab2 { background: var(--surface); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="persp"><div id="rig">
+    <div id="plug"><div class="cord"></div><div class="pin"></div><div class="pin"></div><div class="head"></div></div>
+    <div id="bat">
+      <div id="nub"></div>
+      <div id="shell"></div>
+      <div id="well"><div id="fill"><div class="sh"></div><div class="lip"></div></div></div>
+      <div id="mid"><svg id="bolt" viewBox="0 0 14 22"><path d="M8.5 0 0 12.5h5.6L4.4 22 14 8.6H8.2z" fill="#fff"/></svg><div id="pct"></div></div>
+      <div id="ring"></div>
+      <div class="gl"></div>
+    </div>
+    <div id="spark"></div>
+    <div id="lab"><span class="t"></span></div>
+    <div id="lab2"><span class="ok"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><span class="t"></span></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const compact = MV.portrait && MV.alpha;
+  const u = MV.portrait ? MV.u : MV.u * (MV.alpha && W > H ? 0.8 : 1);
+  root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+
+  // ---- the battery
+  const regionW = W - safe.left - safe.right, regionH = H - safe.top - safe.bottom;
+  const NW = 34 * u;                                  // the terminal nub
+  const BW = compact ? regionW * 0.74 : MV.portrait ? regionW - NW - 10 * u : Math.min(W > H ? 980 * u : regionW * 0.74, 980 * u);
+  const BH = BW * (compact ? 0.42 : 0.46);
+  const LH = 80 * u, LG = (compact ? 30 : 56) * u;
+  const groupH = BH + LG + LH;
+  let bx, by;
+  if (compact) { bx = safe.left + (regionW - BW - NW) / 2; by = safe.top + 20 * u; }
+  else { bx = (MV.alpha && W > H ? W - safe.right - BW - NW - 40 * u : (W - BW - NW) / 2); by = safe.top + (regionH - groupH) / 2; }
+  gsap.set("#bat", { left: bx, top: by, width: BW, height: BH });
+  const br = BH * 0.24, pad = BH * 0.075;
+  root.style.setProperty("--br", br + "px"); root.style.setProperty("--wr", (br - pad) + "px");
+  gsap.set("#well", { left: pad, top: pad, width: BW - 2 * pad, height: BH - 2 * pad });
+  gsap.set("#nub", { left: BW - 4 * u, top: BH * 0.32, width: NW + 4 * u, height: BH * 0.36 });
+  gsap.set("#ring", { left: -12 * u, top: -12 * u, width: BW + 24 * u, height: BH + 24 * u });
+  const mid = $("#mid"); mid.style.fontSize = BH * 0.4 + "px"; gsap.set(mid, { left: 0, top: 0, width: BW, height: BH });
+  root.style.setProperty("--gx", ((bx + BW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((by + BH / 2) / H * 100) + "%");
+  // ---- the plug: comes in from the right, its cord runs off the frame
+  const PHd = BH * 0.3, PWd = PHd * 1.3, px = bx + BW + NW - PHd * 0.36, py = by + BH / 2 - PHd / 2;
+  gsap.set("#plug", { left: px, top: py, width: W - px + 40 * u, height: PHd });
+  gsap.set("#plug .head", { left: PHd * 0.32, width: PWd });
+  const pins = document.querySelectorAll("#plug .pin");
+  gsap.set(pins[0], { left: 0, top: PHd * 0.22, width: PHd * 0.4, height: PHd * 0.14 }); gsap.set(pins[1], { left: 0, top: PHd * 0.64, width: PHd * 0.4, height: PHd * 0.14 });
+  gsap.set("#plug .cord", { left: PHd * 0.32 + PWd - 10 * u, top: PHd * 0.3, width: W, height: PHd * 0.4 });
+  gsap.set("#spark", { left: bx + BW + NW - 60 * u, top: by + BH / 2 - 60 * u, width: 120 * u, height: 120 * u });
+
+  // ---- labels
+  $("#lab .t").textContent = v.label || ""; $("#lab2 .t").textContent = v.done || "";
+  const labMax = compact ? regionW - 40 * u : Math.min(regionW, BW + NW) - 40 * u;
+  MV.fitText($("#lab .t"), labMax, 18); MV.fitText($("#lab2 .t"), labMax - 72 * u, 18);
+  const cx = bx + (BW + NW) / 2, ly = by + BH + LG;
+  [["#lab"], ["#lab2"]].forEach(([s]) => { const e = $(s); gsap.set(e, { left: cx - e.offsetWidth / 2, top: ly + (LH - e.offsetHeight) / 2 }); });
+
+  // ---- the charge: colour runs red, amber, green
+  const from = Math.max(0, Math.min(99, Math.round(+v.from || 0)));
+  const C = [[0, [229, 72, 77]], [0.2, [229, 72, 77]], [0.55, [245, 179, 59]], [0.9, [43, 214, 123]], [1, [43, 214, 123]]];
+  const col = (p) => { for (let i = 1; i < C.length; i++) if (p <= C[i][0]) { const [a, ca] = C[i - 1], [b, cb] = C[i], k = (p - a) / Math.max(1e-6, b - a);
+      return `rgb(${ca.map((x, j) => Math.round(x + (cb[j] - x) * k)).join(",")})`; } return "rgb(43,214,123)"; };
+  const wellW = BW - 2 * pad, minW = BH - 2 * pad;     // a sliver never narrower than the round end
+  const pct = $("#pct"); const st = { p: from / 100 };
+  pct.textContent = "100%"; MV.fitText(pct, BW - 2 * pad - BH * 0.5, 20);
+  const draw = () => { const p = st.p; gsap.set("#fill", { width: Math.max(minW * 0.5, wellW * p) }); pct.textContent = Math.round(p * 100) + "%"; root.style.setProperty("--fc", col(p)); };
+  draw();
+
+  // ---- timeline
+  // 1. the battery drifts in, the label waits
+  tl.fromTo("#bat", { opacity: 0, scale: 0.85, rotationY: -30, rotationX: 14, filter: "blur(14px)" }, { opacity: 1, scale: 1, rotationY: -12, rotationX: 6, filter: "blur(0px)", duration: 0.8, ease: "expo.out" }, 0.03);
+  tl.to("#bat", { rotationY: 8, rotationX: 2, duration: D - 0.85 - 0.45, ease: "sine.inOut" }, 0.83);
+  tl.fromTo("#lab", { opacity: 0, y: 20 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 0.3);
+  // 2. the plug slides in and clicks home with a spark
+  const P = 0.62;
+  tl.fromTo("#plug", { x: 340 * u, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.in" }, P - 0.5);
+  tl.to("#plug", { x: -6 * u, duration: 0.05, ease: "power2.out" }, P); tl.to("#plug", { x: 0, duration: 0.3, ease: "back.out(3)" }, P + 0.05);
+  tl.to("#bat", { x: -10 * u, duration: 0.06, ease: "power2.out" }, P); tl.to("#bat", { x: 0, duration: 0.45, ease: "back.out(2.6)" }, P + 0.06);
+  tl.fromTo("#spark", { opacity: 1, scale: 0.3 }, { opacity: 0, scale: 1.6, duration: 0.4, ease: "power2.out", immediateRender: false }, P);
+  tl.set("#spark", { opacity: 0 }, 0);
+  // 3. the fill climbs, the sheen runs, the bolt pulses
+  const F0 = P + 0.18, F1 = 3.0;
+  tl.to(st, { p: 1, duration: F1 - F0, ease: "power1.inOut", onUpdate: draw }, F0);
+  for (let t = F0, k = 0; t < F1 - 0.3; t += 0.55, k++) tl.fromTo("#fill", { "--fs": "-30%" }, { "--fs": "130%", duration: 0.55, ease: "power1.inOut", immediateRender: false }, t);
+  tl.fromTo("#bolt", { scale: 0.6, opacity: 0.5 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(3)" }, P + 0.02);
+  for (let t = P + 0.5; t < F1 - 0.2; t += 0.5) { tl.to("#bolt", { scale: 1.12, duration: 0.12, ease: "power2.out" }, t); tl.to("#bolt", { scale: 1, duration: 0.3, ease: "power2.inOut" }, t + 0.12); }
+  // 4. 100 (the moment that lands): the battery bounces, a green ring pulses off it, the label flips
+  tl.to("#bat", { scale: 1.06, duration: 0.1, ease: "power2.out" }, F1); tl.to("#bat", { scale: 1, duration: 0.6, ease: "back.out(3)" }, F1 + 0.1);
+  tl.fromTo("#ring", { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.14, duration: 0.8, ease: "power2.out", immediateRender: false }, F1);
+  tl.set("#ring", { opacity: 0 }, 0);
+  tl.fromTo("#bolt", { scale: 1.5 }, { scale: 1, duration: 0.5, ease: "back.out(3)", immediateRender: false }, F1);
+  tl.to("#lab", { opacity: 0, y: -16 * u, duration: 0.18, ease: "power2.in" }, F1 - 0.05);
+  tl.fromTo("#lab2", { opacity: 0, y: 18 * u, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2)" }, F1 + 0.12);
+  tl.fromTo("#lab2 .ok", { scale: 0, rotation: -60 }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2.6)" }, F1 + 0.2);
+  tl.fromTo("#bat .gl", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut" }, F1 + 0.05);
+  // exit
+  const X = D - 0.42;
+  tl.to(["#bat", "#plug"], { y: -60 * u, opacity: 0, filter: "blur(12px)", duration: 0.36, ease: "power3.in" }, X);
+  tl.to("#lab2", { y: 30 * u, opacity: 0, duration: 0.3, ease: "power3.in" }, X + 0.03);
+  MV.done();
+</script>
+</body>
+</html>

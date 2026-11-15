@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"line","type":"string","label":"The key sentence, set in the page and highlighted","default":"Small steps, taken every day, beat one big leap."},
+  {"id":"highlight","type":"string","label":"Words to highlight (empty: the whole key sentence)","default":""},
+  {"id":"note","type":"string","label":"The handwritten margin note (two or three words)","default":"Read this twice"},
+  {"id":"chapter","type":"string","label":"Running head at the top of the page","default":"Chapter three"},
+  {"id":"marker","type":"string","label":"Highlighter colour (empty uses the brand second colour)","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Book"; src: url("assets/fonts/LibreBaskerville-wght.ttf"); font-weight: 400 700; font-display: block; }
+  @font-face { font-family: "MV Script"; src: url("assets/fonts/CoveredByYourGrace.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #1b120c; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: -6%; background: #2a1c12 url(assets/wood.jpg) center / calc(var(--u) * 1100); }
+  #ground::after { content: ""; position: absolute; inset: 0; background: radial-gradient(130% 100% at 55% 45%, transparent 45%, rgba(0,0,0,.6)); }
+  #cam { position: absolute; inset: 0; }
+  .boil { translate: var(--bx, 0px) var(--by, 0px); rotate: var(--br, 0deg); }
+  #book { position: absolute; }
+  #book-b { position: absolute; inset: 0; }
+  /* the case: a real brown leather scan, showing a few px past the page block */
+  #cover { position: absolute; background: #4a2e1c url(assets/leather.jpg) center / calc(var(--u) * 700); border-radius: calc(var(--u) * 10); box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 6) rgba(0,0,0,.45), calc(var(--u) * 14) calc(var(--u) * 30) calc(var(--u) * 50) rgba(0,0,0,.55); }
+  /* page edges: the stacked paper under each page, the same paper scan, darker toward the case */
+  .stack { position: absolute; background: #d9cdb4 url(assets/paper-white.jpg) center / calc(var(--u) * 300); background-blend-mode: multiply; }
+  .page { position: absolute; background: #efe6d1 url(assets/paper-white.jpg) center / calc(var(--u) * 760); background-blend-mode: multiply; overflow: hidden; }
+  /* the page curves into the gutter: shade along the spine, a soft highlight where the page rises */
+  #pL::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.05) 0%, transparent 30%, rgba(255,250,235,.12) 72%, rgba(60,40,20,.18) 90%, rgba(30,18,8,.55) 100%); pointer-events: none; }
+  #pR::after { content: ""; position: absolute; inset: 0; background: linear-gradient(270deg, rgba(0,0,0,.04) 0%, transparent 35%, rgba(255,250,235,.12) 80%, rgba(60,40,20,.2) 93%, rgba(30,18,8,.6) 100%), radial-gradient(90% 60% at 60% 30%, rgba(255,246,225,.16), transparent 70%); pointer-events: none; }
+  .txt { position: absolute; font-family: "MV Book", serif; color: #231e19; line-height: 1.45; text-align: left; hyphens: none; }
+  .txt p { margin: 0; text-indent: 1.4em; }
+  .txt p.first { text-indent: 0; }
+  .rh { position: absolute; font-family: "MV Book", serif; color: #4a423a; letter-spacing: .24em; text-transform: uppercase; white-space: nowrap; line-height: 1; }
+  #key { position: relative; }
+  #key .w { position: relative; z-index: 1; text-indent: 0; }
+  .note .w { text-indent: 0; }
+  #marks { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .mk { position: absolute; background: var(--hl); mix-blend-mode: multiply; opacity: .82; transform-origin: 0 50%; }
+  .note { position: absolute; white-space: nowrap; font-family: "MV Script", cursive; color: #1d2650; line-height: 1; filter: url(#bleed); }
+  #arrow { position: absolute; left: 0; top: 0; overflow: visible; filter: url(#bleed); }
+  #arrow path { fill: none; stroke: #1d2650; stroke-linecap: round; stroke-linejoin: round; }
+  #pen { position: absolute; left: 0; top: 0; transform-origin: 0 50%; }
+  #pen img { display: block; width: 100%; filter: drop-shadow(calc(var(--u) * var(--sx, 10)) calc(var(--u) * var(--sy, 18)) calc(var(--u) * 9) rgba(20,14,0,.45)); }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="bleed" x="-5%" y="-10%" width="110%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="2"/>
+    <feDisplacementMap in="SourceGraphic" scale="2.2"/>
+  </filter>
+</svg>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="cam">
+    <div id="ground"></div>
+    <div id="book"><div class="boil" id="book-b">
+      <div id="cover"></div>
+      <div class="stack" id="sL"></div><div class="stack" id="sR"></div>
+      <div class="page" id="pL"><div class="txt" id="tL" data-bleed></div></div>
+      <div class="page" id="pR"><div id="marks"></div><div class="rh" id="rh"></div><div class="txt" id="tR"></div><div class="rh" id="folio"></div>
+        <div class="note" id="note"></div><svg id="arrow"><path id="arp"/></svg></div>
+      <div id="pen"><img src="assets/pen.png" alt="" /></div>
+    </div></div>
+  </div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H, safe } = MV;
+  await Promise.all([document.fonts.load('400 40px "MV Book"'), document.fonts.load('40px "MV Script"')]);
+  const D = +document.getElementById("root").dataset.duration, STEP = 1 / 12;
+  const twos = (name, d) => { const e = gsap.parseEase(name), n = Math.max(1, Math.round(d * 12)); return (p) => e(Math.min(1, Math.ceil(p * n - 1e-6) / n)); };
+  const $ = (id) => document.getElementById(id);
+  const tw = (e) => { const r = document.createRange(); r.selectNodeContents(e); return r.getBoundingClientRect().width; };
+  const marker = /^#[0-9a-f]{6}$/i.test(v.marker || "") ? v.marker : (v.accent2 || "#FFE14D");
+
+  // ---- a macro shot on the right-hand page: the gutter and the facing page at the left of frame, the page block bleeding off
+  // the text block and the note stay inside the safe band (9:16: 290 top, 680 bottom, 192 right)
+  const zTop = safe.top, zBot = H - safe.bottom, zR = W - safe.right;
+  const gx = MV.portrait ? 90 * u : W > H ? W * 0.3 : W * 0.16;              // the gutter, in frame px
+  const PH = Math.max(H * 1.12, (zBot - zTop) * 1.25), PW = PH * 0.68;
+  const py = (zTop + zBot) / 2 - PH * 0.5;
+  const book = $("book");
+  Object.assign(book.style, { left: "0px", top: "0px", width: W + "px", height: H + "px" });
+  const set = (id, x, y, w, h) => Object.assign($(id).style, { left: x + "px", top: y + "px", width: w + "px", height: h + "px" });
+  const ed = 10 * u, cv = 22 * u;
+  set("cover", gx - PW - ed - cv, py - cv * 0.6, PW * 2 + (ed + cv) * 2, PH + cv * 1.2);
+  set("sL", gx - PW - ed, py + ed * 0.6, PW + ed, PH); set("sR", gx, py + ed * 0.6, PW + ed, PH);
+  set("pL", gx - PW, py, PW, PH); set("pR", gx, py, PW, PH);
+  $("pR").style.transformOrigin = "0 50%"; $("pL").style.transformOrigin = "100% 50%";
+
+  // ---- the right page: running head, two paragraphs (the key sentence opens the second), folio
+  const tL = gx + Math.min(PW * 0.13, 110 * u), tRgt = Math.min(gx + PW * 0.88, zR - 60 * u);   // text block, frame px
+  const TW = tRgt - tL;
+  const bandT = zTop + 40 * u, bandB = zBot - 10 * u;
+  const tR = $("tR");
+  const line = String(v.line || "").trim();
+  tR.innerHTML = '<p class="first">The first version is rarely the one that lasts. It shows you what to keep.</p><p><span id="key"><span id="ktxt"></span></span> It sounds too simple to matter, and that is why it works.</p>';
+  $("ktxt").textContent = line;
+  Object.assign(tR.style, { left: (tL - gx) + "px", width: TW + "px" });
+  // fit: the text block plus the note under it within the band
+  const noteH = (fs) => fs * 1.9 + 30 * u;
+  let fs = Math.min(TW * 0.082, 64 * u);
+  const fitH = () => tR.getBoundingClientRect().height + fs * 5.2 + 20 * u;
+  tR.style.fontSize = fs + "px";
+  while (fitH() > bandB - bandT && fs > 26 * u) { fs -= 1; tR.style.fontSize = fs + "px"; }
+  const rh = $("rh"); rh.textContent = v.chapter || ""; rh.style.fontSize = (fs * 0.62) + "px"; MV.fitText(rh, TW, 8 * u);
+  const textTop = bandT + fs * 1.6;
+  rh.style.left = (tL - gx + TW / 2 - tw(rh) / 2) + "px"; rh.style.top = (bandT - py) + "px";
+  tR.style.top = (textTop - py) + "px";
+  const folio = $("folio"); folio.textContent = "47"; folio.style.fontSize = (fs * 0.7) + "px";
+  folio.style.left = (tL - gx + TW / 2 - tw(folio) / 2) + "px";
+  folio.style.top = Math.min(PH - fs * 3, bandB - py + fs * 2.6) + "px"; if (bandB + fs * 2.6 + fs > H - 30 * u) folio.style.display = "none";
+  // the facing page: plain body text, cut by the gutter and the frame
+  const tLp = $("tL");
+  tLp.innerHTML = "<p>of the morning. Nothing in the plan was new, and that was the point. Each part had been tried before and written down. The trick was the order, and the patience to keep going when the early results looked small.</p><p>By the third week the pattern was easy to see. Work that was done a little at a time had quietly added up.</p><p>None of it felt like progress while it happened.</p>";
+  Object.assign(tLp.style, { left: (PW * 0.12) + "px", width: (PW * 0.75) + "px", top: (textTop - py) + "px", fontSize: fs + "px" });
+
+  // ---- the highlighter runs over the chosen words (one swipe per line)
+  const words = MV.words($("ktxt"));
+  const norm = (s) => s.toLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+  const pick = String(v.highlight || "").split(/[\s,]+/).map(norm).filter(Boolean);
+  let on = words.map((w) => !pick.length || pick.includes(norm(w.textContent)));
+  if (!on.some(Boolean)) on = words.map(() => true);
+  const kb = $("key").getBoundingClientRect(), runs = [];
+  words.forEach((w, i) => { if (!on[i]) return; const b = w.getBoundingClientRect(), last = runs[runs.length - 1];
+    if (last && Math.abs(last.top - b.top) < fs * 0.4 && on[i - 1]) last.right = b.right; else runs.push({ left: b.left, right: b.right, top: b.top, bottom: b.bottom }); });
+  const pr0 = $("pR").getBoundingClientRect();
+  const marks = $("marks");
+  const mkEls = runs.map((rn, k) => { const m = document.createElement("div"); m.className = "mk"; m.style.setProperty("--hl", marker);
+    m.style.left = (rn.left - pr0.left - fs * 0.12) + "px"; m.style.width = (rn.right - rn.left + fs * 0.24) + "px";
+    m.style.top = (rn.top - pr0.top + fs * 0.12) + "px"; m.style.height = (fs * 1.16) + "px";
+    const rr = MV.rand(70 + k), j = () => (rr() * 6).toFixed(1);
+    m.style.clipPath = `polygon(${j()}% ${4 + +j()}%, 30% ${j() / 2}%, 70% ${(+j() / 2 + 2).toFixed(1)}%, ${100 - +j()}% 0%, 100% ${92 - +j()}%, 70% ${100 - +j() / 2}%, 30% 100%, 0% ${100 - +j()}%)`;
+    m.style.transform = `rotate(${((rr() - .5) * 1.2).toFixed(2)}deg)`; marks.appendChild(m); return m; });
+
+  // ---- the margin note under the text, an arrow curling up to the highlight
+  const note = $("note"); note.textContent = v.note || ""; note.style.fontSize = (fs * 1.55) + "px";
+  const tb = tR.getBoundingClientRect();
+  const ny = tb.bottom - pr0.top + fs * 1.0;
+  MV.fitText(note, TW * 0.78, 10 * u);
+  const nW = tw(note), nx = tL - gx + TW - nW;
+  note.style.left = nx + "px"; note.style.top = ny + "px";
+  const nf = parseFloat(note.style.fontSize);
+  // the arrow: from the note's left, curling round the left margin, its head pointing at the highlighted line
+  const rTop = Math.min(...runs.map((r) => r.top)), rBot = Math.max(...runs.map((r) => r.bottom));
+  const ax0 = nx - fs * 0.35, ay0 = ny + nf * 0.5;
+  const ax1 = Math.max(fs * 0.4, tL - gx - fs * 0.22), ay1 = (rTop + rBot) / 2 - pr0.top;
+  const cx1 = ax1 - fs * 0.9, cy1 = ay0 + fs * 0.2, cx2 = ax1 - fs * 1.1, cy2 = ay1 + fs * 0.15;
+  const arp = $("arp"), arrow = $("arrow");
+  arrow.setAttribute("width", PW); arrow.setAttribute("height", PH);
+  const hx = (ax1 - cx2), hy = (ay1 - cy2) * 0.3, hl = Math.hypot(hx, hy) || 1, ux = hx / hl, uy = hy / hl, ah = fs * 0.7;
+  const head = `M ${ax1 - ux * ah - uy * ah * 0.6} ${ay1 - uy * ah + ux * ah * 0.6} L ${ax1} ${ay1} L ${ax1 - ux * ah + uy * ah * 0.6} ${ay1 - uy * ah - ux * ah * 0.6}`;
+  arp.setAttribute("d", `M ${ax0} ${ay0} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${ax1} ${ay1} ${head}`);
+  arp.setAttribute("stroke-width", Math.max(3, fs * 0.09));
+  const AL = arp.getTotalLength(); arp.style.strokeDasharray = AL; arp.style.strokeDashoffset = AL;
+
+  // ---- the pen: its tip follows the ink (tip at the image's left end)
+  const pen = $("pen"), PLn = (MV.portrait ? 0.62 : 0.36) * W, ANG = 32, ph = PLn * 116 / 1214;
+  pen.style.width = PLn + "px";
+  const penAt = (x, y, lift = 0) => ({ x: x + gx, y: y + py - ph / 2 - lift * 26 * u, scale: 1 + lift * 0.04, "--sx": 6 + lift * 14, "--sy": 10 + lift * 22 });
+  gsap.set(pen, { rotation: ANG, ...penAt(PW * 1.2, PH * 0.9, 1), opacity: 0 });
+
+  // ---- timeline
+  // 0.0 the page is there (a cutaway opens on it); 0.35 the highlighter swipes the line, run by run (twos);
+  // 1.55 the pen comes in, writes the note, draws the arrow up to the line, lifts away; slow push to the line
+  let t = 0.35;
+  mkEls.forEach((m, k) => { const d = Math.min(0.55, 0.2 + (runs[k].right - runs[k].left) / TW * 0.4);
+    tl.fromTo(m, { scaleX: 0 }, { scaleX: 1, duration: d, ease: twos("power1.inOut", d), immediateRender: true }, t); t += d + 0.08; });
+  const TP = Math.max(t + 0.1, 1.5);
+  const nws = MV.words(note); nws.forEach((w) => { w.style.clipPath = "inset(-40% 108% -40% -8%)"; });
+  const prr = $("pR").getBoundingClientRect(), loc = (b) => ({ l: b.left - prr.left, r: b.right - prr.left, t: b.top - prr.top, b: b.bottom - prr.top });
+  const f0 = loc(nws[0].getBoundingClientRect());
+  tl.set(pen, { opacity: 1 }, TP);
+  tl.fromTo(pen, { rotation: ANG, ...penAt(PW * 1.1, PH * 0.85, 1) }, { ...penAt(f0.l, f0.b - nf * 0.25, 0.3), duration: 0.25, ease: twos("power3.out", 0.25), immediateRender: false }, TP);
+  t = TP + 0.25;
+  const rp = MV.rand(5);
+  nws.forEach((w, wi) => { const b = loc(w.getBoundingClientRect()), L = [...w.textContent].length, n = Math.max(1, Math.ceil(L / 2.4)), d = n * STEP;
+    tl.fromTo(w, { clipPath: "inset(-40% 108% -40% -8%)" }, { clipPath: "inset(-40% -8% -40% -8%)", duration: d, ease: `steps(${n})`, immediateRender: true }, t);
+    for (let q = 1; q <= n; q++) tl.set(pen, penAt(b.l + (b.r - b.l) * (q / n), b.b - nf * (0.18 + rp() * 0.3)), t + (q - 1) * STEP + 0.001);
+    t += d; const nx2 = nws[wi + 1]; if (nx2) { const nb = loc(nx2.getBoundingClientRect()); tl.set(pen, penAt(nb.l, nb.b - nf * 0.25, 0.25), t + 0.001); t += STEP; } });
+  // the arrow, drawn from the note up to the line
+  tl.set(pen, penAt(ax0, ay0, 0.35), t + 0.001); t += STEP;
+  const AN = 6;
+  tl.fromTo(arp, { strokeDashoffset: AL }, { strokeDashoffset: 0, duration: AN * STEP, ease: `steps(${AN})`, immediateRender: true }, t);
+  for (let q = 1; q <= AN; q++) { const p = arp.getPointAtLength(Math.min(AL, AL * q / AN)); tl.set(pen, penAt(p.x, p.y), t + (q - 1) * STEP + 0.001); }
+  t += AN * STEP;
+  tl.to(pen, { ...penAt(PW * 1.15, PH * 0.8, 1), duration: 0.42, ease: twos("power2.in", 0.42) }, t + 0.1);
+  // ink bleed boil, page boil, camera push toward the highlighted line
+  const bt = document.querySelector("#bleed feTurbulence"); for (let k = 0, tt = 0; tt < D; tt += STEP * 2, k++) tl.set(bt, { attr: { seed: 2 + (k % 5) } }, tt);
+  const rb = MV.rand(9); for (let tt = 0; tt < D; tt += STEP * 2) tl.set("#book-b", { "--bx": `${((rb() - .5) * 1.4 * u).toFixed(2)}px`, "--by": `${((rb() - .5) * 1.4 * u).toFixed(2)}px`, "--br": `${((rb() - .5) * 0.12).toFixed(2)}deg` }, tt);
+  const r0 = runs[0] || { left: tL, top: textTop, bottom: textTop };
+  const ox = ((r0.left + (tRgt - tL) * 0.3) / W * 100).toFixed(1), oy = (((r0.top + r0.bottom) / 2) / H * 100).toFixed(1);
+  gsap.set("#cam", { transformOrigin: `${ox}% ${oy}%` });
+  tl.fromTo("#cam", { scale: 1.04, rotation: -0.6 }, { scale: 1.1, rotation: 0.2, duration: D, ease: "power1.inOut" }, 0);
+  MV.done();
+})();
+</script>
+</body>
+</html>

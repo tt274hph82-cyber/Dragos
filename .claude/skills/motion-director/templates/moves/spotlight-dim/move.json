@@ -1,0 +1,5 @@
+{ "id": "spotlight-dim", "name": "Spotlight dim", "oneLiner": "a screenshot floats in a window; the lights go down, a soft follow-spot swings in from the middle and irises onto one region, a faint beam falling into it, then the lit region peels off the page as a glass card with a lit edge and a deep shadow",
+  "category": "explain", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["spotlight", "focus", "dim", "highlight", "attention", "screenshot", "this part", "region", "reveal", "glass"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 3.8, "alpha": true,
+  "say": "when the speaker says 'ignore everything else, look at this': the lights drop on 'ignore', the spot lands and the card lifts on the word that names the part. Set rect to the region in % of the image" }

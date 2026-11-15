@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"product","type":"string","label":"Product name","default":"Wireless headphones"},
+  {"id":"chartLabel","type":"string","label":"Line under the name","default":"Price history, 30 days"},
+  {"id":"was","type":"string","label":"Price before the drop, digits only","default":"129"},
+  {"id":"now","type":"string","label":"Price after the drop, digits only","default":"89"},
+  {"id":"currency","type":"string","label":"Currency sign","default":"$"},
+  {"id":"alertTitle","type":"string","label":"Notification title","default":"Price drop"},
+  {"id":"alertTime","type":"string","label":"Notification time","default":"now"},
+  {"id":"alertBody","type":"string","label":"Notification line (empty: the product is now the new price)","default":""},
+  {"id":"img","type":"string","label":"Your own product cut-out (transparent PNG under assets/brand/); empty = the bundled headphones","default":""}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --ok: #2BD67B; --okg: rgba(43,214,123,.5); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 44%; top: 0%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -32%; top: 56%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; inset: 0; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap, #nwrap { position: absolute; }
+
+  .glass { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden;
+    background: linear-gradient(170deg, rgba(255,255,255,.16), rgba(255,255,255,.05) 60%, rgba(255,255,255,.08));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  #card { border-radius: calc(var(--s) * 44); }
+  #note { border-radius: calc(var(--s) * 40); background: linear-gradient(170deg, rgba(255,255,255,.24), rgba(255,255,255,.1) 70%); }
+  .is-alpha .glass { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 12%), color-mix(in srgb, var(--surface) 92%, transparent)); }
+  .is-alpha #note { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 72%, white 20%), color-mix(in srgb, var(--surface) 86%, white 6%)); }
+  .is-key .glass { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 86%, white 14%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  .is-key #note { background: color-mix(in srgb, var(--surface) 76%, white 18%); }
+  .glass::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.22) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+
+  .ab { position: absolute; box-sizing: border-box; }
+  #thumb { border-radius: calc(var(--s) * 24); overflow: hidden;
+    background: radial-gradient(80% 80% at 50% 30%, color-mix(in srgb, var(--surface) 50%, #908a86), color-mix(in srgb, var(--surface) 80%, black));
+    box-shadow: inset 0 calc(var(--s) * 1.5) 0 rgba(255,255,255,.4), inset 0 0 0 calc(var(--s) * 1.2) rgba(255,255,255,.12); }
+  #thumb img { position: absolute; left: 10%; top: 10%; width: 80%; height: 80%; object-fit: contain; filter: drop-shadow(0 calc(var(--s) * 6) calc(var(--s) * 8) rgba(0,0,0,.5)); }
+  #pname { font-weight: 800; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #plab { font-weight: 600; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.1; }
+  #pold { font-weight: 700; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; line-height: 1; text-align: right; opacity: 0; }
+  #pold s { text-decoration: none; position: relative; }
+  #pold s::after { content: ""; position: absolute; left: -4%; right: -4%; top: 52%; height: calc(var(--s) * 4); background: currentColor; transform-origin: 0 50%; transform: scaleX(var(--st, 0)); }
+  #pnow { font-family: var(--font-display); font-size: calc(var(--s) * 72); color: var(--ink); white-space: nowrap; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; }
+  #hr { height: calc(var(--s) * 1.5); background: rgba(255,255,255,.12); }
+  #chart { position: absolute; overflow: visible; }
+  #wasl { font-weight: 700; font-size: calc(var(--s) * 34); color: color-mix(in srgb, var(--ink) 60%, transparent); white-space: nowrap; line-height: 1; }
+  #dot { border-radius: 50%; background: radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--ok) 50%, white), var(--ok)); box-shadow: 0 0 0 calc(var(--s) * 6) color-mix(in srgb, var(--ok) 25%, transparent), 0 0 calc(var(--s) * 24) var(--okg); opacity: 0; }
+  #lead { border-radius: 50%; background: var(--ink); box-shadow: 0 0 calc(var(--s) * 18) rgba(255,255,255,.7); }
+  .is-key #dot, .is-key #lead { box-shadow: none; }
+  .rg { border-radius: 50%; border: calc(var(--s) * 4) solid var(--ok); opacity: 0; }
+  .is-key .rg { display: none; }
+  #pct { height: calc(var(--s) * 64); border-radius: 99px; display: flex; align-items: center; gap: calc(var(--s) * 8); padding: 0 calc(var(--s) * 22); white-space: nowrap;
+    font-weight: 800; font-size: calc(var(--s) * 36); color: #06210F; background: linear-gradient(180deg, color-mix(in srgb, var(--ok) 70%, #fff), var(--ok));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), 0 0 calc(var(--s) * 24) var(--okg); opacity: 0; }
+  .is-key #pct { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5); }
+  #pct svg { width: calc(var(--s) * 30); height: calc(var(--s) * 30); }
+
+  #nic { border-radius: calc(var(--s) * 22); display: grid; place-items: center;
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 70%, white 30%), var(--accent) 60%, color-mix(in srgb, var(--accent) 80%, black));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45); }
+  #nic svg { width: 58%; height: 58%; overflow: visible; }
+  #ntit { font-weight: 800; font-size: calc(var(--s) * 38); color: var(--ink); white-space: nowrap; line-height: 1.1; }
+  #ntime { font-weight: 600; font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 55%, transparent); white-space: nowrap; line-height: 1.1; text-align: right; }
+  #nbody { font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 88%, transparent); white-space: nowrap; line-height: 1.1; }
+  #nbody b { color: var(--ok); font-weight: 800; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam">
+    <div id="base"></div>
+    <div id="wrap"><div id="card" class="glass">
+      <div id="thumb" class="ab"></div><div id="pname" class="ab"></div><div id="plab" class="ab"></div>
+      <div id="pold" class="ab"><s id="polds"></s></div><div id="pnow" class="ab"></div>
+      <div id="hr" class="ab"></div>
+      <svg id="chart">
+        <defs>
+          <linearGradient id="ar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".3"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient>
+          <clipPath id="clp"><rect id="clr" x="0" y="-50" width="0" height="2000"/></clipPath>
+        </defs>
+        <g id="grid"></g>
+        <line id="wasln" stroke="rgba(255,255,255,.4)" stroke-dasharray="8 10" stroke-linecap="round"/>
+        <path id="area" fill="url(#ar)" clip-path="url(#clp)"/>
+        <path id="line" fill="none" stroke="var(--ink)" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div id="wasl" class="ab"></div>
+      <i class="rg ab" id="r1"></i><i class="rg ab" id="r2"></i>
+      <i id="lead" class="ab"></i><i id="dot" class="ab"></i>
+      <div id="pct" class="ab"><svg viewBox="0 0 24 24"><path d="M12 4v15M6 13l6 6 6-6" fill="none" stroke="#06210F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="pctt"></span></div>
+    </div></div>
+    <div id="nwrap"><div id="note" class="glass">
+      <div id="nic" class="ab"><svg viewBox="0 0 24 24"><path d="M3.5 12.6V5a1.5 1.5 0 0 1 1.5-1.5h7.6l8 8a1.6 1.6 0 0 1 0 2.3l-6.6 6.6a1.6 1.6 0 0 1-2.3 0z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><circle cx="8.3" cy="8.3" r="1.7" fill="#fff"/></svg></div>
+      <div id="ntit" class="ab"></div><div id="ntime" class="ab"></div><div id="nbody" class="ab"></div>
+    </div></div>
+  </div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const own = String(v.img || "").trim(), src = own || "assets/gear-headphones.png";
+  const cur$ = v.currency || "";
+  const wasN = parseFloat(v.was) || 129, nowN = parseFloat(v.now) || 89;
+  const dec = /\./.test(String(v.now)) || /\./.test(String(v.was)) ? 2 : 0;
+  const fmt = (n) => cur$ + n.toFixed(dec);
+  const pctN = Math.max(1, Math.round((1 - nowN / wasN) * 100));
+
+  // ---- zone and scale: a notification banner over the price card, laid out as one stack
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.55; cR = W * 0.95; zT = H * 0.06; zB = H * 0.94; }
+  else if (SQ) { cL = 110 * u; cR = W - 110 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.28; cR = W * 0.72; zT = H * 0.06; zB = H * 0.94; }
+  const pad = 40, DW = 800, inner = DW - pad * 2;
+  const NH = 156, GAP = 26;
+  const hdY = pad, hdH = 112, hrY = hdY + hdH + 26, chY = hrY + 34, chH = P ? 460 : 340;
+  const DH = chY + chH + pad, SH = NH + GAP + DH;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / SH, P ? 1.12 : 1.3);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s, nh = NH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const sT = A && P ? zT : zT + (zB - zT - SH * s) / 2;      // stack top
+  const cT = sT + (NH + GAP) * s;                             // card top in the final stack
+  const push = (NH + GAP) * s / 2;                             // before the banner the card sits centred, half a banner higher
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#nwrap").style, { left: cL + "px", top: sT + "px", width: cw + "px", height: nh + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => Object.assign(el.style, { left: S(x), top: S(y), width: S(w), height: S(h) });
+
+  // ---- header: thumb, name, price (old over new)
+  box($("#thumb"), pad, hdY, hdH, hdH); $("#thumb").appendChild(MV.img(src));
+  $("#pnow").textContent = fmt(wasN); $("#pnow").style.width = "auto";
+  Object.assign($("#pnow").style, { right: S(pad), top: S(hdY + 44) });
+  MV.fitText($("#pnow"), inner * 0.34 * s, 22);
+  const pw = Math.max($("#pnow").getBoundingClientRect().width, 0) / s;
+  $("#polds").textContent = fmt(wasN); Object.assign($("#pold").style, { right: S(pad), top: S(hdY + 2) });
+  const nx = pad + hdH + 24, nW = inner - hdH - 24 - pw - 24;
+  Object.assign($("#pname").style, { left: S(nx), top: S(hdY + 10) }); $("#pname").textContent = v.product || "";
+  Object.assign($("#plab").style, { left: S(nx), top: S(hdY + 62) }); $("#plab").textContent = v.chartLabel || "";
+  MV.fitText($("#pname"), nW * s, 18); MV.fitText($("#plab"), nW * s, 16);
+  box($("#hr"), pad, hrY, inner, 1.5);
+
+  // ---- the chart: 30 days flat around the old price, a bump, then the drop
+  const cx0 = pad, cx1 = DW - pad - 20, cy0 = chY + 50, cy1 = chY + chH - 30;
+  const vmax = wasN * 1.07, vmin = nowN - (wasN - nowN) * 0.35;
+  const Y = (val) => cy0 + (vmax - val) / (vmax - vmin) * (cy1 - cy0);
+  const R = MV.rand(41), NP = 22, vals = [];
+  for (let i = 0; i < NP; i++) {
+    let val = wasN * (1 + (R() - 0.5) * 0.035);
+    if (i >= 11 && i <= 15) val += wasN * 0.035 * Math.sin(((i - 11) / 4) * Math.PI);
+    vals.push(val);
+  }
+  vals[NP - 2] = wasN * 1.008; vals[NP - 1] = wasN * 0.995; vals.push(nowN);
+  const pts = vals.map((val, i) => [cx0 + (i / (vals.length - 1)) * (cx1 - cx0), Y(val)]);
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2, k = 0.18;
+    d += ` C${p1[0] + (p2[0] - p0[0]) * k},${p1[1] + (p2[1] - p0[1]) * k} ${p2[0] - (p3[0] - p1[0]) * k},${p2[1] - (p3[1] - p1[1]) * k} ${p2[0]},${p2[1]}`;
+  }
+  const svg = $("#chart"); box(svg, 0, 0, DW, DH); svg.setAttribute("viewBox", `0 0 ${DW} ${DH}`);
+  const line = $("#line"); line.setAttribute("d", d); line.setAttribute("stroke-width", 6);
+  $("#area").setAttribute("d", d + ` L${cx1},${cy1 + 30} L${cx0},${cy1 + 30} Z`);
+  [0.25, 0.5, 0.75, 1].forEach((f) => { const y = cy0 - 20 + (cy1 + 30 - cy0 + 20) * f; $("#grid").insertAdjacentHTML("beforeend", `<line x1="${cx0}" x2="${DW - pad}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.07)" stroke-width="1.5"/>`); });
+  const wy = Y(wasN); const wl = $("#wasln"); wl.setAttribute("x1", cx0); wl.setAttribute("x2", DW - pad); wl.setAttribute("y1", wy); wl.setAttribute("y2", wy); wl.setAttribute("stroke-width", 2.5);
+  $("#wasl").textContent = fmt(wasN); Object.assign($("#wasl").style, { left: S(cx0), top: S(wy - 52) });
+  const L = line.getTotalLength(); line.setAttribute("stroke-dasharray", `${L} ${L + 10}`); line.setAttribute("stroke-dashoffset", L);
+  const LD = 22, DD = 34, endP = pts[pts.length - 1];
+  box($("#lead"), 0, 0, LD, LD); box($("#dot"), endP[0] - DD / 2, endP[1] - DD / 2, DD, DD);
+  [$("#r1"), $("#r2")].forEach((r) => box(r, endP[0] - DD / 2, endP[1] - DD / 2, DD, DD));
+  $("#pctt").textContent = pctN + "%";
+  Object.assign($("#pct").style, { right: S(pad + 40), top: S(endP[1] - 32) });
+  const draw = (p) => {
+    line.setAttribute("stroke-dashoffset", L * (1 - p));
+    const q = line.getPointAtLength(L * p);
+    $("#clr").setAttribute("width", q.x);
+    gsap.set("#lead", { x: (q.x - LD / 2) * s, y: (q.y - LD / 2) * s });
+  };
+  draw(0);
+
+  // ---- the notification
+  const NI = 96, npad = 30;
+  box($("#nic"), npad, (NH - NI) / 2, NI, NI);
+  $("#ntime").textContent = v.alertTime || ""; $("#ntime").style.width = "auto"; Object.assign($("#ntime").style, { right: S(npad + 6), top: S(NH / 2 - 46) });
+  const tw = $("#ntime").getBoundingClientRect().width / s;
+  const tx = npad + NI + 24, tW = DW - tx - npad;
+  Object.assign($("#ntit").style, { left: S(tx), top: S(NH / 2 - 48) }); $("#ntit").textContent = v.alertTitle || "";
+  MV.fitText($("#ntit"), (tW - tw - 20) * s, 18);
+  Object.assign($("#nbody").style, { left: S(tx), top: S(NH / 2 + 6) });
+  if (v.alertBody) $("#nbody").textContent = v.alertBody;
+  else { $("#nbody").textContent = (v.product || "") + " is now "; const b = document.createElement("b"); b.textContent = fmt(nowN); $("#nbody").appendChild(b); }
+  MV.fitText($("#nbody"), tW * s, 18);
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+
+  // ---- timing
+  const T0 = 0.75, TDR = 1.75, TD = T0 + TDR, TN = TD + 0.62;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${sT + SH * s / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -8, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+
+  // in: the card, centred until the banner pushes it down
+  const P0 = A && P ? -(NH + GAP) * s : -push;
+  tl.fromTo("#wrap", { rotationX: 28, y: P0 + 90 * u, scale: 0.9 }, { rotationX: 0, y: P0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0, y: P0 }, { scaleX: 1, opacity: 1, y: P0, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo("#thumb", { scale: 0.5, rotation: -20 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.4)" }, 0.2);
+  tl.fromTo(["#pname", "#plab", "#pnow"], { opacity: 0, x: -20 * s }, { opacity: 1, x: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.25);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.7, ease: "expo.out" }, 0.3);
+  tl.fromTo(["#grid", "#wasln", "#wasl"], { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "power2.out", stagger: 0.08 }, 0.4);
+  tl.fromTo("#lead", { opacity: 0 }, { opacity: 1, duration: 0.2 }, T0);
+
+  // the line draws across the month, the lead dot riding its tip
+  const o = { p: 0 };
+  tl.fromTo(o, { p: 0 }, { p: 1, duration: TDR, ease: "power1.inOut", immediateRender: false, onUpdate: () => draw(o.p) }, T0);
+
+  // the drop lands: the dot turns green with rings, the chip pops, the price counts down and turns green
+  tl.to("#lead", { opacity: 0, duration: 0.1 }, TD - 0.02);
+  tl.fromTo("#dot", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(3)", transformOrigin: "50% 50%", immediateRender: false }, TD - 0.02);
+  tl.fromTo("#r1", { scale: 1, opacity: 0.9 }, { scale: 3.2, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TD);
+  tl.fromTo("#r2", { scale: 1, opacity: 0.6 }, { scale: 4.6, opacity: 0, duration: 1.0, ease: "expo.out", immediateRender: false }, TD + 0.12);
+  tl.fromTo("#pct", { opacity: 0, scale: 0.4, x: 30 * s }, { opacity: 1, scale: 1, x: 0, duration: 0.5, ease: "back.out(2.4)", transformOrigin: "100% 50%", immediateRender: false }, TD + 0.08);
+  const pr = { n: wasN };
+  tl.fromTo(pr, { n: wasN }, { n: nowN, duration: 0.5, ease: "power2.out", immediateRender: false, onUpdate: () => { $("#pnow").textContent = fmt(pr.n); } }, TD + 0.05);
+  tl.fromTo("#pnow", { color: getComputedStyle($("#pnow")).color }, { color: "#2BD67B", duration: 0.3, ease: "power2.out", immediateRender: false }, TD + 0.1);
+  tl.fromTo("#pnow", { scale: 1 }, { scale: 1.1, duration: 0.08, ease: "power2.out", transformOrigin: "100% 60%", immediateRender: false }, TD + 0.5); tl.to("#pnow", { scale: 1, duration: 0.45, ease: "back.out(3)" }, TD + 0.58);
+  tl.fromTo("#pold", { opacity: 0, y: 14 * s }, { opacity: 1, y: 0, duration: 0.4, ease: "expo.out", immediateRender: false }, TD + 0.1);
+  tl.fromTo("#polds", { "--st": 0 }, { "--st": 1, duration: 0.3, ease: "power2.inOut", immediateRender: false }, TD + 0.3);
+
+  // the alert: the card settles down, the banner drops in over it on a spring
+  tl.to("#wrap", { y: 0, duration: 0.7, ease: "expo.inOut" }, TN - 0.2);
+  tl.to("#base", { y: 0, duration: 0.7, ease: "expo.inOut" }, TN - 0.2);
+  tl.fromTo("#nwrap", { opacity: 0, y: -120 * s, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.5)", immediateRender: false }, TN);
+  tl.fromTo("#nwrap", { filter: "blur(10px)" }, { filter: "blur(0px)", duration: 0.35, ease: "power2.out", immediateRender: false }, TN);
+  gsap.set("#nwrap", { opacity: 0 });
+  tl.fromTo("#nic", { scale: 0.6, rotation: -18 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2.6)", transformOrigin: "50% 50%" }, TN + 0.12);
+  tl.fromTo(["#ntit", "#ntime", "#nbody"], { opacity: 0, x: -16 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", stagger: 0.06 }, TN + 0.14);
+  tl.fromTo("#note", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, TN + 0.35);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

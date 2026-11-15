@@ -1,0 +1,5 @@
+{ "id": "magazine-cover", "name": "Magazine cover", "oneLiner": "a glossy magazine cover assembles around the brand photo (the person rises into a paper sweep, an invented Didone masthead sets letter by letter behind their head, coverlines and the cover-star name slide in), then the camera pulls back to a walnut desk and the new issue drops onto older issues as the laminate gloss runs across it",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "editorial", "studio"], "from": "new",
+  "tags": ["magazine", "cover", "press", "featured", "famous", "cover story", "profile", "media", "editorial", "print", "desk", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.8, "alpha": false,
+  "say": "when the speaker says someone made the cover, got featured or became the story ('imagine being the cover story', 'this is who you become'): the cover builds on the setup and the issue drops on the desk on the payoff" }

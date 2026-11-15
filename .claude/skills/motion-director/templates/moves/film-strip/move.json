@@ -1,0 +1,5 @@
+{ "id": "film-strip", "name": "Film strip", "oneLiner": "a real scanned film strip with the brand's screens in its frames runs fast past a lamp-lit gate (sprocket holes glowing, motion blur, edge numbers), slows on a long tail until the chosen frame clacks into register and the lamp flares, then that frame lifts off the film toward the lens as a lit print with a caption while the strip falls back",
+  "category": "creator", "kind": "effect", "uses": ["broll"], "looks": ["studio", "paper"], "from": "new",
+  "tags": ["film", "film strip", "archive", "past work", "portfolio", "frames", "behind the scenes", "the one", "pick", "story", "cinema", "analog", "real material", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": false,
+  "say": "when the speaker looks back through past work and lands on one piece ('out of everything I made, this is the one', 'go back to frame one'): cut in on the look-back, the clack lands on 'this one', the print lifts as they name it. Set pick to the screen that matters and label to its name" }

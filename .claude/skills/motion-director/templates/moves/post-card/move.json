@@ -1,0 +1,5 @@
+{ "id": "post-card", "name": "Glass post card", "oneLiner": "a social post (real face, name, handle, the line) pops in tilted in 3D on a glass card, the like count ticks up, light runs over it and a heart bursts on the number",
+  "category": "social", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "glass",
+  "tags": ["social", "post", "tweet", "quote", "proof", "likes", "testimonial", "viral", "3d", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.2, "alpha": true,
+  "say": "when the speaker quotes a post, a comment or a line that went viral: lands on the quote, the heart bursts as they say how big it got" }

@@ -1,0 +1,5 @@
+{ "id": "book-stack", "name": "Book stack", "oneLiner": "clothbound books drop one after another onto a walnut desk and settle into a stack, each landing with a small bounce that nudges the ones under it, foil titles on their spines; then the top book in the brand colour slides out toward the lens, stands up and turns its foil-stamped cover square to camera as the light runs across the foil",
+  "category": "paper", "kind": "effect", "uses": ["broll"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["books", "reading", "book", "library", "recommendation", "learn", "author", "published", "guide", "stack", "desk", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": false,
+  "say": "when the speaker talks about books they read or the one that mattered ('I read all of these, but one changed everything', 'I wrote it all down in one book'): the stack builds on the list and the top book turns to camera on the one they name" }

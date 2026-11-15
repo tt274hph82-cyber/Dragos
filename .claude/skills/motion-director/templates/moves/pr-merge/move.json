@@ -1,0 +1,5 @@
+{ "id": "pr-merge", "name": "Glass pull request merge", "oneLiner": "a pull request card on glass: three checks spin and turn green one by one, the merge button wakes up and is pressed, the branch line curves into main with a green node and the status flips from Open to Merged",
+  "category": "dev", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["pull request", "merge", "git", "code", "checks", "ci", "ship", "developer", "ai coding", "agent", "review", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.0, "alpha": true,
+  "say": "when the speaker says the change passed and went in ('all the tests passed and I merged it', 'the agent opened a PR and it shipped'): the checks turn green on 'passed', the button is pressed and the branch merges on 'merged'" }

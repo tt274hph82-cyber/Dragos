@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"title","type":"string","label":"Branch name in the header","default":"main"},
+  {"id":"commits","type":"string","label":"Eight commit messages, newest first, separated by |","default":"Merge reply engine|Tune the prompts|Merge login|Fix login redirect|Draft the reply engine|Set up the API|Add login page|Initial commit"},
+  {"id":"tag","type":"string","label":"Tag that lands on the newest commit","default":"v1.0"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 52%, #fff); --a2l: color-mix(in srgb, var(--accent2) 70%, #fff); --mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace; }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 40%; top: -4%; background: color-mix(in srgb, var(--accent) 40%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 58%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.45)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig, .is-alpha #base { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2200px; perspective-origin: 50% 42%; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #base { position: absolute; height: calc(var(--u) * 3); border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5) 12%, rgba(255,255,255,.5) 88%, transparent); box-shadow: 0 0 calc(var(--u) * 18) rgba(255,255,255,.3); }
+  #wrap { position: absolute; }
+  .ab { position: absolute; box-sizing: border-box; }
+  #win { position: absolute; inset: 0; box-sizing: border-box; overflow: hidden; border-radius: calc(var(--s) * 38);
+    background: linear-gradient(170deg, rgba(255,255,255,.14), rgba(255,255,255,.04) 60%, rgba(255,255,255,.07));
+    -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%);
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14),
+      0 calc(var(--s) * 40) calc(var(--s) * 90) calc(var(--s) * -24) rgba(0,0,0,.7); }
+  .is-alpha #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 80%, white 10%), color-mix(in srgb, var(--surface) 94%, transparent)); }
+  .is-key #win { background: linear-gradient(170deg, color-mix(in srgb, var(--surface) 88%, white 12%), var(--surface)); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.5), inset 0 0 0 calc(var(--s) * 1.5) rgba(255,255,255,.14); }
+  #win::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 30;
+    background: linear-gradient(115deg, transparent calc(var(--sheen, -60%) - 14%), rgba(255,255,255,.2) var(--sheen, -60%), transparent calc(var(--sheen, -60%) + 14%)); mix-blend-mode: screen; }
+  #hd { display: flex; align-items: center; gap: calc(var(--s) * 16); }
+  #hd svg { width: calc(var(--s) * 44); height: calc(var(--s) * 44); flex: none; }
+  #ttl { font-family: var(--mono); font-weight: 700; font-size: calc(var(--s) * 40); color: var(--ink); white-space: nowrap; }
+  #cnt { display: flex; align-items: center; justify-content: flex-end; font-weight: 600; font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 50%, transparent); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  #hr { background: rgba(255,255,255,.1); }
+  #gs { position: absolute; left: 0; top: 0; overflow: visible; }
+  .row { position: absolute; left: 0; right: 0; }
+  .row .hl { position: absolute; inset: 0; border-radius: calc(var(--s) * 16); background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent 90%); opacity: 0; }
+  .msg { position: absolute; display: flex; align-items: center; font-weight: 600; font-size: calc(var(--s) * 36); color: color-mix(in srgb, var(--ink) 90%, transparent); white-space: nowrap; }
+  .hash { position: absolute; display: flex; align-items: center; justify-content: flex-end; font-family: var(--mono); font-size: calc(var(--s) * 32); color: color-mix(in srgb, var(--ink) 42%, transparent); white-space: nowrap; }
+  #tagc { position: absolute; display: flex; align-items: center; gap: calc(var(--s) * 10); padding: 0 calc(var(--s) * 18) 0 calc(var(--s) * 14); border-radius: calc(var(--s) * 14); white-space: nowrap; opacity: 0;
+    font-family: var(--mono); font-weight: 800; font-size: calc(var(--s) * 32); color: #fff;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 72%, #fff), var(--accent) 60%, color-mix(in srgb, var(--accent) 80%, #000));
+    box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45), 0 calc(var(--s) * 12) calc(var(--s) * 28) calc(var(--s) * -8) color-mix(in srgb, var(--accent) 85%, transparent); }
+  .is-key #tagc { box-shadow: inset 0 calc(var(--s) * 2) 0 rgba(255,255,255,.45); }
+  #tagc svg { width: calc(var(--s) * 30); height: calc(var(--s) * 30); flex: none; }
+  #tring { position: absolute; border-radius: calc(var(--s) * 18); border: calc(var(--s) * 3) solid var(--al); box-sizing: border-box; opacity: 0; }
+  .is-key #tring { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig">
+    <div id="base"></div>
+    <div id="wrap"><div id="win">
+      <div id="hd" class="ab"><svg viewBox="0 0 24 24" fill="none" stroke="var(--al)" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="5" r="2.4"/><circle cx="6" cy="19" r="2.4"/><circle cx="18" cy="7" r="2.4"/><path d="M6 7.4v9.2M18 9.4c0 4-4 4.6-9.8 7.6"/></svg><span id="ttl"></span></div>
+      <div id="cnt" class="ab"></div>
+      <div id="hr" class="ab"></div>
+      <div id="rows"></div>
+      <svg id="gs"></svg>
+      <div id="tagc"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"><path d="M3 12.2V4.5A1.5 1.5 0 0 1 4.5 3h7.7l8.8 8.8-9.2 9.2z"/><circle cx="8" cy="8" r="1.7" fill="#fff" stroke="none"/></svg><span id="tagt"></span></div>
+      <div id="tring"></div>
+    </div></div>
+  </div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root");
+  const D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait, SQ = W === H, A = MV.alpha;
+  const DEF = ["Merge reply engine", "Tune the prompts", "Merge login", "Fix login redirect", "Draft the reply engine", "Set up the API", "Add login page", "Initial commit"];
+  const given = String(v.commits || "").split("|").map((x) => x.trim()).filter(Boolean);
+  const msgs = DEF.map((d, i) => given[i] || d).reverse();          // oldest first, k = 0..7
+  // the shape: main (lane 0), a branch off commit 0 merged at 5 (lane 1), a branch off 2 merged at 7 (lane 2)
+  const LANE = [0, 1, 0, 2, 1, 0, 2, 0];
+  const N = 8;
+
+  // ---- zone and scale (820 wide)
+  let cL, cR, zT, zB;
+  if (P) { cL = safe.left; cR = W - safe.right; zT = safe.top; zB = H - safe.bottom; }
+  else if (A && !SQ) { cL = W * 0.5; cR = W * 0.95; zT = H * 0.06; zB = H * 0.94; }
+  else if (SQ) { cL = 90 * u; cR = W - 90 * u; zT = 50 * u; zB = H - 50 * u; }
+  else { cL = W * 0.25; cR = W * 0.75; zT = H * 0.06; zB = H * 0.92; }
+  const DW = 820, pad = 40, HDY = 30, HDH = 64, HRY = HDY + HDH + 22, GY = HRY + 16, RH = 80;
+  const DH = GY + N * RH + 24;
+  const s = Math.min((cR - cL) / DW, (zB - zT) / DH, P ? 1.06 : 1.25);
+  root.style.setProperty("--s", s + "px");
+  const cw = DW * s, ch = DH * s;
+  cL = cL + ((cR - cL) - cw) / 2;
+  const cT = A && P ? zT : zT + (zB - zT - ch) / 2;
+  Object.assign($("#wrap").style, { left: cL + "px", top: cT + "px", width: cw + "px", height: ch + "px" });
+  Object.assign($("#base").style, { left: cL - 40 * u + "px", width: cw + 80 * u + "px", top: cT + ch + 34 * u + "px" });
+  const S = (n) => n * s + "px", box = (el, x, y, w, h) => { Object.assign(el.style, { left: S(x), top: S(y) }); if (w != null) el.style.width = S(w); if (h != null) el.style.height = S(h); };
+
+  // ---- header
+  box($("#hd"), pad, HDY, null, HDH); $("#ttl").textContent = v.title || "";
+  const cnt = $("#cnt"); cnt.textContent = N + " commits"; box(cnt, DW - pad - 260, HDY, 260, HDH);
+  MV.fitText($("#ttl"), (DW - pad * 2 - 60 - 280) * s, 20 * s);
+  box($("#hr"), pad, HRY, DW - pad * 2, 1.5);
+
+  // ---- rows: newest at the top
+  const LX = [pad + 24, pad + 72, pad + 120], MX = pad + 170;
+  const yOf = (k) => GY + (N - 1 - k) * RH + RH / 2;
+  const hr = MV.rand(17), hex = () => Array.from({ length: 7 }, () => "0123456789abcdef"[Math.floor(hr() * 16)]).join("");
+  const rows = $("#rows");
+  $("#tagt").textContent = v.tag || "";
+  const tagc = $("#tagc"); tagc.style.height = S(54);
+  const tagW = v.tag ? tagc.getBoundingClientRect().width / s : 0;
+  const R = msgs.map((m, k) => {
+    const r = document.createElement("div"); r.className = "row"; box(r, pad - 10, yOf(k) - RH / 2, DW - pad * 2 + 20, RH);
+    r.innerHTML = `<i class="hl"></i><div class="msg"></div><div class="hash"></div>`;
+    rows.appendChild(r);
+    const msg = r.querySelector(".msg"); msg.textContent = m; box(msg, MX - pad + 10, 0, null, RH);
+    const hs = r.querySelector(".hash"); hs.textContent = hex(); box(hs, DW - pad * 2 + 20 - 10 - 170, 0, 170, RH);
+    return { r, msg, hs, hl: r.querySelector(".hl") };
+  });
+  // one type size for every message, set by the tightest row (the newest also carries the tag)
+  if (tagW) R[N - 1].hs.style.display = "none";
+  const room = (k) => DW - pad - MX - (k === N - 1 && tagW ? tagW + 24 : 160);
+  let fs = 36; const fitAll = () => R.every((x, k) => x.msg.getBoundingClientRect().width / s <= room(k));
+  while (!fitAll() && fs > 22) { fs -= 1; R.forEach((x) => x.msg.style.fontSize = S(fs)); }
+  // the tag sits after the newest message
+  const newest = R[N - 1], tmW = newest.msg.getBoundingClientRect().width / s;
+  const TGX = DW - pad - tagW, TGY = yOf(N - 1) - 27;
+  box(tagc, TGX, TGY); box($("#tring"), TGX, TGY, tagW, 54);
+
+  // ---- the graph
+  const gs = $("#gs"); gs.setAttribute("viewBox", `0 0 ${DW} ${DH}`); gs.setAttribute("width", cw); gs.setAttribute("height", ch); gs.style.width = cw + "px"; gs.style.height = ch + "px";
+  const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); gs.appendChild(e); return e; };
+  const COL = ["color-mix(in srgb, var(--ink) 80%, transparent)", "var(--accent)", "var(--accent2)"], DCOL = ["var(--ink)", "var(--al)", "var(--a2l)"];
+  const P_ = (k) => [LX[LANE[k]], yOf(k)];
+  // a curve between two commits on different lanes: leave vertically, bend, arrive vertically
+  const seg = (a, b) => { const [x0, y0] = P_(a), [x1, y1] = P_(b); if (x0 === x1) return `M${x0} ${y0}V${y1}`; const my = (y0 + y1) / 2; return `M${x0} ${y0}C${x0} ${my} ${x1} ${my} ${x1} ${y1}`; };
+  const forkSeg = (a, b) => { const [x0, y0] = P_(a), [x1, y1] = P_(b); const r = Math.min(RH * 0.7, Math.abs(y1 - y0)); return `M${x0} ${y0}C${x0} ${y0 - r * 0.62} ${x1} ${y0 - r * 0.38} ${x1} ${y0 - r}V${y1}`; };
+  const mergeSeg = (a, b) => { const [x0, y0] = P_(a), [x1, y1] = P_(b); const r = Math.min(RH * 0.7, Math.abs(y1 - y0)); return `M${x0} ${y0}V${y1 + r}C${x0} ${y1 + r * 0.38} ${x1} ${y1 + r * 0.62} ${x1} ${y1}`; };
+  const BR = [
+    { lane: 0, segs: [[0, 2, seg], [2, 5, seg], [5, 7, seg]], dots: [0, 2, 5, 7] },
+    { lane: 1, segs: [[0, 1, forkSeg], [1, 4, seg], [4, 5, mergeSeg]], dots: [1, 4] },
+    { lane: 2, segs: [[2, 3, forkSeg], [3, 6, seg], [6, 7, mergeSeg]], dots: [3, 6] },
+  ];
+  const paths = BR.map((b) => b.segs.map(([a, c, f]) => { const p = mk("path", { d: f(a, c), fill: "none", stroke: COL[b.lane], "stroke-width": 7, "stroke-linecap": "round", pathLength: 1, "stroke-dasharray": 1, "stroke-dashoffset": 1, opacity: 0 }); return p; }));
+  const DOT = {};
+  for (let k = 0; k < N; k++) { const [x, y] = P_(k), merge = k === 5 || k === 7;
+    const g = document.createElementNS(NS, "g"); gs.appendChild(g);
+    if (merge) { const o = document.createElementNS(NS, "circle"); Object.entries({ cx: x, cy: y, r: 19, fill: "none", stroke: DCOL[LANE[k]], "stroke-width": 3.5 }).forEach(([a, b]) => o.setAttribute(a, b)); g.appendChild(o); }
+    const c = document.createElementNS(NS, "circle"); Object.entries({ cx: x, cy: y, r: merge ? 11 : 14, fill: DCOL[LANE[k]], stroke: "rgba(0,0,0,.4)", "stroke-width": 3 }).forEach(([a, b]) => c.setAttribute(a, b)); g.appendChild(c);
+    DOT[k] = g; gsap.set(g, { scale: 0, transformOrigin: "50% 50%" }); }
+  const halo = mk("circle", { cx: LX[0], cy: yOf(7), r: 26, fill: "none", stroke: "var(--al)", "stroke-width": 4, opacity: 0 });
+  gsap.set(halo, { transformOrigin: "50% 50%" });
+
+  // ---- timing: main, then each branch; a dot pops (and its message slides in) as the line reaches it
+  const T0 = 0.55, SEGD = 0.26, BGAP = 0.12;
+  gsap.set("#rig", { transformOrigin: `${cL + cw / 2}px ${cT + ch / 2}px` });
+  tl.fromTo("#rig", { rotationY: 12, rotationX: 9, scale: 0.94, y: 24 * u }, { rotationY: P ? -6 : -7, rotationX: 3, scale: 1, y: 0, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.12, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.14, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#wrap", { rotationX: 28, y: 90 * u, scale: 0.9 }, { rotationX: 0, y: 0, scale: 1, duration: 0.95, ease: "expo.out" }, 0.02);
+  tl.fromTo("#wrap", { opacity: 0, filter: "blur(14px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 0.02);
+  tl.fromTo("#base", { scaleX: 0.2, opacity: 0 }, { scaleX: 1, opacity: 1, duration: 0.8, ease: "expo.out" }, 0.05);
+  tl.fromTo(["#hd", "#cnt"], { opacity: 0, y: 12 * s }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.18);
+  tl.fromTo("#hr", { scaleX: 0, transformOrigin: "0 50%" }, { scaleX: 1, duration: 0.6, ease: "expo.out" }, 0.25);
+  gsap.set(R.map((x) => [x.msg, x.hs]).flat(), { opacity: 0 });
+  const pop = (k, t) => {
+    tl.to(DOT[k], { scale: 1, duration: 0.42, ease: "back.out(3)" }, t);
+    tl.fromTo(R[k].msg, { opacity: 0, x: -22 * s }, { opacity: 1, x: 0, duration: 0.45, ease: "expo.out", immediateRender: false }, t + 0.02);
+    tl.fromTo(R[k].hs, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, t + 0.08);
+  };
+  let t = T0; const BEND = [];
+  BR.forEach((b, bi) => {
+    if (bi === 0) pop(0, t - 0.05);
+    b.segs.forEach(([a, c], si) => {
+      const p = paths[bi][si], d = bi === 0 ? SEGD * (c - a) / 2.4 : SEGD;
+      tl.set(p, { opacity: 1 }, t);
+      tl.to(p, { attr: { "stroke-dashoffset": 0 }, duration: d, ease: "power1.inOut" }, t);
+      t += d;
+      if (b.dots.includes(c)) pop(c, t - 0.06);
+      else { // a merge arriving on main: the merge commit pulses
+        tl.fromTo(DOT[c], { scale: 1 }, { scale: 1.35, duration: 0.08, ease: "power2.out", immediateRender: false }, t - 0.02); tl.to(DOT[c], { scale: 1, duration: 0.4, ease: "back.out(3)" }, t + 0.06);
+        tl.fromTo(R[c].hl, { opacity: 0.9 }, { opacity: 0, duration: 0.7, ease: "power2.out", immediateRender: false }, t);
+      }
+    });
+    BEND.push(t); t += BGAP;
+  });
+  // the tag stamps onto the newest commit
+  const TT = BEND[2] + 0.22;
+  tl.fromTo(tagc, { opacity: 0, scale: 2.4, rotation: -14, filter: "blur(8px)" }, { opacity: 1, scale: 1, rotation: -3, filter: "blur(0px)", duration: 0.3, ease: "power4.in" }, TT);
+  tl.to(tagc, { scale: 1.08, duration: 0.06, ease: "power1.out" }, TT + 0.3); tl.to(tagc, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(3)" }, TT + 0.36);
+  tl.fromTo("#tring", { scale: 1, opacity: 0.9 }, { scale: 1.45, opacity: 0, duration: 0.7, ease: "expo.out", immediateRender: false }, TT + 0.3);
+  tl.fromTo(halo, { scale: 0.6, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 0.8, ease: "expo.out", immediateRender: false }, TT + 0.3);
+  tl.fromTo(newest.hl, { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out", immediateRender: false }, TT + 0.3);
+  tl.to(newest.hl, { opacity: 0.5, duration: 0.8, ease: "power2.out" }, TT + 0.6);
+  tl.to("#stage", { scale: 1.015, duration: 0.07, ease: "power2.out" }, TT + 0.3); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, TT + 0.37);
+  tl.fromTo("#win", { "--sheen": "-60%" }, { "--sheen": "160%", duration: 0.9, ease: "power2.inOut" }, TT + 0.35);
+
+  if (A) tl.to("#stage", { opacity: 0, y: -50 * u, filter: "blur(14px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

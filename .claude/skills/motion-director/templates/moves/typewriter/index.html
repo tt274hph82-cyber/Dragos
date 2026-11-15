@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"line","type":"string","label":"The line that types out (empty uses the brand headline; up to about 32 characters)","default":""},
+  {"id":"pre","type":"string","label":"A line already typed higher on the sheet","default":"Draft one"},
+  {"id":"centre","type":"string","label":"Keep the authored framing on 9:16 (off)","default":"off"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  @font-face { font-family: "MV Type"; src: url("assets/fonts/SpecialElite-Regular.ttf"); font-display: block; }
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: #0b0908; }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: radial-gradient(70% 55% at 40% 30%, #3a2c22, #120d0a 70%); }
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2400); perspective-origin: 50% 40%; }
+  #cam { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #carriage { position: absolute; left: 0; top: 0; }
+  /* the sheet: a real paper scan, lit from the upper left, bending back over the platen at its foot */
+  #paper { position: absolute; background: #F3EFE6 url(assets/paper-white.jpg) center / calc(var(--u) * 640); overflow: hidden;
+    box-shadow: calc(var(--u) * -10) 0 calc(var(--u) * 30) rgba(0,0,0,.45); }
+  #paper::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(80% 60% at 30% 20%, rgba(255,244,225,.22), transparent 70%), linear-gradient(180deg, transparent 0 calc(100% - var(--curl)), rgba(70,55,40,.08) calc(100% - var(--curl) * .6), rgba(40,30,20,.42)); }
+  #sheet { position: absolute; left: 0; top: 0; }
+  .ch { position: absolute; font-family: "MV Type", monospace; color: #1d1a17; line-height: 1; text-align: center; white-space: pre;
+    -webkit-mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 200); mask: url(assets/inkmask.png) 0 0 / calc(var(--u) * 200); }
+  /* the platen: a black rubber roller, lit as a cylinder */
+  #platen { position: absolute; background: #1b1918 url(assets/plastic.jpg) 0 0 / calc(var(--u) * 260); border-radius: calc(var(--u) * 14); }
+  #platen::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(255,255,255,.06) 12%, rgba(255,255,255,.34) 24%, rgba(255,255,255,.08) 34%, rgba(0,0,0,.15) 62%, rgba(0,0,0,.8)); }
+  /* the paper bail: a chrome bar with a printed scale, and its two rubber rollers */
+  #bail { position: absolute; background: #aeb0b4 url(assets/metal.jpg) center / calc(var(--u) * 900) 100%; border-radius: calc(var(--u) * 6);
+    box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 14) rgba(0,0,0,.35); }
+  #bail::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,0) 35%, rgba(0,0,0,.25) 60%, rgba(0,0,0,.5)); }
+  .tick { position: absolute; background: #2b2b2e; }
+  .num { position: absolute; font-family: var(--font-body); font-weight: 700; color: #2b2b2e; line-height: 1; white-space: nowrap; }
+  .roller { position: absolute; border-radius: calc(var(--u) * 10); background: linear-gradient(180deg, #4a4643, #151312 45%, #000); box-shadow: 0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,.5); }
+  #lever { position: absolute; transform-origin: 100% 50%; border-radius: calc(var(--u) * 12); background: linear-gradient(180deg, #f4f4f4, #9a9ca1 45%, #5b5d62 60%, #c9cbcf); box-shadow: 0 calc(var(--u) * 10) calc(var(--u) * 18) rgba(0,0,0,.5); }
+  /* the fixed front of the machine: dark enamel, the type guide and the ribbon at the strike point, the keys below */
+  #machine { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  #plate { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: calc(var(--u) * 8);
+    background: linear-gradient(180deg, #2a2421, #120f0e); box-shadow: inset 0 0 0 calc(var(--u) * 3) #8d8f93, inset 0 calc(var(--u) * 2) 0 calc(var(--u) * 3) rgba(255,255,255,.35), 0 calc(var(--u) * 8) calc(var(--u) * 14) rgba(0,0,0,.5); }
+  #plate span { font-family: var(--font-display); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; line-height: 1;
+    background: linear-gradient(180deg, #ffffff, #c9cbcf 45%, #7d7f84 55%, #e6e7ea); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #body { position: absolute; background: #1a1614 url(assets/plastic.jpg) center / calc(var(--u) * 420);
+    box-shadow: 0 calc(var(--u) * -14) calc(var(--u) * 26) rgba(0,0,0,.6); }
+  #body::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.16), rgba(255,255,255,0) 6%, rgba(0,0,0,0) 50%, rgba(0,0,0,.5)), radial-gradient(60% 40% at 35% 0%, rgba(255,226,190,.12), transparent 70%); }
+  #guide { position: absolute; background: #b9bbbf url(assets/metal.jpg) center / calc(var(--u) * 600) 100%;
+    clip-path: polygon(0 0, 45% 0, 50% 26%, 55% 0, 100% 0, 94% 100%, 6% 100%); }
+  #guide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(0,0,0,.35)); }
+  #ribbon { position: absolute; border-radius: calc(var(--u) * 3); overflow: hidden; box-shadow: 0 calc(var(--u) * 4) calc(var(--u) * 8) rgba(0,0,0,.5); }
+  #ribbon i { position: absolute; left: 0; right: 0; height: 50%; }
+  #ribbon i:first-child { top: 0; background: linear-gradient(180deg, #2a2725, #0e0d0c); }
+  #ribbon i:last-child { bottom: 0; background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 80%, #000), color-mix(in srgb, var(--accent) 55%, #000)); }
+  #keys { position: absolute; left: 0; top: 0; width: 100%; height: 100%; filter: blur(calc(var(--u) * 4)); }
+  .key { position: absolute; border-radius: 50%; background: radial-gradient(60% 60% at 45% 38%, #3c3835, #0d0c0b 70%); box-shadow: 0 0 0 calc(var(--u) * 6) #b8babd, 0 0 0 calc(var(--u) * 8) #5e6064, 0 calc(var(--u) * 16) calc(var(--u) * 14) rgba(0,0,0,.6); }
+  .key b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #e9e4da; font-family: var(--font-body); font-weight: 700; }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 50%, rgba(0,0,0,.55)); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="cam">
+    <div id="carriage">
+      <div id="paper"><div id="sheet"></div></div>
+      <div id="platen"></div>
+      <div id="bail" data-bleed></div>
+      <div id="lever"></div>
+    </div>
+    <div id="machine">
+      <div id="body"></div><div id="plate" data-bleed><span></span></div><div id="keys" data-bleed></div>
+      <div id="ribbon"><i></i><i></i></div>
+      <div id="guide"></div>
+    </div>
+  </div></div>
+  <div id="vig"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+(async () => {
+  const { v, tl, u, W, H } = MV;
+  await document.fonts.load('80px "MV Type"'); await document.fonts.ready;
+  const root = document.getElementById("root"), D = +root.dataset.duration, $ = (q) => document.querySelector(q);
+  const P = MV.portrait;
+  const line = String(v.line || v.headline || v.tagline || "").trim().replace(/\s+/g, " ").slice(0, 44);
+  // a long line is typed as two (a carriage return between), so the type can stay big in a narrow frame
+  const maxC = P ? 16 : W === H ? 28 : 34;           // only the tall frame has the height for two lines
+  let lines = [line];
+  if (line.length > maxC && line.includes(" ")) { let best = -1;
+    [...line].forEach((c, i) => { if (c === " " && (best < 0 || Math.abs(i - line.length / 2) < Math.abs(best - line.length / 2))) best = i; });
+    lines = [line.slice(0, best), line.slice(best + 1)]; }
+  const NL = lines.length, N = Math.max(1, ...lines.map((l) => l.length), Math.min(String(v.pre || "").trim().length * 0.8, maxC + 2)), NT = lines.reduce((a, l) => a + l.length, 0);
+
+  // ---- type size: the finished line fills about 80% of the frame width, monospaced like the machine
+  const ADV = 0.64;                                          // the machine's pitch, as a fraction of the type size
+  const f = Math.max(38 * u, Math.min((P ? 92 : 80) * u, (W * (P ? 0.76 : 0.72)) / ((N + 2) * ADV)));
+  const adv = f * ADV, LH = f * 1.6;                         // one character, one line
+  const LW = N * adv;
+  // the camera rides with the paper three quarters of the way: the type stays put, the machine steps across under it
+  const LOCK = NL > 1 ? 1 : 0.75;                            // two lines: the camera stays on the page, so the first line never moves
+  const SX = W / 2, SY = H * (P ? 0.5 : 0.53);
+  const cam0 = -LW / 2 + (1 - LOCK) * LW;                    // so the finished line ends centred
+  // ---- the carriage: paper, platen, bail and lever, all moving together (carriage coordinates = frame at x 0)
+  const margin = Math.min(W * 0.32, 12 * adv), PAPW = LW + margin * 2 + W * 1.4;
+  const paperL = SX - margin, paperTop = -H * 0.25, paperB = SY + f * 1.0;
+  const paper = $("#paper"), sheet = $("#sheet");
+  Object.assign(paper.style, { left: paperL + "px", top: paperTop + "px", width: PAPW + "px", height: (paperB - paperTop) + "px" });
+  paper.style.setProperty("--curl", (f * 1.6) + "px");
+  const platen = $("#platen"), PH = f * (P ? 2.4 : 1.9);
+  Object.assign(platen.style, { left: (paperL - W * 0.8) + "px", width: (PAPW + W * 1.6) + "px", top: (paperB - PH * 0.4) + "px", height: PH + "px" });
+  // the line already on the sheet sits high enough to stay in frame after the feed; the bail runs between the two
+  const preD = Math.min(LH * 3.7, SY - f * 0.84 - LH * NL - 50 * u);
+  const bail = $("#bail"), BH = f * 0.62, by = ((SY - f * 0.84 - preD + f * 1.05) + (SY - f * 0.84 - LH * NL)) / 2 - BH / 2;
+  Object.assign(bail.style, { left: (paperL - W * 0.6) + "px", width: (PAPW + W * 1.2) + "px", top: by + "px", height: BH + "px" });
+  const b0 = W * 0.6 + margin;                               // the bail's 0 sits at the left margin
+  for (let k = -10; k <= 90; k++) { const x = b0 + k * adv - 0.5;
+    const t = document.createElement("div"); t.className = "tick"; Object.assign(t.style, { left: x + "px", width: Math.max(1, 1.6 * u) + "px", top: "0px", height: (k % 5 ? BH * 0.26 : BH * 0.42) + "px" }); bail.appendChild(t);
+    if (k % 10 === 0 && k >= 0) { const n = document.createElement("div"); n.className = "num"; n.textContent = k; n.style.fontSize = Math.max(BH * 0.4, 18 * u) + "px"; n.style.left = (x + 4 * u) + "px"; n.style.top = (BH * 0.48) + "px"; bail.appendChild(n); } }
+  for (const rx of [b0 - adv * 6, b0 + LW + adv * 4]) { const r = document.createElement("div"); r.className = "roller"; Object.assign(r.style, { left: rx + "px", top: (-BH * 0.25) + "px", width: (adv * 2.2) + "px", height: (BH * 1.5) + "px" }); bail.appendChild(r); }
+  const lever = $("#lever"), lvW = W * 0.5, lvH = f * 0.55;
+  Object.assign(lever.style, { left: (paperL - W * 0.8 - lvW + 30 * u) + "px", top: (paperB - PH * 0.55) + "px", width: lvW + "px", height: lvH + "px", transform: "rotate(-12deg)" });
+
+  // ---- the type: what is already on the sheet, and the line to come (one cell per character, inked unevenly)
+  const rnd = MV.rand(17);
+  const cells = (txt, x0, y0, fs) => [...txt].map((chr, i) => { const e = document.createElement("div"); e.className = "ch"; e.textContent = chr;
+    const w = fs * ADV; Object.assign(e.style, { left: (x0 + i * w) + "px", top: (y0 + (rnd() - 0.5) * fs * 0.035) + "px", width: w + "px", fontSize: fs + "px", opacity: (0.78 + rnd() * 0.22).toFixed(2),
+      transform: `rotate(${((rnd() - 0.5) * 0.8).toFixed(2)}deg)` }); sheet.appendChild(e); return e; });
+  const sx = margin, sy = SY - paperTop - f * 0.84;
+  const pre = String(v.pre || "").trim();
+  if (pre) cells(pre, sx, sy - preD + f * 0.1, f * 0.8);       // set a touch smaller: it is the page heading
+  const lineCells = lines.map((l, j) => cells(l, sx, sy + j * LH, f));
+  const typed = lineCells.flat();
+  typed.forEach((e) => { e.dataset.ink = e.style.opacity; });
+  gsap.set(typed, { opacity: 0 });
+
+  // ---- the machine (fixed to the desk): the front under the platen, its nameplate, the keys, the ribbon and the type guide at the strike point
+  const body = $("#body"), bodyTop = paperB + PH * 0.55;
+  Object.assign(body.style, { left: (-W * 1.5) + "px", width: (W * 4) + "px", top: bodyTop + "px", height: (H - bodyTop + 300 * u) + "px" });
+  const plate = $("#plate"), pls = plate.querySelector("span");
+  pls.textContent = (v.brandName || "").trim(); if (!pls.textContent) plate.style.display = "none";
+  const plH = Math.max(f * 0.9, 56 * u); pls.style.fontSize = (plH * 0.5) + "px"; MV.fitText(pls, W * 0.5, 14 * u);
+  const plW = Math.max(W * 0.2, pls.getBoundingClientRect().width + plH * 1.2);
+  // the nameplate sits where the finished shot centres it (the machine ends with its strike point at the left margin)
+  Object.assign(plate.style, { left: (SX + LW / 2 - plW / 2) + "px", top: (bodyTop + f * (P ? 0.9 : 0.5)) + "px", width: plW + "px", height: plH + "px" });
+  const guide = $("#guide"), gW = adv * 4.4, gH = f * 0.62;
+  Object.assign(guide.style, { left: (SX - gW / 2) + "px", top: (SY + f * 0.3) + "px", width: gW + "px", height: gH + "px" });
+  const ribbon = $("#ribbon"), rW = adv * 2.6, rH = f * 0.7, ribY = SY + f * 0.55;
+  Object.assign(ribbon.style, { left: (SX - rW / 2) + "px", top: ribY + "px", width: rW + "px", height: rH + "px" });
+  const keys = $("#keys"), kr = (P ? 120 : 104) * u, kTop = bodyTop + f * (P ? 0.9 : 0.5) + plH + (P ? 70 : 40) * u;
+  const keyEls = []; const rows = ["1234567890", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+  rows.forEach((row, ri) => [...row].forEach((ch, ci) => { const k = document.createElement("div"); k.className = "key";
+    const x = SX + (ci - (row.length - 1) / 2) * kr * 1.42 + ri * kr * 0.3, y = kTop + ri * kr * 1.25;
+    Object.assign(k.style, { left: (x - kr / 2) + "px", top: y + "px", width: kr + "px", height: kr + "px" });
+    k.innerHTML = `<b style="font-size:${kr * 0.36}px">${ch}</b>`; keys.appendChild(k); keyEls.push([ch, k]); }));
+  const keyFor = (ch) => { const up = ch.toUpperCase(); const hit = keyEls.find(([c]) => c === up); return hit ? hit[1] : keyEls[10 + ((up.charCodeAt(0) || 0) % 26)][1]; };
+
+  // ---- timeline
+  // 0.0 the loaded machine, a slow push; 0.35 the line types out key by key (each stroke steps the carriage one pitch,
+  // the ribbon jumps to the strike, a key goes down); the return lever throws the carriage back and the platen feeds a line
+  const T0 = 0.35, TT = Math.min(2.5, Math.max(1.2, NT * 0.075)), step = TT / NT;
+  let t = T0;
+  const r2 = MV.rand(5);
+  gsap.set("#carriage", { x: 0 }); gsap.set("#machine", { x: 0 });
+  const camX = (k) => cam0 + LOCK * k * adv;
+  // everything sits in #cam; the carriage moves left a pitch per stroke and the camera follows it most of the way
+  gsap.set("#cam", { x: cam0 });
+  tl.fromTo("#cam", { rotationX: 12, rotationY: -5 }, { rotationX: 6, rotationY: 3, duration: D, ease: "sine.inOut", transformOrigin: "50% 60%", immediateRender: true }, 0);
+  // carriage return: the lever is pushed, the carriage is thrown back to the margin,
+  // the platen turns and the paper rises one line, the carriage knocks against its stop
+  const ret = (TR, j, last) => {
+    tl.to(lever, { rotation: -24, duration: 0.12, ease: "power2.out" }, TR - 0.08);
+    tl.to(lever, { rotation: -12, duration: 0.35, ease: "back.out(2)" }, TR + 0.32);
+    tl.to("#carriage", { x: 0, duration: 0.42, ease: "power3.inOut" }, TR);
+    tl.to("#cam", { x: last ? -LW / 2 : cam0, duration: 0.5, ease: "power3.inOut" }, TR);
+    tl.to(sheet, { y: -LH * (j + 1), duration: 0.22, ease: "power2.out" }, TR + 0.06);
+    tl.fromTo(platen, { backgroundPositionY: -LH * 1.4 * j + "px" }, { backgroundPositionY: -LH * 1.4 * (j + 1) + "px", duration: 0.22, ease: "power2.out", immediateRender: false }, TR + 0.06);
+    tl.fromTo("#carriage", { y: 0 }, { y: 3 * u, duration: 0.04, ease: "power2.out", immediateRender: false }, TR + 0.42);
+    tl.to("#carriage", { y: 0, duration: 0.25, ease: "back.out(3)" }, TR + 0.46);
+  };
+  let TR = 0;
+  lines.forEach((ln, j) => {
+    lineCells[j].forEach((e, i) => {
+      const ch = ln[i], space = ch === " ";
+      const dt = step * (space ? 1.3 : 0.72 + r2() * 0.56);
+      if (!space) {
+        tl.set(e, { opacity: +e.dataset.ink }, t);
+        tl.fromTo(e, { y: f * 0.035 }, { y: 0, duration: 0.05, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo(ribbon, { y: 0 }, { y: -f * 0.74, duration: 0.035, ease: "power2.out", immediateRender: false }, t - 0.03);
+        tl.to(ribbon, { y: 0, duration: 0.08, ease: "power2.in" }, t + 0.01);
+        const k = keyFor(ch); tl.fromTo(k, { scale: 1, y: 0 }, { scale: 0.92, y: 7 * u, duration: 0.03, ease: "power2.out", immediateRender: false }, t - 0.03); tl.to(k, { scale: 1, y: 0, duration: 0.1, ease: "power2.out" }, t + 0.01);
+      }
+      tl.to("#carriage", { x: -(i + 1) * adv, duration: 0.06, ease: "power3.out" }, t + 0.005);
+      tl.to("#cam", { x: camX(i + 1), duration: 0.16, ease: "power2.out" }, t + 0.005);
+      t += dt;
+    });
+    TR = t + 0.28;
+    ret(TR, j, j === NL - 1);
+    t = TR + 0.62;
+  });
+  // the payoff: after the last feed the camera pushes in on the finished text until it sits big and centred,
+  // the platen and the machine framing it below, and holds there
+  const lineY = SY - f * 0.34 - LH * (NL + 1) / 2;           // the finished block's centre once fed up
+  const K = Math.min((W * 0.82) / Math.max(LW, pre.length * adv * 0.8), Math.max(1.15, (P ? 60 : 56) * u / f));
+  const goalY = H * (P ? 0.44 : 0.46);
+  gsap.set("#stage", { transformOrigin: `${W / 2}px ${lineY}px` });
+  tl.fromTo("#stage", { scale: 1, y: 0 }, { scale: 1.04, y: 0, duration: TR, ease: "sine.inOut", immediateRender: true }, 0);
+  tl.to("#stage", { scale: K, y: goalY - lineY, duration: 0.95, ease: "power3.inOut" }, TR + 0.2);
+  tl.to("#stage", { scale: K * 1.015, duration: Math.max(0.1, D - TR - 1.15), ease: "sine.out" }, TR + 1.15);
+  MV.done();
+})();
+</script>
+</body>
+</html>

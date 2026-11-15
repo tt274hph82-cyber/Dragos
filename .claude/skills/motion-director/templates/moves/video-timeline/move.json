@@ -1,0 +1,5 @@
+{ "id": "video-timeline", "name": "Video timeline cut", "oneLiner": "a glass video editor: clips cut from the brand's own media drop and snap onto three tracks, the playhead scrubs with the monitor and timecode following, the blade drops through a clip with a click, the dead part lifts out and the timeline ripples shut",
+  "category": "creator", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass"], "from": "new",
+  "tags": ["video editing", "timeline", "editor", "cut", "clips", "premiere", "final cut", "creator tools", "workflow", "b-roll", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.6, "alpha": true,
+  "say": "when the speaker talks about editing or cutting their videos ('I cut every pause', 'it edits the whole thing for me', 'the dead air is gone'): the clips snap in while they set it up, the cut lands on 'cut' or 'gone'" }

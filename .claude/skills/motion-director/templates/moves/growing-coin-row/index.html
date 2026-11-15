@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"values","type":"string","label":"The amount on each coin, comma separated, 3 to 5, smallest first (short: $1, $10, 1K)","default":"$1,$10,$100,$1,000"},
+  {"id":"labels","type":"string","label":"A short label under each coin, same order (empty = none)","default":"Day 1,Month 1,Month 6,Year 1"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body); }
+  #ground { position: absolute; inset: 0; background: var(--ground); overflow: hidden; }
+  #ground i { position: absolute; border-radius: 50%; filter: blur(calc(var(--u) * 150)); }
+  #ground .l1 { width: 70%; height: 46%; left: 38%; top: 2%; background: color-mix(in srgb, var(--accent) 34%, transparent); }
+  #ground .l2 { width: 75%; height: 50%; left: -34%; top: 52%; background: color-mix(in srgb, var(--accent2) 26%, transparent); }
+  #vig { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(0,0,0,.5)); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain, .is-alpha #vig { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: 2400px; }
+  #rig { position: absolute; inset: 0; transform-style: preserve-3d; }
+  #cam { position: absolute; left: 0; top: 0; transform-origin: 0 0; transform-style: preserve-3d; }
+  .slot { position: absolute; transform-style: preserve-3d; }
+  .coin { position: absolute; left: 0; top: 0; transform-style: preserve-3d; }
+  .coin > * { position: absolute; left: 0; top: 0; backface-visibility: hidden; }
+  /* the face: a raised rim, a reeded edge ring, a recessed field and the engraved value */
+  .face { border-radius: 50%; overflow: hidden;
+    background: radial-gradient(circle at 34% 28%, var(--m0) 0%, var(--m1) 34%, var(--m2) 74%, var(--m3) 100%); }
+  .face .reed { position: absolute; inset: 0; border-radius: 50%; opacity: .35;
+    background: repeating-conic-gradient(from 0deg, rgba(0,0,0,.5) 0deg 1.2deg, rgba(255,255,255,.35) 1.2deg 2.4deg);
+    -webkit-mask: radial-gradient(circle, transparent 0 89%, #000 90.5%); mask: radial-gradient(circle, transparent 0 89%, #000 90.5%); }
+  .face .field { position: absolute; inset: 10%; border-radius: 50%;
+    background: radial-gradient(circle at 62% 70%, var(--m0) 0%, var(--m1) 40%, var(--m2) 100%);
+    box-shadow: inset 0 calc(var(--d) * .022) calc(var(--d) * .03) rgba(0,0,0,.45), inset 0 calc(var(--d) * -.012) calc(var(--d) * .02) rgba(255,255,255,.55), 0 0 0 calc(var(--d) * .006) rgba(0,0,0,.25); }
+  .face .ring2 { position: absolute; inset: 17%; border-radius: 50%; border: calc(var(--d) * .008) solid rgba(0,0,0,.18); box-shadow: 0 calc(var(--d) * .004) 0 rgba(255,255,255,.35); }
+  .face b { position: absolute; left: 0; right: 0; top: 50%; text-align: center; transform: translateY(-50%); white-space: nowrap; line-height: 1;
+    font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: var(--m3); opacity: .9;
+    text-shadow: 0 calc(var(--d) * .006) 0 rgba(255,255,255,.55), 0 calc(var(--d) * -.004) 0 rgba(0,0,0,.35); }
+  .face .sheen { position: absolute; inset: 0; border-radius: 50%; mix-blend-mode: screen; pointer-events: none;
+    background: linear-gradient(115deg, transparent calc(var(--sx, 30%) - 22%), rgba(255,255,255,.55) var(--sx, 30%), transparent calc(var(--sx, 30%) + 22%)); }
+  .face .glint { position: absolute; inset: 0; border-radius: 50%; mix-blend-mode: screen; pointer-events: none; opacity: 0;
+    background: linear-gradient(115deg, transparent calc(var(--gx, -40%) - 9%), rgba(255,255,255,.95) var(--gx, -40%), transparent calc(var(--gx, -40%) + 9%)); }
+  .back { border-radius: 50%; background: radial-gradient(circle at 60% 40%, var(--m1), var(--m2) 70%, var(--m3)); }
+  .strip { transform-origin: 50% 50%; }
+  #floorline { position: absolute; height: calc(var(--u) * 2); background: linear-gradient(90deg, transparent, rgba(255,255,255,.22) 18%, rgba(255,255,255,.3) 50%, rgba(255,255,255,.22) 82%, transparent); }
+  .is-alpha #floorline { display: none; }
+  .refl { position: absolute; border-radius: 50%; pointer-events: none; transform: scaleY(-1);
+    background: radial-gradient(circle at 34% 72%, var(--m0) 0%, var(--m1) 34%, var(--m2) 74%, var(--m3) 100%);
+    -webkit-mask: linear-gradient(180deg, transparent 50%, #000 100%); mask: linear-gradient(180deg, transparent 50%, #000 100%); filter: blur(calc(var(--u) * 5)); }
+  .halo { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0;
+    background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent2) 55%, transparent), color-mix(in srgb, var(--accent) 30%, transparent) 45%, transparent 70%); }
+  .shadow { position: absolute; border-radius: 50%; pointer-events: none; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.55), transparent 70%); }
+  .ringx { position: absolute; border-radius: 50%; pointer-events: none; opacity: 0; border: calc(var(--u) * 4) solid color-mix(in srgb, var(--accent2) 60%, white); box-sizing: border-box; }
+  .lab { position: absolute; white-space: nowrap; text-align: center; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; line-height: 1;
+    color: color-mix(in srgb, var(--ink) 72%, transparent); text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 12) rgba(0,0,0,.6); }
+  .lab.last { color: var(--ink); }
+  .is-alpha .lab { color: #fff; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 10) rgba(0,0,0,.85), 0 0 calc(var(--u) * 2) rgba(0,0,0,.6); }
+  .is-key .lab { text-shadow: none; }
+  .is-key .halo, .is-key .shadow { display: none; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"><i class="l1"></i><i class="l2"></i></div>
+  <div id="stage"><div id="rig"><div id="cam"></div></div></div>
+  <div id="vig"></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, u, W, H, safe } = MV;
+  const root = document.getElementById("root"), D = +root.dataset.duration;
+  const P = MV.portrait, SQ = W === H, LAND = !P && !SQ, A = MV.alpha;
+  const list = (x) => String(x || "").split(",").map((s) => s.trim());
+  // amounts can carry thousands commas ("$1,000"): glue a 3-digit tail back onto the number before it
+  const glue = (arr) => { const o = []; for (const s of arr) { if (o.length && /^\d{3}\b/.test(s) && /\d$/.test(o[o.length - 1])) o[o.length - 1] += "," + s; else o.push(s); } return o; };
+  let values = glue(list(v.values)).filter((s) => s.length), labels = list(v.labels);
+  const N = Math.max(3, Math.min(5, values.length || 4));
+  while (values.length < N) values.push(""); values = values.slice(0, N);
+  labels = labels.slice(0, N); while (labels.length < N) labels.push("");
+  const hasLab = labels.some((s) => s.length);
+
+  // ---- metals, from the first coin to the last: bronze, silver, gold
+  const MET = { b: ["#FFD9B8", "#D08E5B", "#8A4D28", "#4A2412"], s: ["#FFFFFF", "#D3D8DF", "#8D939C", "#454A52"], g: ["#FFF3C4", "#F1C24E", "#B8841C", "#5E3E08"] };
+  const order = { 3: "bsg", 4: "bsgg", 5: "bbsgg" }[N];
+
+  // ---- layout. FLOOR: the coins stand on one glass floor, each g times the last, labels under the floor.
+  // STAIR (9:16 B-roll): they climb a steep staircase, labels to the right of each coin, so the shapes can be big.
+  let box;
+  if (P) box = A ? { x: safe.left, y: safe.top, w: W - safe.left - safe.right, h: H * 0.42 - safe.top } : { x: safe.left, y: safe.top + 20 * u, w: W - safe.left - safe.right, h: H - safe.top - safe.bottom - 20 * u };
+  else if (SQ) box = A ? { x: W * 0.06, y: H * 0.05, w: W * 0.88, h: H * 0.42 } : { x: W * 0.07, y: H * 0.12, w: W * 0.86, h: H * 0.76 };
+  else box = A ? { x: W * 0.5, y: H * 0.14, w: W * 0.45, h: H * 0.6 } : { x: W * 0.07, y: H * 0.14, w: W * 0.86, h: H * 0.72 };
+  const STAIR = P && !A, g = STAIR ? 1.4 : 1.42, ang = 63 * Math.PI / 180;
+  const LFS = Math.round((P ? 40 : 38) * u), LGAP = Math.round((STAIR ? 26 : 34) * u);
+  const cam = document.getElementById("cam");
+  // labels first, so the layout knows how wide each one is
+  const labs = labels.map((t, i) => { const e = document.createElement("div"); e.className = "lab" + (i === N - 1 ? " last" : ""); e.textContent = t; e.style.fontSize = LFS + "px"; cam.append(e);
+    const rg = document.createRange(); rg.selectNodeContents(e); const w = t ? rg.getBoundingClientRect().width : 0; if (!t) e.style.display = "none"; return { e, w }; });
+  if (!STAIR) { // a row of labels must fit the row: shrink them together (not below ~32px) when they would not
+    const tot = labs.reduce((a, l) => a + l.w, 0), room = box.w * 0.94 - (N - 1) * 34 * u;
+    if (tot > room) { const k = Math.max(32 * u / LFS, room / tot); labs.forEach((l) => { l.e.style.fontSize = LFS * k + "px"; l.w *= k; }); } }
+  const lay = (R) => {
+    const r = [...Array(N)].map((_, i) => R * Math.pow(g, i - (N - 1))), c = [];
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    if (STAIR) { c.push([0, 0]);
+      for (let i = 1; i < N; i++) { const d = r[i - 1] + r[i] + 30 * u; c.push([c[i - 1][0] + d * Math.cos(ang), c[i - 1][1] - d * Math.sin(ang)]); }
+      c.forEach(([x, y], i) => { x0 = Math.min(x0, x - r[i]); x1 = Math.max(x1, x + r[i] + (labs[i].w ? 24 * u + labs[i].w : 0)); y0 = Math.min(y0, y - r[i]); y1 = Math.max(y1, y + r[i]); });
+    } else { let x = 0;
+      for (let i = 0; i < N; i++) { if (i) { const need = (labs[i - 1].w + labs[i].w) / 2 + 34 * u - (r[i - 1] + r[i]); x += r[i - 1] + r[i] + Math.max(r[i] * 0.16, 26 * u, need); } c.push([x, -r[i]]); }
+      c.forEach(([x, y], i) => { const hw = Math.max(r[i], labs[i].w / 2); x0 = Math.min(x0, x - hw); x1 = Math.max(x1, x + hw); y0 = Math.min(y0, y - r[i]); });
+      y1 = hasLab ? LGAP + LFS : r[0] * 0.5; }
+    return { r, c, x0, x1, y0, y1 };
+  };
+  let lo = 20 * u, hi = 800 * u, L;
+  for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2, t = lay(m); if (t.x1 - t.x0 <= box.w && t.y1 - t.y0 <= box.h) lo = m; else hi = m; }
+  L = lay(lo);
+  const ox = box.x + (box.w - (L.x1 - L.x0)) / 2 - L.x0, oy = box.y + (box.h - (L.y1 - L.y0)) / 2 - L.y0;
+  const C = L.c.map(([x, y]) => [x + ox, y + oy]), FLOOR = oy;
+  if (!STAIR) { // the glass floor line and the mirrored shapes under it
+    const fl = document.createElement("div"); fl.id = "floorline"; cam.prepend(fl);
+    Object.assign(fl.style, { left: C[0][0] - L.r[0] * 2 + "px", width: C[N - 1][0] - C[0][0] + L.r[0] * 2 + L.r[N - 1] * 2 + "px", top: FLOOR - 1 * u + "px" }); }
+
+  // ---- build each coin: two faces and a real rim of shaded strips
+  const coins = [];
+  for (let i = 0; i < N; i++) {
+    const r = L.r[i], d = 2 * r, th = Math.max(8 * u, d * 0.085), m = MET[order[i]], last = i === N - 1;
+    const slot = document.createElement("div"); slot.className = "slot"; Object.assign(slot.style, { left: C[i][0] + "px", top: C[i][1] + "px" });
+    const sh = document.createElement("div"); sh.className = "shadow";
+    if (STAIR) Object.assign(sh.style, { width: d * 1.5 + "px", height: d * 1.5 + "px", left: C[i][0] - d * 0.75 + "px", top: C[i][1] - d * 0.6 + "px", opacity: 0 });
+    else Object.assign(sh.style, { width: d * 1.15 + "px", height: d * 0.16 + "px", left: C[i][0] - d * 0.575 + "px", top: FLOOR - d * 0.08 + "px", opacity: 0 });
+    const refl = document.createElement("div"); refl.className = "refl";
+    ["--m0", "--m1", "--m2", "--m3"].forEach((k, j) => refl.style.setProperty(k, m[j]));
+    Object.assign(refl.style, { width: d + "px", height: d + "px", left: C[i][0] - r + "px", top: FLOOR + 2 * u + "px", opacity: 0 });
+    if (STAIR) refl.style.display = "none";
+    const halo = document.createElement("div"); halo.className = "halo"; Object.assign(halo.style, { width: d * 2.3 + "px", height: d * 2.3 + "px", left: -d * 1.15 + "px", top: -d * 1.15 + "px" });
+    const ringx = document.createElement("div"); ringx.className = "ringx"; Object.assign(ringx.style, { width: d + "px", height: d + "px", left: -r + "px", top: -r + "px" });
+    const bob = document.createElement("div"); bob.className = "coin";
+    const coin = document.createElement("div"); coin.className = "coin"; bob.append(coin);
+    ["--m0", "--m1", "--m2", "--m3"].forEach((k, j) => coin.style.setProperty(k, m[j])); coin.style.setProperty("--d", d + "px");
+    const face = document.createElement("div"); face.className = "face";
+    face.innerHTML = `<div class="reed"></div><div class="field"></div><div class="ring2"></div><b></b><div class="sheen"></div><div class="glint"></div>`;
+    Object.assign(face.style, { width: d + "px", height: d + "px", transform: `translate(${-r}px, ${-r}px) translateZ(${th / 2}px)` });
+    const back = document.createElement("div"); back.className = "back";
+    Object.assign(back.style, { width: d + "px", height: d + "px", transform: `translate(${-r}px, ${-r}px) translateZ(${-th / 2}px) rotateY(180deg)` });
+    coin.append(back);
+    const S = Math.max(28, Math.round(d / (6 * u)) * 2), sw = (Math.PI * d) / S + 1.2;
+    for (let j = 0; j < S; j++) {
+      const a = (j / S) * 360, s = document.createElement("div"); s.className = "strip";
+      // light from upper left: the rim is bright where its normal faces it
+      const nx = Math.cos((a - 90) * Math.PI / 180), ny = Math.sin((a - 90) * Math.PI / 180), lum = 0.5 + 0.5 * (-0.55 * nx - 0.85 * ny);
+      const col = lum > 0.66 ? m[0] : lum > 0.4 ? m[1] : lum > 0.18 ? m[2] : m[3];
+      Object.assign(s.style, { width: sw + "px", height: th + "px", left: -sw / 2 + "px", top: -th / 2 + "px",
+        background: `repeating-linear-gradient(90deg, ${col} 0 ${Math.max(1.5, sw * 0.5)}px, color-mix(in srgb, ${col} 72%, black) ${Math.max(1.5, sw * 0.5)}px ${sw}px)`,
+        transform: `rotateZ(${a}deg) translateY(${-r}px) rotateX(90deg)`, backfaceVisibility: "visible" });
+      coin.append(s);
+    }
+    coin.append(face);
+    cam.insertBefore(sh, cam.querySelector(".lab")); cam.insertBefore(refl, cam.querySelector(".lab"));
+    slot.append(halo, ringx, bob); cam.append(slot);
+    const b = face.querySelector("b"); b.textContent = values[i]; b.style.fontSize = Math.round(d * 0.3) + "px"; MV.fitText(b, d * 0.56, 10);
+    const lab = labs[i].e;
+    if (STAIR) { const lw = Math.min(labs[i].w, box.x + box.w - (C[i][0] + r + 24 * u)); MV.fitText(lab, lw, 26); Object.assign(lab.style, { left: C[i][0] + r + 24 * u + "px", top: C[i][1] - LFS / 2 + "px", textAlign: "left" }); }
+    else Object.assign(lab.style, { left: C[i][0] - labs[i].w / 2 - 10 * u + "px", width: labs[i].w + 20 * u + "px", top: FLOOR + LGAP + "px" });
+    coins.push({ slot, bob, coin, face, sheen: face.querySelector(".sheen"), glint: face.querySelector(".glint"), halo, ringx, sh, refl, lab, r, d, rot: 0, base: (P ? -16 : -22) + i * 3 });
+  }
+
+  // ---- the camera: frames the coins that have landed, zooming out in log space as each one arrives
+  const fitK = (k) => { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+    for (let i = 0; i < k; i++) { const r = L.r[i], [x, y] = C[i], lw = labs[i].w;
+      if (STAIR) { x0 = Math.min(x0, x - r - 20 * u); x1 = Math.max(x1, x + r + (lw ? 24 * u + lw : 0) + 20 * u); y0 = Math.min(y0, y - r - 20 * u); y1 = Math.max(y1, y + r + 20 * u); }
+      else { const hw = Math.max(r, lw / 2); x0 = Math.min(x0, x - hw - 20 * u); x1 = Math.max(x1, x + hw + 20 * u); y0 = Math.min(y0, y - r - 20 * u); y1 = Math.max(y1, FLOOR + (hasLab ? LGAP + LFS : r * 0.4) + 20 * u); } }
+    const s = Math.min(k === N ? 1 : 2.2, box.w / (x1 - x0), box.h / (y1 - y0));
+    return { s: k === N ? 1 : Math.max(1, s), cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 }; };
+  const views = [...Array(N)].map((_, i) => fitK(i + 1)); views[N - 1] = { s: 1, cx: box.x + box.w / 2, cy: box.y + box.h / 2 };
+  const AX = box.x + box.w / 2, AY = box.y + box.h / 2;
+  const clock = { k: 0 };
+  const paintCam = () => { const k = Math.max(0, Math.min(N - 1, clock.k)), i = Math.min(N - 2, Math.floor(k)), f = k - i, a = views[i], b = views[i + 1];
+    const ls = Math.log(a.s) + (Math.log(b.s) - Math.log(a.s)) * f, s = Math.exp(ls), cx = a.cx + (b.cx - a.cx) * f, cy = a.cy + (b.cy - a.cy) * f;
+    cam.style.transform = `translate(${AX - cx * s}px, ${AY - cy * s}px) scale(${s})`; };
+  paintCam();
+
+  // ---- time
+  const T0 = 0.15, STEP = N >= 5 ? 0.5 : N === 4 ? 0.6 : 0.72, arrive = coins.map((_, i) => T0 + i * STEP + (i === N - 1 ? 0.12 : 0));
+  const LANDT = arrive[N - 1] + 0.62;
+  for (let i = 1; i < N; i++) tl.fromTo(clock, { k: i - 1 }, { k: i, duration: 0.85, ease: "expo.inOut", immediateRender: false, onUpdate: paintCam }, arrive[i] - 0.18);
+  // the rotation drives the face's specular band, so the light really moves across the metal
+  const paintRot = (c) => () => { c.coin.style.transform = `rotateY(${c.rot}deg) rotateX(${c.tilt || 0}deg)`; const k = ((c.rot % 360) + 360) % 360, sgn = k > 180 ? k - 360 : k;
+    c.sheen.style.setProperty("--sx", 50 - sgn * 1.6 + "%"); c.refl.style.transform = `scaleY(-1) scaleX(${Math.max(0.08, Math.abs(Math.cos(c.rot * Math.PI / 180)))})`; };
+  coins.forEach((c, i) => {
+    const t = arrive[i], last = i === N - 1, spin = last ? 900 : 540, pr = paintRot(c), dur = last ? 1.0 : 0.85;
+    c.rot = c.base + spin; c.tilt = 0; pr();
+    if (STAIR) tl.fromTo(c.slot, { z: -900 * u, y: 160 * u, opacity: 0 }, { z: 0, y: 0, opacity: 1, duration: dur, ease: "expo.out" }, t);
+    else { // dropped from above onto the floor, spinning, and it lands
+      tl.fromTo(c.slot, { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, t);
+      tl.fromTo(c.slot, { y: -(360 * u + c.d), z: -300 * u }, { y: 0, z: 0, duration: 0.55, ease: "power2.in" }, t);
+      tl.to(c.slot, { y: -c.d * 0.08, duration: 0.16, ease: "power2.out" }, t + 0.55); tl.to(c.slot, { y: 0, duration: 0.16, ease: "power2.in" }, t + 0.71);
+      tl.fromTo(c.refl, { opacity: 0 }, { opacity: A ? 0 : 0.22, duration: 0.4, ease: "power2.out" }, t + 0.4);
+    }
+    tl.fromTo(c, { rot: c.base + spin }, { rot: c.base, duration: last ? 1.15 : 0.95, ease: "power3.out", onUpdate: pr }, t);
+    tl.fromTo(c, { tilt: 18 }, { tilt: 0, duration: 1.0, ease: "back.out(2)", onUpdate: pr }, t);
+    tl.fromTo(c.sh, { opacity: 0, scaleX: 0.4 }, { opacity: STAIR ? 0.35 : (A ? 0.6 : 0.9), scaleX: 1, duration: 0.6, ease: "expo.out" }, t + 0.2);
+    tl.fromTo(c.lab, { y: 26 * u, opacity: 0, filter: "blur(8px)" }, { y: 0, opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, t + (STAIR ? 0.35 : 0.6));
+    // then a slow drift, so nothing stands still
+    tl.to(c, { rot: c.base + (i % 2 ? 9 : -9), duration: D - t - 1.0, ease: "sine.inOut", onUpdate: pr }, t + 1.0);
+    if (STAIR) tl.fromTo(c.bob, { y: 0 }, { y: (i % 2 ? 1 : -1) * 7 * u, duration: D - t - 0.8, ease: "sine.inOut" }, t + 0.8);
+  });
+  // ---- the moment: the gold coin lands, a glint crosses its face, a ring of light goes out
+  const Lc = coins[N - 1];
+  tl.fromTo(Lc.halo, { opacity: 0, scale: 0.6 }, { opacity: MV.alpha ? 0.55 : 0.9, scale: 1, duration: 0.9, ease: "expo.out" }, LANDT - 0.25);
+  tl.fromTo(Lc.glint, { opacity: 1, "--gx": "-30%" }, { "--gx": "130%", duration: 0.7, ease: "power2.inOut" }, LANDT - 0.1);
+  tl.to(Lc.glint, { opacity: 0, duration: 0.01 }, LANDT + 0.62);
+  tl.fromTo(Lc.ringx, { scale: 1, opacity: 0.9 }, { scale: 2.1, opacity: 0, duration: 0.85, ease: "expo.out", immediateRender: false }, LANDT);
+  tl.to("#stage", { scale: 1.02, duration: 0.07, ease: "power2.out" }, LANDT); tl.to("#stage", { scale: 1, duration: 0.5, ease: "expo.out" }, LANDT + 0.07);
+
+  // ---- the camera drift and the light
+  tl.fromTo("#rig", { rotationX: 4, rotationY: P ? 6 : 8 }, { rotationX: -2, rotationY: P ? -4 : -6, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l1", { x: 0, y: 0 }, { x: -W * 0.1, y: H * 0.05, duration: D, ease: "sine.inOut" }, 0);
+  tl.fromTo("#ground .l2", { x: 0, y: 0 }, { x: W * 0.12, y: -H * 0.04, duration: D, ease: "sine.inOut" }, 0);
+  if (MV.alpha) tl.to("#stage", { opacity: 0, y: -40 * u, filter: "blur(12px)", duration: 0.38, ease: "power3.in" }, D - 0.42);
+  MV.done();
+</script>
+</body>
+</html>

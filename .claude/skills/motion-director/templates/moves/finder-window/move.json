@@ -1,0 +1,5 @@
+{ "id": "finder-window", "name": "File browser window", "oneLiner": "a smoked-glass file browser window rises in 3D; the selection walks down the folder column a row at a time and lands on one folder, which swells and opens: its files wipe into the next column, a glowing box draws round them and a leader drops into a white caption card that names what they are",
+  "category": "productivity", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["glass", "studio"], "from": "new",
+  "tags": ["files", "folder", "file browser", "desktop", "computer", "local", "documents", "context", "memory", "data", "privacy", "organise", "agent", "what it reads"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker points at files on their own machine ('it reads everything in this folder', 'I keep all my scripts here'): the selection lands on the folder as they name it, the card lands on what the files are. Set folders, target (one of them), files and label" }

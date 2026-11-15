@@ -1,0 +1,5 @@
+{ "id": "bond-coupon-drip", "name": "Bond coupon drip", "oneLiner": "an engraved certificate on real paper (guilloche border, rosette medallion with the rate) rises into frame; one by one its perforated coupons tear off, each turns into a real gold coin that arcs onto a growing pile with a green +amount, the running total counts up and the last coin lands with a glint and a ring of light",
+  "category": "business", "kind": "effect", "uses": ["broll", "overlay"], "looks": ["paper", "studio"], "from": "new",
+  "tags": ["money", "bond", "coupon", "interest", "passive income", "dividend", "recurring", "payout", "yield", "compound", "evergreen", "royalty", "finance", "paper", "coins", "3d"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 5.2, "alpha": true,
+  "say": "when the speaker explains something that pays out again and again (a bond's coupon, a dividend, an evergreen video, a product that sells while you sleep): cut in on the asset, each coin lands as a period is counted, the total lands on the punchline" }

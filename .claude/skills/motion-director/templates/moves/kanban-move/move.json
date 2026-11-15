@@ -1,0 +1,5 @@
+{ "id": "kanban-move", "name": "Glass kanban move", "oneLiner": "a task board on a glass pane: a pointer grabs a card in To do, it lifts with a deep shadow, swings across the board while the other cards make room, and drops into Done with a check that pops and the column count ticking up",
+  "category": "productivity", "kind": "effect", "uses": ["overlay", "broll"], "looks": ["glass"], "from": "new",
+  "tags": ["kanban", "board", "task", "todo", "done", "project", "workflow", "productivity", "shipped", "progress", "team", "dark"],
+  "formats": ["9:16", "16:9", "1:1"], "duration": 4.6, "alpha": true,
+  "say": "when the speaker says a task got finished or handed off ('and that one is done', 'the agent closed it out'): the card lifts as they name the task, the check pops on 'done'" }

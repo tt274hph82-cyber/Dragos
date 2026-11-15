@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en" data-composition-variables='[
+  {"id":"titles","type":"string","label":"Video titles separated by |, the first is playing, the rest are queued","default":"How I plan a week of content|The setup I use every day|Five tools I open every morning|Building an agent from scratch|My whole editing workflow"},
+  {"id":"runtimes","type":"string","label":"Durations (m:ss) in the same order, separated by |","default":"12:00|14:02|9:41|18:25|11:07"},
+  {"id":"channel","type":"string","label":"Channel name under the playing title (empty: the brand name)","default":""},
+  {"id":"upNext","type":"string","label":"Queue header","default":"Up next"},
+  {"id":"nowLabel","type":"string","label":"Chip on the player","default":"Now playing"}
+]'>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width={{W}}, height={{H}}" />
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="assets/brand-fonts.css" />
+<style>
+  html, body { margin: 0; width: {{W}}px; height: {{H}}px; overflow: hidden; background: var(--ground, #0E0D12); }
+  #root { position: relative; width: {{W}}px; height: {{H}}px; overflow: hidden; font-family: var(--font-body);
+    --al: color-mix(in srgb, var(--accent) 60%, #fff); --ad: color-mix(in srgb, var(--accent) 66%, #000); }
+  #ground { position: absolute; inset: 0; background:
+    radial-gradient(55% 36% at var(--gx, 50%) var(--gy, 45%), color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(60% 40% at 90% 100%, color-mix(in srgb, var(--accent2) 18%, transparent), transparent 70%), var(--ground); }
+  #grain { position: absolute; inset: 0; opacity: .45; mix-blend-mode: overlay; pointer-events: none;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='1' seed='8'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); }
+  .is-alpha #ground, .is-alpha #grain { display: none; }
+
+  #stage { position: absolute; inset: 0; perspective: calc(var(--u) * 2000); }
+  #card { position: absolute; box-sizing: border-box; border-radius: calc(var(--u) * 44); transform-style: preserve-3d;
+    background: linear-gradient(165deg, rgba(255,255,255,.16), rgba(255,255,255,.06) 55%, rgba(255,255,255,.04));
+    -webkit-backdrop-filter: blur(28px) saturate(160%); backdrop-filter: blur(28px) saturate(160%);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12),
+      0 calc(var(--u) * 50) calc(var(--u) * 100) calc(var(--u) * -30) rgba(0,0,0,.75), 0 0 calc(var(--u) * 110) calc(var(--u) * -20) color-mix(in srgb, var(--accent) 32%, transparent); }
+  .is-alpha #card { background: linear-gradient(165deg, color-mix(in srgb, var(--surface) 88%, #fff), color-mix(in srgb, var(--surface) 96%, transparent)); }
+  .is-key #card { background: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none;
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.42), inset 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  #sheen { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: screen; z-index: 40;
+    background: linear-gradient(108deg, transparent calc(var(--sheen, -40%) - 14%), rgba(255,255,255,.2) var(--sheen, -40%), transparent calc(var(--sheen, -40%) + 14%)); }
+
+  .pimg { position: absolute; inset: 0; } .pimg img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  #player { position: absolute; border-radius: calc(var(--u) * 26); overflow: hidden; background: #0b0b0d; box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12), 0 calc(var(--u) * 24) calc(var(--u) * 50) calc(var(--u) * -20) rgba(0,0,0,.8); }
+  #pgrad { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.4), transparent 28%, transparent 58%, rgba(0,0,0,.78)); }
+  #now { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 12); padding: calc(var(--u) * 9) calc(var(--u) * 18) calc(var(--u) * 9) calc(var(--u) * 14); border-radius: calc(var(--u) * 14);
+    background: rgba(0,0,0,.66); color: #fff; font-size: calc(var(--u) * 30); font-weight: 750; white-space: nowrap; line-height: 1; }
+  .eq { display: flex; align-items: flex-end; gap: calc(var(--u) * 4); height: calc(var(--u) * 26); }
+  .eq i { width: calc(var(--u) * 6); height: 100%; border-radius: calc(var(--u) * 2); background: var(--al); transform-origin: 50% 100%; }
+  #tm { position: absolute; font-size: calc(var(--u) * 32); font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; white-space: nowrap; text-shadow: 0 calc(var(--u) * 2) calc(var(--u) * 8) rgba(0,0,0,.6); line-height: 1; }
+  #pb { position: absolute; height: calc(var(--u) * 9); border-radius: calc(var(--u) * 5); background: rgba(255,255,255,.28); }
+  #pb i { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: inherit; transform-origin: 0 50%; background: linear-gradient(90deg, var(--ad), var(--accent) 70%, var(--al)); box-shadow: 0 0 calc(var(--u) * 12) var(--accent); }
+  #pb b { position: absolute; top: 50%; left: 0; width: calc(var(--u) * 24); height: calc(var(--u) * 24); margin: calc(var(--u) * -12); border-radius: 50%; background: #fff; box-shadow: 0 0 calc(var(--u) * 12) var(--accent); }
+  #pring { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 130); height: calc(var(--u) * 130); margin: calc(var(--u) * -65); border-radius: 50%; box-sizing: border-box; border: calc(var(--u) * 5) solid #fff; opacity: 0; }
+  #pplay { position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 116); height: calc(var(--u) * 116); margin: calc(var(--u) * -58); border-radius: 50%; display: grid; place-items: center; opacity: 0;
+    background: radial-gradient(circle at 35% 28%, rgba(255,255,255,.6), rgba(255,255,255,.2) 60%, rgba(255,255,255,.14)); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: inset 0 calc(var(--u) * 2) 0 rgba(255,255,255,.8), 0 calc(var(--u) * 20) calc(var(--u) * 40) rgba(0,0,0,.45); }
+  .is-key #pplay { background: rgba(255,255,255,.85); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  #pplay svg { width: 42%; height: 42%; margin-left: 8%; }
+  #info { position: absolute; }
+  .it { font-size: calc(var(--u) * 40); font-weight: 750; color: var(--ink); line-height: 1.18; letter-spacing: -0.01em; white-space: nowrap; }
+  .ic { margin-top: calc(var(--u) * 8); font-size: calc(var(--u) * 32); font-weight: 550; color: color-mix(in srgb, var(--ink) 56%, transparent); white-space: nowrap; }
+  #info2 { position: absolute; }
+  #qh { position: absolute; display: flex; align-items: center; gap: calc(var(--u) * 14); font-size: calc(var(--u) * 34); font-weight: 750; color: color-mix(in srgb, var(--ink) 70%, transparent); white-space: nowrap; }
+  #qh svg { width: calc(var(--u) * 40); height: calc(var(--u) * 40); }
+  #qv { position: absolute; overflow: hidden; }
+  .qr { position: absolute; left: 0; right: 0; display: flex; align-items: center; gap: calc(var(--u) * 20); box-sizing: border-box; padding: calc(var(--u) * 10); border-radius: calc(var(--u) * 24); }
+  .qr.hi { background: color-mix(in srgb, var(--accent) 16%, rgba(255,255,255,.04)); box-shadow: inset 0 0 0 calc(var(--u) * 2) color-mix(in srgb, var(--al) 55%, transparent); }
+  .qn { flex: none; width: calc(var(--u) * 40); text-align: center; font-size: calc(var(--u) * 34); font-weight: 800; color: color-mix(in srgb, var(--ink) 50%, transparent); font-variant-numeric: tabular-nums; }
+  .qt { flex: none; position: relative; border-radius: calc(var(--u) * 16); overflow: hidden; background: #111; box-shadow: 0 0 0 calc(var(--u) * 1.5) rgba(255,255,255,.12); }
+  .qt img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  .qd { position: absolute; right: calc(var(--u) * 8); bottom: calc(var(--u) * 8); padding: calc(var(--u) * 3) calc(var(--u) * 9); border-radius: calc(var(--u) * 8); background: rgba(0,0,0,.8); color: #fff; font-size: calc(var(--u) * 24); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .qx { flex: 1; min-width: 0; }
+  .qx b { display: block; font-size: calc(var(--u) * 36); font-weight: 700; color: var(--ink); line-height: 1.2; white-space: nowrap; }
+  .qx span { display: block; margin-top: calc(var(--u) * 6); font-size: calc(var(--u) * 30); font-weight: 550; color: color-mix(in srgb, var(--ink) 52%, transparent); white-space: nowrap; }
+  #fly { position: absolute; left: 0; top: 0; border-radius: calc(var(--u) * 26); overflow: hidden; opacity: 0; z-index: 30; transform-origin: 0 0;
+    box-shadow: 0 calc(var(--u) * 40) calc(var(--u) * 70) calc(var(--u) * -20) rgba(0,0,0,.85), 0 0 0 calc(var(--u) * 2) rgba(255,255,255,.25); }
+  #fly img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="{{DUR}}" data-width="{{W}}" data-height="{{H}}" data-fps="30">
+  <div id="ground"></div>
+  <div id="stage"><div id="card">
+    <div id="player"><div class="pimg" id="pa"></div><div class="pimg" id="pbimg"></div><div id="pgrad"></div>
+      <div id="now"><span class="eq"><i></i><i></i><i></i></span><span id="nowt"></span></div>
+      <div id="tm"></div><div id="pb"><i></i><b></b></div><div id="pring"></div>
+      <div id="pplay"><svg viewBox="0 0 24 24"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.6-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8z" fill="#fff"/></svg></div></div>
+    <div id="info"><div class="it" id="it1"></div><div class="ic" id="ic1"></div></div>
+    <div id="info2"><div class="it" id="it2"></div><div class="ic" id="ic2"></div></div>
+    <div id="qh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h11M4 12h11M4 18h7M17 14.5v6l4.5-3z"/></svg><span id="qht"></span></div>
+    <div id="qv"></div>
+    <div id="fly"></div>
+    <div id="sheen"></div>
+  </div></div>
+  <div id="grain"></div>
+</div>
+<script src="assets/move.js"></script>
+<script>
+  const { v, tl, W, H, safe } = MV;
+  const P = MV.portrait, SQ = W === H, L = W > H, A = MV.alpha;
+  const mode = L && !A ? "side" : (A && !L) ? "compact" : "stack";
+  const u = MV.u * (mode === "side" ? 1.0 : mode === "compact" ? (P ? 0.95 : 0.9) : P ? 1.0 : A ? 0.9 : 0.86);
+  const root = document.getElementById("root"); root.style.setProperty("--u", u + "px");
+  const D = +root.dataset.duration, $ = (s) => document.querySelector(s);
+  const titles = String(v.titles || "").split("|").map((s) => s.trim()).filter(Boolean);
+  const rts = String(v.runtimes || "").split("|").map((s) => s.trim());
+  const scr = v.screens || [], S = (i) => scr.length ? scr[i % scr.length] : null;
+  const chn = v.channel || v.brandName || "";
+  const NQ = mode === "side" ? 4 : mode === "compact" ? 2 : P ? 4 : A ? 3 : 2;   // visible queue rows
+
+  // ---- layout
+  const rw = W - safe.left - safe.right, rh = H - safe.top - safe.bottom, PAD = 26 * u;
+  const rowH = (mode === "side" ? 128 : 120) * u, QG = 10 * u, QHH = 60 * u;
+  let CW, CH, pl, info, qh, qv;
+  if (mode === "side") {
+    CW = Math.min(1640 * u, rw); const qw = 700 * u, pw = CW - 3 * PAD - qw, ph = pw * 9 / 16;
+    pl = { x: PAD, y: PAD, w: pw, h: ph }; info = { x: PAD + 6 * u, y: PAD + ph + 22 * u, w: pw - 12 * u };
+    CH = Math.max(info.y + 110 * u + PAD, PAD + QHH + NQ * (rowH + QG) + PAD);
+    qh = { x: 2 * PAD + pw, y: PAD + 6 * u }; qv = { x: 2 * PAD + pw - 10 * u, y: PAD + QHH, w: qw + 10 * u, h: NQ * (rowH + QG) };
+  } else if (mode === "compact") {
+    CW = P ? rw : Math.min(820 * u, rw); const pw = CW * 0.46, ph = pw * 9 / 16;
+    pl = { x: PAD, y: PAD, w: pw, h: ph }; info = { x: 2 * PAD + pw - 6 * u, y: PAD + ph / 2 - 50 * u, w: CW - pw - 3 * PAD };
+    qh = { x: PAD + 6 * u, y: PAD + ph + 24 * u }; qv = { x: PAD - 10 * u, y: qh.y + QHH - 6 * u, w: CW - 2 * PAD + 20 * u, h: NQ * (rowH + QG) };
+    CH = qv.y + qv.h + PAD - QG;
+  } else {
+    CW = P ? rw : Math.min((A ? 780 : 860) * u, rw); const pw = CW - 2 * PAD, ph = pw * 9 / 16;
+    pl = { x: PAD, y: PAD, w: pw, h: ph }; info = { x: PAD + 6 * u, y: PAD + ph + 22 * u, w: pw - 12 * u };
+    qh = { x: PAD + 6 * u, y: info.y + 110 * u + 10 * u }; qv = { x: PAD - 10 * u, y: qh.y + QHH - 6 * u, w: CW - 2 * PAD + 20 * u, h: NQ * (rowH + QG) };
+    CH = qv.y + qv.h + PAD - QG;
+  }
+  if (mode === "compact") { $("#now").style.display = "none"; $("#tm").style.display = "none"; }
+  if (mode === "compact") $("#info .ic").style.display = $("#info2 .ic").style.display = "none";
+  gsap.set("#player", { left: pl.x, top: pl.y, width: pl.w, height: pl.h });
+  gsap.set(["#info", "#info2"], { left: info.x, top: info.y, width: info.w });
+  gsap.set("#qh", { left: qh.x, top: qh.y }); gsap.set("#qv", { left: qv.x, top: qv.y, width: qv.w, height: qv.h });
+  let x = (W - CW) / 2, y = (H - CH) / 2;
+  if (A) { if (P) { x = safe.left; y = safe.top; } else { x = W - safe.right - CW; y = safe.top; } }
+  gsap.set("#card", { left: x, top: y, width: CW, height: CH });
+  root.style.setProperty("--gx", ((x + CW / 2) / W * 100) + "%"); root.style.setProperty("--gy", ((y + CH / 2) / H * 100) + "%");
+
+  // ---- content
+  if (S(0)) $("#pa").appendChild(MV.img(S(0))); if (S(1)) $("#pbimg").appendChild(MV.img(S(1))); gsap.set("#pbimg", { opacity: 0 });
+  $("#nowt").textContent = v.nowLabel || ""; if (!v.nowLabel) $("#now").style.display = "none";
+  gsap.set("#now", { left: 18 * u, top: 18 * u });
+  gsap.set("#tm", { left: 22 * u, bottom: 40 * u }); gsap.set("#pb", { left: 22 * u, right: 22 * u, bottom: 20 * u });
+  const fitIt = (el, w) => MV.fitText(el, w, 18);
+  $("#it1").textContent = titles[0] || ""; $("#ic1").textContent = chn; $("#it2").textContent = titles[1] || ""; $("#ic2").textContent = chn;
+  if (mode === "compact") { ["#it1", "#it2"].forEach((s) => { const e = $(s); e.style.whiteSpace = "normal"; e.style.textWrap = "balance"; let fs = 40 * u; e.style.fontSize = fs + "px";
+    while (e.getBoundingClientRect().height > fs * 1.18 * 2 + 2 && fs > 22) { fs -= 2; e.style.fontSize = fs + "px"; } }); }
+  else ["#it1", "#it2", "#ic1", "#ic2"].forEach((s) => fitIt($(s), info.w));
+  $("#qht").textContent = v.upNext || "";
+  // the queue: items 1.. of the list, one more than fits so the list stays full after the shift
+  const thW = (mode === "side" ? 180 : 168) * u, thH = thW * 9 / 16;
+  const rows = [];
+  const NT = Math.max(1, titles.length - 1);
+  for (let i = 1; i < NQ + 2 && titles.length > 1; i++) {
+    const ti = 1 + (i - 1) % NT;
+    const r = document.createElement("div"); r.className = "qr";
+    r.innerHTML = `<div class="qn"></div><div class="qt"></div><div class="qx"><b></b><span></span></div>`;
+    r.querySelector(".qn").textContent = i; const t = r.querySelector(".qt"); gsap.set(t, { width: thW, height: thH });
+    if (S(ti)) t.appendChild(MV.img(S(ti))); if (rts[ti]) { const d = document.createElement("span"); d.className = "qd"; d.textContent = rts[ti]; t.appendChild(d); }
+    r.querySelector("b").textContent = titles[ti]; r.querySelector(".qx span").textContent = chn;
+    gsap.set(r, { height: rowH, top: (i - 1) * (rowH + QG) }); $("#qv").appendChild(r);
+    const tw = qv.w - 20 * u - 40 * u - thW - 40 * u; fitIt(r.querySelector("b"), tw); fitIt(r.querySelector(".qx span"), tw);
+    rows.push(r);
+  }
+  // one size for every row title, the smallest any of them needed
+  { const m = Math.min(...rows.map((r) => parseFloat(r.querySelector("b").style.fontSize) || 36 * u)); rows.forEach((r) => { r.querySelector("b").style.fontSize = m + "px"; }); }
+  const mmss = (s) => Math.floor(s / 60) + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+  const secs = (s) => { const m = String(s || "").match(/^(\d+):(\d\d)$/); return m ? +m[1] * 60 + +m[2] : 0; };
+  const d0 = secs(rts[0]) || 720, d1 = secs(rts[1]) || 600;
+  const pw = pl.w - 44 * u;
+
+  // ---- timeline
+  tl.fromTo("#card", { opacity: 0, y: 90 * u, z: -300 * u, rotationX: 22, rotationY: L ? 10 : -8 }, { opacity: 1, y: 0, z: 0, rotationX: 7, rotationY: L ? 5 : -5, duration: 0.9, ease: "expo.out" }, 0.02);
+  tl.fromTo("#card", { filter: "blur(16px)" }, { filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 0.02);
+  tl.to("#card", { rotationX: 2, rotationY: L ? -4 : 4, duration: D - 1.3, ease: "sine.inOut" }, 0.9);
+  tl.fromTo("#pa", { scale: 1.08 }, { scale: 1, duration: 2.2, ease: "sine.out" }, 0);
+  tl.fromTo(["#info", "#qh"], { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "expo.out" }, 0.3);
+  rows.forEach((r, i) => tl.fromTo(r, { opacity: 0, x: 30 * u }, { opacity: i < NQ ? 1 : 0, x: 0, duration: 0.5, ease: "expo.out" }, 0.4 + i * 0.07));
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 1.1, ease: "power2.inOut" }, 0.5);
+  // the equaliser on the chip dances
+  $("#now").querySelectorAll(".eq i").forEach((b, k) => tl.fromTo(b, { scaleY: 0.3 }, { scaleY: 1, duration: 0.22 + k * 0.05, ease: "sine.inOut", yoyo: true, repeat: Math.floor(D / (0.22 + k * 0.05)) - 1 }, 0.05 * k));
+  // 1. the playing video runs out
+  const E = 1.55, pr = { p: 0.9 };
+  const setP = (p, dur) => { gsap.set("#pb i", { scaleX: p }); gsap.set("#pb b", { x: pw * p }); $("#tm").textContent = mmss(p * dur) + " / " + mmss(dur); };
+  setP(0.9, d0);
+  tl.to(pr, { p: 1, duration: E - 0.2, ease: "none", onUpdate: () => setP(pr.p, d0) }, 0.2);
+  // 2. the next row lights, its thumbnail lifts out and flies up into the player
+  const r0 = rows[0], F0 = E + 0.05, F1 = F0 + 0.75;
+  tl.to(r0, { backgroundColor: "rgba(255,255,255,.1)", boxShadow: `inset 0 0 0 ${2 * u}px rgba(255,255,255,.35)`, duration: 0.2, ease: "power2.out" }, E - 0.15);
+  tl.to("#pa", { filter: "brightness(.45)", duration: 0.35, ease: "power2.out" }, E - 0.05);
+  const fly = $("#fly"); if (S(1)) fly.appendChild(MV.img(S(1)));
+  gsap.set(fly, { width: pl.w, height: pl.h });
+  const tx0 = qv.x + 10 * u + 40 * u + 20 * u, ty0 = qv.y + (rowH - thH) / 2, sc0 = thW / pl.w;
+  tl.set(fly, { opacity: 1, x: tx0, y: ty0, scale: sc0 }, F0);
+  tl.set(r0.querySelector(".qt"), { opacity: 0 }, F0);
+  tl.to(fly, { x: pl.x, y: pl.y, scale: 1, duration: F1 - F0, ease: "expo.inOut" }, F0);
+  tl.fromTo(fly, { rotation: 0 }, { rotation: -3, duration: (F1 - F0) / 2, ease: "sine.out", yoyo: true, repeat: 1, immediateRender: false }, F0);
+  // the queue closes the gap: the played row leaves, the rest slide up and renumber
+  tl.to(r0, { opacity: 0, x: -40 * u, duration: 0.3, ease: "power2.in" }, F0 + 0.1);
+  rows.slice(1).forEach((r, i) => {
+    tl.to(r, { top: i * (rowH + QG), duration: 0.6, ease: "expo.inOut" }, F0 + 0.2 + i * 0.04);
+    if (i === NQ - 1) tl.to(r, { opacity: 1, duration: 0.3, ease: "power2.out" }, F0 + 0.62);
+    tl.set(r.querySelector(".qn"), { textContent: i + 1 }, F0 + 0.5 + i * 0.04);
+  });
+  // 3. the moment: it lands in the player, the title swaps, a fresh bar starts playing
+  tl.set("#pbimg", { opacity: 1 }, F1); tl.set(fly, { opacity: 0 }, F1 + 0.02); tl.set("#pa", { opacity: 0 }, F1);
+  tl.to("#player", { scale: 1.035, duration: 0.07, ease: "power2.out" }, F1); tl.to("#player", { scale: 1, duration: 0.5, ease: "back.out(2.6)" }, F1 + 0.07);
+  tl.fromTo("#pplay", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.6)", immediateRender: false }, F1 + 0.02);
+  tl.to("#pplay", { opacity: 0, scale: 0.8, duration: 0.3, ease: "power2.in" }, F1 + 0.6);
+  tl.fromTo("#pring", { opacity: 0.9, scale: 0.9 }, { opacity: 0, scale: 2.2, duration: 0.7, ease: "expo.out", immediateRender: false }, F1 + 0.05);
+  tl.to("#info", { opacity: 0, y: -14 * u, duration: 0.2, ease: "power2.in" }, F1 - 0.3);
+  tl.fromTo("#info2", { opacity: 0, y: 16 * u }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", immediateRender: false }, F1 + 0.08);
+  gsap.set("#info2", { opacity: 0 });
+  const pr2 = { p: 0 };
+  tl.to(pr2, { p: Math.min(0.12, 40 / d1), duration: D - F1, ease: "none", onStart: () => setP(0, d1), onUpdate: () => setP(pr2.p, d1) }, F1);
+  tl.fromTo("#pbimg", { scale: 1 }, { scale: 1.06, duration: D - F1, ease: "sine.out" }, F1);
+  tl.fromTo("#sheen", { "--sheen": "-40%" }, { "--sheen": "140%", duration: 0.9, ease: "power2.inOut", immediateRender: false }, F1 + 0.05);
+  if (A) { tl.to("#card", { y: -120 * u, z: -260 * u, rotationX: -14, opacity: 0, duration: 0.42, ease: "power3.in" }, D - 0.44); tl.to("#card", { filter: "blur(14px)", duration: 0.42, ease: "power3.in" }, D - 0.44); }
+  MV.done();
+</script>
+</body>
+</html>
