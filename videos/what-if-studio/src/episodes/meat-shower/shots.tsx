@@ -174,25 +174,57 @@ const BigX: React.FC<{ t: number; x?: number; y?: number; s?: number }> = ({ t, 
   <g transform={`translate(${x} ${y}) scale(${popIn(t, 5) * s})`}><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#140A12" strokeWidth={80} strokeLinecap="round" /><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#E0283A" strokeWidth={54} strokeLinecap="round" /></g>
 );
 
-// ---------------------------------------------------------------- the hook: "it rained meat"
+// ---------------------------------------------------------------- shared bits for the one-of-a-kind shots
+const Grass: React.FC<{ y: number; c?: string; n?: number; h?: number }> = ({ y, c = '#4A7A3A', n = 60, h = 1 }) => (
+  <g><rect x={-200} y={y} width={W + 400} height={2400} fill={c} />
+    {Array.from({ length: n }, (_, i) => <path key={i} d={`M ${random(`gr${y}${i}`) * 1080} ${y + 10 + random(`gq${y}${i}`) * 600} l ${-10 * h} ${-34 * h} m ${10 * h} ${34 * h} l ${8 * h} ${-38 * h} m ${-8 * h} ${38 * h} l ${18 * h} ${-26 * h}`} stroke="#6AA04A" strokeWidth={4 * h} opacity={0.75} />)}</g>
+);
+const Stars: React.FC<{ t: number; n?: number; h?: number }> = ({ t, n = 70, h = 1100 }) => <g>{Array.from({ length: n }, (_, i) => <circle key={i} cx={random(`ks${i}`) * W} cy={random(`ky${i}`) * h} r={1.5 + random(`kr${i}`) * 2.5} fill="#FFF" opacity={0.3 + 0.6 * Math.abs(Math.sin(t * 0.05 + i))} />)}</g>;
+const Clipping: React.FC<{ t: number }> = ({ t }) => (
+  <g transform={`translate(540 860) rotate(${-4 + (1 - popIn(t)) * 30}) scale(${popIn(t) * 1.1})`}>
+    <ellipse cx={30} cy={420} rx={380} ry={36} fill="#000" opacity={0.5} filter="url(#gsB12)" />
+    <path d="M -340 -430 L 340 -430 L 330 -380 L 344 -320 L 330 -200 L 342 -60 L 332 120 L 344 300 L 336 420 L -330 420 L -342 300 L -332 120 L -344 -60 L -332 -200 L -342 -320 Z" fill="#EFE2C2" stroke={INK} strokeWidth={6} />
+    <text x={0} y={-350} textAnchor="middle" fontFamily="Georgia, serif" fontWeight={700} fontSize={40} fill="#5A4A30">MARCH 1876</text>
+    <path d="M -300 -320 L 300 -320" stroke={INK} strokeWidth={4} />
+    <text x={0} y={-230} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={70} fill="#8A1A1A">A SHOWER</text>
+    <text x={0} y={-150} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={70} fill="#8A1A1A">OF MEAT!</text>
+    <text x={0} y={-90} textAnchor="middle" fontFamily="Georgia, serif" fontSize={34} fill="#3A2A1A">FELL FROM A CLEAR SKY IN KENTUCKY</text>
+    {Array.from({ length: 12 }, (_, i) => <rect key={i} x={-290} y={-40 + i * 34} width={580 * (0.75 + 0.25 * random(`cl${i}`))} height={10} fill="#8A7A60" opacity={0.6} />)}
+  </g>
+);
+const Vultures = (t: number, n: number, cx: number, cy: number, r: number, s: number, puke = false) => Array.from({ length: n }, (_, i) => {
+  const a = t * 0.025 + (i / n) * Math.PI * 2;
+  return <Vulture key={i} x={cx + Math.cos(a) * r} y={cy + Math.sin(a) * r * 0.35} s={s * (0.8 + 0.2 * Math.sin(a))} t={t + i * 9} flip={Math.sin(a) < 0} puke={puke ? (t + i * 7) / 40 : 0} />;
+});
+
+// ---------------------------------------------------------------- the hook: from frame 0, meat pours down at the camera
 export const S1: S = ({ t }) => (
   <g>
-    <Farm id="k1" mood="noon" t={t} />
-    <Punch t={t - 2} lines={['KENTUCKY,', '1876']} y={300} size={116} color="#FFD23F" kicker="A TRUE STORY" />
+    <defs><radialGradient id="kh1" cx="0.5" cy="0.45" r="0.7"><stop offset="0" stopColor="#FFD8A0" /><stop offset="1" stopColor="#7A2A22" /></radialGradient></defs>
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="url(#kh1)" />
+    <Rays x={540} y={760} t={t} o={0.35} n={14} spread={360} dir={0} len={1400} />
+    {/* worm's-eye view: chunks rush toward the lens from the sky's centre */}
+    {Array.from({ length: 22 }, (_, i) => { const q = ((t * 0.018 + i / 22) % 1), a = i * 2.4; return <Meat key={i} x={540 + Math.cos(a) * q * 900} y={760 + Math.sin(a) * q * 1200} s={0.2 + q * 2.6} rot={a * 60 + t * 3} seed={i} glow={q > 0.6 ? 0.5 : 0} />; })}
+    <Punch t={t + 6} lines={['IT RAINED', 'MEAT']} y={290} size={130} color={MEAT} kicker="KENTUCKY, 1876" />
   </g>
 );
 export const S2: S = ({ t }) => (
   <g>
-    <Farm id="k2" mood="warm" t={t} />
-    <MeatRain t={t + 40} n={30} ground={1300} />
-    <Punch t={t - 2} lines={['IT RAINED', 'MEAT']} y={300} size={120} color={MEAT} />
+    <Sky id="k2" mood="warm" sunX={300} sunY={420} />
+    <Grass y={1180} />
+    {/* a fence post in close-up as a chunk slaps onto it */}
+    <rect x={380} y={560} width={300} height={1400} fill="#8A6A44" stroke={INK} strokeWidth={10} />
+    {Array.from({ length: 8 }, (_, i) => <path key={i} d={`M ${400 + i * 34} 580 L ${410 + i * 30} 1900`} stroke="#5A4228" strokeWidth={5} opacity={0.6} />)}
+    <rect x={-200} y={700} width={W + 400} height={70} fill="#7A5A38" stroke={INK} strokeWidth={8} />
+    <Meat x={530} y={Math.min(700, -300 + t * 60)} s={2.6} rot={t < 17 ? t * 8 : 140} seed={11} />
+    {t > 17 ? Array.from({ length: 8 }, (_, i) => { const a = (i / 8) * Math.PI * 2, d = 120 + (t - 17) * 10; return <circle key={i} cx={530 + Math.cos(a) * d} cy={700 + Math.sin(a) * d * 0.5} r={14 - Math.min(10, (t - 17) * 0.6)} fill={MEAT} />; }) : null}
+    <Sfx t={t - 17} text="SPLAT!" x={540} y={460} rot={-8} size={130} />
   </g>
 );
 export const S3: S = ({ t, f }) => (
   <g>
     <Sky id="k3" mood="cold" sunX={-300} sunY={-300} />
     <Clouds mood="cold" t={t} y={380} o={0.8} />
-    {/* "not cats and dogs": a cat and a dog falling, crossed out */}
     <g transform={`translate(330 ${560 + t * 4}) rotate(${t * 3}) scale(${popIn(since(f, 'cats') + 3) * 1.5})`}><ellipse rx={90} ry={60} fill="#F2A040" stroke={INK} strokeWidth={6} /><circle cx={80} cy={-40} r={44} fill="#F2A040" stroke={INK} strokeWidth={6} /><path d="M 56 -78 L 64 -110 L 84 -82 M 96 -82 L 116 -108 L 120 -74" fill="#F2A040" stroke={INK} strokeWidth={6} /><circle cx={92} cy={-44} r={6} fill={INK} /></g>
     <g transform={`translate(760 ${780 + t * 4}) rotate(${-t * 3}) scale(${popIn(since(f, 'dogs') + 3) * 1.5})`}><ellipse rx={100} ry={60} fill="#A8743A" stroke={INK} strokeWidth={6} /><circle cx={-90} cy={-40} r={50} fill="#A8743A" stroke={INK} strokeWidth={6} /><ellipse cx={-120} cy={-20} rx={22} ry={44} fill="#6A4422" stroke={INK} strokeWidth={5} /><circle cx={-100} cy={-48} r={6} fill={INK} /></g>
     <BigX t={since(f, 'dogs') + 6} y={760} s={0.85} />
@@ -200,31 +232,46 @@ export const S3: S = ({ t, f }) => (
 );
 export const S4: S = ({ t }) => (
   <g>
-    <Sky id="k4" mood="noon" sunX={760} sunY={300} />
-    <path d="M -200 1000 Q 540 940 1280 1000 L 1280 2000 L -200 2000 Z" fill="#4A7A3A" />
-    <ellipse cx={540} cy={1140} rx={300} ry={50} fill="#000" opacity={0.4} filter="url(#gsB12)" />
-    <Meat x={540} y={1000} s={4.2 * popIn(t - 1)} rot={-8} seed={3} glow={0.8} />
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#1A0E0C" />
+    <circle cx={540} cy={900} r={520} fill={MEAT} opacity={0.35} filter="url(#gsB48)" style={scr} />
+    <Rays x={540} y={-100} t={t} o={0.35} n={5} spread={30} dir={90} len={1600} />
+    <ellipse cx={540} cy={1150} rx={330} ry={50} fill="#000" opacity={0.6} filter="url(#gsB12)" />
+    <Meat x={540} y={980} s={4.4 * popIn(t - 1)} rot={-8} seed={3} glow={0.8} />
     <Punch t={t - 2} lines={['ACTUAL', 'MEAT']} y={290} size={124} color={MEAT} />
   </g>
 );
 export const S5: S = ({ t }) => (
   <g>
-    <Farm id="k5" mood="noon" t={t} />
-    <Burst t={t - 2} text="NOT KIDDING!" x={540} y={620} size={88} color="#FFD23F" />
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#2A1E14" />
+    <Rays x={540} y={-100} t={t} o={0.3} n={6} spread={50} dir={90} />
+    <Clipping t={t - 1} />
+    <Burst t={t - 8} text="NOT KIDDING!" x={760} y={380} size={64} color="#FFD23F" />
   </g>
 );
 export const S6: S = ({ t }) => (
   <g>
-    <Farm id="k6" mood="danger" t={t} />
-    <MeatRain t={t + 60} n={34} ground={1300} />
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#1C2440" />
+    {Array.from({ length: 30 }, (_, i) => <path key={i} d={`M ${-100 + i * 50} -200 L ${-100 + i * 50} 2200`} stroke="#2A3A60" strokeWidth={2} />)}
+    {/* a map of Kentucky, a red storm cloud over Bath County */}
+    <g transform={`translate(540 900) scale(${popIn(t - 1)}) rotate(-3)`}>
+      <path d="M -420 -40 L -300 -120 L -120 -100 L 40 -170 L 200 -150 L 330 -220 L 420 -160 L 400 -40 L 300 40 L 160 60 L -60 80 L -260 90 L -420 60 Z" fill="#7AA05A" stroke="#F2EADC" strokeWidth={8} />
+      <circle cx={250} cy={-120} r={18} fill={MEAT} stroke="#FFF" strokeWidth={5} />
+      <g transform={`translate(250 ${-300 + Math.sin(t * 0.1) * 8})`}>{[[-60, 0, 60], [0, -20, 76], [60, 0, 60]].map(([cx, cy, r], i) => <circle key={i} cx={cx} cy={cy} r={r} fill={MEAT} stroke={INK} strokeWidth={5} />)}</g>
+      {Array.from({ length: 6 }, (_, i) => { const q = ((t * 0.05 + i / 6) % 1); return <Meat key={i} x={200 + i * 20} y={-240 + q * 120} s={0.22} rot={i * 50} seed={i} />; })}
+      <text x={-260} y={40} fontFamily={FONT.title} fontWeight={800} fontSize={48} fill="#F2EADC">KENTUCKY</text>
+    </g>
     <Punch t={t - 2} lines={['THE KENTUCKY', 'MEAT SHOWER']} y={290} size={100} color={MEAT} />
   </g>
 );
 // ---------------------------------------------------------------- the setup
 export const S7: S = ({ t }) => (
   <g>
-    <Farm id="k7" mood="noon" t={t} />
-    <Calendar t={t - 1} day="3" month="MARCH" year="1876" x={540} y={740} />
+    {/* inside the cabin: log wall, a window, the calendar */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#5A3A20" />
+    {Array.from({ length: 22 }, (_, i) => <rect key={i} x={-200} y={-100 + i * 100} width={W + 400} height={86} rx={40} fill="#7A5230" stroke="#3A2412" strokeWidth={6} />)}
+    <rect x={640} y={300} width={360} height={380} fill="#BFE0FF" stroke="#3A2412" strokeWidth={22} /><path d="M 820 300 L 820 680 M 640 490 L 1000 490" stroke="#3A2412" strokeWidth={14} />
+    <path d="M 640 300 L 1000 300 L 1100 1700 L 560 1700 Z" fill="url(#gsRay)" opacity={0.3} filter="url(#gsB16)" style={scr} />
+    <Calendar t={t - 1} day="3" month="MARCH" year="1876" x={340} y={760} />
   </g>
 );
 export const S8: S = ({ t }) => (
@@ -235,55 +282,73 @@ export const S8: S = ({ t }) => (
 );
 export const S9: S = ({ t }) => (
   <g>
-    <Farm id="k9" mood="warm" t={t} buildings={false} />
-    <Cabin x={300} base={1130} s={0.95} />
-    <Woman x={600} feet={1430} s={1.4} mood="warm" t={t} g="stand" />
-    <Punch t={t - 2} lines={['MRS. CROUCH']} y={300} size={112} color="#FFD23F" kicker="A WOMAN NAMED" />
+    {/* an old oval portrait of Mrs. Crouch */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#3A2A20" />
+    <Glow x={540} y={820} r={600} kind="warm" o={0.4} />
+    <g transform={`translate(540 860) scale(${popIn(t - 1)})`}>
+      <ellipse rx={330} ry={430} fill="#8A6A2A" stroke={INK} strokeWidth={10} />
+      <ellipse rx={290} ry={390} fill="#D8C8A0" />
+      <ellipse rx={290} ry={390} fill="#8A6A40" opacity={0.25} />
+      <path d="M -260 300 Q -200 120 0 110 Q 200 120 260 300 L 260 390 L -260 390 Z" fill="#3A5A8A" />
+      <ellipse cx={0} cy={-60} rx={110} ry={140} fill="#E8C8A0" stroke={INK} strokeWidth={6} />
+      <path d="M -150 -40 Q -160 -230 0 -240 Q 160 -230 150 -40 Q 120 -180 0 -190 Q -120 -180 -150 -40 Z" fill="#E8D8A8" stroke={INK} strokeWidth={6} />
+      <circle cx={-40} cy={-70} r={10} fill={INK} /><circle cx={40} cy={-70} r={10} fill={INK} /><path d="M -30 20 Q 0 36 30 20" stroke={INK} strokeWidth={6} fill="none" />
+      <path d="M -60 90 L 60 90 L 40 130 L -40 130 Z" fill="#F2EADC" />
+    </g>
+    <Punch t={t - 2} lines={['MRS. CROUCH']} y={280} size={110} color="#FFD23F" kicker="A WOMAN NAMED" />
   </g>
 );
 export const S10: S = ({ t }) => (
   <g>
-    <Farm id="k10" mood="warm" t={t} buildings={false} fence={false} />
-    <Kettle x={740} base={1400} s={1.3} t={t} />
-    <Woman x={300} feet={1430} s={1.4} mood="warm" t={t} g="point" flip />
-    <Punch t={t - 2} lines={['MAKING SOAP']} y={300} size={112} color="#FFD23F" />
+    <Sky id="k10" mood="warm" sunX={820} sunY={420} />
+    <Grass y={1240} c="#5A7A3A" />
+    <Kettle x={600} base={1440} s={1.6} t={t} />
+    <Woman x={260} feet={1440} s={1.4} mood="warm" t={t} g="point" flip />
+    <Punch t={t - 2} lines={['MAKING SOAP']} y={300} size={112} color="#FFD23F" kicker="OUTSIDE" />
   </g>
 );
 export const S11: S = ({ t }) => (
   <g>
     <Sky id="k11" mood="noon" sunX={540} sunY={700} />
     <Rays x={540} y={700} t={t} o={0.3} n={12} spread={360} dir={0} len={1200} />
-    <path d="M -200 1250 Q 540 1200 1280 1250 L 1280 2000 L -200 2000 Z" fill="#4A7A3A" />
     <Punch t={t - 2} lines={['TOTALLY', 'CLEAR SKY']} y={290} size={110} color={SKYB} />
   </g>
 );
 export const S12: S = ({ t }) => (
   <g>
     <Sky id="k12" mood="noon" sunX={760} sunY={360} />
-    <MeatRain t={t} n={50} ground={1400} s={0.8} flakes />
-    <path d="M -200 1250 Q 540 1200 1280 1250 L 1280 2000 L -200 2000 Z" fill="#4A7A3A" />
+    <MeatRain t={t} n={50} ground={2400} s={0.8} flakes />
+    {/* over her shoulder: she looks up */}
+    <Woman x={300} feet={2050} s={2.6} mood="noon" t={t} g="shock" />
     <Punch t={t - 2} lines={['FLAKES', 'FALLING']} y={300} size={110} color="#FFFFFF" />
   </g>
 );
-export const S13: S = ({ t, f }) => (
+export const S13: S = ({ t }) => (
   <g>
     <Sky id="k13" mood="cold" sunX={-300} sunY={-300} />
-    {Array.from({ length: 34 }, (_, i) => { const x = random(`sx${i}`) * 1080, y = (random(`sy${i}`) * 1500 + t * 6) % 1500; const red = since(f, 'red') > 0; return <g key={i} transform={`translate(${x} ${y}) rotate(${t * 2 + i * 30})`}>{[0, 60, 120].map((a) => <path key={a} d="M -24 0 L 24 0" stroke={red ? MEAT : '#FFFFFF'} strokeWidth={7} strokeLinecap="round" transform={`rotate(${a})`} />)}</g>; })}
+    {Array.from({ length: 34 }, (_, i) => { const x = random(`sx${i}`) * 1080, y = (random(`sy${i}`) * 1500 + t * 6) % 1500; return <g key={i} transform={`translate(${x} ${y}) rotate(${t * 2 + i * 30})`}>{[0, 60, 120].map((a) => <path key={a} d="M -24 0 L 24 0" stroke="#FFFFFF" strokeWidth={7} strokeLinecap="round" transform={`rotate(${a})`} />)}</g>; })}
     <Punch t={t - 2} lines={['LIKE SNOW...']} y={300} size={110} color="#FFFFFF" />
   </g>
 );
 export const S14: S = ({ t }) => (
   <g>
-    <Sky id="k14" mood="danger" sunX={-300} sunY={-300} />
-    {Array.from({ length: 34 }, (_, i) => { const x = random(`sx${i}`) * 1080, y = (random(`sy${i}`) * 1500 + t * 6) % 1500; return <g key={i} transform={`translate(${x} ${y}) rotate(${t * 2 + i * 30})`}>{[0, 60, 120].map((a) => <path key={a} d="M -24 0 L 24 0" stroke={MEAT} strokeWidth={9} strokeLinecap="round" transform={`rotate(${a})`} />)}</g>; })}
-    <Burst t={t - 2} text="BUT RED!" x={540} y={700} size={120} color={MEAT} />
+    {/* one red flake lands on her open palm */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#6A8AA8" />
+    <Glow x={540} y={900} r={700} kind="red" o={0.4} />
+    <g transform="translate(540 1050) rotate(-8)"><path d="M -260 260 L -260 -40 Q -260 -90 -210 -90 L 220 -90 Q 270 -90 270 -40 L 270 60 Q 270 110 220 110 L 60 110 L 60 260 Z" fill="#E8B88A" stroke={INK} strokeWidth={10} /><path d="M -180 -90 L -180 -200 M -80 -90 L -80 -240 M 20 -90 L 20 -230 M 120 -90 L 120 -190" stroke="#E8B88A" strokeWidth={70} strokeLinecap="round" /><path d="M -180 -90 L -180 -200 M -80 -90 L -80 -240 M 20 -90 L 20 -230 M 120 -90 L 120 -190" stroke={INK} strokeWidth={6} strokeLinecap="round" opacity={0.3} /></g>
+    <Meat x={540} y={Math.min(960, 300 + t * 40)} s={1.2} rot={t * 6} seed={13} glow={0.6} />
+    <Burst t={t - 2} text="BUT RED!" x={540} y={460} size={110} color={MEAT} />
   </g>
 );
 // ---------------------------------------------------------------- the meat
 export const S15: S = ({ t }) => (
   <g>
-    <Farm id="k15" mood="warm" t={t} />
-    <MeatRain t={t + 20} n={36} ground={1250} s={1.3} />
+    {/* the cabin roof in close-up, chunks bouncing off the shingles */}
+    <Sky id="k15" mood="warm" sunX={850} sunY={380} />
+    <path d="M -200 1400 L 540 700 L 1280 1400 L 1280 2400 L -200 2400 Z" fill="#4A3A2A" stroke={INK} strokeWidth={10} />
+    {Array.from({ length: 12 }, (_, r) => <path key={r} d={`M ${540 - (r + 1) * 70} ${700 + (r + 1) * 66} L ${540 + (r + 1) * 70} ${700 + (r + 1) * 66}`} stroke="#2A2014" strokeWidth={6} />)}
+    <rect x={760} y={600} width={90} height={260} fill="#6A6A6A" stroke={INK} strokeWidth={8} />
+    <MeatRain t={t + 20} n={30} ground={1100} s={1.6} seed={4} />
     <Punch t={t - 2} lines={['CHUNKS OF', 'MEAT']} y={300} size={116} color={MEAT} />
   </g>
 );
@@ -291,7 +356,6 @@ export const S16: S = ({ t }) => (
   <g>
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#4A7A3A" />
     <Glow x={540} y={900} r={700} kind="warm" o={0.4} />
-    {/* a hand beside a chunk the size of a palm */}
     <ellipse cx={540} cy={1060} rx={420} ry={60} fill="#000" opacity={0.35} filter="url(#gsB12)" />
     <Meat x={380} y={900} s={2.4} rot={-10} seed={7} glow={0.5} />
     <g transform="translate(740 900) rotate(-10)"><path d="M -110 120 L -110 -40 Q -110 -70 -84 -70 L -84 -170 Q -84 -196 -62 -196 Q -40 -196 -40 -170 L -40 -80 L -36 -200 Q -36 -226 -12 -226 Q 12 -226 12 -200 L 12 -84 L 18 -190 Q 18 -214 40 -214 Q 62 -214 62 -190 L 62 -70 L 66 -150 Q 66 -172 86 -172 Q 106 -172 106 -150 L 106 40 Q 106 120 40 140 L -60 140 Q -110 140 -110 120 Z" fill="#E8B88A" stroke={INK} strokeWidth={8} /></g>
@@ -300,10 +364,13 @@ export const S16: S = ({ t }) => (
 );
 export const S17: S = ({ t }) => (
   <g>
-    <Farm id="k17" mood="warm" t={t} buildings={false} />
-    {[[200, 1180, 1.6], [560, 1150, 1.4], [880, 1200, 1.7]].map(([mx, my, ms], i) => <Meat key={i} x={mx} y={Math.min(my, -200 + (t - i * 5) * 40)} s={ms * popIn(t - i * 5 + 8)} rot={i * 50} seed={i + 9} />)}
-    {[[220, 1100], [580, 1060], [900, 1110]].map(([sx, sy], i) => t - i * 5 > 30 ? <g key={i}>{Array.from({ length: 6 }, (_, k) => <circle key={k} cx={sx + Math.cos(k) * 90} cy={sy + Math.sin(k) * 30} r={10} fill={MEAT} />)}</g> : null)}
-    <Sfx t={t - 30} text="SPLAT!" x={540} y={680} rot={-8} size={140} />
+    {/* the yard at chicken height: hens scatter as chunks hit */}
+    <Sky id="k17" mood="warm" sunX={200} sunY={500} />
+    <Fence y={1080} c="#8A6A44" />
+    <Grass y={1080} c="#6A8A3A" h={1.6} />
+    {[[200, 1180, 1.6], [560, 1150, 1.4], [880, 1200, 1.7]].map(([mx, my, ms], i) => <Meat key={i} x={mx} y={Math.min(my, -200 + (t - i * 5) * 40)} s={ms} rot={i * 50} seed={i + 9} />)}
+    {[[360, 1400], [720, 1450]].map(([cx, cy], i) => <g key={i} transform={`translate(${cx + (i ? 1 : -1) * t * 6} ${cy - Math.abs(Math.sin(t * 0.5 + i)) * 40}) scale(${i ? -1.3 : 1.3} 1.3)`}><ellipse rx={70} ry={50} fill="#F2EADC" stroke={INK} strokeWidth={6} /><circle cx={60} cy={-50} r={30} fill="#F2EADC" stroke={INK} strokeWidth={6} /><path d="M 86 -50 L 110 -42 L 86 -36 Z" fill="#FFB13A" stroke={INK} strokeWidth={4} /><path d="M 52 -82 q 8 -18 18 0" fill="#D8262E" /><path d="M -60 -10 L -120 -60 L -90 0 Z" fill="#F2EADC" stroke={INK} strokeWidth={5} transform={`rotate(${Math.sin(t) * 20} -60 -10)`} /></g>)}
+    <Sfx t={t - 30} text="PLOP! PLOP!" x={540} y={680} rot={-8} size={120} />
   </g>
 );
 export const S18: S = ({ t }) => (
@@ -311,20 +378,30 @@ export const S18: S = ({ t }) => (
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#3A6A2E" />
     {Array.from({ length: 60 }, (_, i) => <path key={i} d={`M ${random(`ax${i}`) * 1080} ${random(`ay${i}`) * 1800} l -8 -24 m 8 24 l 6 -26`} stroke="#5A9A3A" strokeWidth={4} />)}
     <Glow x={540} y={860} r={700} kind="warm" o={0.3} />
-    {/* top-down: the strip of meat across the field */}
     <rect x={220} y={500} width={640 * easeOut(clamp((t - 2) / 20))} height={720} fill={MEAT} opacity={0.18} />
     {Array.from({ length: 40 }, (_, i) => (random(`bx${i}`) * 640 < 640 * easeOut(clamp((t - 2) / 20)) ? <Meat key={i} x={220 + random(`bx${i}`) * 640} y={520 + random(`by${i}`) * 680} s={0.35} rot={i * 40} seed={i} /> : null))}
     <path d="M 220 1260 L 860 1260" stroke="#FFF" strokeWidth={6} /><path d="M 220 1240 L 220 1280 M 860 1240 L 860 1280" stroke="#FFF" strokeWidth={6} />
     <Punch t={t - 6} lines={['100 YARDS']} y={290} size={120} color="#FFD23F" kicker="A STRIP OF MEAT" />
   </g>
 );
+export const S39: S = ({ t }) => (
+  <g>
+    {/* ground level across the field: meat to the horizon */}
+    <Sky id="k39" mood="danger" sunX={540} sunY={900} />
+    <rect x={-200} y={960} width={W + 400} height={1400} fill="#4A6A2A" />
+    {Array.from({ length: 46 }, (_, i) => { const d = random(`fd${i}`), y = 980 + d * d * 900; return <Meat key={i} x={random(`fx${i}`) * 1180 - 50} y={y} s={0.15 + d * 1.6} rot={i * 33} seed={i} />; })}
+    <Punch t={t - 2} lines={['COVERED', 'IN MEAT']} y={290} size={116} color={MEAT} />
+  </g>
+);
 // ---------------------------------------------------------------- the taste test
-const twoGuys = (t: number, g1: Gest, g2: Gest) => <g><Man x={290} feet={1500} s={1.25} mood="warm" t={t} g={g1} hat="bowler" /><Man x={790} feet={1500} s={1.25} mood="warm" t={t} g={g2} hat="cap" flip /></g>;
 export const S19: S = ({ t }) => (
   <g>
-    <Farm id="k19" mood="warm" t={t} buildings={false} />
-    <Meat x={540} y={1440} s={1.4} rot={10} seed={21} glow={0.6} />
-    {twoGuys(t, 'point', 'stand')}
+    {/* two neighbours walking up the dirt road */}
+    <Sky id="k19" mood="warm" sunX={540} sunY={520} />
+    <path d="M -200 1000 Q 540 940 1280 1000 L 1280 2400 L -200 2400 Z" fill="#5A7A3A" />
+    <path d="M 480 1000 L 600 1000 L 1000 2000 L 80 2000 Z" fill="#B8945A" />
+    <Man x={lerp(420, 440, t / 60)} feet={1480 - t * 1.5} s={1.1} mood="warm" t={t} g="run" hat="bowler" />
+    <Man x={lerp(660, 640, t / 60)} feet={1520 - t * 1.5} s={1.15} mood="warm" t={t + 9} g="run" hat="cap" />
     <Punch t={t - 2} lines={['TWO LOCAL', 'GUYS']} y={300} size={110} color="#FFD23F" />
   </g>
 );
@@ -339,16 +416,24 @@ export const S20: S = ({ t }) => (
 );
 export const S21: S = ({ t }) => (
   <g>
-    <Farm id="k21" mood="warm" t={t} buildings={false} />
-    {twoGuys(t, 'point', 'stand')}
-    <Speech t={t - 2} x={330} y={760}><g transform="translate(-20 -40)"><Sheep s={0.9} /></g><text y={100} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={48} fill={INK}>MUTTON!</text></Speech>
+    {/* guy one, close, thinking of a sheep */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#6A8A5A" />
+    <Glow x={300} y={700} r={700} kind="warm" o={0.4} />
+    <Man x={330} feet={1800} s={2.4} mood="warm" t={t} g="stand" hat="bowler" />
+    {[[560, 900, 20], [610, 820, 30]].map(([cx, cy, r], i) => <circle key={i} cx={cx} cy={cy} r={r * popIn(t - 2 - i * 2)} fill="#FFF8EA" stroke={INK} strokeWidth={6} />)}
+    <g transform={`translate(780 600) scale(${popIn(t - 6)})`}>{[[-120, 0, 120], [0, -50, 140], [120, 0, 120], [0, 60, 130]].map(([cx, cy, r], i) => <circle key={i} cx={cx} cy={cy} r={r} fill="#FFF8EA" stroke={INK} strokeWidth={8} />)}{[[-120, 0, 112], [0, -50, 132], [120, 0, 112], [0, 60, 122]].map(([cx, cy, r], i) => <circle key={`f${i}`} cx={cx} cy={cy} r={r} fill="#FFF8EA" />)}<g transform="translate(-20 -10)"><Sheep s={1.1} /></g></g>
+    <Punch t={t - 2} lines={['MUTTON!']} y={300} size={120} color="#FFD23F" />
   </g>
 );
 export const S22: S = ({ t }) => (
   <g>
-    <Farm id="k22" mood="warm" t={t} buildings={false} />
-    {twoGuys(t, 'stand', 'point')}
-    <Speech t={t - 2} x={760} y={760} flip><g transform="translate(-40 -20)"><Deer s={0.8} /></g><text y={100} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={48} fill={INK}>DEER!</text></Speech>
+    {/* the deer itself, in the woods, looking worried */}
+    <Sky id="k22" mood="cold" sunX={800} sunY={360} />
+    {Array.from({ length: 9 }, (_, i) => <Tree key={i} x={i * 140 - 40} base={1250 + (i % 2) * 40} s={1.2 + (i % 3) * 0.3} c={['#2A4A3A', '#3A5A44', '#24402E'][i % 3]} />)}
+    <Grass y={1250} c="#3A5A2E" />
+    <g transform="translate(560 1260)"><Deer s={2.4} /></g>
+    <Sfx t={t - 4} text="ME?!" x={760} y={760} rot={8} size={110} />
+    <Punch t={t - 2} lines={['DEER!']} y={300} size={124} color="#FFD23F" kicker="THE OTHER GUY SAID" />
   </g>
 );
 // ---------------------------------------------------------------- the lab
@@ -361,7 +446,11 @@ export const S23: S = ({ t }) => (
 );
 export const S24: S = ({ t, f }) => (
   <g>
-    <Lab t={t} />
+    {/* the jars on a lit tabletop, landing one per word */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#0E1418" />
+    <ellipse cx={540} cy={1100} rx={620} ry={120} fill="#9FE3FF" opacity={0.18} filter="url(#gsB24)" style={scr} />
+    <Rays x={540} y={-100} t={t} o={0.3} n={5} spread={40} dir={90} len={1500} />
+    <rect x={-200} y={1100} width={W + 400} height={900} fill="#2A2018" />
     <g transform="translate(540 1100) scale(1.2) translate(-540 -1100)">
       <Jar x={300} base={1100} t={since(f, 'lung') + 2} label="LUNG" c="#8A1A1A" />
       <Jar x={540} base={1100} t={since(f, 'muscle') + 2} label="MUSCLE" c="#8A1A1A" />
@@ -372,41 +461,52 @@ export const S24: S = ({ t, f }) => (
 // ---------------------------------------------------------------- where from?
 export const S25: S = ({ t }) => (
   <g>
-    <Farm id="k25" mood="cold" t={t} />
-    <Sfx t={t - 3} text="?" x={540} y={620} size={300} rot={6} />
-    <Punch t={t - 2} lines={['WHERE FROM?']} y={300} size={110} color="#9FE3FF" />
+    {/* a question mark written in the clouds */}
+    <Sky id="k25" mood="cold" sunX={-300} sunY={-300} />
+    <g transform={`translate(540 760) scale(${popIn(t - 1)})`} filter="url(#gsB3)">
+      <path d="M -150 -120 Q -150 -300 0 -300 Q 160 -300 160 -150 Q 160 -40 40 0 L 40 120" stroke="#F2F4FF" strokeWidth={90} fill="none" strokeLinecap="round" />
+      <circle cx={40} cy={260} r={56} fill="#F2F4FF" />
+    </g>
+    <Punch t={t - 2} lines={['WHERE FROM?']} y={290} size={110} color="#9FE3FF" />
   </g>
 );
 export const S26: S = ({ t }) => (
   <g>
-    <Farm id="k26" mood="danger" t={t} buildings={false} />
-    <g transform={`translate(540 ${640 + Math.sin(t * 0.1) * 12}) scale(${popIn(t - 1)})`}>
+    <Sky id="k26" mood="danger" sunX={-300} sunY={-300} />
+    <g transform={`translate(540 ${700 + Math.sin(t * 0.1) * 12}) scale(${popIn(t - 1)})`}>
       {[[-180, 20, 140], [0, -60, 180], [170, 10, 140], [-90, 90, 130], [100, 100, 130]].map(([cx, cy, r], i) => <circle key={i} cx={cx} cy={cy} r={r} fill={MEAT} stroke={INK} strokeWidth={6} />)}
       {Array.from({ length: 10 }, (_, i) => <path key={i} d={`M ${-200 + i * 44} ${-20 + (i % 3) * 50} q 20 -14 40 0`} stroke={FAT} strokeWidth={9} fill="none" strokeLinecap="round" />)}
     </g>
-    <MeatRain t={t + 30} n={20} ground={1250} />
+    {Array.from({ length: 14 }, (_, i) => { const q = ((t * 0.04 + i / 14) % 1); return <Meat key={i} x={360 + (i * 37) % 380} y={900 + q * 600} s={0.4} rot={q * 300} seed={i} />; })}
     <Punch t={t - 2} lines={['A MEAT', 'CLOUD?']} y={290} size={110} color={MEAT} />
   </g>
 );
 export const S27: S = ({ t }) => (
   <g>
-    <S26 t={t + 40} len={60} f={0} />
-    <BigX t={t - 1} y={700} s={1.2} />
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#120608" />
+    <Glow x={540} y={860} r={700} kind="red" o={0.6} />
+    <BigX t={t} y={860} s={1.4} />
+    <Punch t={t} lines={['WRONG.']} y={300} size={150} color="#FF3A3A" />
   </g>
 );
+// ---------------------------------------------------------------- the vultures
 export const S28: S = ({ t }) => (
   <g>
-    <Farm id="k28" mood="warm" t={t} />
-    {[[240, 560, 0.8, 0], [620, 470, 0.65, 1], [880, 620, 0.55, 2], [450, 700, 0.45, 3]].map(([vx, vy, vs, i]) => <Vulture key={i} x={vx + Math.cos(t * 0.03 + i * 2) * 80} y={vy + Math.sin(t * 0.03 + i * 2) * 30} s={vs} t={t + i * 9} flip={i % 2 === 1} />)}
+    {/* the flock circling high, against the sun */}
+    <Sky id="k28" mood="warm" sunX={540} sunY={760} />
+    <Rays x={540} y={760} t={t} o={0.35} n={12} spread={360} dir={0} len={1300} />
+    {Vultures(t, 6, 540, 760, 360, 0.55)}
     <Punch t={t - 2} lines={['VULTURES']} y={300} size={124} color="#FFD23F" kicker="THE BEST GUESS" />
   </g>
 );
 export const S29: S = ({ t }) => (
   <g>
-    <Sky id="k29" mood="warm" sunX={760} sunY={360} />
-    <Clouds mood="warm" t={t} y={520} o={0.5} />
-    <Vulture x={540} y={860} s={1.6} t={t} scared />
-    <Sfx t={t - 3} text="SPOOKED!" x={540} y={460} rot={-6} size={110} />
+    {/* one perched on a dead branch, startled */}
+    <Sky id="k29" mood="cold" sunX={200} sunY={420} />
+    <path d="M 1300 1500 Q 900 1300 700 1180 L 540 1120 L 380 1160 M 700 1180 L 760 1000" stroke="#2A2018" strokeWidth={40} fill="none" strokeLinecap="round" />
+    <Vulture x={560} y={1020 - Math.max(0, t - 6) * 6} s={1.4} t={t} scared={t > 6} />
+    <Sfx t={t - 6} text="!!!" x={760} y={620} rot={8} size={150} />
+    <Punch t={t - 2} lines={['SPOOKED']} y={300} size={124} color="#9FE3FF" kicker="WHEN VULTURES GET" />
   </g>
 );
 export const S30: S = ({ t }) => (
@@ -428,16 +528,25 @@ export const S31: S = ({ t }) => (
 );
 export const S32: S = ({ t }) => (
   <g>
-    <Farm id="k32" mood="warm" t={t} />
-    {[[240, 520, 0.6, 0], [600, 440, 0.5, 1], [860, 560, 0.45, 2]].map(([vx, vy, vs, i]) => <Vulture key={i} x={vx + Math.cos(t * 0.03 + i * 2) * 60} y={vy} s={vs} t={t + i * 9} flip={i % 2 === 1} puke={(t + i * 7) / 40} />)}
-    <MeatRain t={t + 30} n={24} ground={1250} />
+    {/* the diagram: a flock over one farm, with what fell */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#EAD9B0" />
+    {Array.from({ length: 24 }, (_, i) => <path key={i} d={`M ${-100 + i * 60} -200 L ${-100 + i * 60} 2200`} stroke="#D8C498" strokeWidth={2} />)}
+    <rect x={260} y={980} width={560} height={300} fill="#9AC07A" stroke={INK} strokeWidth={8} />
+    <text x={540} y={1250} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={40} fill={INK}>ONE FARM</text>
+    {Array.from({ length: 7 }, (_, i) => { const x = 300 + i * 80; return <g key={i}><path d={`M ${x - 30} ${560 + (i % 2) * 40} q 30 -24 60 0`} stroke={INK} strokeWidth={8} fill="none" />{Array.from({ length: 3 }, (_, k) => { const q = ((t * 0.05 + k / 3 + i * 0.1) % 1); return <circle key={k} cx={x} cy={600 + q * 380} r={9} fill={MEAT} />; })}</g>; })}
+    <Punch t={t - 2} lines={['A BUNCH', 'OF BIRDS']} y={290} size={106} color={INK} />
   </g>
 );
 export const S33: S = ({ t }) => (
   <g>
-    <Farm id="k33" mood="warm" t={t} />
-    <MeatRain t={t + 80} n={30} ground={1250} />
-    <Burst t={t - 2} text="LOST THEIR LUNCH" x={540} y={620} size={70} color="#9BE04A" />
+    {/* bird's-eye: a wing in front, the farm far below */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#5A8A4A" />
+    {Array.from({ length: 8 }, (_, i) => <rect key={i} x={-200 + i * 180} y={-200} width={170} height={2400} fill={i % 2 ? '#6A9A4A' : '#7AA85A'} opacity={0.5} />)}
+    <g transform="translate(560 1050) scale(0.5)"><rect x={-200} y={-160} width={400} height={320} fill="#9A2A22" stroke={INK} strokeWidth={10} /><path d="M -200 0 L 200 0" stroke="#5A1A14" strokeWidth={14} /></g>
+    <g transform="translate(300 1150) scale(0.4)"><rect x={-170} y={-120} width={340} height={240} fill="#4A3A2A" stroke={INK} strokeWidth={10} /></g>
+    {Array.from({ length: 18 }, (_, i) => { const q = ((t * 0.03 + i / 18) % 1); return <Meat key={i} x={300 + (i * 53) % 520} y={500 + q * 700} s={0.5 - q * 0.3} rot={q * 400} seed={i} />; })}
+    <g transform={`translate(-80 300) rotate(${-10 + Math.sin(t * 0.3) * 6})`}><path d="M 0 0 Q 400 -120 900 40 L 860 80 L 880 120 L 820 140 L 830 190 L 740 170 Q 400 140 0 120 Z" fill="#2A2420" stroke={INK} strokeWidth={10} /></g>
+    <Burst t={t - 2} text="LOST THEIR LUNCH" x={560} y={760} size={70} color="#9BE04A" />
   </g>
 );
 // ---------------------------------------------------------------- the callback
@@ -453,33 +562,44 @@ export const S34: S = ({ t }) => (
 );
 export const S35: S = ({ t }) => (
   <g>
-    <Sky id="k35" mood="noon" sunX={760} sunY={360} />
-    <path d="M -200 1250 Q 540 1200 1280 1250 L 1280 2000 L -200 2000 Z" fill="#4A7A3A" />
-    <Man x={540} feet={1560} s={1.6} mood="noon" t={t} g="nose" hat="cap" />
-    <Vulture x={720} y={420} s={0.5} t={t} />
-    <Punch t={t - 2} lines={['KEEP YOUR', 'MOUTH SHUT']} y={300} size={100} color="#FFD23F" />
+    {/* a face, close, lips pressed shut as a chunk bounces off */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#8AB8E0" />
+    <circle cx={540} cy={820} r={420} fill="#E8B88A" stroke={INK} strokeWidth={12} />
+    <ellipse cx={400} cy={740} rx={40} ry={56} fill="#FFF" stroke={INK} strokeWidth={6} /><ellipse cx={680} cy={740} rx={40} ry={56} fill="#FFF" stroke={INK} strokeWidth={6} />
+    <circle cx={400} cy={710} r={20} fill={INK} /><circle cx={680} cy={710} r={20} fill={INK} />
+    <path d="M 420 980 Q 540 960 660 980" stroke={INK} strokeWidth={16} strokeLinecap="round" fill="none" />
+    <Meat x={540 + Math.max(0, t - 14) * 14} y={t < 14 ? 140 + t * 60 : 960 - Math.sin(clamp((t - 14) / 20) * Math.PI) * 300} s={1} rot={t * 10} seed={17} />
+    <Punch t={t - 2} lines={['KEEP YOUR', 'MOUTH SHUT']} y={210} size={96} color="#FFD23F" />
   </g>
 );
 export const S36: S = ({ t }) => (
   <g>
-    <Farm id="k36" mood="warm" t={t} sunX={540} sunY={760} />
+    {/* sunset: vultures sit along the fence */}
+    <Sky id="k36" mood="danger" sunX={540} sunY={900} />
+    <Rays x={540} y={900} t={t} o={0.35} n={12} spread={360} dir={0} len={1300} />
+    <rect x={-200} y={1200} width={W + 400} height={1000} fill="#1A0E0C" />
+    <Fence y={1200} c="#1A0E0C" />
+    {[150, 420, 700, 950].map((vx, i) => <g key={vx} transform={`translate(${vx} 1060) scale(${i % 2 ? -0.7 : 0.7} 0.7)`}><ellipse cx={0} cy={0} rx={60} ry={70} fill="#120A08" /><path d="M 20 -50 Q 40 -100 60 -110" stroke="#120A08" strokeWidth={20} strokeLinecap="round" /><circle cx={64} cy={-116} r={22} fill="#120A08" /></g>)}
     <Punch t={t - 2} lines={["THAT'S REAL."]} y={300} size={120} color="#FFD23F" />
   </g>
 );
 export const S37: S = ({ t }) => (
   <g>
-    <Farm id="k37" mood="night" t={t} sunX={800} sunY={360} />
-    <Lamp x={110} base={1720} s={1.1} t={t} />
-    {twoGuys(t, 'stand', 'stand')}
+    {/* the barn at night, a lantern on a hook */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#140C10" />
+    <Stars t={t} h={600} />
+    <Barn x={540} base={1300} s={2.0} c="#5A1A18" />
+    <Lamp x={880} base={1720} s={1.1} t={t} />
     <Punch t={t - 3} lines={['FOLLOW FOR', 'STRANGE HISTORY']} y={300} size={80} color="#C9A2FF" />
   </g>
 );
-
-// ---------------------------------------------------------------- "wide, then close" pairs
-const close = (Shot: S, cx: number, cy: number, z: number, from: number): S => (p) => (
-  <CloseCtx.Provider value={true}><g transform={`translate(540 ${cy}) scale(${z}) translate(${-cx} ${-cy})`}><Shot {...p} t={p.t + from} /></g></CloseCtx.Provider>
+export const S38: S = ({ t }) => (
+  <g>
+    {/* "See ya!": one vulture flies across the full moon */}
+    <rect x={-200} y={-200} width={W + 400} height={2400} fill="#0A0A1C" />
+    <Stars t={t} h={1900} n={90} />
+    <circle cx={540} cy={820} r={520} fill="#CFE0FF" opacity={0.25} filter="url(#gsB48)" style={scr} />
+    <circle cx={540} cy={820} r={340} fill="#E8EEFF" />
+    <Vulture x={lerp(-200, 1300, clamp(t / 100))} y={820 + Math.sin(t * 0.05) * 30} s={1.0} t={t} />
+  </g>
 );
-export const S38 = close(S37, 540, 1350, 1.5, 40);  // "strange history": the two guys
-export const S39 = close(S15, 540, 1150, 1.5, 30);  // "splat all over the yard"
-export const S40 = close(S10, 700, 1200, 1.5, 30);  // "making soap": the kettle
-export const S41 = close(S18, 540, 860, 1.4, 40);  // "just covered in meat"

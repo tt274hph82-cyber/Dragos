@@ -68,6 +68,9 @@ For "What If" episodes, use the **what-if-animation** skill in `.claude/skills/w
   - Used so far: fountain pen = study corner; parachute = study corner; toothbrush = kitchen, caught brushing his teeth.
 
 ## Story Reels (native 9:16, the reference style)
+- **Two standing rules from the user, for every video (any style):**
+  - **Start with the hook.** Frame 0 is already the most dramatic image of the story with the hook text on it (e.g. meat pouring down at the camera under "IT RAINED MEAT"), never a calm establishing shot or a plain title card.
+  - **Never repeat a scene.** Every shot is a new place, angle or object: no set used twice with the same composition, no `close()` push-ins of an earlier shot, no shot that is an earlier one plus a stamp. Vary the angle (worm's-eye, bird's-eye, over the shoulder, ground level, top-down diagram, interior, close on a hand or face) instead of reusing a set. Check the contact sheet for any two frames that look alike before rendering.
 For story Reels (strange-history storytime, 2-3 min), use the engine's story mode (`defineStory` in `videos/what-if-studio/src/engine/episode.tsx`) and the scene kit in `src/episodes/molasses/kit.tsx`. The current model episode is `dancing-plague` (rebuilt from the user's reference Reel); `molasses` was the first. The reference channel's analysis is in `videos/what-if-studio/STORY-STYLE.md`.
 
 - **No mascot/host in story Reels** (the user removed him). The narrator carries the personality instead.

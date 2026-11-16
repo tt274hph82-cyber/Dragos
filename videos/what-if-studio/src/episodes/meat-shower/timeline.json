@@ -11,7 +11,7 @@
    "t0": 0,
    "t1": 60.0,
    "line": "In eighteen seventy-six, it",
-   "cam": "dive"
+   "cam": "push"
   },
   {
    "shot": "S2",
@@ -90,20 +90,12 @@
   {
    "shot": "S10",
    "a": 485.0,
-   "b": 518.0,
-   "t0": 0,
-   "t1": 33.0,
-   "line": "outside, making",
-   "tr": "whip"
-  },
-  {
-   "shot": "S40",
-   "a": 518.0,
    "b": 538.0,
    "t0": 0,
-   "t1": 20.0,
-   "line": "soap. The",
-   "tr": "zoom"
+   "t1": 53.0,
+   "line": "outside, making soap. The",
+   "cam": "panR",
+   "tr": "whip"
   },
   {
    "shot": "S11",
@@ -163,20 +155,11 @@
   {
    "shot": "S17",
    "a": 829.0,
-   "b": 883.0,
-   "t0": 0,
-   "t1": 54.0,
-   "line": "splat all over the yard and the",
-   "tr": "zoom"
-  },
-  {
-   "shot": "S39",
-   "a": 883.0,
    "b": 907.0,
    "t0": 0,
-   "t1": 24.0,
-   "line": "fence. A",
-   "tr": "whip"
+   "t1": 78.0,
+   "line": "splat all over the yard and the fence. A",
+   "tr": "zoom"
   },
   {
    "shot": "S18",
@@ -189,7 +172,7 @@
    "tr": "ghost"
   },
   {
-   "shot": "S41",
+   "shot": "S39",
    "a": 972.0,
    "b": 1040.0,
    "t0": 0,
@@ -279,6 +262,7 @@
    "t0": 0,
    "t1": 23.0,
    "line": "Wrong. The",
+   "cam": "static",
    "tr": "cut"
   },
   {
@@ -377,7 +361,8 @@
    "b": 2263,
    "t0": 0,
    "t1": 106.0,
-   "line": "strange history. See ya!"
+   "line": "strange history. See ya!",
+   "tr": "zoom"
   }
  ],
  "shots": [
@@ -466,19 +451,10 @@
    "id": "S10",
    "size": "story",
    "key": 30,
-   "len": 33.0,
+   "len": 53.0,
    "first": 485.0,
-   "line": "outside, making",
+   "line": "outside, making soap. The",
    "note": "S10"
-  },
-  {
-   "id": "S40",
-   "size": "story",
-   "key": 30,
-   "len": 20.0,
-   "first": 518.0,
-   "line": "soap. The",
-   "note": "S40"
   },
   {
    "id": "S11",
@@ -538,19 +514,10 @@
    "id": "S17",
    "size": "story",
    "key": 30,
-   "len": 54.0,
+   "len": 78.0,
    "first": 829.0,
-   "line": "splat all over the yard and the",
+   "line": "splat all over the yard and the fence. A",
    "note": "S17"
-  },
-  {
-   "id": "S39",
-   "size": "story",
-   "key": 30,
-   "len": 24.0,
-   "first": 883.0,
-   "line": "fence. A",
-   "note": "S39"
   },
   {
    "id": "S18",
@@ -562,13 +529,13 @@
    "note": "S18"
   },
   {
-   "id": "S41",
+   "id": "S39",
    "size": "story",
    "key": 30,
    "len": 68.0,
    "first": 972.0,
    "line": "just covered in meat. And you know what",
-   "note": "S41"
+   "note": "S39"
   },
   {
    "id": "S19",
@@ -826,11 +793,11 @@
   }
  ],
  "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.2361,
+  "musicVol": 0.0819,
   "voice": "meat-shower/voice.wav",
   "sfx": "meat-shower/sfx.wav",
-  "voiceVol": 0.8,
-  "sfxVol": 0.2388,
-  "music": "meat-shower/music.wav",
-  "musicVol": 0.0819
+  "music": "meat-shower/music.wav"
  }
 }
