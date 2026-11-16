@@ -19,7 +19,7 @@ export const FxDefs: React.FC = () => (
   </defs>
 );
 /** Soft light shafts fanning out from (x, y), slowly turning, added on top (screen). */
-const Rays: React.FC<{ x: number; y: number; t: number; n?: number; len?: number; o?: number; spread?: number; dir?: number; color?: string }> = ({ x, y, t, n = 7, len = 1500, o = 0.3, spread = 70, dir = 90, color }) => (
+export const Rays: React.FC<{ x: number; y: number; t: number; n?: number; len?: number; o?: number; spread?: number; dir?: number; color?: string }> = ({ x, y, t, n = 7, len = 1500, o = 0.3, spread = 70, dir = 90, color }) => (
   <g style={scr} opacity={o} filter="url(#gsB12)">
     {Array.from({ length: n }, (_, i) => {
       const a = (dir - spread / 2 + (i + 0.5) * (spread / n) + Math.sin(t * 0.02 + i) * 2) * Math.PI / 180, w = (spread / n) * 0.35 * Math.PI / 180;
@@ -29,7 +29,7 @@ const Rays: React.FC<{ x: number; y: number; t: number; n?: number; len?: number
   </g>
 );
 /** Layered clouds with lit tops, drifting. */
-const Clouds: React.FC<{ mood: Mood; t: number; y?: number; o?: number }> = ({ mood, t, y = 560, o = 1 }) => {
+export const Clouds: React.FC<{ mood: Mood; t: number; y?: number; o?: number }> = ({ mood, t, y = 560, o = 1 }) => {
   const m = MOODS[mood];
   return (
     <g opacity={o}>
@@ -47,7 +47,7 @@ const Clouds: React.FC<{ mood: Mood; t: number; y?: number; o?: number }> = ({ m
   );
 };
 /** A Victorian gas lamp with a warm halo and a pool of light on the ground. */
-const Lamp: React.FC<{ x: number; base: number; s?: number; t: number }> = ({ x, base, s = 1, t }) => {
+export const Lamp: React.FC<{ x: number; base: number; s?: number; t: number }> = ({ x, base, s = 1, t }) => {
   const fl = 1 + 0.06 * Math.sin(t * 0.7 + x);
   return (
     <g transform={`translate(${x} ${base}) scale(${s})`}>
@@ -62,7 +62,7 @@ const Lamp: React.FC<{ x: number; base: number; s?: number; t: number }> = ({ x,
   );
 };
 /** A soft contact shadow under feet. */
-const Shadow: React.FC<{ x: number; y: number; w: number; o?: number }> = ({ x, y, w, o = 0.55 }) => <ellipse cx={x} cy={y} rx={w} ry={w * 0.18} fill="#000" opacity={o} filter="url(#gsB6)" />;
+export const Shadow: React.FC<{ x: number; y: number; w: number; o?: number }> = ({ x, y, w, o = 0.55 }) => <ellipse cx={x} cy={y} rx={w} ry={w * 0.18} fill="#000" opacity={o} filter="url(#gsB6)" />;
 /** The film look on top of every shot: a teal-and-amber grade, a light leak, floating dust, grain and a vignette. */
 export const Atmos: React.FC<{ f: number }> = ({ f }) => (
   <g>
@@ -196,9 +196,9 @@ const Thames: React.FC<{ id: string; mood: Mood; t: number; stink?: number; boil
 };
 
 // ---------------------------------------------------------------- people
-type Gest = 'nose' | 'gag' | 'run' | 'point' | 'shock' | 'stand' | 'vote' | 'dig';
+export type Gest = 'nose' | 'gag' | 'run' | 'point' | 'shock' | 'stand' | 'vote' | 'dig';
 /** A Victorian Londoner in silhouette with the scene's rim; gest picks the pose. */
-const Man: React.FC<{ x: number; feet: number; s: number; mood: Mood; t: number; g?: Gest; hat?: 'bowler' | 'cap' | 'none'; flip?: boolean; ph?: number }> = ({ x, feet, s, mood, t, g = 'stand', hat = 'bowler', flip, ph = 0 }) => {
+export const Man: React.FC<{ x: number; feet: number; s: number; mood: Mood; t: number; g?: Gest; hat?: 'bowler' | 'cap' | 'none'; flip?: boolean; ph?: number }> = ({ x, feet, s, mood, t, g = 'stand', hat = 'bowler', flip, ph = 0 }) => {
   const p = t * 0.5 + ph, run = Math.sin(p) * 40;
   const yaw = flip ? -0.4 : 0.4;
   const poses: Record<Gest, object> = {

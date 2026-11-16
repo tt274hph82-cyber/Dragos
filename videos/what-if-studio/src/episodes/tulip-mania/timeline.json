@@ -1,0 +1,775 @@
+{
+ "slug": "tulip-mania",
+ "title": "TULIP MANIA",
+ "fps": 30,
+ "total": 2396,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 86.0,
+   "t0": 0,
+   "t1": 86.0,
+   "line": "In sixteen thirty-seven, one flower bulb",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "a": 86.0,
+   "b": 112.0,
+   "t0": 0,
+   "t1": 26.0,
+   "line": "cost more than",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 112.0,
+   "b": 192.0,
+   "t0": 0,
+   "t1": 80.0,
+   "line": "a house. A flower.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S4",
+   "a": 192.0,
+   "b": 217.0,
+   "t0": 0,
+   "t1": 25.0,
+   "line": "Bulb. And",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "a": 217.0,
+   "b": 280.0,
+   "t0": 0,
+   "t1": 63.0,
+   "line": "no, I'm not making this up.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S6",
+   "a": 280.0,
+   "b": 375.0,
+   "t0": 0,
+   "t1": 95.0,
+   "line": "They called it Tulip Mania. Here's the deal.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "a": 375.0,
+   "b": 423.0,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "Holland was rich, and",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "a": 423.0,
+   "b": 521.0,
+   "t0": 0,
+   "t1": 98.0,
+   "line": "tulips were brand new, and super fancy. The",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S9",
+   "a": 521.0,
+   "b": 606.0,
+   "t0": 0,
+   "t1": 85.0,
+   "line": "rarest ones had wild flame stripes.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S10",
+   "a": 606.0,
+   "b": 663.0,
+   "t0": 0,
+   "t1": 57.0,
+   "line": "Everybody wanted one. So",
+   "tr": "whip"
+  },
+  {
+   "shot": "S11",
+   "a": 663.0,
+   "b": 727.0,
+   "t0": 0,
+   "t1": 64.0,
+   "line": "prices went crazy.",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S12",
+   "a": 727.0,
+   "b": 808.0,
+   "t0": 0,
+   "t1": 81.0,
+   "line": "One old list says a single bulb was swapped for",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 808.0,
+   "b": 868.0,
+   "t0": 0,
+   "t1": 60.0,
+   "line": "four fat oxen, eight pigs,",
+   "tr": "whip"
+  },
+  {
+   "shot": "S14",
+   "a": 868.0,
+   "b": 960.0,
+   "t0": 0,
+   "t1": 92.0,
+   "line": "twelve sheep, a ton of butter, and a bed.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "a": 960.0,
+   "b": 1022.0,
+   "t0": 0,
+   "t1": 62.0,
+   "line": "People traded them in taverns, for",
+   "tr": "flash"
+  },
+  {
+   "shot": "S16",
+   "a": 1022.0,
+   "b": 1091.0,
+   "t0": 0,
+   "t1": 69.0,
+   "line": "bulbs still buried in the dirt.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S17",
+   "a": 1091.0,
+   "b": 1173.0,
+   "t0": 0,
+   "t1": 82.0,
+   "line": "Just paper promises. They called it the",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 1173.0,
+   "b": 1205.0,
+   "t0": 0,
+   "t1": 32.0,
+   "line": "wind trade. And",
+   "tr": "whip"
+  },
+  {
+   "shot": "S19",
+   "a": 1205.0,
+   "b": 1254.0,
+   "t0": 0,
+   "t1": 49.0,
+   "line": "legend says a sailor",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "a": 1254.0,
+   "b": 1334.0,
+   "t0": 0,
+   "t1": 80.0,
+   "line": "ate a priceless bulb, because he thought it was an",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 1334.0,
+   "b": 1356.0,
+   "t0": 0,
+   "t1": 22.0,
+   "line": "onion. And you",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "a": 1356.0,
+   "b": 1438.0,
+   "t0": 0,
+   "t1": 82.0,
+   "line": "know what made those stripes so special? A",
+   "tr": "flash"
+  },
+  {
+   "shot": "S23",
+   "a": 1438.0,
+   "b": 1474.0,
+   "t0": 0,
+   "t1": 36.0,
+   "line": "virus. The",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S24",
+   "a": 1474.0,
+   "b": 1549.0,
+   "t0": 0,
+   "t1": 75.0,
+   "line": "flowers were sick. Then, one day in",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S25",
+   "a": 1549.0,
+   "b": 1579.0,
+   "t0": 0,
+   "t1": 30.0,
+   "line": "February, at an",
+   "tr": "flash"
+  },
+  {
+   "shot": "S26",
+   "a": 1579.0,
+   "b": 1623.0,
+   "t0": 0,
+   "t1": 44.0,
+   "line": "auction in Haarlem,",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S27",
+   "a": 1623.0,
+   "b": 1671.0,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "nobody showed up to buy.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S28",
+   "a": 1671.0,
+   "b": 1713.0,
+   "t0": 0,
+   "t1": 42.0,
+   "line": "Boom. Prices",
+   "tr": "flash"
+  },
+  {
+   "shot": "S29",
+   "a": 1713.0,
+   "b": 1776.0,
+   "t0": 0,
+   "t1": 63.0,
+   "line": "crashed in days. Now,",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "a": 1776.0,
+   "b": 1869.0,
+   "t0": 0,
+   "t1": 93.0,
+   "line": "historians say the madness got blown up later.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S31",
+   "a": 1869.0,
+   "b": 1953.0,
+   "t0": 0,
+   "t1": 84.0,
+   "line": "Most folks didn't go broke. But it's still one of the",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S32",
+   "a": 1953.0,
+   "b": 2026.0,
+   "t0": 0,
+   "t1": 73.0,
+   "line": "first famous money bubbles in history.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S33",
+   "a": 2026.0,
+   "b": 2058.0,
+   "t0": 0,
+   "t1": 32.0,
+   "line": "You get it? I",
+   "tr": "flash"
+  },
+  {
+   "shot": "S34",
+   "a": 2058.0,
+   "b": 2104.0,
+   "t0": 0,
+   "t1": 46.0,
+   "line": "said, you get it?",
+   "tr": "whip"
+  },
+  {
+   "shot": "S35",
+   "a": 2104.0,
+   "b": 2182.0,
+   "t0": 0,
+   "t1": 78.0,
+   "line": "People paid a fortune for a sick flower.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S36",
+   "a": 2182.0,
+   "b": 2228.0,
+   "t0": 0,
+   "t1": 46.0,
+   "line": "That's real. That's",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S37",
+   "a": 2228.0,
+   "b": 2288.0,
+   "t0": 0,
+   "t1": 60.0,
+   "line": "about it, folks. Follow for more",
+   "tr": "flash"
+  },
+  {
+   "shot": "S38",
+   "a": 2288.0,
+   "b": 2396,
+   "t0": 0,
+   "t1": 108.0,
+   "line": "strange history. See ya!"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 86.0,
+   "first": 0,
+   "line": "In sixteen thirty-seven, one flower bulb",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 26.0,
+   "first": 86.0,
+   "line": "cost more than",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 80.0,
+   "first": 112.0,
+   "line": "a house. A flower.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 25.0,
+   "first": 192.0,
+   "line": "Bulb. And",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 63.0,
+   "first": 217.0,
+   "line": "no, I'm not making this up.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 95.0,
+   "first": 280.0,
+   "line": "They called it Tulip Mania. Here's the deal.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 375.0,
+   "line": "Holland was rich, and",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 98.0,
+   "first": 423.0,
+   "line": "tulips were brand new, and super fancy. The",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 85.0,
+   "first": 521.0,
+   "line": "rarest ones had wild flame stripes.",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 57.0,
+   "first": 606.0,
+   "line": "Everybody wanted one. So",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 64.0,
+   "first": 663.0,
+   "line": "prices went crazy.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 81.0,
+   "first": 727.0,
+   "line": "One old list says a single bulb was swapped for",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 60.0,
+   "first": 808.0,
+   "line": "four fat oxen, eight pigs,",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 92.0,
+   "first": 868.0,
+   "line": "twelve sheep, a ton of butter, and a bed.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 62.0,
+   "first": 960.0,
+   "line": "People traded them in taverns, for",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 69.0,
+   "first": 1022.0,
+   "line": "bulbs still buried in the dirt.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 82.0,
+   "first": 1091.0,
+   "line": "Just paper promises. They called it the",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 32.0,
+   "first": 1173.0,
+   "line": "wind trade. And",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 49.0,
+   "first": 1205.0,
+   "line": "legend says a sailor",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 80.0,
+   "first": 1254.0,
+   "line": "ate a priceless bulb, because he thought it was an",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 22.0,
+   "first": 1334.0,
+   "line": "onion. And you",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 82.0,
+   "first": 1356.0,
+   "line": "know what made those stripes so special? A",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 36.0,
+   "first": 1438.0,
+   "line": "virus. The",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 75.0,
+   "first": 1474.0,
+   "line": "flowers were sick. Then, one day in",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 30.0,
+   "first": 1549.0,
+   "line": "February, at an",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 44.0,
+   "first": 1579.0,
+   "line": "auction in Haarlem,",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 1623.0,
+   "line": "nobody showed up to buy.",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 42.0,
+   "first": 1671.0,
+   "line": "Boom. Prices",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 63.0,
+   "first": 1713.0,
+   "line": "crashed in days. Now,",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 93.0,
+   "first": 1776.0,
+   "line": "historians say the madness got blown up later.",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 84.0,
+   "first": 1869.0,
+   "line": "Most folks didn't go broke. But it's still one of the",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 73.0,
+   "first": 1953.0,
+   "line": "first famous money bubbles in history.",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 32.0,
+   "first": 2026.0,
+   "line": "You get it? I",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 46.0,
+   "first": 2058.0,
+   "line": "said, you get it?",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 78.0,
+   "first": 2104.0,
+   "line": "People paid a fortune for a sick flower.",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 46.0,
+   "first": 2182.0,
+   "line": "That's real. That's",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 60.0,
+   "first": 2228.0,
+   "line": "about it, folks. Follow for more",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 108.0,
+   "first": 2288.0,
+   "line": "strange history. See ya!",
+   "note": "S38"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#FFE8F0",
+   "o": 0.8,
+   "f": 1
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 7,
+   "f": 1
+  },
+  {
+   "kind": "punch",
+   "f": 108.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#E0283A",
+   "o": 0.7,
+   "f": 283.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF6A7A",
+   "o": 0.6,
+   "f": 524.0
+  },
+  {
+   "kind": "punch",
+   "f": 820.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 918.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 1264.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#9BE04A",
+   "o": 0.7,
+   "f": 1441.0
+  },
+  {
+   "kind": "shake",
+   "len": 12,
+   "amp": 9,
+   "f": 1674.0
+  },
+  {
+   "kind": "flash",
+   "color": "#FF3A3A",
+   "o": 0.5,
+   "f": 1674.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 2061.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.06,
+   "f": 2185.0
+  }
+ ],
+ "audio": {
+  "voice": "tulip-mania/voice.wav",
+  "sfx": "tulip-mania/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1833,
+  "music": "tulip-mania/music.wav",
+  "musicVol": 0.0877
+ }
+}
