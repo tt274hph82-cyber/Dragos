@@ -1,0 +1,1392 @@
+{
+ "id": "MeatShower",
+ "slug": "meat-shower",
+ "topic": "The Kentucky Meat Shower, 1876: a Short in the Great Stink style, every shot showing exactly what is said, a sound on every camera move",
+ "title": [
+  "THE KENTUCKY",
+  "MEAT SHOWER"
+ ],
+ "accent": "MEAT",
+ "lead": 1.0,
+ "tail": 2.0,
+ "voice": {
+  "id": "TtRFBnwQdH1k01vR0hMz",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.38,
+   "similarity_boost": 0.8,
+   "style": 0.5,
+   "use_speaker_boost": true,
+   "speed": 1.06
+  }
+ },
+ "script": [
+  {
+   "beat": "hook",
+   "text": "In eighteen seventy-six, it rained meat. Not cats and dogs. Actual meat."
+  },
+  {
+   "beat": "hook",
+   "text": "And no, I'm not kidding. They called it the Kentucky Meat Shower."
+  },
+  {
+   "beat": "setup",
+   "text": "Here's the deal. March third, on a farm in Bath County, a woman named Mrs. Crouch is outside, making soap."
+  },
+  {
+   "beat": "setup",
+   "text": "The sky is totally clear. And then, flakes start falling. Like snow. But red."
+  },
+  {
+   "beat": "rain",
+   "text": "Chunks of meat, some as big as your palm, splat all over the yard and the fence."
+  },
+  {
+   "beat": "rain",
+   "text": "A strip about a hundred yards long, just covered in meat."
+  },
+  {
+   "beat": "taste",
+   "text": "And you know what two local guys did? They tasted it."
+  },
+  {
+   "beat": "taste",
+   "text": "One said it was mutton. The other said deer."
+  },
+  {
+   "beat": "lab",
+   "text": "Scientists got samples. Some found lung, some found muscle, some found cartilage."
+  },
+  {
+   "beat": "why",
+   "text": "So where did it come from? A cloud made of meat? Wrong."
+  },
+  {
+   "beat": "why",
+   "text": "The best guess is a flock of vultures. When vultures get spooked, they throw up, so they're lighter and can fly away faster."
+  },
+  {
+   "beat": "why",
+   "text": "So that day, a bunch of birds lost their lunch, all over one Kentucky farm."
+  },
+  {
+   "beat": "end",
+   "text": "So next time you stare up at a clear blue sky, maybe keep your mouth shut."
+  },
+  {
+   "beat": "end",
+   "text": "That's real. That's about it, folks. Follow for more strange history. See ya!"
+  }
+ ],
+ "science": [
+  {
+   "claim": "On 3 March 1876, near Rankin in Bath County, Kentucky, flakes and chunks of what looked like meat fell from a clear sky over a strip roughly 100 yards long and 50 wide, while Mrs. Allen Crouch was making soap in her yard; pieces were reported up to about 3-4 inches across; two men tasted it and guessed mutton or venison; samples examined later were identified by different people as lung, muscle and cartilage; the leading explanation is a flock of vultures disgorging (vultures vomit to lighten themselves when startled).",
+   "working": "",
+   "source": "Wikipedia, Kentucky meat shower; Smithsonian; Scientific American (1876); New York Times (10 March 1876)"
+  }
+ ],
+ "sound": {
+  "clips": {
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "whoosh": [
+    "a soft cinematic whoosh transition",
+    1.2
+   ],
+   "page": [
+    "an old book page turning, paper rustle",
+    1.0
+   ],
+   "gasp": [
+    "a single man gasping in surprise, cartoon, short",
+    0.8
+   ],
+   "thud": [
+    "a body falling onto stone cobblestones, soft heavy thud",
+    1.0
+   ],
+   "bell": [
+    "a single distant church bell tolling once, reverberant",
+    4.0
+   ],
+   "gong": [
+    "a deep cinematic low boom hit with a long tail",
+    2.5
+   ],
+   "shimmer": [
+    "a weird psychedelic warbling shimmer sound, swirling synth, short",
+    3.0
+   ],
+   "tick": [
+    "a mechanical clock ticking, close",
+    2.0
+   ],
+   "farm": [
+    "a quiet American farm in the 1800s on a sunny day, birds chirping, a rooster far away, wind in the grass, no voices",
+    10.0
+   ],
+   "soap": [
+    "a big iron kettle of liquid bubbling over a wood fire outdoors, crackling fire",
+    4.0
+   ],
+   "splat": [
+    "several wet meaty splats hitting the ground one after another, gross, cartoon",
+    2.0
+   ],
+   "splat1": [
+    "one big wet meaty splat, gross, cartoon, short",
+    0.8
+   ],
+   "chomp": [
+    "someone taking a big bite and chewing loudly, cartoon, short",
+    1.5
+   ],
+   "hmm": [
+    "a man saying hmmm thoughtfully, short, no words",
+    1.2
+   ],
+   "bubbles": [
+    "glass jars clinking on a wooden lab shelf, short",
+    1.5
+   ],
+   "vultures": [
+    "a flock of large birds flapping their wings overhead, with vulture hissing",
+    3.0
+   ],
+   "squawk": [
+    "a startled big bird squawking loudly, short",
+    1.0
+   ],
+   "vomit": [
+    "a cartoon bird retching and throwing up, gross but funny, short",
+    1.5
+   ],
+   "flyaway": [
+    "large wings flapping fast as birds fly away, whoosh",
+    2.0
+   ],
+   "score": [
+    "a playful, quirky American folk score for a funny but gross true story from 1870s Kentucky: banjo, fiddle, upright bass, washboard and jaw harp, mischievous and bouncy, a little spooky in the middle, building to a silly hoedown, then a wry ending, no vocals",
+    90,
+    "music"
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_push": [
+    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
+    1.2
+   ],
+   "tr_pan": [
+    "a soft quick sideways air swish, a camera pan, short",
+    0.7
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -11.0,
+   "music_lu": -15.0
+  },
+  "events": [
+   [
+    "S1",
+    "tr_thunder",
+    0.55
+   ],
+   [
+    "S1+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S2+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S3",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S3+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S4",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S4+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S5",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S5+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S6",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S6+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S7",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S7+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S8",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S8+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S9",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S9+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S10",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S10+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S40",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S40+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S11",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S11+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S12",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S12+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S13",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S13+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S14",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S14+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S15",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S15+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S16",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S16+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S17",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S17+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S39",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S39+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S18",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S18+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S41",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S41+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S19",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S19+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S20",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S20+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S21",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S21+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S22",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S22+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S23",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S23+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S24",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S24+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S25",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S25+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S26",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S26+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S27",
+    "tr_cut",
+    0.256,
+    "peak"
+   ],
+   [
+    "S27+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S28",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S28+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S29",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S29+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S30",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S30+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S31",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S31+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S32",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S32+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S33",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S33+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S34",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S34+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S35",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S35+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S36",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S36+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S37",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S37+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S38",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S38+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S2+3",
+    "tr_impact",
+    0.614,
+    "onset"
+   ],
+   [
+    "S4+3",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S6+3",
+    "tr_impact",
+    0.614,
+    "onset"
+   ],
+   [
+    "S14+3",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S18+8",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S27+2",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S36+3",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S1",
+    "farm",
+    0.45
+   ],
+   [
+    "S2+8",
+    "splat",
+    0.3
+   ],
+   [
+    "S6+10",
+    "splat",
+    0.3
+   ],
+   [
+    "S10",
+    "soap",
+    0.5
+   ],
+   [
+    "S15+12",
+    "splat",
+    0.3
+   ],
+   [
+    "S17+30",
+    "splat1",
+    0.35
+   ],
+   [
+    "S19",
+    "farm",
+    0.3
+   ],
+   [
+    "S20+4",
+    "chomp",
+    0.6
+   ],
+   [
+    "S21+2",
+    "hmm",
+    0.4
+   ],
+   [
+    "S24",
+    "bubbles",
+    0.4
+   ],
+   [
+    "S28",
+    "vultures",
+    0.5
+   ],
+   [
+    "S29+2",
+    "squawk",
+    0.4
+   ],
+   [
+    "S30+4",
+    "vomit",
+    0.5
+   ],
+   [
+    "S31",
+    "flyaway",
+    0.5
+   ],
+   [
+    "S32+10",
+    "splat",
+    0.25
+   ],
+   [
+    "S36",
+    "farm",
+    0.3
+   ]
+  ]
+ },
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "at": "rained",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "at": "Not",
+   "tr": "whip"
+  },
+  {
+   "shot": "S4",
+   "at": "Actual",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "at": "no",
+   "cam": "pull",
+   "tr": "whip"
+  },
+  {
+   "shot": "S6",
+   "at": "They",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "at": "March",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "at": "farm",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S9",
+   "at": "woman",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "at": "outside",
+   "tr": "whip"
+  },
+  {
+   "shot": "S40",
+   "at": "soap",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "at": "sky",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S12",
+   "at": "flakes",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "at": "Like",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S14",
+   "at": "But",
+   "tr": "flash"
+  },
+  {
+   "shot": "S15",
+   "at": "Chunks",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "at": "some",
+   "tr": "whip"
+  },
+  {
+   "shot": "S17",
+   "at": "splat",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "at": "fence",
+   "tr": "whip"
+  },
+  {
+   "shot": "S18",
+   "at": "strip",
+   "cam": "rise",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S41",
+   "at": "just",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S19",
+   "at": "two",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "at": "tasted",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "at": "One",
+   "cam": "panL",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "at": "other",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S23",
+   "at": "Scientists",
+   "tr": "flash"
+  },
+  {
+   "shot": "S24",
+   "at": "Some",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S25",
+   "at": "where",
+   "tr": "flash"
+  },
+  {
+   "shot": "S26",
+   "at": "cloud",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S27",
+   "at": "Wrong",
+   "tr": "cut"
+  },
+  {
+   "shot": "S28",
+   "at": "best",
+   "tr": "flash"
+  },
+  {
+   "shot": "S29",
+   "at": "When",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "at": "throw",
+   "tr": "whip"
+  },
+  {
+   "shot": "S31",
+   "at": "lighter",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S32",
+   "at": "bunch",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S33",
+   "at": "lost",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S34",
+   "at": "next",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "at": "maybe",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S36",
+   "at": "That's",
+   "tr": "flash"
+  },
+  {
+   "shot": "S37",
+   "at": "about",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S38",
+   "at": "strange"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "set": "farm",
+   "key": 30,
+   "note": "S41"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S1+1",
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.8
+  },
+  {
+   "at": "S1+1",
+   "kind": "shake",
+   "len": 10,
+   "amp": 7
+  },
+  {
+   "at": "S2+3",
+   "kind": "bloom",
+   "color": "#C8384A",
+   "o": 0.6
+  },
+  {
+   "at": "S4+3",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S6+3",
+   "kind": "bloom",
+   "color": "#C8384A",
+   "o": 0.7
+  },
+  {
+   "at": "S14+3",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S17+30",
+   "kind": "shake",
+   "len": 10,
+   "amp": 8
+  },
+  {
+   "at": "S18+8",
+   "kind": "punch"
+  },
+  {
+   "at": "S20+4",
+   "kind": "shake",
+   "len": 6,
+   "amp": 5
+  },
+  {
+   "at": "S27+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S27+2",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  },
+  {
+   "at": "S30+4",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  },
+  {
+   "at": "S36+3",
+   "kind": "punch",
+   "amp": 0.06
+  }
+ ]
+}

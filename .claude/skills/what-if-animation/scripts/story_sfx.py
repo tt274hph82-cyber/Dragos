@@ -1,7 +1,10 @@
 """Story Reels: a sound for every cut (hard cuts too), camera move, keyword and hit, like the reference Reels (whoosh on each transition, a
 riser on a dive, a boom on punches and blooms, a thunder crack on the cold open).
 
-    python <skill>/scripts/story_sfx.py <slug> [--thunder]
+    python <skill>/scripts/story_sfx.py <slug> [--thunder] [--moves] [--gain 1.6]
+
+--moves adds a sound to every camera move too (a soft swell on push/pull/rise, a swish on pans), not only on dives;
+--gain scales every transition and move sound (the user asked to hear a sound on each camera transition).
 
 Rewrites the `tr_*` clips and events in episode.json's `sound` (your own events are kept), so run it after every
 edit change, then sfx.py. The camera and transition rotation mirrors src/engine/episode.tsx (AUTO_CAM / AUTO_TR).
@@ -10,6 +13,8 @@ import json, sys, pathlib
 
 slug = sys.argv[1]
 thunder = '--thunder' in sys.argv
+moves = '--moves' in sys.argv
+gain = float(sys.argv[sys.argv.index('--gain') + 1]) if '--gain' in sys.argv else 1.0
 p = pathlib.Path('src/episodes') / slug / 'episode.json'
 ep = json.loads(p.read_text())
 AUTO_CAM = ['push', 'panL', 'dive', 'pull', 'panR', 'push', 'rise']
@@ -25,9 +30,11 @@ CLIPS = {
     'tr_tick': ['a fast mechanical counter ticking up, short', 1.2],
     'tr_cut': ['a very short punchy swish pop for a hard cut, cartoon, crisp', 0.6],
     'tr_hit': ['a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word', 0.6],
+    'tr_push': ['a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short', 1.2],
+    'tr_pan': ['a soft quick sideways air swish, a camera pan, short', 0.7],
     'tr_thunder': ['a huge close thunder crack with a long rolling thunder rumble, cinematic storm', 6.0],
 }
-GAIN = {'tr_cut': 0.16, 'tr_hit': 0.2, 'tr_whoosh': 0.22, 'tr_zoom': 0.26, 'tr_flash': 0.3, 'tr_whip': 0.22, 'tr_ghost': 0.16, 'tr_riser': 0.13, 'tr_impact': 0.32, 'tr_tick': 0.18}
+GAIN = {'tr_push': 0.12, 'tr_pan': 0.14, 'tr_cut': 0.16, 'tr_hit': 0.2, 'tr_whoosh': 0.22, 'tr_zoom': 0.26, 'tr_flash': 0.3, 'tr_whip': 0.22, 'tr_ghost': 0.16, 'tr_riser': 0.13, 'tr_impact': 0.32, 'tr_tick': 0.18}
 TR_CLIP = {'cut': 'tr_cut', 'ghost': 'tr_ghost', 'zoom': 'tr_zoom', 'flash': 'tr_flash', 'whip': 'tr_whip', 'dissolve': 'tr_whoosh'}
 
 snd = ep.setdefault('sound', {'clips': {}, 'events': []})
@@ -49,6 +56,10 @@ for i, e in enumerate(ep['edit']):
         auto.append([cue, c, GAIN[c], 'peak'])
     if cam == 'dive':
         auto.append([f'{cue}+4', 'tr_riser', GAIN['tr_riser']])
+    elif moves and cam in ('panL', 'panR', 'drift'):
+        auto.append([f'{cue}+5', 'tr_pan', GAIN['tr_pan']])
+    elif moves and cam in ('push', 'pull', 'rise', 'zoomOut', 'tiltDown'):
+        auto.append([f'{cue}+5', 'tr_push', GAIN['tr_push']])
 for f in ep.get('fx', []):
     if f['kind'] in ('punch', 'bloom'):
         auto.append([f['at'], 'tr_impact', GAIN['tr_impact'] * (1.2 if f['kind'] == 'bloom' else 1), 'onset'])
@@ -69,6 +80,10 @@ for a in auto:
     k = (a[0], a[1])
     if k not in seen:
         seen.add(k); ded.append(a)
+if gain != 1.0:
+    for a in ded:
+        if a[1] != 'tr_thunder':
+            a[2] = round(a[2] * gain, 3)
 snd['events'] = ded + events
 p.write_text(json.dumps(ep, indent=1))
 print(f'{len(ded)} automatic sound events ({sum(1 for a in ded if a[1] != "tr_impact")} on cuts and moves, {sum(1 for a in ded if a[1] == "tr_impact")} hits){" + thunder" if thunder else ""}')

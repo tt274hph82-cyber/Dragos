@@ -1,0 +1,836 @@
+{
+ "slug": "meat-shower",
+ "title": "THE KENTUCKY MEAT SHOWER",
+ "fps": 30,
+ "total": 2263,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 60.0,
+   "t0": 0,
+   "t1": 60.0,
+   "line": "In eighteen seventy-six, it",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "a": 60.0,
+   "b": 102.0,
+   "t0": 0,
+   "t1": 42.0,
+   "line": "rained meat.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 102.0,
+   "b": 147.0,
+   "t0": 0,
+   "t1": 45.0,
+   "line": "Not cats and dogs.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S4",
+   "a": 147.0,
+   "b": 187.0,
+   "t0": 0,
+   "t1": 40.0,
+   "line": "Actual meat. And",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "a": 187.0,
+   "b": 238.0,
+   "t0": 0,
+   "t1": 51.0,
+   "line": "no, I'm not kidding.",
+   "cam": "pull",
+   "tr": "whip"
+  },
+  {
+   "shot": "S6",
+   "a": 238.0,
+   "b": 346.0,
+   "t0": 0,
+   "t1": 108.0,
+   "line": "They called it the Kentucky Meat Shower. Here's the deal.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "a": 346.0,
+   "b": 381.0,
+   "t0": 0,
+   "t1": 35.0,
+   "line": "March third, on a",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "a": 381.0,
+   "b": 433.0,
+   "t0": 0,
+   "t1": 52.0,
+   "line": "farm in Bath County, a",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S9",
+   "a": 433.0,
+   "b": 485.0,
+   "t0": 0,
+   "t1": 52.0,
+   "line": "woman named Mrs. Crouch is",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 485.0,
+   "b": 518.0,
+   "t0": 0,
+   "t1": 33.0,
+   "line": "outside, making",
+   "tr": "whip"
+  },
+  {
+   "shot": "S40",
+   "a": 518.0,
+   "b": 538.0,
+   "t0": 0,
+   "t1": 20.0,
+   "line": "soap. The",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "a": 538.0,
+   "b": 637.0,
+   "t0": 0,
+   "t1": 99.0,
+   "line": "sky is totally clear. And then,",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S12",
+   "a": 637.0,
+   "b": 679.0,
+   "t0": 0,
+   "t1": 42.0,
+   "line": "flakes start falling.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S13",
+   "a": 679.0,
+   "b": 709.0,
+   "t0": 0,
+   "t1": 30.0,
+   "line": "Like snow.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S14",
+   "a": 709.0,
+   "b": 733.0,
+   "t0": 0,
+   "t1": 24.0,
+   "line": "But red.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S15",
+   "a": 733.0,
+   "b": 772.0,
+   "t0": 0,
+   "t1": 39.0,
+   "line": "Chunks of meat,",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S16",
+   "a": 772.0,
+   "b": 829.0,
+   "t0": 0,
+   "t1": 57.0,
+   "line": "some as big as your palm,",
+   "tr": "whip"
+  },
+  {
+   "shot": "S17",
+   "a": 829.0,
+   "b": 883.0,
+   "t0": 0,
+   "t1": 54.0,
+   "line": "splat all over the yard and the",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "a": 883.0,
+   "b": 907.0,
+   "t0": 0,
+   "t1": 24.0,
+   "line": "fence. A",
+   "tr": "whip"
+  },
+  {
+   "shot": "S18",
+   "a": 907.0,
+   "b": 972.0,
+   "t0": 0,
+   "t1": 65.0,
+   "line": "strip about a hundred yards long,",
+   "cam": "rise",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S41",
+   "a": 972.0,
+   "b": 1040.0,
+   "t0": 0,
+   "t1": 68.0,
+   "line": "just covered in meat. And you know what",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S19",
+   "a": 1040.0,
+   "b": 1093.0,
+   "t0": 0,
+   "t1": 53.0,
+   "line": "two local guys did? They",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "a": 1093.0,
+   "b": 1116.0,
+   "t0": 0,
+   "t1": 23.0,
+   "line": "tasted it.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 1116.0,
+   "b": 1177.0,
+   "t0": 0,
+   "t1": 61.0,
+   "line": "One said it was mutton. The",
+   "cam": "panL",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "a": 1177.0,
+   "b": 1215.0,
+   "t0": 0,
+   "t1": 38.0,
+   "line": "other said deer.",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S23",
+   "a": 1215.0,
+   "b": 1270.0,
+   "t0": 0,
+   "t1": 55.0,
+   "line": "Scientists got samples.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S24",
+   "a": 1270.0,
+   "b": 1399.0,
+   "t0": 0,
+   "t1": 129.0,
+   "line": "Some found lung, some found muscle, some found cartilage. So",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S25",
+   "a": 1399.0,
+   "b": 1446.0,
+   "t0": 0,
+   "t1": 47.0,
+   "line": "where did it come from? A",
+   "tr": "flash"
+  },
+  {
+   "shot": "S26",
+   "a": 1446.0,
+   "b": 1496.0,
+   "t0": 0,
+   "t1": 50.0,
+   "line": "cloud made of meat?",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S27",
+   "a": 1496.0,
+   "b": 1519.0,
+   "t0": 0,
+   "t1": 23.0,
+   "line": "Wrong. The",
+   "tr": "cut"
+  },
+  {
+   "shot": "S28",
+   "a": 1519.0,
+   "b": 1595.0,
+   "t0": 0,
+   "t1": 76.0,
+   "line": "best guess is a flock of vultures.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S29",
+   "a": 1595.0,
+   "b": 1644.0,
+   "t0": 0,
+   "t1": 49.0,
+   "line": "When vultures get spooked, they",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "a": 1644.0,
+   "b": 1684.0,
+   "t0": 0,
+   "t1": 40.0,
+   "line": "throw up, so they're",
+   "tr": "whip"
+  },
+  {
+   "shot": "S31",
+   "a": 1684.0,
+   "b": 1788.0,
+   "t0": 0,
+   "t1": 104.0,
+   "line": "lighter and can fly away faster. So that day, a",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S32",
+   "a": 1788.0,
+   "b": 1812.0,
+   "t0": 0,
+   "t1": 24.0,
+   "line": "bunch of birds",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S33",
+   "a": 1812.0,
+   "b": 1921.0,
+   "t0": 0,
+   "t1": 109.0,
+   "line": "lost their lunch, all over one Kentucky farm. So",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S34",
+   "a": 1921.0,
+   "b": 2006.0,
+   "t0": 0,
+   "t1": 85.0,
+   "line": "next time you stare up at a clear blue sky,",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "a": 2006.0,
+   "b": 2054.0,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "maybe keep your mouth shut.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S36",
+   "a": 2054.0,
+   "b": 2097.0,
+   "t0": 0,
+   "t1": 43.0,
+   "line": "That's real. That's",
+   "tr": "flash"
+  },
+  {
+   "shot": "S37",
+   "a": 2097.0,
+   "b": 2157.0,
+   "t0": 0,
+   "t1": 60.0,
+   "line": "about it, folks. Follow for more",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S38",
+   "a": 2157.0,
+   "b": 2263,
+   "t0": 0,
+   "t1": 106.0,
+   "line": "strange history. See ya!"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 60.0,
+   "first": 0,
+   "line": "In eighteen seventy-six, it",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 42.0,
+   "first": 60.0,
+   "line": "rained meat.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 45.0,
+   "first": 102.0,
+   "line": "Not cats and dogs.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 40.0,
+   "first": 147.0,
+   "line": "Actual meat. And",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 51.0,
+   "first": 187.0,
+   "line": "no, I'm not kidding.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 108.0,
+   "first": 238.0,
+   "line": "They called it the Kentucky Meat Shower. Here's the deal.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 35.0,
+   "first": 346.0,
+   "line": "March third, on a",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 52.0,
+   "first": 381.0,
+   "line": "farm in Bath County, a",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 52.0,
+   "first": 433.0,
+   "line": "woman named Mrs. Crouch is",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 33.0,
+   "first": 485.0,
+   "line": "outside, making",
+   "note": "S10"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 30,
+   "len": 20.0,
+   "first": 518.0,
+   "line": "soap. The",
+   "note": "S40"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 99.0,
+   "first": 538.0,
+   "line": "sky is totally clear. And then,",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 42.0,
+   "first": 637.0,
+   "line": "flakes start falling.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 30.0,
+   "first": 679.0,
+   "line": "Like snow.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 24.0,
+   "first": 709.0,
+   "line": "But red.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 39.0,
+   "first": 733.0,
+   "line": "Chunks of meat,",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 57.0,
+   "first": 772.0,
+   "line": "some as big as your palm,",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 54.0,
+   "first": 829.0,
+   "line": "splat all over the yard and the",
+   "note": "S17"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 30,
+   "len": 24.0,
+   "first": 883.0,
+   "line": "fence. A",
+   "note": "S39"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 65.0,
+   "first": 907.0,
+   "line": "strip about a hundred yards long,",
+   "note": "S18"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "key": 30,
+   "len": 68.0,
+   "first": 972.0,
+   "line": "just covered in meat. And you know what",
+   "note": "S41"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 53.0,
+   "first": 1040.0,
+   "line": "two local guys did? They",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 23.0,
+   "first": 1093.0,
+   "line": "tasted it.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 61.0,
+   "first": 1116.0,
+   "line": "One said it was mutton. The",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 38.0,
+   "first": 1177.0,
+   "line": "other said deer.",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 55.0,
+   "first": 1215.0,
+   "line": "Scientists got samples.",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 129.0,
+   "first": 1270.0,
+   "line": "Some found lung, some found muscle, some found cartilage. So",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 47.0,
+   "first": 1399.0,
+   "line": "where did it come from? A",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 50.0,
+   "first": 1446.0,
+   "line": "cloud made of meat?",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 23.0,
+   "first": 1496.0,
+   "line": "Wrong. The",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 76.0,
+   "first": 1519.0,
+   "line": "best guess is a flock of vultures.",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 49.0,
+   "first": 1595.0,
+   "line": "When vultures get spooked, they",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 40.0,
+   "first": 1644.0,
+   "line": "throw up, so they're",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 104.0,
+   "first": 1684.0,
+   "line": "lighter and can fly away faster. So that day, a",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 24.0,
+   "first": 1788.0,
+   "line": "bunch of birds",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 109.0,
+   "first": 1812.0,
+   "line": "lost their lunch, all over one Kentucky farm. So",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 85.0,
+   "first": 1921.0,
+   "line": "next time you stare up at a clear blue sky,",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 2006.0,
+   "line": "maybe keep your mouth shut.",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 43.0,
+   "first": 2054.0,
+   "line": "That's real. That's",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 60.0,
+   "first": 2097.0,
+   "line": "about it, folks. Follow for more",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 106.0,
+   "first": 2157.0,
+   "line": "strange history. See ya!",
+   "note": "S38"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.8,
+   "f": 1
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 7,
+   "f": 1
+  },
+  {
+   "kind": "bloom",
+   "color": "#C8384A",
+   "o": 0.6,
+   "f": 63.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 150.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#C8384A",
+   "o": 0.7,
+   "f": 241.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 712.0
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 8,
+   "f": 859.0
+  },
+  {
+   "kind": "punch",
+   "f": 915.0
+  },
+  {
+   "kind": "shake",
+   "len": 6,
+   "amp": 5,
+   "f": 1097.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1498.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 1498.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 1648.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.06,
+   "f": 2057.0
+  }
+ ],
+ "audio": {
+  "voice": "meat-shower/voice.wav",
+  "sfx": "meat-shower/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.2388,
+  "music": "meat-shower/music.wav",
+  "musicVol": 0.0819
+ }
+}
