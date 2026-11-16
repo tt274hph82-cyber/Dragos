@@ -174,6 +174,101 @@ const BigX: React.FC<{ t: number; x?: number; y?: number; s?: number }> = ({ t, 
   <g transform={`translate(${x} ${y}) scale(${popIn(t, 5) * s})`}><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#140A12" strokeWidth={80} strokeLinecap="round" /><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#E0283A" strokeWidth={54} strokeLinecap="round" /></g>
 );
 
+
+// ---------------------------------------------------------------- detailed animals and a human hand
+/** A ginger tabby cat in mid-fall: striped fur, white muzzle and paws, pink inner ears, green eyes, whiskers, a fluffy tail. */
+const Cat: React.FC<{ t: number }> = ({ t }) => {
+  const kick = Math.sin(t * 0.5) * 14, tail = Math.sin(t * 0.3) * 20;
+  const leg = (x: number, y: number, a: number, k: number) => <g transform={`translate(${x} ${y}) rotate(${a + k})`}><path d="M -16 0 Q -20 50 -10 92 L 14 92 Q 22 50 16 0 Z" fill="#E8913A" stroke={INK} strokeWidth={5} /><ellipse cx={2} cy={96} rx={22} ry={14} fill="#FFF4E6" stroke={INK} strokeWidth={5} />{[-8, 2, 12].map((tx) => <path key={tx} d={`M ${tx} 90 L ${tx} 102`} stroke={INK} strokeWidth={2} opacity={0.5} />)}</g>;
+  return (
+    <g>
+      <path d={`M -110 10 Q -190 ${-40 + tail} -200 ${-120 + tail} Q -205 ${-150 + tail} -175 ${-140 + tail} Q -165 ${-60 + tail} -100 -10 Z`} fill="#E8913A" stroke={INK} strokeWidth={6} />
+      {[0, 1, 2].map((i) => <path key={i} d={`M ${-150 - i * 14} ${-30 - i * 30 + tail * 0.6} l 24 -6`} stroke="#B85A1A" strokeWidth={8} strokeLinecap="round" />)}
+      {leg(-70, 30, 20, kick)}{leg(-30, 40, -10, -kick)}
+      <ellipse cx={0} cy={0} rx={125} ry={72} fill="#E8913A" stroke={INK} strokeWidth={7} />
+      <ellipse cx={10} cy={30} rx={80} ry={36} fill="#FFF4E6" />
+      {[-70, -35, 0, 35].map((x) => <path key={x} d={`M ${x} -70 Q ${x + 10} -40 ${x - 4} -14`} stroke="#B85A1A" strokeWidth={10} strokeLinecap="round" fill="none" />)}
+      {leg(40, 40, -20, -kick)}{leg(80, 30, 10, kick)}
+      {/* head */}
+      <g transform="translate(120 -50)">
+        <path d="M -52 -40 L -66 -112 L -10 -64 Z" fill="#E8913A" stroke={INK} strokeWidth={6} /><path d="M -50 -52 L -58 -96 L -24 -66 Z" fill="#F4A6B0" />
+        <path d="M 52 -40 L 66 -112 L 10 -64 Z" fill="#E8913A" stroke={INK} strokeWidth={6} /><path d="M 50 -52 L 58 -96 L 24 -66 Z" fill="#F4A6B0" />
+        <ellipse cx={0} cy={0} rx={78} ry={68} fill="#E8913A" stroke={INK} strokeWidth={7} />
+        {[-24, 0, 24].map((x) => <path key={x} d={`M ${x} -66 L ${x * 0.8} -38`} stroke="#B85A1A" strokeWidth={8} strokeLinecap="round" />)}
+        <ellipse cx={0} cy={26} rx={46} ry={32} fill="#FFF4E6" />
+        {[-30, 30].map((x) => <g key={x}><ellipse cx={x} cy={-6} rx={20} ry={24} fill="#9BE04A" stroke={INK} strokeWidth={4} /><ellipse cx={x} cy={-4} rx={6} ry={18} fill={INK} /><circle cx={x - 6} cy={-14} r={5} fill="#FFF" /></g>)}
+        <path d="M -9 16 L 9 16 L 0 26 Z" fill="#F07A8A" stroke={INK} strokeWidth={3} />
+        <path d="M 0 26 Q -12 40 -22 34 M 0 26 Q 12 40 22 34" stroke={INK} strokeWidth={4} fill="none" strokeLinecap="round" />
+        <ellipse cx={0} cy={44} rx={10} ry={8} fill="#8A1A2A" />
+        {[-1, 1].map((sd) => [14, 24, 34].map((y) => <path key={`${sd}${y}`} d={`M ${sd * 30} ${y} L ${sd * 92} ${y - 14 + (y - 24) * 0.6}`} stroke="#FFF" strokeWidth={3} opacity={0.9} />))}
+      </g>
+    </g>
+  );
+};
+/** A brown-and-white beagle in mid-fall: floppy ears, white blaze and chest, black saddle, a wagging tail, a pink tongue. */
+const Dog: React.FC<{ t: number }> = ({ t }) => {
+  const kick = Math.sin(t * 0.55 + 1) * 16, wag = Math.sin(t * 0.9) * 26, flap = Math.sin(t * 0.4) * 12;
+  const leg = (x: number, y: number, a: number, k: number) => <g transform={`translate(${x} ${y}) rotate(${a + k})`}><path d="M -18 0 L -16 86 L 18 86 L 18 0 Z" fill="#FFF4E6" stroke={INK} strokeWidth={5} /><ellipse cx={2} cy={92} rx={24} ry={14} fill="#FFF4E6" stroke={INK} strokeWidth={5} /></g>;
+  return (
+    <g>
+      <g transform={`translate(130 -20) rotate(${-40 + wag})`}><path d="M 0 0 Q 30 -60 20 -120 Q 34 -126 40 -110 Q 46 -50 16 6 Z" fill="#A8743A" stroke={INK} strokeWidth={5} /><path d="M 22 -118 Q 34 -126 40 -110 L 30 -100 Z" fill="#FFF4E6" /></g>
+      {leg(80, 30, -20, kick)}{leg(40, 40, 10, -kick)}
+      <ellipse cx={0} cy={0} rx={140} ry={74} fill="#C8884A" stroke={INK} strokeWidth={7} />
+      <path d="M -60 -66 Q 10 -86 80 -60 Q 60 -10 0 -10 Q -40 -16 -60 -66 Z" fill="#2A1E16" />
+      <ellipse cx={-30} cy={34} rx={86} ry={34} fill="#FFF4E6" />
+      {leg(-40, 40, 20, -kick)}{leg(-80, 30, -10, kick)}
+      {/* head */}
+      <g transform="translate(-150 -50)">
+        <ellipse cx={0} cy={0} rx={74} ry={66} fill="#C8884A" stroke={INK} strokeWidth={7} />
+        <path d="M -8 -64 Q 0 -10 -10 40 L 14 40 Q 8 -10 8 -64 Z" fill="#FFF4E6" />
+        <ellipse cx={-34} cy={44} rx={56} ry={36} fill="#FFF4E6" stroke={INK} strokeWidth={6} />
+        <ellipse cx={-70} cy={34} rx={18} ry={14} fill="#1A1210" /><circle cx={-74} cy={30} r={5} fill="#FFF" opacity={0.7} />
+        <path d="M -40 70 Q -30 104 -6 92 Q 0 78 -10 70 Z" fill="#F07A8A" stroke={INK} strokeWidth={4} />
+        {[-20, 22].map((x) => <g key={x}><ellipse cx={x} cy={-12} rx={14} ry={16} fill="#3A2210" stroke={INK} strokeWidth={3} /><circle cx={x - 4} cy={-18} r={5} fill="#FFF" /></g>)}
+        <path d="M -36 -34 q 12 -8 24 0 M 8 -34 q 12 -8 24 0" stroke={INK} strokeWidth={5} fill="none" strokeLinecap="round" />
+        <g transform={`rotate(${flap} 50 -30)`}><path d="M 40 -40 Q 110 -30 104 50 Q 96 90 66 80 Q 44 30 34 -10 Z" fill="#7A4A22" stroke={INK} strokeWidth={6} /></g>
+      </g>
+      <path d="M -150 30 Q -110 20 -90 40" stroke="#B8302A" strokeWidth={14} strokeLinecap="round" fill="none" /><circle cx={-110} cy={34} r={8} fill="#FFD23F" stroke={INK} strokeWidth={3} />
+    </g>
+  );
+};
+/** A human hand, palm up and seen from above: five jointed fingers and a thumb with nails, knuckle creases, palm lines,
+ *  a shaded heel and a shirt cuff. Built around (0,0) = the centre of the palm. */
+const Hand: React.FC<{ s?: number; rot?: number; x?: number; y?: number; skin?: string; cuff?: string }> = ({ s = 1, rot = 0, x = 0, y = 0, skin = '#EDB98C', cuff = '#3A5A8A' }) => {
+  const shade = '#C98E62', line = '#8A5232';
+  const finger = (fx: number, len: number, a: number, w: number) => (
+    <g transform={`translate(${fx} -96) rotate(${a})`}>
+      <path d={`M ${-w} 10 L ${-w * 0.95} ${-len + w} Q ${-w * 0.95} ${-len - w * 0.2} 0 ${-len - w * 0.25} Q ${w * 0.95} ${-len - w * 0.2} ${w * 0.95} ${-len + w} L ${w} 10 Z`} fill={skin} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+      <path d={`M ${w * 0.55} 6 L ${w * 0.5} ${-len + w}`} stroke={shade} strokeWidth={w * 0.5} opacity={0.45} strokeLinecap="round" />
+      {[0.38, 0.68].map((k) => <path key={k} d={`M ${-w * 0.6} ${-len * k} Q 0 ${-len * k + 5} ${w * 0.6} ${-len * k}`} stroke={line} strokeWidth={3.5} fill="none" opacity={0.75} />)}
+      <path d={`M ${-w * 0.55} ${-len + w * 0.55} Q 0 ${-len - w * 0.05} ${w * 0.55} ${-len + w * 0.55} L ${w * 0.5} ${-len + w * 1.3} Q 0 ${-len + w * 1.5} ${-w * 0.5} ${-len + w * 1.3} Z`} fill="#F7D6C0" stroke={line} strokeWidth={2.5} opacity={0.9} />
+    </g>
+  );
+  return (
+    <g transform={`translate(${x} ${y}) rotate(${rot}) scale(${s})`}>
+      <ellipse cx={20} cy={210} rx={200} ry={40} fill="#000" opacity={0.3} filter="url(#gsB12)" />
+      {/* the wrist and cuff */}
+      <path d="M -88 90 L -96 260 L 96 260 L 88 90 Z" fill={skin} stroke={INK} strokeWidth={6} />
+      <path d="M -112 220 L 112 220 L 120 320 L -120 320 Z" fill={cuff} stroke={INK} strokeWidth={6} /><circle cx={70} cy={262} r={9} fill="#F2EADC" stroke={INK} strokeWidth={3} />
+      {finger(-80, 150, -12, 28)}{finger(-26, 190, -3, 30)}{finger(30, 182, 4, 29)}{finger(80, 140, 13, 26)}
+      {/* the thumb, folding across from the side */}
+      <g transform="translate(-104 30) rotate(-58)">
+        <path d="M -30 0 Q -40 -80 -24 -140 Q -4 -170 18 -150 Q 34 -100 30 0 Z" fill={skin} stroke={INK} strokeWidth={6} strokeLinejoin="round" />
+        <path d="M -16 -150 Q 4 -166 16 -146 L 14 -124 Q 0 -116 -16 -126 Z" fill="#F7D6C0" stroke={line} strokeWidth={2.5} />
+        <path d="M -24 -80 Q 0 -74 24 -82" stroke={line} strokeWidth={3.5} fill="none" opacity={0.75} />
+      </g>
+      {/* the palm: filled first, then outlined only on the sides and heel so no seam shows under the fingers */}
+      <path d="M -116 -100 Q -126 -20 -112 40 Q -100 118 -40 140 Q 30 152 84 124 Q 118 92 116 20 Q 114 -40 112 -100 Q 0 -112 -116 -100 Z" fill={skin} />
+      <path d="M -116 -96 Q -126 -20 -112 40 Q -100 118 -40 140 Q 30 152 84 124 Q 118 92 116 20 Q 114 -40 112 -96" fill="none" stroke={INK} strokeWidth={6} strokeLinejoin="round" strokeLinecap="round" />
+      <path d="M -112 -96 Q -60 -112 -4 -104 Q 54 -112 110 -96" stroke={shade} strokeWidth={5} fill="none" opacity={0.45} />
+      <path d="M 60 -80 Q 110 0 70 120" stroke={shade} strokeWidth={36} opacity={0.35} fill="none" strokeLinecap="round" />
+      <path d="M -100 -40 Q -20 -60 100 -50" stroke={line} strokeWidth={4} fill="none" opacity={0.7} />
+      <path d="M -100 -10 Q -20 -24 60 4" stroke={line} strokeWidth={4} fill="none" opacity={0.7} />
+      <path d="M -60 -50 Q -110 40 -40 130" stroke={line} strokeWidth={4} fill="none" opacity={0.7} />
+      <path d="M -60 -90 Q -40 -70 -30 -94 M 0 -94 Q 14 -70 26 -94" stroke={shade} strokeWidth={6} opacity={0.4} fill="none" />
+    </g>
+  );
+};
 // ---------------------------------------------------------------- shared bits for the one-of-a-kind shots
 const Grass: React.FC<{ y: number; c?: string; n?: number; h?: number }> = ({ y, c = '#4A7A3A', n = 60, h = 1 }) => (
   <g><rect x={-200} y={y} width={W + 400} height={2400} fill={c} />
@@ -225,9 +320,10 @@ export const S3: S = ({ t, f }) => (
   <g>
     <Sky id="k3" mood="cold" sunX={-300} sunY={-300} />
     <Clouds mood="cold" t={t} y={380} o={0.8} />
-    <g transform={`translate(330 ${560 + t * 4}) rotate(${t * 3}) scale(${popIn(since(f, 'cats') + 3) * 1.5})`}><ellipse rx={90} ry={60} fill="#F2A040" stroke={INK} strokeWidth={6} /><circle cx={80} cy={-40} r={44} fill="#F2A040" stroke={INK} strokeWidth={6} /><path d="M 56 -78 L 64 -110 L 84 -82 M 96 -82 L 116 -108 L 120 -74" fill="#F2A040" stroke={INK} strokeWidth={6} /><circle cx={92} cy={-44} r={6} fill={INK} /></g>
-    <g transform={`translate(760 ${780 + t * 4}) rotate(${-t * 3}) scale(${popIn(since(f, 'dogs') + 3) * 1.5})`}><ellipse rx={100} ry={60} fill="#A8743A" stroke={INK} strokeWidth={6} /><circle cx={-90} cy={-40} r={50} fill="#A8743A" stroke={INK} strokeWidth={6} /><ellipse cx={-120} cy={-20} rx={22} ry={44} fill="#6A4422" stroke={INK} strokeWidth={5} /><circle cx={-100} cy={-48} r={6} fill={INK} /></g>
-    <BigX t={since(f, 'dogs') + 6} y={760} s={0.85} />
+    {Array.from({ length: 40 }, (_, i) => { const x = random(`rn${i}`) * 1100, y = (random(`ry${i}`) * 1700 + t * 28) % 1700; return <path key={i} d={`M ${x} ${y} l -10 40`} stroke="#BFD8F0" strokeWidth={4} opacity={0.5} strokeLinecap="round" />; })}
+    <g transform={`translate(390 ${560 + t * 3}) rotate(${-14 + Math.sin(t * 0.08) * 8}) scale(${popIn(since(f, 'cats') + 3) * 1.15})`}><Cat t={t} /></g>
+    <g transform={`translate(760 ${860 + t * 3}) rotate(${10 + Math.sin(t * 0.07) * 8}) scale(${popIn(since(f, 'dogs') + 3) * 1.2})`}><Dog t={t} /></g>
+    <BigX t={since(f, 'dogs') + 10} y={760} s={0.85} />
   </g>
 );
 export const S4: S = ({ t }) => (
@@ -335,9 +431,10 @@ export const S14: S = ({ t }) => (
     {/* one red flake lands on her open palm */}
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#6A8AA8" />
     <Glow x={540} y={900} r={700} kind="red" o={0.4} />
-    <g transform="translate(540 1050) rotate(-8)"><path d="M -260 260 L -260 -40 Q -260 -90 -210 -90 L 220 -90 Q 270 -90 270 -40 L 270 60 Q 270 110 220 110 L 60 110 L 60 260 Z" fill="#E8B88A" stroke={INK} strokeWidth={10} /><path d="M -180 -90 L -180 -200 M -80 -90 L -80 -240 M 20 -90 L 20 -230 M 120 -90 L 120 -190" stroke="#E8B88A" strokeWidth={70} strokeLinecap="round" /><path d="M -180 -90 L -180 -200 M -80 -90 L -80 -240 M 20 -90 L 20 -230 M 120 -90 L 120 -190" stroke={INK} strokeWidth={6} strokeLinecap="round" opacity={0.3} /></g>
-    <Meat x={540} y={Math.min(960, 300 + t * 40)} s={1.2} rot={t * 6} seed={13} glow={0.6} />
-    <Burst t={t - 2} text="BUT RED!" x={540} y={460} size={110} color={MEAT} />
+    {Array.from({ length: 16 }, (_, i) => { const x = random(`fl${i}`) * 1080, y = (random(`fy${i}`) * 1500 + t * 5) % 1500; return <ellipse key={i} cx={x} cy={y} rx={9} ry={6} fill={MEAT} opacity={0.7} />; })}
+    <Hand x={540} y={1060} s={1.45} rot={-6} cuff="#3A5A8A" />
+    <Meat x={540} y={Math.min(1010, 300 + t * 40)} s={0.9} rot={t * 6} seed={13} glow={0.6} />
+    <Burst t={t - 2} text="BUT RED!" x={540} y={420} size={110} color={MEAT} />
   </g>
 );
 // ---------------------------------------------------------------- the meat
@@ -355,10 +452,11 @@ export const S15: S = ({ t }) => (
 export const S16: S = ({ t }) => (
   <g>
     <rect x={-200} y={-200} width={W + 400} height={2400} fill="#4A7A3A" />
+    {Array.from({ length: 50 }, (_, i) => <path key={i} d={`M ${random(`pg${i}`) * 1080} ${random(`ph${i}`) * 1900} l -8 -26 m 8 26 l 7 -28`} stroke="#5E9A44" strokeWidth={5} />)}
     <Glow x={540} y={900} r={700} kind="warm" o={0.4} />
-    <ellipse cx={540} cy={1060} rx={420} ry={60} fill="#000" opacity={0.35} filter="url(#gsB12)" />
-    <Meat x={380} y={900} s={2.4} rot={-10} seed={7} glow={0.5} />
-    <g transform="translate(740 900) rotate(-10)"><path d="M -110 120 L -110 -40 Q -110 -70 -84 -70 L -84 -170 Q -84 -196 -62 -196 Q -40 -196 -40 -170 L -40 -80 L -36 -200 Q -36 -226 -12 -226 Q 12 -226 12 -200 L 12 -84 L 18 -190 Q 18 -214 40 -214 Q 62 -214 62 -190 L 62 -70 L 66 -150 Q 66 -172 86 -172 Q 106 -172 106 -150 L 106 40 Q 106 120 40 140 L -60 140 Q -110 140 -110 120 Z" fill="#E8B88A" stroke={INK} strokeWidth={8} /></g>
+    <Hand x={720} y={1000} s={1.25} rot={8} cuff="#6A4A2A" />
+    <ellipse cx={330} cy={1080} rx={190} ry={36} fill="#000" opacity={0.35} filter="url(#gsB12)" />
+    <Meat x={320} y={960} s={2.6} rot={-10} seed={7} glow={0.5} />
     <Punch t={t - 2} lines={['BIG AS', 'YOUR PALM']} y={300} size={110} color="#FFD23F" />
   </g>
 );
