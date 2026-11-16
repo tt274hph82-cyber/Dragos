@@ -1,0 +1,1202 @@
+{
+ "id": "GreatStink",
+ "slug": "great-stink",
+ "topic": "The Great Stink of London, 1858: a Short in the Dancing Plague v3 story style, with a young energetic narrator",
+ "title": [
+  "THE GREAT",
+  "STINK"
+ ],
+ "accent": "STINK",
+ "lead": 1.0,
+ "tail": 2.0,
+ "voice": {
+  "id": "TtRFBnwQdH1k01vR0hMz",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.38,
+   "similarity_boost": 0.8,
+   "style": 0.5,
+   "use_speaker_boost": true,
+   "speed": 1.06
+  }
+ },
+ "script": [
+  {
+   "beat": "hook",
+   "text": "In eighteen fifty-eight, London smelled so bad, the government almost ran away from its own building."
+  },
+  {
+   "beat": "hook",
+   "text": "And no, I'm not exaggerating. They called it the Great Stink."
+  },
+  {
+   "beat": "setup",
+   "text": "Here's the deal. Two and a half million people, and almost all their toilet waste went straight into one river. The Thames."
+  },
+  {
+   "beat": "setup",
+   "text": "The same river a lot of them drank from."
+  },
+  {
+   "beat": "heat",
+   "text": "Then came a brutal heatwave, and the river started to cook."
+  },
+  {
+   "beat": "heat",
+   "text": "Sailors gagged. People crossed the bridges with rags over their noses."
+  },
+  {
+   "beat": "heat",
+   "text": "And inside Parliament, right on the river, they soaked the curtains in chemicals, just to breathe."
+  },
+  {
+   "beat": "fear",
+   "text": "And you know what scared them most? They thought the smell itself was killing people."
+  },
+  {
+   "beat": "fear",
+   "text": "Wrong. The real killer was in the water. Cholera. A few years earlier, it killed over ten thousand Londoners."
+  },
+  {
+   "beat": "fix",
+   "text": "But that smell finally got them moving. They rushed a new law through in about eighteen days. Eighteen!"
+  },
+  {
+   "beat": "fix",
+   "text": "An engineer named Joseph Bazalgette built over a thousand miles of sewers, and made the pipes way bigger than he needed. Just in case."
+  },
+  {
+   "beat": "fix",
+   "text": "Good call. London still uses them today."
+  },
+  {
+   "beat": "end",
+   "text": "You get it? I said, you get it? A bad smell fixed a whole city."
+  },
+  {
+   "beat": "end",
+   "text": "That's real. That's about it, folks. Follow for more strange history. See ya!"
+  }
+ ],
+ "science": [
+  {
+   "claim": "Summer 1858: a heatwave turned the Thames, which carried most of London's sewage, into an open stink; Parliament (on the river) hung curtains soaked in chloride of lime and considered moving; a bill to fund new sewers passed in about 18 days; Joseph Bazalgette's system (about 82 miles of intercepting sewers and some 1,100 miles of street sewers) is still in use, and he famously enlarged the pipe sizes as a margin of safety; London's population was about 2.5 million; the 1853-54 cholera outbreak killed over 10,000 Londoners; people believed in miasma (bad air), while John Snow had linked cholera to water in 1854.",
+   "working": "",
+   "source": "Wikipedia, Great Stink; Halliday, The Great Stink of London (1999); Science Museum; Museum of London"
+  }
+ ],
+ "sound": {
+  "clips": {
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "whoosh": [
+    "a soft cinematic whoosh transition",
+    1.2
+   ],
+   "page": [
+    "an old book page turning, paper rustle",
+    1.0
+   ],
+   "gasp": [
+    "a single man gasping in surprise, cartoon, short",
+    0.8
+   ],
+   "thud": [
+    "a body falling onto stone cobblestones, soft heavy thud",
+    1.0
+   ],
+   "bell": [
+    "a single distant church bell tolling once, reverberant",
+    4.0
+   ],
+   "gong": [
+    "a deep cinematic low boom hit with a long tail",
+    2.5
+   ],
+   "shimmer": [
+    "a weird psychedelic warbling shimmer sound, swirling synth, short",
+    3.0
+   ],
+   "heartbeat": [
+    "a slow heavy heartbeat, tense, short",
+    3.0
+   ],
+   "tick": [
+    "a mechanical clock ticking, close",
+    2.0
+   ],
+   "river": [
+    "a slow filthy river lapping against stone embankment in a city, flies buzzing, distant horse carts, Victorian London, no voices",
+    10.0
+   ],
+   "flies": [
+    "a cloud of flies buzzing loudly, close",
+    3.0
+   ],
+   "bubble": [
+    "thick mud bubbling and plopping, gross, close",
+    3.0
+   ],
+   "gag": [
+    "a man gagging and coughing in disgust, cartoon, short, no words",
+    1.5
+   ],
+   "crowd_cough": [
+    "a crowd of people coughing and groaning in disgust, no clear words",
+    3.0
+   ],
+   "splash": [
+    "a big sloshy splash of sewage water pouring out of a pipe into a river",
+    2.5
+   ],
+   "gavel": [
+    "a wooden gavel banging three times",
+    1.5
+   ],
+   "dig": [
+    "workers digging with shovels and pickaxes in a brick tunnel, echoing",
+    3.0
+   ],
+   "flush": [
+    "a huge rush of water roaring through a large tunnel",
+    3.0
+   ],
+   "ship": [
+    "an old wooden sailing ship creaking on water, ropes, gulls",
+    3.0
+   ],
+   "score": [
+    "a cheeky, energetic Victorian London score for a gross but funny true story: plucky pizzicato strings, a bouncy tuba, an out-of-tune music hall piano and a light snare, tense and playful, builds in the middle, then turns bright and triumphant at the end, no vocals",
+    90,
+    "music"
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -14.0,
+   "music_lu": -15.0
+  },
+  "events": [
+   [
+    "S1",
+    "tr_thunder",
+    0.55
+   ],
+   [
+    "S1+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S3+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S4",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S39",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S9+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S10",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S37",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S15+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S16",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S38",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S17",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S18",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S19",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S20",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S21+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S22",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S23",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S24",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S26",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S27",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S40",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S40+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S28",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S29",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S30",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S31",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S32",
+    "tr_whip",
+    0.22,
+    "peak"
+   ],
+   [
+    "S33",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S34",
+    "tr_zoom",
+    0.26,
+    "peak"
+   ],
+   [
+    "S34+4",
+    "tr_riser",
+    0.13
+   ],
+   [
+    "S35",
+    "tr_flash",
+    0.3,
+    "peak"
+   ],
+   [
+    "S36",
+    "tr_ghost",
+    0.16,
+    "peak"
+   ],
+   [
+    "S5+3",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S6+36",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S19+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S21+3",
+    "tr_impact",
+    0.384,
+    "onset"
+   ],
+   [
+    "S22+28",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S25+2",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S27+36",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S32+3",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S34+3",
+    "tr_impact",
+    0.32,
+    "onset"
+   ],
+   [
+    "S1",
+    "river",
+    0.5
+   ],
+   [
+    "S1",
+    "flies",
+    0.35
+   ],
+   [
+    "S4",
+    "bubble",
+    0.5
+   ],
+   [
+    "S4",
+    "flies",
+    0.4
+   ],
+   [
+    "S7+6",
+    "splash",
+    0.6
+   ],
+   [
+    "S11",
+    "bubble",
+    0.6
+   ],
+   [
+    "S12",
+    "ship",
+    0.4
+   ],
+   [
+    "S12+6",
+    "gag",
+    0.7
+   ],
+   [
+    "S13",
+    "crowd_cough",
+    0.5
+   ],
+   [
+    "S16+8",
+    "splash",
+    0.25
+   ],
+   [
+    "S19+1",
+    "thud",
+    0.6
+   ],
+   [
+    "S21",
+    "heartbeat",
+    0.6
+   ],
+   [
+    "S23+2",
+    "gavel",
+    0.7
+   ],
+   [
+    "S28",
+    "dig",
+    0.6
+   ],
+   [
+    "S34",
+    "flush",
+    0.6
+   ]
+  ]
+ },
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "at": "smelled",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "at": "ran"
+  },
+  {
+   "shot": "S4",
+   "at": "no",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "at": "They",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "at": "Two",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "at": "toilet",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "at": "straight"
+  },
+  {
+   "shot": "S8",
+   "at": "Thames",
+   "tr": "whip"
+  },
+  {
+   "shot": "S9",
+   "at": "lot",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "at": "brutal",
+   "tr": "flash"
+  },
+  {
+   "shot": "S11",
+   "at": "river",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S12",
+   "at": "Sailors",
+   "tr": "whip"
+  },
+  {
+   "shot": "S13",
+   "at": "People",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S37",
+   "at": "rags",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S14",
+   "at": "inside",
+   "tr": "flash"
+  },
+  {
+   "shot": "S15",
+   "at": "soaked",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S16",
+   "at": "chemicals",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S38",
+   "at": "breathe"
+  },
+  {
+   "shot": "S17",
+   "at": "scared",
+   "tr": "flash"
+  },
+  {
+   "shot": "S18",
+   "at": "thought",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S19",
+   "at": "Wrong",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "at": "killer",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "at": "Cholera",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S22",
+   "at": "killed",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S23",
+   "at": "finally",
+   "tr": "flash"
+  },
+  {
+   "shot": "S24",
+   "at": "law",
+   "tr": "whip"
+  },
+  {
+   "shot": "S25",
+   "at": "Eighteen!",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "at": "engineer",
+   "tr": "flash"
+  },
+  {
+   "shot": "S27",
+   "at": "built",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S40",
+   "at": "thousand",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S28",
+   "at": "sewers",
+   "tr": "whip"
+  },
+  {
+   "shot": "S29",
+   "at": "pipes",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "at": "Good",
+   "tr": "flash"
+  },
+  {
+   "shot": "S31",
+   "at": "You",
+   "tr": "flash"
+  },
+  {
+   "shot": "S32",
+   "at": "said",
+   "tr": "whip"
+  },
+  {
+   "shot": "S33",
+   "at": "bad",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S34",
+   "at": "That's",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S35",
+   "at": "about",
+   "tr": "flash"
+  },
+  {
+   "shot": "S36",
+   "at": "strange"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "set": "london",
+   "key": 30,
+   "note": "S40"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S1+1",
+   "kind": "flash",
+   "color": "#E8FFD0",
+   "o": 0.8
+  },
+  {
+   "at": "S1+1",
+   "kind": "shake",
+   "len": 10,
+   "amp": 7
+  },
+  {
+   "at": "S5+3",
+   "kind": "bloom",
+   "color": "#9BE04A",
+   "o": 0.7
+  },
+  {
+   "at": "S6+36",
+   "kind": "punch"
+  },
+  {
+   "at": "S11+4",
+   "kind": "shake",
+   "len": 10,
+   "amp": 5
+  },
+  {
+   "at": "S19+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S19+2",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  },
+  {
+   "at": "S21+3",
+   "kind": "bloom",
+   "color": "#FF3A2A",
+   "o": 0.8
+  },
+  {
+   "at": "S22+28",
+   "kind": "punch"
+  },
+  {
+   "at": "S25+2",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S25+2",
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.7
+  },
+  {
+   "at": "S27+36",
+   "kind": "punch"
+  },
+  {
+   "at": "S28+6",
+   "kind": "shake",
+   "len": 8,
+   "amp": 5
+  },
+  {
+   "at": "S32+3",
+   "kind": "punch",
+   "amp": 0.08
+  },
+  {
+   "at": "S34+3",
+   "kind": "punch",
+   "amp": 0.06
+  }
+ ]
+}

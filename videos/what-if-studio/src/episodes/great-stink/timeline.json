@@ -1,0 +1,817 @@
+{
+ "slug": "great-stink",
+ "title": "THE GREAT STINK",
+ "fps": 30,
+ "total": 2387,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 61.0,
+   "t0": 0,
+   "t1": 61.0,
+   "line": "In eighteen fifty-eight, London",
+   "cam": "dive"
+  },
+  {
+   "shot": "S2",
+   "a": 61.0,
+   "b": 133.0,
+   "t0": 0,
+   "t1": 72.0,
+   "line": "smelled so bad, the government almost",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 133.0,
+   "b": 196.0,
+   "t0": 0,
+   "t1": 63.0,
+   "line": "ran away from its own building. And"
+  },
+  {
+   "shot": "S4",
+   "a": 196.0,
+   "b": 260.0,
+   "t0": 0,
+   "t1": 64.0,
+   "line": "no, I'm not exaggerating.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 260.0,
+   "b": 360.0,
+   "t0": 0,
+   "t1": 100.0,
+   "line": "They called it the Great Stink. Here's the deal.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 360.0,
+   "b": 449.0,
+   "t0": 0,
+   "t1": 89.0,
+   "line": "Two and a half million people, and almost all their",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S7",
+   "a": 449.0,
+   "b": 481.0,
+   "t0": 0,
+   "t1": 32.0,
+   "line": "toilet waste went",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "a": 481.0,
+   "b": 543.0,
+   "t0": 0,
+   "t1": 62.0,
+   "line": "straight into one river. The"
+  },
+  {
+   "shot": "S8",
+   "a": 543.0,
+   "b": 599.0,
+   "t0": 0,
+   "t1": 56.0,
+   "line": "Thames. The same river a",
+   "tr": "whip"
+  },
+  {
+   "shot": "S9",
+   "a": 599.0,
+   "b": 662.0,
+   "t0": 0,
+   "t1": 63.0,
+   "line": "lot of them drank from. Then came a",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 662.0,
+   "b": 714.0,
+   "t0": 0,
+   "t1": 52.0,
+   "line": "brutal heatwave, and the",
+   "tr": "flash"
+  },
+  {
+   "shot": "S11",
+   "a": 714.0,
+   "b": 766.0,
+   "t0": 0,
+   "t1": 52.0,
+   "line": "river started to cook.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S12",
+   "a": 766.0,
+   "b": 814.0,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "Sailors gagged.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S13",
+   "a": 814.0,
+   "b": 859.0,
+   "t0": 0,
+   "t1": 45.0,
+   "line": "People crossed the bridges with",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S37",
+   "a": 859.0,
+   "b": 907.0,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "rags over their noses. And",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S14",
+   "a": 907.0,
+   "b": 988.0,
+   "t0": 0,
+   "t1": 81.0,
+   "line": "inside Parliament, right on the river, they",
+   "tr": "flash"
+  },
+  {
+   "shot": "S15",
+   "a": 988.0,
+   "b": 1019.0,
+   "t0": 0,
+   "t1": 31.0,
+   "line": "soaked the curtains in",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S16",
+   "a": 1019.0,
+   "b": 1062.0,
+   "t0": 0,
+   "t1": 43.0,
+   "line": "chemicals, just to",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S38",
+   "a": 1062.0,
+   "b": 1099.0,
+   "t0": 0,
+   "t1": 37.0,
+   "line": "breathe. And you know what"
+  },
+  {
+   "shot": "S17",
+   "a": 1099.0,
+   "b": 1149.0,
+   "t0": 0,
+   "t1": 50.0,
+   "line": "scared them most? They",
+   "tr": "flash"
+  },
+  {
+   "shot": "S18",
+   "a": 1149.0,
+   "b": 1223.0,
+   "t0": 0,
+   "t1": 74.0,
+   "line": "thought the smell itself was killing people.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S19",
+   "a": 1223.0,
+   "b": 1266.0,
+   "t0": 0,
+   "t1": 43.0,
+   "line": "Wrong. The real",
+   "tr": "flash"
+  },
+  {
+   "shot": "S20",
+   "a": 1266.0,
+   "b": 1321.0,
+   "t0": 0,
+   "t1": 55.0,
+   "line": "killer was in the water.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S21",
+   "a": 1321.0,
+   "b": 1398.0,
+   "t0": 0,
+   "t1": 77.0,
+   "line": "Cholera. A few years earlier, it",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S22",
+   "a": 1398.0,
+   "b": 1504.0,
+   "t0": 0,
+   "t1": 106.0,
+   "line": "killed over ten thousand Londoners. But that smell",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S23",
+   "a": 1504.0,
+   "b": 1582.0,
+   "t0": 0,
+   "t1": 78.0,
+   "line": "finally got them moving. They rushed a new",
+   "tr": "flash"
+  },
+  {
+   "shot": "S24",
+   "a": 1582.0,
+   "b": 1614.0,
+   "t0": 0,
+   "t1": 32.0,
+   "line": "law through in about",
+   "tr": "whip"
+  },
+  {
+   "shot": "S25",
+   "a": 1614.0,
+   "b": 1696.0,
+   "t0": 0,
+   "t1": 82.0,
+   "line": "eighteen days. Eighteen! An",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "a": 1696.0,
+   "b": 1757.0,
+   "t0": 0,
+   "t1": 61.0,
+   "line": "engineer named Joseph Bazalgette",
+   "tr": "flash"
+  },
+  {
+   "shot": "S27",
+   "a": 1757.0,
+   "b": 1782.0,
+   "t0": 0,
+   "t1": 25.0,
+   "line": "built over a",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S40",
+   "a": 1782.0,
+   "b": 1813.0,
+   "t0": 0,
+   "t1": 31.0,
+   "line": "thousand miles of",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S28",
+   "a": 1813.0,
+   "b": 1847.0,
+   "t0": 0,
+   "t1": 34.0,
+   "line": "sewers, and made the",
+   "tr": "whip"
+  },
+  {
+   "shot": "S29",
+   "a": 1847.0,
+   "b": 1940.0,
+   "t0": 0,
+   "t1": 93.0,
+   "line": "pipes way bigger than he needed. Just in case.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S30",
+   "a": 1940.0,
+   "b": 2019.0,
+   "t0": 0,
+   "t1": 79.0,
+   "line": "Good call. London still uses them today.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S31",
+   "a": 2019.0,
+   "b": 2052.0,
+   "t0": 0,
+   "t1": 33.0,
+   "line": "You get it? I",
+   "tr": "flash"
+  },
+  {
+   "shot": "S32",
+   "a": 2052.0,
+   "b": 2106.0,
+   "t0": 0,
+   "t1": 54.0,
+   "line": "said, you get it? A",
+   "tr": "whip"
+  },
+  {
+   "shot": "S33",
+   "a": 2106.0,
+   "b": 2174.0,
+   "t0": 0,
+   "t1": 68.0,
+   "line": "bad smell fixed a whole city.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S34",
+   "a": 2174.0,
+   "b": 2220.0,
+   "t0": 0,
+   "t1": 46.0,
+   "line": "That's real. That's",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S35",
+   "a": 2220.0,
+   "b": 2281.0,
+   "t0": 0,
+   "t1": 61.0,
+   "line": "about it, folks. Follow for more",
+   "tr": "flash"
+  },
+  {
+   "shot": "S36",
+   "a": 2281.0,
+   "b": 2387,
+   "t0": 0,
+   "t1": 106.0,
+   "line": "strange history. See ya!"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 61.0,
+   "first": 0,
+   "line": "In eighteen fifty-eight, London",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 72.0,
+   "first": 61.0,
+   "line": "smelled so bad, the government almost",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 63.0,
+   "first": 133.0,
+   "line": "ran away from its own building. And",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 64.0,
+   "first": 196.0,
+   "line": "no, I'm not exaggerating.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 100.0,
+   "first": 260.0,
+   "line": "They called it the Great Stink. Here's the deal.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 89.0,
+   "first": 360.0,
+   "line": "Two and a half million people, and almost all their",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 32.0,
+   "first": 449.0,
+   "line": "toilet waste went",
+   "note": "S7"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 30,
+   "len": 62.0,
+   "first": 481.0,
+   "line": "straight into one river. The",
+   "note": "S39"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 56.0,
+   "first": 543.0,
+   "line": "Thames. The same river a",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 63.0,
+   "first": 599.0,
+   "line": "lot of them drank from. Then came a",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 52.0,
+   "first": 662.0,
+   "line": "brutal heatwave, and the",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 52.0,
+   "first": 714.0,
+   "line": "river started to cook.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 766.0,
+   "line": "Sailors gagged.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 45.0,
+   "first": 814.0,
+   "line": "People crossed the bridges with",
+   "note": "S13"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 859.0,
+   "line": "rags over their noses. And",
+   "note": "S37"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 81.0,
+   "first": 907.0,
+   "line": "inside Parliament, right on the river, they",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 31.0,
+   "first": 988.0,
+   "line": "soaked the curtains in",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 43.0,
+   "first": 1019.0,
+   "line": "chemicals, just to",
+   "note": "S16"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 37.0,
+   "first": 1062.0,
+   "line": "breathe. And you know what",
+   "note": "S38"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 50.0,
+   "first": 1099.0,
+   "line": "scared them most? They",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 74.0,
+   "first": 1149.0,
+   "line": "thought the smell itself was killing people.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 43.0,
+   "first": 1223.0,
+   "line": "Wrong. The real",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 55.0,
+   "first": 1266.0,
+   "line": "killer was in the water.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 77.0,
+   "first": 1321.0,
+   "line": "Cholera. A few years earlier, it",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 106.0,
+   "first": 1398.0,
+   "line": "killed over ten thousand Londoners. But that smell",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 78.0,
+   "first": 1504.0,
+   "line": "finally got them moving. They rushed a new",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 32.0,
+   "first": 1582.0,
+   "line": "law through in about",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 82.0,
+   "first": 1614.0,
+   "line": "eighteen days. Eighteen! An",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 61.0,
+   "first": 1696.0,
+   "line": "engineer named Joseph Bazalgette",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 25.0,
+   "first": 1757.0,
+   "line": "built over a",
+   "note": "S27"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 30,
+   "len": 31.0,
+   "first": 1782.0,
+   "line": "thousand miles of",
+   "note": "S40"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 34.0,
+   "first": 1813.0,
+   "line": "sewers, and made the",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 93.0,
+   "first": 1847.0,
+   "line": "pipes way bigger than he needed. Just in case.",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 79.0,
+   "first": 1940.0,
+   "line": "Good call. London still uses them today.",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 33.0,
+   "first": 2019.0,
+   "line": "You get it? I",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 54.0,
+   "first": 2052.0,
+   "line": "said, you get it? A",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 68.0,
+   "first": 2106.0,
+   "line": "bad smell fixed a whole city.",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 46.0,
+   "first": 2174.0,
+   "line": "That's real. That's",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 61.0,
+   "first": 2220.0,
+   "line": "about it, folks. Follow for more",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 106.0,
+   "first": 2281.0,
+   "line": "strange history. See ya!",
+   "note": "S36"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#E8FFD0",
+   "o": 0.8,
+   "f": 1
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 7,
+   "f": 1
+  },
+  {
+   "kind": "bloom",
+   "color": "#9BE04A",
+   "o": 0.7,
+   "f": 263.0
+  },
+  {
+   "kind": "punch",
+   "f": 396.0
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 5,
+   "f": 718.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1225.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 1225.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF3A2A",
+   "o": 0.8,
+   "f": 1324.0
+  },
+  {
+   "kind": "punch",
+   "f": 1426.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1616.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFD23F",
+   "o": 0.7,
+   "f": 1616.0
+  },
+  {
+   "kind": "punch",
+   "f": 1793.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 5,
+   "f": 1819.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 2055.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.06,
+   "f": 2177.0
+  }
+ ],
+ "audio": {
+  "voice": "great-stink/voice.wav",
+  "sfx": "great-stink/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.201,
+  "music": "great-stink/music.wav",
+  "musicVol": 0.1225
+ }
+}
