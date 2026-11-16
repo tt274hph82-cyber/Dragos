@@ -1,0 +1,793 @@
+{
+ "slug": "moon-hoax",
+ "title": "THE GREAT MOON HOAX",
+ "fps": 30,
+ "total": 2434,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 93.0,
+   "t0": 0,
+   "t1": 93.0,
+   "line": "In eighteen thirty-five, a New York newspaper told the",
+   "cam": "dive"
+  },
+  {
+   "shot": "S37",
+   "a": 93.0,
+   "b": 130.0,
+   "t0": 0,
+   "t1": 37.0,
+   "line": "whole city there were",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S2",
+   "a": 130.0,
+   "b": 195.0,
+   "t0": 0,
+   "t1": 65.0,
+   "line": "bat-people living on the Moon. And",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 195.0,
+   "b": 227.0,
+   "t0": 0,
+   "t1": 32.0,
+   "line": "people bought it.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S4",
+   "a": 227.0,
+   "b": 272.0,
+   "t0": 0,
+   "t1": 45.0,
+   "line": "Not a cartoon. A",
+   "tr": "whip"
+  },
+  {
+   "shot": "S5",
+   "a": 272.0,
+   "b": 320.0,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "real front page.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S6",
+   "a": 320.0,
+   "b": 391.0,
+   "t0": 0,
+   "t1": 71.0,
+   "line": "They called it the Great Moon Hoax.",
+   "tr": "flash"
+  },
+  {
+   "shot": "S38",
+   "a": 391.0,
+   "b": 442.0,
+   "t0": 0,
+   "t1": 51.0,
+   "line": "Here's the deal. The New York",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S7",
+   "a": 442.0,
+   "b": 519.0,
+   "t0": 0,
+   "t1": 77.0,
+   "line": "Sun said a famous astronomer, Sir John",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "a": 519.0,
+   "b": 559.0,
+   "t0": 0,
+   "t1": 40.0,
+   "line": "Herschel, had built a",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S9",
+   "a": 559.0,
+   "b": 633.0,
+   "t0": 0,
+   "t1": 74.0,
+   "line": "giant telescope in South Africa. With a",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 633.0,
+   "b": 703.0,
+   "t0": 0,
+   "t1": 70.0,
+   "line": "lens twenty-four feet wide, it could",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S11",
+   "a": 703.0,
+   "b": 779.0,
+   "t0": 0,
+   "t1": 76.0,
+   "line": "see the Moon like it was right down the street. And",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S12",
+   "a": 779.0,
+   "b": 820.0,
+   "t0": 0,
+   "t1": 41.0,
+   "line": "what did he see?",
+   "tr": "flash"
+  },
+  {
+   "shot": "S13",
+   "a": 820.0,
+   "b": 870.0,
+   "t0": 0,
+   "t1": 50.0,
+   "line": "Blue unicorns.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S14",
+   "a": 870.0,
+   "b": 938.0,
+   "t0": 0,
+   "t1": 68.0,
+   "line": "Beavers walking on two legs.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "a": 938.0,
+   "b": 1023.0,
+   "t0": 0,
+   "t1": 85.0,
+   "line": "Giant purple crystals. And then, the",
+   "tr": "whip"
+  },
+  {
+   "shot": "S16",
+   "a": 1023.0,
+   "b": 1057.0,
+   "t0": 0,
+   "t1": 34.0,
+   "line": "big one.",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S17",
+   "a": 1057.0,
+   "b": 1133.0,
+   "t0": 0,
+   "t1": 76.0,
+   "line": "Furry little people, with bat wings,",
+   "tr": "flash"
+  },
+  {
+   "shot": "S18",
+   "a": 1133.0,
+   "b": 1174.0,
+   "t0": 0,
+   "t1": 41.0,
+   "line": "flying over the lakes.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S19",
+   "a": 1174.0,
+   "b": 1212.0,
+   "t0": 0,
+   "t1": 38.0,
+   "line": "New Yorkers went",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "a": 1212.0,
+   "b": 1255.0,
+   "t0": 0,
+   "t1": 43.0,
+   "line": "wild. The Sun",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S20",
+   "a": 1255.0,
+   "b": 1339.0,
+   "t0": 0,
+   "t1": 84.0,
+   "line": "claimed it was the best-selling paper in the world.",
+   "tr": "whip"
+  },
+  {
+   "shot": "S21",
+   "a": 1339.0,
+   "b": 1428.0,
+   "t0": 0,
+   "t1": 89.0,
+   "line": "Other papers copied the story word for word,",
+   "tr": "flash"
+  },
+  {
+   "shot": "S39",
+   "a": 1428.0,
+   "b": 1463.0,
+   "t0": 0,
+   "t1": 35.0,
+   "line": "just to keep up. And",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S22",
+   "a": 1463.0,
+   "b": 1570.0,
+   "t0": 0,
+   "t1": 107.0,
+   "line": "you know who had no idea? Herschel himself. He was",
+   "tr": "flash"
+  },
+  {
+   "shot": "S23",
+   "a": 1570.0,
+   "b": 1675.0,
+   "t0": 0,
+   "t1": 105.0,
+   "line": "real, and he really was in South Africa. He just",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S24",
+   "a": 1675.0,
+   "b": 1729.0,
+   "t0": 0,
+   "t1": 54.0,
+   "line": "never saw a single bat-man.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S25",
+   "a": 1729.0,
+   "b": 1782.0,
+   "t0": 0,
+   "t1": 53.0,
+   "line": "Turns out a reporter made the",
+   "tr": "flash"
+  },
+  {
+   "shot": "S36",
+   "a": 1782.0,
+   "b": 1857.0,
+   "t0": 0,
+   "t1": 75.0,
+   "line": "whole thing up. Most likely a guy named",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S26",
+   "a": 1857.0,
+   "b": 1914.0,
+   "t0": 0,
+   "t1": 57.0,
+   "line": "Richard Adams Locke. And when the",
+   "tr": "whip"
+  },
+  {
+   "shot": "S27",
+   "a": 1914.0,
+   "b": 1997.0,
+   "t0": 0,
+   "t1": 83.0,
+   "line": "truth came out? The Sun never really said",
+   "tr": "flash"
+  },
+  {
+   "shot": "S28",
+   "a": 1997.0,
+   "b": 2027.0,
+   "t0": 0,
+   "t1": 30.0,
+   "line": "sorry. And",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S29",
+   "a": 2027.0,
+   "b": 2112.0,
+   "t0": 0,
+   "t1": 85.0,
+   "line": "sales stayed sky high. So next time something",
+   "tr": "whip"
+  },
+  {
+   "shot": "S30",
+   "a": 2112.0,
+   "b": 2193.0,
+   "t0": 0,
+   "t1": 81.0,
+   "line": "online sounds too wild to be true,",
+   "tr": "flash"
+  },
+  {
+   "shot": "S31",
+   "a": 2193.0,
+   "b": 2226.0,
+   "t0": 0,
+   "t1": 33.0,
+   "line": "check the telescope.",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S32",
+   "a": 2226.0,
+   "b": 2269.0,
+   "t0": 0,
+   "t1": 43.0,
+   "line": "That's real. That's",
+   "tr": "flash"
+  },
+  {
+   "shot": "S33",
+   "a": 2269.0,
+   "b": 2329.0,
+   "t0": 0,
+   "t1": 60.0,
+   "line": "about it, folks. Follow for more",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S34",
+   "a": 2329.0,
+   "b": 2434,
+   "t0": 0,
+   "t1": 105.0,
+   "line": "strange history. See ya!"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 93.0,
+   "first": 0,
+   "line": "In eighteen thirty-five, a New York newspaper told the",
+   "note": "S1"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 37.0,
+   "first": 93.0,
+   "line": "whole city there were",
+   "note": "S37"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 65.0,
+   "first": 130.0,
+   "line": "bat-people living on the Moon. And",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 32.0,
+   "first": 195.0,
+   "line": "people bought it.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 45.0,
+   "first": 227.0,
+   "line": "Not a cartoon. A",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 272.0,
+   "line": "real front page.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 71.0,
+   "first": 320.0,
+   "line": "They called it the Great Moon Hoax.",
+   "note": "S6"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 51.0,
+   "first": 391.0,
+   "line": "Here's the deal. The New York",
+   "note": "S38"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 77.0,
+   "first": 442.0,
+   "line": "Sun said a famous astronomer, Sir John",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 40.0,
+   "first": 519.0,
+   "line": "Herschel, had built a",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 74.0,
+   "first": 559.0,
+   "line": "giant telescope in South Africa. With a",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 70.0,
+   "first": 633.0,
+   "line": "lens twenty-four feet wide, it could",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 76.0,
+   "first": 703.0,
+   "line": "see the Moon like it was right down the street. And",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 41.0,
+   "first": 779.0,
+   "line": "what did he see?",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 50.0,
+   "first": 820.0,
+   "line": "Blue unicorns.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 68.0,
+   "first": 870.0,
+   "line": "Beavers walking on two legs.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 85.0,
+   "first": 938.0,
+   "line": "Giant purple crystals. And then, the",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 34.0,
+   "first": 1023.0,
+   "line": "big one.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 76.0,
+   "first": 1057.0,
+   "line": "Furry little people, with bat wings,",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 41.0,
+   "first": 1133.0,
+   "line": "flying over the lakes.",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 38.0,
+   "first": 1174.0,
+   "line": "New Yorkers went",
+   "note": "S19"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 43.0,
+   "first": 1212.0,
+   "line": "wild. The Sun",
+   "note": "S35"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 84.0,
+   "first": 1255.0,
+   "line": "claimed it was the best-selling paper in the world.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 89.0,
+   "first": 1339.0,
+   "line": "Other papers copied the story word for word,",
+   "note": "S21"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 30,
+   "len": 35.0,
+   "first": 1428.0,
+   "line": "just to keep up. And",
+   "note": "S39"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 107.0,
+   "first": 1463.0,
+   "line": "you know who had no idea? Herschel himself. He was",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 105.0,
+   "first": 1570.0,
+   "line": "real, and he really was in South Africa. He just",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 54.0,
+   "first": 1675.0,
+   "line": "never saw a single bat-man.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 53.0,
+   "first": 1729.0,
+   "line": "Turns out a reporter made the",
+   "note": "S25"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 75.0,
+   "first": 1782.0,
+   "line": "whole thing up. Most likely a guy named",
+   "note": "S36"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 57.0,
+   "first": 1857.0,
+   "line": "Richard Adams Locke. And when the",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 83.0,
+   "first": 1914.0,
+   "line": "truth came out? The Sun never really said",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 30.0,
+   "first": 1997.0,
+   "line": "sorry. And",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 85.0,
+   "first": 2027.0,
+   "line": "sales stayed sky high. So next time something",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 81.0,
+   "first": 2112.0,
+   "line": "online sounds too wild to be true,",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 33.0,
+   "first": 2193.0,
+   "line": "check the telescope.",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 43.0,
+   "first": 2226.0,
+   "line": "That's real. That's",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 60.0,
+   "first": 2269.0,
+   "line": "about it, folks. Follow for more",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 105.0,
+   "first": 2329.0,
+   "line": "strange history. See ya!",
+   "note": "S34"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#DDE8FF",
+   "o": 0.8,
+   "f": 1
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 7,
+   "f": 1
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF8AD0",
+   "o": 0.6,
+   "f": 133.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#DDE8FF",
+   "o": 0.7,
+   "f": 323.0
+  },
+  {
+   "kind": "punch",
+   "f": 641.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#5AA8FF",
+   "o": 0.6,
+   "f": 823.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#B06AFF",
+   "o": 0.6,
+   "f": 941.0
+  },
+  {
+   "kind": "bloom",
+   "color": "#FF8AD0",
+   "o": 0.7,
+   "f": 1060.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 1060.0
+  },
+  {
+   "kind": "punch",
+   "f": 1285.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.08,
+   "f": 1678.0
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 2000.0
+  },
+  {
+   "kind": "punch",
+   "amp": 0.06,
+   "f": 2229.0
+  }
+ ],
+ "audio": {
+  "voice": "moon-hoax/voice.wav",
+  "sfx": "moon-hoax/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1691,
+  "music": "moon-hoax/music.wav",
+  "musicVol": 0.1239
+ }
+}
