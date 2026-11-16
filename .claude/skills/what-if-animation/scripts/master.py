@@ -1,7 +1,7 @@
 """Step 8: the master. Renders the episode, then brings the mix to -14 LUFS with true peaks under -1 dBTP (two-pass
 loudnorm, video copied untouched), measures the result and writes the report.
 
-python <skill>/scripts/master.py <slug> [--vertical] [--skip-render] [--concurrency 6]
+python <skill>/scripts/master.py <slug> [--vertical] [--skip-render] [--concurrency 6] [--hq]
 Writes out/<slug>/<slug>-raw.mp4, out/<slug>/<slug>-final.mp4 and out/<slug>/report.json
 --vertical renders only the 9:16 composition (<Id>Vertical, 1080x1920): the Shorts/Reels deliverable.
 """
@@ -24,6 +24,8 @@ if '--skip-render' not in args:
     cmd = [npx, 'remotion', 'render', 'src/index.ts', comp, str(raw), '--log', 'error']
     if conc:
         cmd += ['--concurrency', conc]
+    if '--hq' in args:  # high fidelity: near-lossless frames and a high-quality intermediate
+        cmd += ['--jpeg-quality', '98', '--crf', '12']
     print(' '.join(cmd))
     subprocess.run(cmd, cwd=STUDIO, check=True)
     print(f'rendered in {time.time() - t0:.0f} s')
