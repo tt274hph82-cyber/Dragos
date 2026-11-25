@@ -6,4 +6,4 @@ export const INTERIOR = {shots: [] as string[], centre: [0, 0] as [number, numbe
 /** night mood 0..1 (0 = none) */
 export const MOOD = (_f: number) => 0;
 export type Mood = {sun: [number, number, number]; sunC: string; sunI: number; sky: string; gnd: string; hemiI: number; amb: string; ambI: number; fog?: [string, number, number]; bloom?: number; exp?: number};
-export const moodOf = (_loc: string): Mood | null => null;
+export const moodOf = (_loc: string, _f = 0): Mood | null => null;

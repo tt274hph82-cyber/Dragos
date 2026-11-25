@@ -1,0 +1,26 @@
+{
+  "music": "Instrumental 1920s-to-1950s Americana score for a playful true story about why stop signs are red: plucky upright bass, muted trumpet, ragtime piano and brushed snare, curious and a little mischievous, then a warm confident brass lift near the end. No vocals.",
+  "sfx_lu": -14,
+  "music_lu": -17,
+  "sfx": [
+    {"shot": "hook", "word": "for", "off": 0.0, "prompt": "vintage car tyres screeching to a sudden stop on asphalt at night", "secs": 1.2, "gain": 0.45},
+    {"shot": "detroit", "word": "cars", "prompt": "old 1910s car horns honking, busy street, horse neighing", "secs": 2.0, "gain": 0.4},
+    {"shot": "detroit", "word": "nobody", "prompt": "two old cars brake hard, near miss, short screech", "secs": 1.0, "gain": 0.4},
+    {"shot": "square", "word": "nails", "prompt": "hammer nailing a metal sign to a wooden post, three hits", "secs": 1.2, "gain": 0.7},
+    {"shot": "night", "word": "night", "prompt": "quiet night street, crickets, distant old engine", "secs": 1.5, "gain": 0.5},
+    {"shot": "wall", "word": "every", "prompt": "fast flutter of paper and tin signs rattling in wind", "secs": 1.0, "gain": 0.5},
+    {"shot": "room", "word": "idea", "prompt": "bright idea chime, single soft bell ding", "secs": 0.8, "gain": 0.6},
+    {"shot": "room", "word": "sides", "prompt": "cardboard shapes sliding on a wooden table", "secs": 1.0, "gain": 0.6},
+    {"shot": "board", "word": "circle", "prompt": "light cardboard piece dropping on paper, soft tap", "secs": 0.6, "gain": 0.7},
+    {"shot": "board", "word": "eight", "prompt": "light cardboard piece dropping on paper, soft tap", "secs": 0.6, "gain": 0.7},
+    {"shot": "snow", "word": "behind", "prompt": "car rolling slowly to a stop on crunchy snow, soft winter wind", "secs": 1.6, "gain": 0.5},
+    {"shot": "paint", "word": "yellow", "prompt": "metal paint can lifted off a wooden bench, lid rattle", "secs": 0.8, "gain": 0.6},
+    {"shot": "fade", "word": "summers", "prompt": "fast time-lapse whoosh, rising wind and clock ticking quickly", "secs": 2.0, "gain": 0.45},
+    {"shot": "fade", "word": "gray", "prompt": "dry dusty creak of old sun-bleached metal", "secs": 0.8, "gain": 0.5},
+    {"shot": "montage", "word": "thirty", "prompt": "calendar pages flipping rapidly", "secs": 1.2, "gain": 0.6},
+    {"shot": "montage", "word": "america", "prompt": "1950s car driving past, quick pass-by", "secs": 1.2, "gain": 0.5},
+    {"shot": "works", "word": "red", "prompt": "cloth sheet whipped off, then a short small crowd cheer", "secs": 1.4, "gain": 0.5},
+    {"shot": "today", "word": "brakes", "prompt": "modern car braking smoothly at night, soft tyre hiss", "secs": 1.0, "gain": 0.5},
+    {"shot": "today", "word": "took", "prompt": "warm gentle bell chime, resolving", "secs": 1.2, "gain": 0.5}
+  ]
+}

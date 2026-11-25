@@ -57,7 +57,7 @@ const Caption: React.FC<{f: number; width: number; height: number}> = ({f, width
 
 export const Video: React.FC = () => {
   const fr = useCurrentFrame(), {width, height} = useVideoConfig(), rt = fr / 30, f = warp(rt) * 30;
-  const d = useSetData(), st = stage(f), md = moodOf((st as any).loc ?? ''), cc = camAt(rt), cam = cc.p, vel = velocities(f, st), fl = flashAt(rt);
+  const d = useSetData(), st = stage(f), md = moodOf((st as any).loc ?? '', f), cc = camAt(rt), cam = cc.p, vel = velocities(f, st), fl = flashAt(rt);
   return (
     <AbsoluteFill style={{backgroundColor: '#000'}}>
       {AUDIO.voice && <Audio src={staticFile(AUDIO.voice)} />}

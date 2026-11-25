@@ -209,7 +209,7 @@ export const Shaft: React.FC<{p: V3; s: V3; r?: V3; col?: string; o?: number}> =
 /** floating dust motes in a box (seeded), drifting with the frame */
 export const Motes: React.FC<{c: V3; size: V3; f: number; n?: number; col?: string; seed?: number}> = ({c, size, f, n = 40, col = '#fff4d8', seed = 1}) => (<group position={c}>
   {Array.from({length: n}, (_, i) => { const t = f / 30, x = (rnd(i, seed) - 0.5) * size[0] + Math.sin(t * 0.4 + i) * 0.15, y = ((rnd(i, seed + 1) * size[1] + t * 0.05 * (0.5 + rnd(i, seed + 2))) % size[1]) - size[1] / 2, z = (rnd(i, seed + 3) - 0.5) * size[2];
-    return <M key={i} g={sph} m={glow(col, 1.6, 0.55)} p={[x, y, z]} s={0.012 + rnd(i, seed + 4) * 0.018} sh={false} />; })}</group>);
+    return <M key={i} g={sph} m={glow(col, 1.15, 0.35)} p={[x, y, z]} s={0.006 + rnd(i, seed + 4) * 0.01} sh={false} />; })}</group>);
 /** a sun / moon disk with a halo, placed far away along a direction from at */
 export const SunDisk: React.FC<{at: V3; dir: V3; col?: string; r?: number; dist?: number}> = ({at, dir, col = '#fff0c0', r = 6, dist = 140}) => { const v = new THREE.Vector3(...dir).normalize().multiplyScalar(dist);
   return (<group position={[at[0] + v.x, at[1] + v.y, at[2] + v.z]}><mesh geometry={sph} scale={r} material={glow(col, 2.2)} /><Halo col={col} s={r * 7} o={0.55} /><Halo col={col} s={r * 16} o={0.18} /></group>); };

@@ -21,4 +21,4 @@ export const LIGHTS: Record<string, Mood> = {
   brush: {...GOLD, sun: [-10, 5, 7]}, stretch: GOLD, miles: {...GOLD, sun: [14, 4.2, -3], fog: ['#f6c890', 80, 320]}, end: GOLD,
   modern: {sun: [-6, 10, -4], sunC: '#8aa4ff', sunI: 0.9, sky: '#2a3a6a', gnd: '#101018', hemiI: 0.55, amb: '#6a7ab8', ambI: 0.2, fog: ['#141a38', 30, 170], bloom: 1.6, exp: 1.05},
 };
-export const moodOf = (loc: string): Mood => LIGHTS[loc] ?? DAY;
+export const moodOf = (loc: string, _f = 0): Mood => LIGHTS[loc] ?? DAY;
