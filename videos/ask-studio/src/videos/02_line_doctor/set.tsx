@@ -29,9 +29,9 @@ const Dust: React.FC<{p: [number, number, number]; lf: number}> = ({p, lf}) => <
 /** desert dressing around a location: saguaros, poles, tumbleweed, sun/moon disk */
 const Dress: React.FC<{x: number; f: number; seed: number; loc: string; poles?: boolean; span?: number}> = ({x, f, seed, loc, poles = true, span = 120}) => { const m = moodOf(loc);
   return (<group>
-    {Array.from({length: 9}, (_, i) => <Cactus key={i} p={[x - span / 2 + rnd(i, seed) * span, 0, (rnd(i, seed + 1) > 0.5 ? 1 : -1) * (9 + rnd(i, seed + 2) * 22)]} h={2.4 + rnd(i, seed + 3) * 2.2} ry={rnd(i, seed + 4) * 6} />)}
+    {Array.from({length: 9}, (_, i) => <Cactus key={i} p={[x - span / 2 + rnd(i, seed) * span, 0, (rnd(i, seed + 1) > 0.35 ? -(10 + rnd(i, seed + 2) * 22) : 24 + rnd(i, seed + 2) * 14)]} h={2.4 + rnd(i, seed + 3) * 2.2} ry={rnd(i, seed + 4) * 6} />)}
     {poles && <Poles x0={x - span / 2} x1={x + span / 2} z={-6.5} />}
-    <Tumble p={[x - 14, 0, 4 + (seed % 3)]} lf={f % 600} s={0.5} />
+    {loc !== 'modern' && <Tumble p={[x - 14, 0, -4 - (seed % 3)]} lf={f % 600} s={0.5} />}
     <SunDisk at={[x, 0, 0]} dir={[m.sun[0], Math.max(0.12, m.sun[1] * 0.12), m.sun[2]]} col={loc === 'modern' ? '#dfe8ff' : m.sunC} r={loc === 'modern' ? 4 : 7} />
   </group>); };
 const Hook: React.FC<P> = ({d, f, st, cam}) => { const D = d.d, x = X.hook, j = st.people[0], q = j && charPts(j, f, cam, null);
@@ -96,7 +96,7 @@ const County: React.FC<P> = ({d, f}) => { const D = d.d, x = X.county;
 const Door: React.FC<P> = ({d, f, st}) => { const D = d.d, x = X.door, k = st.ex.door ?? 0;
   return (<group>
     <M m={T('#d8c8a0')} p={[x, 1.8, -0.2]} s={[10, 3.6, 0.2]} /><M m={T('#6b5240')} p={[x, 0.45, -0.08]} s={[10, 0.9, 0.05]} />
-    <M g={plane} m={T('#7a5a3a')} p={[x, 0, 2]} s={[10, 5, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />
+    <M g={plane} m={T('#7a5a3a')} p={[x, 0, 6]} s={[24, 14, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />
     <M m={T('#3a2414')} p={[x + 1.2, 1.15, -0.1]} s={[1.3, 2.3, 0.05]} />
     <group position={[x + 0.55, 0, -0.06]} rotation={[0, -k * 1.4, 0]}><M m={T('#7a3b22')} p={[0.65, 1.15, 0]} s={[1.3, 2.3, 0.08]} /><M g={sph} m={T('#d8b040')} p={[1.15, 1.1, 0.07]} s={0.06} />
       <Img t={D.signBoard} p={[0.65, 1.8, 0.05]} s={[1.0, 0.28]} /></group>

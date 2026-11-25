@@ -13,7 +13,7 @@ import {Character} from '../chars/rig';
 import {WORDS, CAPS} from '@story/timeline';
 import {AUDIO, SetBefore, SetAfter, useSetData} from '@story/set';
 import {moodOf, type Mood} from '@story/look';
-import {EffectComposer, Bloom, Vignette, Noise, SMAA, BrightnessContrast, HueSaturation} from '@react-three/postprocessing';
+import {EffectComposer, Bloom, Vignette, SMAA, BrightnessContrast, HueSaturation} from '@react-three/postprocessing';
 export {TOTAL};
 
 const Rig: React.FC<{c: Cam}> = ({c}) => { const {camera} = useThree(); camera.layers.enableAll(); applyCam(camera as THREE.PerspectiveCamera, c); return null; };   // characters live on a separate layer (NOINK)
@@ -40,7 +40,6 @@ const Post: React.FC<{m: Mood | null}> = ({m}) => (
     <BrightnessContrast brightness={0.0} contrast={0.06} />
     <HueSaturation saturation={0.06} />
     <Vignette eskil={false} offset={0.28} darkness={0.55} />
-    <Noise premultiply opacity={0.35} />
     <SMAA />
   </EffectComposer>);
 
