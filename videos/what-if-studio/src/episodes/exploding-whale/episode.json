@@ -10,16 +10,10 @@
  "lead": 0.4,
  "tail": 2.0,
  "voice": {
-  "id": "Bj9UqZbhQsanLzgalpEG",
-  "model": "eleven_v4",
-  "language": "en",
-  "settings": {
-   "stability": 0.45,
-   "similarity_boost": 0.8,
-   "style": 0.35,
-   "use_speaker_boost": true,
-   "speed": 1.1
-  }
+  "provider": "fish",
+  "id": "e686ae649ee44f219a108aacba206c1a",
+  "model": "s1",
+  "name": "calm storyteller male (Fish Audio)"
  },
  "script": [
   {
@@ -1611,5 +1605,17 @@
     0.3
    ]
   ]
+ },
+ "voice_austin": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true,
+   "speed": 1.1
+  }
  }
 }
