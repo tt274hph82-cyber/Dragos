@@ -5,7 +5,8 @@ ElevenLabs TTS.
 
 python <skill>/scripts/fish_voice.py <slug> [--force]
 
-episode.json "voice": {"provider": "fish", "id": "<Fish Audio model id>", "model": "s1"}
+episode.json "voice": {"provider": "fish", "id": "<Fish Audio voice id>", "model": "drama-3"} (or s2.1-pro, s1); per beat an optional
+"fish_dir": "[stage direction]" read by Drama 3 / S2 (not spoken). Unknown model names silently fall back to s2.1-pro.
 Keys: FISH_API_KEY (Fish Audio) and ELEVENLABS_API_KEY (speech-to-text) from the environment or the studio's .env.
 """
 import hashlib, json, os, pathlib, re, subprocess, sys
@@ -40,8 +41,11 @@ if not force and meta.get('sig') == sig and raw_mp3.exists() and raw_words.exist
     print('Fish take unchanged: reusing it.')
 else:
     print(f'{len(text)} characters to Fish Audio (voice {V["id"]}, model {V.get("model", "s1")})')
+    # Drama 3 / S2 read [bracket] stage directions per beat (episode.json script[i].fish_dir); they are not spoken, so the
+    # captions and word times still come from the plain script
+    spoken = ' '.join(((b.get('fish_dir', '') + ' ') if b.get('fish_dir') else '') + b['text'].strip() for b in ep['script'])
     r = requests.post('https://api.fish.audio/v1/tts', headers={'Authorization': 'Bearer ' + key('FISH_API_KEY'), 'model': V.get('model', 's1')},
-                      json={'text': text, 'reference_id': V['id'], 'format': 'mp3', 'mp3_bitrate': 128, **V.get('settings', {})}, timeout=600)
+                      json={'text': spoken, 'reference_id': V['id'], 'format': 'mp3', 'mp3_bitrate': 128, **V.get('settings', {})}, timeout=600)
     r.raise_for_status()
     raw_mp3.write_bytes(r.content)
     # word times from speech-to-text on the take itself

@@ -10,63 +10,83 @@
  "lead": 0.4,
  "tail": 2.0,
  "voice": {
-  "provider": "fish",
-  "id": "e686ae649ee44f219a108aacba206c1a",
-  "model": "s1",
-  "name": "calm storyteller male (Fish Audio)"
+  "id": "uB5dGadiIOtRLnqbQl9M",
+  "name": "Ethan - Energetic YouTube Narrator",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.38,
+   "similarity_boost": 0.8,
+   "style": 0.5,
+   "use_speaker_boost": true,
+   "speed": 1.06
+  }
  },
  "script": [
   {
    "beat": "hook",
-   "text": "In nineteen seventy, the state of Oregon blew up a whale. On purpose. With half a ton of dynamite."
+   "text": "In nineteen seventy, the state of Oregon blew up a whale. On purpose. With half a ton of dynamite.",
+   "fish_dir": "[a folksy storyteller, grinning, can't believe it himself]"
   },
   {
    "beat": "hook",
-   "text": "And buddy, this ain't some tall tale. It's on film."
+   "text": "And buddy, this ain't some tall tale. It's on film.",
+   "fish_dir": "[leaning in, sly and warm]"
   },
   {
    "beat": "setup",
-   "text": "Here's the deal. November, a little beach town called Florence. A forty-five foot sperm whale washes up dead. Eight tons. And it stinks to high heaven."
+   "text": "Here's the deal. November, a little beach town called Florence. A forty-five foot sperm whale washes up dead. Eight tons. And it stinks to high heaven.",
+   "fish_dir": "[easy, settling into the yarn]"
   },
   {
    "beat": "setup",
-   "text": "Now, in Oregon, the beach counted as a highway. So the whale was the highway department's problem."
+   "text": "Now, in Oregon, the beach counted as a highway. So the whale was the highway department's problem.",
+   "fish_dir": "[dry, deadpan]"
   },
   {
    "beat": "plan",
-   "text": "Their plan? Blow it into tiny pieces and let the seagulls clean up. What could go wrong?"
+   "text": "Their plan? Blow it into tiny pieces and let the seagulls clean up. What could go wrong?",
+   "fish_dir": "[mock-serious, then deeply sarcastic on the last question]"
   },
   {
    "beat": "plan",
-   "text": "One fella in the crowd, an old army explosives man, said that's way too much dynamite. Nobody listened."
+   "text": "One fella in the crowd, an old army explosives man, said that's way too much dynamite. Nobody listened.",
+   "fish_dir": "[a little tense, ominous]"
   },
   {
    "beat": "boom",
-   "text": "Twenty cases of dynamite. The countdown. And... KABOOM."
+   "text": "Twenty cases of dynamite. The countdown. And... KABOOM.",
+   "fish_dir": "[building tension, slowing down, then shouting the last word]"
   },
   {
    "beat": "rain",
-   "text": "Sand, smoke, and then it rained whale. Chunks of blubber came down on the crowd like the sky had a bellyache."
+   "text": "Sand, smoke, and then it rained whale. Chunks of blubber came down on the crowd like the sky had a bellyache.",
+   "fish_dir": "[awed, then laughing in disbelief]"
   },
   {
    "beat": "car",
-   "text": "One chunk flattened a brand-new car. And whose car was it? The army man's. The way he told it, he bought it at a sale called Get a Whale of a Deal."
+   "text": "One chunk flattened a brand-new car. And whose car was it? The army man's. The way he told it, he bought it at a sale called Get a Whale of a Deal.",
+   "fish_dir": "[gleeful, savoring the irony]"
   },
   {
    "beat": "gulls",
-   "text": "And the seagulls? Scared off by the boom. Didn't touch a bite."
+   "text": "And the seagulls? Scared off by the boom. Didn't touch a bite.",
+   "fish_dir": "[amused, matter-of-fact]"
   },
   {
    "beat": "end",
-   "text": "Most of the whale was still lying right there. So they buried it. Like they should've done in the first place."
+   "text": "Most of the whale was still lying right there. So they buried it. Like they should've done in the first place.",
+   "fish_dir": "[shaking his head, wry]"
   },
   {
    "beat": "end",
-   "text": "Today, Florence has a park called Exploding Whale Memorial Park. That's real."
+   "text": "Today, Florence has a park called Exploding Whale Memorial Park. That's real.",
+   "fish_dir": "[proud, warm]"
   },
   {
    "beat": "end",
-   "text": "So next time somebody says I've got a plan, ask how much dynamite. That's about it, folks. Follow for more strange history. See ya!"
+   "text": "So next time somebody says I've got a plan, ask how much dynamite. That's about it, folks. Follow for more strange history. See ya!",
+   "fish_dir": "[warm, wrapping up with a wink, friendly sign-off]"
   }
  ],
  "science": [
@@ -665,17 +685,17 @@
    "amp": 7
   },
   {
-   "at": "S4+8",
+   "at": "S4+27",
    "kind": "punch",
    "amp": 0.1
   },
   {
-   "at": "S9+10",
+   "at": "S9+40",
    "kind": "punch",
    "amp": 0.1
   },
   {
-   "at": "S11+4",
+   "at": "S11+31",
    "kind": "punch",
    "amp": 0.1
   },
@@ -687,12 +707,12 @@
    "r": 260
   },
   {
-   "at": "S20+3",
+   "at": "S20+58",
    "kind": "punch",
    "amp": 0.12
   },
   {
-   "at": "S22+6",
+   "at": "S22+32",
    "kind": "punch",
    "amp": 0.1
   },
@@ -715,13 +735,13 @@
    "o": 0.8
   },
   {
-   "at": "S29+10",
+   "at": "S29+30",
    "kind": "shake",
    "len": 8,
    "amp": 8
   },
   {
-   "at": "S29+10",
+   "at": "S29+30",
    "kind": "bloom",
    "color": "#F6D6C8",
    "o": 0.5
@@ -731,12 +751,12 @@
    "kind": "rewind"
   },
   {
-   "at": "S39+3",
+   "at": "S39+21",
    "kind": "punch",
    "amp": 0.1
   },
   {
-   "at": "S41+4",
+   "at": "S41+31",
    "kind": "punch",
    "amp": 0.12
   }
@@ -898,14 +918,14 @@
    }
   ],
   "levels": {
-   "sfx_lu": -11.0,
+   "sfx_lu": -13.0,
    "music_lu": -15.0
   },
   "events": [
    [
     "S1",
     "tr_thunder",
-    0.55
+    0.4
    ],
    [
     "S1+5",
@@ -1376,45 +1396,45 @@
     0.192
    ],
    [
-    "S4+8",
+    "S4+27",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
-    "S9+10",
+    "S9+40",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
-    "S11+4",
+    "S11+31",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
-    "S20+3",
+    "S20+58",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
-    "S22+6",
+    "S22+32",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
     "S24+2",
     "tr_impact",
-    0.614,
+    0.338,
     "onset"
    ],
    [
-    "S29+10",
+    "S29+30",
     "tr_impact",
-    0.614,
+    0.338,
     "onset"
    ],
    [
@@ -1423,15 +1443,15 @@
     0.4
    ],
    [
-    "S39+3",
+    "S39+21",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
-    "S41+4",
+    "S41+31",
     "tr_impact",
-    0.512,
+    0.282,
     "onset"
    ],
    [
@@ -1445,17 +1465,17 @@
     0.4
    ],
    [
-    "S3+8",
+    "S3+25",
     "stamp",
     0.3
    ],
    [
-    "S4+32",
+    "S4+49",
     "fuse",
-    0.22
+    0.16
    ],
    [
-    "S5+20",
+    "S5+57",
     "pop",
     0.3
    ],
@@ -1475,12 +1495,12 @@
     0.3
    ],
    [
-    "S12+4",
+    "S12+51",
     "stink",
-    0.35
+    0.22
    ],
    [
-    "S13+6",
+    "S13+87",
     "splat1",
     0.2
    ],
@@ -1495,9 +1515,9 @@
     0.3
    ],
    [
-    "S17+6",
+    "S17+27",
     "fuse",
-    0.3
+    0.16
    ],
    [
     "S18",
@@ -1505,12 +1525,12 @@
     0.25
    ],
    [
-    "S20+30",
+    "S20+33",
     "pop",
-    0.25
+    0.14
    ],
    [
-    "S22+4",
+    "S22+32",
     "tick",
     0.2
    ],
@@ -1520,9 +1540,9 @@
     0.35
    ],
    [
-    "S23+44",
+    "S23+45",
     "plunger",
-    0.28
+    0.22
    ],
    [
     "S24+1",
@@ -1555,9 +1575,9 @@
     0.25
    ],
    [
-    "S29+22",
+    "S29+30",
     "crunch",
-    0.32
+    0.22
    ],
    [
     "S32+6",
@@ -1570,7 +1590,7 @@
     0.35
    ],
    [
-    "S35+8",
+    "S35+34",
     "sniff",
     0.3
    ],
@@ -1595,7 +1615,7 @@
     0.18
    ],
    [
-    "S41+30",
+    "S41+31",
     "stamp",
     0.4
    ],
@@ -1605,17 +1625,5 @@
     0.3
    ]
   ]
- },
- "voice_austin": {
-  "id": "Bj9UqZbhQsanLzgalpEG",
-  "model": "eleven_v4",
-  "language": "en",
-  "settings": {
-   "stability": 0.45,
-   "similarity_boost": 0.8,
-   "style": 0.35,
-   "use_speaker_boost": true,
-   "speed": 1.1
-  }
  }
 }
