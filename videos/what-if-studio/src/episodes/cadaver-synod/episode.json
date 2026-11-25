@@ -1,0 +1,1175 @@
+{
+ "id": "CadaverSynod",
+ "slug": "cadaver-synod",
+ "topic": "The Cadaver Synod, Rome 897: a story Short in the Dancing Plague v2 look with the animated-shorts-kit long-take camera, faces and candlelight",
+ "title": [
+  "THE CADAVER",
+  "SYNOD"
+ ],
+ "accent": "CADAVER",
+ "lead": 0.4,
+ "tail": 2.0,
+ "voice": {
+  "id": "QvlD90AkjGTCqc9685Rq",
+  "name": "Grant - Hyper, Over-the-top and Loud",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.38,
+   "similarity_boost": 0.8,
+   "style": 0.5,
+   "use_speaker_boost": true,
+   "speed": 1.06
+  }
+ },
+ "script": [
+  {
+   "beat": "hook",
+   "text": "In eight ninety-seven, a pope put a dead man on trial. Not a painting of him. His actual corpse."
+  },
+  {
+   "beat": "hook",
+   "text": "And no, this ain't a horror movie. It's in the history books. They call it the Cadaver Synod."
+  },
+  {
+   "beat": "setup",
+   "text": "Here's the deal. Rome. Pope Formosus has been dead for about nine months. The new pope, Stephen the Sixth, really did not like him."
+  },
+  {
+   "beat": "dig",
+   "text": "So what does he do? He digs him up. Dresses the body in full papal robes. And sits it on a throne, in front of a room full of bishops."
+  },
+  {
+   "beat": "trial",
+   "text": "Now, a corpse can't talk. So they gave it a lawyer. A young deacon stood behind the throne and answered for the dead guy."
+  },
+  {
+   "beat": "trial",
+   "text": "The charge? Breaking church rules to become pope. And you know what the verdict was? Guilty."
+  },
+  {
+   "beat": "after",
+   "text": "Stephen cut off the three fingers Formosus used for blessings and threw the body in the River Tiber. Like taking out the trash."
+  },
+  {
+   "beat": "turn",
+   "text": "But Rome had seen enough. Within months the people turned on Stephen. He was thrown in prison, and strangled."
+  },
+  {
+   "beat": "turn",
+   "text": "And Formosus? Pulled out of the river by a monk, and buried again, back in Saint Peter's."
+  },
+  {
+   "beat": "end",
+   "text": "That's real."
+  },
+  {
+   "beat": "end",
+   "text": "So next time you think your boss holds a grudge, at least he isn't digging you up."
+  },
+  {
+   "beat": "end",
+   "text": "That's about it, folks. Follow for more strange history. See ya!"
+  }
+ ],
+ "science": [
+  {
+   "claim": "In January 897 Pope Stephen VI had the exhumed corpse of Pope Formosus (died April 896) dressed in papal vestments, seated on a throne and tried before a synod at the Lateran; a deacon answered for the dead pope; Formosus was found guilty (of perjury and of serving as pope illegally, having been a bishop of another see), his acts were annulled, the three fingers of his right hand used for blessings were cut off, and the body was thrown into the Tiber (after a brief burial in a common grave); it was recovered (by a monk / hermit, according to the accounts) and later reburied in St Peter's by Theodore II; a popular uprising in Rome deposed Stephen VI, who was imprisoned and strangled in the summer of 897.",
+   "working": "",
+   "source": "Wikipedia, Cadaver Synod; Liutprand of Cremona, Antapodosis; Encyclopaedia Britannica"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "at": "And",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S3",
+   "at": "Here's",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S4",
+   "at": "Pope",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S5",
+   "at": "So",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S6",
+   "at": "Dresses",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S7",
+   "at": "front",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S8",
+   "at": "charge",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S9",
+   "at": "Stephen",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S10",
+   "at": "threw",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S11",
+   "at": "But",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S12",
+   "at": "He",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S13",
+   "at": "Formosus",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S14",
+   "at": "buried",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S15",
+   "at": "So",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S16",
+   "at": "That's",
+   "cam": "static",
+   "tr": "dissolve"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "rome",
+   "key": 30,
+   "note": "S16"
+  }
+ ],
+ "takes": {
+  "S1": [
+   [
+    null,
+    540,
+    760,
+    2.6
+   ],
+   [
+    "trial",
+    540,
+    960,
+    1.05,
+    12
+   ],
+   [
+    "corpse",
+    540,
+    820,
+    2.2
+   ]
+  ],
+  "S2": [
+   [
+    null,
+    540,
+    700,
+    1.2
+   ],
+   [
+    "history",
+    620,
+    1020,
+    1.5
+   ],
+   [
+    "Cadaver",
+    770,
+    990,
+    2.3
+   ]
+  ],
+  "S3": [
+   [
+    null,
+    540,
+    900,
+    1.05
+   ],
+   [
+    "Rome",
+    640,
+    960,
+    1.6
+   ]
+  ],
+  "S4": [
+   [
+    null,
+    360,
+    1000,
+    1.6
+   ],
+   [
+    "nine",
+    330,
+    1060,
+    2.3
+   ],
+   [
+    "Stephen",
+    780,
+    940,
+    2.0
+   ],
+   [
+    "not",
+    780,
+    880,
+    2.8
+   ]
+  ],
+  "S5": [
+   [
+    null,
+    540,
+    900,
+    1.3
+   ],
+   [
+    "digs",
+    540,
+    1180,
+    1.9
+   ],
+   [
+    "up",
+    540,
+    1060,
+    1.6
+   ]
+  ],
+  "S6": [
+   [
+    null,
+    420,
+    1100,
+    1.7
+   ],
+   [
+    "robes",
+    420,
+    1110,
+    2.1
+   ],
+   [
+    "throne",
+    780,
+    980,
+    1.8
+   ]
+  ],
+  "S7": [
+   [
+    null,
+    540,
+    1020,
+    1.0
+   ],
+   [
+    "bishops",
+    540,
+    1060,
+    1.25
+   ],
+   [
+    "corpse",
+    540,
+    900,
+    2.4
+   ],
+   [
+    "lawyer",
+    700,
+    880,
+    2.4
+   ],
+   [
+    "answered",
+    720,
+    860,
+    3.0
+   ]
+  ],
+  "S8": [
+   [
+    null,
+    540,
+    820,
+    1.8
+   ],
+   [
+    "verdict",
+    800,
+    980,
+    2.2
+   ],
+   [
+    "Guilty",
+    540,
+    820,
+    1.6
+   ]
+  ],
+  "S9": [
+   [
+    null,
+    540,
+    960,
+    1.4
+   ],
+   [
+    "three",
+    540,
+    820,
+    2.3
+   ],
+   [
+    "blessings",
+    540,
+    900,
+    1.6
+   ]
+  ],
+  "S10": [
+   [
+    null,
+    540,
+    900,
+    1.4
+   ],
+   [
+    "Tiber",
+    540,
+    1100,
+    1.2
+   ],
+   [
+    "trash",
+    540,
+    1180,
+    1.6
+   ]
+  ],
+  "S11": [
+   [
+    null,
+    540,
+    1000,
+    1.05
+   ],
+   [
+    "people",
+    420,
+    1180,
+    1.9
+   ],
+   [
+    "Stephen",
+    800,
+    700,
+    2.2
+   ]
+  ],
+  "S12": [
+   [
+    null,
+    540,
+    900,
+    1.5
+   ],
+   [
+    "prison",
+    540,
+    860,
+    2.0
+   ],
+   [
+    "strangled",
+    700,
+    1000,
+    2.6
+   ]
+  ],
+  "S13": [
+   [
+    null,
+    540,
+    1000,
+    1.2
+   ],
+   [
+    "monk",
+    620,
+    1120,
+    2.1
+   ]
+  ],
+  "S14": [
+   [
+    null,
+    540,
+    1000,
+    1.15
+   ],
+   [
+    "Peter's",
+    540,
+    820,
+    1.5
+   ],
+   [
+    "real",
+    540,
+    900,
+    2.0
+   ]
+  ],
+  "S15": [
+   [
+    null,
+    540,
+    960,
+    1.1
+   ],
+   [
+    "boss",
+    360,
+    960,
+    2.0
+   ],
+   [
+    "digging",
+    820,
+    1120,
+    2.2
+   ]
+  ],
+  "S16": [
+   [
+    null,
+    540,
+    1100,
+    1.8
+   ],
+   [
+    "Follow",
+    540,
+    900,
+    1.0
+   ]
+  ]
+ },
+ "sound": {
+  "clips": {
+   "candles": [
+    "a quiet echoing stone basilica at night, candles crackling softly, distant wind, no voices",
+    10.0
+   ],
+   "choir": [
+    "a single low male monk chant note echoing in a cathedral, eerie, short",
+    3.0
+   ],
+   "creak": [
+    "an old wooden coffin lid creaking open slowly, eerie",
+    2.0
+   ],
+   "shovel": [
+    "shovels digging into earth at night, three strokes",
+    2.0
+   ],
+   "cloth": [
+    "heavy fabric robes rustling and being pulled on, short",
+    1.2
+   ],
+   "gasp": [
+    "a small crowd of men gasping in shock in a stone hall, short",
+    1.2
+   ],
+   "page": [
+    "a huge old book slamming open, pages turning",
+    1.5
+   ],
+   "bones": [
+    "dry bones rattling, eerie, short",
+    1.0
+   ],
+   "stamp": [
+    "a heavy wooden gavel slam echoing in a hall, short",
+    0.8
+   ],
+   "snip": [
+    "a sharp metallic snip, quick, cartoon",
+    0.5
+   ],
+   "splash": [
+    "a heavy body splashing into a river at night",
+    1.5
+   ],
+   "trash": [
+    "a metal trash can lid clanging, cartoon, short",
+    0.8
+   ],
+   "mob": [
+    "an angry medieval crowd shouting and marching with torches",
+    3.0
+   ],
+   "cell": [
+    "a heavy iron prison door slamming shut with an echo",
+    1.5
+   ],
+   "snuff": [
+    "a candle being blown out, a soft puff",
+    0.6
+   ],
+   "oars": [
+    "a wooden rowing boat creaking on calm water at dawn, oars dipping",
+    3.0
+   ],
+   "bells": [
+    "distant church bells ringing slowly in a city at dawn",
+    4.0
+   ],
+   "office": [
+    "a quiet modern office, keyboard typing, air conditioning hum",
+    3.0
+   ],
+   "rome": [
+    "an ancient city at dusk, distant bells, birds, river, no voices",
+    6.0
+   ],
+   "score": [
+    "a darkly comic medieval score for a bizarre true story about a pope putting a corpse on trial: low monk choir hums, pipe organ, plucked lute, frame drum and pizzicato strings, spooky but playful, a tense trial section, a grim sting at the verdict, then a wry, light ending, no vocals",
+    80,
+    "music"
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_push": [
+    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
+    1.2
+   ],
+   "tr_pan": [
+    "a soft quick sideways air swish, a camera pan, short",
+    0.7
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ],
+   "mv_push": [
+    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
+    1.2
+   ],
+   "mv_pull": [
+    "a deep airy reverse whoosh, a camera pulling back fast, cinematic, short",
+    1.0
+   ],
+   "mv_pan": [
+    "a soft quick sideways air swish, a camera pan, short",
+    0.7
+   ],
+   "mv_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ]
+  },
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -15.0
+  },
+  "events": [
+   [
+    "S1",
+    "tr_thunder",
+    0.55
+   ],
+   [
+    "S1",
+    "tr_cut",
+    0.256,
+    "peak"
+   ],
+   [
+    "S2",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S3",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S4",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S5",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S6",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S7",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S8",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S9",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S10",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S11",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S12",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S13",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S14",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S15",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S16",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S1",
+    "candles",
+    0.35
+   ],
+   [
+    "S1+4",
+    "choir",
+    0.3
+   ],
+   [
+    "S1+190",
+    "gasp",
+    0.3
+   ],
+   [
+    "S2",
+    "page",
+    0.4
+   ],
+   [
+    "S3",
+    "rome",
+    0.3
+   ],
+   [
+    "S4+45",
+    "bones",
+    0.25
+   ],
+   [
+    "S5",
+    "shovel",
+    0.35
+   ],
+   [
+    "S5+41",
+    "creak",
+    0.3
+   ],
+   [
+    "S6+54",
+    "cloth",
+    0.35
+   ],
+   [
+    "S7",
+    "candles",
+    0.3
+   ],
+   [
+    "S7+49",
+    "gasp",
+    0.3
+   ],
+   [
+    "S8+157",
+    "stamp",
+    0.45
+   ],
+   [
+    "S9+97",
+    "snip",
+    0.35
+   ],
+   [
+    "S10+36",
+    "splash",
+    0.45
+   ],
+   [
+    "S10+97",
+    "trash",
+    0.3
+   ],
+   [
+    "S11",
+    "mob",
+    0.35
+   ],
+   [
+    "S12+23",
+    "cell",
+    0.4
+   ],
+   [
+    "S12+68",
+    "snuff",
+    0.35
+   ],
+   [
+    "S13",
+    "oars",
+    0.35
+   ],
+   [
+    "S14",
+    "bells",
+    0.3
+   ],
+   [
+    "S15",
+    "office",
+    0.25
+   ],
+   [
+    "S16",
+    "rome",
+    0.3
+   ],
+   [
+    "S1+80",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S1+152",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S2+44",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S2+97",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S3+6",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S4+37",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S4+89",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S4+143",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S5+19",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S5+33",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S6+32",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S6+75",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S7+10",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S7+47",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S7+115",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S7+201",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S8+86",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S8+118",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S9+8",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S9+57",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S10+14",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S10+59",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S11+58",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S11+86",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S12+0",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S12+27",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S13+40",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S14+26",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S14+65",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S15+17",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S15+80",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S16+11",
+    "mv_pull",
+    0.36
+   ]
+  ]
+ },
+ "fx": [
+  {
+   "at": "S1+1",
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.7
+  },
+  {
+   "at": "S1+1",
+   "kind": "shake",
+   "len": 8,
+   "amp": 6
+  },
+  {
+   "at": "S9+86",
+   "kind": "flash",
+   "color": "#FF3030",
+   "o": 0.35
+  }
+ ]
+}

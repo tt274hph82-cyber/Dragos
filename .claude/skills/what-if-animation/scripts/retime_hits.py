@@ -14,7 +14,7 @@ def at(sh, word, off=2, start=False):
             return f"{sh}+{max(0, round((x['s'] if start else x['e']) * 30 - a) + off)}"
     raise SystemExit(f'{word} not in {sh}')
 e = json.load(open(f'{d}/episode.json'))
-for fx in e['fx']:
+for fx in e.get('fx', []):
     sh = fx['at'].split('+')[0]
     if sh in K['fx'] and fx['kind'] in ('punch', 'bloom', 'shake'): fx['at'] = at(sh, K['fx'][sh])
 place = {(c, sh): at(sh, wd, off, st) for c, sh, wd, off, st in K['events']}

@@ -1,0 +1,342 @@
+{
+ "slug": "cadaver-synod",
+ "title": "THE CADAVER SYNOD",
+ "fps": 30,
+ "total": 2108,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 193.6,
+   "t0": 0,
+   "t1": 193.6,
+   "line": "In eight ninety- seven, a pope put a dead man on trial. Not a painting of him. His actual corpse.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S2",
+   "a": 193.6,
+   "b": 351.6,
+   "t0": 0,
+   "t1": 158.00000000000003,
+   "line": "And no, this ain't a horror movie. It's in the history books. They call it the Cadaver Synod.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S3",
+   "a": 351.6,
+   "b": 400.6,
+   "t0": 0,
+   "t1": 49.0,
+   "line": "Here's the deal. Rome.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S4",
+   "a": 400.6,
+   "b": 593.6,
+   "t0": 0,
+   "t1": 193.0,
+   "line": "Pope Formosus has been dead for about nine months. The new pope, Stephen the Sixth, really did not like him.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S5",
+   "a": 593.6,
+   "b": 661.6,
+   "t0": 0,
+   "t1": 68.0,
+   "line": "So what does he do? He digs him up.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S6",
+   "a": 661.6,
+   "b": 780.6,
+   "t0": 0,
+   "t1": 119.0,
+   "line": "Dresses the body in full papal robes. And sits it on a throne, in",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S7",
+   "a": 780.6,
+   "b": 1049.6,
+   "t0": 0,
+   "t1": 268.9999999999999,
+   "line": "front of a room full of bishops. Now, a corpse can't talk. So they gave it a lawyer. A young deacon stood behind the throne and answered for the dead guy. The",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S8",
+   "a": 1049.6,
+   "b": 1215.6,
+   "t0": 0,
+   "t1": 166.0,
+   "line": "charge? Breaking church rules to become pope. And you know what the verdict was? Guilty.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S9",
+   "a": 1215.6,
+   "b": 1317.6,
+   "t0": 0,
+   "t1": 102.0,
+   "line": "Stephen cut off the three fingers Formosus used for blessings and",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S10",
+   "a": 1317.6,
+   "b": 1420.6,
+   "t0": 0,
+   "t1": 103.0,
+   "line": "threw the body in the River Tiber. Like taking out the trash.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S11",
+   "a": 1420.6,
+   "b": 1545.6,
+   "t0": 0,
+   "t1": 125.0,
+   "line": "But Rome had seen enough. Within months the people turned on Stephen.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S12",
+   "a": 1545.6,
+   "b": 1624.6,
+   "t0": 0,
+   "t1": 79.0,
+   "line": "He was thrown in prison, and strangled. And",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S13",
+   "a": 1624.6,
+   "b": 1705.6,
+   "t0": 0,
+   "t1": 81.0,
+   "line": "Formosus? Pulled out of the river by a monk, and",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S14",
+   "a": 1705.6,
+   "b": 1812.6,
+   "t0": 0,
+   "t1": 107.0,
+   "line": "buried again, back in Saint Peter's. That's real.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S15",
+   "a": 1812.6,
+   "b": 1942.6,
+   "t0": 0,
+   "t1": 130.0,
+   "line": "So next time you think your boss holds a grudge, at least he isn't digging you up.",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S16",
+   "a": 1942.6,
+   "b": 2108,
+   "t0": 0,
+   "t1": 165.4000000000001,
+   "line": "That's about it, folks. Follow for more strange history. See ya!",
+   "cam": "static",
+   "tr": "dissolve"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 193.6,
+   "first": 0,
+   "line": "In eight ninety- seven, a pope put a dead man on trial. Not a painting of him. His actual corpse.",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 158.00000000000003,
+   "first": 193.6,
+   "line": "And no, this ain't a horror movie. It's in the history books. They call it the Cadaver Synod.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 49.0,
+   "first": 351.6,
+   "line": "Here's the deal. Rome.",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 193.0,
+   "first": 400.6,
+   "line": "Pope Formosus has been dead for about nine months. The new pope, Stephen the Sixth, really did not like him.",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 68.0,
+   "first": 593.6,
+   "line": "So what does he do? He digs him up.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 119.0,
+   "first": 661.6,
+   "line": "Dresses the body in full papal robes. And sits it on a throne, in",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 268.9999999999999,
+   "first": 780.6,
+   "line": "front of a room full of bishops. Now, a corpse can't talk. So they gave it a lawyer. A young deacon stood behind the throne and answered for the dead guy. The",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 166.0,
+   "first": 1049.6,
+   "line": "charge? Breaking church rules to become pope. And you know what the verdict was? Guilty.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 102.0,
+   "first": 1215.6,
+   "line": "Stephen cut off the three fingers Formosus used for blessings and",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 103.0,
+   "first": 1317.6,
+   "line": "threw the body in the River Tiber. Like taking out the trash.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 125.0,
+   "first": 1420.6,
+   "line": "But Rome had seen enough. Within months the people turned on Stephen.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 79.0,
+   "first": 1545.6,
+   "line": "He was thrown in prison, and strangled. And",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 81.0,
+   "first": 1624.6,
+   "line": "Formosus? Pulled out of the river by a monk, and",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 107.0,
+   "first": 1705.6,
+   "line": "buried again, back in Saint Peter's. That's real.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 130.0,
+   "first": 1812.6,
+   "line": "So next time you think your boss holds a grudge, at least he isn't digging you up.",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 165.4000000000001,
+   "first": 1942.6,
+   "line": "That's about it, folks. Follow for more strange history. See ya!",
+   "note": "S16"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.7,
+   "f": 1
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 6,
+   "f": 1
+  },
+  {
+   "kind": "flash",
+   "color": "#FF3030",
+   "o": 0.35,
+   "f": 1301.6
+  }
+ ],
+ "audio": {
+  "voiceVol": 0.8,
+  "sfxVol": 0.268,
+  "musicVol": 0.1343,
+  "voice": "cadaver-synod/voice.wav",
+  "sfx": "cadaver-synod/sfx.wav",
+  "music": "cadaver-synod/music.wav"
+ }
+}
