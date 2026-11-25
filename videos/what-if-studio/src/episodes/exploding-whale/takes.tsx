@@ -52,7 +52,7 @@ const Take: React.FC<{ id: string; f: number; t: number; children: React.ReactNo
   const c = camAt(id, f, t);
   return (
     <g>
-      <g transform={`translate(${W / 2} 960) scale(${c.z}) translate(${-c.x} ${-c.y})`} filter={c.blur ? `url(#gsB${c.blur})` : undefined}>{children}</g>
+      <g transform={`translate(${W / 2} 960) scale(${c.z}) translate(${-c.x} ${-c.y})`}>{children}</g>
       {over}
     </g>
   );
@@ -251,9 +251,9 @@ export const S115: S = ({ t, f }) => (   // today: kids in the park, pan to the 
     <rect x={-300} y={1000} width={W + 600} height={1200} fill="#4A7A3A" />
     {Array.from({ length: 5 }, (_, i) => <g key={i} transform={`translate(${60 + i * 250} 1000)`}><rect x={-12} y={-140} width={24} height={140} fill="#5A3A22" /><circle cx={0} cy={-190} r={80} fill="#3A6A2A" stroke={INK} strokeWidth={5} /></g>)}
     <g transform="translate(200 1260) scale(0.7)"><path d="M -120 0 L -60 -260 L 60 -260 L 120 0" stroke={INK} strokeWidth={12} fill="none" /><path d={`M 0 -260 L ${Math.sin(t * 0.12) * 90} -100`} stroke={INK} strokeWidth={5} /><rect x={Math.sin(t * 0.12) * 90 - 30} y={-108} width={60} height={14} fill="#D8322A" /></g>
-    {[[300, 0], [420, 1]].map(([x, i]) => <Man key={i} x={x} feet={1300 - Math.abs(Math.sin(t * 0.3 + i)) * 24} s={0.7} mood="noon" t={t + i * 4} g="run" hat="none" e="happy" ph={i} />)}
+    {[0, 1].map((i) => { const u = ((t * 0.006 + i * 0.5) % 1), back = u > 0.5, x = back ? lerp(920, 120, (u - 0.5) * 2) : lerp(120, 920, u * 2);   // the kids run laps across the lawn
+      return <Man key={i} x={x} feet={1300 + i * 30} s={0.7} mood="noon" t={t + i * 4} g="run" hat="none" e="happy" ph={i} flip={back} />; })}
     <Board x={600} y={1060} w={460} h={290} lines={['EXPLODING WHALE', 'MEMORIAL PARK']} size={46} bg="#5A3A22" posts={150} />
-    <g transform="translate(600 690) scale(0.2)"><Whale x={0} y={0} s={1} rim="#FFE2A8" dead={false} /></g>
     <rect x={500} y={1130} width={200} height={100} rx={10} fill="#C8A048" stroke={INK} strokeWidth={5} />
     <text x={600} y={1172} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={18} fill={INK}>NOV 12, 1970</text>
     <text x={600} y={1200} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={16} fill={INK}>FLORENCE, OREGON</text>
@@ -277,7 +277,7 @@ export const S117: S = ({ t, f }) => (   // sign-off: the whale on the sunset be
   <Take id="S117" f={f} t={t} over={w(f, t, 'Follow') < 0 ? <><Txt x={540} y={400} s={96} c="#FFD08A">THAT'S ABOUT IT,</Txt><Txt x={540} y={510} s={110}>FOLKS</Txt></> : <Punch t={w(f, t, 'Follow')} lines={['FOLLOW FOR MORE', 'STRANGE HISTORY']} y={300} size={80} color="#FFD08A" />}>
     <Sky id="t17" mood="outback" sunX={540} sunY={1000} />
     <Rays x={540} y={1000} t={t} o={0.3} n={10} spread={140} dir={90} />
-    <g transform={`translate(${430 + t * 0.6} 640) scale(0.5)`} opacity={0.85}><path d="M -470 -40 Q -500 -250 -380 -270 L -60 -280 Q 120 -270 260 -190 Q 380 -120 470 -70 L 600 -60 Q 660 -150 720 -170 Q 700 -90 640 -46 Q 700 -10 720 70 Q 660 40 600 -30 L 470 -20 Q 300 0 -60 6 L -440 6 Q -480 -10 -470 -40 Z" fill="#FFE6C8" /></g>
+    <Clouds mood="outback" t={t} y={620} o={0.9} />
     <Sea mood="outback" t={t} y={1000} to={1180} sunX={540} />
     <Sand mood="outback" y={1180} />
     <Whale x={540} y={1200} s={0.4} rim={MOODS.outback.rim} dead={false} />
