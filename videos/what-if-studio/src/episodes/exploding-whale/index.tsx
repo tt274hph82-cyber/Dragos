@@ -2,7 +2,9 @@ import React from 'react';
 import { defineStory, Timeline, StoryWord, ShotProps } from '../../engine';
 import timeline from './timeline.json';
 import words from './words.json';
-import * as S from './shots';
+import * as S0 from './shots';
+import * as TK from './takes';
+const S = { ...S0, ...TK };
 import { FxDefs, Atmos } from '../great-stink/shots';
 
 // "The Exploding Whale" (Florence, Oregon, 1970): a story Short in the Dancing Plague v2 look; frames follow the

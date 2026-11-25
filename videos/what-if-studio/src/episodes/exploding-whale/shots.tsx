@@ -11,24 +11,24 @@ import words from './words.json';
 // Key content sits between y 280 and 1150 (captions below).
 
 type S = React.FC<ShotProps>;
-const scr = { mixBlendMode: 'screen' as const };
-const BLUB = '#F2D6C8', SKIN = '#454B58', DYN = '#D8322A', CAR = '#2F8FA0';
+export const scr = { mixBlendMode: 'screen' as const };
+export const BLUB = '#F2D6C8', SKIN = '#454B58', DYN = '#D8322A', CAR = '#2F8FA0';
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-const since = (f: number, word: string, n = 0) => {
+export const since = (f: number, word: string, n = 0) => {
   const hits = (words as { w: string; s: number }[]).filter((x) => norm(x.w) === norm(word));
   const w = hits[Math.min(n, hits.length - 1)];
   return w ? f - Math.round(w.s * 30) : 0;
 };
-const Txt: React.FC<{ x: number; y: number; s: number; c?: string; children: React.ReactNode; a?: 'middle' | 'start'; rot?: number }> = ({ x, y, s, c = '#FFF8EA', children, a = 'middle', rot = 0 }) => (
+export const Txt: React.FC<{ x: number; y: number; s: number; c?: string; children: React.ReactNode; a?: 'middle' | 'start'; rot?: number }> = ({ x, y, s, c = '#FFF8EA', children, a = 'middle', rot = 0 }) => (
   <text x={x} y={y} textAnchor={a} transform={rot ? `rotate(${rot} ${x} ${y})` : undefined} fontFamily={FONT.title} fontWeight={800} fontSize={s} fill={c} stroke="#140A12" strokeWidth={s * 0.12} paintOrder="stroke" strokeLinejoin="round">{children}</text>
 );
-const Speech: React.FC<{ t: number; x: number; y: number; children: React.ReactNode; flip?: boolean }> = ({ t, x, y, children, flip }) => (t < 0 ? null :
+export const Speech: React.FC<{ t: number; x: number; y: number; children: React.ReactNode; flip?: boolean }> = ({ t, x, y, children, flip }) => (t < 0 ? null :
   <g transform={`translate(${x} ${y}) scale(${popIn(t, 6)})`}>
     <path d={`M -190 -130 Q -210 -150 -190 -170 L 190 -170 Q 210 -150 190 -130 L 190 90 Q 210 110 190 130 L ${flip ? 60 : -20} 130 L ${flip ? 100 : -80} 210 L ${flip ? 0 : -60} 130 L -190 130 Q -210 110 -190 90 Z`} fill="#FFF8EA" stroke={INK} strokeWidth={8} />
     {children}
   </g>
 );
-const BigX: React.FC<{ t: number; x?: number; y?: number; s?: number }> = ({ t, x = 540, y = 820, s = 1 }) => (t < 0 ? null :
+export const BigX: React.FC<{ t: number; x?: number; y?: number; s?: number }> = ({ t, x = 540, y = 820, s = 1 }) => (t < 0 ? null :
   <g transform={`translate(${x} ${y}) scale(${popIn(t, 5) * s})`}><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#140A12" strokeWidth={80} strokeLinecap="round" /><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#E0283A" strokeWidth={54} strokeLinecap="round" /></g>
 );
 
@@ -37,7 +37,7 @@ export type Ex = 'neutral' | 'happy' | 'shock' | 'angry' | 'disgust' | 'smug' | 
 const DEFAULT_EX: Record<string, Ex> = { stand: 'neutral', nose: 'disgust', gag: 'disgust', run: 'scared', point: 'angry', shock: 'shock', vote: 'happy', dig: 'neutral' };
 /** Eyes, brows and a mouth on a silhouette head (centre hx, hy, radius r); look -1..1 turns the features to that side.
  *  Blinks every few seconds (seeded by ph). White eyes read on the dark silhouettes, like glowing eyes in the dark. */
-const Face: React.FC<{ hx: number; hy: number; r: number; look: number; e: Ex; t: number; ph?: number; rim: string }> = ({ hx, hy, r, look, e, t, ph = 0, rim }) => {
+export const Face: React.FC<{ hx: number; hy: number; r: number; look: number; e: Ex; t: number; ph?: number; rim: string }> = ({ hx, hy, r, look, e, t, ph = 0, rim }) => {
   const cx = hx + look * r * 0.28, blink = ((t + ph * 37) % 96) < 4 ? 0.12 : 1;
   const big = e === 'shock' || e === 'scared', eh = r * (big ? 0.26 : e === 'smug' ? 0.12 : e === 'happy' ? 0.15 : 0.19) * blink, ew = r * (big ? 0.2 : 0.17);
   const pup = r * (e === 'scared' ? 0.06 : 0.09), px = look * r * 0.06, sep = r * 0.36;
@@ -67,7 +67,7 @@ const Face: React.FC<{ hx: number; hy: number; r: number; look: number; e: Ex; t
   );
 };
 /** A figure with a face: the story kit's silhouette (with its contact shadow) plus eyes and an expression. */
-const Man: React.FC<{ x: number; feet: number; s: number; mood: Mood; t: number; g?: Gest; hat?: 'bowler' | 'cap' | 'none'; flip?: boolean; ph?: number; e?: Ex }> = (p) => {
+export const Man: React.FC<{ x: number; feet: number; s: number; mood: Mood; t: number; g?: Gest; hat?: 'bowler' | 'cap' | 'none'; flip?: boolean; ph?: number; e?: Ex }> = (p) => {
   const g = p.g ?? 'stand', hop = g === 'run' ? Math.abs(Math.sin(p.t * 0.5 + (p.ph ?? 0))) * 18 : 0;
   const hy = p.feet - hop - LEG_LEN * p.s + HEAD.y * p.s + (g === 'nose' || g === 'gag' ? 6 * p.s : 0), r = HEAD.r * p.s;
   return <g><Body {...p} /><Face hx={p.x} hy={hy} r={r} look={p.flip ? -1 : 1} e={p.e ?? DEFAULT_EX[g] ?? 'neutral'} t={p.t} ph={p.ph ?? p.x} rim={MOODS[p.mood].rim} /></g>;
@@ -75,7 +75,7 @@ const Man: React.FC<{ x: number; feet: number; s: number; mood: Mood; t: number;
 
 // ---------------------------------------------------------------- the coast
 /** Rolling sea from the horizon to the shore, with moving wave crests and sun glitter. */
-const Sea: React.FC<{ mood: Mood; t: number; y?: number; to?: number; sunX?: number }> = ({ mood, t, y = 900, to = 1080, sunX }) => {
+export const Sea: React.FC<{ mood: Mood; t: number; y?: number; to?: number; sunX?: number }> = ({ mood, t, y = 900, to = 1080, sunX }) => {
   const m = MOODS[mood];
   return (
     <g>
@@ -91,7 +91,7 @@ const Sea: React.FC<{ mood: Mood; t: number; y?: number; to?: number; sunX?: num
   );
 };
 /** Sand from y down, with ripples and dune grass tufts. */
-const Sand: React.FC<{ mood: Mood; y?: number; tufts?: number }> = ({ mood, y = 1080, tufts = 8 }) => {
+export const Sand: React.FC<{ mood: Mood; y?: number; tufts?: number }> = ({ mood, y = 1080, tufts = 8 }) => {
   const m = MOODS[mood];
   return (
     <g>
@@ -104,7 +104,7 @@ const Sand: React.FC<{ mood: Mood; y?: number; tufts?: number }> = ({ mood, y = 
   );
 };
 /** A far headland with Heceta Head's lighthouse (white tower, lit lamp) and its beam. */
-const Headland: React.FC<{ mood: Mood; x?: number; y?: number; s?: number; t: number; beam?: boolean }> = ({ mood, x = 830, y = 900, s = 1, t, beam }) => {
+export const Headland: React.FC<{ mood: Mood; x?: number; y?: number; s?: number; t: number; beam?: boolean }> = ({ mood, x = 830, y = 900, s = 1, t, beam }) => {
   const m = MOODS[mood];
   return (
     <g transform={`translate(${x} ${y}) scale(${s})`}>
@@ -120,7 +120,7 @@ const Headland: React.FC<{ mood: Mood; x?: number; y?: number; s?: number; t: nu
   );
 };
 /** The whole beach: sky, sun rays, clouds, the headland, the sea and the sand. */
-const Beach: React.FC<{ id: string; mood: Mood; t: number; sunX?: number; sunY?: number; horizon?: number; shore?: number; head?: boolean; moon?: boolean }> = ({ id, mood, t, sunX = 760, sunY = 620, horizon = 900, shore = 1080, head = true, moon }) => (
+export const Beach: React.FC<{ id: string; mood: Mood; t: number; sunX?: number; sunY?: number; horizon?: number; shore?: number; head?: boolean; moon?: boolean }> = ({ id, mood, t, sunX = 760, sunY = 620, horizon = 900, shore = 1080, head = true, moon }) => (
   <g>
     <Sky id={id} mood={mood} sunX={sunX} sunY={sunY} moon={moon} />
     <Rays x={sunX} y={sunY} t={t} o={0.22} n={8} spread={120} dir={90} />
@@ -134,7 +134,7 @@ const Beach: React.FC<{ id: string; mood: Mood; t: number; sunX?: number; sunY?:
 // ---------------------------------------------------------------- the whale
 /** A dead sperm whale lying on its side, facing left: the huge square head, the narrow jaw, wrinkled skin, flukes.
  *  rim = the scene's glow; open 0..1 splits it open (the blast). */
-const Whale: React.FC<{ x: number; y: number; s: number; rim: string; open?: number; t?: number; dead?: boolean }> = ({ x, y, s, rim, open = 0, t = 0, dead = true }) => (
+export const Whale: React.FC<{ x: number; y: number; s: number; rim: string; open?: number; t?: number; dead?: boolean }> = ({ x, y, s, rim, open = 0, t = 0, dead = true }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`} style={{ filter: `drop-shadow(0 0 8px ${rim})` }}>
     <ellipse cx={60} cy={14} rx={640} ry={56} fill="#000" opacity={0.45} filter="url(#gsB12)" />
     <g transform={`translate(${-open * 60} ${-open * 20}) rotate(${-open * 6})`}>
@@ -164,7 +164,7 @@ const Whale: React.FC<{ x: number; y: number; s: number; rim: string; open?: num
   </g>
 );
 /** A chunk of blubber: dark skin on one side, pale fat on the other, seeded shape. */
-const Chunk: React.FC<{ x: number; y: number; s?: number; rot?: number; seed?: number }> = ({ x, y, s = 1, rot = 0, seed = 0 }) => {
+export const Chunk: React.FC<{ x: number; y: number; s?: number; rot?: number; seed?: number }> = ({ x, y, s = 1, rot = 0, seed = 0 }) => {
   const n = 9, pts = Array.from({ length: n }, (_, i) => { const a = (i / n) * Math.PI * 2, r = 40 * (0.75 + random(`ck${seed}${i}`) * 0.45); return [Math.cos(a) * r * 1.3, Math.sin(a) * r]; });
   const d = 'M ' + pts.map((p) => p.join(' ')).join(' L ') + ' Z';
   return (
@@ -176,7 +176,7 @@ const Chunk: React.FC<{ x: number; y: number; s?: number; rot?: number; seed?: n
   );
 };
 /** Blubber falling from the sky (k 0..1 how far into the rain), seeded. */
-const Rain: React.FC<{ t: number; n?: number; seed?: string; s?: number; ground?: number }> = ({ t, n = 18, seed = 'r', s = 1, ground = 1500 }) => (
+export const Rain: React.FC<{ t: number; n?: number; seed?: string; s?: number; ground?: number }> = ({ t, n = 18, seed = 'r', s = 1, ground = 1500 }) => (
   <g>{Array.from({ length: n }, (_, i) => {
     const x = random(`${seed}x${i}`) * (W + 200) - 100, d = random(`${seed}d${i}`) * 30, sp = 22 + random(`${seed}s${i}`) * 18;
     const y = Math.min(ground - random(`${seed}g${i}`) * 300, -200 + (t - d) * sp);
@@ -185,7 +185,7 @@ const Rain: React.FC<{ t: number; n?: number; seed?: string; s?: number; ground?
 );
 
 // ---------------------------------------------------------------- props
-const Dynamite: React.FC<{ x: number; y: number; s?: number; n?: number; lit?: number }> = ({ x, y, s = 1, n = 3, lit = 0 }) => (
+export const Dynamite: React.FC<{ x: number; y: number; s?: number; n?: number; lit?: number }> = ({ x, y, s = 1, n = 3, lit = 0 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     {Array.from({ length: n }, (_, i) => <g key={i} transform={`translate(${(i - (n - 1) / 2) * 38} 0)`}><rect x={-18} y={-120} width={36} height={130} rx={8} fill={DYN} stroke={INK} strokeWidth={5} /><rect x={-18} y={-80} width={36} height={16} fill="#F2E6C8" opacity={0.8} /></g>)}
     <rect x={-n * 20} y={-50} width={n * 40} height={14} fill="#3A2A1A" />
@@ -193,7 +193,7 @@ const Dynamite: React.FC<{ x: number; y: number; s?: number; n?: number; lit?: n
     {lit > 0 ? <g><circle cx={-6} cy={-190} r={14} fill="#FFE07A" /><Glow x={-6} y={-190} r={80} kind="warm" o={0.8} /></g> : null}
   </g>
 );
-const Crate: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
+export const Crate: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <ellipse cx={10} cy={4} rx={100} ry={16} fill="#000" opacity={0.45} filter="url(#gsB3)" />
     <rect x={-80} y={-110} width={160} height={110} fill="#A8743A" stroke={INK} strokeWidth={6} />
@@ -203,7 +203,7 @@ const Crate: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) 
   </g>
 );
 /** A blasting machine: a wooden box with a T-handle plunger (k 0..1 pushed down). */
-const Plunger: React.FC<{ x: number; y: number; s?: number; k?: number }> = ({ x, y, s = 1, k = 0 }) => (
+export const Plunger: React.FC<{ x: number; y: number; s?: number; k?: number }> = ({ x, y, s = 1, k = 0 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <rect x={-14} y={-230 + k * 120} width={28} height={180} fill="#8A8A92" stroke={INK} strokeWidth={5} />
     <rect x={-120} y={-250 + k * 120} width={240} height={34} rx={14} fill="#5A3A22" stroke={INK} strokeWidth={6} />
@@ -215,7 +215,7 @@ const Plunger: React.FC<{ x: number; y: number; s?: number; k?: number }> = ({ x
   </g>
 );
 /** A seagull standing (flap 0) or flying (flap > 0 = wing beat phase). */
-const Gull: React.FC<{ x: number; y: number; s?: number; flap?: number; flip?: boolean; lick?: number }> = ({ x, y, s = 1, flap = 0, flip, lick = 0 }) => (
+export const Gull: React.FC<{ x: number; y: number; s?: number; flap?: number; flip?: boolean; lick?: number }> = ({ x, y, s = 1, flap = 0, flip, lick = 0 }) => (
   <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s} ${s})`}>
     {flap > 0 ? (
       <g>
@@ -238,7 +238,7 @@ const Gull: React.FC<{ x: number; y: number; s?: number; flap?: number; flip?: b
   </g>
 );
 /** A 1970 sedan in profile (crush 0..1 flattens the roof). */
-const Car: React.FC<{ x: number; y: number; s?: number; c?: string; crush?: number; flip?: boolean }> = ({ x, y, s = 1, c = CAR, crush = 0, flip }) => (
+export const Car: React.FC<{ x: number; y: number; s?: number; c?: string; crush?: number; flip?: boolean }> = ({ x, y, s = 1, c = CAR, crush = 0, flip }) => (
   <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s} ${s})`}>
     <ellipse cx={0} cy={8} rx={330} ry={30} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <path d="M -290 -40 L -280 -100 Q -270 -120 -200 -124 L 250 -124 Q 300 -120 300 -90 L 300 -40 Z" fill={c} stroke={INK} strokeWidth={7} />
@@ -251,7 +251,7 @@ const Car: React.FC<{ x: number; y: number; s?: number; c?: string; crush?: numb
   </g>
 );
 /** A 1970 highway department dump truck, orange, in profile. */
-const Truck: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
+export const Truck: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <ellipse cx={0} cy={8} rx={360} ry={32} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <path d="M -320 -50 L -320 -220 L 60 -220 L 80 -50 Z" fill="#E8862A" stroke={INK} strokeWidth={7} />
@@ -264,8 +264,8 @@ const Truck: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) 
   </g>
 );
 /** A rough Oregon outline (neon). */
-const OREGON = 'M 120 300 L 880 300 L 900 380 L 860 470 L 880 560 L 880 800 L 120 800 L 110 700 L 90 600 L 120 500 L 100 420 Z';
-const Tape: React.FC<{ x0: number; x1: number; y: number; k: number; label: string }> = ({ x0, x1, y, k, label }) => {
+export const OREGON = 'M 120 300 L 880 300 L 900 380 L 860 470 L 880 560 L 880 800 L 120 800 L 110 700 L 90 600 L 120 500 L 100 420 Z';
+export const Tape: React.FC<{ x0: number; x1: number; y: number; k: number; label: string }> = ({ x0, x1, y, k, label }) => {
   const xe = lerp(x0, x1, easeOut(clamp(k)));
   return (
     <g>
@@ -276,12 +276,12 @@ const Tape: React.FC<{ x0: number; x1: number; y: number; k: number; label: stri
     </g>
   );
 };
-const Weight: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
+export const Weight: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}><path d="M -70 0 L -50 -110 L 50 -110 L 70 0 Z" fill="#4A4A52" stroke={INK} strokeWidth={6} /><path d="M -24 -110 Q 0 -150 24 -110" stroke={INK} strokeWidth={12} fill="none" />
     <text x={0} y={-36} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={34} fill="#F2E6C8">1 TON</text></g>
 );
 /** A cloud with a bellyache face (sick k 0..1). */
-const SickCloud: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
+export const SickCloud: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
   <g transform={`translate(${x} ${y + Math.sin(t * 0.2) * 6}) scale(${s})`}>
     {[[-150, 20, 110], [-50, -50, 140], [90, -30, 130], [190, 30, 100], [20, 50, 130]].map(([cx, cy, r], i) => <circle key={i} cx={cx} cy={cy} r={r} fill="#C8D0D8" stroke={INK} strokeWidth={8} />)}
     {[[-150, 20, 100], [-50, -50, 130], [90, -30, 120], [190, 30, 90], [20, 50, 120]].map(([cx, cy, r], i) => <circle key={'f' + i} cx={cx} cy={cy} r={r} fill="#C8D0D8" />)}
@@ -291,7 +291,7 @@ const SickCloud: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ 
     <path d="M -30 -110 q 30 -30 60 0" stroke="#7AA04A" strokeWidth={8} fill="none" opacity={0.8} />
   </g>
 );
-const Dozer: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
+export const Dozer: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <ellipse cx={0} cy={6} rx={280} ry={28} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <rect x={-200} y={-70} width={340} height={70} rx={34} fill={INK} />{Array.from({ length: 6 }, (_, i) => <circle key={i} cx={-170 + i * 56} cy={-35} r={22} fill="#5A5A62" />)}
@@ -301,9 +301,9 @@ const Dozer: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y
     <rect x={-150} y={-260} width={20} height={70} fill={INK} />{Array.from({ length: 3 }, (_, i) => <circle key={i} cx={-140 + Math.sin(t * 0.2 + i) * 10} cy={-290 - i * 40 - (t % 20)} r={16 + i * 6} fill="#6A6A72" opacity={0.5 - i * 0.12} />)}
   </g>
 );
-const Mound: React.FC<{ x: number; y: number; w: number; h: number; c: string }> = ({ x, y, w, h, c }) => <path d={`M ${x - w} ${y} Q ${x - w * 0.4} ${y - h} ${x} ${y - h} Q ${x + w * 0.5} ${y - h} ${x + w} ${y} Z`} fill={c} stroke={INK} strokeWidth={6} />;
+export const Mound: React.FC<{ x: number; y: number; w: number; h: number; c: string }> = ({ x, y, w, h, c }) => <path d={`M ${x - w} ${y} Q ${x - w * 0.4} ${y - h} ${x} ${y - h} Q ${x + w * 0.5} ${y - h} ${x + w} ${y} Z`} fill={c} stroke={INK} strokeWidth={6} />;
 /** A wooden roadside sign on two posts. */
-const Board: React.FC<{ x: number; y: number; w: number; h: number; lines: string[]; size: number; bg?: string; fg?: string; posts?: number }> = ({ x, y, w, h, lines, size, bg = '#2E6A4A', fg = '#F4EEE2', posts = 260 }) => (
+export const Board: React.FC<{ x: number; y: number; w: number; h: number; lines: string[]; size: number; bg?: string; fg?: string; posts?: number }> = ({ x, y, w, h, lines, size, bg = '#2E6A4A', fg = '#F4EEE2', posts = 260 }) => (
   <g>
     <ellipse cx={x + w * 0.08} cy={y + posts} rx={w * 0.55} ry={w * 0.06} fill="#000" opacity={0.45} filter="url(#gsB6)" />
     {[-w * 0.32, w * 0.32].map((dx) => <rect key={dx} x={x + dx - 12} y={y} width={24} height={posts} fill="#6A4428" stroke={INK} strokeWidth={4} />)}
@@ -313,7 +313,7 @@ const Board: React.FC<{ x: number; y: number; w: number; h: number; lines: strin
   </g>
 );
 /** A crowd of onlookers on the dunes (silhouettes, hats). */
-const Crowd: React.FC<{ mood: Mood; t: number; n: number; x0: number; x1: number; feet: number; s: number; g?: 'stand' | 'run' | 'shock' | 'nose' | 'point'; seed?: number; flip?: boolean; e?: Ex }> = ({ mood, t, n, x0, x1, feet, s, g = 'stand', seed = 0, flip, e }) => (
+export const Crowd: React.FC<{ mood: Mood; t: number; n: number; x0: number; x1: number; feet: number; s: number; g?: 'stand' | 'run' | 'shock' | 'nose' | 'point'; seed?: number; flip?: boolean; e?: Ex }> = ({ mood, t, n, x0, x1, feet, s, g = 'stand', seed = 0, flip, e }) => (
   <g>{Array.from({ length: n }, (_, i) => { const x = lerp(x0, x1, n === 1 ? 0.5 : i / (n - 1)) + (random(`cr${seed}${i}`) - 0.5) * 50;
     return <Man key={i} x={x} feet={feet + (i % 3) * 14} s={s * (0.9 + (i % 3) * 0.06)} mood={mood} t={t + i * 7} g={g} e={e ?? (g === 'stand' ? (['neutral', 'happy', 'smug'] as Ex[])[(i + seed) % 3] : undefined)} hat={(['bowler', 'cap', 'none'] as const)[(i + seed) % 3]} flip={flip ?? i % 2 === 0} ph={i} />; })}</g>
 );

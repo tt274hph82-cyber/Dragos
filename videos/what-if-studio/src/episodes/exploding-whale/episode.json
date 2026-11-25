@@ -98,6 +98,1250 @@
  ],
  "edit": [
   {
+   "shot": "S101",
+   "at": "f:0",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S102",
+   "at": "half",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S103",
+   "at": "November",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S104",
+   "at": "forty",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S105",
+   "at": "Now",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S106",
+   "at": "Their",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S107",
+   "at": "One",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S108",
+   "at": "Twenty",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S109",
+   "at": "KABOOM",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S110",
+   "at": "rained",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S111",
+   "at": "One",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S112",
+   "at": "way",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S113",
+   "at": "seagulls",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S114",
+   "at": "Most",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S115",
+   "at": "Today",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S116",
+   "at": "next",
+   "cam": "static",
+   "tr": "dissolve"
+  },
+  {
+   "shot": "S117",
+   "at": "That's",
+   "cam": "static",
+   "tr": "dissolve"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S101",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S101"
+  },
+  {
+   "id": "S102",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S102"
+  },
+  {
+   "id": "S103",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S103"
+  },
+  {
+   "id": "S104",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S104"
+  },
+  {
+   "id": "S105",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S105"
+  },
+  {
+   "id": "S106",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S106"
+  },
+  {
+   "id": "S107",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S107"
+  },
+  {
+   "id": "S108",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S108"
+  },
+  {
+   "id": "S109",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S109"
+  },
+  {
+   "id": "S110",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S110"
+  },
+  {
+   "id": "S111",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S111"
+  },
+  {
+   "id": "S112",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S112"
+  },
+  {
+   "id": "S113",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S113"
+  },
+  {
+   "id": "S114",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S114"
+  },
+  {
+   "id": "S115",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S115"
+  },
+  {
+   "id": "S116",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S116"
+  },
+  {
+   "id": "S117",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S117"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S101+1",
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.8
+  },
+  {
+   "at": "S101+1",
+   "kind": "shake",
+   "len": 10,
+   "amp": 7
+  },
+  {
+   "at": "S109+1",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 1
+  },
+  {
+   "at": "S109+1",
+   "kind": "shake",
+   "len": 16,
+   "amp": 12
+  },
+  {
+   "at": "S109+2",
+   "kind": "bloom",
+   "color": "#FFB03A",
+   "o": 0.8
+  },
+  {
+   "at": "S112",
+   "kind": "rewind"
+  }
+ ],
+ "sound": {
+  "clips": {
+   "surf": [
+    "ocean waves rolling onto a sandy beach, wind, distant seagulls, no voices",
+    10.0
+   ],
+   "gulls": [
+    "several seagulls calling, close, short",
+    2.0
+   ],
+   "boom": [
+    "a massive close dynamite explosion with a deep rumble and debris, cinematic",
+    4.0
+   ],
+   "splat": [
+    "several wet heavy blobs splatting onto sand one after another, gross, cartoon",
+    2.0
+   ],
+   "splat1": [
+    "one big wet heavy splat, gross, cartoon, short",
+    0.8
+   ],
+   "crunch": [
+    "a heavy wet object crushing a car roof, metal crunch and glass cracking",
+    1.5
+   ],
+   "crowd": [
+    "a small 1970s crowd murmuring on a beach, outdoors",
+    4.0
+   ],
+   "scream": [
+    "a crowd screaming and running away on a beach, short",
+    2.5
+   ],
+   "truck": [
+    "an old diesel dump truck pulling up and idling, outdoors",
+    3.0
+   ],
+   "camera": [
+    "an old 16mm film camera whirring, mechanical",
+    2.0
+   ],
+   "fuse": [
+    "a lit fuse fizzing and sparking, close",
+    1.5
+   ],
+   "tick": [
+    "three loud clock ticks, tense countdown",
+    2.0
+   ],
+   "plunger": [
+    "a wooden blasting plunger pushed down hard, mechanical clunk",
+    0.8
+   ],
+   "stamp": [
+    "a heavy rubber stamp slammed on paper, short",
+    0.6
+   ],
+   "stink": [
+    "a cartoon disgusted groan, someone saying eww, short, no words",
+    1.0
+   ],
+   "flap": [
+    "many birds flapping wings and taking off at once, whoosh",
+    2.0
+   ],
+   "sniff": [
+    "a bird sniffing and a short disappointed squawk, cartoon",
+    1.0
+   ],
+   "dozer": [
+    "a bulldozer engine rumbling and pushing sand",
+    3.0
+   ],
+   "kids": [
+    "children laughing and playing in a sunny park, distant, short",
+    3.0
+   ],
+   "bell": [
+    "a small shop bell jingle and a cash register ding",
+    1.0
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "marker": [
+    "a marker pen squeaking on a whiteboard, short",
+    1.0
+   ],
+   "score": [
+    "a playful, mischievous 1970s American score for a funny true story about a whale blown up on an Oregon beach: twangy surf guitar, upright bass, bongos and brushed drums, a little sneaky as the plan forms, tense before the countdown, a big comic brass stab after the explosion, then a jaunty, wry ending, no vocals",
+    90,
+    "music"
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_push": [
+    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
+    1.2
+   ],
+   "tr_pan": [
+    "a soft quick sideways air swish, a camera pan, short",
+    0.7
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ],
+   "mv_push": [
+    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
+    1.2
+   ],
+   "mv_pull": [
+    "a deep airy reverse whoosh, a camera pulling back fast, cinematic, short",
+    1.0
+   ],
+   "mv_pan": [
+    "a soft quick sideways air swish, a camera pan, short",
+    0.7
+   ],
+   "mv_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ]
+  },
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -13.0,
+   "music_lu": -15.0
+  },
+  "events": [
+   [
+    "S101",
+    "tr_thunder",
+    0.55
+   ],
+   [
+    "S101",
+    "tr_cut",
+    0.256,
+    "peak"
+   ],
+   [
+    "S102",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S103",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S104",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S105",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S106",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S107",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S108",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S109",
+    "tr_cut",
+    0.256,
+    "peak"
+   ],
+   [
+    "S110",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S111",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S112",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S113",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S114",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S115",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S116",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S117",
+    "tr_whoosh",
+    0.352,
+    "peak"
+   ],
+   [
+    "S109+2",
+    "tr_impact",
+    0.614,
+    "onset"
+   ],
+   [
+    "S112",
+    "tr_tick",
+    0.4
+   ],
+   [
+    "S101+0",
+    "surf",
+    0.35
+   ],
+   [
+    "S101+2",
+    "boom",
+    0.4
+   ],
+   [
+    "S101+139",
+    "stamp",
+    0.3
+   ],
+   [
+    "S102+45",
+    "fuse",
+    0.16
+   ],
+   [
+    "S102+113",
+    "pop",
+    0.3
+   ],
+   [
+    "S102+123",
+    "camera",
+    0.3
+   ],
+   [
+    "S103+23",
+    "surf",
+    0.25
+   ],
+   [
+    "S104+36",
+    "gulls",
+    0.3
+   ],
+   [
+    "S104+168",
+    "stink",
+    0.22
+   ],
+   [
+    "S105+76",
+    "splat1",
+    0.2
+   ],
+   [
+    "S105+82",
+    "truck",
+    0.3
+   ],
+   [
+    "S106+87",
+    "gulls",
+    0.3
+   ],
+   [
+    "S106+155",
+    "fuse",
+    0.16
+   ],
+   [
+    "S107+0",
+    "crowd",
+    0.25
+   ],
+   [
+    "S107+116",
+    "pop",
+    0.14
+   ],
+   [
+    "S108+40",
+    "tick",
+    0.2
+   ],
+   [
+    "S108+50",
+    "tick",
+    0.35
+   ],
+   [
+    "S108+94",
+    "plunger",
+    0.22
+   ],
+   [
+    "S109+1",
+    "boom",
+    0.55
+   ],
+   [
+    "S109+39",
+    "crowd",
+    0.25
+   ],
+   [
+    "S110+10",
+    "splat",
+    0.4
+   ],
+   [
+    "S110+36",
+    "scream",
+    0.3
+   ],
+   [
+    "S110+56",
+    "splat",
+    0.35
+   ],
+   [
+    "S110+104",
+    "splat1",
+    0.25
+   ],
+   [
+    "S111+32",
+    "crunch",
+    0.22
+   ],
+   [
+    "S112+6",
+    "bell",
+    0.3
+   ],
+   [
+    "S113+0",
+    "flap",
+    0.35
+   ],
+   [
+    "S113+105",
+    "sniff",
+    0.3
+   ],
+   [
+    "S114+4",
+    "gulls",
+    0.2
+   ],
+   [
+    "S114+95",
+    "dozer",
+    0.3
+   ],
+   [
+    "S115+0",
+    "kids",
+    0.25
+   ],
+   [
+    "S116+2",
+    "marker",
+    0.18
+   ],
+   [
+    "S116+118",
+    "stamp",
+    0.4
+   ],
+   [
+    "S117+0",
+    "surf",
+    0.3
+   ],
+   [
+    "S101+44",
+    "mv_whip",
+    0.5
+   ],
+   [
+    "S101+99",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S102+2",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S102+34",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S102+67",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S102+108",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S103+35",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S104+0",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S104+44",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S104+61",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S104+110",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S105+39",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S105+67",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S105+97",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S106+3",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S106+61",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S106+116",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S107+27",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S107+93",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S107+132",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S108+28",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S109+29",
+    "mv_whip",
+    0.5
+   ],
+   [
+    "S110+62",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S110+104",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S111+51",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S111+92",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S112+25",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S113+47",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S114+73",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S114+124",
+    "mv_pull",
+    0.36
+   ],
+   [
+    "S115+40",
+    "mv_pan",
+    0.34
+   ],
+   [
+    "S115+118",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S116+54",
+    "mv_push",
+    0.3
+   ],
+   [
+    "S117+14",
+    "mv_pull",
+    0.36
+   ]
+  ]
+ },
+ "takes": {
+  "S101": [
+   [
+    null,
+    540,
+    880,
+    2.3
+   ],
+   [
+    "Oregon",
+    540,
+    980,
+    1.0,
+    12,
+    "whip"
+   ],
+   [
+    "purpose",
+    860,
+    1230,
+    2.2
+   ]
+  ],
+  "S102": [
+   [
+    null,
+    300,
+    1250,
+    2.1
+   ],
+   [
+    "dynamite",
+    300,
+    1000,
+    2.1
+   ],
+   [
+    "buddy",
+    660,
+    1260,
+    1.9
+   ],
+   [
+    "tall",
+    660,
+    1180,
+    2.5
+   ],
+   [
+    "film",
+    880,
+    1060,
+    2.1
+   ]
+  ],
+  "S103": [
+   [
+    null,
+    540,
+    960,
+    1.0
+   ],
+   [
+    "Florence",
+    190,
+    920,
+    2.4
+   ]
+  ],
+  "S104": [
+   [
+    null,
+    280,
+    1060,
+    2.3
+   ],
+   [
+    "foot",
+    780,
+    1060,
+    2.3
+   ],
+   [
+    "dead",
+    420,
+    1080,
+    3.0
+   ],
+   [
+    "Eight",
+    540,
+    1080,
+    1.15
+   ],
+   [
+    "stinks",
+    540,
+    1380,
+    1.5
+   ]
+  ],
+  "S105": [
+   [
+    null,
+    540,
+    1080,
+    2.0
+   ],
+   [
+    "highway",
+    540,
+    1040,
+    1.6
+   ],
+   [
+    "whale",
+    300,
+    1120,
+    1.9
+   ],
+   [
+    "department's",
+    620,
+    1080,
+    1.15
+   ]
+  ],
+  "S106": [
+   [
+    null,
+    540,
+    960,
+    1.25
+   ],
+   [
+    "Blow",
+    540,
+    880,
+    2.1
+   ],
+   [
+    "seagulls",
+    800,
+    560,
+    2.6
+   ],
+   [
+    "wrong",
+    230,
+    1010,
+    2.3
+   ]
+  ],
+  "S107": [
+   [
+    null,
+    540,
+    1240,
+    1.05
+   ],
+   [
+    "army",
+    620,
+    1120,
+    2.7
+   ],
+   [
+    "too",
+    600,
+    1100,
+    3.1
+   ],
+   [
+    "Nobody",
+    880,
+    1200,
+    2.3
+   ]
+  ],
+  "S108": [
+   [
+    null,
+    540,
+    1120,
+    1.25
+   ],
+   [
+    "countdown",
+    820,
+    1300,
+    2.4
+   ]
+  ],
+  "S109": [
+   [
+    null,
+    540,
+    900,
+    1.7
+   ],
+   [
+    "Sand",
+    540,
+    1000,
+    1.0,
+    10,
+    "whip"
+   ]
+  ],
+  "S110": [
+   [
+    null,
+    540,
+    700,
+    1.5
+   ],
+   [
+    "crowd",
+    540,
+    1300,
+    1.5
+   ],
+   [
+    "bellyache",
+    540,
+    560,
+    1.6
+   ]
+  ],
+  "S111": [
+   [
+    null,
+    560,
+    1180,
+    2.1
+   ],
+   [
+    "whose",
+    470,
+    1180,
+    1.2
+   ],
+   [
+    "army",
+    210,
+    1080,
+    2.4
+   ]
+  ],
+  "S112": [
+   [
+    null,
+    560,
+    1200,
+    1.6
+   ],
+   [
+    "sale",
+    540,
+    620,
+    1.4
+   ]
+  ],
+  "S113": [
+   [
+    null,
+    540,
+    800,
+    1.2
+   ],
+   [
+    "Didn't",
+    640,
+    1290,
+    2.3
+   ]
+  ],
+  "S114": [
+   [
+    null,
+    400,
+    1020,
+    1.7
+   ],
+   [
+    "buried",
+    720,
+    1150,
+    1.8
+   ],
+   [
+    "first",
+    540,
+    1060,
+    1.1
+   ]
+  ],
+  "S115": [
+   [
+    null,
+    320,
+    1180,
+    1.6
+   ],
+   [
+    "Exploding",
+    560,
+    940,
+    1.5
+   ],
+   [
+    "real",
+    600,
+    1170,
+    3.0
+   ]
+  ],
+  "S116": [
+   [
+    null,
+    540,
+    700,
+    1.4
+   ],
+   [
+    "ask",
+    540,
+    820,
+    1.9
+   ]
+  ],
+  "S117": [
+   [
+    null,
+    540,
+    1120,
+    2.0
+   ],
+   [
+    "Follow",
+    540,
+    850,
+    1.0
+   ]
+  ]
+ },
+ "edit_v1": [
+  {
    "shot": "S1",
    "at": "f:0",
    "cam": "push"
@@ -360,1270 +1604,5 @@
    "cam": "rise",
    "tr": "ghost"
   }
- ],
- "shots": [
-  {
-   "id": "S1",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S1"
-  },
-  {
-   "id": "S2",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S2"
-  },
-  {
-   "id": "S3",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S3"
-  },
-  {
-   "id": "S4",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S4"
-  },
-  {
-   "id": "S5",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S5"
-  },
-  {
-   "id": "S6",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S6"
-  },
-  {
-   "id": "S7",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S7"
-  },
-  {
-   "id": "S8",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S8"
-  },
-  {
-   "id": "S9",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S9"
-  },
-  {
-   "id": "S10",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S10"
-  },
-  {
-   "id": "S11",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S11"
-  },
-  {
-   "id": "S12",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S12"
-  },
-  {
-   "id": "S13",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S13"
-  },
-  {
-   "id": "S14",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S14"
-  },
-  {
-   "id": "S15",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S15"
-  },
-  {
-   "id": "S16",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S16"
-  },
-  {
-   "id": "S17",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S17"
-  },
-  {
-   "id": "S18",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S18"
-  },
-  {
-   "id": "S19",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S19"
-  },
-  {
-   "id": "S20",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S20"
-  },
-  {
-   "id": "S21",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S21"
-  },
-  {
-   "id": "S22",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S22"
-  },
-  {
-   "id": "S23",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S23"
-  },
-  {
-   "id": "S24",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S24"
-  },
-  {
-   "id": "S25",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S25"
-  },
-  {
-   "id": "S26",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S26"
-  },
-  {
-   "id": "S27",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S27"
-  },
-  {
-   "id": "S28",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S28"
-  },
-  {
-   "id": "S29",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S29"
-  },
-  {
-   "id": "S30",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S30"
-  },
-  {
-   "id": "S31",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S31"
-  },
-  {
-   "id": "S32",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S32"
-  },
-  {
-   "id": "S33",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S33"
-  },
-  {
-   "id": "S34",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S34"
-  },
-  {
-   "id": "S35",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S35"
-  },
-  {
-   "id": "S36",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S36"
-  },
-  {
-   "id": "S37",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S37"
-  },
-  {
-   "id": "S38",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S38"
-  },
-  {
-   "id": "S39",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S39"
-  },
-  {
-   "id": "S40",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S40"
-  },
-  {
-   "id": "S41",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S41"
-  },
-  {
-   "id": "S42",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S42"
-  },
-  {
-   "id": "S43",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S43"
-  },
-  {
-   "id": "S44",
-   "size": "story",
-   "set": "beach",
-   "key": 30,
-   "note": "S44"
-  }
- ],
- "fx": [
-  {
-   "at": "S1+1",
-   "kind": "flash",
-   "color": "#FFF0E0",
-   "o": 0.8
-  },
-  {
-   "at": "S1+1",
-   "kind": "shake",
-   "len": 10,
-   "amp": 7
-  },
-  {
-   "at": "S4+20",
-   "kind": "punch",
-   "amp": 0.1
-  },
-  {
-   "at": "S9+36",
-   "kind": "punch",
-   "amp": 0.1
-  },
-  {
-   "at": "S11+31",
-   "kind": "punch",
-   "amp": 0.1
-  },
-  {
-   "at": "S17+6",
-   "kind": "iris",
-   "x": 540,
-   "y": 980,
-   "r": 260
-  },
-  {
-   "at": "S20+57",
-   "kind": "punch",
-   "amp": 0.12
-  },
-  {
-   "at": "S22+40",
-   "kind": "punch",
-   "amp": 0.1
-  },
-  {
-   "at": "S24+1",
-   "kind": "flash",
-   "color": "#FFFFFF",
-   "o": 1
-  },
-  {
-   "at": "S24+1",
-   "kind": "shake",
-   "len": 16,
-   "amp": 12
-  },
-  {
-   "at": "S24+2",
-   "kind": "bloom",
-   "color": "#FFB03A",
-   "o": 0.8
-  },
-  {
-   "at": "S29+32",
-   "kind": "shake",
-   "len": 8,
-   "amp": 8
-  },
-  {
-   "at": "S29+32",
-   "kind": "bloom",
-   "color": "#F6D6C8",
-   "o": 0.5
-  },
-  {
-   "at": "S32",
-   "kind": "rewind"
-  },
-  {
-   "at": "S39+25",
-   "kind": "punch",
-   "amp": 0.1
-  },
-  {
-   "at": "S41+42",
-   "kind": "punch",
-   "amp": 0.12
-  }
- ],
- "sound": {
-  "clips": {
-   "surf": [
-    "ocean waves rolling onto a sandy beach, wind, distant seagulls, no voices",
-    10.0
-   ],
-   "gulls": [
-    "several seagulls calling, close, short",
-    2.0
-   ],
-   "boom": [
-    "a massive close dynamite explosion with a deep rumble and debris, cinematic",
-    4.0
-   ],
-   "splat": [
-    "several wet heavy blobs splatting onto sand one after another, gross, cartoon",
-    2.0
-   ],
-   "splat1": [
-    "one big wet heavy splat, gross, cartoon, short",
-    0.8
-   ],
-   "crunch": [
-    "a heavy wet object crushing a car roof, metal crunch and glass cracking",
-    1.5
-   ],
-   "crowd": [
-    "a small 1970s crowd murmuring on a beach, outdoors",
-    4.0
-   ],
-   "scream": [
-    "a crowd screaming and running away on a beach, short",
-    2.5
-   ],
-   "truck": [
-    "an old diesel dump truck pulling up and idling, outdoors",
-    3.0
-   ],
-   "camera": [
-    "an old 16mm film camera whirring, mechanical",
-    2.0
-   ],
-   "fuse": [
-    "a lit fuse fizzing and sparking, close",
-    1.5
-   ],
-   "tick": [
-    "three loud clock ticks, tense countdown",
-    2.0
-   ],
-   "plunger": [
-    "a wooden blasting plunger pushed down hard, mechanical clunk",
-    0.8
-   ],
-   "stamp": [
-    "a heavy rubber stamp slammed on paper, short",
-    0.6
-   ],
-   "stink": [
-    "a cartoon disgusted groan, someone saying eww, short, no words",
-    1.0
-   ],
-   "flap": [
-    "many birds flapping wings and taking off at once, whoosh",
-    2.0
-   ],
-   "sniff": [
-    "a bird sniffing and a short disappointed squawk, cartoon",
-    1.0
-   ],
-   "dozer": [
-    "a bulldozer engine rumbling and pushing sand",
-    3.0
-   ],
-   "kids": [
-    "children laughing and playing in a sunny park, distant, short",
-    3.0
-   ],
-   "bell": [
-    "a small shop bell jingle and a cash register ding",
-    1.0
-   ],
-   "pop": [
-    "a cartoon speech bubble pop, short and bright",
-    0.5
-   ],
-   "marker": [
-    "a marker pen squeaking on a whiteboard, short",
-    1.0
-   ],
-   "score": [
-    "a playful, mischievous 1970s American score for a funny true story about a whale blown up on an Oregon beach: twangy surf guitar, upright bass, bongos and brushed drums, a little sneaky as the plan forms, tense before the countdown, a big comic brass stab after the explosion, then a jaunty, wry ending, no vocals",
-    90,
-    "music"
-   ],
-   "tr_whoosh": [
-    "a fast airy cinematic whoosh, a short swoosh transition",
-    0.8
-   ],
-   "tr_zoom": [
-    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
-    1.0
-   ],
-   "tr_flash": [
-    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
-    1.2
-   ],
-   "tr_whip": [
-    "a very quick whip pan swish, short",
-    0.5
-   ],
-   "tr_ghost": [
-    "a soft breathy reverse whoosh, gentle and airy, short",
-    1.0
-   ],
-   "tr_riser": [
-    "a short tense whoosh riser swelling up, cinematic, short",
-    1.4
-   ],
-   "tr_impact": [
-    "a deep punchy cinematic boom impact hit for a title, short",
-    1.2
-   ],
-   "tr_tick": [
-    "a fast mechanical counter ticking up, short",
-    1.2
-   ],
-   "tr_cut": [
-    "a very short punchy swish pop for a hard cut, cartoon, crisp",
-    0.6
-   ],
-   "tr_hit": [
-    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
-    0.6
-   ],
-   "tr_push": [
-    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
-    1.2
-   ],
-   "tr_pan": [
-    "a soft quick sideways air swish, a camera pan, short",
-    0.7
-   ],
-   "tr_thunder": [
-    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
-    6.0
-   ]
-  },
-  "music": [
-   {
-    "clip": "score",
-    "from": "f:0",
-    "fade_in": 0.5,
-    "fade_out": 2.0
-   }
-  ],
-  "levels": {
-   "sfx_lu": -13.0,
-   "music_lu": -15.0
-  },
-  "events": [
-   [
-    "S1",
-    "tr_thunder",
-    0.55
-   ],
-   [
-    "S1+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S2",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S2+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S3",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S3+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S4",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S4+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S5",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S5+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S6",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S6+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S7",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S7+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S8",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S8+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S9",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S9+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S10",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S10+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S11",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S11+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S12",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S12+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S13",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S13+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S14",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S14+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S15",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S15+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S16",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S16+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S17",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S17+4",
-    "tr_riser",
-    0.208
-   ],
-   [
-    "S18",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S18+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S19",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S19+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S20",
-    "tr_cut",
-    0.256,
-    "peak"
-   ],
-   [
-    "S21",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S21+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S22",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S22+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S23",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S23+4",
-    "tr_riser",
-    0.208
-   ],
-   [
-    "S24",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S25",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S25+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S26",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S26+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S27",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S27+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S28",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S28+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S29",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S29+4",
-    "tr_riser",
-    0.208
-   ],
-   [
-    "S30",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S30+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S31",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S31+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S32",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S32+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S33",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S33+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S34",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S34+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S35",
-    "tr_whip",
-    0.352,
-    "peak"
-   ],
-   [
-    "S35+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S36",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S36+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S37",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S37+5",
-    "tr_pan",
-    0.224
-   ],
-   [
-    "S38",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S38+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S43",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S43+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S39",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S39+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S40",
-    "tr_flash",
-    0.48,
-    "peak"
-   ],
-   [
-    "S40+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S41",
-    "tr_zoom",
-    0.416,
-    "peak"
-   ],
-   [
-    "S41+4",
-    "tr_riser",
-    0.208
-   ],
-   [
-    "S42",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S42+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S44",
-    "tr_ghost",
-    0.256,
-    "peak"
-   ],
-   [
-    "S44+5",
-    "tr_push",
-    0.192
-   ],
-   [
-    "S4+20",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S9+36",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S11+31",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S20+57",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S22+40",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S24+2",
-    "tr_impact",
-    0.338,
-    "onset"
-   ],
-   [
-    "S29+32",
-    "tr_impact",
-    0.338,
-    "onset"
-   ],
-   [
-    "S32",
-    "tr_tick",
-    0.4
-   ],
-   [
-    "S39+25",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S41+42",
-    "tr_impact",
-    0.282,
-    "onset"
-   ],
-   [
-    "S1",
-    "surf",
-    0.35
-   ],
-   [
-    "S1+2",
-    "boom",
-    0.4
-   ],
-   [
-    "S3+26",
-    "stamp",
-    0.3
-   ],
-   [
-    "S4+45",
-    "fuse",
-    0.16
-   ],
-   [
-    "S5+57",
-    "pop",
-    0.3
-   ],
-   [
-    "S6+6",
-    "camera",
-    0.3
-   ],
-   [
-    "S8",
-    "surf",
-    0.25
-   ],
-   [
-    "S10+10",
-    "gulls",
-    0.3
-   ],
-   [
-    "S12+51",
-    "stink",
-    0.22
-   ],
-   [
-    "S13+76",
-    "splat1",
-    0.2
-   ],
-   [
-    "S14+2",
-    "truck",
-    0.3
-   ],
-   [
-    "S16+4",
-    "gulls",
-    0.3
-   ],
-   [
-    "S17+34",
-    "fuse",
-    0.16
-   ],
-   [
-    "S18",
-    "crowd",
-    0.25
-   ],
-   [
-    "S20+27",
-    "pop",
-    0.14
-   ],
-   [
-    "S22+40",
-    "tick",
-    0.2
-   ],
-   [
-    "S23",
-    "tick",
-    0.35
-   ],
-   [
-    "S23+44",
-    "plunger",
-    0.22
-   ],
-   [
-    "S24+1",
-    "boom",
-    0.55
-   ],
-   [
-    "S25",
-    "crowd",
-    0.25
-   ],
-   [
-    "S26+10",
-    "splat",
-    0.4
-   ],
-   [
-    "S27",
-    "scream",
-    0.3
-   ],
-   [
-    "S27+20",
-    "splat",
-    0.35
-   ],
-   [
-    "S28+10",
-    "splat1",
-    0.25
-   ],
-   [
-    "S29+32",
-    "crunch",
-    0.22
-   ],
-   [
-    "S32+6",
-    "bell",
-    0.3
-   ],
-   [
-    "S34",
-    "flap",
-    0.35
-   ],
-   [
-    "S35+36",
-    "sniff",
-    0.3
-   ],
-   [
-    "S36+4",
-    "gulls",
-    0.2
-   ],
-   [
-    "S37",
-    "dozer",
-    0.3
-   ],
-   [
-    "S38",
-    "kids",
-    0.25
-   ],
-   [
-    "S40+2",
-    "marker",
-    0.18
-   ],
-   [
-    "S41+42",
-    "stamp",
-    0.4
-   ],
-   [
-    "S42",
-    "surf",
-    0.3
-   ]
-  ]
- }
+ ]
 }
