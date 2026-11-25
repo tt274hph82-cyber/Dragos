@@ -16,6 +16,7 @@ import { greatStink } from './great-stink';
 import { tulipMania } from './tulip-mania';
 import { moonHoax } from './moon-hoax';
 import { meatShower } from './meat-shower';
+import { explodingWhale } from './exploding-whale';
 import { tenSeconds } from './ten-seconds';
 import { bestFriend } from './best-friend';
 import { momPlays } from './mom-plays';
@@ -34,4 +35,4 @@ import { pencil } from './pencil';
 import { microwave } from './microwave';
 import { tokenSeven } from './token-seven';
 
-export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin, grandmaPro, teacherJoins, digDown, babyController, cigarette, pencil, microwave, tokenSeven, greatStink, tulipMania, moonHoax, meatShower];
+export const EPISODES = [rewind, copyPaste, pause, pauseFull, pause2, skipSleep, stilou, fountainPen, parachute, toothbrush, molasses, emuWar, dancingPlague, tenSeconds, bestFriend, momPlays, blinkGems, petSwallowed, dadBoss, hacked, neverStop, sisterAdmin, grandmaPro, teacherJoins, digDown, babyController, cigarette, pencil, microwave, tokenSeven, greatStink, tulipMania, moonHoax, meatShower, explodingWhale];

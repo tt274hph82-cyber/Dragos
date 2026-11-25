@@ -1,0 +1,943 @@
+{
+ "slug": "exploding-whale",
+ "title": "THE EXPLODING WHALE",
+ "fps": 30,
+ "total": 2468,
+ "segments": [
+  {
+   "shot": "S1",
+   "a": 0,
+   "b": 63.6,
+   "t0": 0,
+   "t1": 63.6,
+   "line": "In nineteen seventy, the state of",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "a": 63.6,
+   "b": 123.6,
+   "t0": 0,
+   "t1": 59.99999999999999,
+   "line": "Oregon blew up a whale.",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "a": 123.6,
+   "b": 163.6,
+   "t0": 0,
+   "t1": 40.0,
+   "line": "On purpose. With",
+   "cam": "pull",
+   "tr": "whip"
+  },
+  {
+   "shot": "S4",
+   "a": 163.6,
+   "b": 223.6,
+   "t0": 0,
+   "t1": 60.0,
+   "line": "half a ton of dynamite. And",
+   "cam": "rise",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "a": 223.6,
+   "b": 284.6,
+   "t0": 0,
+   "t1": 61.00000000000003,
+   "line": "buddy, this ain't some tall tale.",
+   "cam": "panR",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "a": 284.6,
+   "b": 342.6,
+   "t0": 0,
+   "t1": 58.0,
+   "line": "It's on film. Here's the deal.",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S7",
+   "a": 342.6,
+   "b": 368.6,
+   "t0": 0,
+   "t1": 26.0,
+   "line": "November, a",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "a": 368.6,
+   "b": 434.6,
+   "t0": 0,
+   "t1": 66.0,
+   "line": "little beach town called Florence.",
+   "cam": "panL",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S9",
+   "a": 434.6,
+   "b": 469.6,
+   "t0": 0,
+   "t1": 35.0,
+   "line": "A forty- five foot",
+   "cam": "rise",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "a": 469.6,
+   "b": 528.6,
+   "t0": 0,
+   "t1": 59.0,
+   "line": "sperm whale washes up dead.",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S11",
+   "a": 528.6,
+   "b": 565.6,
+   "t0": 0,
+   "t1": 37.0,
+   "line": "Eight tons.",
+   "cam": "pull",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S12",
+   "a": 565.6,
+   "b": 619.6,
+   "t0": 0,
+   "t1": 54.0,
+   "line": "And it stinks to high heaven.",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S13",
+   "a": 619.6,
+   "b": 708.6,
+   "t0": 0,
+   "t1": 89.0,
+   "line": "Now, in Oregon, the beach counted as a highway.",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S14",
+   "a": 708.6,
+   "b": 781.6,
+   "t0": 0,
+   "t1": 73.0,
+   "line": "So the whale was the highway department's problem.",
+   "cam": "panL",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "a": 781.6,
+   "b": 867.6,
+   "t0": 0,
+   "t1": 86.0,
+   "line": "Their plan? Blow it into tiny pieces and let the",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S16",
+   "a": 867.6,
+   "b": 901.6,
+   "t0": 0,
+   "t1": 34.0,
+   "line": "seagulls clean up.",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S17",
+   "a": 901.6,
+   "b": 946.6,
+   "t0": 0,
+   "t1": 45.0,
+   "line": "What could go wrong?",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "a": 946.6,
+   "b": 994.6,
+   "t0": 0,
+   "t1": 48.0,
+   "line": "One fella in the crowd, an old",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S19",
+   "a": 994.6,
+   "b": 1038.6,
+   "t0": 0,
+   "t1": 43.999999999999886,
+   "line": "army explosives man,",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S20",
+   "a": 1038.6,
+   "b": 1105.6,
+   "t0": 0,
+   "t1": 67.0,
+   "line": "said that's way too much dynamite.",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S21",
+   "a": 1105.6,
+   "b": 1143.6,
+   "t0": 0,
+   "t1": 38.0,
+   "line": "Nobody listened.",
+   "cam": "panL",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "a": 1143.6,
+   "b": 1200.6,
+   "t0": 0,
+   "t1": 57.0,
+   "line": "Twenty cases of dynamite. The",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S23",
+   "a": 1200.6,
+   "b": 1255.6,
+   "t0": 0,
+   "t1": 55.0,
+   "line": "countdown. And...",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S24",
+   "a": 1255.6,
+   "b": 1299.6,
+   "t0": 0,
+   "t1": 44.0,
+   "line": "KABOOM.",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S25",
+   "a": 1299.6,
+   "b": 1357.6,
+   "t0": 0,
+   "t1": 58.0,
+   "line": "Sand, smoke, and then it",
+   "cam": "pull",
+   "tr": "flash"
+  },
+  {
+   "shot": "S26",
+   "a": 1357.6,
+   "b": 1396.6,
+   "t0": 0,
+   "t1": 39.0,
+   "line": "rained whale.",
+   "cam": "rise",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S27",
+   "a": 1396.6,
+   "b": 1452.6,
+   "t0": 0,
+   "t1": 56.0,
+   "line": "Chunks of blubber came down on the crowd",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S28",
+   "a": 1452.6,
+   "b": 1513.6,
+   "t0": 0,
+   "t1": 61.0,
+   "line": "like the sky had a bellyache.",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S29",
+   "a": 1513.6,
+   "b": 1579.6,
+   "t0": 0,
+   "t1": 66.0,
+   "line": "One chunk flattened a brand- new car. And",
+   "cam": "dive",
+   "tr": "flash"
+  },
+  {
+   "shot": "S30",
+   "a": 1579.6,
+   "b": 1614.6,
+   "t0": 0,
+   "t1": 35.0,
+   "line": "whose car was it? The",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S31",
+   "a": 1614.6,
+   "b": 1644.6,
+   "t0": 0,
+   "t1": 30.0,
+   "line": "army man's. The",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S32",
+   "a": 1644.6,
+   "b": 1719.6,
+   "t0": 0,
+   "t1": 75.0,
+   "line": "way he told it, he bought it at a sale called",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S33",
+   "a": 1719.6,
+   "b": 1775.6,
+   "t0": 0,
+   "t1": 56.0,
+   "line": "Get a Whale of a Deal. And the",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S34",
+   "a": 1775.6,
+   "b": 1848.6,
+   "t0": 0,
+   "t1": 73.0,
+   "line": "seagulls? Scared off by the boom.",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "a": 1848.6,
+   "b": 1883.6,
+   "t0": 0,
+   "t1": 35.0,
+   "line": "Didn't touch a bite.",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S36",
+   "a": 1883.6,
+   "b": 1966.6,
+   "t0": 0,
+   "t1": 83.0,
+   "line": "Most of the whale was still lying right there. So they",
+   "cam": "pull",
+   "tr": "flash"
+  },
+  {
+   "shot": "S37",
+   "a": 1966.6,
+   "b": 2039.6,
+   "t0": 0,
+   "t1": 73.0,
+   "line": "buried it. Like they should've done in the first place.",
+   "cam": "panR",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S38",
+   "a": 2039.6,
+   "b": 2100.6,
+   "t0": 0,
+   "t1": 61.0,
+   "line": "Today, Florence has a park called",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S43",
+   "a": 2100.6,
+   "b": 2165.6,
+   "t0": 0,
+   "t1": 65.0,
+   "line": "Exploding Whale Memorial Park.",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "a": 2165.6,
+   "b": 2192.6,
+   "t0": 0,
+   "t1": 27.0,
+   "line": "That's real. So",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S40",
+   "a": 2192.6,
+   "b": 2262.6,
+   "t0": 0,
+   "t1": 70.0,
+   "line": "next time somebody says I've got a plan,",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S41",
+   "a": 2262.6,
+   "b": 2307.6,
+   "t0": 0,
+   "t1": 45.0,
+   "line": "ask how much dynamite.",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S42",
+   "a": 2307.6,
+   "b": 2345.6,
+   "t0": 0,
+   "t1": 38.0,
+   "line": "That's about it, folks.",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S44",
+   "a": 2345.6,
+   "b": 2468,
+   "t0": 0,
+   "t1": 122.40000000000009,
+   "line": "Follow for more strange history. See ya!",
+   "cam": "rise",
+   "tr": "ghost"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "key": 30,
+   "len": 63.6,
+   "first": 0,
+   "line": "In nineteen seventy, the state of",
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "key": 30,
+   "len": 59.99999999999999,
+   "first": 63.6,
+   "line": "Oregon blew up a whale.",
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "key": 30,
+   "len": 40.0,
+   "first": 123.6,
+   "line": "On purpose. With",
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "key": 30,
+   "len": 60.0,
+   "first": 163.6,
+   "line": "half a ton of dynamite. And",
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "key": 30,
+   "len": 61.00000000000003,
+   "first": 223.6,
+   "line": "buddy, this ain't some tall tale.",
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "key": 30,
+   "len": 58.0,
+   "first": 284.6,
+   "line": "It's on film. Here's the deal.",
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "key": 30,
+   "len": 26.0,
+   "first": 342.6,
+   "line": "November, a",
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "key": 30,
+   "len": 66.0,
+   "first": 368.6,
+   "line": "little beach town called Florence.",
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "key": 30,
+   "len": 35.0,
+   "first": 434.6,
+   "line": "A forty- five foot",
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "key": 30,
+   "len": 59.0,
+   "first": 469.6,
+   "line": "sperm whale washes up dead.",
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "key": 30,
+   "len": 37.0,
+   "first": 528.6,
+   "line": "Eight tons.",
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "key": 30,
+   "len": 54.0,
+   "first": 565.6,
+   "line": "And it stinks to high heaven.",
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "key": 30,
+   "len": 89.0,
+   "first": 619.6,
+   "line": "Now, in Oregon, the beach counted as a highway.",
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "key": 30,
+   "len": 73.0,
+   "first": 708.6,
+   "line": "So the whale was the highway department's problem.",
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "key": 30,
+   "len": 86.0,
+   "first": 781.6,
+   "line": "Their plan? Blow it into tiny pieces and let the",
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "key": 30,
+   "len": 34.0,
+   "first": 867.6,
+   "line": "seagulls clean up.",
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "key": 30,
+   "len": 45.0,
+   "first": 901.6,
+   "line": "What could go wrong?",
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "key": 30,
+   "len": 48.0,
+   "first": 946.6,
+   "line": "One fella in the crowd, an old",
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "key": 30,
+   "len": 43.999999999999886,
+   "first": 994.6,
+   "line": "army explosives man,",
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "key": 30,
+   "len": 67.0,
+   "first": 1038.6,
+   "line": "said that's way too much dynamite.",
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "key": 30,
+   "len": 38.0,
+   "first": 1105.6,
+   "line": "Nobody listened.",
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "key": 30,
+   "len": 57.0,
+   "first": 1143.6,
+   "line": "Twenty cases of dynamite. The",
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "key": 30,
+   "len": 55.0,
+   "first": 1200.6,
+   "line": "countdown. And...",
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "key": 30,
+   "len": 44.0,
+   "first": 1255.6,
+   "line": "KABOOM.",
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "key": 30,
+   "len": 58.0,
+   "first": 1299.6,
+   "line": "Sand, smoke, and then it",
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "key": 30,
+   "len": 39.0,
+   "first": 1357.6,
+   "line": "rained whale.",
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "key": 30,
+   "len": 56.0,
+   "first": 1396.6,
+   "line": "Chunks of blubber came down on the crowd",
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "key": 30,
+   "len": 61.0,
+   "first": 1452.6,
+   "line": "like the sky had a bellyache.",
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "key": 30,
+   "len": 66.0,
+   "first": 1513.6,
+   "line": "One chunk flattened a brand- new car. And",
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "key": 30,
+   "len": 35.0,
+   "first": 1579.6,
+   "line": "whose car was it? The",
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "key": 30,
+   "len": 30.0,
+   "first": 1614.6,
+   "line": "army man's. The",
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "key": 30,
+   "len": 75.0,
+   "first": 1644.6,
+   "line": "way he told it, he bought it at a sale called",
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "key": 30,
+   "len": 56.0,
+   "first": 1719.6,
+   "line": "Get a Whale of a Deal. And the",
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "key": 30,
+   "len": 73.0,
+   "first": 1775.6,
+   "line": "seagulls? Scared off by the boom.",
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "key": 30,
+   "len": 35.0,
+   "first": 1848.6,
+   "line": "Didn't touch a bite.",
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "key": 30,
+   "len": 83.0,
+   "first": 1883.6,
+   "line": "Most of the whale was still lying right there. So they",
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "key": 30,
+   "len": 73.0,
+   "first": 1966.6,
+   "line": "buried it. Like they should've done in the first place.",
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "key": 30,
+   "len": 61.0,
+   "first": 2039.6,
+   "line": "Today, Florence has a park called",
+   "note": "S38"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "key": 30,
+   "len": 65.0,
+   "first": 2100.6,
+   "line": "Exploding Whale Memorial Park.",
+   "note": "S43"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "key": 30,
+   "len": 27.0,
+   "first": 2165.6,
+   "line": "That's real. So",
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "key": 30,
+   "len": 70.0,
+   "first": 2192.6,
+   "line": "next time somebody says I've got a plan,",
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "key": 30,
+   "len": 45.0,
+   "first": 2262.6,
+   "line": "ask how much dynamite.",
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "key": 30,
+   "len": 38.0,
+   "first": 2307.6,
+   "line": "That's about it, folks.",
+   "note": "S42"
+  },
+  {
+   "id": "S44",
+   "size": "story",
+   "key": 30,
+   "len": 122.40000000000009,
+   "first": 2345.6,
+   "line": "Follow for more strange history. See ya!",
+   "note": "S44"
+  }
+ ],
+ "fx": [
+  {
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.8,
+   "f": 1
+  },
+  {
+   "kind": "shake",
+   "len": 10,
+   "amp": 7,
+   "f": 1
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 171.6
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 444.6
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 532.6
+  },
+  {
+   "kind": "iris",
+   "x": 540,
+   "y": 980,
+   "r": 260,
+   "f": 907.6
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 1041.6
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 1149.6
+  },
+  {
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 1,
+   "f": 1256.6
+  },
+  {
+   "kind": "shake",
+   "len": 16,
+   "amp": 12,
+   "f": 1256.6
+  },
+  {
+   "kind": "bloom",
+   "color": "#FFB03A",
+   "o": 0.8,
+   "f": 1257.6
+  },
+  {
+   "kind": "shake",
+   "len": 8,
+   "amp": 8,
+   "f": 1523.6
+  },
+  {
+   "kind": "bloom",
+   "color": "#F6D6C8",
+   "o": 0.5,
+   "f": 1523.6
+  },
+  {
+   "kind": "rewind",
+   "f": 1644.6
+  },
+  {
+   "kind": "punch",
+   "amp": 0.1,
+   "f": 2168.6
+  },
+  {
+   "kind": "punch",
+   "amp": 0.12,
+   "f": 2266.6
+  }
+ ],
+ "audio": {
+  "voice": "exploding-whale/voice.wav",
+  "sfx": "exploding-whale/sfx.wav",
+  "voiceVol": 0.8,
+  "sfxVol": 0.1854,
+  "music": "exploding-whale/music.wav",
+  "musicVol": 0.065
+ }
+}

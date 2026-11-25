@@ -1,0 +1,1615 @@
+{
+ "id": "ExplodingWhale",
+ "slug": "exploding-whale",
+ "topic": "The Exploding Whale, Florence, Oregon, 1970: a story Short in the Dancing Plague v2 look, frames locked to the narration, a sound on every camera move",
+ "title": [
+  "THE EXPLODING",
+  "WHALE"
+ ],
+ "accent": "WHALE",
+ "lead": 0.4,
+ "tail": 2.0,
+ "voice": {
+  "id": "Bj9UqZbhQsanLzgalpEG",
+  "model": "eleven_v4",
+  "language": "en",
+  "settings": {
+   "stability": 0.45,
+   "similarity_boost": 0.8,
+   "style": 0.35,
+   "use_speaker_boost": true,
+   "speed": 1.1
+  }
+ },
+ "script": [
+  {
+   "beat": "hook",
+   "text": "In nineteen seventy, the state of Oregon blew up a whale. On purpose. With half a ton of dynamite."
+  },
+  {
+   "beat": "hook",
+   "text": "And buddy, this ain't some tall tale. It's on film."
+  },
+  {
+   "beat": "setup",
+   "text": "Here's the deal. November, a little beach town called Florence. A forty-five foot sperm whale washes up dead. Eight tons. And it stinks to high heaven."
+  },
+  {
+   "beat": "setup",
+   "text": "Now, in Oregon, the beach counted as a highway. So the whale was the highway department's problem."
+  },
+  {
+   "beat": "plan",
+   "text": "Their plan? Blow it into tiny pieces and let the seagulls clean up. What could go wrong?"
+  },
+  {
+   "beat": "plan",
+   "text": "One fella in the crowd, an old army explosives man, said that's way too much dynamite. Nobody listened."
+  },
+  {
+   "beat": "boom",
+   "text": "Twenty cases of dynamite. The countdown. And... KABOOM."
+  },
+  {
+   "beat": "rain",
+   "text": "Sand, smoke, and then it rained whale. Chunks of blubber came down on the crowd like the sky had a bellyache."
+  },
+  {
+   "beat": "car",
+   "text": "One chunk flattened a brand-new car. And whose car was it? The army man's. The way he told it, he bought it at a sale called Get a Whale of a Deal."
+  },
+  {
+   "beat": "gulls",
+   "text": "And the seagulls? Scared off by the boom. Didn't touch a bite."
+  },
+  {
+   "beat": "end",
+   "text": "Most of the whale was still lying right there. So they buried it. Like they should've done in the first place."
+  },
+  {
+   "beat": "end",
+   "text": "Today, Florence has a park called Exploding Whale Memorial Park. That's real."
+  },
+  {
+   "beat": "end",
+   "text": "So next time somebody says I've got a plan, ask how much dynamite. That's about it, folks. Follow for more strange history. See ya!"
+  }
+ ],
+ "science": [
+  {
+   "claim": "On 12 November 1970 the Oregon State Highway Division, which had jurisdiction over Oregon's beaches (legally public highways), removed a dead sperm whale about 45 ft long and about 8 tons from the beach at Florence by blasting it with about half a ton (20 cases) of dynamite; blubber fell on spectators up to a quarter mile away and one large piece crushed the roof of a new Oldsmobile belonging to Walter Umenhofer, who had warned it was too much dynamite and had bought the car during a 'Get a Whale of a Deal' promotion; seagulls were frightened away; most of the carcass remained and was buried. Footage by KATU (reporter Paul Linnman). In 2020 Florence named a park Exploding Whale Memorial Park.",
+   "working": "",
+   "source": "Wikipedia, Exploding whale; KATU archive; Oregon Department of Transportation; The Oregonian (2020)"
+  }
+ ],
+ "edit": [
+  {
+   "shot": "S1",
+   "at": "f:0",
+   "cam": "push"
+  },
+  {
+   "shot": "S2",
+   "at": "Oregon",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S3",
+   "at": "On",
+   "cam": "pull",
+   "tr": "whip"
+  },
+  {
+   "shot": "S4",
+   "at": "half",
+   "cam": "rise",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S5",
+   "at": "buddy",
+   "cam": "panR",
+   "tr": "flash"
+  },
+  {
+   "shot": "S6",
+   "at": "It's",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S7",
+   "at": "November",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S8",
+   "at": "little",
+   "cam": "panL",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S9",
+   "at": "A",
+   "cam": "rise",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S10",
+   "at": "sperm",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S11",
+   "at": "Eight",
+   "cam": "pull",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S12",
+   "at": "And",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S13",
+   "at": "Now",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S14",
+   "at": "So",
+   "cam": "panL",
+   "tr": "whip"
+  },
+  {
+   "shot": "S15",
+   "at": "Their",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S16",
+   "at": "seagulls",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S17",
+   "at": "What",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S18",
+   "at": "One",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S19",
+   "at": "army",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S20",
+   "at": "said",
+   "cam": "static",
+   "tr": "cut"
+  },
+  {
+   "shot": "S21",
+   "at": "Nobody",
+   "cam": "panL",
+   "tr": "whip"
+  },
+  {
+   "shot": "S22",
+   "at": "Twenty",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S23",
+   "at": "countdown",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S24",
+   "at": "KABOOM",
+   "cam": "static",
+   "tr": "flash"
+  },
+  {
+   "shot": "S25",
+   "at": "Sand",
+   "cam": "pull",
+   "tr": "flash"
+  },
+  {
+   "shot": "S26",
+   "at": "rained",
+   "cam": "rise",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S27",
+   "at": "Chunks",
+   "cam": "panR",
+   "tr": "whip"
+  },
+  {
+   "shot": "S28",
+   "at": "like",
+   "cam": "push",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S29",
+   "at": "One",
+   "cam": "dive",
+   "tr": "flash"
+  },
+  {
+   "shot": "S30",
+   "at": "whose",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S31",
+   "at": "army",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S32",
+   "at": "way",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S33",
+   "at": "Get",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S34",
+   "at": "seagulls",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S35",
+   "at": "Didn't",
+   "cam": "push",
+   "tr": "whip"
+  },
+  {
+   "shot": "S36",
+   "at": "Most",
+   "cam": "pull",
+   "tr": "flash"
+  },
+  {
+   "shot": "S37",
+   "at": "buried",
+   "cam": "panR",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S38",
+   "at": "Today",
+   "cam": "rise",
+   "tr": "flash"
+  },
+  {
+   "shot": "S43",
+   "at": "Exploding",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S39",
+   "at": "That's",
+   "cam": "push",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S40",
+   "at": "next",
+   "cam": "push",
+   "tr": "flash"
+  },
+  {
+   "shot": "S41",
+   "at": "ask",
+   "cam": "dive",
+   "tr": "zoom"
+  },
+  {
+   "shot": "S42",
+   "at": "That's",
+   "cam": "pull",
+   "tr": "ghost"
+  },
+  {
+   "shot": "S44",
+   "at": "Follow",
+   "cam": "rise",
+   "tr": "ghost"
+  }
+ ],
+ "shots": [
+  {
+   "id": "S1",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S1"
+  },
+  {
+   "id": "S2",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S2"
+  },
+  {
+   "id": "S3",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S3"
+  },
+  {
+   "id": "S4",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S4"
+  },
+  {
+   "id": "S5",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S5"
+  },
+  {
+   "id": "S6",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S6"
+  },
+  {
+   "id": "S7",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S7"
+  },
+  {
+   "id": "S8",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S8"
+  },
+  {
+   "id": "S9",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S9"
+  },
+  {
+   "id": "S10",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S10"
+  },
+  {
+   "id": "S11",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S11"
+  },
+  {
+   "id": "S12",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S12"
+  },
+  {
+   "id": "S13",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S13"
+  },
+  {
+   "id": "S14",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S14"
+  },
+  {
+   "id": "S15",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S15"
+  },
+  {
+   "id": "S16",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S16"
+  },
+  {
+   "id": "S17",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S17"
+  },
+  {
+   "id": "S18",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S18"
+  },
+  {
+   "id": "S19",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S19"
+  },
+  {
+   "id": "S20",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S20"
+  },
+  {
+   "id": "S21",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S21"
+  },
+  {
+   "id": "S22",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S22"
+  },
+  {
+   "id": "S23",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S23"
+  },
+  {
+   "id": "S24",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S24"
+  },
+  {
+   "id": "S25",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S25"
+  },
+  {
+   "id": "S26",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S26"
+  },
+  {
+   "id": "S27",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S27"
+  },
+  {
+   "id": "S28",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S28"
+  },
+  {
+   "id": "S29",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S29"
+  },
+  {
+   "id": "S30",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S30"
+  },
+  {
+   "id": "S31",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S31"
+  },
+  {
+   "id": "S32",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S32"
+  },
+  {
+   "id": "S33",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S33"
+  },
+  {
+   "id": "S34",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S34"
+  },
+  {
+   "id": "S35",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S35"
+  },
+  {
+   "id": "S36",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S36"
+  },
+  {
+   "id": "S37",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S37"
+  },
+  {
+   "id": "S38",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S38"
+  },
+  {
+   "id": "S39",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S39"
+  },
+  {
+   "id": "S40",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S40"
+  },
+  {
+   "id": "S41",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S41"
+  },
+  {
+   "id": "S42",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S42"
+  },
+  {
+   "id": "S43",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S43"
+  },
+  {
+   "id": "S44",
+   "size": "story",
+   "set": "beach",
+   "key": 30,
+   "note": "S44"
+  }
+ ],
+ "fx": [
+  {
+   "at": "S1+1",
+   "kind": "flash",
+   "color": "#FFF0E0",
+   "o": 0.8
+  },
+  {
+   "at": "S1+1",
+   "kind": "shake",
+   "len": 10,
+   "amp": 7
+  },
+  {
+   "at": "S4+8",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S9+10",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S11+4",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S17+6",
+   "kind": "iris",
+   "x": 540,
+   "y": 980,
+   "r": 260
+  },
+  {
+   "at": "S20+3",
+   "kind": "punch",
+   "amp": 0.12
+  },
+  {
+   "at": "S22+6",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S24+1",
+   "kind": "flash",
+   "color": "#FFFFFF",
+   "o": 1
+  },
+  {
+   "at": "S24+1",
+   "kind": "shake",
+   "len": 16,
+   "amp": 12
+  },
+  {
+   "at": "S24+2",
+   "kind": "bloom",
+   "color": "#FFB03A",
+   "o": 0.8
+  },
+  {
+   "at": "S29+10",
+   "kind": "shake",
+   "len": 8,
+   "amp": 8
+  },
+  {
+   "at": "S29+10",
+   "kind": "bloom",
+   "color": "#F6D6C8",
+   "o": 0.5
+  },
+  {
+   "at": "S32",
+   "kind": "rewind"
+  },
+  {
+   "at": "S39+3",
+   "kind": "punch",
+   "amp": 0.1
+  },
+  {
+   "at": "S41+4",
+   "kind": "punch",
+   "amp": 0.12
+  }
+ ],
+ "sound": {
+  "clips": {
+   "surf": [
+    "ocean waves rolling onto a sandy beach, wind, distant seagulls, no voices",
+    10.0
+   ],
+   "gulls": [
+    "several seagulls calling, close, short",
+    2.0
+   ],
+   "boom": [
+    "a massive close dynamite explosion with a deep rumble and debris, cinematic",
+    4.0
+   ],
+   "splat": [
+    "several wet heavy blobs splatting onto sand one after another, gross, cartoon",
+    2.0
+   ],
+   "splat1": [
+    "one big wet heavy splat, gross, cartoon, short",
+    0.8
+   ],
+   "crunch": [
+    "a heavy wet object crushing a car roof, metal crunch and glass cracking",
+    1.5
+   ],
+   "crowd": [
+    "a small 1970s crowd murmuring on a beach, outdoors",
+    4.0
+   ],
+   "scream": [
+    "a crowd screaming and running away on a beach, short",
+    2.5
+   ],
+   "truck": [
+    "an old diesel dump truck pulling up and idling, outdoors",
+    3.0
+   ],
+   "camera": [
+    "an old 16mm film camera whirring, mechanical",
+    2.0
+   ],
+   "fuse": [
+    "a lit fuse fizzing and sparking, close",
+    1.5
+   ],
+   "tick": [
+    "three loud clock ticks, tense countdown",
+    2.0
+   ],
+   "plunger": [
+    "a wooden blasting plunger pushed down hard, mechanical clunk",
+    0.8
+   ],
+   "stamp": [
+    "a heavy rubber stamp slammed on paper, short",
+    0.6
+   ],
+   "stink": [
+    "a cartoon disgusted groan, someone saying eww, short, no words",
+    1.0
+   ],
+   "flap": [
+    "many birds flapping wings and taking off at once, whoosh",
+    2.0
+   ],
+   "sniff": [
+    "a bird sniffing and a short disappointed squawk, cartoon",
+    1.0
+   ],
+   "dozer": [
+    "a bulldozer engine rumbling and pushing sand",
+    3.0
+   ],
+   "kids": [
+    "children laughing and playing in a sunny park, distant, short",
+    3.0
+   ],
+   "bell": [
+    "a small shop bell jingle and a cash register ding",
+    1.0
+   ],
+   "pop": [
+    "a cartoon speech bubble pop, short and bright",
+    0.5
+   ],
+   "marker": [
+    "a marker pen squeaking on a whiteboard, short",
+    1.0
+   ],
+   "score": [
+    "a playful, mischievous 1970s American score for a funny true story about a whale blown up on an Oregon beach: twangy surf guitar, upright bass, bongos and brushed drums, a little sneaky as the plan forms, tense before the countdown, a big comic brass stab after the explosion, then a jaunty, wry ending, no vocals",
+    90,
+    "music"
+   ],
+   "tr_whoosh": [
+    "a fast airy cinematic whoosh, a short swoosh transition",
+    0.8
+   ],
+   "tr_zoom": [
+    "a fast zoom-in whoosh rising in pitch, a cinematic swoosh transition, short",
+    1.0
+   ],
+   "tr_flash": [
+    "a bright camera flash pop with a shimmering reverse whoosh, a cinematic transition hit, short",
+    1.2
+   ],
+   "tr_whip": [
+    "a very quick whip pan swish, short",
+    0.5
+   ],
+   "tr_ghost": [
+    "a soft breathy reverse whoosh, gentle and airy, short",
+    1.0
+   ],
+   "tr_riser": [
+    "a short tense whoosh riser swelling up, cinematic, short",
+    1.4
+   ],
+   "tr_impact": [
+    "a deep punchy cinematic boom impact hit for a title, short",
+    1.2
+   ],
+   "tr_tick": [
+    "a fast mechanical counter ticking up, short",
+    1.2
+   ],
+   "tr_cut": [
+    "a very short punchy swish pop for a hard cut, cartoon, crisp",
+    0.6
+   ],
+   "tr_hit": [
+    "a short punchy cartoon impact thump with a tiny whoosh, crisp, for a key word",
+    0.6
+   ],
+   "tr_push": [
+    "a soft low cinematic air swell, a slow camera push-in whoosh, gentle, short",
+    1.2
+   ],
+   "tr_pan": [
+    "a soft quick sideways air swish, a camera pan, short",
+    0.7
+   ],
+   "tr_thunder": [
+    "a huge close thunder crack with a long rolling thunder rumble, cinematic storm",
+    6.0
+   ]
+  },
+  "music": [
+   {
+    "clip": "score",
+    "from": "f:0",
+    "fade_in": 0.5,
+    "fade_out": 2.0
+   }
+  ],
+  "levels": {
+   "sfx_lu": -11.0,
+   "music_lu": -15.0
+  },
+  "events": [
+   [
+    "S1",
+    "tr_thunder",
+    0.55
+   ],
+   [
+    "S1+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S2",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S2+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S3",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S3+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S4",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S4+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S5",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S5+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S6",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S6+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S7",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S7+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S8",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S8+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S9",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S9+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S10",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S10+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S11",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S11+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S12",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S12+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S13",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S13+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S14",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S14+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S15",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S15+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S16",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S16+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S17",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S17+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S18",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S18+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S19",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S19+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S20",
+    "tr_cut",
+    0.256,
+    "peak"
+   ],
+   [
+    "S21",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S21+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S22",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S22+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S23",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S23+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S24",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S25",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S25+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S26",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S26+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S27",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S27+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S28",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S28+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S29",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S29+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S30",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S30+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S31",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S31+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S32",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S32+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S33",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S33+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S34",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S34+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S35",
+    "tr_whip",
+    0.352,
+    "peak"
+   ],
+   [
+    "S35+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S36",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S36+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S37",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S37+5",
+    "tr_pan",
+    0.224
+   ],
+   [
+    "S38",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S38+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S43",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S43+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S39",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S39+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S40",
+    "tr_flash",
+    0.48,
+    "peak"
+   ],
+   [
+    "S40+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S41",
+    "tr_zoom",
+    0.416,
+    "peak"
+   ],
+   [
+    "S41+4",
+    "tr_riser",
+    0.208
+   ],
+   [
+    "S42",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S42+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S44",
+    "tr_ghost",
+    0.256,
+    "peak"
+   ],
+   [
+    "S44+5",
+    "tr_push",
+    0.192
+   ],
+   [
+    "S4+8",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S9+10",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S11+4",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S20+3",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S22+6",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S24+2",
+    "tr_impact",
+    0.614,
+    "onset"
+   ],
+   [
+    "S29+10",
+    "tr_impact",
+    0.614,
+    "onset"
+   ],
+   [
+    "S32",
+    "tr_tick",
+    0.4
+   ],
+   [
+    "S39+3",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S41+4",
+    "tr_impact",
+    0.512,
+    "onset"
+   ],
+   [
+    "S1",
+    "surf",
+    0.35
+   ],
+   [
+    "S1+2",
+    "boom",
+    0.4
+   ],
+   [
+    "S3+8",
+    "stamp",
+    0.3
+   ],
+   [
+    "S4+32",
+    "fuse",
+    0.22
+   ],
+   [
+    "S5+20",
+    "pop",
+    0.3
+   ],
+   [
+    "S6+6",
+    "camera",
+    0.3
+   ],
+   [
+    "S8",
+    "surf",
+    0.25
+   ],
+   [
+    "S10+10",
+    "gulls",
+    0.3
+   ],
+   [
+    "S12+4",
+    "stink",
+    0.35
+   ],
+   [
+    "S13+6",
+    "splat1",
+    0.2
+   ],
+   [
+    "S14+2",
+    "truck",
+    0.3
+   ],
+   [
+    "S16+4",
+    "gulls",
+    0.3
+   ],
+   [
+    "S17+6",
+    "fuse",
+    0.3
+   ],
+   [
+    "S18",
+    "crowd",
+    0.25
+   ],
+   [
+    "S20+30",
+    "pop",
+    0.25
+   ],
+   [
+    "S22+4",
+    "tick",
+    0.2
+   ],
+   [
+    "S23",
+    "tick",
+    0.35
+   ],
+   [
+    "S23+44",
+    "plunger",
+    0.28
+   ],
+   [
+    "S24+1",
+    "boom",
+    0.55
+   ],
+   [
+    "S25",
+    "crowd",
+    0.25
+   ],
+   [
+    "S26+10",
+    "splat",
+    0.4
+   ],
+   [
+    "S27",
+    "scream",
+    0.3
+   ],
+   [
+    "S27+20",
+    "splat",
+    0.35
+   ],
+   [
+    "S28+10",
+    "splat1",
+    0.25
+   ],
+   [
+    "S29+22",
+    "crunch",
+    0.32
+   ],
+   [
+    "S32+6",
+    "bell",
+    0.3
+   ],
+   [
+    "S34",
+    "flap",
+    0.35
+   ],
+   [
+    "S35+8",
+    "sniff",
+    0.3
+   ],
+   [
+    "S36+4",
+    "gulls",
+    0.2
+   ],
+   [
+    "S37",
+    "dozer",
+    0.3
+   ],
+   [
+    "S38",
+    "kids",
+    0.25
+   ],
+   [
+    "S40+2",
+    "marker",
+    0.18
+   ],
+   [
+    "S41+30",
+    "stamp",
+    0.4
+   ],
+   [
+    "S42",
+    "surf",
+    0.3
+   ]
+  ]
+ }
+}
