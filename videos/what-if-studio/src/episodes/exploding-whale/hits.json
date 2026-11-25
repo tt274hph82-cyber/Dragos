@@ -1,0 +1,4 @@
+{"fx": {"S4": "ton", "S9": "foot", "S11": "tons", "S20": "dynamite", "S22": "dynamite", "S29": "flattened", "S39": "real", "S41": "dynamite"},
+ "events": [["fuse", "S4", "dynamite", 2, false], ["stamp", "S3", "purpose", 2, false], ["pop", "S5", "tale", 2, false], ["crunch", "S29", "flattened", 2, false],
+  ["pop", "S20", "too", 0, true], ["plunger", "S23", "and", 2, false], ["stamp", "S41", "dynamite", 2, false], ["splat1", "S13", "highway", 2, false],
+  ["fuse", "S17", "wrong", 2, false], ["stink", "S12", "heaven", 2, false], ["sniff", "S35", "bite", 2, false], ["tick", "S22", "dynamite", 2, false]]}
