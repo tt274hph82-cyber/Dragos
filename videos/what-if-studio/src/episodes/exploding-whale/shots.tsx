@@ -1,8 +1,8 @@
 import React from 'react';
 import { random } from 'remotion';
-import { ShotProps, FONT } from '../../engine';
+import { ShotProps, FONT, LEG_LEN, HEAD } from '../../engine';
 import { W, Mood, MOODS, Sky, Punch, Burst, Counter, BigNumber, Calendar, popIn, clamp, lerp, easeOut, Glow, INK } from '../molasses/kit';
-import { FxDefs, Rays, Clouds, Shadow, Man } from '../great-stink/shots';
+import { FxDefs, Rays, Clouds, Shadow, Man as Body, Gest } from '../great-stink/shots';
 import words from './words.json';
 
 // "The Exploding Whale" (Florence, Oregon, 1970): a native 9:16 story Short in the Dancing Plague v2 look: one colour mood
@@ -32,9 +32,50 @@ const BigX: React.FC<{ t: number; x?: number; y?: number; s?: number }> = ({ t, 
   <g transform={`translate(${x} ${y}) scale(${popIn(t, 5) * s})`}><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#140A12" strokeWidth={80} strokeLinecap="round" /><path d="M -240 -240 L 240 240 M 240 -240 L -240 240" stroke="#E0283A" strokeWidth={54} strokeLinecap="round" /></g>
 );
 
+// ---------------------------------------------------------------- faces
+export type Ex = 'neutral' | 'happy' | 'shock' | 'angry' | 'disgust' | 'smug' | 'scared' | 'sad';
+const DEFAULT_EX: Record<string, Ex> = { stand: 'neutral', nose: 'disgust', gag: 'disgust', run: 'scared', point: 'angry', shock: 'shock', vote: 'happy', dig: 'neutral' };
+/** Eyes, brows and a mouth on a silhouette head (centre hx, hy, radius r); look -1..1 turns the features to that side.
+ *  Blinks every few seconds (seeded by ph). White eyes read on the dark silhouettes, like glowing eyes in the dark. */
+const Face: React.FC<{ hx: number; hy: number; r: number; look: number; e: Ex; t: number; ph?: number; rim: string }> = ({ hx, hy, r, look, e, t, ph = 0, rim }) => {
+  const cx = hx + look * r * 0.28, blink = ((t + ph * 37) % 96) < 4 ? 0.12 : 1;
+  const big = e === 'shock' || e === 'scared', eh = r * (big ? 0.26 : e === 'smug' ? 0.12 : e === 'happy' ? 0.15 : 0.19) * blink, ew = r * (big ? 0.2 : 0.17);
+  const pup = r * (e === 'scared' ? 0.06 : 0.09), px = look * r * 0.06, sep = r * 0.36;
+  const brow = { neutral: [0, 0], happy: [-4, 4], shock: [-14, -14], angry: [10, -10], disgust: [8, -6], smug: [2, -8], scared: [-10, 12], sad: [-8, 10] }[e];
+  const mouth: Record<Ex, string> = {
+    neutral: `M ${cx - r * 0.2} ${hy + r * 0.42} L ${cx + r * 0.2} ${hy + r * 0.42}`,
+    happy: `M ${cx - r * 0.3} ${hy + r * 0.32} Q ${cx} ${hy + r * 0.66} ${cx + r * 0.3} ${hy + r * 0.32}`,
+    shock: '', scared: `M ${cx - r * 0.24} ${hy + r * 0.5} q ${r * 0.08} ${-r * 0.1} ${r * 0.16} 0 q ${r * 0.08} ${r * 0.1} ${r * 0.16} 0 q ${r * 0.08} ${-r * 0.1} ${r * 0.16} 0`,
+    angry: `M ${cx - r * 0.26} ${hy + r * 0.52} Q ${cx} ${hy + r * 0.34} ${cx + r * 0.26} ${hy + r * 0.52}`,
+    disgust: `M ${cx - r * 0.26} ${hy + r * 0.46} q ${r * 0.13} ${-r * 0.12} ${r * 0.26} 0 q ${r * 0.13} ${r * 0.12} ${r * 0.26} 0`,
+    smug: `M ${cx - r * 0.22} ${hy + r * 0.44} Q ${cx + r * 0.05} ${hy + r * 0.52} ${cx + r * 0.28} ${hy + r * 0.3}`,
+    sad: `M ${cx - r * 0.24} ${hy + r * 0.52} Q ${cx} ${hy + r * 0.36} ${cx + r * 0.24} ${hy + r * 0.52}`,
+  };
+  const sw = Math.max(2, r * 0.07);
+  return (
+    <g>
+      {[-1, 1].map((sd) => (
+        <g key={sd}>
+          <ellipse cx={cx + sd * sep / 2} cy={hy - r * 0.05} rx={ew} ry={Math.max(1, eh)} fill="#FFF8EA" style={{ filter: `drop-shadow(0 0 ${r * 0.08}px ${rim})` }} />
+          {blink > 0.5 ? <circle cx={cx + sd * sep / 2 + px} cy={hy - r * 0.03} r={Math.min(pup, eh * 0.8)} fill="#140A12" /> : null}
+          {blink > 0.5 ? <circle cx={cx + sd * sep / 2 + px - pup * 0.35} cy={hy - r * 0.07} r={pup * 0.3} fill="#FFF" /> : null}
+          <path d={`M ${cx + sd * sep / 2 - ew * 1.1} ${hy - r * 0.32 + (sd < 0 ? brow[0] : brow[1]) * r / 60} L ${cx + sd * sep / 2 + ew * 1.1} ${hy - r * 0.32 + (sd < 0 ? brow[1] : brow[0]) * r / 60 * (sd < 0 ? 1 : 1)}`} stroke={rim} strokeWidth={sw * 1.2} strokeLinecap="round" opacity={0.9} />
+        </g>
+      ))}
+      {e === 'shock' ? <ellipse cx={cx} cy={hy + r * 0.46} rx={r * 0.13} ry={r * 0.18} fill="#140A12" stroke={rim} strokeWidth={sw * 0.7} /> : <path d={mouth[e]} stroke={rim} strokeWidth={sw} fill="none" strokeLinecap="round" />}
+    </g>
+  );
+};
+/** A figure with a face: the story kit's silhouette (with its contact shadow) plus eyes and an expression. */
+const Man: React.FC<{ x: number; feet: number; s: number; mood: Mood; t: number; g?: Gest; hat?: 'bowler' | 'cap' | 'none'; flip?: boolean; ph?: number; e?: Ex }> = (p) => {
+  const g = p.g ?? 'stand', hop = g === 'run' ? Math.abs(Math.sin(p.t * 0.5 + (p.ph ?? 0))) * 18 : 0;
+  const hy = p.feet - hop - LEG_LEN * p.s + HEAD.y * p.s + (g === 'nose' || g === 'gag' ? 6 * p.s : 0), r = HEAD.r * p.s;
+  return <g><Body {...p} /><Face hx={p.x} hy={hy} r={r} look={p.flip ? -1 : 1} e={p.e ?? DEFAULT_EX[g] ?? 'neutral'} t={p.t} ph={p.ph ?? p.x} rim={MOODS[p.mood].rim} /></g>;
+};
+
 // ---------------------------------------------------------------- the coast
 /** Rolling sea from the horizon to the shore, with moving wave crests and sun glitter. */
-const Sea: React.FC<{ mood: Mood; t: number; y?: number; to?: number }> = ({ mood, t, y = 900, to = 1080 }) => {
+const Sea: React.FC<{ mood: Mood; t: number; y?: number; to?: number; sunX?: number }> = ({ mood, t, y = 900, to = 1080, sunX }) => {
   const m = MOODS[mood];
   return (
     <g>
@@ -43,6 +84,7 @@ const Sea: React.FC<{ mood: Mood; t: number; y?: number; to?: number }> = ({ moo
       {Array.from({ length: 7 }, (_, r) => { const yy = y + 12 + r * r * ((to - y) / 50) + r * 6, sh = (t * (0.6 + r * 0.25) + r * 40) % 120;
         return <path key={r} d={Array.from({ length: 12 }, (_, k) => `M ${-260 + k * 120 + sh} ${yy} q 30 ${-4 - r} 60 0`).join(' ')} stroke={m.rim} strokeOpacity={0.35 + r * 0.05} strokeWidth={2 + r * 0.6} fill="none" />; })}
       {Array.from({ length: 22 }, (_, i) => <rect key={i} x={(random(`gl${i}`) * W + t * 0.4) % W} y={y + 6 + random(`gy${i}`) * (to - y) * 0.5} width={14 + random(`gw${i}`) * 30} height={3} fill={m.rim} opacity={0.25 + 0.3 * Math.abs(Math.sin(t * 0.15 + i))} style={scr} />)}
+      {sunX !== undefined ? <g style={scr}>{Array.from({ length: 16 }, (_, i) => { const yy = y + 6 + i * (to - y) / 16, wv = 18 + i * 9; return <rect key={'sg' + i} x={sunX - wv / 2 + Math.sin(t * 0.3 + i * 1.7) * 14} y={yy} width={wv * (0.6 + 0.4 * Math.abs(Math.sin(t * 0.2 + i)))} height={4 + i * 0.6} rx={3} fill={m.rim} opacity={0.75 - i * 0.03} />; })}<Glow x={sunX} y={y} r={420} kind={m.glow} o={0.55} /></g> : null}
       {/* surf line on the sand */}
       <path d={`M -300 ${to} Q 200 ${to - 16 + Math.sin(t * 0.08) * 8} 540 ${to - 4} T ${W + 300} ${to}`} stroke="#FFF8EA" strokeOpacity={0.6} strokeWidth={10} fill="none" />
     </g>
@@ -84,7 +126,7 @@ const Beach: React.FC<{ id: string; mood: Mood; t: number; sunX?: number; sunY?:
     <Rays x={sunX} y={sunY} t={t} o={0.22} n={8} spread={120} dir={90} />
     <Clouds mood={mood} t={t} y={480} o={0.8} />
     {head ? <Headland mood={mood} t={t} y={horizon + 4} beam={mood === 'night' || mood === 'cold'} /> : null}
-    <Sea mood={mood} t={t} y={horizon} to={shore} />
+    <Sea mood={mood} t={t} y={horizon} to={shore} sunX={sunY < horizon + 40 ? sunX : undefined} />
     <Sand mood={mood} y={shore} />
   </g>
 );
@@ -94,10 +136,14 @@ const Beach: React.FC<{ id: string; mood: Mood; t: number; sunX?: number; sunY?:
  *  rim = the scene's glow; open 0..1 splits it open (the blast). */
 const Whale: React.FC<{ x: number; y: number; s: number; rim: string; open?: number; t?: number; dead?: boolean }> = ({ x, y, s, rim, open = 0, t = 0, dead = true }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`} style={{ filter: `drop-shadow(0 0 8px ${rim})` }}>
-    <ellipse cx={40} cy={10} rx={560} ry={40} fill="#000" opacity={0.35} />
+    <ellipse cx={60} cy={14} rx={640} ry={56} fill="#000" opacity={0.45} filter="url(#gsB12)" />
     <g transform={`translate(${-open * 60} ${-open * 20}) rotate(${-open * 6})`}>
       {/* head block and body */}
       <path d="M -470 -40 Q -500 -250 -380 -270 L -60 -280 Q 120 -270 260 -190 Q 380 -120 470 -70 L 470 -20 Q 300 0 -60 6 L -440 6 Q -480 -10 -470 -40 Z" fill={SKIN} stroke={rim} strokeWidth={4} />
+      {/* light along the back, shade under the belly, a wet sheen */}
+      <path d="M -440 -240 Q -380 -262 -60 -270 Q 120 -260 250 -186 Q 370 -120 452 -78" stroke={rim} strokeWidth={14} strokeOpacity={0.55} fill="none" strokeLinecap="round" filter="url(#gsB3)" />
+      <path d="M -460 -20 Q -200 10 200 -4 Q 360 -10 460 -30 L 460 -10 Q 300 6 -60 10 L -440 8 Z" fill="#1E222A" opacity={0.7} />
+      <ellipse cx={-280} cy={-200} rx={120} ry={22} fill="#FFFFFF" opacity={0.14} transform="rotate(-6 -280 -200)" />
       {/* wrinkles */}
       {Array.from({ length: 12 }, (_, i) => <path key={i} d={`M ${-280 + i * 52} -250 q 14 120 -4 230`} stroke="#2E333D" strokeWidth={5} fill="none" opacity={0.7} />)}
       <path d="M -460 -24 Q -300 -6 -120 -10" stroke="#2A2F38" strokeWidth={10} fill="none" />
@@ -149,6 +195,7 @@ const Dynamite: React.FC<{ x: number; y: number; s?: number; n?: number; lit?: n
 );
 const Crate: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
+    <ellipse cx={10} cy={4} rx={100} ry={16} fill="#000" opacity={0.45} filter="url(#gsB3)" />
     <rect x={-80} y={-110} width={160} height={110} fill="#A8743A" stroke={INK} strokeWidth={6} />
     <path d="M -80 -110 L 80 0 M 80 -110 L -80 0" stroke="#7A5226" strokeWidth={6} />
     <rect x={-66} y={-74} width={132} height={36} fill="#F2E6C8" stroke={INK} strokeWidth={3} />
@@ -160,6 +207,7 @@ const Plunger: React.FC<{ x: number; y: number; s?: number; k?: number }> = ({ x
   <g transform={`translate(${x} ${y}) scale(${s})`}>
     <rect x={-14} y={-230 + k * 120} width={28} height={180} fill="#8A8A92" stroke={INK} strokeWidth={5} />
     <rect x={-120} y={-250 + k * 120} width={240} height={34} rx={14} fill="#5A3A22" stroke={INK} strokeWidth={6} />
+    <ellipse cx={20} cy={54} rx={220} ry={30} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <rect x={-140} y={-120} width={280} height={170} rx={10} fill="#8A5A32" stroke={INK} strokeWidth={7} />
     <text x={0} y={-30} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={34} fill="#F2E6C8">DANGER</text>
     {[-90, 90].map((cx) => <circle key={cx} cx={cx} cy={20} r={12} fill="#D8B040" stroke={INK} strokeWidth={4} />)}
@@ -192,7 +240,7 @@ const Gull: React.FC<{ x: number; y: number; s?: number; flap?: number; flip?: b
 /** A 1970 sedan in profile (crush 0..1 flattens the roof). */
 const Car: React.FC<{ x: number; y: number; s?: number; c?: string; crush?: number; flip?: boolean }> = ({ x, y, s = 1, c = CAR, crush = 0, flip }) => (
   <g transform={`translate(${x} ${y}) scale(${(flip ? -1 : 1) * s} ${s})`}>
-    <ellipse cx={0} cy={6} rx={300} ry={18} fill="#000" opacity={0.35} />
+    <ellipse cx={0} cy={8} rx={330} ry={30} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <path d="M -290 -40 L -280 -100 Q -270 -120 -200 -124 L 250 -124 Q 300 -120 300 -90 L 300 -40 Z" fill={c} stroke={INK} strokeWidth={7} />
     <path d={`M -170 -124 L ${-120 + crush * 30} ${-210 + crush * 80} L ${130 - crush * 30} ${-210 + crush * 80} L 190 -124 Z`} fill={c} stroke={INK} strokeWidth={7} />
     <path d={`M -140 -128 L ${-108 + crush * 30} ${-196 + crush * 74} L 0 ${-196 + crush * 74} L 0 -128 Z M 20 -128 L 20 ${-196 + crush * 74} L ${118 - crush * 30} ${-196 + crush * 74} L 164 -128 Z`} fill="#BFE6F2" opacity={0.85 - crush * 0.4} stroke={INK} strokeWidth={4} />
@@ -205,7 +253,7 @@ const Car: React.FC<{ x: number; y: number; s?: number; c?: string; crush?: numb
 /** A 1970 highway department dump truck, orange, in profile. */
 const Truck: React.FC<{ x: number; y: number; s?: number }> = ({ x, y, s = 1 }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
-    <ellipse cx={0} cy={6} rx={330} ry={20} fill="#000" opacity={0.35} />
+    <ellipse cx={0} cy={8} rx={360} ry={32} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <path d="M -320 -50 L -320 -220 L 60 -220 L 80 -50 Z" fill="#E8862A" stroke={INK} strokeWidth={7} />
     <path d="M 80 -50 L 90 -240 L 230 -240 L 310 -150 L 320 -50 Z" fill="#E8862A" stroke={INK} strokeWidth={7} />
     <path d="M 110 -220 L 210 -220 L 280 -150 L 110 -150 Z" fill="#BFE6F2" stroke={INK} strokeWidth={5} />
@@ -245,6 +293,7 @@ const SickCloud: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ 
 );
 const Dozer: React.FC<{ x: number; y: number; s?: number; t: number }> = ({ x, y, s = 1, t }) => (
   <g transform={`translate(${x} ${y}) scale(${s})`}>
+    <ellipse cx={0} cy={6} rx={280} ry={28} fill="#000" opacity={0.5} filter="url(#gsB6)" />
     <rect x={-200} y={-70} width={340} height={70} rx={34} fill={INK} />{Array.from({ length: 6 }, (_, i) => <circle key={i} cx={-170 + i * 56} cy={-35} r={22} fill="#5A5A62" />)}
     <rect x={-170} y={-200} width={260} height={130} fill="#F2B030" stroke={INK} strokeWidth={6} /><rect x={-90} y={-300} width={140} height={100} fill="#F2B030" stroke={INK} strokeWidth={6} />
     <rect x={-74} y={-284} width={108} height={70} fill="#BFE6F2" stroke={INK} strokeWidth={4} />
@@ -256,6 +305,7 @@ const Mound: React.FC<{ x: number; y: number; w: number; h: number; c: string }>
 /** A wooden roadside sign on two posts. */
 const Board: React.FC<{ x: number; y: number; w: number; h: number; lines: string[]; size: number; bg?: string; fg?: string; posts?: number }> = ({ x, y, w, h, lines, size, bg = '#2E6A4A', fg = '#F4EEE2', posts = 260 }) => (
   <g>
+    <ellipse cx={x + w * 0.08} cy={y + posts} rx={w * 0.55} ry={w * 0.06} fill="#000" opacity={0.45} filter="url(#gsB6)" />
     {[-w * 0.32, w * 0.32].map((dx) => <rect key={dx} x={x + dx - 12} y={y} width={24} height={posts} fill="#6A4428" stroke={INK} strokeWidth={4} />)}
     <rect x={x - w / 2} y={y - h} width={w} height={h + 10} rx={16} fill={bg} stroke={INK} strokeWidth={8} />
     <rect x={x - w / 2 + 14} y={y - h + 14} width={w - 28} height={h - 18} rx={10} fill="none" stroke={fg} strokeWidth={4} />
@@ -263,9 +313,9 @@ const Board: React.FC<{ x: number; y: number; w: number; h: number; lines: strin
   </g>
 );
 /** A crowd of onlookers on the dunes (silhouettes, hats). */
-const Crowd: React.FC<{ mood: Mood; t: number; n: number; x0: number; x1: number; feet: number; s: number; g?: 'stand' | 'run' | 'shock' | 'nose' | 'point'; seed?: number; flip?: boolean }> = ({ mood, t, n, x0, x1, feet, s, g = 'stand', seed = 0, flip }) => (
+const Crowd: React.FC<{ mood: Mood; t: number; n: number; x0: number; x1: number; feet: number; s: number; g?: 'stand' | 'run' | 'shock' | 'nose' | 'point'; seed?: number; flip?: boolean; e?: Ex }> = ({ mood, t, n, x0, x1, feet, s, g = 'stand', seed = 0, flip, e }) => (
   <g>{Array.from({ length: n }, (_, i) => { const x = lerp(x0, x1, n === 1 ? 0.5 : i / (n - 1)) + (random(`cr${seed}${i}`) - 0.5) * 50;
-    return <Man key={i} x={x} feet={feet + (i % 3) * 14} s={s * (0.9 + (i % 3) * 0.06)} mood={mood} t={t + i * 7} g={g} hat={(['bowler', 'cap', 'none'] as const)[(i + seed) % 3]} flip={flip ?? i % 2 === 0} ph={i} />; })}</g>
+    return <Man key={i} x={x} feet={feet + (i % 3) * 14} s={s * (0.9 + (i % 3) * 0.06)} mood={mood} t={t + i * 7} g={g} e={e ?? (g === 'stand' ? (['neutral', 'happy', 'smug'] as Ex[])[(i + seed) % 3] : undefined)} hat={(['bowler', 'cap', 'none'] as const)[(i + seed) % 3]} flip={flip ?? i % 2 === 0} ph={i} />; })}</g>
 );
 
 // ---------------------------------------------------------------- shots
@@ -290,7 +340,7 @@ export const S2: S = ({ t }) => (   // neon Oregon, Florence pinned
 export const S3: S = ({ t, f }) => (   // "On purpose": the official, thumbs up, stamp
   <g>
     <Beach id="w3" mood="noon" t={t} />
-    <Man x={540} feet={1700} s={2.1} mood="noon" t={t} g="vote" hat="cap" />
+    <Man x={540} feet={1700} s={2.1} mood="noon" t={t} g="vote" hat="cap" e="happy" />
     {since(f, 'purpose') >= 0 ? <g transform={`translate(540 520) rotate(-10) scale(${popIn(since(f, 'purpose'), 5)})`}><rect x={-300} y={-80} width={600} height={160} fill="none" stroke="#D8322A" strokeWidth={16} /><Txt x={0} y={34} s={100} c="#D8322A">ON PURPOSE</Txt></g> : null}
   </g>
 );
@@ -307,7 +357,7 @@ export const S5: S = ({ t, f }) => (   // not a tall tale: an old fisherman with
     <Sky id="w5" mood="warm" sunX={760} sunY={520} />
     <rect x={-300} y={1100} width={W + 600} height={900} fill="#3A2416" />
     <rect x={-300} y={1080} width={W + 600} height={30} fill="#6A4428" />
-    <Man x={330} feet={1520} s={1.6} mood="warm" t={t} g="shock" hat="cap" />
+    <Man x={330} feet={1520} s={1.6} mood="warm" t={t} g="shock" hat="cap" e="happy" />
     <g transform="translate(700 980) rotate(-8)"><path d="M -230 0 Q -60 -120 160 -20 L 260 -90 L 240 0 L 260 90 L 160 20 Q -60 120 -230 0 Z" fill="#6A8AA0" stroke={INK} strokeWidth={8} /><circle cx={-170} cy={-10} r={12} fill="#FFF" /></g>
     <Txt x={540} y={420} s={110} c="#FFD23F">TALL TALE?</Txt>
     <BigX t={since(f, 'tall') + 4} y={900} s={1.1} />
@@ -323,7 +373,7 @@ export const S6: S = ({ t, f }) => (   // it's on film: a 1970 newsman and his c
       <rect x={100} y={-420} width={90} height={70} fill="#2A2A30" stroke={INK} strokeWidth={6} /><circle cx={190} cy={-385} r={30} fill="#9AD8F0" stroke={INK} strokeWidth={6} />
       <circle cx={-110} cy={-430} r={10} fill="#FF3A3A" opacity={Math.sin(t * 0.4) > 0 ? 1 : 0.2} />
     </g>
-    <Man x={330} feet={1560} s={1.7} mood="noon" t={t} g="point" hat="none" />
+    <Man x={330} feet={1560} s={1.7} mood="noon" t={t} g="point" hat="none" e="happy" />
     <g transform={`translate(${-200 + (t * 8) % 300} 420)`}>{Array.from({ length: 6 }, (_, i) => <g key={i} transform={`translate(${i * 260} 0)`}><rect x={0} y={-90} width={250} height={180} fill="#1A1A1E" />{[0, 1, 2, 3, 4, 5].map((k) => <rect key={k} x={14 + k * 40} y={-80} width={20} height={14} fill="#F2E6C8" />)}{[0, 1, 2, 3, 4, 5].map((k) => <rect key={'b' + k} x={14 + k * 40} y={66} width={20} height={14} fill="#F2E6C8" />)}<rect x={20} y={-56} width={210} height={112} fill={i % 2 ? '#8A6A4A' : '#5A6A7A'} /></g>)}</g>
     {since(f, 'film') >= 0 ? <Punch t={since(f, 'film')} lines={["IT'S ON FILM"]} y={640} size={110} color="#FFD23F" /> : null}
   </g>
@@ -374,7 +424,7 @@ export const S11: S = ({ t, f }) => (   // top-down: the whale and eight one-ton
 export const S12: S = ({ t }) => (   // the stink: close faces holding their noses
   <g>
     <Beach id="w12" mood="noon" t={t} head={false} />
-    <Crowd mood="noon" t={t} n={3} x0={220} x1={860} feet={1900} s={2.5} g="nose" seed={2} />
+    <Crowd mood="noon" t={t} n={3} x0={220} x1={860} feet={1680} s={2.5} g="nose" seed={2} />
     {Array.from({ length: 6 }, (_, i) => <path key={i} d={`M ${120 + i * 170} ${1100 - ((t * 3 + i * 40) % 300)} q 30 -40 0 -80 q -30 -40 0 -80`} stroke="#9AD84A" strokeWidth={14} fill="none" strokeLinecap="round" opacity={0.8} style={{ filter: 'drop-shadow(0 0 10px #9AD84A)' }} />)}
     <Txt x={540} y={420} s={104} c="#9AD84A">PEE-YOO!</Txt>
   </g>
@@ -399,13 +449,15 @@ export const S15: S = ({ t, f }) => (   // the highway office: men round a bluep
     <rect x={-300} y={-300} width={W + 600} height={2500} fill="#3A4A5A" />
     <rect x={640} y={360} width={320} height={360} fill="#9FC8E8" stroke={INK} strokeWidth={10} /><path d="M 800 360 L 800 720 M 640 540 L 960 540" stroke={INK} strokeWidth={8} />
     <Glow x={800} y={540} r={360} kind="cool" o={0.5} />
+    <path d="M 640 720 L 960 720 L 760 1600 L 120 1600 Z" fill="#CFE8FF" opacity={0.16} filter="url(#gsB24)" style={scr} />
+    <g transform="translate(330 420)"><path d="M 0 -140 L 0 0" stroke={INK} strokeWidth={5} /><path d="M -60 40 L 60 40 L 30 0 L -30 0 Z" fill="#2F6F73" stroke={INK} strokeWidth={4} /><circle cx={0} cy={44} r={14} fill="#FFE7A0" /><Glow x={0} y={60} r={300} kind="warm" o={0.7} /><path d="M -50 50 L 50 50 L 220 700 L -220 700 Z" fill="#FFE7A0" opacity={0.12} filter="url(#gsB12)" style={scr} /></g>
     <rect x={-300} y={1150} width={W + 600} height={900} fill="#2A2A30" />
     <rect x={100} y={980} width={880} height={50} fill="#6A4428" stroke={INK} strokeWidth={6} />
     <g transform="translate(540 960) rotate(-3)"><rect x={-330} y={-200} width={660} height={190} fill="#2A5A9A" stroke="#F4EEE2" strokeWidth={6} />
       <path d="M -250 -60 Q -150 -140 0 -130 Q 150 -120 250 -70" stroke="#F4EEE2" strokeWidth={6} fill="none" /><circle cx={0} cy={-100} r={26} fill="#D8322A" />
       {since(f, 'Blow') >= 0 ? <text x={0} y={-30} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={56} fill="#F4EEE2">PLAN: KABOOM</text> : null}</g>
-    <Man x={200} feet={1540} s={1.5} mood="night" t={t} g="point" hat="none" />
-    <Man x={880} feet={1540} s={1.5} mood="night" t={t + 5} g="stand" hat="bowler" flip />
+    <Man x={200} feet={1540} s={1.5} mood="night" t={t} g="point" hat="none" e="happy" />
+    <Man x={880} feet={1540} s={1.5} mood="night" t={t + 5} g="stand" hat="bowler" flip e="smug" />
     <g transform="translate(540 300)"><circle r={46} fill="#F4EEE2" stroke={INK} strokeWidth={6} /><path d={`M 0 0 L ${Math.sin(t * 0.1) * 30} ${-Math.cos(t * 0.1) * 30}`} stroke={INK} strokeWidth={6} /></g>
   </g>
 );
@@ -432,14 +484,14 @@ export const S18: S = ({ t }) => (   // the crowd on the dunes; one man in a sol
     <Whale x={300} y={1100} s={0.45} rim={MOODS.noon.rim} />
     <path d="M -300 1500 Q 300 1260 1380 1420 L 1380 2000 L -300 2000 Z" fill={MOODS.noon.layers[2]} />
     <Crowd mood="noon" t={t} n={7} x0={80} x1={1000} feet={1460} s={0.95} seed={3} />
-    <g><Man x={620} feet={1430} s={1.05} mood="warm" t={t} g="stand" hat="cap" /><Glow x={620} y={1200} r={260} kind="warm" o={0.6} /></g>
+    <g><Man x={620} feet={1430} s={1.05} mood="warm" t={t} g="stand" hat="cap" e="neutral" /><Glow x={620} y={1200} r={260} kind="warm" o={0.6} /></g>
   </g>
 );
 export const S19: S = ({ t }) => (   // close: the army explosives man, cap and medals
   <g>
     <Sky id="w19" mood="noon" sunX={760} sunY={520} />
     <rect x={-300} y={1300} width={W + 600} height={700} fill={MOODS.noon.layers[2]} />
-    <Man x={540} feet={2300} s={3.2} mood="warm" t={t} g="stand" hat="cap" />
+    <Man x={540} feet={2300} s={3.2} mood="warm" t={t} g="stand" hat="cap" e="smug" />
     {[[440, 1460, '#D8322A'], [500, 1470, '#2A5A9A'], [560, 1460, '#F2B030']].map(([x, y, c], i) => <g key={i}><rect x={(x as number) - 14} y={(y as number) - 40} width={28} height={40} fill={c as string} /><circle cx={x as number} cy={(y as number) + 14} r={18} fill="#D8B040" stroke={INK} strokeWidth={4} /></g>)}
     <Txt x={540} y={420} s={96} c="#FFD27A">ARMY</Txt><Txt x={540} y={530} s={84}>EXPLOSIVES MAN</Txt>
   </g>
@@ -448,15 +500,15 @@ export const S20: S = ({ t, f }) => (   // "TOO MUCH!" bubble
   <g>
     <Sky id="w20" mood="danger" sunX={760} sunY={520} />
     <rect x={-300} y={1300} width={W + 600} height={700} fill={MOODS.danger.layers[2]} />
-    <Man x={420} feet={2100} s={2.6} mood="danger" t={t} g="point" hat="cap" />
+    <Man x={420} feet={1840} s={2.6} mood="danger" t={t} g="point" hat="cap" e="angry" />
     <Speech t={since(f, 'too')} x={700} y={620} flip><text x={0} y={-10} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={96} fill="#D8322A">TOO</text><text x={0} y={90} textAnchor="middle" fontFamily={FONT.title} fontWeight={800} fontSize={96} fill="#D8322A">MUCH!</text></Speech>
   </g>
 );
 export const S21: S = ({ t }) => (   // nobody listened: a hard hat waves him off, over the shoulder
   <g>
     <Beach id="w21" mood="noon" t={t} />
-    <Man x={640} feet={1500} s={1.5} mood="noon" t={t} g="vote" hat="bowler" flip />
-    <Man x={240} feet={2000} s={2.9} mood="warm" t={t} g="stand" hat="cap" />
+    <Man x={640} feet={1500} s={1.5} mood="noon" t={t} g="vote" hat="bowler" flip e="smug" />
+    <Man x={240} feet={1860} s={2.9} mood="warm" t={t} g="stand" hat="cap" e="sad" />
     <Txt x={540} y={420} s={110} c="#F2B030">NOBODY</Txt><Txt x={540} y={530} s={110} c="#F2B030">LISTENED</Txt>
   </g>
 );
@@ -545,7 +597,7 @@ export const S31: S = ({ t }) => (   // the army man stares at his flattened car
   <g>
     <Beach id="w31" mood="danger" t={t} head={false} />
     <Car x={680} y={1230} s={0.9} crush={1} />
-    <Man x={260} feet={1900} s={2.5} mood="danger" t={t} g="shock" hat="cap" />
+    <Man x={260} feet={1780} s={2.5} mood="danger" t={t} g="shock" hat="cap" e="shock" />
     <Txt x={540} y={420} s={110} c="#FF8A3D">HIS CAR!</Txt>
   </g>
 );
@@ -557,7 +609,7 @@ export const S32: S = ({ t, f }) => (   // rewind: the dealer lot, bunting, the 
     {Array.from({ length: 14 }, (_, i) => { const u = (i + 0.5) / 14, x = lerp(-100, 1180, u), y = 520 + Math.sin(u * Math.PI) * 120 * 0.9; return <path key={i} d={`M ${x - 26} ${y} L ${x + 26} ${y} L ${x} ${y + 60 + Math.sin(t * 0.3 + i) * 6} Z`} fill={['#D8322A', '#F4EEE2', '#2A5A9A'][i % 3]} stroke={INK} strokeWidth={3} />; })}
     <Car x={560} y={1250} s={1.2} />
     <Glow x={560} y={1100} r={400} kind="warm" o={0.5} />
-    <Man x={180} feet={1500} s={1.3} mood="warm" t={t} g="point" hat="cap" />
+    <Man x={180} feet={1500} s={1.3} mood="warm" t={t} g="point" hat="cap" e="happy" />
     {since(f, 'sale') >= 0 ? <Punch t={since(f, 'sale')} lines={['A SALE', 'CALLED...']} y={330} size={100} color="#FFD27A" /> : null}
   </g>
 );
@@ -611,7 +663,7 @@ export const S38: S = ({ t }) => (   // today: a sunny park by the river, kids p
     <rect x={-300} y={1000} width={W + 600} height={1000} fill="#4A7A3A" />
     {Array.from({ length: 5 }, (_, i) => <g key={i} transform={`translate(${80 + i * 240} 1000)`}><rect x={-12} y={-140} width={24} height={140} fill="#5A3A22" /><circle cx={0} cy={-190} r={80} fill="#3A6A2A" stroke={INK} strokeWidth={5} /></g>)}
     <g transform="translate(740 1260)"><path d="M -120 0 L -60 -260 L 60 -260 L 120 0" stroke={INK} strokeWidth={12} fill="none" /><path d={`M 0 -260 L ${Math.sin(t * 0.12) * 90} -100`} stroke={INK} strokeWidth={5} /><rect x={Math.sin(t * 0.12) * 90 - 30} y={-108} width={60} height={14} fill="#D8322A" /></g>
-    {[[300, 0], [460, 1]].map(([x, i]) => <Man key={i} x={x} feet={1300 - Math.abs(Math.sin(t * 0.3 + i)) * 30} s={0.8} mood="noon" t={t + i * 4} g="run" hat="none" ph={i} />)}
+    {[[300, 0], [460, 1]].map(([x, i]) => <Man key={i} x={x} feet={1300 - Math.abs(Math.sin(t * 0.3 + i)) * 30} s={0.8} mood="noon" t={t + i * 4} g="run" hat="none" ph={i} e="happy" />)}
     <Punch t={t - 2} lines={['TODAY']} y={330} size={120} color="#FFD23F" />
   </g>
 );
@@ -637,12 +689,14 @@ export const S40: S = ({ t }) => (   // a modern office: "I'VE GOT A PLAN"
   <g>
     <rect x={-300} y={-300} width={W + 600} height={2500} fill="#2E3A4A" />
     <rect x={120} y={420} width={840} height={520} fill="#F4F4F0" stroke="#8A8A92" strokeWidth={14} />
+    <rect x={110} y={950} width={860} height={40} fill="#000" opacity={0.35} filter="url(#gsB12)" />
+    {[300, 780].map((lx) => <g key={lx}><rect x={lx - 90} y={250} width={180} height={18} rx={9} fill="#E8F2FF" /><Glow x={lx} y={268} r={360} kind="cool" o={0.6} /></g>)}
     <text x={540} y={620} textAnchor="middle" fontFamily={FONT.hand} fontWeight={700} fontSize={96} fill="#2A5A9A">I'VE GOT</text>
     <text x={540} y={740} textAnchor="middle" fontFamily={FONT.hand} fontWeight={700} fontSize={96} fill="#2A5A9A">A PLAN!</text>
     <path d="M 300 830 L 780 830" stroke="#D8322A" strokeWidth={8} strokeDasharray={480} strokeDashoffset={480 * (1 - clamp(t / 20))} />
     <rect x={-300} y={1150} width={W + 600} height={800} fill="#1E242E" />
-    <Man x={820} feet={1600} s={1.6} mood="cold" t={t} g="point" hat="none" flip />
-    <Man x={200} feet={1700} s={1.9} mood="cold" t={t} g="stand" hat="none" />
+    <Man x={820} feet={1600} s={1.6} mood="cold" t={t} g="point" hat="none" flip e="happy" />
+    <Man x={200} feet={1700} s={1.9} mood="cold" t={t} g="stand" hat="none" e="shock" />
   </g>
 );
 export const S41: S = ({ t }) => (   // stamp: HOW MUCH DYNAMITE?
