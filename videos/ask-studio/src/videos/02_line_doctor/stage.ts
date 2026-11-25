@@ -75,8 +75,8 @@ export function stage(f: number): Stage {
     case 'club': {   // the women's club writes letters
       const x = X.club;
       P.push({who: 'june', p: [x, 0, -1.5], ...seq(lf, [[0, 'talk', 'happy'], [30, 'point', 'proud']]), gaze: 'cam'});
-      P.push({who: 'grandma', p: [x - 2.0, 0, 0.6], act: 'think', expr: 'happy'}); P.push({who: 'baker', p: [x + 2.0, 0, 0.6], act: 'cheer', expr: 'happy'});
-      P.push({who: 'woman', p: [x - 0.9, 0, 1.6], act: 'present', expr: 'proud'}); P.push({who: 'youngwoman', p: [x + 0.9, 0, 1.6], act: 'talk', expr: 'happy'}); break; }
+      P.push({who: 'grandma', p: [x - 2.9, 0, 0.4], act: 'think', expr: 'happy'}); P.push({who: 'baker', p: [x + 2.0, 0, 0.6], act: 'cheer', expr: 'happy'});
+      P.push({who: 'woman', p: [x - 1.4, 0, 1.9], act: 'present', expr: 'proud'}); P.push({who: 'youngwoman', p: [x + 1.6, 0, 1.9], act: 'talk', expr: 'happy'}); break; }
     case 'map': {   // the state map lights up club by club; a petition unrolls
       const x = X.map; ex.pins = lf; ex.scroll = cl((lf - W('map', 'Thousands') + 6) / 40);
       P.push({who: 'nurse', p: [x - 1.7, 0, 0.4], ...seq(lf, [[0, 'point', 'happy']]), gaze: [x, 2, -1.8]});

@@ -130,7 +130,6 @@ export const Front: React.FC<{p: V3; w: number; h: number; col: string; sign?: T
 const voidM = new THREE.MeshBasicMaterial({color: '#1c1410', side: THREE.BackSide, fog: false});
 export const Room: React.FC<{p: V3; w?: number; d?: number; h?: number; wall: THREE.Material; floor: THREE.Material}> = ({p, w = 9, d = 8, h = 3.6, wall, floor}) => (<group position={p}>
   <mesh geometry={sph} material={voidM} scale={[w * 1.6, h * 3, d * 1.6]} />
-  <M m={wall} p={[0, h + 0.05, 0]} s={[w, 0.1, d]} sh={false} />
   <M g={plane} m={floor} p={[0, 0, 0]} s={[w, d, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />
   <M m={wall} p={[0, h / 2, -d / 2]} s={[w, h, 0.1]} sh={false} />
   {[-w / 2, w / 2].map((x) => <M key={x} m={wall} p={[x, h / 2, 0]} s={[0.1, h, d]} sh={false} />)}
@@ -157,4 +156,77 @@ export const Brush: React.FC<{p: V3; ry?: number; tilt?: number; s?: number}> = 
   <M m={T('#b8b8c0')} p={[0, 0.15, 0]} s={[0.05, 0.08, 0.17]} />
   <M g={cyl} m={T('#a8743a')} p={[0, 0.42, 0]} s={[0.025, 0.46, 0.025]} />
 </group></group>);
+
+// ---------------- light, glow and set dressing (polish pass) ----------------
+/** a glowing material that blooms: colour pushed above 1 and not tone-mapped */
+const gcache = new Map<string, THREE.Material>();
+export const glow = (c: string, k = 2.5, o = 1) => { const key = c + k + o; let m = gcache.get(key); if (!m) { const col = new THREE.Color(c).multiplyScalar(k);
+  m = new THREE.MeshBasicMaterial({color: col, toneMapped: false, transparent: o < 1, opacity: o, depthWrite: o >= 1, fog: false}); gcache.set(key, m); } return m; };
+const add = (c: string, o: number) => new THREE.MeshBasicMaterial({color: c, transparent: true, opacity: o, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false, fog: false, side: THREE.DoubleSide});
+/** soft radial glow sprite (no hard edge, unlike a translucent sphere) */
+let haloT: THREE.Texture | null = null;
+const halo = () => { if (haloT) return haloT; const c = cv(128, 128), g = c.getContext('2d')!, r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(0.25, 'rgba(255,255,255,.45)'); r.addColorStop(0.6, 'rgba(255,255,255,.1)'); r.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = r; g.fillRect(0, 0, 128, 128);
+  haloT = new THREE.CanvasTexture(c); return haloT; };
+export const Halo: React.FC<{p?: V3; col: string; s: number; o?: number}> = ({p = [0, 0, 0], col, s, o = 0.5}) =>
+  <sprite position={p} scale={[s, s, 1]}><spriteMaterial map={halo()} color={col} transparent opacity={o} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} fog={false} /></sprite>;
+/** seeded 0..1 (no Math.random: frames must render the same everywhere) */
+export const rnd = (i: number, s = 1) => { const x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453; return x - Math.floor(x); };
+/** saguaro cactus */
+export const Cactus: React.FC<{p: V3; h?: number; ry?: number}> = ({p, h = 3.2, ry = 0}) => (<group position={p} rotation={[0, ry, 0]}>
+  <M g={cyl} m={T('#4f7a3a')} p={[0, h / 2, 0]} s={[0.26, h, 0.26]} /><M g={sph} m={T('#4f7a3a')} p={[0, h, 0]} s={[0.26, 0.2, 0.26]} />
+  <M g={cyl} m={T('#4a7236')} p={[0.42, h * 0.42, 0]} s={[0.16, 0.5, 0.16]} r={[0, 0, Math.PI / 2]} /><M g={cyl} m={T('#4a7236')} p={[0.62, h * 0.58, 0]} s={[0.17, h * 0.34, 0.17]} /><M g={sph} m={T('#4a7236')} p={[0.62, h * 0.75, 0]} s={0.17} />
+  <M g={cyl} m={T('#4a7236')} p={[-0.38, h * 0.55, 0]} s={[0.14, 0.42, 0.14]} r={[0, 0, Math.PI / 2]} /><M g={cyl} m={T('#4a7236')} p={[-0.55, h * 0.68, 0]} s={[0.15, h * 0.26, 0.15]} /><M g={sph} m={T('#4a7236')} p={[-0.55, h * 0.81, 0]} s={0.15} />
+</group>);
+/** a row of telegraph poles with sagging wires along x */
+export const Poles: React.FC<{x0: number; x1: number; z: number; step?: number; h?: number}> = ({x0, x1, z, step = 22, h = 6}) => { const n = Math.floor((x1 - x0) / step);
+  return (<group>{Array.from({length: n + 1}, (_, i) => { const x = x0 + i * step; return (<group key={i}>
+    <M g={cyl} m={T('#5a3a26')} p={[x, h / 2, z]} s={[0.1, h, 0.1]} /><M m={T('#5a3a26')} p={[x, h - 0.4, z]} s={[0.08, 0.08, 1.4]} />
+    {[-0.55, 0.55].map((dz) => <M key={dz} g={sph} m={T('#d8e0e8')} p={[x, h - 0.32, z + dz]} s={0.05} sh={false} />)}
+    {i < n && [-0.55, 0.55].map((dz) => <mesh key={'w' + dz} position={[x + step / 2, h - 0.62, z + dz]} rotation={[0, 0, 0]} scale={[step / 2, 0.3, 1]}>
+      <tubeGeometry args={[new THREE.QuadraticBezierCurve3(new THREE.Vector3(-1, 1, 0), new THREE.Vector3(0, -0.3, 0), new THREE.Vector3(1, 1, 0)), 12, 0.012, 3, false]} /><meshBasicMaterial color="#2a2020" /></mesh>)}
+  </group>); })}</group>); };
+/** a tumbleweed rolling along +x from x0, by local frame lf */
+export const Tumble: React.FC<{p: V3; lf: number; speed?: number; s?: number}> = ({p, lf, speed = 0.12, s = 0.6}) => { const dx = lf * speed, y = s * 0.9 + Math.abs(Math.sin(lf * 0.18)) * 0.35;
+  return (<group position={[p[0] + dx, p[1] + y, p[2]]} rotation={[0, 0, -dx / s]} scale={s}>
+    {Array.from({length: 7}, (_, i) => <mesh key={i} rotation={[i * 0.9, i * 1.7, i * 0.4]}><torusGeometry args={[0.85, 0.035, 4, 14]} /><meshToonMaterial color={i % 2 ? '#a8885a' : '#8a6a40'} /></mesh>)}</group>); };
+export const Barrel: React.FC<{p: V3; s?: number}> = ({p, s = 1}) => (<group position={p} scale={s}><M g={cyl} m={T('#8a5a32')} p={[0, 0.45, 0]} s={[0.32, 0.9, 0.32]} />
+  {[0.15, 0.75].map((y) => <M key={y} g={cyl} m={T('#3a3a40')} p={[0, y, 0]} s={[0.335, 0.05, 0.335]} />)}</group>);
+export const Hitch: React.FC<{p: V3; w?: number}> = ({p, w = 2.4}) => (<group position={p}>{[-w / 2, w / 2].map((x) => <M key={x} m={T('#6a4428')} p={[x, 0.5, 0]} s={[0.1, 1.0, 0.1]} />)}<M g={cyl} m={T('#7a4a28')} p={[0, 0.95, 0]} s={[0.05, w + 0.2, 0.05]} r={[0, 0, Math.PI / 2]} /></group>);
+export const WaterTower: React.FC<{p: V3}> = ({p}) => (<group position={p}>{[[-1, -1], [1, -1], [-1, 1], [1, 1]].map(([a, b], i) => <M key={i} m={T('#5a3a26')} p={[a * 1.1, 3, b * 1.1]} s={[0.14, 6, 0.14]} />)}
+  <M g={cyl} m={T('#8a5a32')} p={[0, 7.2, 0]} s={[1.8, 2.6, 1.8]} /><M g={cone} m={T('#4a2418')} p={[0, 9.0, 0]} s={[2.0, 1.0, 2.0]} /></group>);
+/** a hanging or wall lamp: glowing bulb + soft halo (+ a real point light when lit) */
+export const Lamp: React.FC<{p: V3; col?: string; k?: number; hang?: number; light?: number}> = ({p, col = '#ffd08a', k = 3, hang = 0, light = 0}) => (<group position={p}>
+  {hang > 0 && <M g={cyl} m={T('#2a2a2a')} p={[0, hang / 2, 0]} s={[0.012, hang, 0.012]} sh={false} />}
+  {hang > 0 && <M g={cone} m={T('#2f6f73')} p={[0, 0.1, 0]} s={[0.32, 0.22, 0.32]} sh={false} />}
+  <M g={sph} m={glow(col, k)} s={0.09} sh={false} />
+  <Halo col={col} s={1.1} o={0.55} />
+  {light > 0 && <pointLight color={col} intensity={light} distance={7} decay={1.6} />}
+</group>);
+/** a light shaft: an additive slab from a window along a direction */
+export const Shaft: React.FC<{p: V3; s: V3; r?: V3; col?: string; o?: number}> = ({p, s, r = [0, 0, 0], col = '#fff0c8', o = 0.10}) => (<group position={p} rotation={r}>
+  {[1, 0.7, 0.4].map((k, i) => <mesh key={i} geometry={box} scale={[s[0] * k, s[1], s[2] * k]} material={add(col, o / (i + 1.4))} />)}</group>);
+/** floating dust motes in a box (seeded), drifting with the frame */
+export const Motes: React.FC<{c: V3; size: V3; f: number; n?: number; col?: string; seed?: number}> = ({c, size, f, n = 40, col = '#fff4d8', seed = 1}) => (<group position={c}>
+  {Array.from({length: n}, (_, i) => { const t = f / 30, x = (rnd(i, seed) - 0.5) * size[0] + Math.sin(t * 0.4 + i) * 0.15, y = ((rnd(i, seed + 1) * size[1] + t * 0.05 * (0.5 + rnd(i, seed + 2))) % size[1]) - size[1] / 2, z = (rnd(i, seed + 3) - 0.5) * size[2];
+    return <M key={i} g={sph} m={glow(col, 1.6, 0.55)} p={[x, y, z]} s={0.012 + rnd(i, seed + 4) * 0.018} sh={false} />; })}</group>);
+/** a sun / moon disk with a halo, placed far away along a direction from at */
+export const SunDisk: React.FC<{at: V3; dir: V3; col?: string; r?: number; dist?: number}> = ({at, dir, col = '#fff0c0', r = 6, dist = 140}) => { const v = new THREE.Vector3(...dir).normalize().multiplyScalar(dist);
+  return (<group position={[at[0] + v.x, at[1] + v.y, at[2] + v.z]}><mesh geometry={sph} scale={r} material={glow(col, 2.2)} /><Halo col={col} s={r * 7} o={0.55} /><Halo col={col} s={r * 16} o={0.18} /></group>); };
+/** a picture frame on a wall (z+ facing) */
+export const Frame: React.FC<{p: V3; w?: number; h?: number; col?: string; art?: string}> = ({p, w = 0.7, h = 0.9, col = '#6a4428', art = '#8a9a7a'}) => (<group position={p}>
+  <M m={T(col)} s={[w, h, 0.05]} /><M m={T(art)} p={[0, 0, 0.03]} s={[w * 0.8, h * 0.8, 0.02]} /><M g={sph} m={T('#e8d8b0')} p={[0, h * 0.05, 0.045]} s={[w * 0.18, h * 0.18, 0.01]} /></group>);
+export const Rug: React.FC<{p: V3; w: number; d: number; col?: string; edge?: string}> = ({p, w, d, col = '#8a2f2a', edge = '#d8b060'}) => (<group position={p}>
+  <M g={plane} m={T(edge)} p={[0, 0.006, 0]} s={[w, d, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} /><M g={plane} m={T(col)} p={[0, 0.012, 0]} s={[w - 0.2, d - 0.2, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} /></group>);
+export const Shelf: React.FC<{p: V3; w?: number; seed?: number}> = ({p, w = 1.8, seed = 1}) => (<group position={p}>
+  <M m={T('#5a3a22')} p={[0, 1.1, 0]} s={[w, 2.2, 0.4]} />
+  {[0.35, 0.95, 1.55].map((y, r) => <group key={r}><M m={T('#3a2414')} p={[0, y + 0.28, 0.05]} s={[w - 0.1, 0.5, 0.32]} />
+    {Array.from({length: 10}, (_, i) => <M key={i} m={T(['#8a2f2a', '#2f5a7a', '#c8a050', '#4a6a3a', '#6a3a5a'][Math.floor(rnd(i + r * 10, seed) * 5)])} p={[-w / 2 + 0.15 + i * (w - 0.25) / 10, y + 0.22, 0.12]} s={[0.12, 0.3 + rnd(i, seed + r) * 0.12, 0.24]} />)}</group>)}
+</group>);
+export const Bunting: React.FC<{x0: number; x1: number; y: number; z: number}> = ({x0, x1, y, z}) => (<group>{Array.from({length: Math.floor((x1 - x0) / 0.45)}, (_, i) => { const x = x0 + i * 0.45, t = (x - x0) / (x1 - x0);
+  return <mesh key={i} position={[x, y - Math.sin(t * Math.PI) * 0.35, z]} rotation={[0, 0, Math.PI]} scale={[0.18, 0.26, 0.02]} geometry={cone} material={T(['#c8262e', '#f4ead6', '#2a5f9a'][i % 3])} />; })}</group>);
+/** stars on the sky dome (seeded twinkle) */
+export const Stars: React.FC<{at: V3; n?: number; f: number; r?: number}> = ({at, n = 140, f, r = 150}) => (<group position={at}>
+  {Array.from({length: n}, (_, i) => { const a = rnd(i, 7) * Math.PI * 2, e = 0.12 + rnd(i, 8) * 1.2, tw = 0.6 + 0.4 * Math.sin(f * 0.2 + i);
+    return <M key={i} g={sph} m={glow('#e8f0ff', 1.2 + tw, 1)} p={[Math.cos(a) * Math.cos(e) * r, Math.sin(e) * r, Math.sin(a) * Math.cos(e) * r]} s={0.18 + rnd(i, 9) * 0.25} sh={false} />; })}</group>);
 export {basic, box, cyl, sph, cone, plane};
