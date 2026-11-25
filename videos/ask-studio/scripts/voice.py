@@ -12,7 +12,7 @@ if not mp3.exists():
     req = urllib.request.Request('https://api.elevenlabs.io/v1/text-to-speech/Bj9UqZbhQsanLzgalpEG?output_format=mp3_44100_128', data=json.dumps(body).encode(), headers={'xi-api-key': key, 'Content-Type': 'application/json'})
     mp3.write_bytes(urllib.request.urlopen(req, timeout=300).read())
 wav = P / 'voice.wav'
-subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', str(mp3), '-af', 'silenceremove=start_periods=1:start_threshold=-45dB,adelay=150|150,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,apad=pad_dur=0.35,loudnorm=I=-16:TP=-1.5', '-ar', '48000', '-ac', '2', str(wav)], check=True)
+subprocess.run(['ffmpeg', '-y', '-v', 'error', '-i', str(mp3), '-af', 'atempo=' + os.environ.get('TEMPO', '1.0') + ',silenceremove=start_periods=1:start_threshold=-45dB,adelay=150|150,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse,apad=pad_dur=0.35,loudnorm=I=-16:TP=-1.5', '-ar', '48000', '-ac', '2', str(wav)], check=True)
 r = requests.post('https://api.elevenlabs.io/v1/speech-to-text', headers={'xi-api-key': key}, data={'model_id': 'scribe_v1', 'language_code': 'en'}, files={'file': open(mp3 if False else wav, 'rb')}, timeout=300)
 r.raise_for_status()
 words = [{'w': w['text'], 's': w['start'], 'e': w['end']} for w in r.json()['words'] if w['type'] == 'word']

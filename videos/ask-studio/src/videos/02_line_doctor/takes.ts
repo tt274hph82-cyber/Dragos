@@ -15,6 +15,7 @@ export const PROPS: Props = {
   scroll: [[X.map, 0.9, 1.4], [0.8, 0.3, 1.1]],
   cal: [[X.years - 2.2, 2.2, -3.85], [0.7, 0.8, 0.1]],
   stampdesk: [[X.years - 0.3, 1.1, 0.3], [0.5, 0.25, 0.4]],
+  bulb: [[X.road + 28.5, 2.6, 7.4], 0.5],
   milesnear: [[X.miles - 20, 0, 0], [8, 0.5, 3]],
   milesfar: [[X.miles + 60, 0, 0], [18, 1, 4]],
   modroad: [[X.modern, 0.6, 0], [6, 0.6, 3]],
@@ -35,11 +36,11 @@ export const TAKES: Take[] = [
     K(T('truck', 'roaring'), 'car:1', 'MS', 100, 8, 38, {move: 'dolly', dur: 0.5})]},
   {name: 'sand', why: 'the skid into the sand, then her face and the bulb on "idea"', keys: [
     K(R.sand, 'car:0', 'FS', 40, 8, 42),
-    K(T('sand', 'idea') - 0.2, 'june', 'MCU', 25, 5, 36, {move: 'arc', dur: 0.7})]},
+    K(T('sand', 'idea') - 0.2, 'june', 'MS', 0, 6, 40, {move: 'arc', dur: 0.7})]},
   {name: 'idea', why: "bird's-eye: the line draws itself; a car on each side on \"your\" / \"my\"", keys: [
-    K(R.idea, 'prop:idearoad', 'WS', 0, 80, 40, {push: 1.03}),
-    K(T('idea', 'Your'), 'car:0', 'FS', 0, 70, 40, {move: 'pan', dur: 0.6}),
-    K(T('idea', 'My'), 'car:1', 'FS', 0, 70, 40, {move: 'pan', dur: 0.6})]},
+    K(R.idea, 'prop:idearoad', 'WS', 15, 38, 42, {push: 1.04}),
+    K(T('idea', 'Your'), 'car:0', 'FS', 10, 45, 40, {move: 'pan', dur: 0.6}),
+    K(T('idea', 'My'), 'car:1', 'FS', -10, 45, 40, {move: 'pan', dur: 0.6})]},
   {name: 'county', why: 'the board; push on the banker laughing on "money"', keys: [
     K(R.county, ['june', 'preacher', 'banker', 'shopper2'], 'FS', 10, 8, 42),
     K(T('county', 'Waste'), 'banker', 'MCU', -10, 3, 36, {move: 'arc', dur: 0.7})]},
@@ -59,7 +60,7 @@ export const TAKES: Take[] = [
     K(T('stretch', 'everyone'), ['june', 'car:0'], 'FS', 35, 14, 40, {move: 'arc', dur: 0.9})]},
   {name: 'club', why: "the women's club; push on June", keys: [
     K(R.club, ['june', 'grandma', 'baker', 'woman', 'youngwoman'], 'FS', 0, 8, 42),
-    K(T('club', 'joined'), 'june', 'MCU', 10, 4, 36, {move: 'arc', dur: 0.7})]},
+    K(T('club', 'joined'), 'june', 'MCU', 10, 22, 34, {move: 'arc', dur: 0.7})]},
   {name: 'map', why: 'the map lights up in threes; tilt down to the petition on "Thousands"', keys: [
     K(R.map, 'prop:map', 'FS', 0, 4, 40, {push: 1.04}),
     K(T('map', 'Thousands'), 'prop:scroll', 'MS', 10, 40, 38, {move: 'pullpush', dur: 0.8})]},
@@ -67,13 +68,13 @@ export const TAKES: Take[] = [
     K(R.years, 'prop:cal', 'MS', 0, 2, 40),
     K(T('years', 'yes') - 0.1, 'prop:stampdesk', 'CU', 20, 40, 36, {move: 'arc', dur: 0.6})]},
   {name: 'miles', why: 'aerial: the line races off to the horizon', keys: [
-    K(R.miles, 'prop:milesnear', 'WS', -70, 30, 40),
-    K(T('miles', 'thousands'), 'prop:milesfar', 'EWS', -80, 18, 40, {move: 'dolly', dur: 1.4})]},
+    K(R.miles, 'prop:milesnear', 'WS', -85, 10, 34),
+    K(T('miles', 'thousands'), 'prop:milesfar', 'EWS', -88, 12, 32, {move: 'dolly', dur: 1.4})]},
   {name: 'modern', why: 'today at night: every car on its own side', keys: [
     K(R.modern, 'prop:modroad', 'WS', 25, 26, 40, {push: 1.03}),
     K(T('modern', 'drew'), 'car:0', 'FS', 45, 6, 40, {move: 'arc', dur: 0.8})]},
   {name: 'end', why: 'a kid looks down at the line; whip to June at her first line, golden hour', keys: [
-    K(R.end, 'car:0', 'MS', -30, 12, 40),
+    K(R.end, 'kid', 'MS', 20, 6, 40),
     K(T('end', 'down'), 'prop:dashline', 'MS', 0, 55, 40, {move: 'pan', dur: 0.6}),
     K(T('end', 'That'), 'june', 'WS', 40, 6, 42, {move: 'whip', dur: 0.3})]},
 ];

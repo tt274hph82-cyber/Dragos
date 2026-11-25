@@ -7,7 +7,7 @@ import {Car} from '../../engine/kits/downtown/street';
 import {charPts} from '../../engine/camera/camera';
 import {useDesert, Sky, Mountains, Palm, DesertRoad, Truck, Front, Room, ModernCar, Can, Brush, M, T, basic, sph, cyl, plane, box, type DesertData} from '../../engine/kits/desert/desert';
 import {X, type Stage} from './stage';
-export const AUDIO: {voice: string | null; bed: string | null} = {voice: null, bed: null};
+export const AUDIO: {voice: string | null; bed: string | null} = {voice: null, bed: '02_line_doctor/mix.wav'};
 export const useSetData = () => ({g: useMats(), d: useDesert()});
 type P = {d: ReturnType<typeof useSetData>; f: number; st: Stage; cam: THREE.Vector3; vel: (THREE.Vector3 | null)[]; tod: Tod};
 const cl = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
@@ -53,10 +53,11 @@ const Road: React.FC<P & {sand?: boolean}> = ({d, st, sand}) => { const D = d.d,
     {[-30, -8, 22, 48, 70].map((dx, i) => <Palm key={i} p={[x + dx, 0, -10 - (i % 3) * 4]} h={6.5 + (i % 2)} />)}
     <Cars st={st} />
     {sand && st.cars[0] && <Dust p={st.cars[0].p} lf={st.ex.dust ?? 0} />}
-    {sand && st.people[0] && <Bulb p={[st.people[0].p[0], 2.2, st.people[0].p[2]]} k={st.ex.bulb ?? 0} />}
+    {sand && st.people[0] && <Bulb p={[st.people[0].p[0], st.people[0].inCar ? 2.2 : 2.05, st.people[0].p[2]]} k={st.ex.bulb ?? 0} />}
   </group>); };
 const Idea: React.FC<P> = ({d, st}) => { const D = d.d, x = X.idea;
-  return (<group><Sky t={D.skyDay} at={[x, 0, 0]} /><DesertRoad d={D} x0={x - 80} x1={x + 80} line={st.ex.line} seed={9} /><Cars st={st} />
+  return (<group><Sky t={D.skyDay} at={[x, 0, 0]} /><Mountains x={x} /><DesertRoad d={D} x0={x - 80} x1={x + 80} line={st.ex.line} seed={9} /><Cars st={st} />
+    {[-26, -9, 7, 21].map((dx, i) => <Palm key={i} p={[x + dx, 0, -12 - i * 2]} h={6.5} />)}
     <M g={sph} m={basic('#fbf8ee')} p={[st.ex.line ? st.ex.line[1] : x, 0.05, 0]} s={0.14} sh={false} /></group>); };
 const County: React.FC<P> = ({d}) => { const D = d.d, x = X.county;
   return (<group>
@@ -123,7 +124,9 @@ const Years: React.FC<P> = ({d, st}) => { const D = d.d, x = X.years, c = st.ex.
     <group position={[x - 0.3, 1.1 + 0.35 * (1 - down) + (s <= 0 ? 0.2 : 0), 0.3]}><M m={T('#7a3b22')} p={[0, 0.06, 0]} s={[0.4, 0.12, 0.25]} /><M g={cyl} m={T('#a8743a')} p={[0, 0.25, 0]} s={[0.06, 0.3, 0.06]} /><M g={sph} m={T('#7a3b22')} p={[0, 0.42, 0]} s={0.1} /></group>
   </group>); };
 const Miles: React.FC<P> = ({d, st}) => { const D = d.d, x = X.miles;
-  return (<group><Sky t={D.skyDay} at={[x, 0, 0]} r={420} /><Mountains x={x + 300} z={-200} /><DesertRoad d={D} x0={x - 60} x1={x + 700} line={st.ex.line} seed={17} />
+  return (<group><Sky t={D.skyGold} at={[x + 60, 0, 0]} r={300} /><DesertRoad d={D} x0={x - 60} x1={x + 700} line={st.ex.line} seed={17} />
+    {Array.from({length: 40}, (_, i) => <group key={i}><M g={cyl} m={T('#5a3a26')} p={[x - 30 + i * 16, 2.6, -4.5]} s={[0.09, 5.2, 0.09]} /><M m={T('#5a3a26')} p={[x - 30 + i * 16, 4.9, -4.5]} s={[0.08, 0.08, 1.4]} /></group>)}
+    {Array.from({length: 14}, (_, i) => <Palm key={'p' + i} p={[x - 20 + i * 45, 0, i % 2 ? 9 : -9]} h={7} />)}
     {st.ex.line && <M g={sph} m={basic('#ffffff')} p={[st.ex.line[1], 0.1, 0]} s={0.5} sh={false} />}</group>); };
 const Modern: React.FC<P> = ({d, st}) => { const D = d.d, x = X.modern;
   return (<group><Sky t={D.skyNight} at={[x, 0, 0]} /><DesertRoad d={D} x0={x - 320} x1={x + 320} line={st.ex.line} newRoad seed={19} /><Cars st={st} night />

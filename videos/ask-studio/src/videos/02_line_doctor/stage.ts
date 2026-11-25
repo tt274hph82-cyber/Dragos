@@ -36,7 +36,8 @@ export function stage(f: number): Stage {
       K.push({...car([[0, x - 8, 1.5], [18, x - 1, 5.2]], lf, '#1e1e24'), ry: -0.55 * k});
       K.push(car([[0, x + 2, 0], [70, x - 26, 0]], lf, 'TRUCK', Math.PI));
       ex.dust = lf;
-      P.push({who: 'june', p: seatOf(K[0], 1), inCar: true, sit: true, ...seq(lf, [[0, 'idle', 'surprised'], [W('sand', 'idea') - 8, 'eureka', 'happy']]), look: 1});
+      const out = W('sand', 'idea') - 16;
+      P.push(lf < out ? {who: 'june', p: seatOf(K[0], 1), inCar: true, sit: true, act: 'idle', expr: 'surprised', look: 1} : {who: 'june', p: [x - 1.5, 0, 7.4], ...seq(lf, [[0, 'eureka', 'happy']]), gaze: 'cam'});
       ex.bulb = lf - W('sand', 'idea') + 4; break; }
     case 'idea': {   // bird's-eye: the line draws itself, a car on each side
       const x = X.idea; ex.line = [x - 40, x - 40 + 80 * sm((lf - 2) / (W('idea', 'Your') - 4))];
@@ -92,7 +93,7 @@ export function stage(f: number): Stage {
     case 'end': {    // a kid looks down at the line from the passenger seat... then June at her finished line, golden hour
       const x = X.end; ex.line = [x - 80, x + 1];
       K.push({p: [X.dash, 0, 1.6], ry: 0, col: 'M:#5b7fb5'});
-      P.push({who: 'kid', p: seatOf(K[0], -1), inCar: true, sit: true, act: 'idle', expr: 'surprised', gaze: [X.dash + 3, 0, 0]});
+      P.push({who: 'kid', p: [X.dash + 2.2, 0, -1.0], act: 'idle', expr: 'surprised', gaze: [X.dash + 3, 0, 0]});
       P.push({who: 'june', p: [x + 2.0, 0, -0.9], ...seq(lf, [[0, 'proud', 'proud'], [W('end', 'doctor'), 'wave', 'happy']]), gaze: 'cam'}); break; }
   }
   autoGaze(P, [] as MeterP[]);

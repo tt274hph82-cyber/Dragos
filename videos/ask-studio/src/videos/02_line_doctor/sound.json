@@ -1,0 +1,27 @@
+{
+  "music": "Instrumental 1910s Americana folk score for a true story about a country doctor in the California desert: upright piano, banjo, fiddle, brushed snare and soft whistling. Starts tense and dusty, turns warm and hopeful, builds to a proud triumphant finish. No vocals.",
+  "sfx_lu": -14,
+  "music_lu": -17,
+  "sfx": [
+    {"shot": "hook", "word": "painted", "prompt": "wet paintbrush stroke on rough asphalt, long swipe", "secs": 1.2},
+    {"shot": "hook", "word": "nobody", "prompt": "lonely desert wind gust, dry", "secs": 1.5, "gain": 0.6},
+    {"shot": "town", "word": "doctor", "prompt": "old wooden screen door creak and small bell", "secs": 1.0, "gain": 0.6},
+    {"shot": "truck", "word": "truck", "prompt": "old 1910s truck engine rumble approaching", "secs": 2.0, "gain": 0.7},
+    {"shot": "truck", "word": "roaring", "prompt": "loud old-fashioned truck horn honk, ahooga", "secs": 1.0, "gain": 0.35},
+    {"shot": "sand", "word": "swerved", "prompt": "car tyres skidding off road into sand, gravel spray", "secs": 1.5, "gain": 0.6},
+    {"shot": "idea", "word": "your", "prompt": "vintage car driving past, quick pass-by", "secs": 1.2, "gain": 0.6},
+    {"shot": "idea", "word": "my", "prompt": "vintage car driving past, quick pass-by", "secs": 1.2, "gain": 0.6},
+    {"shot": "county", "word": "waste", "prompt": "group of old men laughing mockingly, short", "secs": 1.5, "gain": 0.5},
+    {"shot": "store", "word": "paint", "prompt": "antique cash register ding and drawer", "secs": 1.0, "gain": 0.6},
+    {"shot": "brush", "word": "and", "prompt": "paintbrush strokes on road, three slow swipes", "secs": 1.6},
+    {"shot": "stare", "word": "crazy", "prompt": "man snickering, short mocking laugh", "secs": 1.0, "gain": 0.5},
+    {"shot": "stretch", "word": "everyone", "prompt": "two vintage cars passing each other, gentle", "secs": 1.5, "gain": 0.6},
+    {"shot": "club", "word": "joined", "prompt": "women cheering and clapping in a small hall, short", "secs": 1.5, "gain": 0.45},
+    {"shot": "map", "word": "letters", "prompt": "old typewriter typing fast then bell ding", "secs": 1.5, "gain": 0.6},
+    {"shot": "map", "word": "thousands", "prompt": "long paper scroll unrolling", "secs": 1.2, "gain": 0.7},
+    {"shot": "years", "word": "seven", "prompt": "calendar pages flipping fast", "secs": 1.0, "gain": 0.7},
+    {"shot": "years", "word": "yes", "prompt": "heavy rubber stamp thump on paper desk", "secs": 0.6, "gain": 0.6},
+    {"shot": "modern", "word": "she", "prompt": "modern cars whooshing past on a highway at night", "secs": 2.0, "gain": 0.5},
+    {"shot": "end", "word": "doctor", "prompt": "warm gentle bell chime, hopeful", "secs": 1.2, "gain": 0.6}
+  ]
+}
