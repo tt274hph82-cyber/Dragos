@@ -10,7 +10,7 @@ export type V3 = [number, number, number];
 const INK = '#241726';
 const FONT = '"Archivo Black", Anton, Impact, sans-serif';
 const cv = (w: number, h: number) => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; };
-const tex = (c: HTMLCanvasElement) => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t; };
+const tex = (c: HTMLCanvasElement) => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter; t.magFilter = THREE.LinearFilter; return t; };
 const box = new THREE.BoxGeometry(1, 1, 1), cyl = new THREE.CylinderGeometry(1, 1, 1, 18), sph = new THREE.SphereGeometry(1, 20, 14), cone = new THREE.ConeGeometry(1, 1, 5), plane = new THREE.PlaneGeometry(1, 1);
 const cache = new Map<string, THREE.Material>();
 /** toon material by colour (cached) */
@@ -25,13 +25,14 @@ const skyTex = (stops: [number, string][], stars = 0, sun?: [number, number, num
   stops.forEach(([o, col]) => gr.addColorStop(o, col)); g.fillStyle = gr; g.fillRect(0, 0, 64, 512);
   for (let i = 0; i < stars; i++) { g.fillStyle = `rgba(255,255,255,${0.4 + 0.6 * ((i * 37) % 10) / 10})`; g.fillRect((i * 53) % 64, (i * 97) % 300, 1, 1); }
   return tex(c); };
-const roadTex = (base: string) => { const c = cv(256, 256), g = c.getContext('2d')!; g.fillStyle = base; g.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 2600; i++) { const a = ((i * 7919) % 1000) / 1000; g.fillStyle = a > 0.5 ? 'rgba(255,255,255,.10)' : 'rgba(0,0,0,.12)'; g.fillRect((i * 37) % 256, (i * 101) % 256, 2, 2); }
+// ground textures are soft and low-contrast on purpose: fine dots / thin lines alias into flicker when the camera moves
+const roadTex = (base: string) => { const c = cv(256, 256), g = c.getContext('2d')!; g.fillStyle = base; g.fillRect(0, 0, 256, 256); g.filter = 'blur(6px)';
+  for (let i = 0; i < 60; i++) { const a = ((i * 7919) % 1000) / 1000; g.fillStyle = a > 0.5 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.06)'; g.beginPath(); g.ellipse((i * 37) % 256, (i * 101) % 256, 14 + (i % 4) * 6, 8 + (i % 3) * 4, 0, 0, Math.PI * 2); g.fill(); }
   const t = tex(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; };
-const sandTex = () => { const c = cv(256, 256), g = c.getContext('2d')!; g.fillStyle = '#e6c48a'; g.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 40; i++) { g.strokeStyle = 'rgba(176,128,70,.22)'; g.lineWidth = 3; g.beginPath(); const y = (i * 41) % 256; g.moveTo(0, y); g.bezierCurveTo(80, y - 10, 170, y + 12, 256, y); g.stroke(); }
-  for (let i = 0; i < 1800; i++) { g.fillStyle = i % 2 ? 'rgba(255,240,210,.25)' : 'rgba(150,100,50,.18)'; g.fillRect((i * 53) % 256, (i * 131) % 256, 2, 2); }
-  const t = tex(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(30, 30); return t; };
+const sandTex = () => { const c = cv(256, 256), g = c.getContext('2d')!; g.fillStyle = '#e6c48a'; g.fillRect(0, 0, 256, 256); g.filter = 'blur(10px)';
+  for (let i = 0; i < 9; i++) { g.strokeStyle = 'rgba(176,128,70,.12)'; g.lineWidth = 18; g.beginPath(); const y = (i * 29) % 256; g.moveTo(-20, y); g.bezierCurveTo(80, y - 14, 170, y + 16, 276, y); g.stroke(); }
+  for (let i = 0; i < 24; i++) { g.fillStyle = i % 2 ? 'rgba(255,240,210,.10)' : 'rgba(150,100,50,.08)'; g.beginPath(); g.arc((i * 53) % 256, (i * 131) % 256, 18 + (i % 3) * 8, 0, Math.PI * 2); g.fill(); }
+  const t = tex(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(18, 18); return t; };
 /** a rough California outline (lon/lat-ish polygon) with club pins */
 const caMap = () => { const c = cv(768, 1024), g = c.getContext('2d')!; g.fillStyle = '#e8d8b0'; g.fillRect(0, 0, 768, 1024);
   for (let i = 0; i < 12; i++) { g.strokeStyle = 'rgba(120,90,50,.15)'; g.lineWidth = 2; g.beginPath(); g.moveTo(0, i * 90); g.lineTo(768, i * 90); g.stroke(); g.beginPath(); g.moveTo(i * 70, 0); g.lineTo(i * 70, 1024); g.stroke(); }
@@ -93,11 +94,11 @@ export const DesertRoad: React.FC<{d: DesertData; x0: number; x1: number; line?:
   const sandM = useMemo(() => lookToon({map: d.sand}), [d]);
   return (<group>
     <M g={plane} m={sandM} p={[cx, 0, 0]} s={[L + 400, 400, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />
-    <M g={plane} m={roadM} p={[cx, 0.01, 0]} s={[L, 6, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />
-    {[-3.05, 3.05].map((z) => <M key={z} g={plane} m={T(newRoad ? '#f2efe6' : '#b09a78')} p={[cx, 0.012, z]} s={[L, newRoad ? 0.14 : 0.3, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />)}
+    <M g={plane} m={roadM} p={[cx, 0.02, 0]} s={[L, 6, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />
+    {[-3.05, 3.05].map((z) => <M key={z} g={plane} m={T(newRoad ? '#f2efe6' : '#b09a78')} p={[cx, 0.035, z]} s={[L, newRoad ? 0.14 : 0.3, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />)}
     {line && line[1] > line[0] && (dash
-      ? Array.from({length: Math.floor((line[1] - line[0]) / 6)}, (_, i) => <M key={i} g={plane} m={T('#f2c23a')} p={[line[0] + i * 6 + 1.6, 0.02, 0]} s={[3.2, 0.16, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />)
-      : <M g={plane} m={T('#fbf8ee')} p={[(line[0] + line[1]) / 2, 0.02, 0]} s={[line[1] - line[0], 0.18, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />)}
+      ? Array.from({length: Math.floor((line[1] - line[0]) / 6)}, (_, i) => <M key={i} g={plane} m={T('#f2c23a')} p={[line[0] + i * 6 + 1.6, 0.05, 0]} s={[3.2, 0.16, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />)
+      : <M g={plane} m={T('#fbf8ee')} p={[(line[0] + line[1]) / 2, 0.05, 0]} s={[line[1] - line[0], 0.18, 1]} r={[-Math.PI / 2, 0, 0]} sh={false} />)}
     {Array.from({length: Math.floor(L / 9)}, (_, i) => { const x = x0 + i * 9 + ((i * 7 + seed) % 5), side = (i + seed) % 2 ? 1 : -1, z = side * (6 + ((i * 13 + seed) % 9)); return i % 3 === 0 ? <Rock key={i} p={[x, 0.1, z]} s={0.7 + (i % 3) * 0.3} /> : <Bush key={i} p={[x, 0, z]} s={0.7 + (i % 4) * 0.2} />; })}
   </group>);
 };
