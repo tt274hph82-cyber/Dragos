@@ -1,3 +1,4 @@
 mike/frames/
 mike/_tmp*.svg
 mike/sfx.wav
+__pycache__/
