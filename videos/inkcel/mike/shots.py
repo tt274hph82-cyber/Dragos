@@ -48,12 +48,30 @@ def rooster_head(name='RH'):
     return o
 
 
-def shot(i, u):
+def ex(ts, seq, blink_every=1.7, ph=0.0):
+    """expression at time ts (s) from a list of (start s, expr); a 3-frame blink every ~1.7 s"""
+    e = seq[0][1]
+    for st, x in seq:
+        if ts >= st:
+            e = x
+    if ((ts + ph) % blink_every) < 0.1 and e not in ('shock',):
+        return 'blink'
+    return e
+
+
+def pop(ts, starts, amp=0.035):
+    """spring overshoot right after each pose change (a snap, then a settle)"""
+    d = min([ts - s for s in starts if ts >= s] or [9])
+    return 1 + amp * math.exp(-d * 9) * math.cos(d * 26)
+
+
+def shot(i, u, ts=0.0):
+    br = 1 + 0.008 * math.sin(ts * 2.4)   # breathing
     if i == 0:   # CU low angle: Lloyd swings the axe, anger; push in
         cam = Cam(f=2600, horizon=2600, eye=0.9, z=-6.0)
         B = C.barnyard('S1', cam)
         s = 1.45 + 0.2 * u
-        L = raster(put(C.lloyd('anger', 'swing', 1, 's1'), 1120, 4250 + 200 * u, s))
+        L = raster(put(C.lloyd(ex(ts, [(0, 'anger'), (0.9, 'shock'), (1.5, 'anger')]), 'swing', 1, 's1'), 1120, 4000 + 200 * u, s * br * pop(ts, [0, 0.9, 1.5])))
         L = light_wrap(L, poly_mask([[(0, 0), (1200, 0), (1500, 2000), (900, 3840), (0, 3840)]]), 0.5)
         return comp([(raster(B['sky'] + B['back']), 18), (raster(B['mid']), 12), (L, 0)])
     if i == 1:   # insert: the head lands by the block, dust ticks; punch-in
@@ -67,22 +85,26 @@ def shot(i, u):
     if i == 2:   # wide: headless Mike struts away; Lloyd recoils behind (reaction)
         cam = Cam(f=2500, horizon=1350, eye=0.5, x=0.3 + 0.4 * u, z=0.2)
         B = C.barnyard('S3', cam)
-        act = at(cam, -0.6, 6.2, C.lloyd('shock', 'shock', -1, 's3l')) + at(cam, 0.45 + u * 0.4, 2.5, C.mike(True, 's3m', u * 6), 0.95)
+        act = at(cam, -1.5, 5.0, C.lloyd(ex(ts, [(0, 'neutral'), (0.5, 'shock')]), 'shock' if ts > 0.5 else 'stand', -1, 's3l'), 1.85 * pop(ts, [0.5], 0.05)) + at(cam, 0.6 + u * 0.5, 2.6, C.mike(True, 's3m', ts * 9), 1.15)
         return comp([(raster(B['sky'] + B['back']), 6), (raster(B['mid'] + B['light'] + B['fore']), 0), (raster(act), 0)])
     if i == 3:   # wide establishing: the whole farm; slow orbit and pull back
         cam = Cam(f=1100, horizon=1450, eye=2.4, x=-1.0 + 0.8 * u, z=-4.0 - 2 * u, yaw=0.08 - 0.06 * u)
         B = C.barnyard('S4', cam)
         birds = ''.join(ink([(300 + j * 160 + u * 200, 700 + (j % 2) * 60), (330 + j * 160 + u * 200, 680 + (j % 2) * 60), (360 + j * 160 + u * 200, 700 + (j % 2) * 60)], 5, f'bird{j}') for j in range(4))
-        return comp([(raster(B['sky'] + B['back'] + birds), 2), (raster(B['mid'] + B['light'] + B['fore']), 0)])
+        house = shape(cam.poly([(-4.5, 0, 7), (-1.5, 0, 7), (-1.5, 2.6, 7), (-3.0, 3.8, 7), (-4.5, 2.6, 7)]), '#f6efe6', 'house', w=5, smooth=False)
+        house += shape(cam.poly([(-3.4, 0, 7), (-2.6, 0, 7), (-2.6, 1.9, 7), (-3.4, 1.9, 7)]), C.BLUE_SH, 'hdoor', w=4, smooth=False)
+        house += shape(cam.poly([(-4.5, 2.6, 7), (-3.0, 3.8, 7), (-3.0, 3.8, 10), (-4.5, 2.6, 10)]), C.REDB, 'hroof', w=4, smooth=False)
+        hens = ''.join(at(cam, 0.8 + j * 0.9, 3.0 + j * 0.7, f'<g transform="scale(-1 1)">{C.mike(False, f"hen{j}", ts * 6 + j)}</g>', 0.55) for j in range(3))
+        return comp([(raster(B['sky'] + B['back'] + birds), 2), (raster(B['mid'] + B['light'] + house + B['fore'] + hens), 0)])
     if i == 4:   # medium: Lloyd at the table, smug, the empty plate; the mother-in-law behind, angry
         cam = Cam(f=2100, horizon=1500, eye=1.3, x=0.7, z=0.6 + 0.3 * u)
         K = C.kitchen('S5', cam)
         X1, WZ0, WZ1, WY0, WY1 = 3.2, 3.0, 5.0, 1.0, 2.4
         corners = [(X1, WY0, WZ0), (X1, WY0, WZ1), (X1, WY1, WZ1), (X1, WY1, WZ0)]
         SUN2 = (-1.0, -0.34, -0.12)
-        A = raster(at(cam, -0.55, 4.4, C.mil('anger', 1, 's5m'), 1.55))
+        A = raster(at(cam, -0.95, 3.9, C.mil(ex(ts, [(0, 'neutral'), (0.6, 'anger')], 1.9, 0.5), 1, 's5m'), 1.55 * pop(ts, [0.6], 0.05)))
         px, py = cam.p(0.0, 0.8, 4.4)
-        Lr = raster(at(cam, 0.95, 3.1, C.lloyd('smug', 'stand', 1, 's5l')) + put(C.plate(0, 0, 1, 's5p'), px, py, cam.scale(4.4) / 900 * 0.9))
+        Lr = raster(at(cam, 0.95, 3.1, C.lloyd(ex(ts, [(0, 'neutral'), (0.4, 'smug'), (1.3, 'joy')]), 'stand', 1, 's5l'), 1.85 * br * pop(ts, [0.4, 1.3])) + put(C.plate(0, 0, 1, 's5p'), px, py, cam.scale(4.4) / 900 * 0.9))
         Lr = light_wrap(Lr, poly_mask([cam.poly([cast_to_plane(q, SUN2, 0, 0.95) for q in corners])]), 0.6)
         A = light_wrap(A, poly_mask([cam.poly([cast_to_plane(q, SUN2, 0, -0.55) for q in corners])]), 0.6)
         return comp([(raster(K['sky'] + K['back']), 9), (raster(K['mid']), 2), (A, 0), (Lr, 0)])
@@ -101,7 +123,7 @@ def shot(i, u):
         cam = Cam(f=2600, horizon=2400, eye=1.0, z=-6.0)
         from cast2 import sideshow
         S = sideshow()
-        L = raster(put(C.lloyd('joy', 'stand', 1, 's7l'), 1080, 5200, 2.4) + ''.join(put(C.coins(0, 0, 3, f'cn{j}'), [260, 420, 1740, 1900][j % 4], 1500 + ((j * 330 + u * 1600) % 2000), 1.4) for j in range(10)))
+        L = raster(put(C.lloyd(ex(ts, [(0, 'shock'), (0.5, 'joy')]), 'stand', 1, 's7l'), 1080, 5200, 2.4 * br * pop(ts, [0.5])) + ''.join(put(C.coins(0, 0, 3, f'cn{j}'), [260, 420, 1740, 1900][j % 4], 1500 + ((j * 330 + u * 1600) % 2000), 1.4) for j in range(10)))
         L = light_wrap(L, poly_mask([[(0, 0), (2160, 0), (2160, 900), (0, 2400)]]), 0.35)
         return comp([(raster(S['sky'] + S['back']), 18), (raster(S['mid'] + S['light']), 14), (L, 0)])
 
