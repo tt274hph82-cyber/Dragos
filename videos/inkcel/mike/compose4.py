@@ -16,9 +16,8 @@ PEACH_RGB = np.array([247, 201, 162], np.float32)
 
 
 def raster(body):
-    p = HERE / '_tmp4.svg'
-    p.write_text(svg_doc(W2, H2, body))
-    return Image.open(io.BytesIO(subprocess.run(['rsvg-convert', '-w', str(W2), '-h', str(H2), str(p)], check=True, capture_output=True).stdout)).convert('RGBA')
+    # piped through stdin: safe when several worker processes rasterise at once
+    return Image.open(io.BytesIO(subprocess.run(['rsvg-convert', '-w', str(W2), '-h', str(H2)], input=svg_doc(W2, H2, body).encode(), check=True, capture_output=True).stdout)).convert('RGBA')
 
 
 def poly_mask(polys):
