@@ -66,7 +66,13 @@ def kitchen_shot(out):
     c = cam
     X1, WZ0, WZ1, WY0, WY1 = 3.2, 3.0, 5.0, 1.0, 2.4
     corners = [(X1, WY0, WZ0), (X1, WY0, WZ1), (X1, WY1, WZ1), (X1, WY1, WZ0)]
-    extra = ''
+    SUN2 = (-1.0, -0.34, -0.12)   # a lower afternoon sun: the beam crosses the room at chest height
+    # the big diagonal light on the left wall, with the mullion cross in shadow
+    wl = c.poly([cast_to_plane(q, SUN2, 0, -3.2) for q in corners])
+    extra = shape(wl, PEACH_HEX, 'wallLight', line=False, smooth=False, cut=0.5, extra=' fill-opacity="0.92"')
+    m1 = [cast_to_plane((X1, WY0, (WZ0 + WZ1) / 2), SUN2, 0, -3.2), cast_to_plane((X1, WY1, (WZ0 + WZ1) / 2), SUN2, 0, -3.2)]
+    m2 = [cast_to_plane((X1, (WY0 + WY1) / 2, WZ0), SUN2, 0, -3.2), cast_to_plane((X1, (WY0 + WY1) / 2, WZ1), SUN2, 0, -3.2)]
+    extra += ink([c.p(*m1[0]), c.p(*m1[1])], 22, 'wm1', taper=False, color=C.BLUE) + ink([c.p(*m2[0]), c.p(*m2[1])], 22, 'wm2', taper=False, color=C.BLUE)
     # packed set: hanging pots, a calendar 1945, a coat on a hook, a lamp with a glint, a rug, flour sacks, a chair
     for i in range(3):
         x, y = c.p(-0.8 + i * 0.5, 2.6, 8.6)
@@ -87,15 +93,15 @@ def kitchen_shot(out):
     back = raster(K['sky'] + K['back'] + extra)
     mid = raster(rugsvg + K['mid'])
     # characters: Lloyd at the table (big, foreground right), the mother-in-law behind on the left; the plate
-    actors = at(c, -0.9, 6.2, C.mil('anger', 1, 'km'), 1.55)
-    lloyd = at(c, 1.55, 2.7, C.lloyd('smug', 'stand', 1, 'kl'))
+    actors = at(c, -0.55, 4.4, C.mil('anger', 1, 'km'), 1.55)
+    lloyd = at(c, 0.95, 3.1, C.lloyd('smug', 'stand', 1, 'kl'))
     px, py = c.p(0.0, 0.8, 4.4)
     plate = put(C.plate(0, 0, 1, 'kp'), px, py, c.scale(4.4) / 900 * 0.9)
     A = raster(actors)
     Lr = raster(lloyd + plate)
     # light wrap: the beam cast onto each character's depth plane (the X of where they stand)
-    beamL = c.poly([cast_to_plane(q, C.SUN_K, 0, 1.55) for q in corners])
-    beamW = c.poly([cast_to_plane(q, C.SUN_K, 0, -0.9) for q in corners])
+    beamL = c.poly([cast_to_plane(q, SUN2, 0, 0.95) for q in corners])
+    beamW = c.poly([cast_to_plane(q, SUN2, 0, -0.55) for q in corners])
     Lr = light_wrap(Lr, poly_mask([beamL]), 0.6)
     A = light_wrap(A, poly_mask([beamW]), 0.6)
     return frame([(back, 9), (mid, 2), (A, 0), (Lr, 0)], out)

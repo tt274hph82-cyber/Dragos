@@ -47,6 +47,14 @@ def lloyd_head(expr='neutral', k=1, name='L3', lit=True):
     o += ink(M([(-10, 40), (-40, 110), (-44, 176 + jaw * 0.6)]), 3.6, name + 'foldF')
     o += ink(M([(120, 50), (126, 120), (118, 186 + jaw * 0.7)]), 3.6, name + 'foldN')
     o += ink(M([(-60, 250 + jaw), (40, 280 + jaw), (130, 246 + jaw)]), 3, name + 'chin2', color=FINE, op=0.85)
+    for j, ex in enumerate((-60, 60)):   # crow's feet
+        for t_ in range(3):
+            o += tick((ex + (34 if j else -30)) * k, -30 + t_ * 10, (0.3 - t_ * 0.3) if (j == 1) == (k > 0) else (2.8 + t_ * 0.3), 16, 1.6, f'{name}cf{j}{t_}', color=FINE, op=0.85)
+    o += ink(M([(170, -150), (186, -90), (180, -40)]), 2.6, name + 'temple', color=FINE, op=0.8)
+    o += ink(M([(90, 180 + jaw * 0.8), (40, 196 + jaw * 0.9), (-20, 192 + jaw * 0.9)]), 2.4, name + 'lipLine', color=FINE, op=0.7)
+    o += ink(M([(-120, 150 + jaw * 0.6), (-100, 210 + jaw * 0.9)]), 2.6, name + 'jowlF', color=FINE, op=0.8)
+    for i in range(10):
+        o += ink(M([(-150 + i * 6, -196 + i * 5), (-140 + i * 4, -120 + i * 6)]), 1.7, f'{name}hairF{i}', op=0.7)
     # eyes toward the facing side: the far eye smaller (foreshortened)
     mode = {'blink': 'blink', 'shock': 'shock', 'anger': 'angry'}.get(expr, 'normal')
     lid = {'smug': 0.68, 'joy': 0.6, 'neutral': 0.52}.get(expr, 0.45)
@@ -113,6 +121,8 @@ def lloyd_body(name='L3b', pose='stand', k=1):
         o += f'<circle cx="{x * k}" cy="-890" r="13" fill="{PEACH}" stroke="{INK}" stroke-width="3"/>'
     o += shape(M([(-90, -1210), (90, -1210), (110, -1110), (-100, -1110)]), SKIN_SH, name + 'neck', w=5, smooth=False)
     o += shape(M([(-130, -1130), (0, -1080), (150, -1130), (100, -1170), (-90, -1170)]), REDB, name + 'collar', w=4, smooth=False)
+    o += shape(M([(-40, -1090), (0, -1060), (-70, -1040)]), '#6a2018', name + 'collarPtF', w=3, smooth=False) + shape(M([(40, -1090), (0, -1060), (90, -1036)]), REDB, name + 'collarPtN', w=3, smooth=False)
+    o += F([M([(180, -1100), (240, -1060)]), M([(200, -1070), (250, -1030)]), M([(-200, -1090), (-250, -1050)]), M([(260, -980), (300, -930)]), M([(-260, -980), (-296, -930)]), M([(120, -1040), (150, -990)]), M([(-110, -1030), (-140, -990)])], name + 'shF', 3.2)
     if pose == 'stand':
         # far arm (shade, behind), near arm big with a thick forearm and a fold at the elbow
         o += shape(M([(-300, -1080), (-380, -1040), (-400, -800), (-380, -620), (-320, -620), (-320, -840)]), '#6a2018', name + 'armF', w=5)
