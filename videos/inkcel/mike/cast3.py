@@ -91,7 +91,7 @@ def lloyd_head(expr='neutral', k=1, name='L3', lit=True):
     return o
 
 
-def lloyd_body(name='L3b', pose='stand', k=1):
+def lloyd_body(name='L3b', pose='stand', k=1, layer='all'):
     """huge barrel body in 3/4: the near shoulder and arm bigger, the far side in shade, fold strokes everywhere.
     Origin = feet centre; the head sits on (0, -1400) scaled 1.0."""
     o = ''
@@ -131,12 +131,18 @@ def lloyd_body(name='L3b', pose='stand', k=1):
         o += F([M([(330, -860), (380, -846)]), M([(340, -890), (370, -880)]), M([(350, -760), (400, -750)])], name + 'elb')
         o += hand(380 * k, -566, 78, SKIN, SKIN_SH, name + 'handN', lit=True, rot=180, curl=0.5, ring=PEACH)
     elif pose == 'swing':
-        o += shape(M([(-280, -1080), (-340, -1060), (-150, -1480), (-80, -1460)]), '#6a2018', name + 'armUF', w=5)
-        o += shape(M([(250, -1110), (330, -1090), (130, -1500), (60, -1480)]), REDB, name + 'armUN', w=5)
-        o += F([M([(220, -1260), (260, -1250)]), M([(-200, -1250), (-170, -1240)])], name + 'sf')
-        o += hand(-30 * k, -1520, 70, SKIN, SKIN_SH, name + 'hU1', lit=False, rot=-8, curl=0.85)
-        o += hand(60 * k, -1546, 70, SKIN, SKIN_SH, name + 'hU2', lit=True, rot=8, curl=0.85, ring=PEACH)
-        o += axe_prop(10 * k, -1530, 1.3, -18 * k, name + 'axe')
+        # the axe wound up over the near shoulder: the far arm reaches across behind the head (body layer),
+        # the near arm comes up the side of the head (arms layer), so neither covers the face
+        if layer in ('all', 'body'):
+            o += shape(M([(-280, -1080), (-330, -1050), (200, -1640), (260, -1600)]), '#6a2018', name + 'armUF', w=5)
+        if layer == 'arms':
+            o = ''
+        if layer in ('all', 'arms'):
+            o += shape(M([(260, -1110), (350, -1080), (430, -1660), (350, -1690)]), REDB, name + 'armUN', w=5)
+            o += F([M([(300, -1300), (350, -1290)]), M([(320, -1420), (370, -1410)])], name + 'sf')
+            o += hand(330 * k, -1720, 70, SKIN, SKIN_SH, name + 'hU1', lit=False, rot=10 * k, curl=0.85)
+            o += hand(400 * k, -1745, 70, SKIN, SKIN_SH, name + 'hU2', lit=True, rot=20 * k, curl=0.85, ring=PEACH)
+            o += axe_prop(370 * k, -1730, 1.3, -50 * k, name + 'axe')
     elif pose == 'shock':
         o += shape(M([(-300, -1080), (-380, -1050), (-560, -1320), (-500, -1360)]), '#6a2018', name + 'armSF', w=5)
         o += shape(M([(260, -1110), (360, -1070), (580, -1300), (520, -1350)]), REDB, name + 'armSN', w=5)
@@ -146,7 +152,10 @@ def lloyd_body(name='L3b', pose='stand', k=1):
 
 
 def lloyd(expr='neutral', pose='stand', k=1, name='L3'):
-    return lloyd_body(name + 'b', pose, k) + f'<g transform="translate({-30 * k} -1420)">{lloyd_head(expr, k, name + "h")}</g>'
+    head = f'<g transform="translate({-30 * k} -1420)">{lloyd_head(expr, k, name + "h")}</g>'
+    if pose == 'swing':   # raised arms and the axe are drawn over the head and hat
+        return lloyd_body(name + 'b', pose, k, 'body') + head + lloyd_body(name + 'b', pose, k, 'arms')
+    return lloyd_body(name + 'b', pose, k) + head
 
 
 # ---------------------------------------------------------------- the mother-in-law in 3/4: tiny, thin, a long pointed face, a tall barbed bun
